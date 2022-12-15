@@ -10,7 +10,16 @@ import AppKit
 import FZExtensions
 
 public extension NSTableView {
-    func reloadMaintainingSelection(_ completionHandler: (() -> ())? = nil) {
+    typealias DragHandler = (IndexSet, [NSTableColumn], NSEvent, NSPointPointer)->(NSImage)
+    
+    //typealias DragHandler = (rows: IndexSet, columns: [NSTableColumn], event: NSEvent, offset: NSPointPointer)->(NSImage)
+    
+    internal var dragHandler: DragHandler? {
+         get { getAssociatedValue(key: "_dragHandler", object: self) }
+         set { set(associatedValue: newValue, key: "_dragHandler", object: self) } }
+    
+    
+    func reloadMaintainingSelection(completionHandler: (() -> ())? = nil) {
            let oldSelectedRowIndexes = selectedRowIndexes
            reloadOnMainThread {
                if oldSelectedRowIndexes.count == 0 {
@@ -55,8 +64,6 @@ public extension NSTableView {
     }
     
     
-   
-    
     /**
      Returns the cell views currently visible.
      
@@ -67,7 +74,7 @@ public extension NSTableView {
         var visibleCellViews = [NSTableCellView]()
         for row in visibleRowIndexes {
             if let rowView = self.rowView(atRow: row, makeIfNecessary: false) {
-                visibleCellViews.append(contentsOf: rowView.tableCells)
+                visibleCellViews.append(contentsOf: rowView.cellViews)
             }
         }
         return visibleCellViews
@@ -176,4 +183,9 @@ public extension NSTableView {
      @objc internal func windowDidResignKey() {
          self.visibleRowViews().forEach({$0.isEmphasized = false})
       }
+    
+    func dragImageForRows(with dragRows: IndexSet, tableColumns: [NSTableColumn], event dragEvent: NSEvent, offset dragImageOffset: NSPointPointer
+    ) -> NSImage {
+        self.dragHandler?(dragRows, tableColumns, dragEvent, dragImageOffset) ?? NSImage(color: .gray)
+    }
 }

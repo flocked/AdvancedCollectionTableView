@@ -28,30 +28,28 @@ extension NSTableRowContentConfiguration {
         }
         
         internal func updateConfiguration(with configuration: NSTableRowContentConfiguration) {
-            var roundedCorners = CACornerMask()
-            if (configuration.isPreviousRowSelected == false) {
-                roundedCorners.insert(.topLeft)
-                roundedCorners.insert(.topRight)
-            }
-            if (configuration.isNextRowSelected == false) {
-                roundedCorners.insert(.bottomLeft)
-                roundedCorners.insert(.bottomRight)
-            }
-            contentView.roundedCorners = roundedCorners
+            contentView.roundedCorners = configuration.roundedCorners
             contentView.cornerRadius = configuration.cornerRadius
             contentView.backgroundColor = configuration.resolvedBackgroundColor()
-            contentView.layer?.contents = configuration.image
+            contentView.layer?.contents = configuration.backgroundImage
             contentView.layer?.contentsGravity = configuration.imageProperties.scaling
+            
+            contentViewConstraits[0].constant = -configuration.backgroundPadding.bottom
+            contentViewConstraits[1].constant = configuration.backgroundPadding.top
+            contentViewConstraits[2].constant = configuration.backgroundPadding.leading
+            contentViewConstraits[3].constant = configuration.backgroundPadding.trailing
         }
         
         func supports(_ configuration: NSContentConfiguration) -> Bool {
             return (configuration as? NSTableRowContentConfiguration) != nil
         }
         
+        var contentViewConstraits: [NSLayoutConstraint] = []
+        
         init(configuration: NSTableRowContentConfiguration) {
             self.appliedConfiguration = configuration
             super.init(frame: .zero)
-            self.addSubview(withConstraint: contentView)
+            contentViewConstraits = self.addSubview(withConstraint: contentView)
             contentView.wantsLayer = true
             self.updateConfiguration(with: configuration)
         }

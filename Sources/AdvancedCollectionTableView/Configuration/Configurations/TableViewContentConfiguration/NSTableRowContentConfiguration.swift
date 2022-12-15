@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-
 /**
  A content configuration for a table row-based content view.
  
@@ -26,7 +25,7 @@ import FZExtensions
  rowView.contentConfiguration = content
  ```
  */
-public class NSTableRowContentConfiguration: NSContentConfiguration {
+public struct NSTableRowContentConfiguration: NSContentConfiguration {
     
     public init() {
         
@@ -36,17 +35,45 @@ public class NSTableRowContentConfiguration: NSContentConfiguration {
      */
     var backgroundColor: NSColor? = nil
     /**
+     The background color.
+     */
+    var selectionBackgroundColor: NSColor? = nil
+    /**
      The corner radius..
      */
     var cornerRadius: CGFloat = 0.0
     /**
      The image to display.
      */
-    var image: NSImage? = nil
-
-    internal var isNextRowSelected: Bool = false
-    internal var isPreviousRowSelected: Bool = false
+    var backgroundImage: NSImage? = nil
     
+    /**
+     The margins between the content and the edges of the content view.
+     */
+    var autoAdjustRowSize: Bool = false
+    
+    var backgroundPadding: NSDirectionalEdgeInsets = .zero
+    
+    internal var roundedCorners: CACornerMask = .all
+    
+    static func sourceList() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.backgroundPadding = .init(top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0)
+        configuration.cornerRadius = 4.0
+        configuration.imageProperties.tintColor = .controlAccentColor
+        configuration.selectionBackgroundColor = .controlAccentColor
+        return configuration
+    }
+    
+    static func fullSize() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.selectionBackgroundColor = .systemBlue
+        configuration.backgroundPadding = .zero
+        configuration.cornerRadius = 0.0
+        configuration.imageProperties.symbolConfiguration.colorStyle = .multicolor(.controlAccentColor)
+        return configuration
+    }
+        
     /**
      Properties for configuring the image.
      */
@@ -56,7 +83,8 @@ public class NSTableRowContentConfiguration: NSContentConfiguration {
      */
     var seperatorProperties: SeperatorProperties = .default()
     var backgroundColorTansform: NSConfigurationColorTransformer? = nil
-    
+    var selectionBackgroundColorTansform: NSConfigurationColorTransformer? = nil
+
     /**
     Generates the resolved background color, using the background color and background color transformer.
 
@@ -69,13 +97,42 @@ public class NSTableRowContentConfiguration: NSContentConfiguration {
         return nil
     }
     
+    /**
+    Generates the resolved background color, using the background color and background color transformer.
+
+    The resulting tint color depends on backgroundColor and backgroundColorTransformer.
+    */
+    func resolvedSelectionBackgroundColor() -> NSColor? {
+        if let selectionBackgroundColor = self.selectionBackgroundColor {
+            return self.selectionBackgroundColorTansform?(selectionBackgroundColor) ?? selectionBackgroundColor
+        }
+        return nil
+    }
+    
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
         return contentView
     }
     
     public func updated(for state: NSConfigurationState) -> Self {
-        return self
+        var configuration = self
+        if let state = state as? NSTableRowConfigurationState {
+            configuration.roundedCorners = []
+            if (state.isPreviousRowSelected == false) {
+                configuration.roundedCorners.insert(.topLeft)
+                configuration.roundedCorners.insert(.topRight)
+            }
+            if (state.isNextRowSelected == false) {
+                configuration.roundedCorners.insert(.bottomLeft)
+                configuration.roundedCorners.insert(.bottomRight)
+            }
+            if (state.isSelected) {
+                configuration.backgroundColor = .controlAccentColor
+            } else {
+                configuration.backgroundColor = nil
+            }
+        }
+        return configuration
     }
 
 }

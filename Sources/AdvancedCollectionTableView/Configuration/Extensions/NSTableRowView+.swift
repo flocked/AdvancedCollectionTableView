@@ -9,7 +9,7 @@ import AppKit
 import FZExtensions
 
 public extension NSTableRowView {
-    var tableCells: [NSTableCellView] {
+    var cellViews: [NSTableCellView] {
         self.subviews.compactMap({$0 as? NSTableCellView})
     }
     
@@ -138,7 +138,7 @@ public extension NSTableRowView {
      To add your own custom state, see NSConfigurationStateCustomKey.
      */
     var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isSelectable: self.isSelectable, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized)
+        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isSelectable: self.isSelectable, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
     
@@ -148,8 +148,15 @@ public extension NSTableRowView {
      You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s configurationState changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
-    func setNeedsUpdateConfiguration() {
+    func setNeedsUpdateConfiguration(updateCellViews: Bool = true) {
+        if (updateCellViews == true) {
+            setNeedsCellViewsUpdateConfiguration()
+        }
         self.updateConfiguration(using: self.configurationState)
+    }
+    
+    internal func setNeedsCellViewsUpdateConfiguration() {
+        self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
     }
     
     /**
@@ -170,7 +177,7 @@ public extension NSTableRowView {
         set {
             set(associatedValue: newValue, key: "_isHovered", object: self)
             self.setNeedsUpdateConfiguration()
-            self.tableCells.forEach({$0.isHovered = newValue})
+            self.cellViews.forEach({$0.isHovered = newValue})
         }
     }
     
@@ -214,6 +221,13 @@ public extension NSTableRowView {
         }
     }
     
+    var isSelected: Bool {
+        get { getAssociatedValue(key: "_isSelected", object: self, initialValue: false) }
+        set {
+            set(associatedValue: newValue, key: "_isSelected", object: self)
+            self.setNeedsUpdateConfiguration()
+        }
+    }
     
     override var isSelectable: Bool {
         get { getAssociatedValue(key: "_isSelectable", object: self, initialValue: false) }
@@ -223,7 +237,6 @@ public extension NSTableRowView {
         }
     }
      
-    
     static internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
         set {

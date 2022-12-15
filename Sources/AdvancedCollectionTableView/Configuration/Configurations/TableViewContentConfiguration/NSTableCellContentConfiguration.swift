@@ -28,7 +28,7 @@ import FZExtensions
  cell.contentConfiguration = content
  ```
  */
-public class NSTableCellContentConfiguration: NSContentConfiguration {
+public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /**
      The primary text.
      */

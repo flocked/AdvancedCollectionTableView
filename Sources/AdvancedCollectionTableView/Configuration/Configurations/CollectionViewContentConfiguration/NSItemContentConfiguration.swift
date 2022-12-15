@@ -28,7 +28,7 @@ import FZExtensions
  item.contentConfiguration = content
  ```
  */
-public class NSItemContentConfiguration: NSContentConfiguration {
+public struct NSItemContentConfiguration: NSContentConfiguration {
     /**
      The primary text.
      */
