@@ -10,8 +10,11 @@ It also adds extensions to NSCollectionView, NSCollectionViewItem, NSTableView, 
 
 
 An extension to NSCollectionView that adds iOS UICollectionView:
-- CellRegistration
-- SupplementaryRegistration
+- NSCollectionView ItemRegistration
+- NSCollectionView SupplementaryRegistration
+
+- NSTableView CellRegistration
+- NSTableView RowRegistration
 - reconfigureItems(at indexPaths: [IndexPath])
 
 It also provides convenience functions for registering and making NSCollectionViewItems.

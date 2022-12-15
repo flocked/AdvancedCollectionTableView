@@ -10,6 +10,19 @@ import AppKit
 import FZExtensions
 
 public extension NSTableView {
+    func reloadMaintainingSelection(_ completionHandler: (() -> ())? = nil) {
+           let oldSelectedRowIndexes = selectedRowIndexes
+           reloadOnMainThread {
+               if oldSelectedRowIndexes.count == 0 {
+                   if self.numberOfRows > 0 {
+                       self.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
+                   }
+               } else {
+                   self.selectRowIndexes(oldSelectedRowIndexes, byExtendingSelection: false)
+               }
+           }
+       }
+    
     /**
      Returns the row indexes currently visible.
 
