@@ -51,6 +51,17 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     var image: NSImage? = nil
     
     /**
+     The image to display.
+     */
+    var customView: NSView? = nil
+    
+    /**
+     The image to display.
+     */
+    var CustomViewProperties: CustomViewProperties = .default()
+    
+    
+    /**
      Properties for configuring the image.
      */
     var imageProperties: ImageProperties = ImageProperties()
@@ -75,6 +86,12 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
      This value only applies when there’s both a text and secondary text.
      */
     var textToSecondaryTextPadding: CGFloat = 4.0
+    /**
+     The padding between the text (or secondary text) and custom view.
+
+     This value only applies when there’s both a text (or secondary text) and custom view.
+     */
+    var textToCustomViewPadding: CGFloat = 4.0
     /**
      The margins between the content and the edges of the content view.
      */
@@ -135,7 +152,11 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     }
     
     internal var hasImage: Bool {
-        self.image != nil || self.imageProperties.backgroundColor != nil
+        self.image != nil || self.imageProperties.resolvedBackgroundColor() != nil
+    }
+    
+    internal var hasCustomView: Bool {
+        self.customView != nil || self.CustomViewProperties.resolvedBackgroundColor() != nil
     }
     
     public init() {
@@ -210,11 +231,16 @@ public extension NSTableCellContentConfiguration {
     }
     
     struct ImageProperties {
+        enum Position {
+            case leading
+            case trailing
+        }
         var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
         var tintColor: NSColor? = nil
         var cornerRadius: CGFloat = 0.0
         var backgroundColor: NSColor? = nil
         var shadowProperties: ShadowProperties = .black()
+        var position: Position = .leading
         
         var backgroundColorTransform: NSConfigurationColorTransformer? = nil
         var tintColorTransform: NSConfigurationColorTransformer? = nil
@@ -370,13 +396,47 @@ public extension NSTableCellContentConfiguration {
                 return property
             }
             
-            public static func none() -> ShadowProperties {
-                return ShadowProperties()
-            }
-            
             static func `default`() -> ShadowProperties {
                 return ShadowProperties()
             }
+            
+            public static func none() -> ShadowProperties {
+                return ShadowProperties()
+            }
+        }
+    }
+    struct CustomViewProperties {
+        enum WidthSizeOption {
+            case absolute(CGFloat)
+            case textWidth
+            case relative(CGFloat)
+        }
+        
+        enum HeightSizeOption {
+            case absolute(CGFloat)
+            case textWidth
+            case relative(CGFloat)
+        }
+        
+        typealias Corners = CACornerMask
+        var cornerRadius: CGFloat = 0.0
+        var roundedCorners: Corners = .all
+        
+        var width: WidthSizeOption = .textWidth
+        var height: HeightSizeOption = .absolute(30.0)
+        
+        var backtroundColor: NSColor? = nil
+        var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+        
+        static func `default`() -> CustomViewProperties {
+            return CustomViewProperties()
+        }
+
+        func resolvedBackgroundColor() -> NSColor? {
+            if let backtroundColor = self.backtroundColor {
+                return self.backgroundColorTransform?(backtroundColor) ?? backtroundColor
+            }
+            return nil
         }
     }
 }

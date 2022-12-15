@@ -152,10 +152,7 @@ public extension NSCollectionView {
         let clipView = scrollView.contentView
         if (self.trackDisplayingItems) {
             clipView.postsBoundsChangedNotifications = true
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(didScroll),
-                                                   name: NSView.boundsDidChangeNotification,
-                                                   object: clipView)
+            NotificationCenter.default.addObserver(self, selector: #selector(didScroll), name: NSView.boundsDidChangeNotification, object: clipView)
         } else {
             clipView.postsBoundsChangedNotifications = false
             NotificationCenter.default.removeObserver(self, name: NSView.boundsDidChangeNotification, object: clipView)

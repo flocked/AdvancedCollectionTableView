@@ -11,8 +11,8 @@ import Foundation
  The requirements for an object that encapsulates a view’s state.
 
  This protocol provides a blueprint for a configuration state object, which encompasses a trait collection along with all of the common states that affect a view’s appearance. A configuration state encapsulates the inputs that configure a view for any possible state or combination of states. You use a configuration state with background and content configurations to obtain the default appearance for a specific state.
- Typically, you don’t create a configuration state yourself. To obtain a configuration state, override the updateConfiguration(using:) method in your view subclass and use the state parameter. Outside of this method, you can get a view’s configuration state by using its configurationState property.
- For more information, see NSItemConfigurationState.
+ Typically, you don’t create a configuration state yourself. To obtain a configuration state, override the ``updateConfiguration(using:)`` method in your view subclass and use the state parameter. Outside of this method, you can get a view’s configuration state by using its ``configurationState`` property.
+ For more information, see ``NSItemConfigurationState``.
  */
 public protocol NSConfigurationState {
     subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? { get set }

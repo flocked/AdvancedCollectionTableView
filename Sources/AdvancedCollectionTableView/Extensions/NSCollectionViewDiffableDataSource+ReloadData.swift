@@ -1,12 +1,10 @@
 //
-//  DiffableDataSource+.swift
-//  FZCollection
+//  File.swift
+//  
 //
-//  Created by Florian Zand on 02.05.22.
+//  Created by Florian Zand on 16.12.22.
 //
 
-
-import Foundation
 import AppKit
 
 public extension NSDiffableDataSourceSnapshot {
@@ -49,7 +47,7 @@ public extension NSCollectionViewDiffableDataSource {
             self.apply(snapshot, animatingDifferences: false, completion: completion)
     }
     
-    private  func applySnapshot(
+    private func applySnapshot(
         _ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
         animated: Bool = true,
         completion: (() -> Void)? = nil) {
@@ -63,3 +61,4 @@ public extension NSCollectionViewDiffableDataSource {
         }
     }
 }
+

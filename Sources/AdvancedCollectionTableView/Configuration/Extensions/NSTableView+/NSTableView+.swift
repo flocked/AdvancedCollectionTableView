@@ -84,7 +84,7 @@ public extension NSTableView {
     /**
      Constants that describe modes for invalidating the size of self-sizing table view items.
 
-     Use these constants with the selfSizingInvalidation property.
+     Use these constants with the ``selfSizingInvalidation`` property.
      
      - Parameters:
         - disabled: A mode that disables self-sizing invalidation.
@@ -97,7 +97,7 @@ public extension NSTableView {
     }
     
     /**
-     The mode that the table view uses for invalidating the size of self-sizing items.
+     The mode that the table view uses for invalidating the size of self-sizing cells..
      */
     var selfSizingInvalidation: SelfSizingInvalidation {
         get {

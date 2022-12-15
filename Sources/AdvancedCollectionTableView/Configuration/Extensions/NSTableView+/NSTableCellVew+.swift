@@ -78,8 +78,8 @@ public extension NSTableCellView {
     /**
      A Boolean value that determines whether the cell automatically updates its content configuration when its state changes.
 
-     When this value is true, the cell automatically calls updated(for:) on its contentConfiguration when the cell’s configurationState changes, and applies the updated configuration back to the cell. The default value is true.
-     If you override updateConfiguration(using:) to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     When this value is true, the cell automatically calls updated(for:) on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is true.
+     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
@@ -104,7 +104,7 @@ public extension NSTableCellView {
     /**
      The current configuration state of the cell.
 
-     To add your own custom state, see NSConfigurationStateCustomKey.
+     To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableCellConfigurationState {
         let state = NSTableCellConfigurationState(isSelected: self.rowView?.isSelected ?? false, isSelectable: self.isSelectable, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized)
@@ -114,7 +114,7 @@ public extension NSTableCellView {
     /**
      Informs the cell to update its configuration for its current state.
 
-     You call this method when you need the cell to update its configuration according to the current configuration state. The system calls this method automatically when the cell’s configurationState changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
+     You call this method when you need the cell to update its configuration according to the current configuration state. The system calls this method automatically when the cell’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the cell’s configuration state, make sure to call this method every time those custom states change.
      */
     func setNeedsUpdateConfiguration() {
@@ -146,7 +146,7 @@ public extension NSTableCellView {
     /**
      A block for handling updates to the cell’s configuration using the current state.
 
-     A configuration update handler provides an alternative approach to overriding updateConfiguration(using:) in a subclass. Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
+     A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
      
      ```
      cell.configurationUpdateHandler = { cell, state in
@@ -159,7 +159,7 @@ public extension NSTableCellView {
      }
      ```
      
-     Setting the value of this property calls setNeedsUpdateConfiguration(). The system calls this handler after calling updateConfiguration(using:).
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
      */
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }

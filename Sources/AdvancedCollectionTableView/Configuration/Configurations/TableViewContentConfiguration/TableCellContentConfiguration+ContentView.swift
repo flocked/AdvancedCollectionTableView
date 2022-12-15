@@ -19,8 +19,18 @@ extension NSTableCellContentConfiguration {
         var _constraints: [NSLayoutConstraint] = []
         var imageViewConstraints: [NSLayoutConstraint] = []
         
+        var customView: NSView? = nil
+        var customViewConstraints: [NSLayoutConstraint] = []
+
+        
         lazy var textStackView: NSStackView = {
             let textStackView = NSStackView(views: [textField, secondaryTextField])
+            textStackView.orientation = .vertical
+            return textStackView
+        }()
+        
+        lazy var textCustomViewStackView: NSStackView = {
+            let textStackView = NSStackView(views: [textStackView])
             textStackView.orientation = .vertical
             return textStackView
         }()
@@ -48,6 +58,36 @@ extension NSTableCellContentConfiguration {
         }
         
         internal func updateConfiguration(with configuration: NSTableCellContentConfiguration) {
+            
+            if configuration.imageProperties.position == .leading, stackView.arrangedSubviews.first != self.imageView {
+                stackView.removeArrangedSubview(textStackView)
+                stackView.addArrangedSubview(textStackView)
+            } else {
+                stackView.removeArrangedSubview(imageView)
+                stackView.addArrangedSubview(imageView)
+            }
+            
+            textCustomViewStackView.spacing = configuration.textToCustomViewPadding
+            if configuration.hasCustomView {
+                if let configurationCustomView = configuration.customView {
+                    if (self.customView != configurationCustomView) {
+                        self.customView?.removeFromSuperview()
+                        self.customView = configurationCustomView
+                        textCustomViewStackView.addArrangedSubview(configurationCustomView)
+                    } else {
+                        
+                    }
+                } else {
+                    self.customView?.removeFromSuperview()
+                    self.customView = NSView()
+                }
+                self.customView?.backgroundColor = configuration.CustomViewProperties.resolvedBackgroundColor()
+                self.customView?.cornerRadius = configuration.CustomViewProperties.cornerRadius
+                self.customView?.roundedCorners = configuration.CustomViewProperties.roundedCorners
+            } else {
+                self.customView?.removeFromSuperview()
+                self.customView = nil
+            }
             textField.maximumNumberOfLines = configuration.textProperties.numberOfLines
             textField.isHidden = (configuration.hasText == false)
             textField.alignment = configuration.textProperties.alignment
@@ -187,3 +227,15 @@ extension NSTableCellContentConfiguration {
         
     }
 }
+
+/*
+extension NSStackView {
+    internal var arrangedView: [NSView] {
+        get { getAssociatedValue(key: "_arrangedView", object: self) }
+        set {
+            set(associatedValue: newValue, key: "_arrangedView", object: self)
+            self.setNeedsUpdateConfiguration()
+        }
+    }
+}
+*/

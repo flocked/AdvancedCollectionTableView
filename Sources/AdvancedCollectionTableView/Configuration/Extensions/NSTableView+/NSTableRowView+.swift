@@ -74,8 +74,8 @@ public extension NSTableRowView {
     /**
      A Boolean value that determines whether the row automatically updates its content configuration when its state changes.
 
-     When this value is true, the row automatically calls updated(for:) on its contentConfiguration when the row’s configurationState changes, and applies the updated configuration back to the row. The default value is true.
-     If you override updateConfiguration(using:) to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     When this value is true, the row automatically calls updated(for:) on its ``contentConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
+     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
@@ -109,7 +109,7 @@ public extension NSTableRowView {
     /**
      A block for handling updates to the row’s configuration using the current state.
 
-     A configuration update handler provides an alternative approach to overriding updateConfiguration(using:) in a subclass. Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
+     A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
      
      ```
      rowView.configurationUpdateHandler = { rowView, state in
@@ -122,7 +122,7 @@ public extension NSTableRowView {
      }
      ```
      
-     Setting the value of this property calls setNeedsUpdateConfiguration(). The system calls this handler after calling updateConfiguration(using:).
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
      */
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }
@@ -135,7 +135,7 @@ public extension NSTableRowView {
     /**
      The current configuration state of the row.
 
-     To add your own custom state, see NSConfigurationStateCustomKey.
+     To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableRowConfigurationState {
         let state = NSTableRowConfigurationState(isSelected: self.isSelected, isSelectable: self.isSelectable, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
@@ -145,7 +145,7 @@ public extension NSTableRowView {
     /**
      Informs the row to update its configuration for its current state.
 
-     You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s configurationState changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
+     You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
     func setNeedsUpdateConfiguration(updateCellViews: Bool = true) {
@@ -162,7 +162,7 @@ public extension NSTableRowView {
     /**
      Updates the row’s configuration using the current state.
 
-     Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
+     Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     func updateConfiguration(using state: NSTableRowConfigurationState) {

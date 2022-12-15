@@ -11,9 +11,9 @@ import FZExtensions
 /**
  A content configuration for a table item-based content view.
  
- A table item content configuration describes the styling and content for an individual element that might appear in a list, like a item, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to items, headers, and footers in UICollectionView and UICollectionView, or to your own custom list content view (UIListContentView).
+ A table item content configuration describes the styling and content for an individual element that might appear in a list, like a item, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to items, headers, and footers in ``NSCollectionView``, or to your own custom list content view (``NSContentView``).
  
- For views like items, headers, and footers, use their defaultContentConfiguration() to get a list content configuration that has preconfigured default styling. Alternatively, you can create a list content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
+ For views like items, headers, and footers, use their ``defaultContentConfiguration()`` to get a list content configuration that has preconfigured default styling. Alternatively, you can create a list content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
  
  ```
  var content = item.defaultContentConfiguration()
@@ -29,38 +29,23 @@ import FZExtensions
  ```
  */
 public struct NSItemContentConfiguration: NSContentConfiguration {
-    /**
-     The primary text.
-     */
+    
+    // The primary text.
     var text: String? = nil
-    /**
-     An attributed variant of the primary text.
-     */
+    // An attributed variant of the primary text.
     var attributedText: NSAttributedString? = nil
-    /**
-     The secondary text.
-     */
+    // The secondary text.
     var secondaryText: String? = nil
-    /**
-     An attributed variant of the secondary text.
-     */
+    // An attributed variant of the secondary text.
     var secondaryattributedText: NSAttributedString? = nil
-    /**
-     The image to display.
-     */
+    // The image to display.
     var image: NSImage? = nil
     
-    /**
-     Properties for configuring the image.
-     */
+    // Properties for configuring the image.
     var imageProperties: ImageProperties = ImageProperties()
-    /**
-     Properties for configuring the primary text.
-     */
+    // Properties for configuring the primary text.
     var textProperties: TextProperties = .textStyle(.body, weight: .bold)
-    /**
-     Properties for configuring the secondary text.
-     */
+    // Properties for configuring the secondary text.
     var secondaryTextProperties: TextProperties = .textStyle(.body)
    
     /**
@@ -91,7 +76,6 @@ public struct NSItemContentConfiguration: NSContentConfiguration {
      The margins between the content and the edges of the content view.
      */
     var padding: NSDirectionalEdgeInsets = .init(4.0)
-
 
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
@@ -133,9 +117,8 @@ public extension NSItemContentConfiguration {
         var alignment: NSTextAlignment = .left
         var lineBreakMode: NSLineBreakMode = .byWordWrapping
         var textTransform: TextTransform = .none
-        /**
-         The style of bezel the text field displays.
-         */
+        
+       //  The style of bezel the text field displays.
         var bezelStyle: NSTextField.BezelStyle? = nil
         
         /**
@@ -157,9 +140,7 @@ public extension NSItemContentConfiguration {
         var textColor: NSColor = .labelColor
         var textColorTansform: NSConfigurationColorTransformer? = nil
         
-        /**
-         The color of the background the text field’s item draws behind the text.
-         */
+        // The color of the background the text field’s item draws behind the text.
         var backgroundColor: NSColor? = nil
         var backgroundColorTansform: NSConfigurationColorTransformer? = nil
 

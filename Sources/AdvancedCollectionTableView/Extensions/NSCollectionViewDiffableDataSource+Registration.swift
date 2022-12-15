@@ -8,36 +8,6 @@
 import AppKit
 
 public extension NSCollectionViewDiffableDataSource {
-    
-    
-    /*
-    func apply(
-        _ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-        animatingDifferences: Bool = true,
-        completion: (() -> Void)? = nil
-    ) {
-        if animatingDifferences {
-            self.apply(snapshot, animatingDifferences: true, completion: completion)
-        } else {
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = 0
-                self.apply(snapshot, animatingDifferences: true, completion: completion)
-            NSAnimationContext.endGrouping()
-    }
-    }
-     */
-    
-    
-     func applySnapshotUsingReloadData(_
-         snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-         completion: (() -> Void)? = nil) {
-             self.apply(snapshot, animatingDifferences: false, completion: completion)
-     }
-
-
-}
-
-public extension NSCollectionViewDiffableDataSource {
     /**
      Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
      
