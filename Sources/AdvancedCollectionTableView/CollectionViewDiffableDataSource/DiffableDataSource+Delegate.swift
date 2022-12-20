@@ -120,5 +120,20 @@ extension CollectionViewDiffableDataSource {
                 return indexPaths
             }
         }
+        
+        func collectionView(_ collectionView: NSCollectionView, shouldChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) -> Set<IndexPath> {
+            if let shouldChangeItems = self.dataSource.highlightHandlers.shouldChangeItems {
+                let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
+                let returnElements = shouldChangeItems(shouldElements, highlightState)
+                return Set(returnElements.compactMap({self.dataSource.indexPath(for: $0)}))
+            } else {
+                return indexPaths
+            }
+        }
+        
+        func collectionView(_ collectionView: NSCollectionView, didChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) {
+            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
+            self.dataSource.highlightHandlers.didChangeItems?(elements, highlightState)
+        }
     }
 }

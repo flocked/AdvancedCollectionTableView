@@ -68,6 +68,9 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     open var sectionHandlers = SectionHandlers<Section>() {
         didSet { self.ensureTrackingArea()} }
     open var prefetchHandlers = PrefetchHandlers<Element>()
+    open var dragDropHandlers = DragdropHandlers<Element>()
+    open var highlightHandlers = HighlightHandlers<Element>()
+
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
     open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Void)? = nil
     open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }

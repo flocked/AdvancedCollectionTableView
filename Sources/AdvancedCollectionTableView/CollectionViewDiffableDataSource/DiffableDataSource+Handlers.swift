@@ -15,6 +15,18 @@ extension CollectionViewDiffableDataSource {
         var didDeselect: (([E]) -> Void)? = nil
     }
     
+    public struct DragdropHandlers<E> {
+        var canDropOutside: (([E]) -> [E])? = nil
+        var dropOutside: (([E]) -> [AnyObject])? = nil
+        var canDrag: (([AnyObject]) -> Bool)? = nil
+        var dragOutside: (([E]) -> [AnyObject])? = nil
+    }
+    
+    public struct HighlightHandlers<E> {
+        var shouldChangeItems: (([E], NSCollectionViewItem.HighlightState) -> [E])? = nil
+        var didChangeItems: (([E], NSCollectionViewItem.HighlightState) -> ())? = nil
+    }
+    
     public struct ReorderHandlers<E> {
         var canReorder: (([E]) -> Bool)? = nil
         var willReorder: (([E]) -> Void)? = nil

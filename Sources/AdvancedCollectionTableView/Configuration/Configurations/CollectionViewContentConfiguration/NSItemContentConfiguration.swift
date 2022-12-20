@@ -77,11 +77,15 @@ public struct NSItemContentConfiguration: NSContentConfiguration {
      */
     var padding: NSDirectionalEdgeInsets = .init(4.0)
 
+    // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
         return contentView
     }
     
+    /**
+     Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
+     */
     public func updated(for state: NSConfigurationState) -> Self {
         return self
     }

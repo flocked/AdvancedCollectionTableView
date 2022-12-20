@@ -56,24 +56,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
     
     internal var roundedCorners: CACornerMask = .all
     
-    static func sourceList() -> NSTableRowContentConfiguration {
-        var configuration = NSTableRowContentConfiguration()
-        configuration.backgroundPadding = .init(top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0)
-        configuration.cornerRadius = 4.0
-        configuration.imageProperties.tintColor = .controlAccentColor
-        configuration.selectionBackgroundColor = .controlAccentColor
-        return configuration
-    }
-    
-    static func fullSize() -> NSTableRowContentConfiguration {
-        var configuration = NSTableRowContentConfiguration()
-        configuration.selectionBackgroundColor = .systemBlue
-        configuration.backgroundPadding = .zero
-        configuration.cornerRadius = 0.0
-        configuration.imageProperties.symbolConfiguration.colorStyle = .multicolor(.controlAccentColor)
-        return configuration
-    }
-        
     /**
      Properties for configuring the image.
      */
@@ -84,6 +66,67 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
     var seperatorProperties: SeperatorProperties = .default()
     var backgroundColorTansform: NSConfigurationColorTransformer? = nil
     var selectionBackgroundColorTansform: NSConfigurationColorTransformer? = nil
+    
+    internal var tableViewStyle: NSTableView.Style? = nil
+    
+    
+    public static func `default`() -> NSTableRowContentConfiguration {
+        return.automatic()
+    }
+    
+    public static func style(_ style: NSTableView.Style) -> NSTableRowContentConfiguration {
+        switch style {
+        case .automatic:
+            return .automatic()
+        case .fullWidth:
+            return .fullWidth()
+        case .inset:
+            return .inset()
+        case .sourceList:
+            return .sourceList()
+        case .plain:
+            return .plain()
+        @unknown default:
+            return .automatic()
+        }
+    }
+    
+    public static func automatic() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.tableViewStyle = .automatic
+        return configuration
+    }
+    
+    public static func fullWidth() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.tableViewStyle = .fullWidth
+        configuration.selectionBackgroundColor = .systemBlue
+        configuration.backgroundPadding = .zero
+        configuration.cornerRadius = 0.0
+        return configuration
+    }
+    
+    public static func sourceList() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.tableViewStyle = .sourceList
+        configuration.backgroundPadding = .init(top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0)
+        configuration.cornerRadius = 4.0
+        configuration.imageProperties.tintColor = .controlAccentColor
+        configuration.selectionBackgroundColor = .controlAccentColor
+        return configuration
+    }
+    
+    public static func plain() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.tableViewStyle = .plain
+        return configuration
+    }
+
+    public static func inset() -> NSTableRowContentConfiguration {
+        var configuration = NSTableRowContentConfiguration()
+        configuration.tableViewStyle = .inset
+        return configuration
+    }
 
     /**
     Generates the resolved background color, using the background color and background color transformer.
@@ -109,11 +152,15 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
         return nil
     }
     
+    // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
         return contentView
     }
     
+    /**
+     Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
+     */
     public func updated(for state: NSConfigurationState) -> Self {
         var configuration = self
         if let state = state as? NSTableRowConfigurationState {
@@ -134,7 +181,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
         }
         return configuration
     }
-
 }
 
 @available(macOS 12.0, *)

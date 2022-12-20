@@ -72,7 +72,7 @@ public extension NSTableCellView {
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     func defaultContentConfiguration() -> NSTableCellContentConfiguration {
-        return NSTableCellContentConfiguration()
+        return NSTableCellContentConfiguration.default()
     }
     
     /**
@@ -100,7 +100,7 @@ public extension NSTableCellView {
             self.contentView?.removeFromSuperview()
         }
     }
-    
+
     /**
      The current configuration state of the cell.
 
@@ -227,6 +227,13 @@ public extension NSTableCellView {
     }
     */
     
+    @objc internal func swizzled_viewDidMoveToSuperview()  {
+        if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
+        //    contentView.con
+        }
+        self.swizzled_viewDidMoveToSuperview()
+    }
+    
     static internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
         set {
@@ -238,13 +245,13 @@ public extension NSTableCellView {
         
         if (didSwizzle == false) {
             didSwizzle = true
-            /*
-            Swizzle(NSCollectionViewCell.self) {
-            #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
-                #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
-                #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
+            
+            Swizzle(NSTableCellView.self) {
+                #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
+            //    #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
+             //   #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
             }
-             */
+             
         }
     }
     

@@ -50,7 +50,7 @@ public extension NSTableRowView {
      - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     func defaultContentConfiguration() -> NSTableRowContentConfiguration {
-        return NSTableRowContentConfiguration()
+        return NSTableRowContentConfiguration.default()
     }
     
     /**

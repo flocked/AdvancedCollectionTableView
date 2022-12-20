@@ -51,16 +51,10 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     var image: NSImage? = nil
     
     /**
-     The image to display.
+     Array of properties for configuring additional accesories.
      */
-    var customView: NSView? = nil
-    
-    /**
-     The image to display.
-     */
-    var CustomViewProperties: CustomViewProperties = .default()
-    
-    
+    var accesories: [AccessoryProperties] = []
+
     /**
      Properties for configuring the image.
      */
@@ -88,7 +82,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     var textToSecondaryTextPadding: CGFloat = 4.0
     /**
      The padding between the text (or secondary text) and custom view.
-
      This value only applies when there’s both a text (or secondary text) and custom view.
      */
     var textToCustomViewPadding: CGFloat = 4.0
@@ -97,48 +90,19 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
      */
     var padding: NSDirectionalEdgeInsets = .init(4.0)
     
-    public static func style(_ style: NSTableView.Style) -> NSTableCellContentConfiguration {
-        switch style {
-        case .automatic:
-            return .fullWidth()
-        case .fullWidth:
-            return .fullWidth()
-        case .inset:
-            return .inset()
-        case .sourceList:
-            return .sourceList()
-        case .plain:
-            return .plain()
-        @unknown default:
-            return .fullWidth()
-        }
-    }
-    
-    public static func fullWidth() -> NSTableCellContentConfiguration {
-        let configuration = NSTableCellContentConfiguration()
-        return configuration
-    }
-    
-    public static func sourceList() -> NSTableCellContentConfiguration {
-        let configuration = NSTableCellContentConfiguration()
-        return configuration
-    }
-    
-    public static func plain() -> NSTableCellContentConfiguration {
-        let configuration = NSTableCellContentConfiguration()
-        return configuration
+    static func `default`() -> NSTableCellContentConfiguration {
+        return NSTableCellContentConfiguration()
     }
 
-    public static func inset() -> NSTableCellContentConfiguration {
-        let configuration = NSTableCellContentConfiguration()
-        return configuration
-    }
-
+    // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
         return contentView
     }
     
+    /**
+     Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
+     */
     public func updated(for state: NSConfigurationState) -> Self {
         return self
     }
@@ -155,9 +119,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
         self.image != nil || self.imageProperties.resolvedBackgroundColor() != nil
     }
     
-    internal var hasCustomView: Bool {
-        self.customView != nil || self.CustomViewProperties.resolvedBackgroundColor() != nil
-    }
     
     public init() {
 
@@ -405,7 +366,7 @@ public extension NSTableCellContentConfiguration {
             }
         }
     }
-    struct CustomViewProperties {
+    struct ViewProperties {
         enum WidthSizeOption {
             case absolute(CGFloat)
             case textWidth
@@ -425,16 +386,16 @@ public extension NSTableCellContentConfiguration {
         var width: WidthSizeOption = .textWidth
         var height: HeightSizeOption = .absolute(30.0)
         
-        var backtroundColor: NSColor? = nil
+        var backgroundColor: NSColor? = nil
         var backgroundColorTransform: NSConfigurationColorTransformer? = nil
         
-        static func `default`() -> CustomViewProperties {
-            return CustomViewProperties()
+        static func `default`() -> ViewProperties {
+            return ViewProperties()
         }
 
         func resolvedBackgroundColor() -> NSColor? {
-            if let backtroundColor = self.backtroundColor {
-                return self.backgroundColorTransform?(backtroundColor) ?? backtroundColor
+            if let backgroundColor = self.backgroundColor {
+                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
@@ -470,3 +431,77 @@ internal extension NSAttributedString {
         }
     }
 }
+
+
+public extension NSTableCellContentConfiguration {
+    struct AccessoryProperties {
+        enum Position {
+            case top
+            case topLeft
+            case topRight
+            case bottom
+            case bottomLeft
+            case bottomRight
+        }
+        
+        enum WidthSizeOption {
+            case absolute(CGFloat)
+            case textWidth
+            case relative(CGFloat)
+        }
+        
+        enum HeightSizeOption {
+            case absolute(CGFloat)
+            case textWidth
+            case relative(CGFloat)
+        }
+        
+        var position: Position = .topLeft
+        /**
+         The primary text.
+         */
+        var text: String? = nil
+        /**
+         An attributed variant of the primary text.
+         */
+        var attributedText: NSAttributedString? = nil
+        
+        /**
+         The image to display.
+         */
+        var image: NSImage? = nil
+        
+        /**
+         The image to display.
+         */
+        var view: NSView? = nil
+        
+        /**
+         The image to display.
+         */
+        var viewProperties: ViewProperties = .default()
+        /**
+         Properties for configuring the image.
+         */
+        var imageProperties: ImageProperties = ImageProperties()
+        /**
+         Properties for configuring the primary text.
+         */
+        var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+        
+        var backgroundColor: NSColor? = nil
+        var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+        
+        func resolvedBackgroundColor() -> NSColor? {
+            if let backgroundColor = self.backgroundColor {
+                return self.backgroundColorTansform?(backgroundColor) ?? backgroundColor
+            }
+            return nil
+        }
+    }
+}
+
+
+// max(CGFloat)
+// exactly(CGFloat)
+// keepingAspectRat
