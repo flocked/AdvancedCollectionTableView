@@ -183,7 +183,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
     }
 }
 
-@available(macOS 12.0, *)
 public extension NSTableRowContentConfiguration {
     struct SeperatorProperties {
         var color: NSColor = .separatorColor

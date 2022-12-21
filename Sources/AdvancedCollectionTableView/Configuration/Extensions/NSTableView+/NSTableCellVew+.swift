@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-@available(macOS 12.0, *)
 public extension NSTableCellView {
     /**
      The row view this cell is currently displaying.

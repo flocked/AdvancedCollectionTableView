@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-@available(macOS 12.0, *)
 extension NSTableRowContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         let contentView: NSView = NSView(frame: .zero)

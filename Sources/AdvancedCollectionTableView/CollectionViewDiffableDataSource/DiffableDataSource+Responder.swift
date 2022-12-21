@@ -75,23 +75,29 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func keyDown(with event: NSEvent) {
-            Swift.print(event.keyCode)
-            self.dataSource.keydownHandler?(Int(event.keyCode), event.modifierFlags)
-            let commandPressed = event.modifierFlags.contains(.command)
-            if (event.keyCode == 49) { // SpaceBar
-                
-            } else  if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
-                let selectedElements = self.dataSource.selectedElements
-                if (selectedElements.isEmpty == false) {
-                    self.dataSource.removeElements(selectedElements)
+            var shouldKeyDown = true
+            if let keydownHandler = self.dataSource.keydownHandler?(Int(event.keyCode), event.modifierFlags) {
+                shouldKeyDown = keydownHandler
+            }
+            if (shouldKeyDown) {
+                let commandPressed = event.modifierFlags.contains(.command)
+                if (event.keyCode == 49) { // SpaceBar
+                    
+                } else  if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
+                    let selectedElements = self.dataSource.selectedElements
+                    if (selectedElements.isEmpty == false) {
+                        self.dataSource.removeElements(selectedElements)
+                    }
+                } else if (event.keyCode == 0 && commandPressed) {
+                    self.dataSource.selectAll()
+                } else if (event.keyCode == 30 && commandPressed) {  // Handle Zoom In
+                    
+                } else if (event.keyCode == 44 && commandPressed) {  // Handle Zoom Out
+                    
+                } else  {
+                    self.dataSource.collectionView.keyDown(with: event)
                 }
-            } else if (event.keyCode == 0 && commandPressed) {
-                self.dataSource.selectAll()
-            } else if (event.keyCode == 30 && commandPressed) {  // Handle Zoom In
-                
-            } else if (event.keyCode == 44 && commandPressed) {  // Handle Zoom Out
-                
-            } else  {
+            } else {
                 self.dataSource.collectionView.keyDown(with: event)
             }
         }

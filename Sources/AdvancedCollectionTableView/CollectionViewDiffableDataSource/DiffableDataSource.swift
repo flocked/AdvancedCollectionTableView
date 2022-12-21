@@ -8,6 +8,31 @@
 import AppKit
 import FZExtensions
 
+
+/**
+ The object you use to manage data and provide items for a collection view.
+
+ A diffable data source object is a specialized type of data source that works together with your collection view object. It provides the behavior you need to manage updates to your collection view’s data and UI in a simple, efficient way. It also conforms to the NSCollectionViewDataSource and NSCollectionViewDelegate protocol and provides implementations and handlers for all of the protocol’s methods.
+ 
+ To fill a collection view with data:
+ 1. Connect a diffable data source to your collection view.
+ 2. Implement a cell provider to configure your collection view’s items.
+ 3. Generate the current state of the data.
+ 4. Display the data in the UI.
+ 
+ To connect a diffable data source to a collection view, you create the diffable data source using its init(collectionView:itemProvider:) or init(collectionView:itemRegistration:) initializer, passing in the collection view you want to associate with that data source. You also pass in a cell provider, where you configure each of your items to determine how to display your data in the UI.
+
+ ```
+ dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
+     (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
+     // configure and return cell
+ }
+ ```
+
+ Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see NSDiffableDataSourceSnapshot.
+ 
+ - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
+ */
 open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSCollectionViewDataSource {
     
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
@@ -72,7 +97,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     open var highlightHandlers = HighlightHandlers<Element>()
 
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
-    open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Void)? = nil
+    open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
     open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
     
     open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -91,6 +116,15 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
     
+    /**
+     Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
+
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
+     */
     open func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
@@ -98,6 +132,16 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         dataSource.apply(internalSnapshot, animatingDifferences ? .animated : .non, completion: completion)
     }
     
+    /**
+     Resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
+
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     You can safely call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
+     */
     open func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
@@ -223,13 +267,44 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         }
     }
     
+    /**
+     Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
+     
+     To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
+
+     ```
+     dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
+         (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
+         // configure and return cell
+     }
+     ```
+     
+     - Parameters:
+        - collectionView: The initialized collection view object to connect to the diffable data source.
+        - itemProvider: A closure that creates and returns each of the items for the collection view from the data the diffable data source provides.
+     */
     public init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider) {
         self.collectionView = collectionView
         self.itemProvider = itemProvider
         super.init()
         sharedInit()
     }
-    
+    /**
+     Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
+     
+     To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item registration, where each of your items gets determine how to display your data in the UI.
+
+     ```
+     dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
+         (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
+         // configure and return cell
+     }
+     ```
+     
+     - Parameters:
+        - collectionView: The initialized collection view object to connect to the diffable data source.
+        - itemRegistration: A item registration which returns each of the items for the collection view from the data the diffable data source provides.
+     */
     public init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
         self.collectionView = collectionView
         self.itemProvider = { collectionView,indePath,element in
@@ -258,7 +333,11 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         self.collectionView.delegate = self.delegateBridge
         self.collectionView.prefetchDataSource = self.delegateBridge
     }
-    
+    /**
+     Returns a representation of the current state of the data in the collection view.
+
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
     func snapshot() -> CollectionSnapshot {
         var snapshot = CollectionSnapshot()
         snapshot.appendSections(currentSnapshot.sectionIdentifiers)

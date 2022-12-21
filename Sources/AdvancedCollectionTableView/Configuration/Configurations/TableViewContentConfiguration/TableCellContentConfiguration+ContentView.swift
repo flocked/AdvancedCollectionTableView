@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-@available(macOS 12.0, *)
 extension NSTableCellContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         let textField: NSTextField = NSTextField(wrappingLabelWithString: "")

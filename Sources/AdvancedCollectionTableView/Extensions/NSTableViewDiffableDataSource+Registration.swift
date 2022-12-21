@@ -7,7 +7,6 @@
 
 import AppKit
 
-@available(macOS 11.0, *)
 public extension NSTableViewDiffableDataSource {
     /**
      Creates a diffable data source with the specified cell provider, and connects it to the specified table view.
