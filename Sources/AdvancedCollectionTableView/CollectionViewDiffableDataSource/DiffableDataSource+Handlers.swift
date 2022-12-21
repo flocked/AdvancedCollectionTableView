@@ -45,8 +45,8 @@ extension CollectionViewDiffableDataSource {
     }
     
     public struct QuicklookHandlers<E> {
-        var shouldStartDisplayingSpotlightHandlers: (([E]) -> [(element: Element, url: URL)]?)?
-        var shouldStopDisplayingSpotlightHandlers: (([E]) ->  [(element: Element, url: URL)]?)?
+        var preview: (([E]) -> [(element: Element, url: URL)]?)?
+        var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
     }
     
     public struct MouseHandlers<E> {

@@ -24,21 +24,21 @@ extension CollectionViewDiffableDataSource {
             super.mouseEntered(with: event)
             let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-      //      self.dataSource.mouseHandlers.mouseEntered?(point)
+            //      self.dataSource.mouseHandlers.mouseEntered?(point)
         }
         
         override func mouseMoved(with event: NSEvent) {
             super.mouseMoved(with: event)
             let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-      //      self.dataSource.mouseHandlers.mouseMoved?(point)
+            //      self.dataSource.mouseHandlers.mouseMoved?(point)
         }
         
         override func mouseExited(with event: NSEvent) {
             super.mouseExited(with: event)
-       //     let point = event.location(in: self.dataSource.collectionView)
+            //     let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = nil
-     //       self.dataSource.mouseHandlers.mouseExited?(point)
+            //       self.dataSource.mouseHandlers.mouseExited?(point)
         }
         
         override func mouseUp(with event: NSEvent) {
@@ -83,33 +83,29 @@ extension CollectionViewDiffableDataSource {
                 let commandPressed = event.modifierFlags.contains(.command)
                 if (event.keyCode == 49) { // SpaceBar
                     if (self.dataSource.quicklookPanel.isOpen == false) {
-                        if let shouldStart = self.dataSource.quicklookHandlers.shouldStartDisplayingSpotlightHandlers {
-                            if let _elements = shouldStart(self.dataSource.selectedElements) {
-                                var previewItems: [QuicklookItem] = []
-                                for _element in _elements {
-                                    if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                        previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                    }
+                        if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
+                            var previewItems: [QuicklookItem] = []
+                            for _element in _elements {
+                                if let _elementRect = self.dataSource.frame(for: _element.element) {
+                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
                                 }
-                                if (previewItems.isEmpty == false) {
-                                    self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                    self.dataSource.quicklookPanel.preview(previewItems)
-                                }
+                            }
+                            if (previewItems.isEmpty == false) {
+                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
+                                self.dataSource.quicklookPanel.preview(previewItems)
                             }
                         }
                     } else {
                         var previewItems: [QuicklookItem] = []
-                        if let shouldstop = self.dataSource.quicklookHandlers.shouldStopDisplayingSpotlightHandlers {
-                            if let _elements = shouldstop(self.dataSource.selectedElements) {
-                                for _element in _elements {
-                                    if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                        previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                    }
+                        if let _elements = self.dataSource.quicklookHandlers.endPreviewing?(self.dataSource.selectedElements) {
+                            for _element in _elements {
+                                if let _elementRect = self.dataSource.frame(for: _element.element) {
+                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
                                 }
-                                if (previewItems.isEmpty == false) {
-                                    self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                    self.dataSource.quicklookPanel.preview(previewItems)
-                                }
+                            }
+                            if (previewItems.isEmpty == false) {
+                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
+                                self.dataSource.quicklookPanel.preview(previewItems)
                             }
                         }
                         if (previewItems.isEmpty == false) {
