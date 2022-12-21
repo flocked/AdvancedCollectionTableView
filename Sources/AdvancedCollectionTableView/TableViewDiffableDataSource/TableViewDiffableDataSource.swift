@@ -15,7 +15,6 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Element.ID>
-    
 
     var rowProvider: RowProvider = {tableView, row, element in
         return nil
@@ -293,6 +292,19 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         super.init()
         sharedInit()
     }
+    
+    public init<C: NSTableCellView, R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<C, Element>, rowRegistration: NSTableView.RowViewRegistration<R, Element>) {
+        self.tableView = tableView
+        self.cellProvider = { tableView, column, row, elementID in
+            tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: elementID)!
+        }
+        self.rowProvider = { tableView, row, elementID in
+            tableView.makeRowView(using: rowRegistration, forRow: row, element: elementID)
+        }
+        super.init()
+        sharedInit()
+    }
+    
     
     internal func sharedInit() {
         self.configurateDataSource()
