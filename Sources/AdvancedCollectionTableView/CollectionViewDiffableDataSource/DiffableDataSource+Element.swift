@@ -48,12 +48,27 @@ extension CollectionViewDiffableDataSource {
     public func visibleItems() -> [NSCollectionViewItem] {
         return self.collectionView.visibleItems()
     }
-    
+        
+
     public func element(for indexPath: IndexPath) ->  Element? {
         if let itemId = self.dataSource.itemIdentifier(for: indexPath) {
             return self.currentSnapshot.itemIdentifiers[id: itemId]
         }
         return nil
+    }
+    
+    internal func quicklookItems(for elements: [Element]) -> [QuicklookItem] {
+        /*
+        if let _elements = shouldStartDisplaySpotlightHandlers(self.dataSource.selectedElements) {
+            var previewItems: [QuicklookItem] = []
+            for _element in _elements {
+                if let _elementRect = self.dataSource.frame(for: _element.element) {
+                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
+                }
+            }
+        }
+        */
+        return []
     }
     
     public func element(at point: CGPoint) -> Element? {

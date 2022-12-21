@@ -82,11 +82,48 @@ extension CollectionViewDiffableDataSource {
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
                 if (event.keyCode == 49) { // SpaceBar
-                    
+                    if (self.dataSource.quicklookPanel.isOpen == false) {
+                        if let shouldStart = self.dataSource.quicklookHandlers.shouldStartDisplayingSpotlightHandlers {
+                            if let _elements = shouldStart(self.dataSource.selectedElements) {
+                                var previewItems: [QuicklookItem] = []
+                                for _element in _elements {
+                                    if let _elementRect = self.dataSource.frame(for: _element.element) {
+                                        previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
+                                    }
+                                }
+                                if (previewItems.isEmpty == false) {
+                                    self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
+                                    self.dataSource.quicklookPanel.preview(previewItems)
+                                }
+                            }
+                        }
+                    } else {
+                        var previewItems: [QuicklookItem] = []
+                        if let shouldstop = self.dataSource.quicklookHandlers.shouldStopDisplayingSpotlightHandlers {
+                            if let _elements = shouldstop(self.dataSource.selectedElements) {
+                                for _element in _elements {
+                                    if let _elementRect = self.dataSource.frame(for: _element.element) {
+                                        previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
+                                    }
+                                }
+                                if (previewItems.isEmpty == false) {
+                                    self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
+                                    self.dataSource.quicklookPanel.preview(previewItems)
+                                }
+                            }
+                        }
+                        if (previewItems.isEmpty == false) {
+                            self.dataSource.quicklookPanel.close(previewItems)
+                        } else {
+                            self.dataSource.quicklookPanel.close()
+                        }
+                    }
                 } else  if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
                     let selectedElements = self.dataSource.selectedElements
                     if (selectedElements.isEmpty == false) {
-                        self.dataSource.removeElements(selectedElements)
+                        if (self.dataSource.allowsDeleting) {
+                            self.dataSource.removeElements(selectedElements)
+                        }
                     }
                 } else if (event.keyCode == 0 && commandPressed) {
                     self.dataSource.selectAll()

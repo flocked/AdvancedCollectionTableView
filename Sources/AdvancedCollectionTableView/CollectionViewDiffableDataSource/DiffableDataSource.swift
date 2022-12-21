@@ -73,6 +73,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
     internal var itemProvider: ItemProvider
+    internal let quicklookPanel = QuicklookPanel.shared
     internal var delegateBridge: DelegateBridge<Section, Element>!
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return collectionView.enclosingScrollView }
@@ -163,6 +164,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     open var prefetchHandlers = PrefetchHandlers<Element>()
     open var dragDropHandlers = DragdropHandlers<Element>()
     open var highlightHandlers = HighlightHandlers<Element>()
+    open var quicklookHandlers = QuicklookHandlers<Element>()
 
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
     open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil

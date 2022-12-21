@@ -44,6 +44,11 @@ extension CollectionViewDiffableDataSource {
         var didEndDisplaying: (([E]) -> Void)?
     }
     
+    public struct QuicklookHandlers<E> {
+        var shouldStartDisplayingSpotlightHandlers: (([E]) -> [(element: Element, url: URL)]?)?
+        var shouldStopDisplayingSpotlightHandlers: (([E]) ->  [(element: Element, url: URL)]?)?
+    }
+    
     public struct MouseHandlers<E> {
         var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
         var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil
