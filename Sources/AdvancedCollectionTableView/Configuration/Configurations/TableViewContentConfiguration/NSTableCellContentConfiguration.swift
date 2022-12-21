@@ -436,7 +436,7 @@ internal extension NSAttributedString {
 
 public extension NSTableCellContentConfiguration {
     struct AccessoryProperties: Hashable {
-        enum Position: Hashable {
+        public enum Position: Hashable {
             case top
             case topLeft
             case topRight
@@ -445,55 +445,55 @@ public extension NSTableCellContentConfiguration {
             case bottomRight
         }
         
-        enum WidthSizeOption: Hashable {
+        public enum WidthSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        enum HeightSizeOption: Hashable {
+        public enum HeightSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        var position: Position = .topLeft
+        public var position: Position = .topLeft
         /**
          The primary text.
          */
-        var text: String? = nil
+        public var text: String? = nil
         /**
          An attributed variant of the primary text.
          */
-        var attributedText: NSAttributedString? = nil
+        public var attributedText: NSAttributedString? = nil
         
         /**
          The image to display.
          */
-        var image: NSImage? = nil
+        public var image: NSImage? = nil
         
         /**
          The image to display.
          */
-        var view: NSView? = nil
+        public var view: NSView? = nil
         
         /**
          The image to display.
          */
-        var viewProperties: ViewProperties = .default()
+        public var viewProperties: ViewProperties = .default()
         /**
          Properties for configuring the image.
          */
-        var imageProperties: ImageProperties = ImageProperties()
+        public var imageProperties: ImageProperties = ImageProperties()
         /**
          Properties for configuring the primary text.
          */
-        var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+        public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
         
-        var backgroundColor: NSColor? = nil
-        var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+        public var backgroundColor: NSColor? = nil
+        public var backgroundColorTansform: NSConfigurationColorTransformer? = nil
         
-        func resolvedBackgroundColor() -> NSColor? {
+        public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.backgroundColorTansform?(backgroundColor) ?? backgroundColor
             }
@@ -506,3 +506,4 @@ public extension NSTableCellContentConfiguration {
 // max(CGFloat)
 // exactly(CGFloat)
 // keepingAspectRat
+
