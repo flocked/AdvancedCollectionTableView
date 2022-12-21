@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-
 /**
  The object you use to manage data and provide items for a collection view.
 
@@ -16,16 +15,16 @@ import FZExtensions
  
  To fill a collection view with data:
  1. Connect a diffable data source to your collection view.
- 2. Implement a cell provider to configure your collection view’s items.
+ 2. Implement a item provider to configure your collection view’s items.
  3. Generate the current state of the data.
  4. Display the data in the UI.
  
- To connect a diffable data source to a collection view, you create the diffable data source using its init(collectionView:itemProvider:) or init(collectionView:itemRegistration:) initializer, passing in the collection view you want to associate with that data source. You also pass in a cell provider, where you configure each of your items to determine how to display your data in the UI.
+ To connect a diffable data source to a collection view, you create the diffable data source using its init(collectionView:itemProvider:) or init(collectionView:itemRegistration:) initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
 
  ```
  dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
      (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
-     // configure and return cell
+     // configure and return item
  }
  ```
 
@@ -34,15 +33,42 @@ import FZExtensions
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSCollectionViewDataSource {
-    
+    /**
+     Representation of a state for the data in the collection view.
+     */
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
-    public typealias ItemProvider = (NSCollectionView, IndexPath, Element) -> NSCollectionViewItem?
-    public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ elementKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
+    /**
+     A closure that configures and returns a item for a collection view from its diffable data source.
+
+     A non-nil configured item object. The item provider must return a valid item object to the collection view.
+     
+     - Parameters:
+        - collectionView: The collection view to configure this cell for.
+        -  indexpath: The index path that specifies the location of the item in the collection view.
+        - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
+     
+     - Returns: A non-nil configured item object. The item provider must return a valid cell object to the collection view.
+     */
+    public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
 
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
+    /**
+     The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
+     */
     open var supplementaryViewProvider: SupplementaryViewProvider? = nil
+    /**
+     A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
+     
+     - Parameters:
+        - collectionView: The collection view to configure this supplementary view for.
+        -  elementKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
+        - indexpath: The index path that specifies the location of the supplementary view in the collection view.
+     
+     - Returns: A non-nil configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
+     */
+    public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ elementKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
 
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
@@ -67,18 +93,60 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         }
     }
     
+    /**
+     A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
+
+     If the value of this property is true (the default is false), users can delete items.
+     */
     open var allowsDeleting: Bool = false
+    /**
+     A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
+
+     If the value of this property is true (the default is false), users can reorder items in the collection view.
+     */
     open var allowsReordering: Bool = false
+    /**
+     A Boolean value that indicates whether users can select items while an section is collapsed in the collection view.
+
+     If the value of this property is true (the default), users can select items while an section is collapsed.
+     */
     open var allowsSectionCollapsing: Bool = true
-    open override var isSelectable: Bool {
+    /**
+     A Boolean value that indicates whether users can select items in the collection view.
+
+     If the value of this property is true (the default), users can select items.
+     */
+    open var allowsSelectable: Bool {
         get { self.collectionView.isSelectable }
         set { self.collectionView.isSelectable = newValue } }
+    /**
+     A Boolean value that determines whether users can select more than one item in the collection view.
+
+     This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
+     When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
+     */
     open var allowsMultipleSelection: Bool {
         get { self.collectionView.allowsMultipleSelection }
         set { self.collectionView.allowsMultipleSelection = newValue } }
+    /**
+     A Boolean value indicating whether the collection view may have no selected items.
+
+     The default value of this property is true, which allows the collection view to have no selected items. Setting this property to false causes the collection view to always leave at least one item selected.
+     */
     open var allowsEmptySelection: Bool {
         get { self.collectionView.allowsEmptySelection }
         set { self.collectionView.allowsEmptySelection = newValue } }
+    /**
+     The layout object used to organize the collection view’s content.
+
+     Typically, you specify the layout object at design time in Interface Builder. The layout object works with your data source object to generate the needed items and views to display. The collection view uses the NSCollectionViewGridLayout object by default.
+     Assigning a new value to this property changes the layout object and causes the collection view to update its contents immediately and without animations. If you want to animate a layout change, use an animator object to set the layout object as follows:
+     
+     ```
+     // Insert example
+     ```
+     You can use the completion handler of the associated NSAnimationContext object to perform additional tasks when the animations finish.
+     */
     open var collectionViewLayout: NSCollectionViewLayout? {
         get { self.collectionView.collectionViewLayout }
         set { self.collectionView.collectionViewLayout = newValue } }
