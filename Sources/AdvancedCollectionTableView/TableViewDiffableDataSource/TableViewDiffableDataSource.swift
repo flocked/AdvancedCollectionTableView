@@ -8,21 +8,277 @@
 import AppKit
 import FZExtensions
 
-public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSTableViewDataSource, NSTableViewDelegate {
+public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
-    public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView?
+    public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView
     public typealias RowProvider = (NSTableView, Int, Element) -> NSTableRowView?
+    
+    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
+    internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Element.ID>
+    
 
     var rowProvider: RowProvider = {tableView, row, element in
         return nil
     }
     
-    var cellProvider: CellProvider = {tableView, column, row, element in
-        return nil
-    }
+    var cellProvider: CellProvider
     
     let tableView: NSTableView
-  
+    internal var dataSource: DataSoure!
+    internal var draggingRows = Set<Int>()
+    internal let quicklookPanel = QuicklookPanel.shared
+    internal var delegateBridge: DelegateBridge<Section, Element>!
+    internal var responder: Responder<Section, Element>!
+    internal var scrollView: NSScrollView? { return tableView.enclosingScrollView }
+    internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
+    internal var currentSnapshot: CollectionSnapshot = CollectionSnapshot()
+    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    internal var draggingIndexPaths = Set<IndexPath>()
+    internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
+    internal var trackingArea: NSTrackingArea? = nil
+    internal var hoverElement: Element? = nil {
+        didSet {
+            if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
+                hoverHandlers.isHovering?(hoverElement)
+            }
+            if let oldValue = oldValue, oldValue.id != hoverElement?.id {
+                hoverHandlers.didEndHovering?(oldValue)
+            }
+        }
+    }
+    
+    open var mouseHandlers = MouseHandlers<Element>()
+    open var hoverHandlers = HoverHandlers<Element>() {
+        didSet { self.ensureTrackingArea()} }
+    open var selectionHandlers = SelectionHandlers<Element>()
+    open var reorderHandlers = ReorderHandlers<Element>()
+    open var displayHandlers = DisplayHandlers<Element>() {
+        didSet {  self.ensureTrackingDisplayingItems() } }
+    open var sectionHandlers = ColumnHandlers<Section>() {
+        didSet { self.ensureTrackingArea()} }
+    open var prefetchHandlers = PrefetchHandlers<Element>()
+    open var dragDropHandlers = DragdropHandlers<Element>()
+    open var quicklookHandlers = QuicklookHandlers<Element>()
+
+    open var menuProvider: (([Element]) -> NSMenu?)? = nil
+    open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
+    open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+    
+    /**
+     A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
+
+     If the value of this property is true (the default is false), users can delete items.
+     */
+    open var allowsDeleting: Bool = false
+    /**
+     A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
+
+     If the value of this property is true (the default is false), users can reorder items in the collection view.
+     */
+    open var allowsReordering: Bool = false
+    /**
+     A Boolean value that indicates whether users can select items while an section is collapsed in the collection view.
+
+     If the value of this property is true (the default), users can select items while an section is collapsed.
+     */
+    open var allowsSectionCollapsing: Bool = true
+    /**
+     A Boolean value that indicates whether users can select items in the collection view.
+
+     If the value of this property is true (the default), users can select items.
+     */
+    open var allowsSelectable: Bool {
+        get { self.tableView.isEnabled }
+        set { self.tableView.isEnabled = newValue } }
+    /**
+     A Boolean value that determines whether users can select more than one item in the collection view.
+
+     This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
+     When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
+     */
+    open var allowsMultipleSelection: Bool {
+        get { self.tableView.allowsMultipleSelection }
+        set { self.tableView.allowsMultipleSelection = newValue } }
+    /**
+     A Boolean value indicating whether the collection view may have no selected items.
+
+     The default value of this property is true, which allows the collection view to have no selected items. Setting this property to false causes the collection view to always leave at least one item selected.
+     */
+    open var allowsEmptySelection: Bool {
+        get { self.tableView.allowsEmptySelection }
+        set { self.tableView.allowsEmptySelection = newValue } }
+
+    internal func ensureTrackingArea() {
+        if let trackingArea = trackingArea {
+            self.tableView.removeTrackingArea(trackingArea)
+            self.trackingArea = nil
+        }
+        
+        if (self.needsTrackingArea) {
+            trackingArea = NSTrackingArea(
+                rect: self.tableView.bounds,
+                options: [
+                    .mouseMoved,
+                    .mouseEnteredAndExited,
+                    .activeAlways,
+                    .inVisibleRect],
+                owner: self.responder)
+            self.tableView.addTrackingArea(self.trackingArea!)
+        }
+    }
+    
+    internal var needsTrackingArea: Bool {
+        return  (hoverHandlers.didEndHovering != nil ||
+                    hoverHandlers.isHovering != nil ||
+             //       mouseHandlers.mouseEntered != nil ||
+                 //   mouseHandlers.mouseMoved != nil ||
+                 //       mouseHandlers.mouseExited != nil ||
+                    mouseHandlers.mouseDragged != nil )
+    }
+    
+    internal func addMagnificationRecognizer() {
+        if (magnifyGestureRecognizer == nil) {
+            self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
+            self.tableView.addGestureRecognizer(self.magnifyGestureRecognizer!)
+        }
+    }
+    
+    internal func removeMagnificationRecognizer() {
+        if let magnifyGestureRecognizer = magnifyGestureRecognizer {
+            self.tableView.removeGestureRecognizer(magnifyGestureRecognizer)
+        }
+    }
+    
+    internal var pinchElement: Element? = nil
+    @objc internal func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
+        let pinchLocation = gesture.location(in: self.tableView)
+        switch gesture.state {
+        case .began:
+            //    let center = CGPoint(x: self.tableView.frame.midX, y: self.tableView.frame.midY)
+            pinchElement = self.element(at: pinchLocation)
+        case .ended, .cancelled, .failed:
+            pinchElement = nil
+        default:
+            break
+        }
+        self.pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
+    }
+    
+    internal func ensureTrackingDisplayingItems() {
+        if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
+            scrollView?.contentView.postsBoundsChangedNotifications = true
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(scrollViewContentBoundsDidChange(_:)),
+                                                   name: NSView.boundsDidChangeNotification,
+                                                   object: scrollView?.contentView)
+        } else {
+            scrollView?.contentView.postsBoundsChangedNotifications = false
+            NotificationCenter.default.removeObserver(self)
+        }
+    }
+    
+    
+    internal var previousDisplayingElements = [Element]()
+    @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
+        guard (notification.object as? NSClipView) != nil else { return }
+        let displayingElements = self.visibleElements
+        var added = [Element]()
+        var removed = [Element]()
+        for displayingElement in displayingElements {
+            if (previousDisplayingElements.contains(displayingElement) == false) {
+                added.append(displayingElement)
+            }
+        }
+        for previousDisplayingElement in previousDisplayingElements {
+            if (displayingElements.contains(previousDisplayingElement) == false) {
+                removed.append(previousDisplayingElement)
+            }
+        }
+        if (added.isEmpty == false) {
+            self.displayHandlers.isDisplaying?(added)
+        }
+        if (removed.isEmpty == false) {
+            self.displayHandlers.didEndDisplaying?(removed)
+        }
+        previousDisplayingElements = displayingElements
+    }
+    
+    func snapshot() -> CollectionSnapshot {
+        var snapshot = CollectionSnapshot()
+        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
+        for section in currentSnapshot.sectionIdentifiers {
+            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
+        }
+        return snapshot
+    }
+    
+    open func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
+        let internalSnapshot = convertSnapshot(snapshot)
+        self.currentSnapshot = snapshot
+
+        dataSource.apply(internalSnapshot, animatingDifferences ? .animated : .non, completion: completion)
+    }
+    
+    /**
+     Resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
+
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     You can safely call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
+     */
+    open func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
+        let internalSnapshot = convertSnapshot(snapshot)
+        self.currentSnapshot = snapshot
+
+        dataSource.apply(internalSnapshot, .reloadData, completion: completion)
+    }
+    
+    internal func convertSnapshot(_ snapshot: CollectionSnapshot) -> InternalSnapshot {
+        var internalSnapshot = InternalSnapshot()
+        let sections = snapshot.sectionIdentifiers
+        internalSnapshot.appendSections(sections.ids)
+        for section in sections {
+           let elements = snapshot.itemIdentifiers(inSection: section)
+            internalSnapshot.appendItems(elements.ids, toSection: section.id)
+        }
+        return internalSnapshot
+    }
+    
+    public func numberOfRows(in tableView: NSTableView) -> Int {
+        return dataSource.numberOfRows(in: tableView)
+    }
+    
+    public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        if (self.draggingRows.isEmpty == false) {
+            self.moveElements(at: Array(self.draggingRows), to: row)
+        }
+        return true
+    }
+    
+    public func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        if dropOperation == .above {
+            return .move
+        }
+        return []
+    }
+    
+    public func tableView(_ tableView: NSTableView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+        self.draggingRows = Set(rowIndexes.compactMap({$0}))
+    }
+    
+    public func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+        if let elementID = self.element(for: row)?.id {
+            let item = NSPasteboardItem()
+            item.setString(String(elementID.hashValue), forType: self.pasteboardType)
+            return item
+        } else {
+            return nil
+        }
+    }
+    
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
         self.cellProvider = cellProvider
@@ -37,9 +293,41 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         super.init()
         sharedInit()
     }
-
-    internal func sharedInit() {
     
+    internal func sharedInit() {
+        self.configurateDataSource()
+        
+        self.tableView.postsFrameChangedNotifications = false
+        self.tableView.postsBoundsChangedNotifications = false
+        
+        self.allowsReordering = false
+        self.allowsDeleting = false
+        self.tableView.registerForDraggedTypes([pasteboardType])
+        self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+        
+        self.responder = Responder(self)
+        let collectionViewNextResponder = self.tableView.nextResponder
+        self.tableView.nextResponder = self.responder
+        self.responder.nextResponder = collectionViewNextResponder
+        
+        self.tableView.dataSource = self
+        self.delegateBridge = DelegateBridge(self)
+    }
+    
+    
+    internal func configurateDataSource() {
+        self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
+            tableView, column, row, elementID in
+            let element = self.allElements[id: elementID]!
+                return self.cellProvider(tableView, column, row, element)
+        })
+        
+        
+    
+      //      guard let self = self, let element = self.allElements[id: elementID] else { assertionFailure() }
+      //      return self.rowProvider(tableView, row, element)!
+     //   }
+         
     }
 }
     

@@ -14,6 +14,8 @@ extension CollectionViewDiffableDataSource {
         init (_ dataSource: CollectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
+            self.dataSource.collectionView.delegate = self
+            self.dataSource.collectionView.prefetchDataSource = self
         }
         
         public func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {

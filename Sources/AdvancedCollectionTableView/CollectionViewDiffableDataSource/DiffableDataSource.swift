@@ -400,8 +400,6 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         self.responder.nextResponder = collectionViewNextResponder
         
         self.delegateBridge = DelegateBridge(self)
-        self.collectionView.delegate = self.delegateBridge
-        self.collectionView.prefetchDataSource = self.delegateBridge
     }
     /**
      Returns a representation of the current state of the data in the collection view.
