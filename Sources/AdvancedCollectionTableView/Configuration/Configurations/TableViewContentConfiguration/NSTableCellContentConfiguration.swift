@@ -129,46 +129,46 @@ public extension NSTableCellContentConfiguration {
             case uppercase
         }
         
-        var font: NSFont = .system(.body)
-        var numberOfLines: Int = 0
-        var alignment: NSTextAlignment = .left
-        var lineBreakMode: NSLineBreakMode = .byWordWrapping
-        var textTransform: TextTransform = .none
+        public var font: NSFont = .system(.body)
+        public var numberOfLines: Int = 0
+        public var alignment: NSTextAlignment = .left
+        public var lineBreakMode: NSLineBreakMode = .byWordWrapping
+        public var textTransform: TextTransform = .none
         /**
          The style of bezel the text field displays.
          */
-        var bezelStyle: NSTextField.BezelStyle? = nil
+        public var bezelStyle: NSTextField.BezelStyle? = nil
         
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
          If true, the text field becomes selectable but not editable. Use isEditable to make the text field selectable and editable. If false, the text is neither editable nor selectable.
          */
-        var isSelectable: Bool = false
+        public var isSelectable: Bool = false
         /**
          A Boolean value that controls whether the user can edit the value in the text field.
 
          If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of isSelectable.
          For example, if an NSTextField object is selectable but uneditable, becomes editable for a time, and then becomes uneditable again, it remains selectable. To ensure that text is neither editable nor selectable, use isSelectable to disable text selection.         */
-        var isEditable: Bool = false
+        public var isEditable: Bool = false
         
         /**
          The color of the text field’s content.
          */
-        var textColor: NSColor = .labelColor
-        var textColorTansform: NSConfigurationColorTransformer? = nil
+        public var textColor: NSColor = .labelColor
+        public var textColorTansform: NSConfigurationColorTransformer? = nil
         
         /**
          The color of the background the text field’s cell draws behind the text.
          */
-        var backgroundColor: NSColor? = nil
-        var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+        public var backgroundColor: NSColor? = nil
+        public var backgroundColorTansform: NSConfigurationColorTransformer? = nil
 
-        func resolvedTextColor() -> NSColor {
+        public func resolvedTextColor() -> NSColor {
             return self.textColorTansform?(textColor) ?? textColor
         }
         
-        func resolvedBackgroundColor() -> NSColor? {
+        public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.textColorTansform?(backgroundColor) ?? backgroundColor
             }
@@ -187,23 +187,23 @@ public extension NSTableCellContentConfiguration {
     }
     
     struct ImageProperties: Hashable {
-        enum Position: Hashable {
+        public enum Position: Hashable {
             case leading
             case trailing
         }
-        var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
+        public var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
         public var tintColor: NSColor? = nil
-        var cornerRadius: CGFloat = 0.0
-        var backgroundColor: NSColor? = nil
-        var shadowProperties: ShadowProperties = .black()
-        var position: Position = .leading
+        public var cornerRadius: CGFloat = 0.0
+        public var backgroundColor: NSColor? = nil
+        public var shadowProperties: ShadowProperties = .black()
+        public var position: Position = .leading
         
-        var backgroundColorTransform: NSConfigurationColorTransformer? = nil
-        var tintColorTransform: NSConfigurationColorTransformer? = nil
-        var size: ImageSize = .fullHeight
-        var scaling: CALayerContentsGravity = .resizeAspectFill
+        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+        public var tintColorTransform: NSConfigurationColorTransformer? = nil
+        public var size: ImageSize = .fullHeight
+        public var scaling: CALayerContentsGravity = .resizeAspectFill
         
-        enum ImageSize: Hashable {
+        public enum ImageSize: Hashable {
             case fullHeight
             case textHeight
             case secondaryTextHeight
@@ -211,7 +211,7 @@ public extension NSTableCellContentConfiguration {
             case maxSize(CGSize)
         }
         
-        static func `default`() -> ImageProperties {
+        public static func `default`() -> ImageProperties {
             return ImageProperties()
         }
 
@@ -222,49 +222,49 @@ public extension NSTableCellContentConfiguration {
             return nil
         }
         
-        func resolvedTintColor() -> NSColor? {
+        public func resolvedTintColor() -> NSColor? {
             if let tintColor = self.tintColor {
                 return self.tintColorTransform?(tintColor) ?? tintColor
             }
             return nil
         }
         
-        struct SymbolConfiguration: Hashable {
-            var fontStyle: FontStyle? = .textStyle(.body)
-            var colorStyle: ColorStyle? = .monochrome
-            var colorTransform: NSConfigurationColorTransformer? = nil
+        public struct SymbolConfiguration: Hashable {
+            public var fontStyle: FontStyle? = .textStyle(.body)
+            public var colorStyle: ColorStyle? = .monochrome
+            public var colorTransform: NSConfigurationColorTransformer? = nil
             
-            static func `default`() -> SymbolConfiguration {
+            public static func `default`() -> SymbolConfiguration {
                 return SymbolConfiguration()
             }
             
-            func resolvedPrimaryColor() -> NSColor? {
+            public func resolvedPrimaryColor() -> NSColor? {
                 if let primary = self.colorStyle?.primary {
                     return self.colorTransform?(primary) ?? primary
                 }
                 return nil
             }
             
-            func resolvedSecondaryColor() -> NSColor? {
+            public func resolvedSecondaryColor() -> NSColor? {
                 if let secondary = self.colorStyle?.secondary {
                     return self.colorTransform?(secondary) ?? secondary
                 }
                 return nil
             }
             
-            func resolvedTertiaryColor() -> NSColor? {
+            public func resolvedTertiaryColor() -> NSColor? {
                 if let tertiary = self.colorStyle?.tertiary {
                     return self.colorTransform?(tertiary) ?? tertiary
                 }
                 return nil
             }
             
-            enum FontStyle: Hashable {
+            public enum FontStyle: Hashable {
                 case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
                 case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
             }
             
-            enum ColorStyle: Hashable {
+            public enum ColorStyle: Hashable {
                 case palette(NSColor, NSColor, NSColor? = nil)
                 case monochrome
                 case multicolor(NSColor)
@@ -335,9 +335,9 @@ public extension NSTableCellContentConfiguration {
             public var color: NSColor? = nil
             public var opacity: CGFloat = 0.0
             public var offset: CGPoint = .zero
-            var colorTransform: NSConfigurationColorTransformer? = nil
+            public var colorTransform: NSConfigurationColorTransformer? = nil
 
-            func resolvedColor() -> NSColor? {
+            public func resolvedColor() -> NSColor? {
                 if let color = self.color {
                     return self.colorTransform?(color) ?? color
                 }
@@ -352,7 +352,7 @@ public extension NSTableCellContentConfiguration {
                 return property
             }
             
-            static func `default`() -> ShadowProperties {
+            public static func `default`() -> ShadowProperties {
                 return ShadowProperties()
             }
             
@@ -362,33 +362,33 @@ public extension NSTableCellContentConfiguration {
         }
     }
     struct ViewProperties: Hashable {
-        enum WidthSizeOption: Hashable {
+        public enum WidthSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        enum HeightSizeOption: Hashable {
+        public enum HeightSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        typealias Corners = CACornerMask
-        var cornerRadius: CGFloat = 0.0
-        var roundedCorners: Corners = .all
+        public typealias Corners = CACornerMask
+        public var cornerRadius: CGFloat = 0.0
+        public var roundedCorners: Corners = .all
         
-        var width: WidthSizeOption = .textWidth
-        var height: HeightSizeOption = .absolute(30.0)
+        public var width: WidthSizeOption = .textWidth
+        public var height: HeightSizeOption = .absolute(30.0)
         
-        var backgroundColor: NSColor? = nil
-        var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+        public var backgroundColor: NSColor? = nil
+        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
         
-        static func `default`() -> ViewProperties {
+        public static func `default`() -> ViewProperties {
             return ViewProperties()
         }
 
-        func resolvedBackgroundColor() -> NSColor? {
+        public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
