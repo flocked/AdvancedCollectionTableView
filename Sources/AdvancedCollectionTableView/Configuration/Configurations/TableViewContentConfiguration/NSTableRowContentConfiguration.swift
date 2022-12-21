@@ -11,9 +11,9 @@ import FZExtensions
 /**
  A content configuration for a table row-based content view.
  
- A table row content configuration describes the styling and content for an individual element that might appear in a list, like a row, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to rows, headers, and footers in UICollectionView and UITableView, or to your own custom list content view (UIListContentView).
+ A table row content configuration describes the styling and content for an individual element that might appear in a list, like a row. Using a row content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to rows in NSTableView, or to your own custom row content view (NSContentView).
  
- For views like rows, headers, and footers, use their defaultContentConfiguration() to get a list content configuration that has preconfigured default styling. Alternatively, you can create a list content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
+ For views like rows (NSTableRowView) use their defaultContentConfiguration() to get a list content configuration that has preconfigured default styling. Alternatively, you can create a row content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
  
  ```
  var content = rowView.defaultContentConfiguration()
@@ -26,10 +26,6 @@ import FZExtensions
  ```
  */
 public struct NSTableRowContentConfiguration: NSContentConfiguration {
-    
-    public init() {
-        
-    }
     /**
      The background color.
      */
