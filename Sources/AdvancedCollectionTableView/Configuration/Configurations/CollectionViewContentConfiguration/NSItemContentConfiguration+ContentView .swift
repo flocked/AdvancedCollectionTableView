@@ -8,7 +8,6 @@
 import AppKit
 import FZExtensions
 
-@available(macOS 12.0, *)
 extension NSItemContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         let textField: NSTextField = NSTextField(wrappingLabelWithString: "")
@@ -100,7 +99,9 @@ extension NSItemContentConfiguration {
             imageView.backgroundColor = configuration.imageProperties.resolvedBackgroundColor()
             imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = .center
-            imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.symbolConfiguration
+            if #available(macOS 11.0, *) {
+                imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.symbolConfiguration
+            }
             
             stackView.spacing = configuration.imageToTextPadding
             stackView.orientation = configuration.orientation

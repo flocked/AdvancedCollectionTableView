@@ -20,6 +20,7 @@ extension CollectionViewDiffableDataSource {
         var dropOutside: (([E]) -> [AnyObject])? = nil
         var canDrag: (([AnyObject]) -> Bool)? = nil
         var dragOutside: (([E]) -> [AnyObject])? = nil
+        var draggingImage: (([E], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
     
     public struct HighlightHandlers<E> {

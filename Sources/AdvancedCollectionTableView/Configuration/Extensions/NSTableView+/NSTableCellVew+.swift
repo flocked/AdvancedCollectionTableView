@@ -10,10 +10,18 @@ import FZExtensions
 
 @available(macOS 12.0, *)
 public extension NSTableCellView {
+    /**
+     The row view this cell is currently displaying.
+     
+     If a cell gets displayed inside a table view this property returns the ´´´NSTableRowView´´.
+     */
     var rowView: NSTableRowView? {
        return self.firstSuperview(for: NSTableRowView.self)
     }
     
+    /**
+     The table view this cell is currently displaying.
+     */
     var tableView: NSTableView? {
         self.firstSuperview(for: NSTableView.self)
     }
@@ -228,28 +236,23 @@ public extension NSTableCellView {
     */
     
     @objc internal func swizzled_viewDidMoveToSuperview()  {
-        if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
-        //    contentView.con
-        }
+        // Add constraints if tableview usesAutomaticRowHeights
+       /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
+            contentView.con
+        } */
         self.swizzled_viewDidMoveToSuperview()
     }
     
     static internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "_didSwizzle", object: self)
-        }
+        set { set(associatedValue: newValue, key: "_didSwizzle", object: self) }
     }
     
     @objc static internal func swizzle() {
-        
         if (didSwizzle == false) {
             didSwizzle = true
-            
             Swizzle(NSTableCellView.self) {
                 #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
-            //    #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
-             //   #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
             }
              
         }

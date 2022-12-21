@@ -126,7 +126,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
 }
 
 public extension NSTableCellContentConfiguration {
-    struct TextProperties {
+    struct TextProperties: Hashable {
         public enum TextTransform: Hashable {
             case none
             case capitalized
@@ -191,8 +191,8 @@ public extension NSTableCellContentConfiguration {
         }
     }
     
-    struct ImageProperties {
-        enum Position {
+    struct ImageProperties: Hashable {
+        enum Position: Hashable {
             case leading
             case trailing
         }
@@ -208,7 +208,7 @@ public extension NSTableCellContentConfiguration {
         var size: ImageSize = .fullHeight
         var scaling: CALayerContentsGravity = .resizeAspectFill
         
-        enum ImageSize {
+        enum ImageSize: Hashable {
             case fullHeight
             case textHeight
             case secondaryTextHeight
@@ -234,7 +234,7 @@ public extension NSTableCellContentConfiguration {
             return nil
         }
         
-        struct SymbolConfiguration {
+        struct SymbolConfiguration: Hashable {
             var fontStyle: FontStyle? = .textStyle(.body)
             var colorStyle: ColorStyle? = .monochrome
             var colorTransform: NSConfigurationColorTransformer? = nil
@@ -264,12 +264,12 @@ public extension NSTableCellContentConfiguration {
                 return nil
             }
             
-            enum FontStyle {
+            enum FontStyle: Hashable {
                 case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
                 case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
             }
             
-            enum ColorStyle {
+            enum ColorStyle: Hashable {
                 case palette(NSColor, NSColor, NSColor? = nil)
                 case monochrome
                 case multicolor(NSColor)
@@ -335,7 +335,7 @@ public extension NSTableCellContentConfiguration {
             }
         }
         
-        public struct ShadowProperties {
+        public struct ShadowProperties: Hashable {
             public var radius: CGFloat = 0.0
             public var color: NSColor? = nil
             public var opacity: CGFloat = 0.0
@@ -366,14 +366,14 @@ public extension NSTableCellContentConfiguration {
             }
         }
     }
-    struct ViewProperties {
-        enum WidthSizeOption {
+    struct ViewProperties: Hashable {
+        enum WidthSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        enum HeightSizeOption {
+        enum HeightSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
@@ -401,6 +401,7 @@ public extension NSTableCellContentConfiguration {
         }
     }
 }
+
 
 internal extension String {
     func transform(using transform: NSTableCellContentConfiguration.TextProperties.TextTransform) -> String {
@@ -434,8 +435,8 @@ internal extension NSAttributedString {
 
 
 public extension NSTableCellContentConfiguration {
-    struct AccessoryProperties {
-        enum Position {
+    struct AccessoryProperties: Hashable {
+        enum Position: Hashable {
             case top
             case topLeft
             case topRight
@@ -444,13 +445,13 @@ public extension NSTableCellContentConfiguration {
             case bottomRight
         }
         
-        enum WidthSizeOption {
+        enum WidthSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)
         }
         
-        enum HeightSizeOption {
+        enum HeightSizeOption: Hashable {
             case absolute(CGFloat)
             case textWidth
             case relative(CGFloat)

@@ -221,41 +221,41 @@ extension CollectionViewDiffableDataSource {
         }
     }
     
-    internal func moveElement( _ element: Element, before beforeElement: Element) {
+    public func moveElement( _ element: Element, before beforeElement: Element) {
         var snapshot = self.snapshot()
         snapshot.moveItem(element, beforeItem: beforeElement)
         self.apply(snapshot)
     }
     
-    internal func moveElement( _ element: Element, after afterElement: Element) {
+    public func moveElement( _ element: Element, after afterElement: Element) {
         var snapshot = self.snapshot()
         snapshot.moveItem(element, afterItem: afterElement)
         self.apply(snapshot)
     }
     
-    internal func moveElements( _ elements: [Element], before beforeElement: Element) {
+    public func moveElements( _ elements: [Element], before beforeElement: Element) {
         var snapshot = self.snapshot()
         elements.forEach({snapshot.moveItem($0, beforeItem: beforeElement)})
         self.apply(snapshot)
     }
     
-    internal func moveElements( _ elements: [Element], after afterElement: Element) {
+    public func moveElements( _ elements: [Element], after afterElement: Element) {
         var snapshot = self.snapshot()
         elements.forEach({snapshot.moveItem($0, afterItem: afterElement)})
         self.apply(snapshot)
     }
     
-    internal func removeElements( _ elements: [Element]) {
-        var snapshot = self.snapshot()
-        snapshot.deleteItems(elements)
-        self.apply(snapshot)
-    }
-    
-    internal func moveElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) {
+    public func moveElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) {
         let elements = indexPaths.compactMap({self.element(for: $0)})
         if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
             self.moveElements(elements, before: toElement)
         }
+    }
+    
+    public func removeElements( _ elements: [Element]) {
+        var snapshot = self.snapshot()
+        snapshot.deleteItems(elements)
+        self.apply(snapshot)
     }
     
 }

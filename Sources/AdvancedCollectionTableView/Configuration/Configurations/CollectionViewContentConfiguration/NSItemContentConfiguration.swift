@@ -28,7 +28,7 @@ import FZExtensions
  item.contentConfiguration = content
  ```
  */
-public struct NSItemContentConfiguration: NSContentConfiguration {
+public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     // The primary text.
     var text: String? = nil
@@ -108,7 +108,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration {
 }
 
 public extension NSItemContentConfiguration {
-    struct TextProperties {
+    struct TextProperties: Hashable {
         public enum TextTransform: Hashable {
             case none
             case capitalized
@@ -170,7 +170,7 @@ public extension NSItemContentConfiguration {
         }
     }
     
-    struct ImageProperties {
+    struct ImageProperties: Hashable {
         var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
         var tintColor: NSColor? = nil
         var cornerRadius: CGFloat = 0.0
@@ -182,7 +182,7 @@ public extension NSItemContentConfiguration {
         var size: ImageSize = .fullHeight
         var scaling: CALayerContentsGravity = .resizeAspectFill
         
-        enum ImageSize {
+        enum ImageSize: Hashable {
             case fullHeight
             case textHeight
             case secondaryTextHeight
@@ -208,7 +208,7 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        struct SymbolConfiguration {
+        struct SymbolConfiguration: Hashable {
             var fontStyle: FontStyle? = .textStyle(.body)
             var colorStyle: ColorStyle? = .monochrome
             var colorTransform: NSConfigurationColorTransformer? = nil
@@ -238,12 +238,12 @@ public extension NSItemContentConfiguration {
                 return nil
             }
             
-            enum FontStyle {
+            enum FontStyle: Hashable {
                 case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
                 case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
             }
             
-            enum ColorStyle {
+            enum ColorStyle: Hashable {
                 case palette(NSColor, NSColor, NSColor? = nil)
                 case monochrome
                 case multicolor(NSColor)
@@ -309,7 +309,7 @@ public extension NSItemContentConfiguration {
             }
         }
         
-        public struct ShadowProperties {
+        public struct ShadowProperties: Hashable {
             public var radius: CGFloat = 0.0
             public var color: NSColor? = nil
             public var opacity: CGFloat = 0.0
