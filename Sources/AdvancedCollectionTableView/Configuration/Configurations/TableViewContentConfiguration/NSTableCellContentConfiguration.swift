@@ -32,65 +32,65 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /**
      The primary text.
      */
-    var text: String? = nil
+    public var text: String? = nil
     /**
      An attributed variant of the primary text.
      */
-    var attributedText: NSAttributedString? = nil
+    public var attributedText: NSAttributedString? = nil
     /**
      The secondary text.
      */
-    var secondaryText: String? = nil
+    public var secondaryText: String? = nil
     /**
      An attributed variant of the secondary text.
      */
-    var secondaryattributedText: NSAttributedString? = nil
+    public var secondaryattributedText: NSAttributedString? = nil
     /**
      The image to display.
      */
-    var image: NSImage? = nil
+    public var image: NSImage? = nil
     
     /**
      Array of properties for configuring additional accesories.
      */
-    var accesories: [AccessoryProperties] = []
+    public var accesories: [AccessoryProperties] = []
 
     /**
      Properties for configuring the image.
      */
-    var imageProperties: ImageProperties = ImageProperties()
+    public var imageProperties: ImageProperties = ImageProperties()
     /**
      Properties for configuring the primary text.
      */
-    var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+    public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
     /**
      Properties for configuring the secondary text.
      */
-    var secondaryTextProperties: TextProperties = .textStyle(.body)
+    public var secondaryTextProperties: TextProperties = .textStyle(.body)
    
     /**
      The padding between the image and text.
      
      This value only applies when there’s both an image and text.
      */
-    var imageToTextPadding: CGFloat = 4.0
+    public var imageToTextPadding: CGFloat = 4.0
     /**
      The padding between the primary and secondary text.
 
      This value only applies when there’s both a text and secondary text.
      */
-    var textToSecondaryTextPadding: CGFloat = 4.0
+    public var textToSecondaryTextPadding: CGFloat = 4.0
     /**
      The padding between the text (or secondary text) and custom view.
      This value only applies when there’s both a text (or secondary text) and custom view.
      */
-    var textToCustomViewPadding: CGFloat = 4.0
+    public var textToCustomViewPadding: CGFloat = 4.0
     /**
      The margins between the content and the edges of the content view.
      */
-    var padding: NSDirectionalEdgeInsets = .init(4.0)
+    public var padding: NSDirectionalEdgeInsets = .init(4.0)
     
-    static func `default`() -> NSTableCellContentConfiguration {
+    public static func `default`() -> NSTableCellContentConfiguration {
         return NSTableCellContentConfiguration()
     }
 
@@ -117,11 +117,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     
     internal var hasImage: Bool {
         self.image != nil || self.imageProperties.resolvedBackgroundColor() != nil
-    }
-    
-    
-    public init() {
-
     }
 }
 
