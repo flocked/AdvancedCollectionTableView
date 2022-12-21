@@ -16,7 +16,7 @@ import FZExtensions
  For views like items, headers, and footers, use their ``defaultContentConfiguration()`` to get a list content configuration that has preconfigured default styling. Alternatively, you can create a list content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
  
  ```
- var content = item.defaultContentConfiguration()
+ public var content = item.defaultContentConfiguration()
 
  // Configure content.
  content.text = "Favorites"
@@ -31,52 +31,52 @@ import FZExtensions
 public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     // The primary text.
-    var text: String? = nil
+    public var text: String? = nil
     // An attributed variant of the primary text.
-    var attributedText: NSAttributedString? = nil
+    public var attributedText: NSAttributedString? = nil
     // The secondary text.
-    var secondaryText: String? = nil
+    public var secondaryText: String? = nil
     // An attributed variant of the secondary text.
-    var secondaryattributedText: NSAttributedString? = nil
+    public var secondaryattributedText: NSAttributedString? = nil
     // The image to display.
-    var image: NSImage? = nil
+    public var image: NSImage? = nil
     
     // Properties for configuring the image.
-    var imageProperties: ImageProperties = ImageProperties()
+    public var imageProperties: ImageProperties = ImageProperties()
     // Properties for configuring the primary text.
-    var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+    public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
     // Properties for configuring the secondary text.
-    var secondaryTextProperties: TextProperties = .textStyle(.body)
+    public var secondaryTextProperties: TextProperties = .textStyle(.body)
    
     /**
      The padding between the image and text.
      
      This value only applies when there’s both an image and text.
      */
-    var orientation: NSUserInterfaceLayoutOrientation = .horizontal
+    public var orientation: NSUserInterfaceLayoutOrientation = .horizontal
     /**
      A Boolean value that determines whether the configuration positions the text and secondary text side by side.
      
      When this value is true, the configuration positions the text and secondary text side by side if there’s sufficient space. Otherwise, the configuration stacks the text in a vertical layout.
      */
-    var prefersSideBySideTextAndSecondaryText: Bool = false
+    public var prefersSideBySideTextAndSecondaryText: Bool = false
     /**
      The padding between the image and text.
      
      This value only applies when there’s both an image and text.
      */
-    var imageToTextPadding: CGFloat = 4.0
+    public var imageToTextPadding: CGFloat = 4.0
     /**
      The padding between the primary and secondary text.
 
      This value only applies when there’s both a text and secondary text.
      */
-    var textToSecondaryTextPadding: CGFloat = 4.0
+    public var textToSecondaryTextPadding: CGFloat = 4.0
     /**
      The margins between the content and the edges of the content view.
      */
-    var padding: NSDirectionalEdgeInsets = .init(4.0)
-
+    public var padding: NSDirectionalEdgeInsets = .init(4.0)
+    
     // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         let contentView = ContentView(configuration: self)
@@ -116,43 +116,43 @@ public extension NSItemContentConfiguration {
             case uppercase
         }
         
-        var font: NSFont = .system(.body)
-        var numberOfLines: Int = 0
-        var alignment: NSTextAlignment = .left
-        var lineBreakMode: NSLineBreakMode = .byWordWrapping
-        var textTransform: TextTransform = .none
+        public var font: NSFont = .system(.body)
+        public var numberOfLines: Int = 0
+        public var alignment: NSTextAlignment = .left
+        public var lineBreakMode: NSLineBreakMode = .byWordWrapping
+        public var textTransform: TextTransform = .none
         
        //  The style of bezel the text field displays.
-        var bezelStyle: NSTextField.BezelStyle? = nil
+        public var bezelStyle: NSTextField.BezelStyle? = nil
         
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
          If true, the text field becomes selectable but not editable. Use isEditable to make the text field selectable and editable. If false, the text is neither editable nor selectable.
          */
-        var isSelectable: Bool = false
+        public var isSelectable: Bool = false
         /**
          A Boolean value that controls whether the user can edit the value in the text field.
 
          If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of isSelectable.
          For example, if an NSTextField object is selectable but uneditable, becomes editable for a time, and then becomes uneditable again, it remains selectable. To ensure that text is neither editable nor selectable, use isSelectable to disable text selection.         */
-        var isEditable: Bool = false
+        public var isEditable: Bool = false
         
         /**
          The color of the text field’s content.
          */
-        var textColor: NSColor = .labelColor
-        var textColorTansform: NSConfigurationColorTransformer? = nil
+        public var textColor: NSColor = .labelColor
+        public var textColorTansform: NSConfigurationColorTransformer? = nil
         
         // The color of the background the text field’s item draws behind the text.
-        var backgroundColor: NSColor? = nil
-        var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+        public var backgroundColor: NSColor? = nil
+        public var backgroundColorTansform: NSConfigurationColorTransformer? = nil
 
-        func resolvedTextColor() -> NSColor {
+        public func resolvedTextColor() -> NSColor {
             return self.textColorTansform?(textColor) ?? textColor
         }
         
-        func resolvedBackgroundColor() -> NSColor? {
+        public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.textColorTansform?(backgroundColor) ?? backgroundColor
             }
@@ -172,17 +172,17 @@ public extension NSItemContentConfiguration {
     
     struct ImageProperties: Hashable {
         var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
-        var tintColor: NSColor? = nil
-        var cornerRadius: CGFloat = 0.0
-        var backgroundColor: NSColor? = nil
-        var shadowProperties: ShadowProperties = .black()
+        public var tintColor: NSColor? = nil
+        public var cornerRadius: CGFloat = 0.0
+        public var backgroundColor: NSColor? = nil
+        public var shadowProperties: ShadowProperties = .black()
         
-        var backgroundColorTransform: NSConfigurationColorTransformer? = nil
-        var tintColorTransform: NSConfigurationColorTransformer? = nil
-        var size: ImageSize = .fullHeight
-        var scaling: CALayerContentsGravity = .resizeAspectFill
+        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+        public var tintColorTransform: NSConfigurationColorTransformer? = nil
+        public var size: ImageSize = .fullHeight
+        public var scaling: CALayerContentsGravity = .resizeAspectFill
         
-        enum ImageSize: Hashable {
+        public enum ImageSize: Hashable {
             case fullHeight
             case textHeight
             case secondaryTextHeight
@@ -190,18 +190,18 @@ public extension NSItemContentConfiguration {
             case maxSize(CGSize)
         }
         
-        static func `default`() -> ImageProperties {
+        public static func `default`() -> ImageProperties {
             return ImageProperties()
         }
 
-        func resolvedBackgroundColor() -> NSColor? {
+        public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
         
-        func resolvedTintColor() -> NSColor? {
+        public func resolvedTintColor() -> NSColor? {
             if let tintColor = self.tintColor {
                 return self.tintColorTransform?(tintColor) ?? tintColor
             }
@@ -209,41 +209,41 @@ public extension NSItemContentConfiguration {
         }
         
         struct SymbolConfiguration: Hashable {
-            var fontStyle: FontStyle? = .textStyle(.body)
-            var colorStyle: ColorStyle? = .monochrome
-            var colorTransform: NSConfigurationColorTransformer? = nil
+            public var fontStyle: FontStyle? = .textStyle(.body)
+            public var colorStyle: ColorStyle? = .monochrome
+            public var colorTransform: NSConfigurationColorTransformer? = nil
             
-            static func `default`() -> SymbolConfiguration {
+            public static func `default`() -> SymbolConfiguration {
                 return SymbolConfiguration()
             }
             
-            func resolvedPrimaryColor() -> NSColor? {
+            public func resolvedPrimaryColor() -> NSColor? {
                 if let primary = self.colorStyle?.primary {
                     return self.colorTransform?(primary) ?? primary
                 }
                 return nil
             }
             
-            func resolvedSecondaryColor() -> NSColor? {
+            public func resolvedSecondaryColor() -> NSColor? {
                 if let secondary = self.colorStyle?.secondary {
                     return self.colorTransform?(secondary) ?? secondary
                 }
                 return nil
             }
             
-            func resolvedTertiaryColor() -> NSColor? {
+            public func resolvedTertiaryColor() -> NSColor? {
                 if let tertiary = self.colorStyle?.tertiary {
                     return self.colorTransform?(tertiary) ?? tertiary
                 }
                 return nil
             }
             
-            enum FontStyle: Hashable {
+            public enum FontStyle: Hashable {
                 case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
                 case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
             }
             
-            enum ColorStyle: Hashable {
+            public enum ColorStyle: Hashable {
                 case palette(NSColor, NSColor, NSColor? = nil)
                 case monochrome
                 case multicolor(NSColor)
@@ -314,9 +314,9 @@ public extension NSItemContentConfiguration {
             public var color: NSColor? = nil
             public var opacity: CGFloat = 0.0
             public var offset: CGPoint = .zero
-            var colorTransform: NSConfigurationColorTransformer? = nil
+            public var colorTransform: NSConfigurationColorTransformer? = nil
 
-            func resolvedColor() -> NSColor? {
+            public func resolvedColor() -> NSColor? {
                 if let color = self.color {
                     return self.colorTransform?(color) ?? color
                 }
