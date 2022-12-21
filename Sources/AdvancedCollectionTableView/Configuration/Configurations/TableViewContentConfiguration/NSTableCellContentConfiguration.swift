@@ -197,7 +197,7 @@ public extension NSTableCellContentConfiguration {
             case trailing
         }
         var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
-        var tintColor: NSColor? = nil
+        public var tintColor: NSColor? = nil
         var cornerRadius: CGFloat = 0.0
         var backgroundColor: NSColor? = nil
         var shadowProperties: ShadowProperties = .black()
