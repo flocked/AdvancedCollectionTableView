@@ -53,7 +53,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /**
      Array of properties for configuring additional accesories.
      */
-    public var accesories: [AccessoryProperties] = []
+    public var accessories: [AccessoryProperties] = []
 
     /**
      Properties for configuring the image.
@@ -438,6 +438,9 @@ public extension NSTableCellContentConfiguration {
             case bottom
             case bottomLeft
             case bottomRight
+            internal var isTopPosition: Bool {
+                return self == .top || self == .topLeft || self == .topRight
+            }
         }
         
         public enum WidthSizeOption: Hashable {

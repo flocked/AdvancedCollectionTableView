@@ -53,12 +53,10 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     open var reorderHandlers = ReorderHandlers<Element>()
     open var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
-    open var sectionHandlers = ColumnHandlers<Section>() {
-        didSet { self.ensureTrackingArea()} }
     open var prefetchHandlers = PrefetchHandlers<Element>()
     open var dragDropHandlers = DragdropHandlers<Element>()
     open var quicklookHandlers = QuicklookHandlers<Element>()
-
+    open var columnHandlers = ColumnHandlers<Element>()
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
     open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
     open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }

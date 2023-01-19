@@ -17,7 +17,7 @@ extension NSTableCellContentConfiguration {
         let contentView: NSView = NSView(frame: .zero)
         var _constraints: [NSLayoutConstraint] = []
         var imageViewConstraints: [NSLayoutConstraint] = []
-        
+        var accessoryViews: [NSView] = []
         
         lazy var textStackView: NSStackView = {
             let textStackView = NSStackView(views: [textField, secondaryTextField])
@@ -75,6 +75,14 @@ extension NSTableCellContentConfiguration {
 
             } else {
                 textField.stringValue = configuration.text?.transform(using: configuration.textProperties.textTransform) ?? ""
+            }
+            
+            var topAccessorVyiews: [NSView] = []
+            var bottomAccessorVyiews: [NSView] = []
+            for accessory in configuration.accessories {
+                if (accessory.position.isTopPosition) {
+                    
+                }
             }
             
             secondaryTextField.isHidden = (configuration.hasSecondaryText == false)
@@ -194,6 +202,20 @@ extension NSTableCellContentConfiguration {
             fatalError("init(coder:) has not been implemented")
         }
         
+    }
+}
+
+extension NSTableCellContentConfiguration {
+    internal class AccessoryView: NSView {
+        var properties: NSTableCellContentConfiguration.AccessoryProperties
+        init(properties: NSTableCellContentConfiguration.AccessoryProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }
 

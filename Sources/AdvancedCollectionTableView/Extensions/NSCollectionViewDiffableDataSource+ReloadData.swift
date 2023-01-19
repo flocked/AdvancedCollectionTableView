@@ -17,7 +17,6 @@ public extension NSDiffableDataSourceSnapshot {
 
 public extension NSCollectionViewDiffableDataSource {
     typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>
-    typealias SnapshotApplyOption = Snapshot.ApplyOption
     
     func itemIdentifiers(for indexPaths: [IndexPath]) -> [ItemIdentifierType] {
        return indexPaths.compactMap({self.itemIdentifier(for:$0)})

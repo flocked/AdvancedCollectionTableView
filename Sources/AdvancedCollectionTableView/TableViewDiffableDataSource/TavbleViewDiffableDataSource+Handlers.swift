@@ -62,5 +62,7 @@ extension TableViewDiffableDataSource {
         var didRename: (([NSTableColumn]) -> ())?
         var alowsReordering: (([NSTableColumn]) -> Bool)?
         var didReorder: (([NSTableColumn]) -> ())?
+        var didSelect: ((NSTableColumn) -> ())?
+        var shouldSelect:((NSTableColumn?) -> Bool)?
     }
 }

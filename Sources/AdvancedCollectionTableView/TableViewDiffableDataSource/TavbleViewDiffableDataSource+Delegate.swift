@@ -11,6 +11,14 @@ extension TableViewDiffableDataSource {
     internal class DelegateBridge<S: HashIdentifiable,  E: HashIdentifiable>: NSObject, NSTableViewDelegate, NSTableViewDataSource {
         weak var dataSource: TableViewDiffableDataSource<S,E>!
         
+        func tableView(_ tableView: NSTableView, shouldSelect tableColumn: NSTableColumn?) -> Bool {
+            dataSource.columnHandlers.shouldSelect?(tableColumn) ?? true
+        }
+        
+        func tableView(_ tableView: NSTableView, didClick tableColumn: NSTableColumn) {
+            dataSource.columnHandlers.didSelect?(tableColumn)
+        }
+        
         init (_ dataSource: TableViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
