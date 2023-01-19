@@ -7,16 +7,15 @@
 
 import AppKit
 
-public extension NSDiffableDataSourceSnapshot {
-    enum ApplyOption {
+public enum NSDiffableDataSourceSnapshotApplyOption {
         case reloadData
         case animated
         case non
-    }
 }
 
 public extension NSCollectionViewDiffableDataSource {
     typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>
+    typealias ApplyOption = NSDiffableDataSourceSnapshotApplyOption
     
     func itemIdentifiers(for indexPaths: [IndexPath]) -> [ItemIdentifierType] {
        return indexPaths.compactMap({self.itemIdentifier(for:$0)})
@@ -26,7 +25,7 @@ public extension NSCollectionViewDiffableDataSource {
        return identifiers.compactMap({self.indexPath(for: $0)})
     }
         
-    func apply(_ snapshot: Snapshot,_ option: Snapshot.ApplyOption? = nil, completion: (() -> Void)? = nil) {
+    func apply(_ snapshot: Snapshot,_ option: ApplyOption? = nil, completion: (() -> Void)? = nil) {
         if let option = option {
             switch option {
             case .reloadData:

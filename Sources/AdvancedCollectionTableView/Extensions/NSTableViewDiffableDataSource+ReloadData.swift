@@ -9,7 +9,8 @@ import AppKit
 
 public extension NSTableViewDiffableDataSource {
     typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>
-    
+    typealias ApplyOption = NSDiffableDataSourceSnapshotApplyOption
+
     func itemIdentifiers(for rows: [Int]) -> [ItemIdentifierType] {
        return rows.compactMap({self.itemIdentifier(forRow:$0)})
     }
@@ -18,7 +19,7 @@ public extension NSTableViewDiffableDataSource {
        return identifiers.compactMap({self.row(forItemIdentifier: $0)})
     }
     
-    func apply(_ snapshot: Snapshot,_ option: Snapshot.ApplyOption? = nil, completion: (() -> Void)? = nil) {
+    func apply(_ snapshot: Snapshot,_ option: ApplyOption? = nil, completion: (() -> Void)? = nil) {
         if let option = option {
             switch option {
             case .reloadData:
