@@ -155,7 +155,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     public var mouseHandlers = MouseHandlers<Element>()
     open var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.ensureTrackingArea()} }
-    open var selectionHandlers = SelectionHandlers<Element>()
+    public var selectionHandlers = SelectionHandlers<Element>()
     open var reorderHandlers = ReorderHandlers<Element>()
     open var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }

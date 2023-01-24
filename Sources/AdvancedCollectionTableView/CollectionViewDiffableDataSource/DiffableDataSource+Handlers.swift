@@ -9,10 +9,10 @@ import AppKit
 
 extension CollectionViewDiffableDataSource {
     public struct SelectionHandlers<E> {
-        var shouldSelect: (([E]) -> [E])? = nil
-        var shouldDeselect: (([E]) -> [E])? = nil
-        var didSelect: (([E]) -> Void)? = nil
-        var didDeselect: (([E]) -> Void)? = nil
+        public var shouldSelect: (([E]) -> [E])? = nil
+        public var shouldDeselect: (([E]) -> [E])? = nil
+        public var didSelect: (([E]) -> Void)? = nil
+        public var didDeselect: (([E]) -> Void)? = nil
     }
     
     public struct DragdropHandlers<E> {
