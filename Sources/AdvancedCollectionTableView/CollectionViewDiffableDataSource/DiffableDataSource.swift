@@ -152,7 +152,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         get { self.collectionView.collectionViewLayout }
         set { self.collectionView.collectionViewLayout = newValue } }
     
-    open var mouseHandlers = MouseHandlers<Element>()
+    public var mouseHandlers = MouseHandlers<Element>()
     open var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.ensureTrackingArea()} }
     open var selectionHandlers = SelectionHandlers<Element>()
