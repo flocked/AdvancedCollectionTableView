@@ -429,7 +429,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         self.responder = Responder(self)
         let collectionViewNextResponder = self.collectionView.nextResponder
         self.collectionView.nextResponder = self.responder
-        self.responder.nextResponder = collectionViewNextResponder
+      //  self.responder.nextResponder = collectionViewNextResponder
         
         self.delegateBridge = DelegateBridge(self)
     }

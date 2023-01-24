@@ -54,7 +54,7 @@ extension CollectionViewDiffableDataSource {
         public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> Void)? = nil
         public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> Void)? = nil
     //   var mouseEntered: ((CGPoint) -> Void)? = nil
-     //   var mouseMoved: ((CGPoint) -> Void)? = nil
+        public var mouseMoved: ((CGPoint) -> Void)? = nil
      //   var mouseExited: ((CGPoint) -> Void)? = nil
     }
     

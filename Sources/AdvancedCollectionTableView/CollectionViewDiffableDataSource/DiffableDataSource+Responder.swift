@@ -24,14 +24,14 @@ extension CollectionViewDiffableDataSource {
             super.mouseEntered(with: event)
             let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-            //      self.dataSource.mouseHandlers.mouseEntered?(point)
+           //       self.dataSource.mouseHandlers.mouseEntered?(point)
         }
         
         override func mouseMoved(with event: NSEvent) {
             super.mouseMoved(with: event)
             let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-            //      self.dataSource.mouseHandlers.mouseMoved?(point)
+                  self.dataSource.mouseHandlers.mouseMoved?(point)
         }
         
         override func mouseExited(with event: NSEvent) {
