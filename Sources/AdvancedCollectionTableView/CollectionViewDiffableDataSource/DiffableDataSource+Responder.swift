@@ -42,6 +42,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func mouseUp(with event: NSEvent) {
+            Swift.print("mouseup")
             if let mouseClick = self.dataSource.mouseHandlers.mouseClick {
                 let point = event.location(in: self.dataSource.collectionView)
                 mouseClick(point, event.clickCount, self.dataSource.element(at: point))
