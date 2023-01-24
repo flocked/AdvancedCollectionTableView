@@ -76,7 +76,7 @@ extension CollectionViewDiffableDataSource {
         
         override func keyDown(with event: NSEvent) {
             var shouldKeyDown = true
-            if let keydownHandler = self.dataSource.keydownHandler?(Int(event.keyCode), event.modifierFlags) {
+            if let keydownHandler = self.dataSource.keydownHandler?(event) {
                 shouldKeyDown = keydownHandler
             }
             if (shouldKeyDown) {

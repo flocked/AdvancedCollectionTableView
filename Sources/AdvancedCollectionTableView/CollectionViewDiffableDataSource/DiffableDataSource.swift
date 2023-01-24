@@ -167,9 +167,9 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     open var quicklookHandlers = QuicklookHandlers<Element>()
 
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
-    open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
-    open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
-    
+    open var keydownHandler: ((NSEvent) -> Bool)? = nil
+    open var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+
     open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
     }
@@ -324,6 +324,38 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
                     mouseHandlers.mouseDragged != nil )
     }
     
+    internal func openQuicklookPanel(for elements: [(element: Element, url: URL)]) {
+            var previewItems: [QuicklookItem] = []
+            for _element in elements {
+                if let _elementRect = self.frame(for: _element.element) {
+                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
+                }
+            }
+        
+            if (previewItems.isEmpty == false) {
+                self.quicklookPanel.keyDownResponder = self.collectionView
+                self.quicklookPanel.preview(previewItems)
+            }
+    }
+    
+    internal func closeQuicklookPanel(for elements: [(element: Element, url: URL)]) {
+        var previewItems: [QuicklookItem] = []
+            for _element in elements {
+                if let _elementRect = self.frame(for: _element.element) {
+                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
+                }
+            }
+            if (previewItems.isEmpty == false) {
+                self.quicklookPanel.keyDownResponder = self.collectionView
+                self.quicklookPanel.preview(previewItems)
+            }
+        
+        if (previewItems.isEmpty == false) {
+            self.quicklookPanel.close(previewItems)
+        } else {
+            self.quicklookPanel.close()
+        }
+    }
     internal func configurateDataSource() {
         self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
             [weak self] collectionView, indePath, elementID in

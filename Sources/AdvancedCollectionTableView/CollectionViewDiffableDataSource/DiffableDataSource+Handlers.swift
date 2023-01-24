@@ -50,9 +50,9 @@ extension CollectionViewDiffableDataSource {
     }
     
     public struct MouseHandlers<E> {
-        var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        var mouseDragged: ((CGPoint, E?) -> Void)? = nil
+        public var mouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> Void)? = nil
+        public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> Void)? = nil
+        public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> Void)? = nil
     //   var mouseEntered: ((CGPoint) -> Void)? = nil
      //   var mouseMoved: ((CGPoint) -> Void)? = nil
      //   var mouseExited: ((CGPoint) -> Void)? = nil
