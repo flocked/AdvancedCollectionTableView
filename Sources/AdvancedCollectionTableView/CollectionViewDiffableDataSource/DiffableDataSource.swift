@@ -153,22 +153,22 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         set { self.collectionView.collectionViewLayout = newValue } }
     
     public var mouseHandlers = MouseHandlers<Element>()
-    open var hoverHandlers = HoverHandlers<Element>() {
+    public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.ensureTrackingArea()} }
     public var selectionHandlers = SelectionHandlers<Element>()
-    open var reorderHandlers = ReorderHandlers<Element>()
-    open var displayHandlers = DisplayHandlers<Element>() {
+    public var reorderHandlers = ReorderHandlers<Element>()
+    public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
-    open var sectionHandlers = SectionHandlers<Section>() {
+    public var sectionHandlers = SectionHandlers<Section>() {
         didSet { self.ensureTrackingArea()} }
-    open var prefetchHandlers = PrefetchHandlers<Element>()
-    open var dragDropHandlers = DragdropHandlers<Element>()
-    open var highlightHandlers = HighlightHandlers<Element>()
-    open var quicklookHandlers = QuicklookHandlers<Element>()
+    public var prefetchHandlers = PrefetchHandlers<Element>()
+    public var dragDropHandlers = DragdropHandlers<Element>()
+    public var highlightHandlers = HighlightHandlers<Element>()
+    public var quicklookHandlers = QuicklookHandlers<Element>()
 
-    open var menuProvider: (([Element]) -> NSMenu?)? = nil
-    open var keydownHandler: ((NSEvent) -> Bool)? = nil
-    open var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+    public var menuProvider: (([Element]) -> NSMenu?)? = nil
+    public var keydownHandler: ((NSEvent) -> Bool)? = nil
+    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
 
     open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)

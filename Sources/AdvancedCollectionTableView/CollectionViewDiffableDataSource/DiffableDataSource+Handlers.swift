@@ -16,37 +16,37 @@ extension CollectionViewDiffableDataSource {
     }
     
     public struct DragdropHandlers<E> {
-        var canDropOutside: (([E]) -> [E])? = nil
-        var dropOutside: (([E]) -> [AnyObject])? = nil
-        var canDrag: (([AnyObject]) -> Bool)? = nil
-        var dragOutside: (([E]) -> [AnyObject])? = nil
-        var draggingImage: (([E], NSEvent, NSPointPointer) -> NSImage?)? = nil
+        public var canDropOutside: (([E]) -> [E])? = nil
+        public var dropOutside: (([E]) -> [AnyObject])? = nil
+        public var canDrag: (([AnyObject]) -> Bool)? = nil
+        public var dragOutside: (([E]) -> [AnyObject])? = nil
+        public var draggingImage: (([E], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
     
     public struct HighlightHandlers<E> {
-        var shouldChangeItems: (([E], NSCollectionViewItem.HighlightState) -> [E])? = nil
-        var didChangeItems: (([E], NSCollectionViewItem.HighlightState) -> ())? = nil
+        public var shouldChangeItems: (([E], NSCollectionViewItem.HighlightState) -> [E])? = nil
+        public var didChangeItems: (([E], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
     
     public struct ReorderHandlers<E> {
-        var canReorder: (([E]) -> Bool)? = nil
-        var willReorder: (([E]) -> Void)? = nil
-        var didReorder: (([E]) -> Void)? = nil
+        public var canReorder: (([E]) -> Bool)? = nil
+        public var willReorder: (([E]) -> Void)? = nil
+        public var didReorder: (([E]) -> Void)? = nil
     }
     
     public struct PrefetchHandlers<E> {
-        var willPrefetch: (([E]) -> Void)? = nil
-        var didCancelPrefetching: (([E]) -> Void)? = nil
+        public var willPrefetch: (([E]) -> Void)? = nil
+        public var didCancelPrefetching: (([E]) -> Void)? = nil
     }
     
     public struct DisplayHandlers<E> {
-        var isDisplaying: (([E]) -> Void)?
-        var didEndDisplaying: (([E]) -> Void)?
+        public var isDisplaying: (([E]) -> Void)?
+        public var didEndDisplaying: (([E]) -> Void)?
     }
     
     public struct QuicklookHandlers<E> {
-        var preview: (([E]) -> [(element: Element, url: URL)]?)?
-        var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
+        public var preview: (([E]) -> [(element: Element, url: URL)]?)?
+        public var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
     }
     
     public struct MouseHandlers<E> {
@@ -59,16 +59,16 @@ extension CollectionViewDiffableDataSource {
     }
     
     public struct HoverHandlers<E> {
-        var isHovering: ((E) -> Void)?
-        var didEndHovering: ((E) -> Void)?
+        public var isHovering: ((E) -> Void)?
+        public var didEndHovering: ((E) -> Void)?
     }
     
     public struct SectionHandlers<Section> {
-        var shouldCollapse: ((Section) -> Bool)?
-        var willCollapse: ((Section) -> Void)?
-        var shouldExpand: ((Section) -> Bool)?
-        var willExpand: ((Section) -> Void)?
-        var canReorder: ((Section) -> Bool)?
-        var didReorder: ((Section) -> Void)?
+        public var shouldCollapse: ((Section) -> Bool)?
+        public var willCollapse: ((Section) -> Void)?
+        public var shouldExpand: ((Section) -> Bool)?
+        public var willExpand: ((Section) -> Void)?
+        public var canReorder: ((Section) -> Bool)?
+        public var didReorder: ((Section) -> Void)?
     }
 }
