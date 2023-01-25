@@ -28,7 +28,7 @@ public extension NSCollectionViewItem {
      - ``backgroundView``
      - ``selectedBackgroundView``
      */
-    var backgroundConfiguration: NSBackgroundConfiguration?   {
+    var backgroundConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
@@ -91,7 +91,7 @@ public extension NSCollectionViewItem {
         }
     }
     
-    internal var configurationBackgroundView: (NSView & NSBackgroundView)?   {
+    internal var configurationBackgroundView: (NSView & NSContentView)?   {
         get { getAssociatedValue(key: "_configurationBackgroundView", object: self) }
         set {
             self.configurationBackgroundView?.removeFromSuperview()
@@ -115,7 +115,7 @@ public extension NSCollectionViewItem {
             if var backgroundView = configurationBackgroundView, backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
-                var newBackgroundView = backgroundConfiguration.makeBackgroundView()
+                var newBackgroundView = backgroundConfiguration.makeContentView()
                 configurationBackgroundView = newBackgroundView
                 newBackgroundView.configuration = backgroundConfiguration
             }

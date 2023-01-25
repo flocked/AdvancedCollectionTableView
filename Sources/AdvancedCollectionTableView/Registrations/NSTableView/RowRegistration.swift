@@ -10,10 +10,10 @@ import FZExtensions
 
 public extension NSTableView {
     /**
-    Dequeues a configured reusable cell object.
+    Dequeues a configured reusable rowview object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See NSTableView.CellRegistration.
+        - registration: The rowview registration for configuring the rowview object. See NSTableView.RowViewRegistration.
         - column: The table column in which the cell gets displayed in the table view.
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
         - element: The element that provides data for the cell.
@@ -59,7 +59,7 @@ public extension NSTableView {
         /**
          A closure that handles the cell registration and configuration.
          */
-        public typealias Handler = ((_ cell: RowView, _ row: Int, _ cellIdentifier: Element)->(Void))
+        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
         
         public let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

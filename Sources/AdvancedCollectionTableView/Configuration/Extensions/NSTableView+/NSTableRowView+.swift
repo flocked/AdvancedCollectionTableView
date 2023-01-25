@@ -60,7 +60,7 @@ public extension NSTableRowView {
      Setting a content configuration replaces the existing contentView of the row with a new content view instance from the configuration, or directly applies the configuration to the existing content view if the configuration is compatible with the existing content view type.
      The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
      */
-    var contentConfiguration: NSBackgroundConfiguration?   {
+    var contentConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "_contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_contentConfiguration", object: self)
@@ -86,10 +86,10 @@ public extension NSTableRowView {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if  var contentView = self.contentView as? NSBackgroundView, contentView.supports(contentConfiguration) {
+            if  var contentView = self.contentView as? NSContentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                let contentView = contentConfiguration.makeBackgroundView()
+                let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
             }
         } else {
