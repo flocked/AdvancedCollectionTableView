@@ -251,11 +251,12 @@ public extension NSTableRowView {
     @objc var swizzled_isSelected: Bool {
         get {
             Swift.print("swizzled_isSelected get")
-            return swizzled_isSelected
+            return self.swizzled_isSelected
         }
         set {
             Swift.print("swizzled_isSelected set")
-            swizzled_isSelected = newValue
+            self.swizzled_isSelected = newValue
+            self.setNeedsUpdateConfiguration()
         }
     }
     
