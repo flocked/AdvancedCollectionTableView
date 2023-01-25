@@ -221,6 +221,7 @@ public extension NSTableRowView {
         }
     }
     
+    /*
     @objc var isSelected: Bool {
         get { getAssociatedValue(key: "_isSelected", object: self, initialValue: false) }
         set {
@@ -228,6 +229,7 @@ public extension NSTableRowView {
             self.setNeedsUpdateConfiguration()
         }
     }
+    */
     
     /*
     override var isSelectable: Bool {
