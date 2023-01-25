@@ -272,5 +272,4 @@ extension CollectionViewDiffableDataSource {
         snapshot.deleteItems(elements)
         self.apply(snapshot)
     }
-    
 }

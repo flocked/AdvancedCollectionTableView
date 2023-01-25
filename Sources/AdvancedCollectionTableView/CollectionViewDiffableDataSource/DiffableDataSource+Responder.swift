@@ -11,6 +11,7 @@ import FZExtensions
 extension CollectionViewDiffableDataSource {
     internal class Responder<S: HashIdentifiable,  E: HashIdentifiable>: NSResponder {
         weak var dataSource: CollectionViewDiffableDataSource<S,E>!
+        
         init (_ dataSource: CollectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()

@@ -9,30 +9,31 @@ import AppKit
 
 extension CollectionViewDiffableDataSource {
     internal class DelegateBridge<S: HashIdentifiable,  E: HashIdentifiable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
+        
         weak var dataSource: CollectionViewDiffableDataSource<S,E>!
         
-        init (_ dataSource: CollectionViewDiffableDataSource<S,E>) {
+        init(_ dataSource: CollectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.collectionView.delegate = self
             self.dataSource.collectionView.prefetchDataSource = self
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
+        func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
             self.dataSource.draggingIndexPaths = []
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
             self.dataSource.prefetchHandlers.willPrefetch?(elements)
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
             self.dataSource.prefetchHandlers.didCancelPrefetching?(elements)
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexes: IndexSet, with event: NSEvent) -> Bool {
+        func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexes: IndexSet, with event: NSEvent) -> Bool {
             if let canReorderHandler = self.dataSource.reorderHandlers.canReorder {
                 let elements = indexes.compactMap({self.dataSource.element(for: IndexPath(item: $0, section: 0))})
                 return canReorderHandler(elements)
@@ -41,7 +42,7 @@ extension CollectionViewDiffableDataSource {
             }
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
+        func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
             if let elementID = self.dataSource.element(for: indexPath)?.id {
                 let item = NSPasteboardItem()
                 item.setString(String(elementID.hashValue), forType: self.dataSource.pasteboardType)
@@ -52,33 +53,33 @@ extension CollectionViewDiffableDataSource {
             
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
+        func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
             self.dataSource.draggingIndexPaths = indexPaths
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
+        func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
             if proposedDropOperation.pointee == NSCollectionView.DropOperation.on {
                 proposedDropOperation.pointee = NSCollectionView.DropOperation.before
             }
             return NSDragOperation.move
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
+        func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
                 self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
             }
             return true
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+        func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
             
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, didEndDisplaying item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+        func collectionView(_ collectionView: NSCollectionView, didEndDisplaying item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
             
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
             /*
              self.dataSource.collectionView.window?.makeFirstResponder(self.dataSource.collectionView)
              
@@ -91,7 +92,7 @@ extension CollectionViewDiffableDataSource {
             }
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
+        func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
             /*
              self.dataSource.collectionView.window?.makeFirstResponder(self.dataSource.collectionView)
              let items = indexPaths.compactMap({collectionView.item(at: $0)})
@@ -103,7 +104,7 @@ extension CollectionViewDiffableDataSource {
             }
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, shouldSelectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
+        func collectionView(_ collectionView: NSCollectionView, shouldSelectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
             if let shouldSelectHandler = self.dataSource.selectionHandlers.shouldSelect {
                 let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
                 let returnElements = shouldSelectHandler(shouldElements)
@@ -113,7 +114,7 @@ extension CollectionViewDiffableDataSource {
             }
         }
         
-        public func collectionView(_ collectionView: NSCollectionView, shouldDeselectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
+        func collectionView(_ collectionView: NSCollectionView, shouldDeselectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
             if let shouldDeselectHandler = self.dataSource.selectionHandlers.shouldDeselect {
                 let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
                 let returnElements = shouldDeselectHandler(shouldElements)

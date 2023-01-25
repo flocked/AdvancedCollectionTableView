@@ -32,7 +32,7 @@ import FZExtensions
  
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSCollectionViewDataSource {
+public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSCollectionViewDataSource {
     /**
      Representation of a state for the data in the collection view.
      */
@@ -57,7 +57,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
      */
-    open var supplementaryViewProvider: SupplementaryViewProvider? = nil
+    public var supplementaryViewProvider: SupplementaryViewProvider? = nil
     /**
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
      
@@ -99,25 +99,25 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
 
      If the value of this property is true (the default is false), users can delete items.
      */
-    open var allowsDeleting: Bool = false
+    public var allowsDeleting: Bool = false
     /**
      A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
 
      If the value of this property is true (the default is false), users can reorder items in the collection view.
      */
-    open var allowsReordering: Bool = false
+    public var allowsReordering: Bool = false
     /**
      A Boolean value that indicates whether users can select items while an section is collapsed in the collection view.
 
      If the value of this property is true (the default), users can select items while an section is collapsed.
      */
-    open var allowsSectionCollapsing: Bool = true
+    public var allowsSectionCollapsing: Bool = true
     /**
      A Boolean value that indicates whether users can select items in the collection view.
 
      If the value of this property is true (the default), users can select items.
      */
-    open var allowsSelectable: Bool {
+    public var allowsSelectable: Bool {
         get { self.collectionView.isSelectable }
         set { self.collectionView.isSelectable = newValue } }
     /**
@@ -126,7 +126,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
      This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
      When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
      */
-    open var allowsMultipleSelection: Bool {
+    public var allowsMultipleSelection: Bool {
         get { self.collectionView.allowsMultipleSelection }
         set { self.collectionView.allowsMultipleSelection = newValue } }
     /**
@@ -134,7 +134,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
 
      The default value of this property is true, which allows the collection view to have no selected items. Setting this property to false causes the collection view to always leave at least one item selected.
      */
-    open var allowsEmptySelection: Bool {
+    public var allowsEmptySelection: Bool {
         get { self.collectionView.allowsEmptySelection }
         set { self.collectionView.allowsEmptySelection = newValue } }
     /**
@@ -148,7 +148,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
      ```
      You can use the completion handler of the associated NSAnimationContext object to perform additional tasks when the animations finish.
      */
-    open var collectionViewLayout: NSCollectionViewLayout? {
+    public var collectionViewLayout: NSCollectionViewLayout? {
         get { self.collectionView.collectionViewLayout }
         set { self.collectionView.collectionViewLayout = newValue } }
     
@@ -170,19 +170,19 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
     public var keydownHandler: ((NSEvent) -> Bool)? = nil
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
 
-    open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
     }
     
-    open func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+    public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         return dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
     }
     
-    open func numberOfSections(in collectionView: NSCollectionView) -> Int {
+    public func numberOfSections(in collectionView: NSCollectionView) -> Int {
         return dataSource.numberOfSections(in: collectionView)
     }
     
-    open func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
     
@@ -195,7 +195,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    open func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
 
@@ -212,11 +212,25 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    open func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
+    public func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
 
         dataSource.apply(internalSnapshot, .reloadData, completion: completion)
+    }
+    
+    /**
+     Returns a representation of the current state of the data in the collection view.
+
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
+    public func snapshot() -> CollectionSnapshot {
+        var snapshot = CollectionSnapshot()
+        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
+        for section in currentSnapshot.sectionIdentifiers {
+            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
+        }
+        return snapshot
     }
     
     internal func convertSnapshot(_ snapshot: CollectionSnapshot) -> InternalSnapshot {
@@ -356,6 +370,7 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
             self.quicklookPanel.close()
         }
     }
+    
     internal func configurateDataSource() {
         self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
             [weak self] collectionView, indePath, elementID in
@@ -429,22 +444,9 @@ open class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: 
         self.responder = Responder(self)
         let collectionViewNextResponder = self.collectionView.nextResponder
         self.collectionView.nextResponder = self.responder
-      //  self.responder.nextResponder = collectionViewNextResponder
+        self.responder.nextResponder = collectionViewNextResponder
         
         self.delegateBridge = DelegateBridge(self)
-    }
-    /**
-     Returns a representation of the current state of the data in the collection view.
-
-     A snapshot containing section and item identifiers in the order that they appear in the UI.
-     */
-    func snapshot() -> CollectionSnapshot {
-        var snapshot = CollectionSnapshot()
-        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
-        for section in currentSnapshot.sectionIdentifiers {
-            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
-        }
-        return snapshot
     }
 }
 

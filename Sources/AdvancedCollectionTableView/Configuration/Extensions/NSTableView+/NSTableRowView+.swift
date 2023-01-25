@@ -138,7 +138,7 @@ public extension NSTableRowView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isSelectable: self.isSelectable, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isSelectable: true, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
     
@@ -229,6 +229,7 @@ public extension NSTableRowView {
         }
     }
     
+    /*
     override var isSelectable: Bool {
         get { getAssociatedValue(key: "_isSelectable", object: self, initialValue: false) }
         set {
@@ -236,6 +237,7 @@ public extension NSTableRowView {
             self.setNeedsUpdateConfiguration()
         }
     }
+    */
      
     static internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
