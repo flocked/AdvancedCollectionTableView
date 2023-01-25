@@ -253,7 +253,6 @@ public extension NSTableCellView {
             Swizzle(NSTableCellView.self) {
                 #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
             }
-             
         }
     }
     

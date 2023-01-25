@@ -221,7 +221,7 @@ public extension NSTableRowView {
         }
     }
     
-    var isSelected: Bool {
+    @objc var isSelected: Bool {
         get { getAssociatedValue(key: "_isSelected", object: self, initialValue: false) }
         set {
             set(associatedValue: newValue, key: "_isSelected", object: self)
@@ -246,16 +246,22 @@ public extension NSTableRowView {
         }
     }
     
+    @objc var swizzled_isSelected: Bool {
+        get {
+            return swizzled_isSelected
+        }
+        set {
+            swizzled_isSelected = newValue
+        }
+    }
+    
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
-            /*
-            Swizzle(NSCollectionViewRow.self) {
-            #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
-                #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
-                #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
+            Swizzle(NSTableRowView.self) {
+                #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
+                #selector(setter: isSelected) <-> #selector(setter: swizzled_isSelected)
             }
-             */
         }
     }
 }
