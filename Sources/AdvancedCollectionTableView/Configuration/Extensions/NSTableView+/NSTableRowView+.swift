@@ -255,8 +255,11 @@ public extension NSTableRowView {
         }
         set {
             Swift.print("swizzled_isSelected set")
+            let didChange = (self.swizzled_isSelected != newValue)
             self.swizzled_isSelected = newValue
-            self.setNeedsUpdateConfiguration()
+            if (didChange) {
+                self.setNeedsUpdateConfiguration()
+            }
         }
     }
     
