@@ -115,6 +115,7 @@ public extension NSTableView {
     
 
     override func updateTrackingAreas() {
+        Swift.print("updateTrackingAreas")
         super.updateTrackingAreas()
         self.installTrackingArea()
         /*
@@ -141,6 +142,7 @@ public extension NSTableView {
     
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
+        Swift.print("viewDidMoveToSuperview")
         self.installTrackingArea()
     }
    
