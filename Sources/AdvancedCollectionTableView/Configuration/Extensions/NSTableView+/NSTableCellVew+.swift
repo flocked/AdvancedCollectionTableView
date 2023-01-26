@@ -53,6 +53,7 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "_contentConfiguration", object: self)
             if (contentConfiguration != nil) {
                 Self.swizzle()
+                NSTableRowView.swizzle()
             }
             self.configurateContentView()
         }

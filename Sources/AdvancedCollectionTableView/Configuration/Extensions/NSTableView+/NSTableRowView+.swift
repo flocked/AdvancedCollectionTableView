@@ -167,10 +167,15 @@ public extension NSTableRowView {
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     func updateConfiguration(using state: NSTableRowConfigurationState) {
-        if let backgroundConfiguration = self.contentConfiguration {
-            self.contentConfiguration = backgroundConfiguration.updated(for: state)
+        if let contentConfiguration = self.contentConfiguration {
+            self.contentConfiguration = contentConfiguration.updated(for: state)
         }
+        cellViews.forEach({$0.setNeedsUpdateConfiguration()})
         configurationUpdateHandler?(self, state)
+    }
+    
+    internal func updateCellConfigurations() {
+        
     }
     
     internal var isHovered: Bool {
@@ -248,22 +253,7 @@ public extension NSTableRowView {
             set(associatedValue: newValue, key: "_didSwizzle", object: self)
         }
     }
-    
-    @objc dynamic var swizzled_isSelected: Bool {
-        get {
-            Swift.print("swizzled_isSelected get")
-            return self.swizzled_isSelected
-        }
-        set {
-            Swift.print("swizzled_isSelected set")
-            let didChange = (self.swizzled_isSelected != newValue)
-            self.swizzled_isSelected = newValue
-            if (didChange) {
-                self.setNeedsUpdateConfiguration()
-            }
-        }
-    }
-    
+        
     @objc dynamic func swizzled_setIsSelected(_ isSelected: Bool) {
         Swift.print("swizzled_setIsSelected", isSelected)
         let didChange = (self.isSelected != isSelected)
@@ -274,55 +264,11 @@ public extension NSTableRowView {
     }
     
     @objc static internal func swizzle() {
-
         if (didSwizzle == false) {
             didSwizzle = true
             Swizzle(NSTableRowView.self) {
-            //    #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
                 #selector(setter: isSelected) <-> #selector(swizzled_setIsSelected)
-         //       #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
-           //     NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
             }
-            
         }
     }
 }
-
-/*
-extension NSTableRowView {
-   public func getPrivateVariable() -> String? {
-       return value(forKey: "_selected") as? String
-   }
-
-   open override func value(forUndefinedKey key: String) -> Any? {
-       Swift.print("getValue", key)
-       if key == "_selected" {
-           return nil
-       }
-       return super.value(forUndefinedKey: key)
-   }
-    
-    open override func setValue(_ value: Any?, forKey key: String) {
-        super.setValue(value, forKey: key)
-    }
-    
-    open override func setValue(_ value: Any?, forKeyPath keyPath: String) {
-        Swift.print("setValueKeyPath", keyPath)
-        super.setValue(value, forKeyPath: keyPath)
-    }
-    
-    open override func setValuesForKeys(_ keyedValues: [String : Any]) {
-        Swift.print("setValuesForKeys", keyedValues.keys)
-        super.setValuesForKeys(keyedValues)
-    }
-    
-    open override func setValue(_ value: Any?, forUndefinedKey key: String) {
-        Swift.print("setValue", key)
-        if key == "_selected" {
-            
-        } else {
-            super.setValue(value, forUndefinedKey: key)
-        }
-    }
-}
-*/
