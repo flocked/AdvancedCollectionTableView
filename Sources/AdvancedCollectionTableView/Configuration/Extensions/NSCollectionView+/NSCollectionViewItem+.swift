@@ -471,7 +471,6 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
-        
         self.swizzled_viewDidLayout()
         if collectionView?.selfSizingInvalidation == .enabled {
             if let cachedLayoutAttributes = cachedLayoutAttributes {

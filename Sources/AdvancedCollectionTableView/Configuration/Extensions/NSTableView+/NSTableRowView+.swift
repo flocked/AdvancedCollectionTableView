@@ -11,7 +11,8 @@ import FZExtensions
 
 public extension NSTableRowView {
     var cellViews: [NSTableCellView] {
-        self.subviews.compactMap({$0 as? NSTableCellView})
+        (0..<self.numberOfColumns).compactMap({self.view(atColumn: $0) as? NSTableCellView})
+    //    self.subviews.compactMap({$0 as? NSTableCellView})
     }
     
     var tableView: NSTableView? {
@@ -255,7 +256,6 @@ public extension NSTableRowView {
     }
         
     @objc dynamic func swizzled_setIsSelected(_ isSelected: Bool) {
-        Swift.print("swizzled_setIsSelected", isSelected)
         let didChange = (self.isSelected != isSelected)
         self.swizzled_setIsSelected(isSelected)
         if (didChange) {
