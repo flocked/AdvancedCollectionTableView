@@ -115,6 +115,9 @@ public extension NSTableView {
     
 
     override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        self.installTrackingArea()
+        /*
         if let trackingArea = trackingArea {
             self.removeTrackingArea(trackingArea)
         }
@@ -122,7 +125,24 @@ public extension NSTableView {
         self.trackingArea = NSTrackingArea(rect: self.bounds, options:  options, owner: self)
         self.addTrackingArea(self.trackingArea!)
         super.updateTrackingAreas()
+        */
    }
+    
+    internal func installTrackingArea() {
+        guard let window = window else { return }
+         window.acceptsMouseMovedEvents = true
+         if trackingArea != nil { removeTrackingArea(trackingArea!) }
+        let trackingOptions: NSTrackingArea.Options = [.activeInKeyWindow, .inVisibleRect, .mouseMoved]
+         trackingArea = NSTrackingArea(rect: bounds,
+                                       options: trackingOptions,
+                                       owner: self, userInfo: nil)
+         self.addTrackingArea(trackingArea!)
+    }
+    
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        self.installTrackingArea()
+    }
    
    override func mouseEntered(with event: NSEvent) {
        super.mouseEntered(with: event)
