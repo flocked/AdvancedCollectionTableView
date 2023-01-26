@@ -114,7 +114,7 @@ public extension NSTableView {
          set { set(associatedValue: newValue, key: "_trackingArea", object: self) } }
     
 
-    override func updateTrackingAreas() {
+    override dynamic func updateTrackingAreas() {
         Swift.print("updateTrackingAreas")
         super.updateTrackingAreas()
         self.installTrackingArea()
@@ -140,13 +140,13 @@ public extension NSTableView {
          self.addTrackingArea(trackingArea!)
     }
     
-    override func viewDidMoveToSuperview() {
+    override dynamic func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         Swift.print("viewDidMoveToSuperview")
         self.installTrackingArea()
     }
    
-   override func mouseEntered(with event: NSEvent) {
+   override dynamic func mouseEntered(with event: NSEvent) {
        super.mouseEntered(with: event)
        self.updateRowHoverState(event)
    }
@@ -156,7 +156,7 @@ public extension NSTableView {
        self.updateRowHoverState(event)
    }
    
-    override func mouseExited(with event: NSEvent) {
+    override dynamic func mouseExited(with event: NSEvent) {
        super.mouseExited(with: event)
         self.updateRowHoverState(nil)
    }
