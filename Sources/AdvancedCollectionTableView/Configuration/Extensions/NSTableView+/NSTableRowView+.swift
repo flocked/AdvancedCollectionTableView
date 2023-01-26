@@ -248,7 +248,7 @@ public extension NSTableRowView {
         }
     }
     
-    @objc var swizzled_isSelected: Bool {
+    @objc dynamic var swizzled_isSelected: Bool {
         get {
             Swift.print("swizzled_isSelected get")
             return self.swizzled_isSelected
@@ -266,18 +266,19 @@ public extension NSTableRowView {
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
-            /*
+            
             Swizzle(NSTableRowView.self) {
-             //   NSSelectorFromString("selected") <-> #selector(swizzled_isSelected)
                 #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
-                NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
+                #selector(setter: isSelected) <-> #selector(setter: swizzled_isSelected)
+         //       #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
+           //     NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
             }
-            */
+            
         }
     }
 }
 
-
+/*
 extension NSTableRowView {
    public func getPrivateVariable() -> String? {
        return value(forKey: "_selected") as? String
@@ -314,3 +315,4 @@ extension NSTableRowView {
         }
     }
 }
+*/
