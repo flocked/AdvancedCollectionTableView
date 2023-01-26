@@ -291,6 +291,20 @@ extension NSTableRowView {
        return super.value(forUndefinedKey: key)
    }
     
+    open override func setValue(_ value: Any?, forKey key: String) {
+        super.setValue(value, forKey: key)
+    }
+    
+    open override func setValue(_ value: Any?, forKeyPath keyPath: String) {
+        Swift.print("setValueKeyPath", keyPath)
+        super.setValue(value, forKeyPath: keyPath)
+    }
+    
+    open override func setValuesForKeys(_ keyedValues: [String : Any]) {
+        Swift.print("setValuesForKeys", keyedValues.keys)
+        super.setValuesForKeys(keyedValues)
+    }
+    
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
         Swift.print("setValue", key)
         if key == "_selected" {
