@@ -266,11 +266,37 @@ public extension NSTableRowView {
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
+            /*
             Swizzle(NSTableRowView.self) {
              //   NSSelectorFromString("selected") <-> #selector(swizzled_isSelected)
                 #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
                 NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
             }
+            */
+        }
+    }
+}
+
+
+extension NSTableRowView {
+   public func getPrivateVariable() -> String? {
+       return value(forKey: "_selected") as? String
+   }
+
+   open override func value(forUndefinedKey key: String) -> Any? {
+       Swift.print("getValue", key)
+       if key == "_selected" {
+           return nil
+       }
+       return super.value(forUndefinedKey: key)
+   }
+    
+    open override func setValue(_ value: Any?, forUndefinedKey key: String) {
+        Swift.print("setValue", key)
+        if key == "_selected" {
+            
+        } else {
+            super.setValue(value, forUndefinedKey: key)
         }
     }
 }
