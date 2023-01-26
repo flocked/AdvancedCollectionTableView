@@ -19,6 +19,7 @@ let package = Package(
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZExtensions"]),
+            dependencies: ["FZExtensions", "AdvancedCollectionTableViewObjC"]),
+        .target(name: "AdvancedCollectionTableViewObjC", dependencies: [])
     ]
 )

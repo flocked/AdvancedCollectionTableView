@@ -7,6 +7,7 @@
 
 import AppKit
 import FZExtensions
+// import AdvancedCollectionTableViewObjC
 
 public extension NSTableRowView {
     var cellViews: [NSTableCellView] {
@@ -264,17 +265,20 @@ public extension NSTableRowView {
     }
     
     @objc dynamic func swizzled_setIsSelected(_ isSelected: Bool) {
-        Swift.print("swizzled_isSelected set")
+        Swift.print("swizzled_setIsSelected", isSelected)
+        let didChange = (self.isSelected != isSelected)
         self.swizzled_setIsSelected(isSelected)
+        if (didChange) {
+            self.setNeedsUpdateConfiguration()
+        }
     }
     
     @objc static internal func swizzle() {
-        didSwizzle = true
 
         if (didSwizzle == false) {
-            
+            didSwizzle = true
             Swizzle(NSTableRowView.self) {
-                #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
+            //    #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
                 #selector(setter: isSelected) <-> #selector(swizzled_setIsSelected)
          //       #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
            //     NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)

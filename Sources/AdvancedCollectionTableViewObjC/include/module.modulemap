@@ -1,0 +1,4 @@
+module Runtime {
+    umbrella header "NSTableRowView+Private.h"
+    export *
+}
