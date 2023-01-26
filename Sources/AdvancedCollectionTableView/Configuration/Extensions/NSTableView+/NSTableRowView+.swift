@@ -267,9 +267,9 @@ public extension NSTableRowView {
         if (didSwizzle == false) {
             didSwizzle = true
             Swizzle(NSTableRowView.self) {
-             //   NSSelectorFromString("_selected") <-> #selector(swizzled_isSelected)
+             //   NSSelectorFromString("selected") <-> #selector(swizzled_isSelected)
                 #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
-                #selector(setter: isSelected) <-> #selector(setter: swizzled_isSelected)
+                NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
             }
         }
     }
