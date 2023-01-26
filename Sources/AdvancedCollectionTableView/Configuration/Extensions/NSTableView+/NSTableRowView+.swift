@@ -263,13 +263,18 @@ public extension NSTableRowView {
         }
     }
     
+    @objc func swizzled_setIsSelected(_ isSelected: Bool) {
+        Swift.print("swizzled_isSelected set")
+        self.swizzled_setIsSelected(isSelected)
+    }
+    
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
             
             Swizzle(NSTableRowView.self) {
                 #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
-                #selector(setter: isSelected) <-> #selector(setter: swizzled_isSelected)
+                #selector(setter: isSelected) <-> #selector(swizzled_setIsSelected)
          //       #selector(getter: isSelected) <-> #selector(getter: swizzled_isSelected)
            //     NSSelectorFromString("selected") <-> #selector(setter: swizzled_isSelected)
             }
