@@ -29,7 +29,6 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     internal var delegateBridge: DelegateBridge<Section, Element>!
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return tableView.enclosingScrollView }
-    internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     internal var currentSnapshot: CollectionSnapshot = CollectionSnapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
@@ -52,14 +51,13 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     open var selectionHandlers = SelectionHandlers<Element>()
     open var reorderHandlers = ReorderHandlers<Element>()
     open var displayHandlers = DisplayHandlers<Element>() {
-        didSet {  self.ensureTrackingDisplayingItems() } }
+        didSet {  self.ensureTrackingDisplayingRows() } }
     open var prefetchHandlers = PrefetchHandlers<Element>()
     open var dragDropHandlers = DragdropHandlers<Element>()
     open var quicklookHandlers = QuicklookHandlers<Element>()
     open var columnHandlers = ColumnHandlers<Element>()
     open var menuProvider: (([Element]) -> NSMenu?)? = nil
     open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
-    open var pinchHandler: ((CGPoint, CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -68,19 +66,19 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
      */
     open var allowsDeleting: Bool = false
     /**
-     A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
+     A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
 
-     If the value of this property is true (the default is false), users can reorder items in the collection view.
+     If the value of this property is true (the default is false), users can reorder items in the table view.
      */
     open var allowsReordering: Bool = false
     /**
-     A Boolean value that indicates whether users can select items while an section is collapsed in the collection view.
+     A Boolean value that indicates whether users can select items while an section is collapsed in the table view.
 
      If the value of this property is true (the default), users can select items while an section is collapsed.
      */
     open var allowsSectionCollapsing: Bool = true
     /**
-     A Boolean value that indicates whether users can select items in the collection view.
+     A Boolean value that indicates whether users can select items in the table view.
 
      If the value of this property is true (the default), users can select items.
      */
@@ -88,7 +86,7 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         get { self.tableView.isEnabled }
         set { self.tableView.isEnabled = newValue } }
     /**
-     A Boolean value that determines whether users can select more than one item in the collection view.
+     A Boolean value that determines whether users can select more than one item in the table view.
 
      This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
      When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
@@ -97,9 +95,9 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         get { self.tableView.allowsMultipleSelection }
         set { self.tableView.allowsMultipleSelection = newValue } }
     /**
-     A Boolean value indicating whether the collection view may have no selected items.
+     A Boolean value indicating whether the table view may have no selected items.
 
-     The default value of this property is true, which allows the collection view to have no selected items. Setting this property to false causes the collection view to always leave at least one item selected.
+     The default value of this property is true, which allows the table view to have no selected items. Setting this property to false causes the table view to always leave at least one item selected.
      */
     open var allowsEmptySelection: Bool {
         get { self.tableView.allowsEmptySelection }
@@ -133,35 +131,7 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
                     mouseHandlers.mouseDragged != nil )
     }
     
-    internal func addMagnificationRecognizer() {
-        if (magnifyGestureRecognizer == nil) {
-            self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
-            self.tableView.addGestureRecognizer(self.magnifyGestureRecognizer!)
-        }
-    }
-    
-    internal func removeMagnificationRecognizer() {
-        if let magnifyGestureRecognizer = magnifyGestureRecognizer {
-            self.tableView.removeGestureRecognizer(magnifyGestureRecognizer)
-        }
-    }
-    
-    internal var pinchElement: Element? = nil
-    @objc internal func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
-        let pinchLocation = gesture.location(in: self.tableView)
-        switch gesture.state {
-        case .began:
-            //    let center = CGPoint(x: self.tableView.frame.midX, y: self.tableView.frame.midY)
-            pinchElement = self.element(at: pinchLocation)
-        case .ended, .cancelled, .failed:
-            pinchElement = nil
-        default:
-            break
-        }
-        self.pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
-    }
-    
-    internal func ensureTrackingDisplayingItems() {
+    internal func ensureTrackingDisplayingRows() {
         if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
             scrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
@@ -200,6 +170,11 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         previousDisplayingElements = displayingElements
     }
     
+    /**
+     Returns a representation of the current state of the data in the table view.
+
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
     func snapshot() -> CollectionSnapshot {
         var snapshot = CollectionSnapshot()
         snapshot.appendSections(currentSnapshot.sectionIdentifiers)
@@ -209,6 +184,15 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         return snapshot
     }
     
+    /**
+     Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
+
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
+     */
     open func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
@@ -219,11 +203,11 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     /**
      Resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
 
-     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     The system interrupts any ongoing item animations and immediately reloads the table view’s content.
      You can safely call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
      
      - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - snapshot: The snapshot that reflects the new state of the data in the table view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
     open func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
@@ -291,6 +275,15 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         sharedInit()
     }
     
+    public init<C: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<C, Element>) {
+        self.tableView = tableView
+        self.cellProvider = { tableView, column, row, elementID in
+            tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: elementID)!
+        }
+        super.init()
+        sharedInit()
+    }
+    
     public init<C: NSTableCellView, R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<C, Element>, rowRegistration: NSTableView.RowViewRegistration<R, Element>) {
         self.tableView = tableView
         self.cellProvider = { tableView, column, row, elementID in
@@ -302,7 +295,6 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         super.init()
         sharedInit()
     }
-    
     
     internal func sharedInit() {
         self.configurateDataSource()
@@ -316,9 +308,9 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         
         self.responder = Responder(self)
-        let collectionViewNextResponder = self.tableView.nextResponder
+        let tableViewNextResponder = self.tableView.nextResponder
         self.tableView.nextResponder = self.responder
-        self.responder.nextResponder = collectionViewNextResponder
+        self.responder.nextResponder = tableViewNextResponder
         
         self.tableView.dataSource = self
         self.delegateBridge = DelegateBridge(self)
@@ -331,13 +323,6 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
             let element = self.allElements[id: elementID]!
                 return self.cellProvider(tableView, column, row, element)
         })
-        
-        
-    
-      //      guard let self = self, let element = self.allElements[id: elementID] else { assertionFailure() }
-      //      return self.rowProvider(tableView, row, element)!
-     //   }
-         
     }
 }
     

@@ -31,30 +31,19 @@ extension NSTableCellContentConfiguration {
             stackView.alignment = .firstBaseline
             return stackView
         }()
-        
-        var configuration: NSContentConfiguration {
-            get { self.appliedConfiguration }
-            set {
-                if let newValue = newValue as? NSTableCellContentConfiguration {
-                    self.appliedConfiguration = newValue
-                }
-            }
-        }
-        
-        internal var appliedConfiguration: NSTableCellContentConfiguration {
-            didSet {
-                self.updateConfiguration(with: self.appliedConfiguration)
-            }
-        }
-        
+                
         internal func updateConfiguration(with configuration: NSTableCellContentConfiguration) {
             
-            if configuration.imageProperties.position == .leading, stackView.arrangedSubviews.first != self.imageView {
-                stackView.removeArrangedSubview(textStackView)
-                stackView.addArrangedSubview(textStackView)
+            if configuration.imageProperties.position == .leading {
+                if (stackView.arrangedSubviews.last != self.textStackView) {
+                    stackView.removeArrangedSubview(textStackView)
+                    stackView.addArrangedSubview(textStackView)
+                }
             } else {
-                stackView.removeArrangedSubview(imageView)
-                stackView.addArrangedSubview(imageView)
+                if (stackView.arrangedSubviews.last != self.imageView) {
+                    stackView.removeArrangedSubview(imageView)
+                    stackView.addArrangedSubview(imageView)
+                }
             }
             
             textField.maximumNumberOfLines = configuration.textProperties.numberOfLines
@@ -130,7 +119,7 @@ extension NSTableCellContentConfiguration {
             
             NSLayoutConstraint.deactivate(imageViewConstraints)
             switch configuration.imageProperties.size {
-            case .fullHeight:
+            case .cellHeight:
                 imageViewConstraints = [
                     imageView.topAnchor.constraint(equalTo: textStackView.topAnchor, constant: 0.0),
                     imageView.centerYAnchor.constraint(equalTo: textStackView.centerYAnchor, constant: 0.0),
@@ -184,6 +173,21 @@ extension NSTableCellContentConfiguration {
         public override func layout() {
             super.layout()
             // missing
+        }
+        
+        var configuration: NSContentConfiguration {
+            get { self.appliedConfiguration }
+            set {
+                if let newValue = newValue as? NSTableCellContentConfiguration {
+                    self.appliedConfiguration = newValue
+                }
+            }
+        }
+        
+        internal var appliedConfiguration: NSTableCellContentConfiguration {
+            didSet {
+                self.updateConfiguration(with: self.appliedConfiguration)
+            }
         }
         
         func supports(_ configuration: NSContentConfiguration) -> Bool {

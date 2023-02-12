@@ -177,6 +177,11 @@ public extension NSTableCellView {
         }
     }
     
+    /**
+     A Boolean value that specifies whether the current cell view is hovered.
+
+     A hovered row view has the mouse pointer on it.
+     */
     internal var isHovered: Bool {
         get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
         set {

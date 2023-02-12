@@ -10,11 +10,21 @@ import FZExtensions
 // import AdvancedCollectionTableViewObjC
 
 public extension NSTableRowView {
+    /**
+     The array of cell views embedded in the current row.
+     
+     This array contains zero or more NSTableCellView objects that represent the cell views embedded in the current row view’s content.
+     */
     var cellViews: [NSTableCellView] {
         (0..<self.numberOfColumns).compactMap({self.view(atColumn: $0) as? NSTableCellView})
     //    self.subviews.compactMap({$0 as? NSTableCellView})
     }
     
+    /**
+     The table view that displays the current row view.
+
+     The table view that displays the current row view. The value of this property is nil when the row view is not displayed in a table view.
+     */
     var tableView: NSTableView? {
         self.firstSuperview(for: NSTableView.self)
     }
@@ -179,6 +189,11 @@ public extension NSTableRowView {
         
     }
     
+    /**
+     A Boolean value that specifies whether the current row view is hovered.
+
+     A hovered row view has the mouse pointer on it.
+     */
     internal var isHovered: Bool {
         get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
         set {
@@ -227,26 +242,6 @@ public extension NSTableRowView {
             self.setNeedsUpdateConfiguration()
         }
     }
-    
-    /*
-    @objc var isSelected: Bool {
-        get { getAssociatedValue(key: "_isSelected", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "_isSelected", object: self)
-            self.setNeedsUpdateConfiguration()
-        }
-    }
-    */
-    
-    /*
-    override var isSelectable: Bool {
-        get { getAssociatedValue(key: "_isSelectable", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "_isSelectable", object: self)
-            self.setNeedsUpdateConfiguration()
-        }
-    }
-    */
      
     static internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }

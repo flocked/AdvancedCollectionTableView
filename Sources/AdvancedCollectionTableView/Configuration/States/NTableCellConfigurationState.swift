@@ -32,6 +32,24 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     public var isExpanded: Bool = false
     /// A Boolean value that indicates whether the cell is in a emphasized state.
     public var isEmphasized: Bool = false
+    
+    public init(isSelected: Bool = false,
+                isSelectable: Bool = false,
+                isDisabled: Bool = false,
+                isFocused: Bool = false,
+                isHovered: Bool = false,
+                isEditing: Bool = false,
+                isExpanded: Bool = false,
+                isEmphasized: Bool = false) {
+        self.isSelected = isSelected
+        self.isSelectable = isSelectable
+        self.isDisabled = isDisabled
+        self.isFocused = isFocused
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isExpanded = isExpanded
+        self.isEmphasized = isEmphasized
+    }
 
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {

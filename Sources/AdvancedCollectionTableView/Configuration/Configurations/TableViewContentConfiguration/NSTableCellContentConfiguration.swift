@@ -81,11 +81,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
     /**
-     The padding between the text (or secondary text) and custom view.
-     This value only applies when there’s both a text (or secondary text) and custom view.
-     */
-    public var textToCustomViewPadding: CGFloat = 4.0
-    /**
      The margins between the content and the edges of the content view.
      */
     public var padding: NSDirectionalEdgeInsets = .init(4.0)
@@ -138,7 +133,6 @@ public extension NSTableCellContentConfiguration {
          The style of bezel the text field displays.
          */
         public var bezelStyle: NSTextField.BezelStyle? = nil
-        
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
@@ -175,7 +169,17 @@ public extension NSTableCellContentConfiguration {
             return nil
         }
         
-        public static func textStyle(_ style: NSFont.TextStyle = .body, weight: NSFont.Weight? = nil) -> TextProperties {
+        public static func `default`() -> TextProperties {
+            return .textStyle(.body)
+        }
+        
+        public static func system(size: CGFloat, weight: NSFont.Weight? = nil) -> TextProperties {
+            var property = TextProperties()
+            property.font = .system(size: size, weight: weight ?? .regular)
+            return property
+        }
+        
+        public static func textStyle(_ style: NSFont.TextStyle, weight: NSFont.Weight? = nil) -> TextProperties {
             var property = TextProperties()
             if let weight = weight {
                 property.font = .system(style).weight(weight)
@@ -200,11 +204,11 @@ public extension NSTableCellContentConfiguration {
         
         public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
         public var tintColorTransform: NSConfigurationColorTransformer? = nil
-        public var size: ImageSize = .fullHeight
+        public var size: ImageSize = .cellHeight
         public var scaling: CALayerContentsGravity = .resizeAspectFill
         
         public enum ImageSize: Hashable {
-            case fullHeight
+            case cellHeight
             case textHeight
             case secondaryTextHeight
             case size(CGSize)

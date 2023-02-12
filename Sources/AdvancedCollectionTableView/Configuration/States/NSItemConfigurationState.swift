@@ -41,5 +41,25 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     }
     
     internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
+    
+    public init(isSelected: Bool = false,
+         isSelectable: Bool = false,
+         isDisabled: Bool = false,
+         isFocused: Bool = false,
+         isHovered: Bool = false,
+         isEditing: Bool = false,
+         isExpanded: Bool = false,
+         highlight: NSCollectionViewItem.HighlightState = .none,
+         isEmphasized: Bool = false) {
+        self.isSelected = isSelected
+        self.isSelectable = isSelectable
+        self.isDisabled = isDisabled
+        self.isFocused = isFocused
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isExpanded = isExpanded
+        self.highlight = highlight
+        self.isEmphasized = isEmphasized
+    }
 }
 

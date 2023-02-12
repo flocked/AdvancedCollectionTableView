@@ -44,5 +44,27 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     }
     
     internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
+    
+    public init(isSelected: Bool = false,
+         isSelectable: Bool = false,
+         isDisabled: Bool = false,
+         isFocused: Bool = false,
+         isHovered: Bool = false,
+         isEditing: Bool = false,
+         isExpanded: Bool = false,
+         isEmphasized: Bool = false,
+         isNextRowSelected: Bool = false,
+         isPreviousRowSelected: Bool = false) {
+        self.isSelected = isSelected
+        self.isSelectable = isSelectable
+        self.isDisabled = isDisabled
+        self.isFocused = isFocused
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isExpanded = isExpanded
+        self.isEmphasized = isEmphasized
+        self.isNextRowSelected = isNextRowSelected
+        self.isPreviousRowSelected = isPreviousRowSelected
+    }
 }
 

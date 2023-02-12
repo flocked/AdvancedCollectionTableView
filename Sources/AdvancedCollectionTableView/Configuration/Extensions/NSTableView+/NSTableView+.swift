@@ -114,10 +114,11 @@ public extension NSTableView {
          set { set(associatedValue: newValue, key: "_trackingArea", object: self) } }
     
 
-    override dynamic func updateTrackingAreas() {
+    @objc func swizzled_updateTrackingAreas() {
         Swift.print("updateTrackingAreas")
         super.updateTrackingAreas()
-        self.installTrackingArea()
+
+        self.swizzled_updateTrackingAreas()
         /*
         if let trackingArea = trackingArea {
             self.removeTrackingArea(trackingArea)
@@ -140,39 +141,59 @@ public extension NSTableView {
          self.addTrackingArea(trackingArea!)
     }
     
+    /*
     override dynamic func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         Swift.print("viewDidMoveToSuperview")
         self.installTrackingArea()
     }
+     */
    
-   override dynamic func mouseEntered(with event: NSEvent) {
+    @objc func swizzled_mouseEntered(with event: NSEvent) {
        super.mouseEntered(with: event)
        self.updateRowHoverState(event)
+        self.swizzled_mouseEntered(with: event)
+
    }
    
-   override func mouseMoved(with event: NSEvent) {
+    @objc func swizzled_mouseMoved(with event: NSEvent) {
        super.mouseMoved(with: event)
        self.updateRowHoverState(event)
+        self.swizzled_mouseMoved(with: event)
+
    }
    
-    override dynamic func mouseExited(with event: NSEvent) {
+    @objc func swizzled_mouseExited(with event: NSEvent) {
        super.mouseExited(with: event)
         self.updateRowHoverState(nil)
+        self.swizzled_mouseExited(with: event)
+
    }
  
-    
     internal var hoveredRowView: NSTableRowView? {
          get { getAssociatedValue(key: "_hoveredRowView", object: self) }
          set {  set(associatedValue: newValue, key: "_hoveredRowView", object: self) }
      }
+    
+    internal func cellViews(atRow index: Int) -> [NSTableCellView] {
+        guard index >= 0 && index < self.numberOfRows else { return [] }
+        return self.rowView(atRow: index, makeIfNecessary: false)?.cellViews ?? []
+    }
         
     internal func updateRowHoverState(_ event: NSEvent?) {
-        hoveredRowView?.isHovered = false
         if let location = event?.location(in: self) {
             let rowIndex = self.row(at: location)
-            hoveredRowView = self.rowView(atRow: rowIndex, makeIfNecessary: true)
-            hoveredRowView?.isHovered = true
+            let newHoveredRowView = self.rowView(atRow: rowIndex, makeIfNecessary: true)
+            if (newHoveredRowView != hoveredRowView) {
+                hoveredRowView?.isHovered = false
+                hoveredRowView?.cellViews.forEach({$0.isHovered = false})
+                hoveredRowView = newHoveredRowView
+                hoveredRowView?.isHovered = true
+                hoveredRowView?.cellViews.first(where: {$0.frame.contains(location)})?.isHovered = true
+            }
+        } else {
+            hoveredRowView?.isHovered = false
+            hoveredRowView?.cellViews.forEach({$0.isHovered = false})
         }
     }
     
@@ -183,11 +204,13 @@ public extension NSTableView {
          }
      }
     
+    /*
     override var isEnabled: Bool {
         didSet {
             self.visibleRowViews().forEach({$0.isDisabled = !self.isEnabled})
         }
     }
+    */
     
     internal func observeWindowState() {
         if (isObservingWindowState == false) {
@@ -210,4 +233,21 @@ public extension NSTableView {
     ) -> NSImage {
         self.dragHandler?(dragRows, tableColumns, dragEvent, dragImageOffset) ?? NSImage(color: .gray)
     }
+    
+    static internal var didSwizzleTableView: Bool {
+        get { getAssociatedValue(key: "_didSwizzleTableView", object: self, initialValue: false) }
+        set {
+            set(associatedValue: newValue, key: "_didSwizzleTableView", object: self)
+        }
+    }
+    
+    @objc static internal func swizzleTableView() {
+        if (didSwizzleTableView == false) {
+            didSwizzleTableView = true
+            Swizzle(NSTableRowView.self) {
+                #selector(updateTrackingAreas) <-> #selector(swizzled_updateTrackingAreas)
+            }
+        }
+    }
+    
 }
