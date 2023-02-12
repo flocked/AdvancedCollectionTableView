@@ -113,6 +113,22 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     internal var hasImage: Bool {
         self.image != nil || self.imageProperties.resolvedBackgroundColor() != nil
     }
+    
+   public init(text: String? = nil, attributedText: AttributedString? = nil, secondaryText: String? = nil, secondaryattributedText: AttributedString? = nil, image: NSImage? = nil, accessories: [AccessoryProperties] = [], imageProperties: ImageProperties = ImageProperties(), textProperties: TextProperties = TextProperties(), secondaryTextProperties: TextProperties = TextProperties(), imageToTextPadding: CGFloat = 4.0, textToSecondaryTextPadding: CGFloat = 4.0, padding: NSDirectionalEdgeInsets = .init(4.0)) {
+        self.text = text
+        self.attributedText = attributedText
+        self.secondaryText = secondaryText
+        self.secondaryattributedText = secondaryattributedText
+        self.image = image
+        self.accessories = accessories
+        self.imageProperties = imageProperties
+        self.textProperties = textProperties
+        self.secondaryTextProperties = secondaryTextProperties
+        self.imageToTextPadding = imageToTextPadding
+        self.textToSecondaryTextPadding = textToSecondaryTextPadding
+        self.padding = padding
+    }
+
 }
 
 public extension NSTableCellContentConfiguration {
@@ -188,6 +204,21 @@ public extension NSTableCellContentConfiguration {
             }
             return property
         }
+        
+       public init(font: NSFont = .system(.body), numberOfLines: Int? = nil, alignment: NSTextAlignment = .left, lineBreakMode: NSLineBreakMode = .byWordWrapping, textTransform: TextTransform = .none, bezelStyle: NSTextField.BezelStyle? = nil, isSelectable: Bool = false, isEditable: Bool = false, textColor: NSColor = .labelColor, textColorTansform: NSConfigurationColorTransformer? = nil, backgroundColor: NSColor? = nil, backgroundColorTansform: NSConfigurationColorTransformer? = nil) {
+            self.font = font
+            self.numberOfLines = numberOfLines
+            self.alignment = alignment
+            self.lineBreakMode = lineBreakMode
+            self.textTransform = textTransform
+            self.bezelStyle = bezelStyle
+            self.isSelectable = isSelectable
+            self.isEditable = isEditable
+            self.textColor = textColor
+            self.textColorTansform = textColorTansform
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTansform = backgroundColorTansform
+        }
     }
     
     struct ImageProperties: Hashable {
@@ -205,7 +236,7 @@ public extension NSTableCellContentConfiguration {
         public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
         public var tintColorTransform: NSConfigurationColorTransformer? = nil
         public var size: ImageSize = .cellHeight
-        public var scaling: CALayerContentsGravity = .resizeAspectFill
+        public var scaling: CALayerContentsGravity = .resizeAspect
         
         public enum ImageSize: Hashable {
             case cellHeight
@@ -231,6 +262,19 @@ public extension NSTableCellContentConfiguration {
                 return self.tintColorTransform?(tintColor) ?? tintColor
             }
             return nil
+        }
+        
+       public init(symbolConfiguration: SymbolConfiguration = SymbolConfiguration(), tintColor: NSColor? = nil, cornerRadius: CGFloat = 0.0, backgroundColor: NSColor? = nil, shadowProperties: ShadowProperties = ShadowProperties(), position: Position = .leading, backgroundColorTransform: NSConfigurationColorTransformer? = nil, tintColorTransform: NSConfigurationColorTransformer? = nil, size: ImageSize = .cellHeight, scaling: CALayerContentsGravity = .resizeAspect) {
+            self.symbolConfiguration = symbolConfiguration
+            self.tintColor = tintColor
+            self.cornerRadius = cornerRadius
+            self.backgroundColor = backgroundColor
+            self.shadowProperties = shadowProperties
+            self.position = position
+            self.backgroundColorTransform = backgroundColorTransform
+            self.tintColorTransform = tintColorTransform
+            self.size = size
+            self.scaling = scaling
         }
         
         public struct SymbolConfiguration: Hashable {
@@ -332,6 +376,12 @@ public extension NSTableCellContentConfiguration {
                 }
                 return symbolConfiguration
             }
+            
+           public init(fontStyle: FontStyle? = nil, colorStyle: ColorStyle? = nil, colorTransform: NSConfigurationColorTransformer? = nil) {
+                self.fontStyle = fontStyle
+                self.colorStyle = colorStyle
+                self.colorTransform = colorTransform
+            }
         }
         
         public struct ShadowProperties: Hashable {
@@ -363,8 +413,17 @@ public extension NSTableCellContentConfiguration {
             public static func none() -> ShadowProperties {
                 return ShadowProperties()
             }
+            
+            public init(radius: CGFloat = 0.0, color: NSColor? = nil, opacity: CGFloat = 0.0, offset: CGPoint = .zero, colorTransform: NSConfigurationColorTransformer? = nil) {
+                self.radius = radius
+                self.color = color
+                self.opacity = opacity
+                self.offset = offset
+                self.colorTransform = colorTransform
+            }
         }
     }
+    
     struct ViewProperties: Hashable {
         public enum WidthSizeOption: Hashable {
             case absolute(CGFloat)
@@ -398,42 +457,17 @@ public extension NSTableCellContentConfiguration {
             }
             return nil
         }
-    }
-}
-
-
-internal extension String {
-    func transform(using transform: NSTableCellContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self
-        case .capitalized:
-            return self.capitalized
-        case .lowercase:
-            return self.lowercased()
-        case .uppercase:
-            return self.uppercased()
+        
+        public init(cornerRadius: CGFloat = 0.0, roundedCorners: Corners = .all, width: WidthSizeOption = .textWidth, height: HeightSizeOption = .absolute(30.0), backgroundColor: NSColor? = nil, backgroundColorTransform: NSConfigurationColorTransformer? = nil) {
+            self.cornerRadius = cornerRadius
+            self.roundedCorners = roundedCorners
+            self.width = width
+            self.height = height
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTransform = backgroundColorTransform
         }
     }
-}
 
-internal extension NSAttributedString {
-    func transform(using transform: NSTableCellContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self.string
-        case .capitalized:
-            return self.string.capitalized
-        case .lowercase:
-            return self.string.lowercased()
-        case .uppercase:
-            return self.string.uppercased()
-        }
-    }
-}
-
-
-public extension NSTableCellContentConfiguration {
     struct AccessoryProperties: Hashable {
         public enum Position: Hashable {
             case top
@@ -500,6 +534,49 @@ public extension NSTableCellContentConfiguration {
                 return self.backgroundColorTansform?(backgroundColor) ?? backgroundColor
             }
             return nil
+        }
+        
+        public init(position: Position = .topLeft, text: String? = nil, attributedText: NSAttributedString? = nil, image: NSImage? = nil, view: NSView? = nil, viewProperties: ViewProperties = ViewProperties(), imageProperties: ImageProperties = ImageProperties(), textProperties: TextProperties = TextProperties(), backgroundColor: NSColor? = nil, backgroundColorTansform: NSConfigurationColorTransformer? = nil) {
+            self.position = position
+            self.text = text
+            self.attributedText = attributedText
+            self.image = image
+            self.view = view
+            self.viewProperties = viewProperties
+            self.imageProperties = imageProperties
+            self.textProperties = textProperties
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTansform = backgroundColorTansform
+        }
+    }
+}
+
+internal extension String {
+    func transform(using transform: NSTableCellContentConfiguration.TextProperties.TextTransform) -> String {
+        switch transform {
+        case .none:
+            return self
+        case .capitalized:
+            return self.capitalized
+        case .lowercase:
+            return self.lowercased()
+        case .uppercase:
+            return self.uppercased()
+        }
+    }
+}
+
+internal extension NSAttributedString {
+    func transform(using transform: NSTableCellContentConfiguration.TextProperties.TextTransform) -> String {
+        switch transform {
+        case .none:
+            return self.string
+        case .capitalized:
+            return self.string.capitalized
+        case .lowercase:
+            return self.string.lowercased()
+        case .uppercase:
+            return self.string.uppercased()
         }
     }
 }
