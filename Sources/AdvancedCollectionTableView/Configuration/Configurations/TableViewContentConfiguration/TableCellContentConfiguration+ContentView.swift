@@ -59,13 +59,14 @@ extension NSTableCellContentConfiguration {
             textField.bezelStyle = configuration.textProperties.bezelStyle ?? .roundedBezel
             textField.isBezeled = (configuration.textProperties.bezelStyle != nil)
             if let attributedText = configuration.attributedText {
-                textField.attributedStringValue = attributedText
+                textField.attributedStringValue = NSAttributedString(attributedText)
                 //                 textField.attributedStringValue = attributedText.transform(using: configuration.textProperties.transform)
 
             } else {
                 textField.stringValue = configuration.text?.transform(using: configuration.textProperties.textTransform) ?? ""
             }
             
+            /*
             var topAccessorVyiews: [NSView] = []
             var bottomAccessorVyiews: [NSView] = []
             for accessory in configuration.accessories {
@@ -73,6 +74,7 @@ extension NSTableCellContentConfiguration {
                     
                 }
             }
+             */
             
             secondaryTextField.isHidden = (configuration.hasSecondaryText == false)
             secondaryTextField.maximumNumberOfLines = configuration.secondaryTextProperties.numberOfLines
@@ -88,7 +90,7 @@ extension NSTableCellContentConfiguration {
             secondaryTextField.isBezeled = (configuration.secondaryTextProperties.bezelStyle != nil)
 
             if let secondaryattributedText = configuration.secondaryattributedText {
-                secondaryTextField.attributedStringValue = secondaryattributedText
+                secondaryTextField.attributedStringValue = NSAttributedString(secondaryattributedText)
             } else {
                 secondaryTextField.stringValue = configuration.secondaryText?.transform(using: configuration.secondaryTextProperties.textTransform) ?? ""
             }

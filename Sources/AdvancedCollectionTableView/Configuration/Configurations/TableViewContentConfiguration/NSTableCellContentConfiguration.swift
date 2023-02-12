@@ -36,7 +36,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /**
      An attributed variant of the primary text.
      */
-    public var attributedText: NSAttributedString? = nil
+    public var attributedText: AttributedString? = nil
     /**
      The secondary text.
      */
@@ -44,7 +44,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /**
      An attributed variant of the secondary text.
      */
-    public var secondaryattributedText: NSAttributedString? = nil
+    public var secondaryattributedText: AttributedString? = nil
     /**
      The image to display.
      */
