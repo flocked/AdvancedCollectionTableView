@@ -350,7 +350,7 @@ public extension NSTableCellContentConfiguration {
                 }
             }
             
-            internal var symbolConfiguration: NSImage.SymbolConfiguration {
+            public var nsImageSymbolConfiguration: NSImage.SymbolConfiguration {
                 var symbolConfiguration = NSImage.SymbolConfiguration()
          
                 if let fontStyle = fontStyle {

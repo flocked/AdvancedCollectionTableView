@@ -108,7 +108,7 @@ extension NSTableCellContentConfiguration {
             imageView.backgroundColor = configuration.imageProperties.resolvedBackgroundColor()
             imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = .center
-            imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.symbolConfiguration
+            imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.nsImageSymbolConfiguration
             
             stackView.spacing = configuration.imageToTextPadding
             textStackView.spacing = configuration.textToSecondaryTextPadding
