@@ -244,8 +244,12 @@ public extension NSTableView {
     @objc static internal func swizzleTableView() {
         if (didSwizzleTableView == false) {
             didSwizzleTableView = true
-            Swizzle(NSTableRowView.self) {
-                #selector(updateTrackingAreas) <-> #selector(swizzled_updateTrackingAreas)
+            do {
+                try Swizzle(NSTableRowView.self) {
+                    #selector(updateTrackingAreas) <-> #selector(swizzled_updateTrackingAreas)
+                }
+            } catch {
+                Swift.print(error)
             }
         }
     }

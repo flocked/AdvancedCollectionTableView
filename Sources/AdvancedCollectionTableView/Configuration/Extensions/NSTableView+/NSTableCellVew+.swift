@@ -256,8 +256,12 @@ public extension NSTableCellView {
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
-            Swizzle(NSTableCellView.self) {
-                #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
+            do {
+                try Swizzle(NSTableCellView.self) {
+                    #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
+                }
+            } catch {
+                Swift.print(error)
             }
         }
     }

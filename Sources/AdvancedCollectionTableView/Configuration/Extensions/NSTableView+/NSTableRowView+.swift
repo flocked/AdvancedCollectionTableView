@@ -261,8 +261,12 @@ public extension NSTableRowView {
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
-            Swizzle(NSTableRowView.self) {
-                #selector(setter: isSelected) <-> #selector(swizzled_setIsSelected)
+            do {
+                try Swizzle(NSTableRowView.self) {
+                    #selector(setter: isSelected) <-> #selector(swizzled_setIsSelected)
+                }
+            } catch {
+                Swift.print(error)
             }
         }
     }

@@ -435,12 +435,27 @@ public extension NSCollectionViewItem {
     @objc static internal func swizzle() {
         if (didSwizzle == false) {
             didSwizzle = true
-            Swizzle(NSCollectionViewItem.self) {
-            #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
-                #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
-                #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
+            do {
+              try Swizzle(NSCollectionViewItem.self) {
+                    NSSelectorFromString("prepareForReuse") <-> #selector(swizzled_PrepareForReuse)
+                    
+                    #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
+                    #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
+                    #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
+                }
+            } catch {
+                Swift.print(error)
             }
         }
+    }
+    
+    @objc internal func swizzled_PrepareForReuse() {
+        self.isHovered = false
+        self.isSelectable = false
+        self.isDisabled = false
+        self.isReordering = false
+        self.isEditing = false
+        swizzled_PrepareForReuse()
     }
     
     @objc internal func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {

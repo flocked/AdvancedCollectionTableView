@@ -69,9 +69,13 @@ public extension NSTableView {
         if (didSwizzle == false) {
             didSwizzle = true
             let registerSelector = #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void)
-            Swizzle(NSTableView.self) {
-                #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
-                registerSelector <-> #selector(self.swizzled_register(_:forIdentifier:))
+            do {
+                try Swizzle(NSTableView.self) {
+                    #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
+                    registerSelector <-> #selector(self.swizzled_register(_:forIdentifier:))
+                }
+            } catch {
+                Swift.print(error)
             }
         }
     }
