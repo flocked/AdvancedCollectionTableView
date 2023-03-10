@@ -84,7 +84,7 @@ extension CollectionViewDiffableDataSource {
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
                 if (event.keyCode == 49) { // SpaceBar
-                    if (self.dataSource.quicklookPanel.isOpen == false) {
+                    if (self.dataSource.quicklookPanel.isVisible == false) {
                         if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
                             var previewItems: [QuicklookItem] = []
                             for _element in _elements {
@@ -94,7 +94,7 @@ extension CollectionViewDiffableDataSource {
                             }
                             if (previewItems.isEmpty == false) {
                                 self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                self.dataSource.quicklookPanel.preview(previewItems)
+                                self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
                     } else {
@@ -107,7 +107,7 @@ extension CollectionViewDiffableDataSource {
                             }
                             if (previewItems.isEmpty == false) {
                                 self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                self.dataSource.quicklookPanel.preview(previewItems)
+                                self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
                         if (previewItems.isEmpty == false) {

@@ -82,7 +82,7 @@ extension TableViewDiffableDataSource {
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
                 if (event.keyCode == 49) { // SpaceBar
-                    if (self.dataSource.quicklookPanel.isOpen == false) {
+                    if (self.dataSource.quicklookPanel.isVisible == false) {
                         if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
                             var previewItems: [QuicklookItem] = []
                             for _element in _elements {
@@ -92,7 +92,7 @@ extension TableViewDiffableDataSource {
                             }
                             if (previewItems.isEmpty == false) {
                                 self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
-                                self.dataSource.quicklookPanel.preview(previewItems)
+                                self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
                     } else {
@@ -105,7 +105,7 @@ extension TableViewDiffableDataSource {
                             }
                             if (previewItems.isEmpty == false) {
                                 self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
-                                self.dataSource.quicklookPanel.preview(previewItems)
+                                self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
                         if (previewItems.isEmpty == false) {

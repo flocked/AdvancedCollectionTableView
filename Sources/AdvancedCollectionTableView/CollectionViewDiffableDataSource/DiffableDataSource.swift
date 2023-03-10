@@ -348,7 +348,7 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
         
             if (previewItems.isEmpty == false) {
                 self.quicklookPanel.keyDownResponder = self.collectionView
-                self.quicklookPanel.preview(previewItems)
+                self.quicklookPanel.present(previewItems)
             }
     }
     
@@ -361,7 +361,7 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
             }
             if (previewItems.isEmpty == false) {
                 self.quicklookPanel.keyDownResponder = self.collectionView
-                self.quicklookPanel.preview(previewItems)
+                self.quicklookPanel.present(previewItems)
             }
         
         if (previewItems.isEmpty == false) {
