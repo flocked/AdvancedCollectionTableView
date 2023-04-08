@@ -20,6 +20,9 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
+            if (self.dataSource.draggingElements.isEmpty == false) {
+                self.dataSource.reorderingHandlers.didReorder?(self.dataSource.draggingElements)
+            }
             self.dataSource.draggingIndexPaths = []
         }
         
@@ -34,7 +37,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexes: IndexSet, with event: NSEvent) -> Bool {
-            if let canReorderHandler = self.dataSource.reorderHandlers.canReorder {
+            if let canReorderHandler = self.dataSource.reorderingHandlers.canReorder {
                 let elements = indexes.compactMap({self.dataSource.element(for: IndexPath(item: $0, section: 0))})
                 return canReorderHandler(elements)
             } else {
@@ -66,10 +69,12 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
+                self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
                 self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
             }
             return true
         }
+        
         
         func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
             

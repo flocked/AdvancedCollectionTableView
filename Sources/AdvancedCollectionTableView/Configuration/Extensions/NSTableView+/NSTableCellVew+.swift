@@ -8,23 +8,7 @@
 import AppKit
 import FZExtensions
 
-public extension NSTableCellView {
-    /**
-     The row view this cell is currently displaying.
-     
-     If a cell gets displayed inside a table view this property returns the ´´´NSTableRowView´´.
-     */
-    var rowView: NSTableRowView? {
-       return self.firstSuperview(for: NSTableRowView.self)
-    }
-    
-    /**
-     The table view this cell is currently displaying.
-     */
-    var tableView: NSTableView? {
-        self.firstSuperview(for: NSTableView.self)
-    }
-    
+public extension NSTableCellView {    
     var contentView: NSView?   {
         get { getAssociatedValue(key: "_contentView", object: self) }
         set {
@@ -265,5 +249,4 @@ public extension NSTableCellView {
             }
         }
     }
-    
 }

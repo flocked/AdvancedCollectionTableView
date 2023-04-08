@@ -8,67 +8,82 @@
 import AppKit
 
 extension CollectionViewDiffableDataSource {
+    /// Handlers for selection.
     public struct SelectionHandlers<E> {
-        public var shouldSelect: (([E]) -> [E])? = nil
-        public var shouldDeselect: (([E]) -> [E])? = nil
-        public var didSelect: (([E]) -> Void)? = nil
-        public var didDeselect: (([E]) -> Void)? = nil
+        public var shouldSelect: ((_ elements: [E]) -> [E])? = nil
+        public var shouldDeselect: ((_ elements: [E]) -> [E])? = nil
+        public var didSelect: ((_ elements: [E]) -> ())? = nil
+        public var didDeselect: ((_ elements: [E]) -> ())? = nil
     }
     
     public struct DragdropHandlers<E> {
-        public var canDropOutside: (([E]) -> [E])? = nil
-        public var dropOutside: (([E]) -> [AnyObject])? = nil
+        public var canDropOutside: ((_ elements: [E]) -> [E])? = nil
+        public var dropOutside: ((_ elements: [E]) -> [AnyObject])? = nil
         public var canDrag: (([AnyObject]) -> Bool)? = nil
-        public var dragOutside: (([E]) -> [AnyObject])? = nil
-        public var draggingImage: (([E], NSEvent, NSPointPointer) -> NSImage?)? = nil
+        public var dragOutside: ((_ elements: [E]) -> [AnyObject])? = nil
+        public var draggingImage: ((_ elements: [E], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
     
     public struct HighlightHandlers<E> {
-        public var shouldChangeItems: (([E], NSCollectionViewItem.HighlightState) -> [E])? = nil
-        public var didChangeItems: (([E], NSCollectionViewItem.HighlightState) -> ())? = nil
+        public var shouldChangeItems: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> [E])? = nil
+        public var didChangeItems: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
     
-    public struct ReorderHandlers<E> {
-        public var canReorder: (([E]) -> Bool)? = nil
-        public var willReorder: (([E]) -> Void)? = nil
-        public var didReorder: (([E]) -> Void)? = nil
+    /// Handlers for reordering items.
+    public struct ReorderingHandlers<E> {
+        /// The handler that determines whether you can reorder a particular item.
+        public var canReorder: ((_ elements: [E]) -> Bool)? = nil
+        /// The handler that prepares the diffable data source for reordering its items.
+        public var willReorder: ((_ elements: [E]) -> ())? = nil
+        /// The handler that processes a reordering transaction.
+        public var didReorder: ((_ elements: [E]) -> ())? = nil
     }
     
+    /// Handlers for prefetching items.
     public struct PrefetchHandlers<E> {
-        public var willPrefetch: (([E]) -> Void)? = nil
-        public var didCancelPrefetching: (([E]) -> Void)? = nil
+        /// Handler that tells you to begin preparing data for the elements.
+        public var willPrefetch: ((_ elements: [E]) -> ())? = nil
+        /// Cancels a previously triggered data prefetch request.
+        public var didCancelPrefetching: ((_ elements: [E]) -> ())? = nil
     }
     
+    /// Handlers for displayig items.
     public struct DisplayHandlers<E> {
-        public var isDisplaying: (([E]) -> Void)?
-        public var didEndDisplaying: (([E]) -> Void)?
+        public var isDisplaying: ((_ elements: [E]) -> ())?
+        public var didEndDisplaying: ((_ elements: [E]) -> ())?
     }
     
     public struct QuicklookHandlers<E> {
         public var preview: (([E]) -> [(element: Element, url: URL)]?)?
-        public var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
+        public var endPreviewing: ((_ elements: [E]) ->  [(element: Element, url: URL)]?)?
     }
     
     public struct MouseHandlers<E> {
-        public var mouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> Void)? = nil
-        public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> Void)? = nil
-        public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> Void)? = nil
-    //   var mouseEntered: ((CGPoint) -> Void)? = nil
-        public var mouseMoved: ((CGPoint) -> Void)? = nil
-     //   var mouseExited: ((CGPoint) -> Void)? = nil
+        public var mouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> ())? = nil
+        public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> ())? = nil
+        public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
+    //   var mouseEntered: ((CGPoint) -> ())? = nil
+        public var mouseMoved: ((CGPoint) -> ())? = nil
+     //   var mouseExited: ((CGPoint) -> ())? = nil
     }
     
     public struct HoverHandlers<E> {
-        public var isHovering: ((E) -> Void)?
-        public var didEndHovering: ((E) -> Void)?
+        public var isHovering: ((_ element: E) -> ())?
+        public var didEndHovering: ((_ element: E) -> ())?
     }
     
+    /// Handlers for expanding and collapsing items.
     public struct SectionHandlers<Section> {
-        public var shouldCollapse: ((Section) -> Bool)?
-        public var willCollapse: ((Section) -> Void)?
-        public var shouldExpand: ((Section) -> Bool)?
-        public var willExpand: ((Section) -> Void)?
-        public var canReorder: ((Section) -> Bool)?
-        public var didReorder: ((Section) -> Void)?
+        /// The handler that determines whether a particular section is collapsable.
+        public var shouldCollapse: ((_ section: Section) -> Bool)?
+        /// The handler that determines whether a particular section is expandable.
+        public var shouldExpand: ((_ section: Section) -> Bool)?
+        /// The handler that prepares the diffable data source for collapsing an section.
+        public var willCollapse: ((_ section: Section) -> ())?
+        /// The handler that prepares the diffable data source for expanding an section.
+        public var willExpand: ((_ section: Section) -> ())?
+        ///         /// The handler that determines whether a particular section can be reordered.
+        public var canReorder: ((_ section: Section) -> Bool)?
+        public var didReorder: ((_ section: Section) -> ())?
     }
 }
