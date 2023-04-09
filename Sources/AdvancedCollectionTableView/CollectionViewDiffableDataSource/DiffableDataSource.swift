@@ -169,9 +169,9 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     public var highlightHandlers = HighlightHandlers<Element>()
     public var quicklookHandlers = QuicklookHandlers<Element>()
 
-    public var menuProvider: (([Element]) -> NSMenu?)? = nil
-    public var keydownHandler: ((NSEvent) -> Bool)? = nil
-    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    public var keydownHandler: ((_ event: NSEvent) -> Bool)? = nil
+    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
 
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
