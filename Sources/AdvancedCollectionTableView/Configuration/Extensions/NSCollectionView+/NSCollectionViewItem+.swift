@@ -35,7 +35,7 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.collectionView?.observeWindowState()
-                self.collectionView?.swizzleCollectionViewTrackingArea()
+              //  self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
             self.configurateBackgroundView()
@@ -141,7 +141,7 @@ public extension NSCollectionViewItem {
             if (newValue != nil) {
                 self.collectionView?.observeWindowState()
                 self.collectionView?.installTrackingArea()
-                self.collectionView?.swizzleCollectionViewTrackingArea()
+            //    self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
             self.configurateContentView()
@@ -438,11 +438,7 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
         
-    /*
-     self.collectionView?.observeWindowState()
-     self.collectionView?.swizzleCollectionViewTrackingArea()
-     */
-    
+
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             didSwizzleCollectionItem = true
@@ -529,6 +525,7 @@ public extension NSCollectionViewItem {
                                                    Swift.print("viewDidMoveToSuperview collectionView", collectionView)
                                                    collectionView.observeWindowState()
                                                    collectionView.installTrackingArea()
+                                                   
                                                   collectionView.swizzleCollectionViewTrackingArea()
                                                }
                                                /*
