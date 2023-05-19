@@ -220,13 +220,3 @@ public extension NSCollectionView {
        }
    }
 }
-
-
-public extension NSCollectionView {
-    func item(at point: CGPoint) -> NSCollectionViewItem? {
-        if let indexPath = self.indexPathForItem(at: point) {
-            return self.item(at: indexPath)
-        }
-        return nil
-    }
-}

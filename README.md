@@ -19,5 +19,9 @@ An extension to NSCollectionView that adds iOS UICollectionView:
 
 It also provides convenience functions for registering and making NSCollectionViewItems.
 
-## Important
+### Important
 You can only reconfigurate items that have been previously registered via provided *ItemRegistration*, *register(_ itemClass: Item.Type)* or *register(_ itemClass: Item.Type, nib: NSNib)*.
+
+## CollectionViewDiffableDataSource
+An extended NSCollectionViewDiffableDataSource that adds:
+

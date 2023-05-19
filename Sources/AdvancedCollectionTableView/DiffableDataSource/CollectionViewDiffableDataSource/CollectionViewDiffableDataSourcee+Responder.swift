@@ -8,10 +8,11 @@
 import AppKit
 import FZExtensions
 
-extension TableViewDiffableDataSource {
-    internal class Responder<S: HashIdentifiable,  E: HashIdentifiable>: NSResponder {
-        weak var dataSource: TableViewDiffableDataSource<S,E>!
-        init (_ dataSource: TableViewDiffableDataSource<S,E>) {
+extension CollectionViewDiffableDataSource {
+    internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
+        weak var dataSource: CollectionViewDiffableDataSource<S,E>!
+        
+        init (_ dataSource: CollectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
         }
@@ -22,28 +23,29 @@ extension TableViewDiffableDataSource {
         
         override func mouseEntered(with event: NSEvent) {
             super.mouseEntered(with: event)
-            let point = event.location(in: self.dataSource.tableView)
+            let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-            //      self.dataSource.mouseHandlers.mouseEntered?(point)
+           //       self.dataSource.mouseHandlers.mouseEntered?(point)
         }
         
         override func mouseMoved(with event: NSEvent) {
             super.mouseMoved(with: event)
-            let point = event.location(in: self.dataSource.tableView)
+            let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = self.dataSource.element(at: point)
-            //      self.dataSource.mouseHandlers.mouseMoved?(point)
+                  self.dataSource.mouseHandlers.mouseMoved?(point)
         }
         
         override func mouseExited(with event: NSEvent) {
             super.mouseExited(with: event)
-            //     let point = event.location(in: self.dataSource.tableView)
+            //     let point = event.location(in: self.dataSource.collectionView)
             self.dataSource.hoverElement = nil
             //       self.dataSource.mouseHandlers.mouseExited?(point)
         }
         
         override func mouseUp(with event: NSEvent) {
+            Swift.print("mouseup")
             if let mouseClick = self.dataSource.mouseHandlers.mouseClick {
-                let point = event.location(in: self.dataSource.tableView)
+                let point = event.location(in: self.dataSource.collectionView)
                 mouseClick(point, event.clickCount, self.dataSource.element(at: point))
             }
             super.mouseUp(with: event)
@@ -51,24 +53,24 @@ extension TableViewDiffableDataSource {
         
         override func rightMouseUp(with event: NSEvent) {
             if let rightMouseClick = self.dataSource.mouseHandlers.rightMouseClick {
-                let point = event.location(in: self.dataSource.tableView)
+                let point = event.location(in: self.dataSource.collectionView)
                 rightMouseClick(point, event.clickCount, self.dataSource.element(at: point))
             }
             
             if let menuProvider = self.dataSource.menuProvider {
                 var elements = self.dataSource.selectedElements
-                let point = event.location(in: self.dataSource.tableView)
-                if let element = self.dataSource.element(at: point), self.dataSource.isRowSelected(element) == false {
+                let point = event.location(in: self.dataSource.collectionView)
+                if let element = self.dataSource.element(at: point), self.dataSource.isItemSelected(element) == false {
                     elements.append(element)
                 }
-                menuProvider(elements)?.popUp(positioning: nil, at: point, in: self.dataSource.tableView)
+                menuProvider(elements)?.popUp(positioning: nil, at: point, in: self.dataSource.collectionView)
             }
             super.rightMouseUp(with: event)
         }
         
         override func mouseDragged(with event: NSEvent) {
             if let mouseDragged = self.dataSource.mouseHandlers.mouseDragged {
-                let point = event.location(in: self.dataSource.tableView)
+                let point = event.location(in: self.dataSource.collectionView)
                 mouseDragged(point, self.dataSource.element(at: point))
             }
             super.mouseDragged(with: event)
@@ -76,13 +78,13 @@ extension TableViewDiffableDataSource {
         
         override func keyDown(with event: NSEvent) {
             var shouldKeyDown = true
-            if let keydownHandler = self.dataSource.keydownHandler?(Int(event.keyCode), event.modifierFlags) {
+            if let keydownHandler = self.dataSource.keydownHandler?(event) {
                 shouldKeyDown = keydownHandler
             }
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
-                
-              /*  if (event.keyCode == 49) { // SpaceBar
+                /*
+                if (event.keyCode == 49) { // SpaceBar
                     if (self.dataSource.quicklookPanel.isVisible == false) {
                         if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
                             var previewItems: [QuicklookItem] = []
@@ -92,7 +94,7 @@ extension TableViewDiffableDataSource {
                                 }
                             }
                             if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
+                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
                                 self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
@@ -105,7 +107,7 @@ extension TableViewDiffableDataSource {
                                 }
                             }
                             if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
+                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
                                 self.dataSource.quicklookPanel.present(previewItems)
                             }
                         }
@@ -115,9 +117,8 @@ extension TableViewDiffableDataSource {
                             self.dataSource.quicklookPanel.close()
                         }
                     }
-                    
                 } else */
-            if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
+                if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
                     let selectedElements = self.dataSource.selectedElements
                     if (selectedElements.isEmpty == false) {
                         if (self.dataSource.allowsDeleting) {
@@ -131,10 +132,10 @@ extension TableViewDiffableDataSource {
                 } else if (event.keyCode == 44 && commandPressed) {  // Handle Zoom Out
                     
                 } else  {
-                    self.dataSource.tableView.keyDown(with: event)
+                    self.dataSource.collectionView.keyDown(with: event)
                 }
             } else {
-                self.dataSource.tableView.keyDown(with: event)
+                self.dataSource.collectionView.keyDown(with: event)
             }
         }
     }

@@ -32,7 +32,7 @@ import FZExtensions
  
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSCollectionViewDataSource {
+public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     /**
      Representation of a state for the data in the collection view.
      */

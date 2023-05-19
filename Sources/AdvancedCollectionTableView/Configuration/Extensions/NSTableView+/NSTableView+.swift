@@ -153,17 +153,9 @@ public extension NSTableView {
         get { getAssociatedValue(key: "NSTableView_isEmphasized", object: self, initialValue: false) }
         set {
             set(associatedValue: newValue, key: "NSTableView_isEmphasized", object: self)
-            self.visibleRowViews().forEach({$0.isEmphasized = newValue})
+            self.visibleRows(makeIfNecessary: false).forEach({$0.isEmphasized = newValue})
         }
     }
-        
-    /*
-    func dragImageForRows(with dragRows: IndexSet, tableColumns: [NSTableColumn], event dragEvent: NSEvent, offset dragImageOffset: NSPointPointer
-    ) -> NSImage {
-        self.dragHandler?(dragRows, tableColumns, dragEvent, dragImageOffset) ?? NSImage(color: .gray)
-    }
-    */
-    
     
      internal var didSwizzleTableViewTrackingArea: Bool {
         get { getAssociatedValue(key: "_didSwizzleTableViewTrackingArea", object: self, initialValue: false) }
@@ -204,88 +196,3 @@ public extension NSTableView {
         }
     }
 }
-
-public extension NSTableView {
-    func reloadMaintainingSelection(completionHandler: (() -> ())? = nil) {
-           let oldSelectedRowIndexes = selectedRowIndexes
-           reloadOnMainThread {
-               if oldSelectedRowIndexes.count == 0 {
-                   if self.numberOfRows > 0 {
-                       self.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
-                   }
-               } else {
-                   self.selectRowIndexes(oldSelectedRowIndexes, byExtendingSelection: false)
-               }
-           }
-       }
-    
-    /**
-     Returns the row indexes currently visible.
-
-     - Returns: The array of row indexes corresponding to the currently visible rows.
-     */
-    func visibleRowIndexes() -> [Int] {
-        let visibleRect = self.visibleRect
-        let range = self.rows(in: visibleRect)
-        var visibleRows = [Int]()
-        for row in range.lowerBound...range.upperBound {
-            visibleRows.append(row)
-        }
-        return visibleRows
-    }
-    
-    /**
-     Returns the row views currently visible.
-
-     - Returns: The array of row views corresponding to the currently visible row views.
-     */
-    func visibleRowViews() -> [NSTableRowView] {
-        let visibleRowIndexes = self.visibleRowIndexes()
-        var visibleRowViews = [NSTableRowView]()
-        for row in visibleRowIndexes {
-            if let rowView = self.rowView(atRow: row, makeIfNecessary: false) {
-                visibleRowViews.append(rowView)
-            }
-        }
-        return visibleRowViews
-    }
-    
-    
-    /**
-     Returns the cell views currently visible.
-     
-     - Returns: The array of row views corresponding to the currently visible cell view.
-     */
-    func visibleCellViews() -> [NSTableCellView] {
-        let visibleRowIndexes = self.visibleRowIndexes()
-        var visibleCellViews = [NSTableCellView]()
-        for row in visibleRowIndexes {
-            if let rowView = self.rowView(atRow: row, makeIfNecessary: false) {
-                visibleCellViews.append(contentsOf: rowView.cellViews)
-            }
-        }
-        return visibleCellViews
-    }
-    
-    
-    internal func cellViews(atRow index: Int) -> [NSTableCellView] {
-        guard index >= 0 && index < self.numberOfRows else { return [] }
-        return self.rowView(atRow: index, makeIfNecessary: false)?.cellViews ?? []
-    }
-}
-
-/*
- typealias DragHandler = (IndexSet, [NSTableColumn], NSEvent, NSPointPointer)->(NSImage)
-     
- internal var dragHandler: DragHandler? {
-      get { getAssociatedValue(key: "NSTableView_dragHandler", object: self) }
-      set { set(associatedValue: newValue, key: "NSTableView_dragHandler", object: self) } }
- 
- try  self.hook(#selector(NSTableView.dragImageForRows(with:tableColumns:event:offset:)),
-                methodSignature: (@convention(c) (AnyObject, Selector, IndexSet, [NSTableColumn], NSEvent, NSPointPointer) -> (NSImage)).self,
-                hookSignature: (@convention(block) (AnyObject, IndexSet, [NSTableColumn], NSEvent, NSPointPointer) -> (NSImage)).self) {
-                    store in { (object, dragRows, tableColumns, dragEvent, dragImageOffset ) in
-                       return self.dragHandler?(dragRows, tableColumns, dragEvent, dragImageOffset) ?? store.original(object, store.selector, dragRows, tableColumns, dragEvent, dragImageOffset)
-                    }
-                },
- */

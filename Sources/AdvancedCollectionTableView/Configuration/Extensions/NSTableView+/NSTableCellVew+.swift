@@ -271,27 +271,3 @@ public extension NSTableCellView {
         }
     }
 }
-
-public extension NSTableCellView {
-    internal var isSelected: Bool {
-        get { self.rowView?.isSelected ?? false }
-    }
-    
-    /**
-     The index of the column that displays the cell.
-     */
-    var columnIndex: Int? {
-        get { self.rowView?.cellViews.firstIndex(of: self) }
-    }
-    
-    /**
-     A Boolean value that indicates whether the column displaying the cell is selected.
-     */
-    var isColumnSelected: Bool {
-        get { if let columnIndex = self.columnIndex {
-            return self.tableView?.selectedColumnIndexes.contains(columnIndex) ?? false
-        }
-            return false
-        }
-    }
-}

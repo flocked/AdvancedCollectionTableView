@@ -418,7 +418,7 @@ public extension NSCollectionViewItem {
     }
     
     var nextItem: NSCollectionViewItem? {
-        if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item + 1 < self.collectionView?.numberOfItems(inSection: indexPath.section) {
+        if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item + 1 < (self.collectionView?.numberOfItems(inSection: indexPath.section) ?? -10) {
             let nextIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
             return self.collectionView?.item(at: nextIndexPath)
         }

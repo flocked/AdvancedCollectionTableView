@@ -9,6 +9,7 @@ import AppKit
 import FZExtensions
 import InterposeKit
 
+// Extension to provide registrations of NSTableCellView's via their classes
 public extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.

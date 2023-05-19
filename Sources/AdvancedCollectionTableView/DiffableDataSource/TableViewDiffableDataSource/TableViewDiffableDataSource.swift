@@ -8,7 +8,7 @@
 import AppKit
 import FZExtensions
 
-public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: HashIdentifiable>: NSObject, NSTableViewDataSource {
+public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
     public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView
     public typealias RowProvider = (NSTableView, Int, Element) -> NSTableRowView?

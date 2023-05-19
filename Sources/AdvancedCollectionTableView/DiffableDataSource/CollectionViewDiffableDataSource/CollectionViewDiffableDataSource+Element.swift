@@ -30,7 +30,7 @@ extension CollectionViewDiffableDataSource {
     }
     
     public var nonSelectionIndexPaths: [IndexPath] {
-        return self.collectionView.notSelectedIndexPaths.sorted()
+        return self.collectionView.nonSelectedIndexPaths.sorted()
     }
     
     public var nonSelectedElements: [Element] {

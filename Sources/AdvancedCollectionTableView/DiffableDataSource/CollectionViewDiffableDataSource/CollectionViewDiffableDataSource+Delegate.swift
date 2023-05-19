@@ -8,7 +8,7 @@
 import AppKit
 
 extension CollectionViewDiffableDataSource {
-    internal class DelegateBridge<S: HashIdentifiable,  E: HashIdentifiable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
+    internal class DelegateBridge<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
         weak var dataSource: CollectionViewDiffableDataSource<S,E>!
         
