@@ -70,6 +70,7 @@ public extension NSCollectionView {
      }
      
      internal func observeWindowState() {
+         Swift.print(observeWindowState)
          if (isObservingWindowState == false) {
              isObservingWindowState = true
              Swift.print("observeWindowState", self.window)
@@ -95,7 +96,8 @@ public extension NSCollectionView {
             self.visibleItems().forEach({$0.isEmphasized = newValue})
         }
     }
-        
+       
+    /*
      override func updateTrackingAreas() {
          if let trackingArea = trackingArea {
              self.removeTrackingArea(trackingArea)
@@ -120,6 +122,7 @@ public extension NSCollectionView {
         super.mouseExited(with: event)
          self.updateItemHoverState(nil)
     }
+    */
     
     internal func updateItemHoverState(_ event: NSEvent?) {
         let visibleItems = self.visibleItems()
