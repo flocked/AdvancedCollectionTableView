@@ -8,6 +8,7 @@
 
 import AppKit
 import FZExtensions
+import InterposeKit
 
 public extension NSTableView {
     typealias DragHandler = (IndexSet, [NSTableColumn], NSEvent, NSPointPointer)->(NSImage)
@@ -117,8 +118,6 @@ public extension NSTableView {
     @objc func swizzled_updateTrackingAreas() {
         Swift.print("updateTrackingAreas")
         super.updateTrackingAreas()
-
-        self.swizzled_updateTrackingAreas()
         /*
         if let trackingArea = trackingArea {
             self.removeTrackingArea(trackingArea)
@@ -234,20 +233,28 @@ public extension NSTableView {
         self.dragHandler?(dragRows, tableColumns, dragEvent, dragImageOffset) ?? NSImage(color: .gray)
     }
     
-    static internal var didSwizzleTableView: Bool {
+     internal var didSwizzleTableView: Bool {
         get { getAssociatedValue(key: "_didSwizzleTableView", object: self, initialValue: false) }
         set {
             set(associatedValue: newValue, key: "_didSwizzleTableView", object: self)
         }
     }
     
-    @objc static internal func swizzleTableView() {
+    @objc internal func swizzleTableView(_ shouldSwizzle: Bool = true) {
         if (didSwizzleTableView == false) {
             didSwizzleTableView = true
             do {
-                try Swizzle(NSTableRowView.self) {
-                    #selector(updateTrackingAreas) <-> #selector(swizzled_updateTrackingAreas)
-                }
+                let hooks = [
+                    try  self.hook(#selector(NSTableView.updateTrackingAreas),
+                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                                       store in { (object) in
+                                           self.swizzled_updateTrackingAreas()
+                                           store.original(object, store.selector)
+                                       }
+                                   },
+                ]
+               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
                 Swift.print(error)
             }

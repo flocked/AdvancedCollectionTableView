@@ -83,6 +83,7 @@ extension CollectionViewDiffableDataSource {
             }
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
+                /*
                 if (event.keyCode == 49) { // SpaceBar
                     if (self.dataSource.quicklookPanel.isVisible == false) {
                         if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
@@ -116,7 +117,8 @@ extension CollectionViewDiffableDataSource {
                             self.dataSource.quicklookPanel.close()
                         }
                     }
-                } else  if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
+                } else */
+                if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
                     let selectedElements = self.dataSource.selectedElements
                     if (selectedElements.isEmpty == false) {
                         if (self.dataSource.allowsDeleting) {

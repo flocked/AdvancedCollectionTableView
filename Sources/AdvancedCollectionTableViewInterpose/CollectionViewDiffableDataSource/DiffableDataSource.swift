@@ -81,6 +81,9 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     internal var currentSnapshot: CollectionSnapshot = CollectionSnapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
+    internal var draggingElements: [Element] {
+        self.draggingIndexPaths.compactMap({self.element(for: $0)})
+    }
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
     internal var trackingArea: NSTrackingArea? = nil
     internal var hoverElement: Element? = nil {
@@ -156,7 +159,7 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.ensureTrackingArea()} }
     public var selectionHandlers = SelectionHandlers<Element>()
-    public var reorderHandlers = ReorderHandlers<Element>()
+    public var reorderingHandlers = ReorderingHandlers<Element>()
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
     public var sectionHandlers = SectionHandlers<Section>() {
@@ -338,6 +341,7 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
                     mouseHandlers.mouseDragged != nil )
     }
     
+    /*
     internal func openQuicklookPanel(for elements: [(element: Element, url: URL)]) {
             var previewItems: [QuicklookItem] = []
             for _element in elements {
@@ -370,6 +374,7 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
             self.quicklookPanel.close()
         }
     }
+     */
     
     internal func configurateDataSource() {
         self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {

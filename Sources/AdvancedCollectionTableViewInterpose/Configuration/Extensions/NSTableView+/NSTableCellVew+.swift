@@ -8,23 +8,7 @@
 import AppKit
 import FZExtensions
 
-public extension NSTableCellView {
-    /**
-     The row view this cell is currently displaying.
-     
-     If a cell gets displayed inside a table view this property returns the ´´´NSTableRowView´´.
-     */
-    var rowView: NSTableRowView? {
-       return self.firstSuperview(for: NSTableRowView.self)
-    }
-    
-    /**
-     The table view this cell is currently displaying.
-     */
-    var tableView: NSTableView? {
-        self.firstSuperview(for: NSTableView.self)
-    }
-    
+public extension NSTableCellView {    
     var contentView: NSView?   {
         get { getAssociatedValue(key: "_contentView", object: self) }
         set {
@@ -52,7 +36,7 @@ public extension NSTableCellView {
         set {
             set(associatedValue: newValue, key: "_contentConfiguration", object: self)
             if (contentConfiguration != nil) {
-                Self.swizzle()
+                self.swizzle()
                 NSTableRowView.swizzle()
             }
             self.configurateContentView()
@@ -248,22 +232,29 @@ public extension NSTableCellView {
         self.swizzled_viewDidMoveToSuperview()
     }
     
-    static internal var didSwizzle: Bool {
+    internal var didSwizzle: Bool {
         get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "_didSwizzle", object: self) }
     }
     
-    @objc static internal func swizzle() {
+    @objc internal func swizzle(_ shouldSwizzle: Bool = true) {
         if (didSwizzle == false) {
             didSwizzle = true
             do {
-                try Swizzle(NSTableCellView.self) {
-                    #selector(viewDidMoveToSuperview) <-> #selector(swizzled_viewDidMoveToSuperview)
-                }
+                let hooks = [
+                    try  self.hook(#selector(NSTableCellView.viewDidMoveToSuperview),
+                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                                       store in { (object) in
+                                           self.swizzled_viewDidMoveToSuperview()
+                                           store.original(object, store.selector)
+                                       }
+                                   },
+                ]
+               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
                 Swift.print(error)
             }
         }
     }
-    
 }

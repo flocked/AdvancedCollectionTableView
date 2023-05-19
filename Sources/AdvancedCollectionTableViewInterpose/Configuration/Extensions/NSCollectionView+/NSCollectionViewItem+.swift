@@ -7,6 +7,7 @@
 
 import AppKit
 import FZExtensions
+import InterposeKit
 
 public extension NSCollectionViewItem {
     /**
@@ -15,12 +16,12 @@ public extension NSCollectionViewItem {
      Using a background configuration, you can obtain system default background styling for a variety of different item states. Create a background configuration with one of the default system styles, customize the configuration to match your item’s style as necessary, and assign the configuration to this property.
      
      ```
-     var backgroundConfig = NSBackgroundConfiguration.listPlainItem()
+     var backgroundConfiguration = NSBackgroundConfiguration.listPlainItem()
 
      // Set a nil background color to use the view's tint color.
-     backgroundConfig.backgroundColor = nil
+     backgroundConfiguration.backgroundColor = nil
 
-     item.backgroundConfiguration = backgroundConfig
+     item.backgroundConfiguration = backgroundConfiguration
      ```
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets the following APIs to nil:
@@ -29,11 +30,11 @@ public extension NSCollectionViewItem {
      - ``selectedBackgroundView``
      */
     var backgroundConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
+        get { getAssociatedValue(key: "NSCollectionItem_backgroundConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
-            if (contentConfiguration != nil) {
-                Self.swizzle()
+            set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
+            if (newValue != nil) {
+                self.swizzleIfNeeded()
             }
             self.configurateBackgroundView()
         }
@@ -46,9 +47,8 @@ public extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue(key: "_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
-        set {
-            set(associatedValue: newValue, key: "_automaticallyUpdatesBackgroundConfiguration", object: self)
+        get { getAssociatedValue(key: "NSCollectionItem_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_automaticallyUpdatesBackgroundConfiguration", object: self)
         }
     }
     
@@ -59,15 +59,9 @@ public extension NSCollectionViewItem {
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var backgroundView: NSView?   {
-        get { getAssociatedValue(key: "_backgroundView", object: self) }
-        set {
-            self.backgroundView?.removeFromSuperview()
-            if let newBackgroundView = newValue {
-                self.backgroundConfiguration = nil
-                self.view.addSubview(withConstraint: newBackgroundView)
-                self.orderSubviews()
-            }
-            set(associatedValue: newValue, key: "_backgroundView", object: self)
+        get { getAssociatedValue(key: "NSCollectionItem_backgroundView", object: self) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_backgroundView", object: self)
+            self.configurateBackgroundView()
         }
     }
     
@@ -78,50 +72,52 @@ public extension NSCollectionViewItem {
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var selectedBackgroundView: NSView? {
-        get { getAssociatedValue(key: "_selectedBackgroundView", object: self) }
-        set {
-            self.selectedBackgroundView?.removeFromSuperview()
-            if let newSelectedBackgroundView = newValue {
-                self.backgroundConfiguration = nil
-                newSelectedBackgroundView.isHidden = !self.isSelected
-                self.view.addSubview(withConstraint: newSelectedBackgroundView)
-                self.orderSubviews()
-            }
-            set(associatedValue: newValue, key: "_selectedBackgroundView", object: self)
+        get { getAssociatedValue(key: "NSCollectionItem_selectedBackgroundView", object: self) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_selectedBackgroundView", object: self)
+            self.configurateBackgroundView()
         }
     }
     
     internal var configurationBackgroundView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "_configurationBackgroundView", object: self) }
+        get { getAssociatedValue(key: "NSCollectionItem_configurationBackgroundView", object: self) }
         set {
             self.configurationBackgroundView?.removeFromSuperview()
-            if let configurationBackgroundView = newValue {
-                self.selectedBackgroundView = nil
-                self.backgroundView = nil
-                self.view.backgroundColor = nil
-                self.view.addSubview(withConstraint: configurationBackgroundView)
-            }
-            set(associatedValue: newValue, key: "_configurationBackgroundView", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_configurationBackgroundView", object: self)
+            self.configurateBackgroundView()
         }
+    }
+    
+    internal func configurateBackgroundView() {
+        if let backgroundConfiguration = backgroundConfiguration {
+            self.backgroundView?.removeFromSuperview()
+            self.backgroundView = nil
+            self.selectedBackgroundView?.removeFromSuperview()
+            self.selectedBackgroundView = nil
+            if var backgroundView = configurationBackgroundView, backgroundView.supports(backgroundConfiguration) {
+                backgroundView.configuration = backgroundConfiguration
+            } else {
+                configurationBackgroundView?.removeFromSuperview()
+                var backgroundView = backgroundConfiguration.makeContentView()
+                backgroundView.configuration = backgroundConfiguration
+                configurationBackgroundView = backgroundView
+                self.view.addSubview(backgroundView)
+            }
+        } else {
+            configurationBackgroundView?.removeFromSuperview()
+            configurationBackgroundView = nil
+            if let backgroundView = self.backgroundView {
+                self.view.addSubview(backgroundView)
+            }
+            if let selectedBackgroundView = self.selectedBackgroundView {
+                self.view.addSubview(selectedBackgroundView)
+            }
+        }
+        self.orderSubviews()
     }
     
     internal func orderSubviews() {
         selectedBackgroundView?.sendToBack()
         backgroundView?.sendToBack()
-    }
-    
-    internal func configurateBackgroundView() {
-        if let backgroundConfiguration = backgroundConfiguration {
-            if var backgroundView = configurationBackgroundView, backgroundView.supports(backgroundConfiguration) {
-                backgroundView.configuration = backgroundConfiguration
-            } else {
-                var newBackgroundView = backgroundConfiguration.makeContentView()
-                configurationBackgroundView = newBackgroundView
-                newBackgroundView.configuration = backgroundConfiguration
-            }
-        } else {
-            configurationBackgroundView = nil
-        }
     }
     
     /**
@@ -132,11 +128,11 @@ public extension NSCollectionViewItem {
      The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
      */
     var contentConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "_fzContentConfiguration", object: self) }
+        get { getAssociatedValue(key: "NSCollectionItem_contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "_fzContentConfiguration", object: self)
-            if (contentConfiguration != nil) {
-                Self.swizzle()
+            set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
+            if (newValue != nil) {
+                self.swizzleIfNeeded()
             }
             self.configurateContentView()
         }
@@ -164,7 +160,6 @@ public extension NSCollectionViewItem {
      */
     func  defaultContentConfiguration() -> NSItemContentConfiguration {
         return NSItemContentConfiguration()
-
     }
     
     /**
@@ -174,12 +169,10 @@ public extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
-        set {
-            set(associatedValue: newValue, key: "_automaticallyUpdatesContentConfiguration", object: self)
+        get { getAssociatedValue(key: "NSCollectionItem_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_automaticallyUpdatesContentConfiguration", object: self)
         }
     }
-    
     
     internal var contentView: NSContentView? {
         self.view as? NSContentView
@@ -193,21 +186,14 @@ public extension NSCollectionViewItem {
                 self.cachedLayoutAttributes = nil
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
-                if let backgroundView = backgroundView {
-                    self.view.addSubview(withConstraint: backgroundView)
-                    backgroundView.sendToBack()
-                }
             }
         } else {
             self.cachedLayoutAttributes = nil
             self.view = NSView()
-            if let backgroundView = backgroundView {
-                self.view.addSubview(withConstraint: backgroundView)
-                backgroundView.sendToBack()
-            }
         }
+        self.configurateBackgroundView()
     }
-    
+        
     /**
      The current configuration state of the item.
      
@@ -279,9 +265,9 @@ public extension NSCollectionViewItem {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling ``updateConfiguration(using:)``.
      */
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
-        get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }
+        get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
-            set(associatedValue: newValue, key: "_configurationUpdateHandler", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
@@ -346,57 +332,57 @@ public extension NSCollectionViewItem {
     }
     
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isHovered", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isHovered", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isHovered", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
    internal var isDisabled: Bool {
-        get { getAssociatedValue(key: "_isDisabled", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isDisabled", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isDisabled", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isDisabled", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
     internal var isFocused: Bool {
-        get { getAssociatedValue(key: "_isFocused", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isFocused", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isFocused", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isFocused", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
     internal var isReordering: Bool {
-        get { getAssociatedValue(key: "_isReordering", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isReordering", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isReordering", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isReordering", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
    internal var isEditing: Bool {
-        get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isEditing", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isEditing", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isEditing", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
     internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "_isEmphasized", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isEmphasized", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isEmphasized", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isEmphasized", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
     override var isSelectable: Bool {
-        get { getAssociatedValue(key: "_isSelectable", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSCollectionItem_isSelectable", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isSelectable", object: self)
+            set(associatedValue: newValue, key: "NSCollectionItem_isSelectable", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
@@ -427,26 +413,71 @@ public extension NSCollectionViewItem {
         }
     }
             
-    static internal var didSwizzle: Bool {
-        get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
-        set {  set(associatedValue: newValue, key: "_didSwizzle", object: self) }
+     internal var didSwizzle: Bool {
+        get { getAssociatedValue(key: "NSCollectionItem_didSwizzle", object: self, initialValue: false) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
     
-    @objc static internal func swizzle() {
+    @objc internal func swizzleIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzle == false) {
             didSwizzle = true
+            // NSCollectionViewLayoutAttributes
             do {
-              try Swizzle(NSCollectionViewItem.self) {
-                    NSSelectorFromString("prepareForReuse") <-> #selector(swizzled_PrepareForReuse)
+                let hooks = [
+                    try  self.hook(#selector(NSCollectionViewItem.viewDidLoad),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        store.original(object, store.selector)
+                        self.swizzled_viewDidLayout()
+                    }
+                },
+                    try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
+                    try  self.hook(#selector(NSCollectionViewItem.apply(_:)),
+                                           methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewLayoutAttributes) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject, NSCollectionViewLayoutAttributes) -> ()).self) {
+                    store in { (object, layoutAttributes) in
+                        self.swizzled_apply(layoutAttributes)
+                        store.original(object, store.selector, layoutAttributes)
+                    }
+                },
+                    try  self.hook(#selector(NSCollectionViewItem.preferredLayoutAttributesFitting(_:)),
+                                           methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewLayoutAttributes) -> (NSCollectionViewLayoutAttributes)).self,
+                                           hookSignature: (@convention(block) (AnyObject, NSCollectionViewLayoutAttributes) -> (NSCollectionViewLayoutAttributes)).self) {
+                    store in { (object, layoutAttributes) in
+                        if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
+                            return self.swizzled_preferredLayoutAttributesFitting(layoutAttributes) } else {
+                               return store.original(object, store.selector, layoutAttributes)
+                            }
+                    }
+                },
+                    try  self.hook(#selector(setter: isSelected),
+                                           methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
+                    store in { (object, isSelected) in
+                         store.original(object, store.selector, isSelected)
+                        self.setNeedsUpdateConfiguration()
+                    }
+                },
                     
-                    #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
-                    #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
-                    #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
-                }
+                    ]
+                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
                 Swift.print(error)
             }
         }
+    }
+    
+    @objc var swizzled_isSelected: Bool {
+        get { getAssociatedValue(key: "NSCollectionItem_isSelected", object: self, initialValue: false) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_isSelected", object: self) }
     }
     
     @objc internal func swizzled_PrepareForReuse() {
@@ -455,24 +486,18 @@ public extension NSCollectionViewItem {
         self.isDisabled = false
         self.isReordering = false
         self.isEditing = false
-        swizzled_PrepareForReuse()
     }
     
     @objc internal func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
         self.cachedLayoutAttributes = layoutAttributes
-        swizzled_apply(layoutAttributes)
     }
     
     @objc internal func swizzled_preferredLayoutAttributesFitting(_ layoutAttributes: NSCollectionViewLayoutAttributes) -> NSCollectionViewLayoutAttributes {
-        if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
             let width = layoutAttributes.size.width
             var fittingSize = self.sizeThatFits(CGSize(width: width, height: .infinity))
             fittingSize.width = width
             layoutAttributes.size = fittingSize
             return layoutAttributes
-        } else {
-            return swizzled_preferredLayoutAttributesFitting(layoutAttributes)
-        }
         /*
          let width = layoutAttributes.size.width
          let modifiedAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
@@ -486,7 +511,6 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
-        self.swizzled_viewDidLayout()
         if collectionView?.selfSizingInvalidation == .enabled {
             if let cachedLayoutAttributes = cachedLayoutAttributes {
                 if (self.view.frame != cachedLayoutAttributes.frame) {

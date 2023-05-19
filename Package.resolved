@@ -6,7 +6,16 @@
         "repositoryURL": "https://github.com/flocked/FZExtensions.git",
         "state": {
           "branch": "main",
-          "revision": "8fad1c0ba4efb842a608eda8f4a3123fd1653990",
+          "revision": "dd830533386910f921b8a4659a051a05fbe76529",
+          "version": null
+        }
+      },
+      {
+        "package": "InterposeKit",
+        "repositoryURL": "https://github.com/steipete/InterposeKit.git",
+        "state": {
+          "branch": "master",
+          "revision": "2d48227c359b71be057fe9fd403ff791e5322b32",
           "version": null
         }
       }
