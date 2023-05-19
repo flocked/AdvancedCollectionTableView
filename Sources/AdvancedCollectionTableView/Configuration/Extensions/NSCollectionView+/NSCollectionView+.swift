@@ -199,13 +199,12 @@ public extension NSCollectionView {
        }
    }
    
-   @objc internal func swizzleCollectionViewTrackingArea(_ shouldSwizzle: Bool = true) {
+   @objc public func swizzleCollectionViewTrackingArea(_ shouldSwizzle: Bool = true) {
        if (didSwizzleCollectionViewTrackingArea == false) {
            didSwizzleCollectionViewTrackingArea = true
            Swift.print("swizzleCollectionViewTrackingArea")
            do {
                let hooks = [
-                   
                    try  self.hook(#selector(NSCollectionView
                        .updateTrackingAreas),
                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,

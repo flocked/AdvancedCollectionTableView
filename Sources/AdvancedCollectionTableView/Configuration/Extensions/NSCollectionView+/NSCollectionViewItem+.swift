@@ -526,7 +526,7 @@ public extension NSCollectionViewItem {
                                                    collectionView.observeWindowState()
                                                    collectionView.installTrackingArea()
                                                    
-                                                  collectionView.swizzleCollectionViewTrackingArea()
+                                         //         collectionView.swizzleCollectionViewTrackingArea()
                                                }
                                                /*
                                                self.collectionView?.observeWindowState()
