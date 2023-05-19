@@ -203,7 +203,7 @@ public extension NSCollectionView {
            do {
                let hooks = [
                 
-    try  self.hook(#selector(Self.updateTrackingAreas),
+    try  self.hook(#selector(self.updateTrackingAreas),
                            methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject) -> ()).self) {
     store in { (object) in
@@ -211,7 +211,7 @@ public extension NSCollectionView {
         store.original(object, store.selector)
     }
 },
-    try  self.hook(#selector(Self.mouseMoved(with:)),
+    try  self.hook(#selector(self.mouseMoved(with:)),
                            methodSignature: (@convention(c) (AnyObject, Selector, NSEvent) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject, NSEvent) -> ()).self) {
     store in { (object, event) in
