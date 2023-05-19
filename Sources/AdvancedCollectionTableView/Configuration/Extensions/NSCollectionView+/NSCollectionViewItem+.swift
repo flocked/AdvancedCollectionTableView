@@ -140,6 +140,7 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.collectionView?.observeWindowState()
+                self.collectionView?.installTrackingArea()
                 self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
@@ -522,7 +523,9 @@ public extension NSCollectionViewItem {
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
+                                               Swift.print("viewDidMoveToSuperview", self.view.subviews)
                                                self.collectionView?.observeWindowState()
+                                               self.collectionView?.installTrackingArea()
                                                self.collectionView?.swizzleCollectionViewTrackingArea()
                                                store.original(object, store.selector)
                                            }
