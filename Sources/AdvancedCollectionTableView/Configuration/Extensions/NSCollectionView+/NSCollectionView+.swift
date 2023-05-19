@@ -124,10 +124,7 @@ public extension NSCollectionView {
     }
     */
     
-    override func mouseMoved(with event: NSEvent) {
-        super.mouseMoved(with: event)
-        self.updateItemHoverState(event)
-    }
+
     
     internal func updateItemHoverState(_ event: NSEvent?) {
         let visibleItems = self.visibleItems()
@@ -209,7 +206,7 @@ public extension NSCollectionView {
            do {
                let hooks = [
                 
-    try  self.hook(#selector(NSCollectionView.updateTrackingAreas),
+    try  self.hook(#selector(NSView.updateTrackingAreas),
                            methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject) -> ()).self) {
     store in { (object) in
@@ -218,7 +215,7 @@ public extension NSCollectionView {
         store.original(object, store.selector)
     }
 },
-    try  self.hook(#selector(NSCollectionView.mouseMoved(with:)),
+    try  self.hook(#selector(NSResponder.mouseMoved(with:)),
                            methodSignature: (@convention(c) (AnyObject, Selector, NSEvent) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject, NSEvent) -> ()).self) {
     store in { (object, event) in
