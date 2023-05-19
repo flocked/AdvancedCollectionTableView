@@ -51,7 +51,7 @@ public extension NSTableView {
      }
      ```
      
-     You don’t need to cell *register(_:)*, *register(_:nib:)* or *register(_:forCellWithIdentifier:)*. The table view registers your cell automatically when you pass the cell registration to makeCell(using:for:element:).
+     You don’t need to call *register(_:)*, *register(_:nib:)* or *register(_:forCellWithIdentifier:)*. The table view registers your cell automatically when you pass the cell registration to makeCell(using:for:element:).
      
      - Important: Do not create your cell registration inside a *NSTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
     */
@@ -90,4 +90,12 @@ public extension NSTableView {
                 return rowView
         }
     }
+}
+
+internal extension NSTableView {
+    var registeredRowRegistrations: [NSUserInterfaceItemIdentifier] {
+         get { getAssociatedValue(key: "NSTableView_registeredRowRegistrations", object: self, initialValue: []) }
+         set { set(associatedValue: newValue, key: "NSTableView_registeredRowRegistrations", object: self)
+         }
+     }
 }

@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import FZExtensions
 
 public extension NSCollectionView {
     /**
@@ -70,7 +71,7 @@ public extension NSCollectionView {
         public init(handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = NSUserInterfaceItemIdentifier(String(describing: Item.self))
+            self.identifier = .init(Item.self)
         }
         
         /**
@@ -78,11 +79,14 @@ public extension NSCollectionView {
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib
-            self.identifier = NSUserInterfaceItemIdentifier(String(describing: Item.self))
+            self.identifier = .init(String(describing: Item.self) + String(describing: nib.self))
             self.handler = handler
         }
         
         internal func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
+            if (collectionView.registeredItemRegistrations.contains(self.identifier) == false) {
+                self.register(for: collectionView)
+            }
             if (registeredCollectionView != collectionView) {
                 self.register(for: collectionView)
             }
@@ -103,12 +107,14 @@ public extension NSCollectionView {
                 collectionView.register(Item.self, forItemWithIdentifier: self.identifier)
             }
             self.registeredCollectionView = collectionView
+            collectionView.registeredItemRegistrations.append(self.identifier)
         }
         
         internal func unregister(for collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forItemWithIdentifier: self.identifier)
             self.registeredCollectionView = nil
+            collectionView.registeredItemRegistrations.remove(self.identifier)
         }
         
         deinit {
@@ -117,4 +123,12 @@ public extension NSCollectionView {
             }
         }
     }
+}
+
+internal extension NSCollectionView {
+    var registeredItemRegistrations: [NSUserInterfaceItemIdentifier] {
+         get { getAssociatedValue(key: "NSCollectionView_registeredItemRegistrations", object: self, initialValue: []) }
+         set { set(associatedValue: newValue, key: "NSCollectionView_registeredItemRegistrations", object: self)
+         }
+     }
 }
