@@ -8,22 +8,7 @@
 import AppKit
 import FZExtensions
 
-public extension NSTableCellView {    
-    var contentView: NSView?   {
-        get { getAssociatedValue(key: "_contentView", object: self) }
-        set {
-            if let newValue = newValue {
-                if (newValue != self.contentView) {
-                    self.contentView?.removeFromSuperview()
-                    self.addSubview(withConstraint: newValue)
-                }
-            } else {
-                self.contentView?.removeFromSuperview()
-            }
-            set(associatedValue: newValue, key: "_contentView", object: self)
-        }
-    }
-    
+public extension NSTableCellView {
     /**
      The current content configuration of the item.
 
@@ -32,12 +17,13 @@ public extension NSTableCellView {
      The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
      */
     var contentConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "_contentConfiguration", object: self) }
+        get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "_contentConfiguration", object: self)
-            if (contentConfiguration != nil) {
-                self.swizzle()
-                NSTableRowView.swizzle()
+            set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
+            if (newValue != nil) {
+                self.tableView?.swizzleTableViewTrackingArea()
+                self.tableView?.observeWindowState()
+                self.swizzleTableCellIfNeeded()
             }
             self.configurateContentView()
         }
@@ -74,19 +60,28 @@ public extension NSTableCellView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
+        get { getAssociatedValue(key: "NSTableCellVew_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
         set {
-            set(associatedValue: newValue, key: "_automaticallyUpdatesContentConfiguration", object: self)
+            set(associatedValue: newValue, key: "NSTableCellVew_automaticallyUpdatesContentConfiguration", object: self)
+            self.setNeedsUpdateConfiguration()
+        }
+    }
+    
+    internal var contentView: (NSView & NSContentView)?   {
+        get { getAssociatedValue(key: "NSTableCellVew_contentView", object: self) }
+        set { set(associatedValue: newValue, key: "NSTableCellVew_contentView", object: self)
         }
     }
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if  var contentView = self.contentView as? NSContentView, contentView.supports(contentConfiguration) {
+            if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
+                self.contentView?.removeFromSuperview()
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
+                self.addSubview(withConstraint: contentView)
             }
         } else {
             self.contentView?.removeFromSuperview()
@@ -99,7 +94,7 @@ public extension NSTableCellView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableCellConfigurationState {
-        let state = NSTableCellConfigurationState(isSelected: self.rowView?.isSelected ?? false, isSelectable: true, isDisabled: self.isDisabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized)
+        let state = NSTableCellConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized)
         return state
     }
     
@@ -111,6 +106,22 @@ public extension NSTableCellView {
      */
     func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: self.configurationState)
+    }
+    
+    internal func setNeedsAutomaticUpdateConfiguration() {
+        if automaticConfigurationUpdateIsEnabled {
+            let state = self.configurationState
+            if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
+                self.contentConfiguration = contentConfiguration.updated(for: state)
+            }
+            
+            /*
+             if automaticallyUpdatesContentConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
+             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+             }
+             */
+            configurationUpdateHandler?(self, state)
+        }
     }
     
     /**
@@ -154,9 +165,9 @@ public extension NSTableCellView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
      */
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
-        get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }
+        get { getAssociatedValue(key: "NSTableCellVew_configurationUpdateHandler", object: self) }
         set {
-            set(associatedValue: newValue, key: "_configurationUpdateHandler", object: self)
+            set(associatedValue: newValue, key: "NSTableCellVew_configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
@@ -167,86 +178,88 @@ public extension NSTableCellView {
      A hovered row view has the mouse pointer on it.
      */
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSTableCellVew_isHovered", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isHovered", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isHovered", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
-   internal var isDisabled: Bool {
-        get { getAssociatedValue(key: "_isDisabled", object: self, initialValue: false) }
+   internal var isEnabled: Bool {
+        get { getAssociatedValue(key: "NSTableCellVew_isEnabled", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isDisabled", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isEnabled", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isFocused: Bool {
-        get { getAssociatedValue(key: "_isFocused", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSTableCellVew_isFocused", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isFocused", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isFocused", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isReordering: Bool {
-        get { getAssociatedValue(key: "_isReordering", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSTableCellVew_isReordering", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isReordering", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isReordering", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
    internal var isEditing: Bool {
-        get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSTableCellVew_isEditing", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isEditing", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isEditing", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "_isEmphasized", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "NSTableCellVew_isEmphasized", object: self, initialValue: false) }
         set {
-            set(associatedValue: newValue, key: "_isEmphasized", object: self)
-            self.setNeedsUpdateConfiguration()
+            set(associatedValue: newValue, key: "NSTableCellVew_isEmphasized", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
-    
-    /*
-    override var isSelectable: Bool {
-        get { getAssociatedValue(key: "_isSelectable", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "_isSelectable", object: self)
-            self.setNeedsUpdateConfiguration()
-        }
-    }
-    */
-    
-    @objc internal func swizzled_viewDidMoveToSuperview()  {
-        // Add constraints if tableview usesAutomaticRowHeights
-       /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
-            contentView.con
-        } */
-        self.swizzled_viewDidMoveToSuperview()
+            
+    internal var automaticConfigurationUpdateIsEnabled: Bool {
+        get { getAssociatedValue(key: "NSTableCellView_automaticConfigurationUpdateIsEnabled", object: self, initialValue: true) }
+        set {  set(associatedValue: newValue, key: "NSTableCellView_automaticConfigurationUpdateIsEnabled", object: self) }
     }
     
-    internal var didSwizzle: Bool {
-        get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "_didSwizzle", object: self) }
+    override func prepareForReuse() {
+        self.automaticConfigurationUpdateIsEnabled = false
+        self.isHovered = false
+        self.isEnabled = true
+        self.isReordering = false
+        self.isEditing = false
+        self.isEmphasized = self.tableView?.isEmphasized ?? false
+        self.automaticConfigurationUpdateIsEnabled = true
     }
     
-    @objc internal func swizzle(_ shouldSwizzle: Bool = true) {
-        if (didSwizzle == false) {
-            didSwizzle = true
+    internal var didSwizzleTableCellView: Bool {
+        get { getAssociatedValue(key: "NSTableCellVew_didSwizzle", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "NSTableCellVew_didSwizzle", object: self) }
+    }
+    
+    @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
+        if (didSwizzleTableCellView == false) {
+            didSwizzleTableCellView = true
             do {
                 let hooks = [
                     try  self.hook(#selector(NSTableCellView.viewDidMoveToSuperview),
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           self.swizzled_viewDidMoveToSuperview()
+                                           self.tableView?.swizzleTableViewTrackingArea()
+                                           self.tableView?.observeWindowState()
+                                           // Add constraints if tableview usesAutomaticRowHeights
+                                          /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
+                                               contentView.con
+                                           } */
                                            store.original(object, store.selector)
                                        }
                                    },
@@ -255,6 +268,30 @@ public extension NSTableCellView {
             } catch {
                 Swift.print(error)
             }
+        }
+    }
+}
+
+public extension NSTableCellView {
+    internal var isSelected: Bool {
+        get { self.rowView?.isSelected ?? false }
+    }
+    
+    /**
+     The index of the column that displays the cell.
+     */
+    var columnIndex: Int? {
+        get { self.rowView?.cellViews.firstIndex(of: self) }
+    }
+    
+    /**
+     A Boolean value that indicates whether the column displaying the cell is selected.
+     */
+    var isColumnSelected: Bool {
+        get { if let columnIndex = self.columnIndex {
+            return self.tableView?.selectedColumnIndexes.contains(columnIndex) ?? false
+        }
+            return false
         }
     }
 }

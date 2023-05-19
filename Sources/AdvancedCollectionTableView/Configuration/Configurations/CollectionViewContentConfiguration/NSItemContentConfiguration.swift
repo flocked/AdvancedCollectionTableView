@@ -33,20 +33,20 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     // The primary text.
     public var text: String? = nil
     // An attributed variant of the primary text.
-    public var attributedText: NSAttributedString? = nil
+    public var attributedText: AttributedString? = nil
     // The secondary text.
     public var secondaryText: String? = nil
     // An attributed variant of the secondary text.
-    public var secondaryattributedText: NSAttributedString? = nil
+    public var secondaryattributedText: AttributedString? = nil
     // The image to display.
     public var image: NSImage? = nil
     
-    // Properties for configuring the image.
-    public var imageProperties: ImageProperties = ImageProperties()
     // Properties for configuring the primary text.
     public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
     // Properties for configuring the secondary text.
     public var secondaryTextProperties: TextProperties = .textStyle(.body)
+    // Properties for configuring the image.
+    public var imageProperties: ImageProperties = ImageProperties()
    
     /**
      The padding between the image and text.
@@ -102,8 +102,36 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.image != nil || self.imageProperties.backgroundColor != nil
     }
     
-    public init() {
-
+    init(text: String? = nil,
+         attributedText: AttributedString? = nil,
+         secondaryText: String? = nil,
+         secondaryattributedText: AttributedString? = nil,
+         image: NSImage? = nil,
+         imageProperties: ImageProperties = ImageProperties(),
+         textProperties: TextProperties = .textStyle(.body),
+         secondaryTextProperties: TextProperties = .textStyle(.body),
+         orientation: NSUserInterfaceLayoutOrientation = .vertical,
+         prefersSideBySideTextAndSecondaryText: Bool = false,
+         imageToTextPadding: CGFloat = 2.0,
+         textToSecondaryTextPadding: CGFloat = 2.0,
+         padding: NSDirectionalEdgeInsets = .zero) {
+        self.text = text
+        self.attributedText = attributedText
+        self.secondaryText = secondaryText
+        self.secondaryattributedText = secondaryattributedText
+        self.image = image
+        self.imageProperties = imageProperties
+        self.textProperties = textProperties
+        self.secondaryTextProperties = secondaryTextProperties
+        self.orientation = orientation
+        self.prefersSideBySideTextAndSecondaryText = prefersSideBySideTextAndSecondaryText
+        self.imageToTextPadding = imageToTextPadding
+        self.textToSecondaryTextPadding = textToSecondaryTextPadding
+        self.padding = padding
+    }
+    
+    static func image(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 0.0) -> NSItemContentConfiguration {
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, imageProperties: ImageProperties(cornerRadius: cornerRadius))
     }
 }
 
@@ -157,6 +185,12 @@ public extension NSItemContentConfiguration {
                 return self.textColorTansform?(backgroundColor) ?? backgroundColor
             }
             return nil
+        }
+        
+        public static func systemFont(_ fontSize: CGFloat, weight: NSFont.Weight = .regular) -> TextProperties  {
+            var property = TextProperties()
+            property.font = .systemFont(ofSize: fontSize, weight: weight)
+            return property
         }
         
         public static func textStyle(_ style: NSFont.TextStyle = .body, weight: NSFont.Weight? = nil) -> TextProperties {
@@ -334,10 +368,6 @@ public extension NSItemContentConfiguration {
             public static func none() -> ShadowProperties {
                 return ShadowProperties()
             }
-            
-            static func `default`() -> ShadowProperties {
-                return ShadowProperties()
-            }
         }
     }
 }
@@ -368,6 +398,21 @@ internal extension NSAttributedString {
             return self.string.lowercased()
         case .uppercase:
             return self.string.uppercased()
+        }
+    }
+}
+
+extension AttributedString {
+    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
+        switch transform {
+        case .none:
+           return String(self.characters[...])
+        case .capitalized:
+            return String(self.characters[...]).capitalized
+        case .lowercase:
+            return String(self.characters[...]).lowercased()
+        case .uppercase:
+            return String(self.characters[...]).uppercased()
         }
     }
 }

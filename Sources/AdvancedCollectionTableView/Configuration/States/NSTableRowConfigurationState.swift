@@ -18,10 +18,8 @@ import FZExtensions
 public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the row is in a selected state.
     public var isSelected: Bool = false
-    /// A Boolean value that indicates whether the row is in a selectable state.
-    public var isSelectable: Bool = false
-    /// A Boolean value that indicates whether the row is in a disabled state.
-    public var isDisabled: Bool = false
+    /// A Boolean value that indicates whether the row is in a enabled state.
+    public var isEnabled: Bool = true
     /// A Boolean value that indicates whether the row is in a focused state.
     public var isFocused: Bool = false
     /// A Boolean value that indicates whether the row is in a hovered state (if the mouse is above the row).
@@ -46,8 +44,7 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
     public init(isSelected: Bool = false,
-         isSelectable: Bool = false,
-         isDisabled: Bool = false,
+        isEnabled: Bool = true,
          isFocused: Bool = false,
          isHovered: Bool = false,
          isEditing: Bool = false,
@@ -56,8 +53,7 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
          isNextRowSelected: Bool = false,
          isPreviousRowSelected: Bool = false) {
         self.isSelected = isSelected
-        self.isSelectable = isSelectable
-        self.isDisabled = isDisabled
+        self.isEnabled = isEnabled
         self.isFocused = isFocused
         self.isHovered = isHovered
         self.isEditing = isEditing

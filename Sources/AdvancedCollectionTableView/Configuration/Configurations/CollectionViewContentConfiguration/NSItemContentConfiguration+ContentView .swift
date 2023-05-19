@@ -60,7 +60,8 @@ extension NSItemContentConfiguration {
             textField.bezelStyle = configuration.textProperties.bezelStyle ?? .roundedBezel
             textField.isBezeled = (configuration.textProperties.bezelStyle != nil)
             if let attributedText = configuration.attributedText {
-                textField.attributedStringValue = attributedText
+                textField.attributedStringValue = NSAttributedString(attributedText)
+                
                 //                 textField.attributedStringValue = attributedText.transform(using: configuration.textProperties.transform)
 
             } else {
@@ -81,7 +82,7 @@ extension NSItemContentConfiguration {
             secondaryTextField.isBezeled = (configuration.secondaryTextProperties.bezelStyle != nil)
 
             if let secondaryattributedText = configuration.secondaryattributedText {
-                secondaryTextField.attributedStringValue = secondaryattributedText
+                secondaryTextField.attributedStringValue = NSAttributedString(secondaryattributedText)
             } else {
                 secondaryTextField.stringValue = configuration.secondaryText?.transform(using: configuration.secondaryTextProperties.textTransform) ?? ""
             }

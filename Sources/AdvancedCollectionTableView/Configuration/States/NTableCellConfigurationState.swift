@@ -18,10 +18,8 @@ import FZExtensions
 public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a selected state.
     public var isSelected: Bool = false
-    /// A Boolean value that indicates whether the cell is in a selectable state.
-    public var isSelectable: Bool = false
-    /// A Boolean value that indicates whether the cell is in a disabled state.
-    public var isDisabled: Bool = false
+    /// A Boolean value that indicates whether the cell is in a enabled state.
+    public var isEnabled: Bool = true
     /// A Boolean value that indicates whether the cell is in a focused state.
     public var isFocused: Bool = false
         /// A Boolean value that indicates whether the cell is in a hovered state (if the mouse is above the cell).
@@ -34,16 +32,14 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     public var isEmphasized: Bool = false
     
     public init(isSelected: Bool = false,
-                isSelectable: Bool = false,
-                isDisabled: Bool = false,
+                isEnabled: Bool = true,
                 isFocused: Bool = false,
                 isHovered: Bool = false,
                 isEditing: Bool = false,
                 isExpanded: Bool = false,
                 isEmphasized: Bool = false) {
         self.isSelected = isSelected
-        self.isSelectable = isSelectable
-        self.isDisabled = isDisabled
+        self.isEnabled = isEnabled
         self.isFocused = isFocused
         self.isHovered = isHovered
         self.isEditing = isEditing

@@ -4,14 +4,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "AdvancedCollectionTableViewInterpose",
+    name: "AdvancedCollectionTableView",
     platforms: [
         .macOS("12.0")
     ],
     products: [
         .library(
-            name: "AdvancedCollectionTableViewInterpose",
-            targets: ["AdvancedCollectionTableViewInterpose"]),
+            name: "AdvancedCollectionTableView",
+            targets: ["AdvancedCollectionTableView"]),
     ],
     dependencies: [
         .package(url: "https://github.com/flocked/FZExtensions.git", branch: "main"),
@@ -19,7 +19,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AdvancedCollectionTableViewInterpose",
+            name: "AdvancedCollectionTableView",
             dependencies: ["FZExtensions", "InterposeKit", "AdvancedCollectionTableViewObjC"]),
         .target(name: "AdvancedCollectionTableViewObjC", dependencies: [])
     ]
