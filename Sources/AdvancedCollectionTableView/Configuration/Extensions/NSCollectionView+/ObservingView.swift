@@ -100,7 +100,7 @@ extension NSCollectionView {
                 let location = event.location(in: self)
                 if self.bounds.contains(location) {
                     self.updateItemHoverState(event)
-                    Swift.print("ObserverView location", location)
+                  //  Swift.print("ObserverView location", location)
                 }
             }
         }
