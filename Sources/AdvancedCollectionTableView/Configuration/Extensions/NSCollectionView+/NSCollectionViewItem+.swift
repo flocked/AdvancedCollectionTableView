@@ -439,6 +439,7 @@ public extension NSCollectionViewItem {
         if (didSwizzle == false) {
             didSwizzle = true
             Swift.print("Swizzle")
+            /*
             do {
               try Swizzle(NSCollectionViewItem.self) {
                     NSSelectorFromString("prepareForReuse") <-> #selector(swizzled_PrepareForReuse)
@@ -450,6 +451,7 @@ public extension NSCollectionViewItem {
             } catch {
                 Swift.print(error)
             }
+             */
         }
     }
     
