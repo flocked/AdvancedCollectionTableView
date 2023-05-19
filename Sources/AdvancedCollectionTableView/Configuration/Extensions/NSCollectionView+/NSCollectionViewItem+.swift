@@ -523,7 +523,7 @@ public extension NSCollectionViewItem {
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
-                                               Swift.print("viewDidMoveToSuperview", self.view.subviews)
+                                               Swift.print("viewDidMoveToSuperview", self.view.superview,  self.view.superview?.superview,  self.view.superview?.superview?.superview,  self.view.superview?.superview?.superview?.superview)
                                                self.collectionView?.observeWindowState()
                                                self.collectionView?.installTrackingArea()
                                                self.collectionView?.swizzleCollectionViewTrackingArea()
