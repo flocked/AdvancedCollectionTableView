@@ -97,6 +97,7 @@ public extension NSCollectionView {
         }
     }
     
+    /*
     override func updateTrackingAreas() {
         if let trackingArea = trackingArea {
             self.removeTrackingArea(trackingArea)
@@ -111,6 +112,7 @@ public extension NSCollectionView {
         super.mouseMoved(with: event)
         self.updateItemHoverState(event)
     }
+    */
        
     /*
      override func updateTrackingAreas() {

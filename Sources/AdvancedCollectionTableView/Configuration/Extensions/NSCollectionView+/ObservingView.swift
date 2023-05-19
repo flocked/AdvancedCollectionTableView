@@ -65,12 +65,12 @@ internal func installTrackingArea() {
    
    @objc internal func windowDidBecomeKey() {
        self.windowIsKey = true
-       Swift.print("obserview windowDidBecomeKey")
+    //   Swift.print("obserview windowDidBecomeKey")
    }
     
     @objc internal func windowDidResignKey() {
         self.windowIsKey = false
-        Swift.print("obserview windowDidResignKey")
+    //    Swift.print("obserview windowDidResignKey")
      }
     
     var windowIsKey = false {
@@ -91,14 +91,16 @@ extension NSCollectionView {
             self.addSubview(withConstraint: self.observerView!)
             self.observerView?.windowStateHandler = { [weak self] windowIsKey in
                 guard let self = self else { return }
-                Swift.print("ObserverView windowIsKey", windowIsKey)
+                self.isEmphasized = windowIsKey
+             //   Swift.print("ObserverView windowIsKey", windowIsKey)
             }
             
             self.observerView?.mouseMoveHandler = { [weak self] event in
                 guard let self = self else { return }
                 let location = event.location(in: self)
                 if self.bounds.contains(location) {
-                    Swift.print("ObserverView location", location)
+                    self.updateItemHoverState(event)
+                 //   Swift.print("ObserverView location", location)
                 }
             }
         }

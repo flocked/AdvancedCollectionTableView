@@ -34,7 +34,7 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                self.collectionView?.observeWindowState()
+       //         self.collectionView?.observeWindowState()
               //  self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
@@ -139,8 +139,8 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-                self.collectionView?.observeWindowState()
-                self.collectionView?.installTrackingArea()
+             //   self.collectionView?.observeWindowState()
+           //     self.collectionView?.installTrackingArea()
             //    self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
@@ -214,7 +214,6 @@ public extension NSCollectionViewItem {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSItemConfigurationState {
-        self.collectionView?.observeWindowState()
         let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized)
         /*
          if let listConfiguration = self.collectionView?.listConfiguration {
@@ -523,8 +522,8 @@ public extension NSCollectionViewItem {
                                                
                                                if let collectionView = self.view.firstSuperview(for: NSCollectionView.self) {
                                                    Swift.print("viewDidMoveToSuperview collectionView", collectionView)
-                                                   collectionView.observeWindowState()
-                                                   collectionView.installTrackingArea()
+                                              //     collectionView.observeWindowState()
+                                        //           collectionView.installTrackingArea()
                                                    collectionView.addObserverViewIfNeeded()
                                                    
                                          //         collectionView.swizzleCollectionViewTrackingArea()
