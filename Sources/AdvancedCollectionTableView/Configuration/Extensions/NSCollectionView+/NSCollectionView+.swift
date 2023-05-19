@@ -123,9 +123,12 @@ public extension NSCollectionView {
         if let event = event {
             let location = event.location(in: self)
             let mouseItem = self.item(at: location)
-            visibleItems.forEach({$0.isHovered = ($0 == mouseItem) })
+            if let mouseItem = mouseItem, mouseItem.isHovered == false {
+                mouseItem.isHovered = true
+            }
+            visibleItems.filter({$0.isHovered && $0 != mouseItem}).forEach({$0.isHovered = false })
         } else {
-            visibleItems.forEach({$0.isHovered = false })
+            visibleItems.filter({$0.isHovered}).forEach({$0.isHovered = false })
         }
     }
         
