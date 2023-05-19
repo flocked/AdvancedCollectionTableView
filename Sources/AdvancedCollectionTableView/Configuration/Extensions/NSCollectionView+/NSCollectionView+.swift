@@ -96,6 +96,21 @@ public extension NSCollectionView {
             self.visibleItems().forEach({$0.isEmphasized = newValue})
         }
     }
+    
+    override func updateTrackingAreas() {
+        if let trackingArea = trackingArea {
+            self.removeTrackingArea(trackingArea)
+        }
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .enabledDuringMouseDrag, .activeInKeyWindow, .inVisibleRect]
+        self.trackingArea = NSTrackingArea(rect: self.bounds, options:  options, owner: self)
+        self.addTrackingArea(self.trackingArea!)
+        super.updateTrackingAreas()
+   }
+    
+    override func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        self.updateItemHoverState(event)
+    }
        
     /*
      override func updateTrackingAreas() {
@@ -107,14 +122,14 @@ public extension NSCollectionView {
          self.addTrackingArea(self.trackingArea!)
          super.updateTrackingAreas()
     }
+     
+     override func mouseMoved(with event: NSEvent) {
+         super.mouseMoved(with: event)
+         self.updateItemHoverState(event)
+     }
     
     override func mouseEntered(with event: NSEvent) {
         super.mouseEntered(with: event)
-        self.updateItemHoverState(event)
-    }
-    
-    override func mouseMoved(with event: NSEvent) {
-        super.mouseMoved(with: event)
         self.updateItemHoverState(event)
     }
     
