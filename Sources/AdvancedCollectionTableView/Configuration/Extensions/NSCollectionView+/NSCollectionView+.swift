@@ -72,6 +72,7 @@ public extension NSCollectionView {
      internal func observeWindowState() {
          if (isObservingWindowState == false) {
              isObservingWindowState = true
+             Swift.print("observeWindowState", self.window)
              NotificationCenter.default.addObserver(self, selector: #selector(windowDidBecomeKey), name: NSWindow.didBecomeKeyNotification, object: self.window)
              NotificationCenter.default.addObserver(self, selector: #selector(windowDidResignKey), name: NSWindow.didResignKeyNotification, object: self.window)
          }
@@ -79,10 +80,12 @@ public extension NSCollectionView {
     
     @objc internal func windowDidBecomeKey() {
         self.isEmphasized = true
+        Swift.print("windowDidBecomeKey")
     }
      
      @objc internal func windowDidResignKey() {
          self.isEmphasized = false
+         Swift.print("windowDidResignKey")
       }
         
     internal var isEmphasized: Bool {
