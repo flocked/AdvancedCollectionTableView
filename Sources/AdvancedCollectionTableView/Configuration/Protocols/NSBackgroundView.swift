@@ -5,6 +5,7 @@
 //  Created by Florian Zand on 04.09.22.
 //
 
+/*
 import AppKit
 
 /**
@@ -40,3 +41,4 @@ public extension NSBackgroundView {
        return type(of: configuration) == type(of: self.configuration)
     }
 }
+*/

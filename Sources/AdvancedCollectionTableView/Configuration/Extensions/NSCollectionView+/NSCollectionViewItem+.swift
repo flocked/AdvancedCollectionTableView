@@ -62,12 +62,8 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "_backgroundView", object: self) }
         set {
             self.backgroundView?.removeFromSuperview()
-            if let newBackgroundView = newValue {
-                self.backgroundConfiguration = nil
-                self.view.addSubview(withConstraint: newBackgroundView)
-                self.orderSubviews()
-            }
             set(associatedValue: newValue, key: "_backgroundView", object: self)
+            configurateBackgroundView()
         }
     }
     
@@ -112,16 +108,30 @@ public extension NSCollectionViewItem {
     
     internal func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
+            self.backgroundView?.removeFromSuperview()
+            self.backgroundView = nil
+            self.selectedBackgroundView?.removeFromSuperview()
+            self.selectedBackgroundView = nil
             if var backgroundView = configurationBackgroundView, backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
+                configurationBackgroundView?.removeFromSuperview()
                 var newBackgroundView = backgroundConfiguration.makeContentView()
                 configurationBackgroundView = newBackgroundView
                 newBackgroundView.configuration = backgroundConfiguration
+                self.view.insertSubview(newBackgroundView, at: 0)
             }
         } else {
+            configurationBackgroundView?.removeFromSuperview()
             configurationBackgroundView = nil
+            if let backgroundView = self.backgroundView {
+                self.view.addSubview(backgroundView)
+            }
+            if let selectedBackgroundView = self.selectedBackgroundView {
+                self.view.addSubview(selectedBackgroundView)
+            }
         }
+        self.orderSubviews()
     }
     
     /**
@@ -193,19 +203,12 @@ public extension NSCollectionViewItem {
                 self.cachedLayoutAttributes = nil
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
-                if let backgroundView = backgroundView {
-                    self.view.addSubview(withConstraint: backgroundView)
-                    backgroundView.sendToBack()
-                }
             }
         } else {
             self.cachedLayoutAttributes = nil
             self.view = NSView()
-            if let backgroundView = backgroundView {
-                self.view.addSubview(withConstraint: backgroundView)
-                backgroundView.sendToBack()
-            }
         }
+        self.configurateBackgroundView()
     }
     
     /**

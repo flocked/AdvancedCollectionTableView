@@ -455,3 +455,38 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     }
 }
 
+public extension CollectionViewDiffableDataSource where Element: QLPreviewable {
+    
+    func quicklook(_ elements: [Element], current: Element? = nil) {
+        var index: Int = 0
+        var previewItems: [QLPreviewable] = []
+        let current = current ?? elements.first
+        var transitionImage: NSImage? = nil
+        for element in self.selectedElements {
+            guard let itemView = self.itemView(for: element) else { return }
+            element.previewItemView = itemView.view
+            let previewItem = QuicklookItem(url: element.previewItemURL, frame: itemView.view.frame, transitionImage: element.previewItemTransitionImage)
+            previewItems.append(previewItem)
+            if (element == current) {
+                transitionImage = previewItem.previewItemTransitionImage ?? itemView.view.renderedImage
+                index = previewItems.count - 1
+            }
+        }
+        guard previewItems.isEmpty == false else { return }
+        
+        QuicklookPanel.shared.keyDownResponder = self.collectionView
+        QuicklookPanel.shared.present(previewItems, currentItemIndex: index, image: transitionImage)
+    }
+    
+    func quicklookSelectedItems() {
+        self.quicklook(self.selectedElements)
+    }
+}
+
+
+internal extension QLPreviewable {
+    var previewItemView: NSView? {
+        get { getAssociatedValue(key: "_previewItemView", object: self) }
+        set { set(associatedValue: newValue, key: "_previewItemView", object: self) }
+    }
+}
