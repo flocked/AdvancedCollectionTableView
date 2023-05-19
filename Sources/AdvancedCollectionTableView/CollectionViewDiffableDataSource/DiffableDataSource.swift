@@ -169,9 +169,9 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     public var highlightHandlers = HighlightHandlers<Element>()
     public var quicklookHandlers = QuicklookHandlers<Element>()
 
-    public var menuProvider: (([Element]) -> NSMenu?)? = nil
-    public var keydownHandler: ((NSEvent) -> Bool)? = nil
-    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    public var keydownHandler: ((_ event: NSEvent) -> Bool)? = nil
+    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
 
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
@@ -455,3 +455,38 @@ public class CollectionViewDiffableDataSource<Section: HashIdentifiable, Element
     }
 }
 
+public extension CollectionViewDiffableDataSource where Element: QLPreviewable {
+    
+    func quicklook(_ elements: [Element], current: Element? = nil) {
+        var index: Int = 0
+        var previewItems: [QLPreviewable] = []
+        let current = current ?? elements.first
+        var transitionImage: NSImage? = nil
+        for element in self.selectedElements {
+            guard let itemView = self.itemView(for: element) else { return }
+            element.previewItemView = itemView.view
+            let previewItem = QuicklookItem(url: element.previewItemURL, frame: itemView.view.frame, transitionImage: element.previewItemTransitionImage)
+            previewItems.append(previewItem)
+            if (element == current) {
+                transitionImage = previewItem.previewItemTransitionImage ?? itemView.view.renderedImage
+                index = previewItems.count - 1
+            }
+        }
+        guard previewItems.isEmpty == false else { return }
+        
+        QuicklookPanel.shared.keyDownResponder = self.collectionView
+        QuicklookPanel.shared.present(previewItems, currentItemIndex: index, image: transitionImage)
+    }
+    
+    func quicklookSelectedItems() {
+        self.quicklook(self.selectedElements)
+    }
+}
+
+
+internal extension QLPreviewable {
+    var previewItemView: NSView? {
+        get { getAssociatedValue(key: "_previewItemView", object: self) }
+        set { set(associatedValue: newValue, key: "_previewItemView", object: self) }
+    }
+}

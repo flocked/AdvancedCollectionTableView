@@ -56,8 +56,8 @@ public class TableViewDiffableDataSource<Section: HashIdentifiable, Element: Has
     open var dragDropHandlers = DragdropHandlers<Element>()
     open var quicklookHandlers = QuicklookHandlers<Element>()
     open var columnHandlers = ColumnHandlers<Element>()
-    open var menuProvider: (([Element]) -> NSMenu?)? = nil
-    open var keydownHandler: ((Int, NSEvent.ModifierFlags) -> Bool)? = nil
+    open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    open var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.

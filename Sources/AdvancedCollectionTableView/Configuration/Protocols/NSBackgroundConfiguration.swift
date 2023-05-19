@@ -5,6 +5,7 @@
 //  Created by Florian Zand on 04.09.22.
 //
 
+/*
 import AppKit
 
 /**
@@ -23,3 +24,4 @@ public protocol NSBackgroundConfiguration {
      */
     func updated(for state: NSConfigurationState) -> Self
 }
+*/
