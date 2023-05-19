@@ -213,6 +213,7 @@ public extension NSCollectionView {
                            methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject) -> ()).self) {
     store in { (object) in
+        Swift.print("swizzled updateTrackingAreas")
         self.installTrackingArea()
         store.original(object, store.selector)
     }
@@ -221,6 +222,7 @@ public extension NSCollectionView {
                            methodSignature: (@convention(c) (AnyObject, Selector, NSEvent) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject, NSEvent) -> ()).self) {
     store in { (object, event) in
+        Swift.print("swizzled mouseMoved")
         let location = event.location(in: self)
         if self.visibleRect.contains(location) {
             self.updateItemHoverState(event)
@@ -229,6 +231,7 @@ public extension NSCollectionView {
     }
 },
                ]
+               Swift.print("states", hooks.forEach({$0.state}))
               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
            } catch {
                Swift.print(error)
