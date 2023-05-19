@@ -124,16 +124,6 @@ public extension NSCollectionView {
     }
     */
     
-    override func updateTrackingAreas() {
-        if let trackingArea = trackingArea {
-            self.removeTrackingArea(trackingArea)
-        }
-        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .enabledDuringMouseDrag, .activeInKeyWindow, .inVisibleRect]
-        self.trackingArea = NSTrackingArea(rect: self.bounds, options:  options, owner: self)
-        self.addTrackingArea(self.trackingArea!)
-        super.updateTrackingAreas()
-   }
-    
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
         self.updateItemHoverState(event)
@@ -215,6 +205,7 @@ public extension NSCollectionView {
    @objc internal func swizzleCollectionViewTrackingArea(_ shouldSwizzle: Bool = true) {
        if (didSwizzleCollectionViewTrackingArea == false) {
            didSwizzleCollectionViewTrackingArea = true
+           Swift.print("swizzleCollectionViewTrackingArea")
            do {
                let hooks = [
                 
