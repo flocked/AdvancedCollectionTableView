@@ -210,7 +210,7 @@ public extension NSCollectionView {
         store.original(object, store.selector)
     }
 },
-    try  self.hook(#selector(NSCollectionView.mouseMoved(with:)),
+  /*  try  self.hook(#selector(NSCollectionView.mouseMoved(with:)),
                            methodSignature: (@convention(c) (AnyObject, Selector, NSEvent) -> ()).self,
                            hookSignature: (@convention(block) (AnyObject, NSEvent) -> ()).self) {
     store in { (object, event) in
@@ -220,7 +220,7 @@ public extension NSCollectionView {
         }
         store.original(object, store.selector, event)
     }
-},
+}, */
                ]
               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
            } catch {

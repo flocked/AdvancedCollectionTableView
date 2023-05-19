@@ -529,7 +529,7 @@ public extension NSCollectionViewItem {
                                                    Swift.print("viewDidMoveToSuperview collectionView", collectionView)
                                                    collectionView.observeWindowState()
                                                    collectionView.installTrackingArea()
-                                                 //  collectionView.swizzleCollectionViewTrackingArea()
+                                                  collectionView.swizzleCollectionViewTrackingArea()
                                                }
                                                /*
                                                self.collectionView?.observeWindowState()
