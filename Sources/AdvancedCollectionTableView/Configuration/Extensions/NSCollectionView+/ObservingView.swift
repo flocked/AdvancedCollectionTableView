@@ -89,6 +89,7 @@ extension NSCollectionView {
         if (self.observerView == nil) {
             self.observerView = ObserverView()
             self.addSubview(withConstraint: self.observerView!)
+            self.observerView!.sendToBack()
             self.observerView?.windowStateHandler = { [weak self] windowIsKey in
                 guard let self = self else { return }
                 self.isEmphasized = windowIsKey
