@@ -92,7 +92,7 @@ extension NSCollectionView {
             self.observerView?.windowStateHandler = { [weak self] windowIsKey in
                 guard let self = self else { return }
                 self.isEmphasized = windowIsKey
-             //   Swift.print("ObserverView windowIsKey", windowIsKey)
+                Swift.print("ObserverView windowIsKey", windowIsKey)
             }
             
             self.observerView?.mouseMoveHandler = { [weak self] event in
@@ -100,7 +100,7 @@ extension NSCollectionView {
                 let location = event.location(in: self)
                 if self.bounds.contains(location) {
                     self.updateItemHoverState(event)
-                 //   Swift.print("ObserverView location", location)
+                    Swift.print("ObserverView location", location)
                 }
             }
         }
