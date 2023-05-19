@@ -203,7 +203,30 @@ public extension NSCollectionView {
        if (didSwizzleCollectionViewTrackingArea == false) {
            didSwizzleCollectionViewTrackingArea = true
            Swift.print("swizzleCollectionViewTrackingArea")
- 
+           do {
+               let hooks = [
+                   
+                   try  self.hook(#selector(NSCollectionView
+                       .updateTrackingAreas),
+                                  methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                  hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                                      store in { (object) in
+                                          Swift.print("mouseMoved interpose")
+                                          
+                                      }
+                                  },
+                   try  self.hook(#selector(NSCollectionView.mouseMoved(with:)),
+                                  methodSignature: (@convention(c) (AnyObject, Selector, NSEvent) -> ()).self,
+                                  hookSignature: (@convention(block) (AnyObject, NSEvent) -> ()).self) {
+                                      store in { (object, event) in
+                                          Swift.print("mouseMoved interpuse")
+                                      }
+                                  },
+               ]
+               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
+           } catch {
+               Swift.print(error)
+           }
            
            /*
            do {
