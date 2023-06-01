@@ -366,7 +366,6 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_isHovered", object: self, initialValue: false) }
         set {
             guard newValue != self.isHovered else { return }
-            Swift.print("isHovered updates")
             set(associatedValue: newValue, key: "NSCollectionItem_isHovered", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }

@@ -222,15 +222,12 @@ public extension ObserverView {
         public var rightUp: ((NSEvent)->())? = nil
         
         internal var trackingAreaOptions: NSTrackingArea.Options {
-            var options: NSTrackingArea.Options = [.activeInKeyWindow, .inVisibleRect]
+            var options: NSTrackingArea.Options = [.activeInKeyWindow, .inVisibleRect, .mouseEnteredAndExited]
             if (dragged != nil) {
                 options.insert(.enabledDuringMouseDrag)
             }
-            if (entered != nil || exited != nil) {
-                options.insert(.mouseEnteredAndExited)
-            }
             if (moved != nil) {
-                options.insert(.mouseMoved)
+                options.insert(NSTrackingArea.Options.mouseMoved)
             }
             return options
         }
