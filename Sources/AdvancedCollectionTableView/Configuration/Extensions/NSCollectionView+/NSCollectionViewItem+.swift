@@ -139,9 +139,9 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleCollectionItemIfNeeded()
+            //    self.swizzleCollectionItemIfNeeded()
             }
-            self.configurateContentView()
+       //     self.configurateContentView()
         }
     }
     
