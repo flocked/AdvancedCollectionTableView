@@ -144,6 +144,7 @@ public extension NSCollectionView {
    }
     
     internal func setupCollectionViewObserver() {
+        Swift.print("setupCollectionViewObserver")
         if collectionViewObserver.isObserving(\.selectionIndexPaths) == false {
             collectionViewObserver.add(\.selectionIndexPaths) { [weak self] old, newIndexes in
                 guard let self = self else { return }
