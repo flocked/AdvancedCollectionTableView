@@ -141,7 +141,7 @@ public extension NSCollectionViewItem {
             if (newValue != nil) {
                 self.swizzleCollectionItemIfNeeded()
             }
-           self.configurateContentView()
+            self.configurateContentView()
         }
     }
     
@@ -182,32 +182,25 @@ public extension NSCollectionViewItem {
     }
     
     internal var contentView: NSContentView? {
-      //  self.view.firstSuperview(where: {$0 is (NSView & NSContentView)})
-    //    self.view.firstSubview(type: NSContentView.self) as? any NSView & NSContentView
-       return self.view as? NSContentView
-       // return nil
+        self.view as? NSContentView
     }
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            Swift.print("configurateContentView")
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
-                Swift.print("Add SubView")
-              //  self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
                 self.view = contentConfiguration.makeContentView()
-         //       self.view.wantsLayer = true
+                self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
             }
         } else {
             self.cachedLayoutAttributes = nil
-          //  self.contentView?.removeFromSuperview()
             self.view = NSView()
             self.didSwizzleCollectionItemView = false
         }
-     //   self.configurateBackgroundView()
+        self.configurateBackgroundView()
     }
         
     /**
@@ -604,24 +597,18 @@ public extension NSCollectionViewItem {
     
      override var view: NSView {
          get {
-             Swift.print("getView")
              if (self.nibName != nil) {
-                 Swift.print("nibName")
                  return super.view
              } else {
                  if (self.isViewLoaded == false) {
-                     Swift.print("isViewLoaded false")
                      if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
-                         Swift.print("overrides loadView")
                          self.loadView()
                      }
                      if (self.isViewLoaded == false) {
-                         Swift.print("new View")
                          let newView = NSView()
                          super.view = newView
                      }
                  }
-                 Swift.print("isViewLoaded true")
                  return super.view
              }
          }
