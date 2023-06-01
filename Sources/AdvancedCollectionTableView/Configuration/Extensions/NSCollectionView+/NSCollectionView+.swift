@@ -78,19 +78,18 @@ public extension NSCollectionView {
         }
     }
     
-    internal func updateItemHoverState(_ event: NSEvent?) {
+    internal func updateItemHoverState(_ event: NSEvent) {
         let visibleItems = self.visibleItems()
-        if let event = event {
             let location = event.location(in: self)
             let mouseItem = self.item(at: location)
             if let mouseItem = mouseItem, mouseItem.isHovered == false {
+                Swift.print("mouseItem")
                 mouseItem.isHovered = true
             }
-            visibleItems.filter({$0.isHovered && $0 != mouseItem}).forEach({$0.isHovered = false })
-        } else {
-            visibleItems.filter({$0.isHovered}).forEach({$0.isHovered = false })
+            let items = visibleItems.filter({$0.isHovered && $0 != mouseItem})
+            Swift.print("nonMouseItem", items.count)
+            items.forEach({$0.isHovered = false })
         }
-    }
     
     /*
      internal var trackingArea: NSTrackingArea? {
