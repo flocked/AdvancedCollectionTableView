@@ -32,12 +32,14 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
    }
     
     override func mouseDown(with event: NSEvent) {
-        Swift.print("Mouse Down")
+        Swift.print("Mouse Down", self.nextResponder, self.superview)
+        self.superview?.mouseDown(with: event)
         self.nextResponder?.mouseDown(with: event)
     }
     
     override func mouseUp(with event: NSEvent) {
         Swift.print("Mouse up")
+        self.superview?.mouseUp(with: event)
         self.nextResponder?.mouseUp(with: event)
     }
        
