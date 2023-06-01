@@ -443,12 +443,24 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_didSwizzle", object: self, initialValue: false) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
-        
+    
+    internal var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
+       get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
+       set {  set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self) }
+   }
 
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             didSwizzleCollectionItem = true
+            itemObserver = KeyValueObserver<NSCollectionViewItem>(self)
+            itemObserver?.add(\.isSelected) { old, new in
+                Swift.print("itemObserver", new)
+                if (old != new) {
+                    self.configurateBackgroundView()
+                    self.setNeedsAutomaticUpdateConfiguration()
+                }
+            }
             do {
                 let hooks = [
                     try  self.hook(#selector(NSCollectionViewItem.viewDidLayout),
@@ -485,6 +497,7 @@ public extension NSCollectionViewItem {
                             }
                     }
                 },
+                    /*
                     try  self.hook(#selector(setter: isSelected),
                                            methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
@@ -495,7 +508,7 @@ public extension NSCollectionViewItem {
                                 self.setNeedsAutomaticUpdateConfiguration()
                         }
                     }
-                },
+                }, */
                     try  self.hook(#selector(setter: highlightState),
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
