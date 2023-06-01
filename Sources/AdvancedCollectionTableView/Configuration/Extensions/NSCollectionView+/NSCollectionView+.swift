@@ -143,8 +143,28 @@ public extension NSCollectionView {
         }
    }
     
+    internal var collectionViewObserverNew: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSCollectionItem_CollectionViewObserverNew", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_CollectionViewObserverNew", object: self)
+        }
+   }
+    
     internal func setupCollectionViewObserver() {
         Swift.print("setupCollectionViewObserver")
+        if (collectionViewObserverNew == nil) {
+            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { object, old, new in
+                Swift.print("selectionIndexPaths")
+            }
+            /*
+             collectionViewObserverNew = self.observe(\.selectionIndexPaths, options: [.old , .new]) { object, change in
+             
+             }
+             */
+        }
+    }
+    
+    /*
+    internal func setupCollectionViewObserver() {
         if collectionViewObserver.isObserving(\.selectionIndexPaths) == false {
             collectionViewObserver.add(\.selectionIndexPaths) { [weak self] old, newIndexes in
                 guard let self = self else { return }
@@ -195,6 +215,7 @@ public extension NSCollectionView {
             }
         }
     }
+     */
     
     @objc func didScroll() {
         
