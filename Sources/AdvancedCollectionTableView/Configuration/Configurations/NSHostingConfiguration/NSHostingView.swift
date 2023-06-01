@@ -30,6 +30,10 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
    override var fittingSize: NSSize {
        return hostingController.fittingSize
    }
+    
+    override func mouseDown(with event: NSEvent) {
+        Swift.print("Mouse Down")
+    }
        
    internal var directionalLayoutMargins: NSDirectionalEdgeInsets {
        get { return NSDirectionalEdgeInsets(top: -hostingViewConstraints[0].constant, leading: -hostingViewConstraints[1].constant , bottom: hostingViewConstraints[2].constant , trailing: hostingViewConstraints[3].constant)
