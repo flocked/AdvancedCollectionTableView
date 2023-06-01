@@ -457,12 +457,14 @@ public extension NSCollectionViewItem {
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
+            /*
             if (itemObserverNew == nil) {
                 itemObserverNew = self.observe(\.isSelected, options: [.new]) { [weak self] object, change in
                     guard let self = self else { return }
                     Swift.print("itemObserverNew isSelected")
                 }
             }
+             */
             /*
             itemObserver.add(\.isSelected) { old, new in
                 Swift.print("itemObserver isSelected", new)

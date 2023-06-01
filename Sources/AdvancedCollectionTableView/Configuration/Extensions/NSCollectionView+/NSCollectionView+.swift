@@ -152,8 +152,18 @@ public extension NSCollectionView {
     internal func setupCollectionViewObserver() {
         Swift.print("setupCollectionViewObserver")
         if (collectionViewObserverNew == nil) {
-            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { object, old, new in
-                Swift.print("selectionIndexPaths")
+            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { [weak self] object, previousIndexes, newIndexes in
+                guard let self = self else { return }
+              //  let previousIndexes = self.previousSelectionIndexPaths
+                var itemIndexPaths: [IndexPath] = []
+                
+                let added = newIndexes.symmetricDifference(previousIndexes)
+                let removed = previousIndexes.symmetricDifference(newIndexes)
+
+                itemIndexPaths.append(contentsOf: added)
+                itemIndexPaths.append(contentsOf: removed)
+                Swift.print("selectionIndexPaths", itemIndexPaths.count)
+                
             }
             /*
              collectionViewObserverNew = self.observe(\.selectionIndexPaths, options: [.old , .new]) { object, change in
