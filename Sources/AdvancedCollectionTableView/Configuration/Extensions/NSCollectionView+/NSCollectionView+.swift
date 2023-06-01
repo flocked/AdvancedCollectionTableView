@@ -63,13 +63,6 @@ public extension NSCollectionView {
         }
     }
     
-    internal var isObservingWindowState: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_isObservingWindowState", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionView_isObservingWindowState", object: self)
-        }
-    }
-    
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEmphasized", object: self, initialValue: false) }
         set {
@@ -89,12 +82,6 @@ public extension NSCollectionView {
         previousHoveredItems.forEach({$0.isHovered = false })
     }
     
-    /*
-     internal var trackingArea: NSTrackingArea? {
-     get { getAssociatedValue(key: "NSCollectionView_trackingArea", object: self) }
-     set { set(associatedValue: newValue, key: "NSCollectionView_trackingArea", object: self) } }
-     */
-    
     internal var trackDisplayingItems: Bool {
         get { getAssociatedValue(key: "NSCollectionView_trackDisplayingItems", object: self, initialValue: false) }
         set {
@@ -102,12 +89,6 @@ public extension NSCollectionView {
             self.updateDisplayingItemsTracking()
         }
     }
-    
-    /*
-    override var isSelectable: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_isSelectable", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_isSelectable", object: self) } }
-     */
     
     var isEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
@@ -148,70 +129,47 @@ public extension NSCollectionView {
                 itemIndexPaths.append(contentsOf: removed)
                 itemIndexPaths = itemIndexPaths.uniqued()
                 let items = itemIndexPaths.compactMap({self.item(at: $0)})
-                Swift.print("selectionIndexPaths", itemIndexPaths.count, items.count)
                 items.forEach({ $0.setNeedsUpdateConfiguration() })
-                
             }
         }
     }
-    
-    /*
-    internal func setupCollectionViewObserver() {
-        if collectionViewObserver.isObserving(\.selectionIndexPaths) == false {
-            collectionViewObserver.add(\.selectionIndexPaths) { [weak self] old, newIndexes in
-                guard let self = self else { return }
-                let previousIndexes = self.previousSelectionIndexPaths
-                var itemIndexPaths: [IndexPath] = []
-                
-                let added = newIndexes.symmetricDifference(previousIndexes)
-                let removed = previousIndexes.symmetricDifference(newIndexes)
-
-                itemIndexPaths.append(contentsOf: added)
-                itemIndexPaths.append(contentsOf: removed)
-                
-                Swift.print("selectionIndexPaths", itemIndexPaths.count)
-                
-                let items = itemIndexPaths.compactMap({self.item(at: $0)})
-                items.forEach({ $0.setNeedsUpdateConfiguration() })
-                self.previousSelectionIndexPaths = newIndexes
-                
-                /*
-                let indexPathsForVisibleItems = self.indexPathsForVisibleItems()
-                for previousIndex in previousIndexes {
-                    if newIndexes.contains(previousIndex) == false {
-                        if (indexPathsForVisibleItems.contains(previousIndex)) {
-                            itemIndexPaths.append(previousIndex)
-                        }
-                    }
-                }
-                
-                
-                for value in newIndexes.symmetricDifference(previousIndexes) {
-                    
-                }
-                
-               let diff = Array(newIndexes).difference(from: Array(previousIndexes))
-                for insert in diff.insertions {
-                
-                }
-               
-                
-                for newIndex in newIndexes {
-                    if previousIndexes.contains(newIndex) == false {
-                        if (indexPathsForVisibleItems.contains(newIndex)) {
-                            itemIndexPaths.append(newIndex)
-                        }
-                    }
-                }
-          */
-            }
-        }
-    }
-     */
     
     @objc func didScroll() {
         
     }
+    
+    
+    /*
+    override var isSelectable: Bool {
+        get { getAssociatedValue(key: "NSCollectionView_isSelectable", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "NSCollectionView_isSelectable", object: self) } }
+     */
 }
 
-
+internal extension NSCollectionView {
+    func addObserverView() {
+        if (self.observerView == nil) {
+            self.observerView = ObserverView()
+            self.addSubview(withConstraint: self.observerView!)
+            self.observerView!.sendToBack()
+            self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
+                guard let self = self else { return }
+                self.isEmphasized = windowIsKey
+            }
+            
+            self.observerView?.mouseHandlers.moved = { [weak self] event in
+                guard let self = self else { return }
+                let location = event.location(in: self)
+                if self.bounds.contains(location) {
+                    self.updateItemHoverState(event)
+                }
+            }
+        }
+    }
+    
+    var observerView: ObserverView? {
+        get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
+        set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
+        }
+    }
+}

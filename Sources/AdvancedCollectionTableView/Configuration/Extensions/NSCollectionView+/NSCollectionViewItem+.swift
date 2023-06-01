@@ -521,7 +521,6 @@ public extension NSCollectionViewItem {
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
                     store in { (object, highlightState) in
-                        Swift.print("highlightState change")
                         let oldHighlightState = self.highlightState
                          store.original(object, store.selector, highlightState)
                         if (oldHighlightState != self.highlightState) {
@@ -618,7 +617,7 @@ public extension NSCollectionViewItem {
                 }
             }
         case .enabledIncludingConstraints:
-            Swift.print("")
+            break
         default:
             break
         }

@@ -22,8 +22,6 @@ public extension NSTableCellView {
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
-                self.tableView?.swizzleTableViewTrackingArea()
-                self.tableView?.observeWindowState()
                 self.swizzleTableCellIfNeeded()
             }
             self.configurateContentView()
@@ -261,8 +259,7 @@ public extension NSTableCellView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           self.tableView?.swizzleTableViewTrackingArea()
-                                           self.tableView?.observeWindowState()
+                                           self.tableView?.addObserverView()
                                            // Add constraints if tableview usesAutomaticRowHeights
                                           /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
                                                contentView.con

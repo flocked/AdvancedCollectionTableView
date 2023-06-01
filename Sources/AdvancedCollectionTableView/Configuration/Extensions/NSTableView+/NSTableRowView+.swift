@@ -35,8 +35,6 @@ public extension NSTableRowView {
         set {
             set(associatedValue: newValue, key: "NSTableRowVew_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                self.tableView?.swizzleTableViewTrackingArea()
-                self.tableView?.observeWindowState()
                 self.swizzleTableRowViewIfNeeded()
             }
             self.configurateBackgroundView()
@@ -361,8 +359,7 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           self.tableView?.swizzleTableViewTrackingArea()
-                                           self.tableView?.observeWindowState()
+                                           self.tableView?.addObserverView()
                                            store.original(object, store.selector)
                                        }
                                    },
