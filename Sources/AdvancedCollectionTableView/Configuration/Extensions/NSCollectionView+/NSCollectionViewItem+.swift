@@ -495,7 +495,7 @@ public extension NSCollectionViewItem {
                             }
                     }
                 },
-                    
+                    /*
                     try  self.hook(#selector(setter: isSelected),
                                            methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
@@ -509,6 +509,7 @@ public extension NSCollectionViewItem {
                         }
                     }
                 },
+                     */
                     try  self.hook(#selector(setter: highlightState),
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
