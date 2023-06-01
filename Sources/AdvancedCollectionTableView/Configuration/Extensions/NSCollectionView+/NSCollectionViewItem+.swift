@@ -458,8 +458,9 @@ public extension NSCollectionViewItem {
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             if (itemObserverNew == nil) {
-                itemObserverNew = self.observeChange(\.isSelected) { object, old, new in
-                    Swift.print("itemObserverNew isSelected", new)
+                itemObserverNew = self.observe(\.isSelected, options: [.new]) { [weak self] object, change in
+                    guard let self = self else { return }
+                    Swift.print("itemObserverNew isSelected")
                 }
             }
             /*
