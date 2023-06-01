@@ -185,19 +185,22 @@ public extension NSCollectionViewItem {
         self.view as? NSContentView
     }
     
+  
+    
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
-                self.view = contentConfiguration.makeContentView()
+             //   self.view = contentConfiguration.makeContentView()
+                self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
                 self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
             }
         } else {
             self.cachedLayoutAttributes = nil
-            self.view = NSView()
+          //  self.view = NSView()
             self.didSwizzleCollectionItemView = false
         }
         self.configurateBackgroundView()
