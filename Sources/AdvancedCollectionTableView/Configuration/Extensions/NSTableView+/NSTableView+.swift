@@ -97,9 +97,11 @@ public extension NSTableView {
          set {  set(associatedValue: newValue, key: "NSTableView_hoveredRowView", object: self) }
      }
     
+    /*
     override var isSelectable: Bool {
          get { getAssociatedValue(key: "NSTableView_isSelectable", object: self, initialValue: true) }
          set { set(associatedValue: newValue, key: "NSTableView_isSelectable", object: self) } }
+     */
 
         
     internal func updateRowHoverState(_ event: NSEvent?) {

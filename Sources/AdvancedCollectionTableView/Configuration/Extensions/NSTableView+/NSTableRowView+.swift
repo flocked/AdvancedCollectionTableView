@@ -370,8 +370,8 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
-                                           if self.isSelected != isSelected, (self.tableView?.isSelectable ?? true) {
-                                                   store.original(object, store.selector, isSelected)
+                                           store.original(object, store.selector, isSelected)
+                                           if self.isSelected != isSelected {
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()
                                            }

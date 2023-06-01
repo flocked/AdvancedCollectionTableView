@@ -444,18 +444,16 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
     
-    internal var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
-       get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
-       set {  set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self) }
+    internal var itemObserver: KeyValueObserver<NSCollectionViewItem> {
+       get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: KeyValueObserver<NSCollectionViewItem>(self)) }
    }
 
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             didSwizzleCollectionItem = true
-            itemObserver = KeyValueObserver<NSCollectionViewItem>(self)
-            itemObserver?.add(\.isSelected) { old, new in
-                Swift.print("itemObserver", new)
+            itemObserver.add(\.isSelected) { old, new in
+                Swift.print("itemObserver isSelected", new)
                 if (old != new) {
                     self.configurateBackgroundView()
                     self.setNeedsAutomaticUpdateConfiguration()
@@ -502,9 +500,10 @@ public extension NSCollectionViewItem {
                                            methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                     store in { (object, isSelected) in
+                        let oldIsSelected = self.isSelected
                         Swift.print("swizzle isSelected")
-                        if self.isSelected != isSelected {
-                            store.original(object, store.selector, isSelected)
+                        store.original(object, store.selector, isSelected)
+                        if oldIsSelected != isSelected {
                             self.configurateBackgroundView()
                             self.setNeedsAutomaticUpdateConfiguration()
                         }
@@ -514,8 +513,11 @@ public extension NSCollectionViewItem {
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
                     store in { (object, highlightState) in
+                        let oldHighlightState = self.highlightState
                          store.original(object, store.selector, highlightState)
-                        self.setNeedsAutomaticUpdateConfiguration()
+                        if (oldHighlightState != self.highlightState) {
+                            self.setNeedsAutomaticUpdateConfiguration()
+                        }
                     }
                 },
                     ]
