@@ -228,6 +228,7 @@ public extension NSCollectionViewItem {
      If you add custom states to the item’s configuration state, make sure to call this method every time those custom states change.
      */
     func setNeedsUpdateConfiguration() {
+        Swift.print("setNeedsUpdateConfiguration")
         self.updateConfiguration(using: self.configurationState)
     }
     
@@ -242,6 +243,8 @@ public extension NSCollectionViewItem {
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
             }
+            
+            Swift.print("setNeedsAutomaticUpdateConfiguration", self.configurationUpdateHandler)
             
             configurationUpdateHandler?(self, state)
         }

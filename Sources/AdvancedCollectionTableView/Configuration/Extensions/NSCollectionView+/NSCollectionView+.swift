@@ -133,20 +133,16 @@ public extension NSCollectionView {
         }
     }
     
-    internal var collectionViewObserver: KeyValueObserver<NSCollectionView> {
-        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: .init(self)) }
-   }
-    
-    internal var collectionViewObserverNew: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionItem_CollectionViewObserverNew", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_CollectionViewObserverNew", object: self)
+    internal var collectionViewObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self)
         }
    }
     
     internal func setupCollectionViewObserver() {
         Swift.print("setupCollectionViewObserver")
-        if (collectionViewObserverNew == nil) {
-            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
+        if (collectionViewObserver == nil) {
+            collectionViewObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
                 var itemIndexPaths: [IndexPath] = []
                 
                 let added = newIndexes.symmetricDifference(previousIndexes)
@@ -154,9 +150,9 @@ public extension NSCollectionView {
 
                 itemIndexPaths.append(contentsOf: added)
                 itemIndexPaths.append(contentsOf: removed)
-                Swift.print("selectionIndexPaths", itemIndexPaths.count)
                 
                 let items = itemIndexPaths.compactMap({self.item(at: $0)})
+                Swift.print("selectionIndexPaths", itemIndexPaths.count, items.count)
                 items.forEach({ $0.setNeedsUpdateConfiguration() })
                 
             }
