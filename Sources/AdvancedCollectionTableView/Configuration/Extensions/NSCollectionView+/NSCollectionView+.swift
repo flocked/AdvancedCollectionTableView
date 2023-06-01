@@ -140,7 +140,6 @@ public extension NSCollectionView {
    }
     
     internal func setupCollectionViewObserver() {
-        Swift.print("setupCollectionViewObserver")
         if (collectionViewObserver == nil) {
             collectionViewObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
                 var itemIndexPaths: [IndexPath] = []
@@ -150,7 +149,7 @@ public extension NSCollectionView {
 
                 itemIndexPaths.append(contentsOf: added)
                 itemIndexPaths.append(contentsOf: removed)
-                
+                itemIndexPaths = itemIndexPaths.uniqued()
                 let items = itemIndexPaths.compactMap({self.item(at: $0)})
                 Swift.print("selectionIndexPaths", itemIndexPaths.count, items.count)
                 items.forEach({ $0.setNeedsUpdateConfiguration() })

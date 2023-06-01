@@ -228,7 +228,6 @@ public extension NSCollectionViewItem {
      If you add custom states to the item’s configuration state, make sure to call this method every time those custom states change.
      */
     func setNeedsUpdateConfiguration() {
-        Swift.print("setNeedsUpdateConfiguration")
         self.updateConfiguration(using: self.configurationState)
     }
     
@@ -243,9 +242,7 @@ public extension NSCollectionViewItem {
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
             }
-            
-            Swift.print("setNeedsAutomaticUpdateConfiguration", self.configurationUpdateHandler)
-            
+                        
             configurationUpdateHandler?(self, state)
         }
     }
@@ -460,23 +457,6 @@ public extension NSCollectionViewItem {
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
-            /*
-            if (itemObserverNew == nil) {
-                itemObserverNew = self.observe(\.isSelected, options: [.new]) { [weak self] object, change in
-                    guard let self = self else { return }
-                    Swift.print("itemObserverNew isSelected")
-                }
-            }
-             */
-            /*
-            itemObserver.add(\.isSelected) { old, new in
-                Swift.print("itemObserver isSelected", new)
-                if (old != new) {
-                    self.configurateBackgroundView()
-                    self.setNeedsAutomaticUpdateConfiguration()
-                }
-            }
-             */
             do {
                 let hooks = [
                     try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
@@ -541,6 +521,7 @@ public extension NSCollectionViewItem {
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
                     store in { (object, highlightState) in
+                        Swift.print("highlightState change")
                         let oldHighlightState = self.highlightState
                          store.original(object, store.selector, highlightState)
                         if (oldHighlightState != self.highlightState) {
