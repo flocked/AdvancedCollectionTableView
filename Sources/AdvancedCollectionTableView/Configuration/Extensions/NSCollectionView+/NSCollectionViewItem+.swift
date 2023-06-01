@@ -195,9 +195,9 @@ public extension NSCollectionViewItem {
             } else {
                 self.cachedLayoutAttributes = nil
                 Swift.print("Add SubView")
-                self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
+              //  self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
                // self.view = contentConfiguration.makeContentView()
-                self.view.wantsLayer = true
+         //       self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
             }
         } else {
@@ -206,7 +206,7 @@ public extension NSCollectionViewItem {
           //  self.view = NSView()
             self.didSwizzleCollectionItemView = false
         }
-        self.configurateBackgroundView()
+     //   self.configurateBackgroundView()
     }
         
     /**
