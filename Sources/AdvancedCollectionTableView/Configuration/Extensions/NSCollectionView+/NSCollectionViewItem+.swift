@@ -447,10 +447,21 @@ public extension NSCollectionViewItem {
     internal var itemObserver: KeyValueObserver<NSCollectionViewItem> {
        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: KeyValueObserver<NSCollectionViewItem>(self)) }
    }
+    
+    internal var itemObserverNew: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSCollectionItem_ObserverNew", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_ObserverNew", object: self)
+        }
+   }
 
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
+            if (itemObserverNew == nil) {
+                itemObserverNew = self.observeChange(\.isSelected) { object, old, new in
+                    Swift.print("itemObserverNew isSelected", new)
+                }
+            }
             /*
             itemObserver.add(\.isSelected) { old, new in
                 Swift.print("itemObserver isSelected", new)
