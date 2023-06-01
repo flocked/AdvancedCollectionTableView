@@ -189,10 +189,12 @@ public extension NSCollectionViewItem {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            Swift.print("configurateContentView")
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
+                Swift.print("Add SubView")
                 self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
                // self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
@@ -200,7 +202,7 @@ public extension NSCollectionViewItem {
             }
         } else {
             self.cachedLayoutAttributes = nil
-            self.contentView?.removeFromSuperview()
+          //  self.contentView?.removeFromSuperview()
           //  self.view = NSView()
             self.didSwizzleCollectionItemView = false
         }
