@@ -139,9 +139,9 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-            //    self.swizzleCollectionItemIfNeeded()
+                self.swizzleCollectionItemIfNeeded()
             }
-       //     self.configurateContentView()
+           self.configurateContentView()
         }
     }
     
@@ -181,11 +181,11 @@ public extension NSCollectionViewItem {
         }
     }
     
-    internal var contentView: (NSView & NSContentView)? {
+    internal var contentView: NSContentView? {
       //  self.view.firstSuperview(where: {$0 is (NSView & NSContentView)})
     //    self.view.firstSubview(type: NSContentView.self) as? any NSView & NSContentView
-       // self.view as? NSContentView
-        return nil
+       return self.view as? NSContentView
+       // return nil
     }
     
     internal func configurateContentView() {
@@ -197,14 +197,14 @@ public extension NSCollectionViewItem {
                 self.cachedLayoutAttributes = nil
                 Swift.print("Add SubView")
               //  self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
-               // self.view = contentConfiguration.makeContentView()
+                self.view = contentConfiguration.makeContentView()
          //       self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
             }
         } else {
             self.cachedLayoutAttributes = nil
           //  self.contentView?.removeFromSuperview()
-          //  self.view = NSView()
+            self.view = NSView()
             self.didSwizzleCollectionItemView = false
         }
      //   self.configurateBackgroundView()
