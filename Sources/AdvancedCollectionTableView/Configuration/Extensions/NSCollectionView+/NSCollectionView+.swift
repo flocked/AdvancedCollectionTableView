@@ -137,12 +137,6 @@ public extension NSCollectionView {
         get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: .init(self)) }
    }
     
-    internal var previousSelectionIndexPaths: Set<IndexPath> {
-        get { getAssociatedValue(key: "NSCollectionItem_PreviousSelectionIndexPaths", object: self, initialValue: self.selectionIndexPaths) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_PreviousSelectionIndexPaths", object: self)
-        }
-   }
-    
     internal var collectionViewObserverNew: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionItem_CollectionViewObserverNew", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionItem_CollectionViewObserverNew", object: self)
@@ -152,9 +146,7 @@ public extension NSCollectionView {
     internal func setupCollectionViewObserver() {
         Swift.print("setupCollectionViewObserver")
         if (collectionViewObserverNew == nil) {
-            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { [weak self] object, previousIndexes, newIndexes in
-                guard let self = self else { return }
-              //  let previousIndexes = self.previousSelectionIndexPaths
+            collectionViewObserverNew = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
                 var itemIndexPaths: [IndexPath] = []
                 
                 let added = newIndexes.symmetricDifference(previousIndexes)
@@ -164,12 +156,10 @@ public extension NSCollectionView {
                 itemIndexPaths.append(contentsOf: removed)
                 Swift.print("selectionIndexPaths", itemIndexPaths.count)
                 
+                let items = itemIndexPaths.compactMap({self.item(at: $0)})
+                items.forEach({ $0.setNeedsUpdateConfiguration() })
+                
             }
-            /*
-             collectionViewObserverNew = self.observe(\.selectionIndexPaths, options: [.old , .new]) { object, change in
-             
-             }
-             */
         }
     }
     
