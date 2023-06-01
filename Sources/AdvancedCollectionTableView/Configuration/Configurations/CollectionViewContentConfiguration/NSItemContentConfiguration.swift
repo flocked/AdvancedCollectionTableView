@@ -6,7 +6,9 @@
 //
 
 import AppKit
-import FZExtensions
+import SwiftUI
+import FZSwiftUtils
+import FZUIKit
 
 /**
  A content configuration for a table item-based content view.
@@ -40,6 +42,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var secondaryattributedText: AttributedString? = nil
     // The image to display.
     public var image: NSImage? = nil
+    // The view to display.
+    public var view: NSView? = nil
     
     // Properties for configuring the primary text.
     public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
@@ -47,6 +51,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var secondaryTextProperties: TextProperties = .textStyle(.body)
     // Properties for configuring the image.
     public var imageProperties: ImageProperties = ImageProperties()
+    // Properties for configuring the image.
+    public var contentProperties: ContentProperties = ContentProperties()
    
     /**
      The padding between the image and text.
@@ -99,7 +105,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     internal var hasImage: Bool {
-        self.image != nil || self.imageProperties.backgroundColor != nil
+        self.image != nil || self.contentProperties.backgroundColor != nil
     }
     
     init(text: String? = nil,
@@ -110,6 +116,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          imageProperties: ImageProperties = ImageProperties(),
          textProperties: TextProperties = .textStyle(.body),
          secondaryTextProperties: TextProperties = .textStyle(.body),
+         contentProperties: ContentProperties = ContentProperties(),
          orientation: NSUserInterfaceLayoutOrientation = .vertical,
          prefersSideBySideTextAndSecondaryText: Bool = false,
          imageToTextPadding: CGFloat = 2.0,
@@ -131,7 +138,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     static func image(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 0.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, imageProperties: ImageProperties(cornerRadius: cornerRadius))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, contentProperties: ContentProperties(shape: .roundedRectangular(cornerRadius)))
     }
 }
 
@@ -204,35 +211,65 @@ public extension NSItemContentConfiguration {
         }
     }
     
-    struct ImageProperties: Hashable {
-        var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
-        public var tintColor: NSColor? = nil
-        public var cornerRadius: CGFloat = 0.0
-        public var backgroundColor: NSColor? = nil
+    struct ContentProperties: Hashable {
+        public enum Shape: Hashable {
+            case circle
+            case capsule
+            case roundedRectangular(_ cornerRadius: CGFloat)
+            case rectangular
+            internal var swiftui: some SwiftUI.Shape {
+                switch self {
+                case .circle: return Circle().asAnyShape()
+                case .capsule: return Capsule().asAnyShape()
+                case .roundedRectangular(let cornerRadius): return RoundedRectangle(cornerRadius: cornerRadius).asAnyShape()
+                case .rectangular: return Rectangle().asAnyShape()
+                }
+            }
+        }
+        public var shape: Shape = .rectangular
         public var shadowProperties: ShadowProperties = .black()
         
+        public var backgroundColor: NSColor? = nil
         public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+                
+        public var borderWidth: CGFloat = 0.0
+        public var borderColor: NSColor? = nil
+        public var borderColorTransform: NSConfigurationColorTransformer? = nil
+        
+        public func resolvedBackgroundColor() -> NSColor? {
+            if let backgroundColor = self.backgroundColor {
+                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
+            }
+            return nil
+        }
+        
+        public func resolvedBorderdColor() -> NSColor? {
+            if let borderColor = self.borderColor {
+                return self.borderColorTransform?(borderColor) ?? borderColor
+            }
+            return nil
+        }
+    }
+    
+    struct ImageProperties: Hashable {
+        public var tintColor: NSColor? = nil
         public var tintColorTransform: NSConfigurationColorTransformer? = nil
-        public var size: ImageSize = .fullHeight
+        public var size: ImageSize = .fullSize
         public var scaling: CALayerContentsGravity = .resizeAspectFill
+        var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
+
         
         public enum ImageSize: Hashable {
-            case fullHeight
+            case fullSize
             case textHeight
             case secondaryTextHeight
+            case textAndSecondaryTextHeight
             case size(CGSize)
             case maxSize(CGSize)
         }
         
         public static func `default`() -> ImageProperties {
             return ImageProperties()
-        }
-
-        public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
-                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
-            }
-            return nil
         }
         
         public func resolvedTintColor() -> NSColor? {
@@ -342,32 +379,37 @@ public extension NSItemContentConfiguration {
                 return symbolConfiguration
             }
         }
-        
-        public struct ShadowProperties: Hashable {
-            public var radius: CGFloat = 0.0
-            public var color: NSColor? = nil
-            public var opacity: CGFloat = 0.0
-            public var offset: CGPoint = .zero
-            public var colorTransform: NSConfigurationColorTransformer? = nil
+    }
+    
+    struct BorderProperties: Hashable {
+        public var width: CGFloat = 0.0
+        public var color: NSColor? = nil
+    }
+    
+    struct ShadowProperties: Hashable {
+        public var radius: CGFloat = 0.0
+        public var color: NSColor? = nil
+        public var opacity: CGFloat = 0.0
+        public var offset: CGPoint = .zero
+        public var colorTransform: NSConfigurationColorTransformer? = nil
 
-            public func resolvedColor() -> NSColor? {
-                if let color = self.color {
-                    return self.colorTransform?(color) ?? color
-                }
-                return nil
+        public func resolvedColor() -> NSColor? {
+            if let color = self.color {
+                return self.colorTransform?(color) ?? color
             }
-            
-            public static func black() -> ShadowProperties {
-                var property = ShadowProperties()
-                property.radius = 3.0
-                property.color = .black
-                property.opacity = 1.0
-                return property
-            }
-            
-            public static func none() -> ShadowProperties {
-                return ShadowProperties()
-            }
+            return nil
+        }
+        
+        public static func black() -> ShadowProperties {
+            var property = ShadowProperties()
+            property.radius = 3.0
+            property.color = .black
+            property.opacity = 1.0
+            return property
+        }
+        
+        public static func none() -> ShadowProperties {
+            return ShadowProperties()
         }
     }
 }
@@ -416,3 +458,10 @@ extension AttributedString {
         }
     }
 }
+
+/*
+ public var cornerRadius: CGFloat = 0.0
+ public var backgroundColor: NSColor? = nil
+ public var shadowProperties: ShadowProperties = .black()
+ public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+ */

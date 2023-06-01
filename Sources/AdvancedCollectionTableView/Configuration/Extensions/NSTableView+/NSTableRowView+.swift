@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 // import AdvancedCollectionTableViewObjC
 
 public extension NSTableRowView {
@@ -234,7 +235,7 @@ public extension NSTableRowView {
     
     // Updates content configuration and background configuration if automatic updating is enabled.
     internal func setNeedsAutomaticUpdateConfiguration(updateCellViews: Bool = true) {
-        if eautomaticConfigurationUpdateIsEnabled {
+        if isConfigurationUpdatesEnabled {
             let state = self.configurationState
             var cellViewNeedsUpdate = false
             
@@ -278,6 +279,7 @@ public extension NSTableRowView {
     internal var isHovered: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isHovered", object: self, initialValue: false) }
         set {
+            guard newValue != self.isHovered else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isHovered", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -286,6 +288,7 @@ public extension NSTableRowView {
     internal var isEnabled: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isEnabled", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEnabled else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEnabled", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -294,6 +297,7 @@ public extension NSTableRowView {
     internal var isFocused: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isFocused", object: self, initialValue: false) }
         set {
+            guard newValue != self.isFocused else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isFocused", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -302,6 +306,7 @@ public extension NSTableRowView {
     internal var isReordering: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isReordering", object: self, initialValue: false) }
         set {
+            guard newValue != self.isReordering else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isReordering", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -310,6 +315,7 @@ public extension NSTableRowView {
     internal var isEditing: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isEditing", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEditing else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEditing", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -318,25 +324,26 @@ public extension NSTableRowView {
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isEmphasized", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEmphasized", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
     
     // A Boolean value that indicates whether automatic updating of the configuration is enabled.
-    internal var eautomaticConfigurationUpdateIsEnabled: Bool {
+    internal var isConfigurationUpdatesEnabled: Bool {
         get { getAssociatedValue(key: "NSTableRowView_automaticUpdateConfigurationEnabled", object: self, initialValue: true) }
         set {  set(associatedValue: newValue, key: "NSTableRowView_automaticUpdateConfigurationEnabled", object: self) }
     }
     
     override func prepareForReuse() {
-        self.eautomaticConfigurationUpdateIsEnabled = false
+        self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
         self.isEmphasized = self.tableView?.isEmphasized ?? false
-        self.eautomaticConfigurationUpdateIsEnabled = true
+        self.isConfigurationUpdatesEnabled = true
     }
     
     internal var didSwizzleTableRowView: Bool {

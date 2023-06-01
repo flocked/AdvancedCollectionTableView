@@ -6,8 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
-
+import FZSwiftUtils
+import FZUIKit
 /**
  A content configuration for a table cell-based content view.
  

@@ -6,13 +6,14 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
-class ObserverView: NSView {
+internal class ObserverView: NSView {
     var windowStateHandler: ((_ windowIsKey: Bool)->())? = nil
     var mouseMoveHandler: ((NSEvent)->())? = nil
     
-    internal var trackingArea: NSTrackingArea? = nil
+    internal lazy var trackingArea: TrackingArea = TrackingArea(for: self, options: [.activeInKeyWindow, .inVisibleRect, .mouseMoved, .enabledDuringMouseDrag])
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -25,24 +26,14 @@ class ObserverView: NSView {
     }
     
     func initalSetup() {
-        self.installTrackingArea()
+        trackingArea.update()
     }
     
     override func updateTrackingAreas() {
-        installTrackingArea()
         super.updateTrackingAreas()
-   }
+        trackingArea.update()
+    }
     
-internal func installTrackingArea() {
-    guard let window = window else { return }
-     window.acceptsMouseMovedEvents = true
-    if let trackingArea = self.trackingArea { removeTrackingArea(trackingArea) }
-    let trackingOptions: NSTrackingArea.Options = [.activeInKeyWindow, .inVisibleRect, .mouseMoved, .enabledDuringMouseDrag]
-    self.trackingArea = NSTrackingArea(rect: bounds,
-                                   options: trackingOptions,
-                                   owner: self, userInfo: nil)
-     self.addTrackingArea(trackingArea!)
-}
     
     override func mouseMoved(with event: NSEvent) {
         mouseMoveHandler?(event)
@@ -62,16 +53,14 @@ internal func installTrackingArea() {
             NotificationCenter.default.addObserver(self, selector: #selector(windowDidResignKey), name: NSWindow.didResignKeyNotification, object: self.window)
         }
     }
-   
-   @objc internal func windowDidBecomeKey() {
-       self.windowIsKey = true
-    //   Swift.print("obserview windowDidBecomeKey")
-   }
+    
+    @objc internal func windowDidBecomeKey() {
+        self.windowIsKey = true
+    }
     
     @objc internal func windowDidResignKey() {
         self.windowIsKey = false
-    //    Swift.print("obserview windowDidResignKey")
-     }
+    }
     
     var windowIsKey = false {
         didSet {
@@ -85,7 +74,7 @@ internal func installTrackingArea() {
 }
 
 extension NSCollectionView {
-    internal func addObserverViewIfNeeded() {
+    internal func addObserverView() {
         if (self.observerView == nil) {
             self.observerView = ObserverView()
             self.addSubview(withConstraint: self.observerView!)
@@ -93,7 +82,6 @@ extension NSCollectionView {
             self.observerView?.windowStateHandler = { [weak self] windowIsKey in
                 guard let self = self else { return }
                 self.isEmphasized = windowIsKey
-                Swift.print("ObserverView windowIsKey", windowIsKey)
             }
             
             self.observerView?.mouseMoveHandler = { [weak self] event in
@@ -101,7 +89,6 @@ extension NSCollectionView {
                 let location = event.location(in: self)
                 if self.bounds.contains(location) {
                     self.updateItemHoverState(event)
-                  //  Swift.print("ObserverView location", location)
                 }
             }
         }
@@ -109,11 +96,35 @@ extension NSCollectionView {
     
     internal var observerView: ObserverView? {
         get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
-            if let newValue = newValue {
-                
+        set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
+        }
+    }
+}
+
+extension NSTableView {
+    internal func addObserverView() {
+        if (self.observerView == nil) {
+            self.observerView = ObserverView()
+            self.addSubview(withConstraint: self.observerView!)
+            self.observerView!.sendToBack()
+            self.observerView?.windowStateHandler = { [weak self] windowIsKey in
+                guard let self = self else { return }
+                self.isEmphasized = windowIsKey
             }
+            
+            self.observerView?.mouseMoveHandler = { [weak self] event in
+                guard let self = self else { return }
+                let location = event.location(in: self)
+                if self.bounds.contains(location) {
+                    self.updateRowHoverState(event)
+                }
+            }
+        }
+    }
+    
+    internal var observerView: ObserverView? {
+        get { getAssociatedValue(key: "NSTableView_observerView", object: self) }
+        set { set(associatedValue: newValue, key: "NSTableView_observerView", object: self)
         }
     }
 }

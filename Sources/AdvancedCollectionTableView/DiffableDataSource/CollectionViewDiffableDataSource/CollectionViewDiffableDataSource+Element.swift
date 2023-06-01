@@ -6,7 +6,9 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
+import FZQuicklook
 
 extension CollectionViewDiffableDataSource {
     public var allElements: [Element] {

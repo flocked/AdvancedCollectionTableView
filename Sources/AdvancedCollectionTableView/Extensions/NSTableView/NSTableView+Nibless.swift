@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 import InterposeKit
 
 // Extension to provide registrations of NSTableCellView's via their classes

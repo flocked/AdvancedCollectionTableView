@@ -6,7 +6,75 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
+import SwiftUI
+
+public class NSItemContentView: NSView, NSContentView {
+    public var configuration: NSContentConfiguration {
+        get { _configuration }
+        set {
+            if let newValue = newValue as? NSItemContentConfiguration {
+                self._configuration = newValue
+            }
+        }
+    }
+    
+    internal var _configuration: NSItemContentConfiguration
+    
+    public init(configuration: NSItemContentConfiguration) {
+        self._configuration = configuration
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension NSItemContentView {
+    internal struct ContentView: View {
+        let configuration: NSItemContentConfiguration
+        
+        @ViewBuilder
+        var contentItem: some View {
+          configuration.contentProperties.shape.swiftui
+               .fill(.clear)
+        }
+        
+        @ViewBuilder
+        var textItem: some View {
+            if let attributedText = configuration.attributedText {
+                Text(attributedText)
+            } else if let text = configuration.text {
+                Text(text)
+            }
+        }
+        
+        @ViewBuilder
+        var secondaryTextItem: some View {
+            if let attributedText = configuration.secondaryattributedText {
+                Text(attributedText)
+            } else if let text = configuration.secondaryText {
+                Text(text)
+            }
+        }
+        
+        @ViewBuilder
+        var textItems: some View {
+            VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
+                textItem
+                secondaryTextItem
+            }
+        }
+        
+        
+        
+        var body: some View {
+            textItems
+        }
+    }
+}
 
 extension NSItemContentConfiguration {
     internal class ContentView: NSView, NSContentView {
@@ -91,13 +159,13 @@ extension NSItemContentConfiguration {
             if let image = configuration.image {
                 imageView.images = [image]
             }
-            imageView.layer?.shadowColor = configuration.imageProperties.shadowProperties.resolvedColor()?.cgColor
-            imageView.layer?.shadowOffset = CGSize(width:  configuration.imageProperties.shadowProperties.offset.x, height: configuration.imageProperties.shadowProperties.offset.y)
-            imageView.layer?.shadowRadius = configuration.imageProperties.shadowProperties.radius
-            imageView.layer?.shadowOpacity = Float( configuration.imageProperties.shadowProperties.opacity)
+            imageView.layer?.shadowColor = configuration.contentProperties.shadowProperties.resolvedColor()?.cgColor
+            imageView.layer?.shadowOffset = CGSize(width:  configuration.contentProperties.shadowProperties.offset.x, height: configuration.contentProperties.shadowProperties.offset.y)
+            imageView.layer?.shadowRadius = configuration.contentProperties.shadowProperties.radius
+            imageView.layer?.shadowOpacity = Float( configuration.contentProperties.shadowProperties.opacity)
             
-            imageView.cornerRadius = configuration.imageProperties.cornerRadius
-            imageView.backgroundColor = configuration.imageProperties.resolvedBackgroundColor()
+         //   imageView.cornerRadius = configuration.contentProperties.cor
+            imageView.backgroundColor = configuration.contentProperties.resolvedBackgroundColor()
             imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = .center
             if #available(macOS 11.0, *) {
@@ -116,13 +184,14 @@ extension NSItemContentConfiguration {
             
             NSLayoutConstraint.deactivate(imageViewConstraints)
             switch configuration.imageProperties.size {
-            case .fullHeight:
+             case .fullSize:
                 imageViewConstraints = [
                     imageView.topAnchor.constraint(equalTo: textStackView.topAnchor, constant: 0.0),
                     imageView.centerYAnchor.constraint(equalTo: textStackView.centerYAnchor, constant: 0.0),
                     imageView.bottomAnchor.constraint(equalTo: textStackView.bottomAnchor, constant: 0.0),
                     imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, constant: 0.0),
                 ]
+                 
             case .textHeight:
                 imageViewConstraints = [
                     imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0.0),
@@ -161,6 +230,9 @@ extension NSItemContentConfiguration {
                         imageView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
                         imageView.widthAnchor.constraint(equalToConstant: size.width),]
                 }
+            case .textAndSecondaryTextHeight:
+                // Missing
+                break
             }
             NSLayoutConstraint.activate(imageViewConstraints)
             

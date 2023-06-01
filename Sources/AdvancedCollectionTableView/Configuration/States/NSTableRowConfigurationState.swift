@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 /**
  A structure that encapsulates a row’s state.

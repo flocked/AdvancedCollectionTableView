@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 public extension NSCollectionView {
     /**

@@ -7,7 +7,8 @@
 
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 import InterposeKit
 
 public extension NSTableView {

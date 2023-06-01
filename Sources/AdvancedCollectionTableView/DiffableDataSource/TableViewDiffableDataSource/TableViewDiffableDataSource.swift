@@ -6,7 +6,9 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
+import FZQuicklook
 
 public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>

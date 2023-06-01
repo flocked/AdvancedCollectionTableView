@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 public extension NSTableCellView {
     /**
@@ -109,7 +110,7 @@ public extension NSTableCellView {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
-        if automaticConfigurationUpdateIsEnabled {
+        if isConfigurationUpdatesEnabled {
             let state = self.configurationState
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
@@ -180,6 +181,7 @@ public extension NSTableCellView {
     internal var isHovered: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isHovered", object: self, initialValue: false) }
         set {
+            guard newValue != self.isHovered else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isHovered", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -188,6 +190,7 @@ public extension NSTableCellView {
    internal var isEnabled: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isEnabled", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEnabled else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isEnabled", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -196,6 +199,7 @@ public extension NSTableCellView {
     internal var isFocused: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isFocused", object: self, initialValue: false) }
         set {
+            guard newValue != self.isFocused else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isFocused", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -204,6 +208,7 @@ public extension NSTableCellView {
     internal var isReordering: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isReordering", object: self, initialValue: false) }
         set {
+            guard newValue != self.isReordering else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isReordering", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -212,6 +217,7 @@ public extension NSTableCellView {
    internal var isEditing: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isEditing", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEditing else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isEditing", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -220,24 +226,25 @@ public extension NSTableCellView {
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isEmphasized", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableCellVew_isEmphasized", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
             
-    internal var automaticConfigurationUpdateIsEnabled: Bool {
-        get { getAssociatedValue(key: "NSTableCellView_automaticConfigurationUpdateIsEnabled", object: self, initialValue: true) }
-        set {  set(associatedValue: newValue, key: "NSTableCellView_automaticConfigurationUpdateIsEnabled", object: self) }
+    internal var isConfigurationUpdatesEnabled: Bool {
+        get { getAssociatedValue(key: "NSTableCellView_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
+        set {  set(associatedValue: newValue, key: "NSTableCellView_isConfigurationUpdatesEnabled", object: self) }
     }
     
     override func prepareForReuse() {
-        self.automaticConfigurationUpdateIsEnabled = false
+        self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
         self.isEmphasized = self.tableView?.isEmphasized ?? false
-        self.automaticConfigurationUpdateIsEnabled = true
+        self.isConfigurationUpdatesEnabled = true
     }
     
     internal var didSwizzleTableCellView: Bool {

@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 extension TableViewDiffableDataSource {
     public var allElements: [Element] {

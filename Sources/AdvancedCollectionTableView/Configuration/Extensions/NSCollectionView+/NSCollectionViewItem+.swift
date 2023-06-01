@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 import InterposeKit
 
 public extension NSCollectionViewItem {
@@ -34,8 +35,7 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
-       //         self.collectionView?.observeWindowState()
-              //  self.collectionView?.swizzleCollectionViewTrackingArea()
+                self.swizzleCollectionItemViewIfNeeded()
                 self.swizzleCollectionItemIfNeeded()
             }
             self.configurateBackgroundView()
@@ -139,9 +139,6 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-             //   self.collectionView?.observeWindowState()
-           //     self.collectionView?.installTrackingArea()
-            //    self.collectionView?.swizzleCollectionViewTrackingArea()
                 self.swizzleCollectionItemIfNeeded()
             }
             self.configurateContentView()
@@ -197,13 +194,11 @@ public extension NSCollectionViewItem {
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
-                self.swizzleCollectionItemViewIfNeeded()
             }
         } else {
             self.cachedLayoutAttributes = nil
             self.view = NSView()
             self.didSwizzleCollectionItemView = false
-            self.swizzleCollectionItemViewIfNeeded()
         }
         self.configurateBackgroundView()
     }
@@ -234,7 +229,7 @@ public extension NSCollectionViewItem {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
-        if self.automaticConfigurationUpdateIsEnabled {
+        if self.isConfigurationUpdatesEnabled {
             let state = self.configurationState
             
             if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
@@ -297,6 +292,9 @@ public extension NSCollectionViewItem {
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
+            if(newValue != nil) {
+                swizzleCollectionItemViewIfNeeded()
+            }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -364,6 +362,7 @@ public extension NSCollectionViewItem {
     internal var isHovered: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isHovered", object: self, initialValue: false) }
         set {
+            guard newValue != self.isHovered else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isHovered", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -372,6 +371,7 @@ public extension NSCollectionViewItem {
    internal var isEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isEnabled", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEnabled else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isEnabled", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -380,6 +380,7 @@ public extension NSCollectionViewItem {
     internal var isFocused: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isFocused", object: self, initialValue: false) }
         set {
+            guard newValue != self.isFocused else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isFocused", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -388,6 +389,7 @@ public extension NSCollectionViewItem {
     internal var isReordering: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isReordering", object: self, initialValue: false) }
         set {
+            guard newValue != self.isReordering else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isReordering", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -396,6 +398,7 @@ public extension NSCollectionViewItem {
    internal var isEditing: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isEditing", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEditing else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isEditing", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
@@ -404,6 +407,7 @@ public extension NSCollectionViewItem {
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isEmphasized", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSCollectionItem_isEmphasized", object: self)
             self.setNeedsUpdateConfiguration()
         }
@@ -438,12 +442,13 @@ public extension NSCollectionViewItem {
     }
         
 
+    // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             didSwizzleCollectionItem = true
             do {
                 let hooks = [
-                    try  self.hook(#selector(NSCollectionViewItem.viewDidLoad),
+                    try  self.hook(#selector(NSCollectionViewItem.viewDidLayout),
                                            methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                     store in { (object) in
@@ -509,6 +514,7 @@ public extension NSCollectionViewItem {
        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleView", object: self) }
    }
     
+    // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItemView == false) {
             didSwizzleCollectionItemView = true
@@ -518,21 +524,9 @@ public extension NSCollectionViewItem {
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
-                                               Swift.print("viewDidMoveToSuperview")
-                                               
                                                if let collectionView = self.view.firstSuperview(for: NSCollectionView.self) {
-                                                   Swift.print("viewDidMoveToSuperview collectionView", collectionView)
-                                              //     collectionView.observeWindowState()
-                                        //           collectionView.installTrackingArea()
-                                                   collectionView.addObserverViewIfNeeded()
-                                                   
-                                         //         collectionView.swizzleCollectionViewTrackingArea()
+                                                   collectionView.addObserverView()
                                                }
-                                               /*
-                                               self.collectionView?.observeWindowState()
-                                               self.collectionView?.installTrackingArea()
-                                               self.collectionView?.swizzleCollectionViewTrackingArea()
-                                               */
                                                store.original(object, store.selector)
                                            }
                                        },
@@ -549,19 +543,19 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "NSCollectionItem_isSelected", object: self) }
     }
     
-    internal var automaticConfigurationUpdateIsEnabled: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_automaticConfigurationUpdateIsEnabled", object: self, initialValue: true) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_automaticConfigurationUpdateIsEnabled", object: self) }
+    internal var isConfigurationUpdatesEnabled: Bool {
+        get { getAssociatedValue(key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self) }
     }
             
     @objc internal func swizzled_PrepareForReuse() {
-        self.automaticConfigurationUpdateIsEnabled = false
+        self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
         self.isEmphasized = self.collectionView?.isEmphasized ?? false
-        self.automaticConfigurationUpdateIsEnabled = true
+        self.isConfigurationUpdatesEnabled = true
     }
     
     @objc internal func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
@@ -620,6 +614,7 @@ public extension NSCollectionViewItem {
          }
         set {
             super.view = newValue
+            self.swizzleCollectionItemViewIfNeeded()
         }
     }
 }

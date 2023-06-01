@@ -14,13 +14,15 @@ let package = Package(
             targets: ["AdvancedCollectionTableView"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/flocked/FZExtensions.git", branch: "main"),
+        .package(url: "https://github.com/flocked/FZSwiftUtils.git", branch: "main"),
+        .package(url: "https://github.com/flocked/FZUIKit.git", branch: "main"),
+        .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main"),
         .package(url: "https://github.com/steipete/InterposeKit.git", branch: "master"),
     ],
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZExtensions", "InterposeKit", "AdvancedCollectionTableViewObjC"]),
+            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "InterposeKit", "AdvancedCollectionTableViewObjC"]),
         .target(name: "AdvancedCollectionTableViewObjC", dependencies: [])
     ]
 )

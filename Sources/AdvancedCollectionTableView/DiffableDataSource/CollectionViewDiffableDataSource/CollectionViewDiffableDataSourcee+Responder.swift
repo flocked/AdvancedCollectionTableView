@@ -6,7 +6,8 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 extension CollectionViewDiffableDataSource {
     internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {

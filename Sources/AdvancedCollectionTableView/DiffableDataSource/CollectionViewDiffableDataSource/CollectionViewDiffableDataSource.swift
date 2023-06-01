@@ -6,7 +6,9 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
+import FZQuicklook
 
 /**
  The object you use to manage data and provide items for a collection view.
@@ -461,21 +463,22 @@ public extension CollectionViewDiffableDataSource where Element: QLPreviewable {
         var index: Int = 0
         var previewItems: [QLPreviewable] = []
         let current = current ?? elements.first
-        var transitionImage: NSImage? = nil
         for element in self.selectedElements {
             guard let itemView = self.itemView(for: element) else { return }
             element.previewItemView = itemView.view
-            let previewItem = QuicklookItem(url: element.previewItemURL, frame: itemView.view.frame, transitionImage: element.previewItemTransitionImage)
-            previewItems.append(previewItem)
+            var transitionImage: NSImage? = nil
             if (element == current) {
-                transitionImage = previewItem.previewItemTransitionImage ?? itemView.view.renderedImage
+                transitionImage = element.previewItemTransitionImage ?? itemView.view.renderedImage
                 index = previewItems.count - 1
             }
+            let previewItem = QuicklookItem(content: element.previewItemURL, frame: itemView.view.frame, transitionImage: transitionImage)
+            
+            previewItems.append(previewItem)
         }
         guard previewItems.isEmpty == false else { return }
         
         QuicklookPanel.shared.keyDownResponder = self.collectionView
-        QuicklookPanel.shared.present(previewItems, currentItemIndex: index, image: transitionImage)
+        QuicklookPanel.shared.present(previewItems, currentItemIndex: index)
     }
     
     func quicklookSelectedItems() {
@@ -488,5 +491,25 @@ internal extension QLPreviewable {
     var previewItemView: NSView? {
         get { getAssociatedValue(key: "_previewItemView", object: self) }
         set { set(associatedValue: newValue, key: "_previewItemView", object: self) }
+    }
+}
+
+
+
+private struct ItemIdentifierType: Hashable, Identifiable {
+    let value: any Identifiable
+    let id: AnyHashable
+    
+    init<V: Identifiable>(_ value: V) {
+        self.value = value
+        self.id = value.id
+    }
+    
+    static func == (_ a: ItemIdentifierType, _ b: ItemIdentifierType) -> Bool {
+        return a.id == b.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

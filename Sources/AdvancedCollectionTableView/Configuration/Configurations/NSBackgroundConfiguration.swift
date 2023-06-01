@@ -6,14 +6,15 @@
 //
 
 import AppKit
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
-public struct _NSBackgroundConfiguration: NSContentConfiguration {
+public struct NSBackgroundConfiguration: NSContentConfiguration {
     public func makeContentView() -> NSView & NSContentView {
         ContentView(configuration: self)
     }
     
-    public func updated(for state: NSConfigurationState) -> _NSBackgroundConfiguration {
+    public func updated(for state: NSConfigurationState) -> NSBackgroundConfiguration {
         return self
     }
     
@@ -31,20 +32,20 @@ public struct _NSBackgroundConfiguration: NSContentConfiguration {
     var border: ContentConfiguration.Border = .none()
     
      var image: NSImage? = nil
-    var imageScaling: CALayerContentsGravity = .center
+        var imageScaling: CALayerContentsGravity = .center
 }
 
-internal extension _NSBackgroundConfiguration {
+internal extension NSBackgroundConfiguration {
     class ContentView: NSView, NSContentView {
         var customView: NSView? = nil
         var imageView: ImageView? = nil
         var configuration: NSContentConfiguration {
             get { _configuration }
-            set { if let newValue = newValue as? _NSBackgroundConfiguration {
+            set { if let newValue = newValue as? NSBackgroundConfiguration {
                 _configuration = newValue
             } }  }
         
-        var _configuration: _NSBackgroundConfiguration {
+        var _configuration: NSBackgroundConfiguration {
             didSet {  self.updateConfiguration() } }
         
         func updateConfiguration() {
@@ -90,7 +91,7 @@ internal extension _NSBackgroundConfiguration {
 
         }
         
-        init(configuration: _NSBackgroundConfiguration) {
+        init(configuration: NSBackgroundConfiguration) {
             self._configuration = configuration
             super.init(frame: .zero)
         }

@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
-import FZExtensions
+import FZSwiftUtils
+import FZUIKit
 
 /**
  A content configuration suitable for hosting a hierarchy of SwiftUI views.
@@ -39,6 +40,9 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
   let minWidth: CGFloat?
   let minHeight: CGFloat?
     
+    internal var isEmphasized: Bool = true
+    internal var isSelected: Bool = false
+    
     /**
      Creates a hosting configuration with the given contents.
 
@@ -76,7 +80,15 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
      Returns the configuration updated for the specified state, by applying the configuration’s default values for that state to any properties that have not been customized.
      */
   public func updated(for state: NSConfigurationState) -> NSHostingConfiguration {
-    return self
+      var configuration = self
+      if let state = state as? NSTableCellConfigurationState {
+          configuration.isEmphasized = state.isEmphasized
+          configuration.isSelected = state.isSelected
+      } else if let state = state as? NSItemConfigurationState {
+          configuration.isEmphasized = state.isEmphasized
+          configuration.isSelected = state.isSelected
+      }
+    return configuration
   }
 
     /**
@@ -223,100 +235,5 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
       minWidth: width,
       minHeight: height
     )
-  }
-}
-
- internal class NSHostingContentView<Content, Background>: NSView, NSContentView where Content: View, Background: View {
-     
-  internal let hostingController: NSHostingController<ZStack<TupleView<(Background, Content)>>?> = {
-    let controller = NSHostingController<ZStack<TupleView<(Background, Content)>>?>(rootView: nil)
-    controller.view.backgroundColor = .clear
-    controller.view.translatesAutoresizingMaskIntoConstraints = false
-    return controller
-  }()
-     
-     override func invalidateIntrinsicContentSize() {
-         super.invalidateIntrinsicContentSize()
-     }
-    
-    public func sizeThatFits(_ size: CGSize) -> CGSize {
-        return hostingController.sizeThatFits(in: size)
-    }
-    
-    override var fittingSize: NSSize {
-        return hostingController.fittingSize
-    }
-        
-    internal var directionalLayoutMargins: NSDirectionalEdgeInsets {
-        get { return NSDirectionalEdgeInsets(top: -hostingViewConstraints[0].constant, leading: -hostingViewConstraints[1].constant , bottom: hostingViewConstraints[2].constant , trailing: hostingViewConstraints[3].constant)
-        }
-        set {
-            hostingViewConstraints[0].constant = -newValue.bottom
-            hostingViewConstraints[1].constant = newValue.top
-            hostingViewConstraints[2].constant = newValue.leading
-            hostingViewConstraints[3].constant = -newValue.trailing
-        }
-    }
-    
-    internal func applyConfiguration(_ configuration: NSContentConfiguration) {
-        if let configuration = configuration as? NSHostingConfiguration<Content, Background> {
-          hostingController.rootView = ZStack {
-              configuration.background
-            configuration.content
-          }
-            directionalLayoutMargins = configuration.margins
-        }
-    }
-
-     public var configuration: NSContentConfiguration {
-    didSet {
-        self.applyConfiguration(configuration)
-    }
-  }
-  
-  override var intrinsicContentSize: CGSize {
-      var intrinsicContentSize = super.intrinsicContentSize
-    if let configuration = configuration as? NSHostingConfiguration<Content, Background> {
-      if let width = configuration.minWidth {
-        intrinsicContentSize.width = max(intrinsicContentSize.width, width)
-      }
-      if let height = configuration.minHeight {
-        intrinsicContentSize.height = max(intrinsicContentSize.height, height)
-      }
-    }
-    return intrinsicContentSize
-  }
-    
-   internal var hostingViewConstraints: [NSLayoutConstraint] = []
-
-     
-     public init(configuration: NSContentConfiguration) {
-      self.configuration = configuration
-      super.init(frame: .zero)
-      hostingViewConstraints = addSubview(withConstraint: hostingController.view)
-      self.applyConfiguration(configuration)
-  }
-
-  @available(*, unavailable)
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-         
-    override func viewDidMoveToSuperview() {
-        if superview == nil {
-          hostingController.removeFromParent()
-        } else {
-            if (hostingController.parent == nil) {
-                parentViewController?.addChild(hostingController)
-            }
-        }
-    }
-}
-
-public struct _NSHostingConfigurationBackgroundView<S>: View where S: ShapeStyle {
-  let style: S
-
-  public var body: some View {
-    Rectangle().fill(style)
   }
 }
