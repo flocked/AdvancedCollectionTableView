@@ -603,18 +603,24 @@ public extension NSCollectionViewItem {
     
      override var view: NSView {
          get {
+             Swift.print("getView")
              if (self.nibName != nil) {
+                 Swift.print("nibName")
                  return super.view
              } else {
                  if (self.isViewLoaded == false) {
+                     Swift.print("isViewLoaded false")
                      if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
+                         Swift.print("overrides loadView")
                          self.loadView()
                      }
                      if (self.isViewLoaded == false) {
+                         Swift.print("new View")
                          let newView = NSView()
                          super.view = newView
                      }
                  }
+                 Swift.print("isViewLoaded true")
                  return super.view
              }
          }
