@@ -79,40 +79,15 @@ public extension NSCollectionView {
     }
         
     internal func updateItemHoverState(_ event: NSEvent) {
-        let visibleItems = self.visibleItems()
-        let location = event.location(in: self)
-        let mouseItem = self.item(at: location)
+        let mouseItem = self.item(for: event)
         if let mouseItem = mouseItem, mouseItem.isHovered == false {
             mouseItem.isHovered = true
         }
+        
+        let visibleItems = self.visibleItems()
         let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
         previousHoveredItems.forEach({$0.isHovered = false })
     }
-    
-    /*
-     internal var previousHoveredItem: NSCollectionViewItem? {
-         get { getAssociatedValue(key: "NSCollectionView_previousHoveredItem", object: self, initialValue: nil) }
-         set {
-             set(weakAssociatedValue: newValue, key: "NSCollectionView_previousHoveredItem", object: self)
-         }
-     }
-     
-    internal func updateItemHoverState(_ event: NSEvent) {
-        let visibleItems = self.visibleItems()
-        let location = event.location(in: self)
-        let mouseItem = self.item(at: location)
-        var hoveredItem: NSCollectionViewItem? = nil
-        if let mouseItem = mouseItem, mouseItem.isHovered == false {
-            mouseItem.isHovered = true
-            hoveredItem = mouseItem
-        }
-        if previousHoveredItem != hoveredItem {
-            previousHoveredItem?.isHovered = false
-        }
-        
-        previousHoveredItem = hoveredItem
-    }
-    */
     
     /*
      internal var trackingArea: NSTrackingArea? {
