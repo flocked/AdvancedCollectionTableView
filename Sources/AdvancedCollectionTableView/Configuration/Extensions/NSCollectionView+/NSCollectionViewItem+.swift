@@ -183,8 +183,9 @@ public extension NSCollectionViewItem {
     
     internal var contentView: (NSView & NSContentView)? {
       //  self.view.firstSuperview(where: {$0 is (NSView & NSContentView)})
-        self.view.firstSubview(type: NSContentView.self) as? any NSView & NSContentView
+    //    self.view.firstSubview(type: NSContentView.self) as? any NSView & NSContentView
        // self.view as? NSContentView
+        return nil
     }
     
     internal func configurateContentView() {
