@@ -77,19 +77,42 @@ public extension NSCollectionView {
             self.visibleItems().forEach({$0.isEmphasized = newValue})
         }
     }
-    
+        
     internal func updateItemHoverState(_ event: NSEvent) {
         let visibleItems = self.visibleItems()
-            let location = event.location(in: self)
-            let mouseItem = self.item(at: location)
-            if let mouseItem = mouseItem, mouseItem.isHovered == false {
-                Swift.print("mouseItem")
-                mouseItem.isHovered = true
-            }
-            let items = visibleItems.filter({$0.isHovered && $0 != mouseItem})
-            Swift.print("nonMouseItem", items.count)
-            items.forEach({$0.isHovered = false })
+        let location = event.location(in: self)
+        let mouseItem = self.item(at: location)
+        if let mouseItem = mouseItem, mouseItem.isHovered == false {
+            mouseItem.isHovered = true
         }
+        let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
+        previousHoveredItems.forEach({$0.isHovered = false })
+    }
+    
+    /*
+     internal var previousHoveredItem: NSCollectionViewItem? {
+         get { getAssociatedValue(key: "NSCollectionView_previousHoveredItem", object: self, initialValue: nil) }
+         set {
+             set(weakAssociatedValue: newValue, key: "NSCollectionView_previousHoveredItem", object: self)
+         }
+     }
+     
+    internal func updateItemHoverState(_ event: NSEvent) {
+        let visibleItems = self.visibleItems()
+        let location = event.location(in: self)
+        let mouseItem = self.item(at: location)
+        var hoveredItem: NSCollectionViewItem? = nil
+        if let mouseItem = mouseItem, mouseItem.isHovered == false {
+            mouseItem.isHovered = true
+            hoveredItem = mouseItem
+        }
+        if previousHoveredItem != hoveredItem {
+            previousHoveredItem?.isHovered = false
+        }
+        
+        previousHoveredItem = hoveredItem
+    }
+    */
     
     /*
      internal var trackingArea: NSTrackingArea? {
