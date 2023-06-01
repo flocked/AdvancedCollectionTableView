@@ -35,12 +35,14 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         Swift.print("Mouse Down", self.nextResponder, self.superview)
         self.superview?.mouseDown(with: event)
         self.nextResponder?.mouseDown(with: event)
+        super.mouseDown(with: event)
     }
     
     override func mouseUp(with event: NSEvent) {
         Swift.print("Mouse up")
         self.superview?.mouseUp(with: event)
         self.nextResponder?.mouseUp(with: event)
+        super.mouseUp(with: event)
     }
        
    internal var directionalLayoutMargins: NSDirectionalEdgeInsets {
