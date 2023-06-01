@@ -497,18 +497,19 @@ public extension NSCollectionViewItem {
                             }
                     }
                 },
-                    /*
+                    
                     try  self.hook(#selector(setter: isSelected),
                                            methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                     store in { (object, isSelected) in
-                        if self.isSelected != isSelected, (self.collectionView?.isSelectable ?? true) {
-                                store.original(object, store.selector, isSelected)
-                                self.configurateBackgroundView()
-                                self.setNeedsAutomaticUpdateConfiguration()
+                        Swift.print("swizzle isSelected")
+                        if self.isSelected != isSelected {
+                            store.original(object, store.selector, isSelected)
+                            self.configurateBackgroundView()
+                            self.setNeedsAutomaticUpdateConfiguration()
                         }
                     }
-                }, */
+                },
                     try  self.hook(#selector(setter: highlightState),
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
