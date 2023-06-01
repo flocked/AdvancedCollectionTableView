@@ -133,6 +133,68 @@ public extension NSCollectionView {
         }
     }
     
+    internal var collectionViewObserver: KeyValueObserver<NSCollectionView> {
+        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: .init(self)) }
+   }
+    
+    internal var previousSelectionIndexPaths: Set<IndexPath> {
+        get { getAssociatedValue(key: "NSCollectionItem_PreviousSelectionIndexPaths", object: self, initialValue: self.selectionIndexPaths) }
+        set { set(associatedValue: newValue, key: "NSCollectionItem_PreviousSelectionIndexPaths", object: self)
+        }
+   }
+    
+    internal func setupCollectionViewObserver() {
+        if collectionViewObserver.isObserving(\.selectionIndexPaths) == false {
+            collectionViewObserver.add(\.selectionIndexPaths) { [weak self] old, newIndexes in
+                guard let self = self else { return }
+                let previousIndexes = self.previousSelectionIndexPaths
+                var itemIndexPaths: [IndexPath] = []
+                
+                let added = newIndexes.symmetricDifference(previousIndexes)
+                let removed = previousIndexes.symmetricDifference(newIndexes)
+
+                itemIndexPaths.append(contentsOf: added)
+                itemIndexPaths.append(contentsOf: removed)
+                
+                Swift.print("selectionIndexPaths", itemIndexPaths.count)
+                
+                let items = itemIndexPaths.compactMap({self.item(at: $0)})
+                items.forEach({ $0.setNeedsUpdateConfiguration() })
+                self.previousSelectionIndexPaths = newIndexes
+                
+                /*
+                let indexPathsForVisibleItems = self.indexPathsForVisibleItems()
+                for previousIndex in previousIndexes {
+                    if newIndexes.contains(previousIndex) == false {
+                        if (indexPathsForVisibleItems.contains(previousIndex)) {
+                            itemIndexPaths.append(previousIndex)
+                        }
+                    }
+                }
+                
+                
+                for value in newIndexes.symmetricDifference(previousIndexes) {
+                    
+                }
+                
+               let diff = Array(newIndexes).difference(from: Array(previousIndexes))
+                for insert in diff.insertions {
+                
+                }
+               
+                
+                for newIndex in newIndexes {
+                    if previousIndexes.contains(newIndex) == false {
+                        if (indexPathsForVisibleItems.contains(newIndex)) {
+                            itemIndexPaths.append(newIndex)
+                        }
+                    }
+                }
+          */
+            }
+        }
+    }
+    
     @objc func didScroll() {
         
     }

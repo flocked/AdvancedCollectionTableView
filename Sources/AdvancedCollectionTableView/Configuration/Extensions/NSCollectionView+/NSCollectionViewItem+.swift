@@ -193,15 +193,15 @@ public extension NSCollectionViewItem {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
-             //   self.view = contentConfiguration.makeContentView()
-                self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
-                self.view.wantsLayer = true
                 self.didSwizzleCollectionItemView = false
+               self.view = contentConfiguration.makeContentView()
+             //   self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
+                self.view.wantsLayer = true
             }
         } else {
             self.cachedLayoutAttributes = nil
-          //  self.view = NSView()
             self.didSwizzleCollectionItemView = false
+            self.view = NSView()
         }
         self.configurateBackgroundView()
     }
@@ -443,7 +443,7 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_didSwizzle", object: self, initialValue: false) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
-    
+
     internal var itemObserver: KeyValueObserver<NSCollectionViewItem> {
        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: KeyValueObserver<NSCollectionViewItem>(self)) }
    }
@@ -451,7 +451,6 @@ public extension NSCollectionViewItem {
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
-            didSwizzleCollectionItem = true
             itemObserver.add(\.isSelected) { old, new in
                 Swift.print("itemObserver isSelected", new)
                 if (old != new) {
@@ -461,6 +460,15 @@ public extension NSCollectionViewItem {
             }
             do {
                 let hooks = [
+                    try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
+                    
                     try  self.hook(#selector(NSCollectionViewItem.viewDidLayout),
                                            methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject) -> ()).self) {
@@ -536,7 +544,7 @@ public extension NSCollectionViewItem {
     
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleCollectionItemView == false) {
+        if didSwizzleCollectionItemView == false, self.contentView != nil {
             didSwizzleCollectionItemView = true
             do {
                 let hooks = [
@@ -545,6 +553,7 @@ public extension NSCollectionViewItem {
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
                                                if let collectionView = self.view.firstSuperview(for: NSCollectionView.self) {
+                                                   collectionView.setupCollectionViewObserver()
                                                    collectionView.addObserverView()
                                                }
                                                store.original(object, store.selector)
