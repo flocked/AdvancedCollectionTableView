@@ -130,7 +130,7 @@ public class ObserverView: NSView {
         }
     }
     
-    internal lazy var trackingArea: TrackingArea = TrackingArea(for: self, options: [.activeInKeyWindow, .inVisibleRect])
+    internal lazy var trackingArea: TrackingArea = TrackingArea(for: self, options: [.activeInKeyWindow, .inVisibleRect, .mouseEnteredAndExited])
     
     internal func removeWindowKeyObserver() {
         windowDidBecomeKeyObserver = nil
