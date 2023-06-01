@@ -35,6 +35,7 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         Swift.print("Mouse Down", self.nextResponder, self.superview, self.superview?.parentController, (self.nextResponder as? NSView)?.parentController)
         self.superview?.mouseDown(with: event)
         self.nextResponder?.mouseDown(with: event)
+        self.superview?.parentController?.mouseDown(with: event)
         super.mouseDown(with: event)
     }
     
@@ -42,6 +43,7 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         Swift.print("Mouse up")
         self.superview?.mouseUp(with: event)
         self.nextResponder?.mouseUp(with: event)
+        self.superview?.parentController?.mouseUp(with: event)
         super.mouseUp(with: event)
     }
        
