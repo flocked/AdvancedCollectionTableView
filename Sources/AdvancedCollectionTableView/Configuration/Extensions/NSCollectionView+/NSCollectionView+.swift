@@ -106,9 +106,11 @@ public extension NSCollectionView {
         }
     }
     
+    /*
     override var isSelectable: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isSelectable", object: self, initialValue: true) }
         set { set(associatedValue: newValue, key: "NSCollectionView_isSelectable", object: self) } }
+     */
     
     var isEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
