@@ -360,8 +360,8 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           Swift.print("NSTableRowView viewDidMoveToSuperview", self.tableView, self.superview)
-                                           self.tableView?.addObserverView()
+                                           Swift.print("NSTableRowView viewDidMoveToSuperview")
+                                           self.tableView?.setupObservers()
                                            store.original(object, store.selector)
                                        }
                                    },

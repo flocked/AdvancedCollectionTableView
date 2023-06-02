@@ -260,9 +260,9 @@ public extension NSTableCellView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           Swift.print("cell viewDidMoveToSuperview", self.tableView)
+                                           Swift.print("cell viewDidMoveToSuperview")
                                            self.rowView?.swizzleTableRowViewIfNeeded()
-                                           self.tableView?.addObserverView()
+                                           self.tableView?.setupObservers()
                                            // Add constraints if tableview usesAutomaticRowHeights
                                           /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
                                                contentView.con
