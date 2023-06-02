@@ -459,7 +459,7 @@ public extension NSCollectionViewItem {
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             
-        self.addObserver(self.nsItemObserver, forKeyPath: "selected", context: nil)
+        self.addObserver(self.nsItemObserver, forKeyPath: "isSelected", context: nil)
             
             do {
                 let hooks = [
