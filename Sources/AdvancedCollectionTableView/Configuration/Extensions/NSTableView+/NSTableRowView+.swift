@@ -358,11 +358,20 @@ public extension NSTableRowView {
         set { set(associatedValue: newValue, key: "NSTableRowView_selectionObserver", object: self)
         }
     }
+    
+    var tableViewObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSTableRowView_tableViewObserver", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSTableRowView_tableViewObserver", object: self)
+        }
+    }
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
         Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
+            self.tableViewObserver = self.observe(\.tableView, changeHandler: { object, change in
+                Swift.print("RowTableViewChanged")
+            })
             
             do {
                 let hooks = [
