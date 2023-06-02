@@ -364,11 +364,6 @@ public extension NSTableRowView {
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
             
-            selectionObserver = self.observe(\.isSelected, changeHandler: { rowView, change in
-                Swift.print("HereSelection")
-            })
-            
-            
             do {
                 let hooks = [
                     try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
