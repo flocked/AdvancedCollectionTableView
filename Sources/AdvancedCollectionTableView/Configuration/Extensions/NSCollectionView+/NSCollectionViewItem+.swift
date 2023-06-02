@@ -459,6 +459,9 @@ public extension NSCollectionViewItem {
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             self.didSwizzleCollectionItem = true
+            Swift.print("respondsTo", self.responds(to: NSSelectorFromString("setSelectedWithoutNotification(_:)")))
+            Swift.print("respondsTo_", self.responds(to: NSSelectorFromString("_setSelectedWithoutNotification(_:)")))
+
             do {
                 let hooks = [
                     try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
