@@ -38,6 +38,7 @@ internal extension NSTableView {
     
     func setupDelegateObserver() {
         Swift.print("setupDelegateObserver")
+        /*
         if delegateObserver == nil {
             if let delegate = self.delegate {
                 self.swizzleDelegate(delegate)
@@ -62,6 +63,7 @@ internal extension NSTableView {
                 
             }
         }
+         */
     }
     
     func swizzledSelectionDidChange() {
