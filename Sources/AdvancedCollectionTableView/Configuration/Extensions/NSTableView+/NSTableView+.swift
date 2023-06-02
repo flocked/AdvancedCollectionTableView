@@ -102,6 +102,8 @@ internal extension NSTableView {
         */
         
         if (self.observerView == nil) {
+            self.setupDelegateObserver()
+            
             NotificationCenter.default.addObserver(
                         self,
                         selector: #selector(tableSelectionChanged(_:)),
