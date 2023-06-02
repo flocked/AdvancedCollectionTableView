@@ -106,7 +106,7 @@ internal extension NSTableView {
                         self,
                         selector: #selector(tableSelectionChanged(_:)),
                         name: NSTableView.selectionDidChangeNotification,
-                        object: nil
+                        object: self
                     )
             
             self.observerView = ObserverView()
