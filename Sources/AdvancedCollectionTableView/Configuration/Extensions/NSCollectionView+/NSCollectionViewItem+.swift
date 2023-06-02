@@ -514,7 +514,7 @@ public extension NSCollectionViewItem {
                                        }
                                    },
 */
-  
+  /*
                     try  self.hook(#selector(setter: highlightState),
                                    methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
                                            hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
@@ -526,19 +526,28 @@ public extension NSCollectionViewItem {
                         }
                     }
                 },
+   */
                     ]
                 try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
                 Swift.print(error)
             }
             
-
             
             isSelectedObserver = self.observeChange(\.isSelected) { [weak self] object, old, new in
                 guard let self = self else { return }
-                Swift.print("item isSelected observed")
+                if new != old {
+                    self.setNeedsAutomaticUpdateConfiguration()
+                }
             }
             
+            highlightStateObserver = self.observeChange(\.highlightState) { [weak self] object, old, new in
+                Swift.print("highlightStateObserver called")
+                guard let self = self else { return }
+                if new != old {
+                    self.setNeedsAutomaticUpdateConfiguration()
+                }
+            }
         }
     }
     
@@ -548,8 +557,13 @@ public extension NSCollectionViewItem {
     }
     
     internal var isSelectedObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionItem_isSelectedObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_isSelectedObserver", object: self) }
+        get { getAssociatedValue(key: "_isSelectedObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "_isSelectedObserver", object: self) }
+    }
+    
+    internal var highlightStateObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "_highlightStateObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "_highlightStateObserver", object: self) }
     }
     
     // The collectionView property isn't always returning the collection view.
