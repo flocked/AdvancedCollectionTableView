@@ -499,7 +499,7 @@ public extension NSCollectionViewItem {
                             }
                     }
                 },
-                    try self.hook(#selector(setter: isSelected),
+                    try self.hook(NSSelectorFromString("selected"),
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
