@@ -369,9 +369,9 @@ public extension NSTableRowView {
         Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
-            self.tableViewObserver = self.observe(\.tableView, changeHandler: { object, change in
-                Swift.print("RowTableViewChanged")
-            })
+            self.tableViewObserver = self.observe(\.superview, options: [.new]) { object, change in
+                Swift.print("Row.superview", change.newValue)
+            }
             
             do {
                 let hooks = [
