@@ -375,7 +375,7 @@ public extension NSTableRowView {
                                            store.original(object, store.selector)
                                        }
                                    },
-                    /*
+                    
                     try  self.hook(#selector(setter: isSelected),
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
@@ -388,7 +388,7 @@ public extension NSTableRowView {
                                            }
                                        }
                                    },
-                     */
+                     
                 ]
                 try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
