@@ -353,7 +353,6 @@ public extension NSTableRowView {
     }
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
             do {
@@ -362,7 +361,6 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
-                                           Swift.print("NSTableRowView viewDidMoveToSuperview")
                                            self.tableView?.setupObserverView()
                                            store.original(object, store.selector)
                                        }
@@ -372,7 +370,6 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
-                                           Swift.print("row.isSelected swizzled", isSelected)
                                            if self.isSelected != isSelected {
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()

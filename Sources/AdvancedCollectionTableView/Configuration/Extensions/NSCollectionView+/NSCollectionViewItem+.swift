@@ -190,10 +190,8 @@ public extension NSCollectionViewItem {
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
-                Swift.print("contentView Update")
                 contentView.configuration = contentConfiguration
             } else {
-                Swift.print("contentView New")
                 self.cachedLayoutAttributes = nil
                self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
@@ -453,19 +451,10 @@ public extension NSCollectionViewItem {
         }
    }
     
-    internal var nsItemObserver: ItemObserver {
-        get { getAssociatedValue(key: "NSCollectionItem_nsItemObserver", object: self, initialValue: ItemObserver()) }
-   }
-    
-    
-    
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             self.didSwizzleCollectionItem = true
-            Swift.print("respondsTo", self.responds(to: NSSelectorFromString("setSelectedWithoutNotification(_:)")))
-            Swift.print("respondsTo_", self.responds(to: NSSelectorFromString("_setSelectedWithoutNotification(_:)")))
-
             do {
                 let hooks = [
                     try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
@@ -662,15 +651,5 @@ public extension NSCollectionViewItem {
             }
             self.swizzleCollectionItemViewIfNeeded()
         }
-    }
-}
-
-class ItemObserver: NSObject {
-    override func observeValue(
-        forKeyPath keyPath:String?,
-        of object:Any?,
-        change:[NSKeyValueChangeKey:Any]?,
-        context:UnsafeMutableRawPointer?) {
-            Swift.print("ItemObserver", keyPath ?? "")
     }
 }
