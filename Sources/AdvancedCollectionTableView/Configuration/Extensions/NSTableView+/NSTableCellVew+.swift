@@ -251,7 +251,7 @@ public extension NSTableCellView {
     }
     
     @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
-        Swift.print("swizzleTableCellIfNeeded")
+        Swift.print("swizzleTableCellIfNeeded start")
         if (didSwizzleTableCellView == false) {
             didSwizzleTableCellView = true
             do {
