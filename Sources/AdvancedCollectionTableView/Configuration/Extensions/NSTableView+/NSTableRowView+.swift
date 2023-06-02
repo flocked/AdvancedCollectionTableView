@@ -372,7 +372,6 @@ public extension NSTableRowView {
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
                                            if self.isSelected != isSelected {
-                                               Swift.print("rowParent", self.parentViewController)
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()
                                                self.setCellViewsNeedAutomaticUpdateConfiguration()

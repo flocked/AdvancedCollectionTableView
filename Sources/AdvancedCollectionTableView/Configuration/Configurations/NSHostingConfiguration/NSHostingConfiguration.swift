@@ -40,9 +40,6 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
   let minWidth: CGFloat?
   let minHeight: CGFloat?
     
-    internal var isEmphasized: Bool = true
-    internal var isSelected: Bool = false
-    
     /**
      Creates a hosting configuration with the given contents.
 
@@ -53,7 +50,7 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
   public init(@ViewBuilder content: () -> Content) where Background == EmptyView {
     self.content = content()
     background = .init()
-    margins = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    margins = .zero
     minWidth = nil
     minHeight = nil
   }
@@ -75,29 +72,7 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
     self.minWidth = minWidth
     self.minHeight = minHeight
   }
-    
-    /**
-     Returns the configuration updated for the specified state, by applying the configuration’s default values for that state to any properties that have not been customized.
-     */
-  public func updated(for state: NSConfigurationState) -> NSHostingConfiguration {
-      var configuration = self
-      if let state = state as? NSTableCellConfigurationState {
-          configuration.isEmphasized = state.isEmphasized
-          configuration.isSelected = state.isSelected
-      } else if let state = state as? NSItemConfigurationState {
-          configuration.isEmphasized = state.isEmphasized
-          configuration.isSelected = state.isSelected
-      }
-    return configuration
-  }
-
-    /**
-     Initializes and returns a new instance of the content view using this configuration.
-     */
-  public func makeContentView() -> NSView & NSContentView {
-    return NSHostingContentView<Content, Background>(configuration: self)
-  }
-    
+        
     /**
      Sets the background contents for the hosting configuration’s enclosing cell.
      
@@ -235,5 +210,19 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
       minWidth: width,
       minHeight: height
     )
+  }
+    
+    /**
+     Returns the configuration updated for the specified state, by applying the configuration’s default values for that state to any properties that have not been customized.
+     */
+  public func updated(for state: NSConfigurationState) -> NSHostingConfiguration {
+    return self
+  }
+
+    /**
+     Initializes and returns a new instance of the content view using this configuration.
+     */
+  public func makeContentView() -> NSView & NSContentView {
+    return NSHostingContentView<Content, Background>(configuration: self)
   }
 }

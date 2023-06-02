@@ -120,6 +120,7 @@ extension NSHostingContentView {
     }
 }
 
+
 public struct _NSHostingConfigurationBackgroundView<S>: View where S: ShapeStyle {
     let style: S
     
@@ -127,3 +128,4 @@ public struct _NSHostingConfigurationBackgroundView<S>: View where S: ShapeStyle
         Rectangle().fill(style)
     }
 }
+

@@ -558,7 +558,6 @@ public extension NSCollectionViewItem {
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
-                                               Swift.print("itemParent", self.parent)
                                                self._collectionView?.setupObservers()
                                                store.original(object, store.selector)
                                            }
