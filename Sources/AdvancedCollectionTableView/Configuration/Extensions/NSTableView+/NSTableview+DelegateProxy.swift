@@ -70,7 +70,7 @@ internal extension NSTableView {
     
     func swizzleDelegate(_ delegate: NSTableViewDelegate, shouldSwizzle: Bool = true) {
         Swift.print("swizzleDelegate")
-        guard let delegate = delegate as? NSObject else { return }
+        guard let delegate = delegate as? (NSObject & NSTableViewDelegate) else { return }
         Swift.print("swizzleDelegate true")
         do {
             let hooks = [
