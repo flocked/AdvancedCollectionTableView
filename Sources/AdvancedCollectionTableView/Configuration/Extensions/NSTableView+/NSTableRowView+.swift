@@ -351,23 +351,11 @@ public extension NSTableRowView {
     internal func setCellViewsNeedAutomaticUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
-    
-    var tableViewObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSTableRowView_tableViewObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSTableRowView_tableViewObserver", object: self)
-        }
-    }
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
         Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
-            if (self.tableViewObserver == nil) {
-                self.tableViewObserver = self.observe(\.superview, options: [.new]) { object, change in
-                    Swift.print("Row.superview")
-                }
-            }
-            
             do {
                 let hooks = [
                     try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
@@ -380,7 +368,7 @@ public extension NSTableRowView {
                                        }
                                    },
                     
-                    try  self.hook(#selector(setter: isSelected),
+                    try self.hook(#selector(setter: isSelected),
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
