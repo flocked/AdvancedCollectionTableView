@@ -193,14 +193,11 @@ public extension NSCollectionViewItem {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
-                self.didSwizzleCollectionItemView = false
                self.view = contentConfiguration.makeContentView()
-             //   self.view.addSubview(withConstraint: contentConfiguration.makeContentView())
                 self.view.wantsLayer = true
             }
         } else {
             self.cachedLayoutAttributes = nil
-            self.didSwizzleCollectionItemView = false
             self.view = NSView()
         }
         self.configurateBackgroundView()
@@ -536,25 +533,31 @@ public extension NSCollectionViewItem {
         }
     }
     
+    // The collectionView property isn't always returning the collection view.
+    internal var _collectionView: NSCollectionView? {
+        self.view.firstSuperview(for: NSCollectionView.self)
+    }
+    
+    // Observes when the item view is moved to a superview. When it's moved to the superview, it setups the collection view to observe item selections, mouse movement and window state. The observation is used to update each item state.
+    // Unfortunatly the item's isSelected property isn't KVO observable. Adding trackingArea to each item 
+    
     internal var didSwizzleCollectionItemView: Bool {
        get { getAssociatedValue(key: "NSCollectionItem_didSwizzleView", object: self, initialValue: false) }
        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleView", object: self) }
    }
-    
+            
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
         if didSwizzleCollectionItemView == false, self.contentView != nil {
             didSwizzleCollectionItemView = true
+            
             do {
                 let hooks = [
                         try  self.view.hook(#selector(NSView.viewDidMoveToSuperview),
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
-                                               if let collectionView = self.view.firstSuperview(for: NSCollectionView.self) {
-                                                   collectionView.setupCollectionViewObserver()
-                                                   collectionView.addObserverView()
-                                               }
+                                               self._collectionView?.setupObservers()
                                                store.original(object, store.selector)
                                            }
                                        },
@@ -642,6 +645,9 @@ public extension NSCollectionViewItem {
          }
         set {
             super.view = newValue
+            if (newValue != super.view) {
+                self.didSwizzleCollectionItemView = false
+            }
             self.swizzleCollectionItemViewIfNeeded()
         }
     }

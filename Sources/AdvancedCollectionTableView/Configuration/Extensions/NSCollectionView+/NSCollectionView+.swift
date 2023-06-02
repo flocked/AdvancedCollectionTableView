@@ -111,26 +111,67 @@ public extension NSCollectionView {
         }
     }
     
+    internal func setupObservers(shouldObserve: Bool = true) {
+        self.setupSelectionObserver(shouldObserve: shouldObserve)
+        self.setupObserverView(shouldObserve: shouldObserve)
+    }
+    
+    internal func setupSelectionObserver(shouldObserve: Bool = true) {
+        if shouldObserve {
+            if collectionViewObserver == nil {
+                collectionViewObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
+                    var itemIndexPaths: [IndexPath] = []
+                    
+                    let added = newIndexes.symmetricDifference(previousIndexes)
+                    let removed = previousIndexes.symmetricDifference(newIndexes)
+
+                    itemIndexPaths.append(contentsOf: added)
+                    itemIndexPaths.append(contentsOf: removed)
+                    itemIndexPaths = itemIndexPaths.uniqued()
+                    let items = itemIndexPaths.compactMap({self.item(at: $0)})
+                    items.forEach({ $0.setNeedsUpdateConfiguration() })
+                }
+            }
+        } else {
+            collectionViewObserver?.invalidate()
+            collectionViewObserver = nil
+        }
+    }
+    
+    func setupObserverView(shouldObserve: Bool = true) {
+        if shouldObserve {
+            if (self.observerView == nil) {
+                self.observerView = ObserverView()
+                self.addSubview(withConstraint: self.observerView!)
+                self.observerView!.sendToBack()
+                self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
+                    guard let self = self else { return }
+                    self.isEmphasized = windowIsKey
+                }
+                
+                self.observerView?.mouseHandlers.moved = { [weak self] event in
+                    guard let self = self else { return }
+                    let location = event.location(in: self)
+                    if self.bounds.contains(location) {
+                        self.updateItemHoverState(event)
+                    }
+                }
+            }
+        } else {
+            observerView?.removeFromSuperview()
+            observerView = nil
+        }
+    }
+    
     internal var collectionViewObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self)
         }
    }
     
-    internal func setupCollectionViewObserver() {
-        if (collectionViewObserver == nil) {
-            collectionViewObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
-                var itemIndexPaths: [IndexPath] = []
-                
-                let added = newIndexes.symmetricDifference(previousIndexes)
-                let removed = previousIndexes.symmetricDifference(newIndexes)
-
-                itemIndexPaths.append(contentsOf: added)
-                itemIndexPaths.append(contentsOf: removed)
-                itemIndexPaths = itemIndexPaths.uniqued()
-                let items = itemIndexPaths.compactMap({self.item(at: $0)})
-                items.forEach({ $0.setNeedsUpdateConfiguration() })
-            }
+    var observerView: ObserverView? {
+        get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
+        set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
         }
     }
     
@@ -147,29 +188,5 @@ public extension NSCollectionView {
 }
 
 internal extension NSCollectionView {
-    func addObserverView() {
-        if (self.observerView == nil) {
-            self.observerView = ObserverView()
-            self.addSubview(withConstraint: self.observerView!)
-            self.observerView!.sendToBack()
-            self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
-                guard let self = self else { return }
-                self.isEmphasized = windowIsKey
-            }
-            
-            self.observerView?.mouseHandlers.moved = { [weak self] event in
-                guard let self = self else { return }
-                let location = event.location(in: self)
-                if self.bounds.contains(location) {
-                    self.updateItemHoverState(event)
-                }
-            }
-        }
-    }
-    
-    var observerView: ObserverView? {
-        get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
-        }
-    }
+
 }
