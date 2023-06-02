@@ -251,6 +251,7 @@ public extension NSTableCellView {
     }
     
     @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
+        Swift.print("swizzleTableCellIfNeeded")
         if (didSwizzleTableCellView == false) {
             didSwizzleTableCellView = true
             do {
@@ -259,6 +260,7 @@ public extension NSTableCellView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
+                                           Swift.print("cell viewDidMoveToSuperview", self.tableView)
                                            self.tableView?.addObserverView()
                                            // Add constraints if tableview usesAutomaticRowHeights
                                           /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
