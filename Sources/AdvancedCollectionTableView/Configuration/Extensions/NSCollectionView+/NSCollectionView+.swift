@@ -112,7 +112,7 @@ public extension NSCollectionView {
     }
     
     internal func setupObservers(shouldObserve: Bool = true) {
-     //   self.setupSelectionObserver(shouldObserve: shouldObserve)
+        self.setupSelectionObserver(shouldObserve: shouldObserve)
         self.setupObserverView(shouldObserve: shouldObserve)
     }
     
