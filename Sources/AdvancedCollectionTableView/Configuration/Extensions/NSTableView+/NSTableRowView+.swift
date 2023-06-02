@@ -380,7 +380,7 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
-                                           Swift.print("isSelected swizzled tableview")
+                                           Swift.print("row.isSelected swizzled", isSelected)
                                            if self.isSelected != isSelected {
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()
