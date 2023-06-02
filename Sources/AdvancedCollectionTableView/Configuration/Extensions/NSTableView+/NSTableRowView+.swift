@@ -392,6 +392,7 @@ public extension NSTableRowView {
             } catch {
                 Swift.print(error)
             }
+            
             superviewObserver = self.observeChange(\.superview) { [weak self] object, old, new in
                 guard let self = self else { return }
                 Swift.print("Row superview changed")

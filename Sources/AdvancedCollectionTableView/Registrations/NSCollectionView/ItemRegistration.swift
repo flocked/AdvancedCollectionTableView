@@ -20,7 +20,7 @@ public extension NSCollectionView {
 
      - returns:A configured reusable item object.
      */
-    func makeItem<I: NSCollectionViewItem, E: Any>(using registration: ItemRegistration<I, E>, for indexPath: IndexPath, element: E) -> I {
+    func makeItem<Item, Value>(using registration: ItemRegistration<Item, Value>, for indexPath: IndexPath, element: Value) -> Item where Item: NSCollectionViewItem {
         return registration.makeItem(self, indexPath, element)
     }
 }
