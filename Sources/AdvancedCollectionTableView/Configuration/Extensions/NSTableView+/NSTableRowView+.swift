@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-// import AdvancedCollectionTableViewObjC
+
 
 public extension NSTableRowView {
     /**

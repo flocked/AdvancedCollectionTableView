@@ -57,6 +57,7 @@ public extension NSTableView {
         }
     }
     
+    
     /*
      override var isEnabled: Bool {
      didSet {
@@ -74,7 +75,20 @@ public extension NSTableView {
 }
 
 internal extension NSTableView {
+    var selectionObserver: NotificationToken? {
+        get { getAssociatedValue(key: "NSTableView_selectionObserver", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSTableView_selectionObserver", object: self)
+        }
+    }
+    
     func addObserverView() {
+        if (self.selectionObserver == nil) {
+            selectionObserver = NotificationCenter.default.observe(name: NSTableView.selectionDidChangeNotification, object: self) { [weak self] notification in
+                guard let self = self else { return }
+                Swift.print("Table Selection Changed!")
+            }
+        }
+        
         if (self.observerView == nil) {
             self.observerView = ObserverView()
             self.addSubview(withConstraint: self.observerView!)
