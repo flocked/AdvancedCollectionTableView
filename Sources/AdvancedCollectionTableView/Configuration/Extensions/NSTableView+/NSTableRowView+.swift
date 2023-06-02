@@ -351,6 +351,7 @@ public extension NSTableRowView {
     }
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
+        Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
             do {
@@ -359,6 +360,7 @@ public extension NSTableRowView {
                                    methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                        store in { (object) in
+                                           Swift.print("NSTableRowView viewDidMoveToSuperview", self.tableView, self.superview)
                                            self.tableView?.addObserverView()
                                            store.original(object, store.selector)
                                        }
