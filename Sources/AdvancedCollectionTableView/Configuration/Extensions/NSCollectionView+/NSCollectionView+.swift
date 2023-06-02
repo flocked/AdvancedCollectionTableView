@@ -82,33 +82,6 @@ public extension NSCollectionView {
         hoveredItem = nil
     }
         
-    internal func setupObservers(shouldObserve: Bool = true) {
-   //     self.setupSelectionObserver(shouldObserve: shouldObserve)
-        self.setupObserverView(shouldObserve: shouldObserve)
-    }
-    
-    internal func setupSelectionObserver(shouldObserve: Bool = true) {
-        if shouldObserve {
-            if selectionObserver == nil {
-                selectionObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
-                    var itemIndexPaths: [IndexPath] = []
-                    
-                    let added = newIndexes.symmetricDifference(previousIndexes)
-                    let removed = previousIndexes.symmetricDifference(newIndexes)
-
-                    itemIndexPaths.append(contentsOf: added)
-                    itemIndexPaths.append(contentsOf: removed)
-                    itemIndexPaths = itemIndexPaths.uniqued()
-                    let items = itemIndexPaths.compactMap({self.item(at: $0)})
-                    items.forEach({ $0.setNeedsUpdateConfiguration() })
-                }
-            }
-        } else {
-            selectionObserver?.invalidate()
-            selectionObserver = nil
-        }
-    }
-    
     func setupObserverView(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observerView == nil) {
@@ -138,13 +111,7 @@ public extension NSCollectionView {
             observerView = nil
         }
     }
-    
-    internal var selectionObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self)
-        }
-   }
-    
+        
     var observerView: ObserverView? {
         get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
         set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
@@ -191,4 +158,32 @@ public extension NSCollectionView {
  let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
  previousHoveredItems.forEach({$0.isHovered = false })
  }
+ 
+ internal func setupSelectionObserver(shouldObserve: Bool = true) {
+     if shouldObserve {
+         if selectionObserver == nil {
+             selectionObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
+                 var itemIndexPaths: [IndexPath] = []
+                 
+                 let added = newIndexes.symmetricDifference(previousIndexes)
+                 let removed = previousIndexes.symmetricDifference(newIndexes)
+
+                 itemIndexPaths.append(contentsOf: added)
+                 itemIndexPaths.append(contentsOf: removed)
+                 itemIndexPaths = itemIndexPaths.uniqued()
+                 let items = itemIndexPaths.compactMap({self.item(at: $0)})
+                 items.forEach({ $0.setNeedsUpdateConfiguration() })
+             }
+         }
+     } else {
+         selectionObserver?.invalidate()
+         selectionObserver = nil
+     }
+ }
+ 
+ internal var selectionObserver: NSKeyValueObservation? {
+     get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
+     set { set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self)
+     }
+}
  */

@@ -569,6 +569,20 @@ public extension NSCollectionViewItem {
             
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
+        
+        
+        if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
+            
+        } else {
+            let observer = self.view.observeChange(\.superview) { [weak self] object, old, new in
+                guard let self = self else { return }
+                self._collectionView?.setupObserverView()
+            }
+            set(associatedValue: observer, key: "NSCollectionViewItem_superviewObserver", object: self.view)
+        }
+        
+        /*
+        
         if didSwizzleCollectionItemView == false, self.contentView != nil {
             didSwizzleCollectionItemView = true
             
@@ -578,7 +592,7 @@ public extension NSCollectionViewItem {
                                        methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
                                        hookSignature: (@convention(block) (AnyObject) -> ()).self) {
                                            store in { (object) in
-                                               self._collectionView?.setupObservers()
+                                               self._collectionView?.setupObserverView()
                                                store.original(object, store.selector)
                                            }
                                        },
@@ -588,11 +602,7 @@ public extension NSCollectionViewItem {
                 Swift.print(error)
             }
         }
-    }
-    
-    @objc var swizzled_isSelected: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isSelected", object: self, initialValue: false) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_isSelected", object: self) }
+         */
     }
     
     internal var isConfigurationUpdatesEnabled: Bool {
