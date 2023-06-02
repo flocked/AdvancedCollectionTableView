@@ -66,25 +66,7 @@ public extension NSTableView {
         }
     }
     
-    
-    /*
-     override var isEnabled: Bool {
-     didSet {
-     self.visibleRowViews().forEach({$0.isDisabled = !self.isEnabled})
-     }
-     }
-     */
-    
-    
-    /*
-     override var isSelectable: Bool {
-     get { getAssociatedValue(key: "NSTableView_isSelectable", object: self, initialValue: true) }
-     set { set(associatedValue: newValue, key: "NSTableView_isSelectable", object: self) } }
-     */
-}
-
-internal extension NSTableView {
-    func setupObserverView(shouldObserve: Bool = true) {
+    internal func setupObserverView(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observerView == nil) {
                 self.observerView = ObserverView()
@@ -114,18 +96,20 @@ internal extension NSTableView {
         }
     }
         
-    var observerView: ObserverView? {
+    internal var observerView: ObserverView? {
         get { getAssociatedValue(key: "NSTableView_observerView", object: self) }
         set { set(associatedValue: newValue, key: "NSTableView_observerView", object: self)
         }
     }
     
-    var hoveredRowView: NSTableRowView? {
+    internal var hoveredRowView: NSTableRowView? {
         get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
         set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
         }
     }
 }
+
+
 
 /*
  func setupObservers(shouldObserve: Bool = true) {
@@ -173,4 +157,20 @@ internal extension NSTableView {
      set {  set(associatedValue: newValue, key: "_NSTableView_SelectedRowIndexes", object: self)
      }
  }
+ */
+
+
+/*
+ override var isEnabled: Bool {
+ didSet {
+ self.visibleRowViews().forEach({$0.isDisabled = !self.isEnabled})
+ }
+ }
+ */
+
+
+/*
+ override var isSelectable: Bool {
+ get { getAssociatedValue(key: "NSTableView_isSelectable", object: self, initialValue: true) }
+ set { set(associatedValue: newValue, key: "NSTableView_isSelectable", object: self) } }
  */

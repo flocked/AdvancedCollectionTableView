@@ -1,6 +1,6 @@
 //
 //  NSTableCellVew+.swift
-//  Coll
+//  
 //
 //  Created by Florian Zand on 14.11.22.
 //
@@ -11,10 +11,10 @@ import FZUIKit
 
 public extension NSTableCellView {
     /**
-     The current content configuration of the item.
+     The current content configuration of the cell.
 
-     Using a content configuration, you can set the item’s content and styling for a variety of different item states.
-     Setting a content configuration replaces the existing contentView of the item with a new content view instance from the configuration, or directly applies the configuration to the existing content view if the configuration is compatible with the existing content view type.
+     Using a content configuration, you can set the cell’s content and styling for a variety of different item states.
+     Setting a content configuration replaces the existing contentView of the cell with a new content view instance from the configuration, or directly applies the configuration to the existing content view if the configuration is compatible with the existing content view type.
      The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
      */
     var contentConfiguration: NSContentConfiguration?   {
@@ -113,12 +113,6 @@ public extension NSTableCellView {
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
             }
-            
-            /*
-             if automaticallyUpdatesContentConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
-             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
-             }
-             */
             configurationUpdateHandler?(self, state)
         }
     }
@@ -171,20 +165,14 @@ public extension NSTableCellView {
         }
     }
     
-    /**
-     A Boolean value that specifies whether the current cell view is hovered.
-
-     A hovered row view has the mouse pointer on it.
-     */
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_isHovered", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isHovered else { return }
-            set(associatedValue: newValue, key: "NSTableCellVew_isHovered", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+        self.rowView?.isHovered ?? false
     }
     
+    internal var isEmphasized: Bool {
+        self.rowView?.isEmphasized ?? false
+    }
+        
    internal var isEnabled: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_isEnabled", object: self, initialValue: false) }
         set {
@@ -220,28 +208,19 @@ public extension NSTableCellView {
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
-    
-    internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_isEmphasized", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "NSTableCellVew_isEmphasized", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-            
+                
     internal var isConfigurationUpdatesEnabled: Bool {
         get { getAssociatedValue(key: "NSTableCellView_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
         set {  set(associatedValue: newValue, key: "NSTableCellView_isConfigurationUpdatesEnabled", object: self) }
     }
     
-    override func prepareForReuse() {
+    @objc internal func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
-        self.isHovered = false
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
-        self.isEmphasized = self.tableView?.isEmphasized ?? false
+       // self.isHovered = false
+       // self.isEmphasized = self.tableView?.isEmphasized ?? false
         self.isConfigurationUpdatesEnabled = true
     }
     
@@ -268,6 +247,14 @@ public extension NSTableCellView {
                                            store.original(object, store.selector)
                                        }
                                    },
+                    try  self.hook(#selector(prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
                 ]
                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
@@ -276,3 +263,23 @@ public extension NSTableCellView {
         }
     }
 }
+
+/*
+    internal var isHovered: Bool {
+        get { getAssociatedValue(key: "NSTableCellVew_isHovered", object: self, initialValue: false) }
+        set {
+            guard newValue != self.isHovered else { return }
+            set(associatedValue: newValue, key: "NSTableCellVew_isHovered", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
+    internal var isEmphasized: Bool {
+        get { getAssociatedValue(key: "NSTableCellVew_isEmphasized", object: self, initialValue: false) }
+        set {
+            guard newValue != self.isEmphasized else { return }
+            set(associatedValue: newValue, key: "NSTableCellVew_isEmphasized", object: self)
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+ */

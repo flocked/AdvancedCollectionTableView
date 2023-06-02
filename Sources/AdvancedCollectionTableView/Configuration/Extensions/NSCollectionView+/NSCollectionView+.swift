@@ -39,30 +39,7 @@ public extension NSCollectionView {
             set(associatedValue: newValue.rawValue, key: "NSCollectionView_selfSizingInvalidation", object: self)
         }
     }
-    
-    func setCollectionViewLayout(_ layout: NSCollectionViewLayout, animated: Bool) {
-        if (animated == true) {
-            self.performBatchUpdates({
-                self.animator().collectionViewLayout = layout
-            })
-        } else {
-            self.collectionViewLayout = layout
-        }
-    }
-    
-    func setCollectionViewLayout(_ layout: NSCollectionViewLayout, animated: Bool, completion: ((Bool) -> Void)? = nil) {
-        if (animated == true) {
-            self.performBatchUpdates({
-                self.animator().collectionViewLayout = layout
-            }, completionHandler: { completed in
-                completion?(completed)
-            })
-        } else {
-            self.collectionViewLayout = layout
-            completion?(true)
-        }
-    }
-    
+        
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEmphasized", object: self, initialValue: false) }
         set {
@@ -73,6 +50,15 @@ public extension NSCollectionView {
             }
             self.visibleItems().forEach({$0.isEmphasized = newValue})
         }
+    }
+    
+    var isEnabled: Bool {
+        get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
+        set {
+            set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
+            self.visibleItems().forEach({$0.isEnabled = newValue })
+        }
+        
     }
     
     internal var hoveredItem: NSCollectionViewItem? {
@@ -89,54 +75,13 @@ public extension NSCollectionView {
         
         mouseItem?.isHovered = true
         hoveredItem = mouseItem
-        
-        /*
-        if let mouseItem = mouseItem, mouseItem.isHovered == false {
-            mouseItem.isHovered = true
-            hoveredItem = mouseItem
-        }
-         */
-        /*
-        let visibleItems = self.visibleItems()
-        let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
-        previousHoveredItems.forEach({$0.isHovered = false })
-         */
     }
-    
+        
     internal func removeHoveredItem() {
         hoveredItem?.isHovered = false
         hoveredItem = nil
     }
-    
-    internal var trackDisplayingItems: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_trackDisplayingItems", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionView_trackDisplayingItems", object: self)
-            self.updateDisplayingItemsTracking()
-        }
-    }
-    
-    var isEnabled: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
-            self.visibleItems().forEach({$0.isEnabled = newValue })
-        }
         
-    }
-    
-    internal func updateDisplayingItemsTracking() {
-        guard let scrollView = self.enclosingScrollView else {  return }
-        let clipView = scrollView.contentView
-        if (self.trackDisplayingItems) {
-            clipView.postsBoundsChangedNotifications = true
-            NotificationCenter.default.addObserver(self, selector: #selector(didScroll), name: NSView.boundsDidChangeNotification, object: clipView)
-        } else {
-            clipView.postsBoundsChangedNotifications = false
-            NotificationCenter.default.removeObserver(self, name: NSView.boundsDidChangeNotification, object: clipView)
-        }
-    }
-    
     internal func setupObservers(shouldObserve: Bool = true) {
         self.setupSelectionObserver(shouldObserve: shouldObserve)
         self.setupObserverView(shouldObserve: shouldObserve)
@@ -144,8 +89,8 @@ public extension NSCollectionView {
     
     internal func setupSelectionObserver(shouldObserve: Bool = true) {
         if shouldObserve {
-            if collectionViewObserver == nil {
-                collectionViewObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
+            if selectionObserver == nil {
+                selectionObserver = self.observeChange(\.selectionIndexPaths) { object, previousIndexes, newIndexes in
                     var itemIndexPaths: [IndexPath] = []
                     
                     let added = newIndexes.symmetricDifference(previousIndexes)
@@ -159,8 +104,8 @@ public extension NSCollectionView {
                 }
             }
         } else {
-            collectionViewObserver?.invalidate()
-            collectionViewObserver = nil
+            selectionObserver?.invalidate()
+            selectionObserver = nil
         }
     }
     
@@ -194,7 +139,7 @@ public extension NSCollectionView {
         }
     }
     
-    internal var collectionViewObserver: NSKeyValueObservation? {
+    internal var selectionObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionItem_Observer", object: self)
         }
@@ -205,19 +150,45 @@ public extension NSCollectionView {
         set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
         }
     }
-    
-    @objc func didScroll() {
-        
-    }
-    
-    
-    /*
-    override var isSelectable: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_isSelectable", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_isSelectable", object: self) } }
-     */
 }
 
-internal extension NSCollectionView {
 
-}
+
+/*
+ internal var trackDisplayingItems: Bool {
+     get { getAssociatedValue(key: "NSCollectionView_trackDisplayingItems", object: self, initialValue: false) }
+     set {
+         set(associatedValue: newValue, key: "NSCollectionView_trackDisplayingItems", object: self)
+         self.updateDisplayingItemsTracking()
+     }
+ }
+ 
+ internal func updateDisplayingItemsTracking() {
+     guard let scrollView = self.enclosingScrollView else {  return }
+     let clipView = scrollView.contentView
+     if (self.trackDisplayingItems) {
+         clipView.postsBoundsChangedNotifications = true
+         NotificationCenter.default.addObserver(self, selector: #selector(didScroll), name: NSView.boundsDidChangeNotification, object: clipView)
+     } else {
+         clipView.postsBoundsChangedNotifications = false
+         NotificationCenter.default.removeObserver(self, name: NSView.boundsDidChangeNotification, object: clipView)
+     }
+ }
+ 
+ @objc func didScroll() {
+     
+ }
+ */
+
+/*
+ internal func updateItemHoverState(_ event: NSEvent) {
+ if let mouseItem = mouseItem, mouseItem.isHovered == false {
+     mouseItem.isHovered = true
+     hoveredItem = mouseItem
+ }
+
+ let visibleItems = self.visibleItems()
+ let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
+ previousHoveredItems.forEach({$0.isHovered = false })
+ }
+ */

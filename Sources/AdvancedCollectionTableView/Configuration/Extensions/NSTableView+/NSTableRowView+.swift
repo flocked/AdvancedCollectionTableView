@@ -12,9 +12,9 @@ import FZUIKit
 
 public extension NSTableRowView {
     /**
-     The current background configuration of the item.
+     The current background configuration of the row.
      
-     Using a background configuration, you can obtain system default background styling for a variety of different item states. Create a background configuration with one of the default system styles, customize the configuration to match your item’s style as necessary, and assign the configuration to this property.
+     Using a background configuration, you can obtain system default background styling for a variety of different row states. Create a background configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
      
      ```
      var backgroundConfiguration = NSBackgroundConfiguration.listPlainItem()
@@ -22,7 +22,7 @@ public extension NSTableRowView {
      // Set a nil background color to use the view's tint color.
      backgroundConfiguration.backgroundColor = nil
      
-     item.backgroundConfiguration = backgroundConfiguration
+     row.backgroundConfiguration = backgroundConfiguration
      ```
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets the following APIs to nil:
@@ -42,9 +42,9 @@ public extension NSTableRowView {
     }
     
     /**
-     A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
+     A Boolean value that determines whether the row automatically updates its background configuration when its state changes.
      
-     When this value is true, the item automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is true, the row automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
@@ -54,9 +54,9 @@ public extension NSTableRowView {
     }
     
     /**
-     The view that displays behind the item’s other content.
+     The view that displays behind the row’s other content.
      
-     Use this property to assign a custom background view to the item. The background view appears behind the content view and its frame automatically adjusts so that it fills the bounds of the item.
+     Use this property to assign a custom background view to the row. The background view appears behind the content view and its frame automatically adjusts so that it fills the bounds of the row.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var backgroundView: NSView?   {
@@ -67,9 +67,9 @@ public extension NSTableRowView {
     }
     
     /**
-     The view that displays just above the background view for a selected item.
+     The view that displays just above the background view for a selected row.
      
-     You can use this view to give a selected item a custom appearance. When the item has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
+     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var selectedBackgroundView: NSView? {
@@ -88,9 +88,9 @@ public extension NSTableRowView {
     }
     
     /**
-     The view that displays just above the background view for a selected item.
+     The view that displays just above the background view for a selected row.
      
-     You can use this view to give a selected item a custom appearance. When the item has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
+     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var multipleSelectionBackgroundView: NSView? {
@@ -272,8 +272,8 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isHovered else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isHovered", object: self)
-            self.cellViews.forEach({ $0.isHovered = newValue })
             self.setNeedsAutomaticUpdateConfiguration()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
     }
     
@@ -319,6 +319,7 @@ public extension NSTableRowView {
             guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEmphasized", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
     }
     
@@ -328,7 +329,7 @@ public extension NSTableRowView {
         set {  set(associatedValue: newValue, key: "NSTableRowView_automaticUpdateConfigurationEnabled", object: self) }
     }
     
-    override func prepareForReuse() {
+    @objc internal func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
         self.isEnabled = true
@@ -371,6 +372,7 @@ public extension NSTableRowView {
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
                                            if self.isSelected != isSelected {
+                                               Swift.print("rowParent", self.parentViewController)
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()
                                                self.setCellViewsNeedAutomaticUpdateConfiguration()
@@ -378,7 +380,14 @@ public extension NSTableRowView {
                                            store.original(object, store.selector, isSelected)
                                        }
                                    },
-                     
+                    try  self.hook(#selector(prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
                 ]
                 try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
