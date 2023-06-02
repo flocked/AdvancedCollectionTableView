@@ -516,7 +516,7 @@ public extension NSCollectionViewItem {
                                            store.original(object, store.selector, isSelected)
                                        }
                                    },
-                    try self.hook(NSSelectorFromString("_setSelectedWithoutNotification(_:)"),
+                    try self.hook(NSSelectorFromString("setSelectedWithoutNotification(_:)"),
                                    methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
                                    hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
                                        store in { (object, isSelected) in
