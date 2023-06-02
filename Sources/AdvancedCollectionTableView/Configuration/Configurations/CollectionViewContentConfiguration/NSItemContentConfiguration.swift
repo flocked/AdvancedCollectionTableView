@@ -46,9 +46,9 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var view: NSView? = nil
     
     // Properties for configuring the primary text.
-    public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+    public var textProperties: TextProperties = .textStyle(.body)
     // Properties for configuring the secondary text.
-    public var secondaryTextProperties: TextProperties = .textStyle(.body)
+    public var secondaryTextProperties: TextProperties = .textStyle(.caption1)
     // Properties for configuring the image.
     public var imageProperties: ImageProperties = ImageProperties()
     // Properties for configuring the image.
@@ -71,7 +71,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      
      This value only applies when there’s both an image and text.
      */
-    public var imageToTextPadding: CGFloat = 4.0
+    public var imageToTextPadding: CGFloat = 6.0
     /**
      The padding between the primary and secondary text.
 
@@ -114,13 +114,14 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          secondaryText: String? = nil,
          secondaryattributedText: AttributedString? = nil,
          image: NSImage? = nil,
+         view: NSView? = nil,
          imageProperties: ImageProperties = ImageProperties(),
          textProperties: TextProperties = .textStyle(.body),
-         secondaryTextProperties: TextProperties = .textStyle(.body),
+         secondaryTextProperties: TextProperties = .textStyle(.caption1),
          contentProperties: ContentProperties = ContentProperties(),
          orientation: NSUserInterfaceLayoutOrientation = .vertical,
          prefersSideBySideTextAndSecondaryText: Bool = false,
-         imageToTextPadding: CGFloat = 2.0,
+         imageToTextPadding: CGFloat = 6.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
          padding: NSDirectionalEdgeInsets = .zero) {
         self.text = text
@@ -128,10 +129,12 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.secondaryText = secondaryText
         self.secondaryattributedText = secondaryattributedText
         self.image = image
+        self.view = view
         self.imageProperties = imageProperties
         self.textProperties = textProperties
         self.secondaryTextProperties = secondaryTextProperties
         self.orientation = orientation
+        self.contentProperties = contentProperties
         self.prefersSideBySideTextAndSecondaryText = prefersSideBySideTextAndSecondaryText
         self.imageToTextPadding = imageToTextPadding
         self.textToSecondaryTextPadding = textToSecondaryTextPadding

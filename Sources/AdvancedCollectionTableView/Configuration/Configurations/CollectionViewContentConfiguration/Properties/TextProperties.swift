@@ -20,7 +20,7 @@ public extension NSItemContentConfiguration {
         }
         
         public var font: NSFont = .system(.body)
-        public var numberOfLines: Int = 0
+        public var numberOfLines: Int? = 1
         public var alignment: NSTextAlignment = .left
         public var lineBreakMode: NSLineBreakMode = .byWordWrapping
         public var textTransform: TextTransform = .none

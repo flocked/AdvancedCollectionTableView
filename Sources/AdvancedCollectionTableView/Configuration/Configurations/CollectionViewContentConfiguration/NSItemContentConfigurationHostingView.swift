@@ -102,13 +102,21 @@ internal extension NSItemContentConfigurationHostingView {
         var textItems: some View {
             VStack(spacing: configuration.textToSecondaryTextPadding) {
                 textItem
+                    .font(configuration.textProperties.font.swiftUI)
+                    .lineLimit(configuration.textProperties.numberOfLines)
+                    .foregroundColor(configuration.textProperties.textColor.swiftUI)
+                    .textSelection((configuration.textProperties.isSelectable == true) ? .enabled : .enabled)
+
                 secondaryTextItem
+                    .font(configuration.secondaryTextProperties.font.swiftUI)
+                    .lineLimit(configuration.secondaryTextProperties.numberOfLines)
+                    .foregroundColor(configuration.secondaryTextProperties.textColor.swiftUI)
+                    .textSelection(configuration.secondaryTextProperties.isSelectable == true ? .enabled : .enabled)
             }
         }
         
         @ViewBuilder
         var contentItem: some View {
-            if configuration.image != nil || configuration.view != nil || configuration.contentProperties.backgroundColor != nil {
                 ZStack() {
                     if let backgroundColor = configuration.contentProperties.backgroundColor {
                         configuration.contentProperties.shape.swiftui
@@ -126,10 +134,10 @@ internal extension NSItemContentConfigurationHostingView {
                     }
                 }
            //     .backgroundOptional(configuration.contentProperties.backgroundColor?.swiftUI)
+             //   .clipShape(configuration.contentProperties.shape.swiftui)
                 .clipShape(configuration.contentProperties.shape.swiftui)
-                .borderOptional(configuration.contentProperties.borderColor?.swiftUI, width: configuration.contentProperties.borderWidth)
                 .shadowOptional(color: configuration.contentProperties.shadowProperties.color?.swiftUI, radius: configuration.contentProperties.shadowProperties.radius, offset: configuration.contentProperties.shadowProperties.offset)
-            }
+            
         }
 
         
@@ -152,6 +160,7 @@ internal extension View {
         }
     }
     
+    
     @ViewBuilder
     func shadowOptional(color: Color?, radius: CGFloat, offset: CGPoint) -> some View {
         if let color = color {
@@ -161,6 +170,7 @@ internal extension View {
         }
     }
 }
+
 
 
 internal struct ContainerView<V: NSView>: NSViewRepresentable {
@@ -173,3 +183,23 @@ internal struct ContainerView<V: NSView>: NSViewRepresentable {
     // Nothing to do.
   }
 }
+
+struct CollectionItemView_Previews: PreviewProvider {
+    static var configuration: NSItemContentConfiguration {
+        let view = NSView()
+        view.backgroundColor = .lightGray
+        view.maskToBounds = true
+        let contentProperties = NSItemContentConfiguration.ContentProperties(shape: .roundedRectangular(10.0), backgroundColor: .lightGray, borderWidth: 1.0, borderColor: .controlAccentColor)
+
+       return NSItemContentConfiguration(text: "A fun title", secondaryText: "A fun title that fits", view: nil, contentProperties: contentProperties)
+    }
+    static var previews: some View {
+        VStack(spacing: 10.0) {
+            NSItemContentConfigurationHostingView.ContentView(configuration: configuration)
+                .frame(width: 140, height: 160)
+                .padding()
+
+        }
+    }
+}
+

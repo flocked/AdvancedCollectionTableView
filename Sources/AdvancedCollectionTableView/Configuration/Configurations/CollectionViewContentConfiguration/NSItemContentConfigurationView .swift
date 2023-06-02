@@ -115,7 +115,7 @@ extension NSItemContentConfiguration {
         }
         
         internal func updateConfiguration(with configuration: NSItemContentConfiguration) {
-            textField.maximumNumberOfLines = configuration.textProperties.numberOfLines
+            textField.maximumNumberOfLines = configuration.textProperties.numberOfLines ?? 0
             textField.isHidden = (configuration.hasText == false)
             textField.alignment = configuration.textProperties.alignment
             textField.font = configuration.textProperties.font
@@ -137,7 +137,7 @@ extension NSItemContentConfiguration {
             }
             
             secondaryTextField.isHidden = (configuration.hasSecondaryText == false)
-            secondaryTextField.maximumNumberOfLines = configuration.secondaryTextProperties.numberOfLines
+            secondaryTextField.maximumNumberOfLines = configuration.secondaryTextProperties.numberOfLines ?? 0
             secondaryTextField.alignment = configuration.secondaryTextProperties.alignment
             secondaryTextField.font = configuration.secondaryTextProperties.font
             secondaryTextField.textColor = configuration.secondaryTextProperties.resolvedTextColor()

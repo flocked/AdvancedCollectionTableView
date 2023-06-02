@@ -17,6 +17,17 @@ public extension NSItemContentConfiguration {
             case capsule
             case roundedRectangular(_ cornerRadius: CGFloat)
             case rectangular
+            
+            @ShapeBuilder internal var swiftui: some SwiftUI.Shape {
+                switch self {
+                case .circle: Circle()
+                case .capsule: Capsule()
+                case .roundedRectangular(let cornerRadius): RoundedRectangle(cornerRadius: cornerRadius)
+                case .rectangular: Rectangle()
+                }
+            }
+            
+            /*
             internal var swiftui: some SwiftUI.Shape {
                 switch self {
                 case .circle: return Circle().asAnyShape()
@@ -25,12 +36,13 @@ public extension NSItemContentConfiguration {
                 case .rectangular: return Rectangle().asAnyShape()
                 }
             }
+             */
         }
         
-        public var shape: Shape = .rectangular
+        public var shape: Shape = .roundedRectangular(8.0)
         public var shadowProperties: ShadowProperties = .black()
         
-        public var backgroundColor: NSColor? = nil
+        public var backgroundColor: NSColor? = .systemGray
         public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
                 
         public var borderWidth: CGFloat = 0.0
