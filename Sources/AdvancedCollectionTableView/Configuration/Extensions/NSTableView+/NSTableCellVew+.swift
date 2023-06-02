@@ -262,7 +262,7 @@ public extension NSTableCellView {
                                        store in { (object) in
                                            Swift.print("cell viewDidMoveToSuperview")
                                            self.rowView?.swizzleTableRowViewIfNeeded()
-                                           self.tableView?.setupObservers()
+                                           self.tableView?.setupObserverView()
                                            // Add constraints if tableview usesAutomaticRowHeights
                                           /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
                                                contentView.con

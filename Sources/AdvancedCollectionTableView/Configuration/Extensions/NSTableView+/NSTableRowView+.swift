@@ -383,6 +383,7 @@ public extension NSTableRowView {
                                            if self.isSelected != isSelected {
                                                    self.configurateBackgroundView()
                                                    self.setNeedsAutomaticUpdateConfiguration()
+                                               self.setCellViewsNeedAutomaticUpdateConfiguration()
                                            }
                                            store.original(object, store.selector, isSelected)
                                        }
