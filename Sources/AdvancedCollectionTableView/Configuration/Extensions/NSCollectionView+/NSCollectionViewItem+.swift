@@ -190,8 +190,10 @@ public extension NSCollectionViewItem {
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
+                Swift.print("contentView Update")
                 contentView.configuration = contentConfiguration
             } else {
+                Swift.print("contentView New")
                 self.cachedLayoutAttributes = nil
                self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true

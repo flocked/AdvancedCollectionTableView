@@ -21,8 +21,8 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         }
     }
     
-    internal var _configuration: NSHostingConfiguration<Content, Background> {
-        didSet { updateConfiguration() }
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSHostingConfiguration<Content, Background>
     }
     
     public init(configuration: NSHostingConfiguration<Content, Background>) {
@@ -30,6 +30,10 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         super.init(frame: .zero)
         hostingViewConstraints = addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
+    }
+    
+    internal var _configuration: NSHostingConfiguration<Content, Background> {
+        didSet { updateConfiguration() }
     }
     
     internal func updateConfiguration() {
