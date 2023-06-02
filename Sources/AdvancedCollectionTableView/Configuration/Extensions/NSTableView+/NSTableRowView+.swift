@@ -223,37 +223,30 @@ public extension NSTableRowView {
      You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
-    func setNeedsUpdateConfiguration(updateCellViews: Bool = true) {
-        if (updateCellViews == true) {
-            setNeedsCellViewsUpdateConfiguration()
-        }
+    func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: self.configurationState)
     }
     
     
     // Updates content configuration and background configuration if automatic updating is enabled.
-    internal func setNeedsAutomaticUpdateConfiguration(updateCellViews: Bool = true) {
+    internal func setNeedsAutomaticUpdateConfiguration() {
         if isConfigurationUpdatesEnabled {
             let state = self.configurationState
-            var cellViewNeedsUpdate = false
             
             if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
                 self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
-                cellViewNeedsUpdate = true
             }
-            
-            if updateCellViews && cellViewNeedsUpdate {
-                setNeedsCellViewsUpdateConfiguration()
-            }
-            
+
             configurationUpdateHandler?(self, state)
         }
     }
     
+    /*
     // Updates cell views content configuration.
     internal func setNeedsCellViewsUpdateConfiguration() {
         self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
     }
+    */
     
     /**
      Updates the row’s configuration using the current state.
@@ -279,7 +272,8 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isHovered else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isHovered", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.cellViews.forEach({ $0.isHovered = newValue })
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -288,7 +282,7 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isEnabled else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEnabled", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -297,7 +291,7 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isFocused else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isFocused", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -306,7 +300,7 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isReordering else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isReordering", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -315,7 +309,7 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isEditing else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEditing", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -324,7 +318,7 @@ public extension NSTableRowView {
         set {
             guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableRowView_isEmphasized", object: self)
-            self.setNeedsUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -349,11 +343,32 @@ public extension NSTableRowView {
         set { set(associatedValue: newValue, key: "NSTableRowView_didSwizzle", object: self)
         }
     }
+    
+    internal func setCellViewsNeedUpdateConfiguration() {
+        self.cellViews.forEach({ $0.setNeedsUpdateConfiguration() })
+    }
+    
+    internal func setCellViewsNeedAutomaticUpdateConfiguration() {
+        self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
+    }
+    
+    
+    var selectionObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSTableRowView_selectionObserver", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSTableRowView_selectionObserver", object: self)
+        }
+    }
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
         Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
+            
+            selectionObserver = self.observe(\.isSelected, changeHandler: { rowView, change in
+                Swift.print("HereSelection")
+            })
+            
+            
             do {
                 let hooks = [
                     try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),

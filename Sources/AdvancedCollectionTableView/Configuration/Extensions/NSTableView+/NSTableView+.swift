@@ -40,13 +40,18 @@ public extension NSTableView {
         }
     }
     
-    
-    internal func updateRowHoverState(_ event: NSEvent) {
-        let hoveredRowView = self.rowView(for: event)
-        hoveredRowView?.isHovered = true
+    internal func updateHoveredRow(_ mouseLocation: CGPoint) {
+        let newHoveredRowView = self.rowView(at: mouseLocation)
+        if newHoveredRowView != self.hoveredRowView {
+            self.hoveredRowView?.isHovered = false
+        }
+        newHoveredRowView?.isHovered = true
+        self.hoveredRowView = newHoveredRowView
+    }
         
-        let previousHoveredRows = visibleRows(makeIfNecessary: false).filter({$0.isHovered && $0 != hoveredRowView})
-        previousHoveredRows.forEach({$0.isHovered = false })
+    internal func removeHoveredRow() {
+        self.hoveredRowView?.isHovered = false
+        self.hoveredRowView = nil
     }
     
     internal var isEmphasized: Bool {
@@ -94,9 +99,13 @@ internal extension NSTableView {
                     var rowIndexes: [Int] = []
                     rowIndexes.append(contentsOf: added)
                     rowIndexes.append(contentsOf: removed)
+                    rowIndexes = rowIndexes.uniqued()
+                    
                     let rowViews = rowIndexes.compactMap({ self.rowView(atRow: $0, makeIfNecessary: false) })
-                    Swift.print("NSTableView.selectionChanged", rowViews.count)
-                    rowViews.forEach({ $0.setNeedsUpdateConfiguration() })
+                    rowViews.forEach({
+                        $0.setNeedsAutomaticUpdateConfiguration()
+                        $0.setCellViewsNeedAutomaticUpdateConfiguration()
+                    })
                     self._selectedRowIndexes = new
                 }
             }
@@ -116,11 +125,16 @@ internal extension NSTableView {
                     self.isEmphasized = windowIsKey
                 }
                 
+                self.observerView?.mouseHandlers.exited = { [weak self] event in
+                    guard let self = self else { return }
+                    self.removeHoveredRow()
+                }
+                
                 self.observerView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        self.updateRowHoverState(event)
+                        self.updateHoveredRow(location)
                     }
                 }
             }
@@ -145,6 +159,12 @@ internal extension NSTableView {
     var _selectedRowIndexes: IndexSet {
         get { getAssociatedValue(key: "_NSTableView_SelectedRowIndexes", object: self, initialValue: IndexSet()) }
         set {  set(associatedValue: newValue, key: "_NSTableView_SelectedRowIndexes", object: self)
+        }
+    }
+    
+    var hoveredRowView: NSTableRowView? {
+        get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
+        set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
         }
     }
 }
