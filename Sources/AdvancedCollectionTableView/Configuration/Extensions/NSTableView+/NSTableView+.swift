@@ -81,15 +81,34 @@ internal extension NSTableView {
         }
     }
     
+    @objc func tableSelectionChanged(_ notification: Notification) {
+        Swift.print("Table Selection Changed!")
+
+    }
+    
     func addObserverView() {
+        
+     /*
+        
         if (self.selectionObserver == nil) {
             selectionObserver = NotificationCenter.default.observe(name: NSTableView.selectionDidChangeNotification, object: self) { [weak self] notification in
                 guard let self = self else { return }
                 Swift.print("Table Selection Changed!")
             }
+            
+    
+            
         }
+        */
         
         if (self.observerView == nil) {
+            NotificationCenter.default.addObserver(
+                        self,
+                        selector: #selector(tableSelectionChanged(_:)),
+                        name: NSTableView.selectionDidChangeNotification,
+                        object: nil
+                    )
+            
             self.observerView = ObserverView()
             self.addSubview(withConstraint: self.observerView!)
             self.observerView!.sendToBack()
