@@ -363,9 +363,8 @@ public extension NSTableRowView {
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
             if (self.tableViewObserver == nil) {
-                self.tableViewObserver = self.observe(\.superview, options: [.new]) { [weak self] object, change in
-                    guard let self = self else { return }
-                    Swift.print("Row.superview", change.newValue)
+                self.tableViewObserver = self.observe(\.superview, options: [.new]) { object, change in
+                    Swift.print("Row.superview")
                 }
             }
             
