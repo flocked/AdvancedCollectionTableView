@@ -66,20 +66,46 @@ public extension NSCollectionView {
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEmphasized", object: self, initialValue: false) }
         set {
+            guard newValue != isEmphasized else { return }
             set(associatedValue: newValue, key: "NSCollectionView_isEmphasized", object: self)
+            if newValue == false {
+                self.removeHoveredItem()
+            }
             self.visibleItems().forEach({$0.isEmphasized = newValue})
+        }
+    }
+    
+    internal var hoveredItem: NSCollectionViewItem? {
+        get { getAssociatedValue(key: "NSCollectionView_hoveredItem", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
         }
     }
         
     internal func updateItemHoverState(_ event: NSEvent) {
         let mouseItem = self.item(for: event)
-        if let mouseItem = mouseItem, mouseItem.isHovered == false {
-            mouseItem.isHovered = true
+        if hoveredItem != mouseItem {
+            removeHoveredItem()
         }
         
+        mouseItem?.isHovered = true
+        hoveredItem = mouseItem
+        
+        /*
+        if let mouseItem = mouseItem, mouseItem.isHovered == false {
+            mouseItem.isHovered = true
+            hoveredItem = mouseItem
+        }
+         */
+        /*
         let visibleItems = self.visibleItems()
         let previousHoveredItems = visibleItems.filter({$0.isHovered && $0 != mouseItem})
         previousHoveredItems.forEach({$0.isHovered = false })
+         */
+    }
+    
+    internal func removeHoveredItem() {
+        hoveredItem?.isHovered = false
+        hoveredItem = nil
     }
     
     internal var trackDisplayingItems: Bool {
@@ -147,6 +173,11 @@ public extension NSCollectionView {
                 self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     self.isEmphasized = windowIsKey
+                }
+                
+                self.observerView?.mouseHandlers.exited = { [weak self] event in
+                    guard let self = self else { return }
+                    self.removeHoveredItem()
                 }
                 
                 self.observerView?.mouseHandlers.moved = { [weak self] event in

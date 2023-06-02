@@ -43,7 +43,7 @@ public extension NSTableView {
     internal func updateHoveredRow(_ mouseLocation: CGPoint) {
         let newHoveredRowView = self.rowView(at: mouseLocation)
         if newHoveredRowView != self.hoveredRowView {
-            self.hoveredRowView?.isHovered = false
+            self.removeHoveredRow()
         }
         newHoveredRowView?.isHovered = true
         self.hoveredRowView = newHoveredRowView
@@ -57,7 +57,11 @@ public extension NSTableView {
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSTableView_isEmphasized", object: self, initialValue: false) }
         set {
+            guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableView_isEmphasized", object: self)
+            if newValue == false {
+                self.removeHoveredRow()
+            }
             self.visibleRows(makeIfNecessary: false).forEach({$0.isEmphasized = newValue})
         }
     }
