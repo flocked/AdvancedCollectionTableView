@@ -396,12 +396,22 @@ public extension NSTableRowView {
                 guard let self = self else { return }
                 Swift.print("Row superview changed")
             }
+            
+            isSelectedObserver = self.observeChange(\.isSelected) { [weak self] object, old, new in
+                guard let self = self else { return }
+                Swift.print("Row isSelected observed")
+            }
         }
     }
     
     internal var superviewObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSTableRowView_superviewObserver", object: self, initialValue: nil) }
         set {  set(associatedValue: newValue, key: "NSTableRowView_superviewObserver", object: self) }
+    }
+    
+    internal var isSelectedObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSTableRowView_isSelectedObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSTableRowView_isSelectedObserver", object: self) }
     }
     
 }
