@@ -352,13 +352,6 @@ public extension NSTableRowView {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
     
-    
-    var selectionObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSTableRowView_selectionObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSTableRowView_selectionObserver", object: self)
-        }
-    }
-    
     var tableViewObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSTableRowView_tableViewObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSTableRowView_tableViewObserver", object: self)
@@ -369,8 +362,11 @@ public extension NSTableRowView {
         Swift.print("swizzleTableRowViewIfNeeded start")
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
-            self.tableViewObserver = self.observe(\.superview, options: [.new]) { object, change in
-                Swift.print("Row.superview", change.newValue)
+            if (self.tableViewObserver == nil) {
+                self.tableViewObserver = self.observe(\.superview, options: [.new]) { [weak self] object, change in
+                    guard let self = self else { return }
+                    Swift.print("Row.superview", change.newValue)
+                }
             }
             
             do {
