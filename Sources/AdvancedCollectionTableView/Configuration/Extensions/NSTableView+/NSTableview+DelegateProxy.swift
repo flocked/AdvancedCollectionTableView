@@ -78,7 +78,7 @@ internal extension NSTableView {
                                methodSignature: (@convention(c) (AnyObject, Selector, Notification) -> ()).self,
                                hookSignature: (@convention(block) (AnyObject, Notification) -> ()).self) {
                                    store in { (object, notification) in
-                                       self.swizzledSelectionDidChange()
+                                       Swift.print("swizzled selectionChanged")
                                        store.original(object, store.selector, notification)
                                    }
                                },
