@@ -72,6 +72,7 @@ internal extension NSTableView {
         Swift.print("swizzleDelegate")
         guard let delegate = delegate as? (NSObject & NSTableViewDelegate) else { return }
         Swift.print("swizzleDelegate true")
+        /*
         do {
             let hooks = [
                 try  delegate.hook(#selector(NSTableViewDelegate.tableViewSelectionDidChange(_:)),
@@ -87,6 +88,7 @@ internal extension NSTableView {
         } catch {
             Swift.print(error)
         }
+         */
     }
 }
 
