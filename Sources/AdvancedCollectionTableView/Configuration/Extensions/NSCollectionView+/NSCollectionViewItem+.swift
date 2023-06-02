@@ -531,7 +531,25 @@ public extension NSCollectionViewItem {
             } catch {
                 Swift.print(error)
             }
+            
+
+            
+            isSelectedObserver = self.observeChange(\.isSelected) { [weak self] object, old, new in
+                guard let self = self else { return }
+                Swift.print("item isSelected observed")
+            }
+            
         }
+    }
+    
+    internal var superviewObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSCollectionItem_superviewObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_superviewObserver", object: self) }
+    }
+    
+    internal var isSelectedObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSCollectionItem_isSelectedObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_isSelectedObserver", object: self) }
     }
     
     // The collectionView property isn't always returning the collection view.
