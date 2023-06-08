@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
+/*
 public class NSItemContentView: NSView, NSContentView {
     public var configuration: NSContentConfiguration {
         get { _configuration }
@@ -166,7 +167,7 @@ extension NSItemContentConfiguration {
             
          //   imageView.cornerRadius = configuration.contentProperties.cor
             imageView.backgroundColor = configuration.contentProperties.resolvedBackgroundColor()
-            imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
+           // imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = .center
             if #available(macOS 11.0, *) {
                 imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.symbolConfiguration
@@ -262,3 +263,4 @@ extension NSItemContentConfiguration {
         
     }
 }
+*/

@@ -222,6 +222,7 @@ public extension NSTableCellView {
        // self.isHovered = false
        // self.isEmphasized = self.tableView?.isEmphasized ?? false
         self.isConfigurationUpdatesEnabled = true
+        self.swizzled_PrepareForReuse()
     }
     
     internal var didSwizzleTableCellView: Bool {
@@ -229,34 +230,21 @@ public extension NSTableCellView {
         set { set(associatedValue: newValue, key: "NSTableCellVew_didSwizzle", object: self) }
     }
     
+    @objc internal func swizzledViewDidMoveToSuperview() {
+        self.rowView?.swizzleTableRowViewIfNeeded()
+        self.tableView?.setupObserverView()
+        self.swizzledViewDidMoveToSuperview()
+    }
+    
     @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleTableCellView == false) {
             didSwizzleTableCellView = true
+            
             do {
-                let hooks = [
-                    try  self.hook(#selector(NSTableCellView.viewDidMoveToSuperview),
-                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                                       store in { (object) in
-                                           self.rowView?.swizzleTableRowViewIfNeeded()
-                                           self.tableView?.setupObserverView()
-                                           // Add constraints if tableview usesAutomaticRowHeights
-                                          /* if self.tableView?.usesAutomaticRowHeights == true, let contentView = self.contentView {
-                                               contentView.con
-                                           } */
-                                           store.original(object, store.selector)
-                                       }
-                                   },
-                    try  self.hook(#selector(prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                ]
-               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
+                _ = try Swizzle(NSTableCellView.self) {
+                    #selector(viewDidMoveToSuperview) <-> #selector(swizzledViewDidMoveToSuperview)
+                    #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
+                }
             } catch {
                 Swift.print(error)
             }

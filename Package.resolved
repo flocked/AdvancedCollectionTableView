@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/flocked/FZSwiftUtils.git",
         "state": {
           "branch": "main",
-          "revision": "d4b1cb6d72ac25988c813841e7cc1ca1bd7e72c5",
+          "revision": "edfd7bc34cf07764332a0effa7aad83d2fc21993",
           "version": null
         }
       },
@@ -24,16 +24,7 @@
         "repositoryURL": "https://github.com/flocked/FZUIKit.git",
         "state": {
           "branch": "main",
-          "revision": "5995bbd0fb94179b90c1c4238a1c293459c2525d",
-          "version": null
-        }
-      },
-      {
-        "package": "InterposeKit",
-        "repositoryURL": "https://github.com/steipete/InterposeKit.git",
-        "state": {
-          "branch": "master",
-          "revision": "2d48227c359b71be057fe9fd403ff791e5322b32",
+          "revision": "5317361f0dd0853ca89e0861c1278b8bd2a7950d",
           "version": null
         }
       }

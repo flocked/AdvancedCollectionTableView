@@ -352,59 +352,39 @@ public extension NSTableRowView {
     internal func setCellViewsNeedAutomaticUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
-        
-    @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleTableRowView == false) {
-            didSwizzleTableRowView = true
-            do {
-                let hooks = [
-                    try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
-                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                                       store in { (object) in
-                                           self.tableView?.setupObserverView()
-                                           store.original(object, store.selector)
-                                       }
-                                   },
-                    
-                    try self.hook(#selector(setter: isSelected),
-                                   methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
-                                       store in { (object, isSelected) in
-                                           if self.isSelected != isSelected {
-                                                   self.configurateBackgroundView()
-                                                   self.setNeedsAutomaticUpdateConfiguration()
-                                               self.setCellViewsNeedAutomaticUpdateConfiguration()
-                                           }
-                                           store.original(object, store.selector, isSelected)
-                                       }
-                                   },
-                    try  self.hook(#selector(prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                ]
-                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
-            } catch {
-                Swift.print(error)
-            }
-            
-            superviewObserver = self.observeChange(\.superview) { [weak self] object, old, new in
-                guard let self = self else { return }
-                Swift.print("Row superview changed")
+    
+    
+    @objc internal var swizzledIsSelected: Bool {
+        get { return self.isSelected }
+        set {
+            let oldValue = self.isSelected
+            self.swizzledIsSelected = newValue
+            if oldValue != self.isSelected {
+                self.configurateBackgroundView()
+                self.setNeedsAutomaticUpdateConfiguration()
+                self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
         }
     }
     
-    internal var superviewObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSTableRowView_superviewObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "NSTableRowView_superviewObserver", object: self) }
+    @objc internal func swizzledViewDidMoveToSuperview() {
+        self.tableView?.setupObserverView()
+        self.swizzledViewDidMoveToSuperview()
     }
-    
 
-    
+        
+    @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
+        if (didSwizzleTableRowView == false) {
+            didSwizzleTableRowView = true
+            
+            do {
+                _ = try Swizzle(NSTableRowView.self) {
+                    #selector(setter: isSelected)  <->  #selector(setter: swizzledIsSelected)
+                    #selector(viewDidMoveToSuperview) <-> #selector(swizzledViewDidMoveToSuperview)
+                }
+            } catch {
+                Swift.print(error)
+            }
+        }
+    }
 }

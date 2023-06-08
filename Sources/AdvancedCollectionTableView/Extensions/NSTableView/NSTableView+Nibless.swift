@@ -8,9 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import InterposeKit
 
-// Extension to provide registrations of NSTableCellView's via their classes
 public extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
@@ -25,7 +23,7 @@ public extension NSTableView {
         - identifier: The string that identifies the type of cell. You use this string later when requesting a cell and it must be unique among the other registered cell classes of this table view. This parameter must not be an empty string or nil.
      */
     func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        self.swizzleTableViewCellRegister()
+        NSTableView.swizzle()
         var registeredCellsByIdentifier = self.registeredCellsByIdentifier ?? [:]
         registeredCellsByIdentifier[identifier] = cellClass
         self.registeredCellsByIdentifier = registeredCellsByIdentifier
@@ -36,51 +34,47 @@ public extension NSTableView {
      
      Each key in the dictionary is the identifier string (given by ``NSUserInterfaceItemIdentifier``) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding ``NSTableCellView`` class.
      */
-    internal(set) var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type]?   {
-        get { getAssociatedValue(key: "NSTableView_registeredCellsByIdentifier", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableView_registeredCellsByIdentifier", object: self) }
+    internal (set) var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type]?   {
+        get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self) }
+        set { set(associatedValue: newValue, key: "_registeredCellsByIdentifier", object: self) }
     }
     
-    internal var didSwizzleTableViewCellRegister: Bool {
-        get { getAssociatedValue(key: "NSTableView_didSwizzle_register", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "NSTableView_didSwizzle_register", object: self) }
+    @objc internal func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+        if nib == nil, var registeredCellsByIdentifier = registeredCellsByIdentifier, registeredCellsByIdentifier[identifier] != nil {
+            registeredCellsByIdentifier[identifier] = nil
+            self.registeredCellsByIdentifier = registeredCellsByIdentifier
+        } else {
+            self.swizzled_register(nib, forIdentifier: identifier)
+        }
+    }
+        
+    @objc internal func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
+        if let registeredCellClass = self.registeredCellsByIdentifier?[identifier] {
+            if let tableCellView = self.swizzled_makeView(withIdentifier: identifier, owner: owner) {
+                return tableCellView
+            } else {
+                let tableCellView = registeredCellClass.init(frame: .zero)
+                tableCellView.identifier = identifier
+                return tableCellView
+            }
+        }
+        return self.swizzled_makeView(withIdentifier: identifier, owner: owner)
     }
     
-    @objc internal func swizzleTableViewCellRegister(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleTableViewCellRegister == false) {
-            didSwizzleTableViewCellRegister = true
+    static internal var didSwizzle: Bool {
+        get { getAssociatedValue(key: "_didSwizzle", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "_didSwizzle", object: self) }
+    }
+    
+    @objc static internal func swizzle() {
+        if (didSwizzle == false) {
+            didSwizzle = true
+            let registerSelector = #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void)
             do {
-                let hooks = [
-                    try  self.hook(#selector(NSTableView.makeView(withIdentifier:owner:)),
-                                           methodSignature: (@convention(c) (AnyObject, Selector, NSUserInterfaceItemIdentifier, Any?) -> (NSView?)).self,
-                                           hookSignature: (@convention(block) (AnyObject, NSUserInterfaceItemIdentifier, Any?) -> (NSView?)).self) {
-                    store in { (object, identifier, owner) in
-                        if let registeredCellClass = self.registeredCellsByIdentifier?[identifier] {
-                            if let tableCellView =        store.original(object, store.selector, identifier, owner) {
-                                return tableCellView
-                            } else {
-                                let tableCellView = registeredCellClass.init(frame: .zero)
-                                tableCellView.identifier = identifier
-                                return tableCellView
-                            }
-                        }
-                        return store.original(object, store.selector, identifier, owner)
-                    }
-                },
-                    try  self.hook(#selector((NSTableView.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void),
-                                           methodSignature: (@convention(c) (AnyObject, Selector, NSNib?, NSUserInterfaceItemIdentifier) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject, NSNib?, NSUserInterfaceItemIdentifier) -> ()).self) {
-                    store in { (object, nib, identifier) in
-                        if nib == nil, var registeredCellsByIdentifier = self.registeredCellsByIdentifier, registeredCellsByIdentifier[identifier] != nil {
-                            registeredCellsByIdentifier[identifier] = nil
-                            self.registeredCellsByIdentifier = registeredCellsByIdentifier
-                        } else {
-                            return store.original(object, store.selector, nib, identifier)
-                        }
-                    }
-                },
-                ]
-               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
+                try Swizzle(NSTableView.self) {
+                    #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
+                    registerSelector <-> #selector(self.swizzled_register(_:forIdentifier:))
+                }
             } catch {
                 Swift.print(error)
             }
