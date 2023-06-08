@@ -146,7 +146,7 @@ public extension NSCollectionViewItem {
     }
     
     /**
-     Retrieves a default content configuration for the item’s style.
+     Retrieves a default item content configuration.
      
      The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the item as the current content configuration.
      
@@ -158,9 +158,9 @@ public extension NSCollectionViewItem {
      content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
 
      // Customize appearance.
-     content.imageProperties.tintColor = .purple
+     content.contentProperties.tintColor = .purple
 
-     citemell.contentConfiguration = content
+     item.contentConfiguration = content
      ```
      
      - Returns:A default item content configuration. The system determines default values for the configuration according to the collection view and it’s style.
@@ -184,8 +184,6 @@ public extension NSCollectionViewItem {
     internal var contentView: NSContentView? {
         self.view as? NSContentView
     }
-    
-  
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
@@ -558,52 +556,18 @@ public extension NSCollectionViewItem {
     internal var _collectionView: NSCollectionView? {
         self.view.firstSuperview(for: NSCollectionView.self)
     }
-    
-    // Observes when the item view is moved to a superview. When it's moved to the superview, it setups the collection view to observe item selections, mouse movement and window state. The observation is used to update each item state.
-    // Unfortunatly the item's isSelected property isn't KVO observable. Adding trackingArea to each item 
-    
-    internal var didSwizzleCollectionItemView: Bool {
-       get { getAssociatedValue(key: "NSCollectionItem_didSwizzleView", object: self, initialValue: false) }
-       set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleView", object: self) }
-   }
             
     // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        
-        
         if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
             
         } else {
             let observer = self.view.observeChange(\.superview) { [weak self] object, old, new in
                 guard let self = self else { return }
-                Swift.print("ItWorked")
                 self._collectionView?.setupObserverView()
             }
             set(associatedValue: observer, key: "NSCollectionViewItem_superviewObserver", object: self.view)
         }
-        
-        /*
-        
-        if didSwizzleCollectionItemView == false, self.contentView != nil {
-            didSwizzleCollectionItemView = true
-            
-            do {
-                let hooks = [
-                        try  self.view.hook(#selector(NSView.viewDidMoveToSuperview),
-                                       methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                       hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                                           store in { (object) in
-                                               self._collectionView?.setupObserverView()
-                                               store.original(object, store.selector)
-                                           }
-                                       },
-                    ]
-                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
-            } catch {
-                Swift.print(error)
-            }
-        }
-         */
     }
     
     internal var isConfigurationUpdatesEnabled: Bool {
@@ -677,9 +641,6 @@ public extension NSCollectionViewItem {
          }
         set {
             super.view = newValue
-            if (newValue != super.view) {
-                self.didSwizzleCollectionItemView = false
-            }
             self.swizzleCollectionItemViewIfNeeded()
         }
     }

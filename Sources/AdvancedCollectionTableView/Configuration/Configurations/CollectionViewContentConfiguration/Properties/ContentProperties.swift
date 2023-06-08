@@ -26,17 +26,6 @@ public extension NSItemContentConfiguration {
                 case .rectangular: Rectangle()
                 }
             }
-            
-            /*
-            internal var swiftui: some SwiftUI.Shape {
-                switch self {
-                case .circle: return Circle().asAnyShape()
-                case .capsule: return Capsule().asAnyShape()
-                case .roundedRectangular(let cornerRadius): return RoundedRectangle(cornerRadius: cornerRadius).asAnyShape()
-                case .rectangular: return Rectangle().asAnyShape()
-                }
-            }
-             */
         }
         
         public var shape: Shape = .roundedRectangular(8.0)
@@ -48,6 +37,9 @@ public extension NSItemContentConfiguration {
         public var borderWidth: CGFloat = 0.0
         public var borderColor: NSColor? = nil
         public var borderColorTransform: NSConfigurationColorTransformer? = nil
+        
+        public var imageTintColor: NSColor? = nil
+        public var imageSymbolConfiguration: SymbolConfiguration? = nil
         
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {

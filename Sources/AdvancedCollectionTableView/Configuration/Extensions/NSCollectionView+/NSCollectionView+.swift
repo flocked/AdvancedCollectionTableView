@@ -63,7 +63,7 @@ public extension NSCollectionView {
     
     internal var hoveredItem: NSCollectionViewItem? {
         get { getAssociatedValue(key: "NSCollectionView_hoveredItem", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
+        set { set(weakAssociatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
         }
     }
         

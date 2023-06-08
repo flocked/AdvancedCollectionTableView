@@ -77,41 +77,52 @@ internal class NSItemContentConfigurationHostingView: NSView, NSContentView {
 }
 
 internal extension NSItemContentConfigurationHostingView {
+    struct TextItem: View {
+        let text: String?
+        @State private var _text: String = ""
+        let attributedText: AttributedString?
+        let properties: NSItemContentConfiguration.TextProperties
+        
+        init(text: String?, attributedText: AttributedString?, properties: NSItemContentConfiguration.TextProperties) {
+            self.text = text
+            self.attributedText = attributedText
+            self.properties = properties
+            self._text = self.text ?? ""
+
+        }
+        @ViewBuilder
+        var item: some View {
+            if (properties.isEditable) {
+                EditableLabel($_text, onEditEnd: properties.onEditEnd ?? {_ in })
+            } else {
+                if let attributedText = attributedText {
+                    Text(attributedText)
+                } else if let text = text {
+                    Text(text)
+                }
+            }
+        }
+        
+        var body: some View {
+            item
+                .font(properties.swiftuiFont ?? properties.font.swiftUI)
+                .lineLimit(properties.numberOfLines)
+                .foregroundColor(properties.textColor.swiftUI)
+                .textSelection((properties.isSelectable == true) ? .enabled : .enabled)
+        }
+    }
+    
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
+    
         
-        @ViewBuilder
-        var textItem: some View {
-            if let attributedText = configuration.attributedText {
-                Text(attributedText)
-            } else if let text = configuration.text {
-                Text(text)
-            }
-        }
-        
-        @ViewBuilder
-        var secondaryTextItem: some View {
-            if let attributedText = configuration.secondaryattributedText {
-                Text(attributedText)
-            } else if let text = configuration.secondaryText {
-                Text(text)
-            }
-        }
         
         @ViewBuilder
         var textItems: some View {
             VStack(spacing: configuration.textToSecondaryTextPadding) {
-                textItem
-                    .font(configuration.textProperties.font.swiftUI)
-                    .lineLimit(configuration.textProperties.numberOfLines)
-                    .foregroundColor(configuration.textProperties.textColor.swiftUI)
-                    .textSelection((configuration.textProperties.isSelectable == true) ? .enabled : .enabled)
-
-                secondaryTextItem
-                    .font(configuration.secondaryTextProperties.font.swiftUI)
-                    .lineLimit(configuration.secondaryTextProperties.numberOfLines)
-                    .foregroundColor(configuration.secondaryTextProperties.textColor.swiftUI)
-                    .textSelection(configuration.secondaryTextProperties.isSelectable == true ? .enabled : .enabled)
+                TextItem(text:  configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
+                
+                TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
             }
         }
         
@@ -131,6 +142,8 @@ internal extension NSItemContentConfigurationHostingView {
                         Image(image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .foregroundColor(configuration.contentProperties.imageTintColor?.swiftUI)
+                            .symbolConfiguration(configuration.contentProperties.imageSymbolConfiguration)
                     }
                 }
            //     .backgroundOptional(configuration.contentProperties.backgroundColor?.swiftUI)
@@ -142,10 +155,17 @@ internal extension NSItemContentConfigurationHostingView {
 
         
         var body: some View {
-            VStack(spacing: configuration.imageToTextPadding) {
-                contentItem
-                textItems
-            }.padding(configuration.padding.edgeInsets)
+            if configuration.orientation == .vertical {
+                VStack(spacing: configuration.contentToTextPadding) {
+                    contentItem
+                    textItems
+                }.padding(configuration.padding.edgeInsets)
+            } else {
+                HStack(spacing: configuration.contentToTextPadding) {
+                    contentItem
+                    textItems
+                }.padding(configuration.padding.edgeInsets)
+            }
         }
     }
 }

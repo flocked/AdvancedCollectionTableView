@@ -9,7 +9,7 @@ import AppKit
 import SwiftUI
 import FZSwiftUtils
 import FZUIKit
-
+/*
 public extension NSItemContentConfiguration {
     struct ImageProperties: Hashable {
         public var tintColor: NSColor? = nil
@@ -43,6 +43,7 @@ public extension NSItemContentConfiguration {
             public var fontStyle: FontStyle? = .textStyle(.body)
             public var colorStyle: ColorStyle? = .monochrome
             public var colorTransform: NSConfigurationColorTransformer? = nil
+            public var imageScale: ImageScale? = nil
             
             public static func `default`() -> SymbolConfiguration {
                 return SymbolConfiguration()
@@ -72,6 +73,31 @@ public extension NSItemContentConfiguration {
             public enum FontStyle: Hashable {
                 case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
                 case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
+                var swiftui: Font {
+                    switch self {
+                    case .textStyle(let style, weight: let weight):
+                        return Font.system(style.swiftUI).weight(weight?.swiftUI ?? .regular)
+                    case .systemFont(size: let size, weight: let weight):
+                        return Font.system(size: size).weight(weight?.swiftUI ?? .regular)
+                    }
+                }
+            }
+            
+            public enum ImageScale: Hashable {
+                /// A scale that produces small images.
+                case small
+                /// A scale that produces medium-sized images.
+                case medium
+                /// A scale that produces large images.
+                case large
+                
+                internal var swiftui: Image.Scale {
+                    switch self {
+                    case .small: return .small
+                    case .medium: return .medium
+                    case .large: return .large
+                    }
+                }
             }
             
             public enum ColorStyle: Hashable {
@@ -141,3 +167,4 @@ public extension NSItemContentConfiguration {
         }
     }
 }
+*/

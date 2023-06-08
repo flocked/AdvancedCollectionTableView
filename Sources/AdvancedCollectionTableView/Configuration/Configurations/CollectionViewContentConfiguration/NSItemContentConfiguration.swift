@@ -39,45 +39,40 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     // The secondary text.
     public var secondaryText: String? = nil
     // An attributed variant of the secondary text.
-    public var secondaryattributedText: AttributedString? = nil
+    public var secondaryAttributedText: AttributedString? = nil
     // The image to display.
     public var image: NSImage? = nil
     // The view to display.
     public var view: NSView? = nil
     
     // Properties for configuring the primary text.
-    public var textProperties: TextProperties = .textStyle(.body)
+    public var textProperties: TextProperties = .body
     // Properties for configuring the secondary text.
-    public var secondaryTextProperties: TextProperties = .textStyle(.caption1)
-    // Properties for configuring the image.
-    public var imageProperties: ImageProperties = ImageProperties()
+    public var secondaryTextProperties: TextProperties = .caption1
     // Properties for configuring the image.
     public var contentProperties: ContentProperties = ContentProperties()
    
     /**
-     The padding between the image and text.
+     The orientation of the content view and text.
      
-     This value only applies when there’s both an image and text.
+     If vertical the text appears below the content view, if horizontal it appears on the right side.
      */
-    public var orientation: NSUserInterfaceLayoutOrientation = .horizontal
+    public var orientation: NSUserInterfaceLayoutOrientation = .vertical
+
     /**
-     A Boolean value that determines whether the configuration positions the text and secondary text side by side.
+     The padding between the content view and text.
      
-     When this value is true, the configuration positions the text and secondary text side by side if there’s sufficient space. Otherwise, the configuration stacks the text in a vertical layout.
+     This value only applies when there’s both a content view and text.
      */
-    public var prefersSideBySideTextAndSecondaryText: Bool = false
-    /**
-     The padding between the image and text.
-     
-     This value only applies when there’s both an image and text.
-     */
-    public var imageToTextPadding: CGFloat = 6.0
+    public var contentToTextPadding: CGFloat = 6.0
+    
     /**
      The padding between the primary and secondary text.
 
      This value only applies when there’s both a text and secondary text.
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
+    
     /**
      The margins between the content and the edges of the content view.
      */
@@ -86,8 +81,6 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         return NSItemContentConfigurationHostingView(configuration: self)
-      //  let contentView = ContentView(configuration: self)
-      //  return contentView
     }
     
     /**
@@ -102,41 +95,37 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     internal var hasSecondaryText: Bool {
-        self.secondaryText != nil || self.secondaryattributedText != nil
+        self.secondaryText != nil || self.secondaryAttributedText != nil
     }
     
-    internal var hasImage: Bool {
-        self.image != nil || self.contentProperties.backgroundColor != nil
+    internal var hasContent: Bool {
+        self.image != nil || self.contentProperties.backgroundColor != nil || self.view != nil
     }
     
     init(text: String? = nil,
          attributedText: AttributedString? = nil,
          secondaryText: String? = nil,
-         secondaryattributedText: AttributedString? = nil,
+         secondaryAttributedText: AttributedString? = nil,
          image: NSImage? = nil,
          view: NSView? = nil,
-         imageProperties: ImageProperties = ImageProperties(),
-         textProperties: TextProperties = .textStyle(.body),
-         secondaryTextProperties: TextProperties = .textStyle(.caption1),
+         textProperties: TextProperties = .body,
+         secondaryTextProperties: TextProperties = .caption1,
          contentProperties: ContentProperties = ContentProperties(),
          orientation: NSUserInterfaceLayoutOrientation = .vertical,
-         prefersSideBySideTextAndSecondaryText: Bool = false,
-         imageToTextPadding: CGFloat = 6.0,
+         contentToTextPadding: CGFloat = 6.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
          padding: NSDirectionalEdgeInsets = .zero) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText
-        self.secondaryattributedText = secondaryattributedText
+        self.secondaryAttributedText = secondaryAttributedText
         self.image = image
         self.view = view
-        self.imageProperties = imageProperties
         self.textProperties = textProperties
         self.secondaryTextProperties = secondaryTextProperties
         self.orientation = orientation
         self.contentProperties = contentProperties
-        self.prefersSideBySideTextAndSecondaryText = prefersSideBySideTextAndSecondaryText
-        self.imageToTextPadding = imageToTextPadding
+        self.contentToTextPadding = contentToTextPadding
         self.textToSecondaryTextPadding = textToSecondaryTextPadding
         self.padding = padding
     }
@@ -146,54 +135,11 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
 }
 
-internal extension String {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self
-        case .capitalized:
-            return self.capitalized
-        case .lowercase:
-            return self.lowercased()
-        case .uppercase:
-            return self.uppercased()
-        }
-    }
-}
-
-internal extension NSAttributedString {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self.string
-        case .capitalized:
-            return self.string.capitalized
-        case .lowercase:
-            return self.string.lowercased()
-        case .uppercase:
-            return self.string.uppercased()
-        }
-    }
-}
-
-extension AttributedString {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-           return String(self.characters[...])
-        case .capitalized:
-            return String(self.characters[...]).capitalized
-        case .lowercase:
-            return String(self.characters[...]).lowercased()
-        case .uppercase:
-            return String(self.characters[...]).uppercased()
-        }
-    }
-}
-
 /*
- public var cornerRadius: CGFloat = 0.0
- public var backgroundColor: NSColor? = nil
- public var shadowProperties: ShadowProperties = .black()
- public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+/**
+ A Boolean value that determines whether the configuration positions the text and secondary text side by side.
+ 
+ When this value is true, the configuration positions the text and secondary text side by side if there’s sufficient space. Otherwise, the configuration stacks the text in a vertical layout.
+ */
+public var prefersSideBySideTextAndSecondaryText: Bool = false
  */
