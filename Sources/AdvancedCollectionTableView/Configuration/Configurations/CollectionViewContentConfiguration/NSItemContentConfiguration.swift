@@ -38,13 +38,20 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var attributedText: AttributedString? = nil
     /// The secondary text.
     public var secondaryText: String? = nil
+<<<<<<< HEAD
     /// An attributed variant of the secondary text.
     public var secondaryAttributedText: AttributedString? = nil
     /// The image to display.
+=======
+    // An attributed variant of the secondary text.
+    public var secondaryAttributedText: AttributedString? = nil
+    // The image to display.
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
     public var image: NSImage? = nil
     /// The view to display.
     public var view: NSView? = nil
     
+<<<<<<< HEAD
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .body
     /// Properties for configuring the secondary text.
@@ -54,6 +61,13 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      
      The content view is displayed if there is a item view, image and/or contentProperties.backgroundColor.
      */
+=======
+    // Properties for configuring the primary text.
+    public var textProperties: TextProperties = .body
+    // Properties for configuring the secondary text.
+    public var secondaryTextProperties: TextProperties = .caption1
+    // Properties for configuring the image.
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
     public var contentProperties: ContentProperties = ContentProperties()
    
     /**
@@ -77,7 +91,13 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
     
+<<<<<<< HEAD
     /// The margins between the content and the edges of the content view.
+=======
+    /**
+     The margins between the content and the edges of the content view.
+     */
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
     public var padding: NSDirectionalEdgeInsets = .init(4.0)
     
     /// Creates a new instance of the content view using the configuration.

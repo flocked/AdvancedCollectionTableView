@@ -60,6 +60,7 @@ public extension NSItemContentConfiguration {
         /// The maximum size of the content.
         public var maxSize: CGSize? = nil
         
+<<<<<<< HEAD
         /// The background color.
         public var backgroundColor: NSColor? = .systemGray
         /// The color transformer for resolving the background color.
@@ -79,6 +80,11 @@ public extension NSItemContentConfiguration {
         /// The color transformer for resolving the border color.
         public var borderColorTransform: NSConfigurationColorTransformer? = nil
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
+=======
+        public var imageTintColor: NSColor? = nil
+        public var imageSymbolConfiguration: SymbolConfiguration? = nil
+        
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor

@@ -93,7 +93,11 @@ internal extension NSItemContentConfigurationHostingView {
         @ViewBuilder
         var item: some View {
             if (properties.isEditable) {
+<<<<<<< HEAD
                 EditableText($_text, onEditEnd: properties.onEditEnd ?? {_ in })
+=======
+                EditableLabel($_text, onEditEnd: properties.onEditEnd ?? {_ in })
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
             } else {
                 if let attributedText = attributedText {
                     Text(attributedText)
@@ -115,6 +119,10 @@ internal extension NSItemContentConfigurationHostingView {
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
     
+<<<<<<< HEAD
+=======
+        
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
         
         @ViewBuilder
         var textItems: some View {
@@ -140,7 +148,11 @@ internal extension NSItemContentConfigurationHostingView {
                     if let image = configuration.image {
                         Image(image)
                             .resizable()
+<<<<<<< HEAD
                             .aspectRatio(contentMode: configuration.contentProperties.imageScaling.swiftui)
+=======
+                            .aspectRatio(contentMode: .fit)
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
                             .foregroundColor(configuration.contentProperties.imageTintColor?.swiftUI)
                             .symbolConfiguration(configuration.contentProperties.imageSymbolConfiguration)
                     }
@@ -166,6 +178,30 @@ internal extension NSItemContentConfigurationHostingView {
                     textItems
                 }.padding(configuration.padding.edgeInsets)
             }
+<<<<<<< HEAD
+=======
+        }
+    }
+}
+
+internal extension View {
+    @ViewBuilder
+    func backgroundOptional<S: ShapeStyle>(_ style: S?) -> some View {
+        if let style = style {
+            background(style)
+        } else {
+            self
+        }
+    }
+    
+    
+    @ViewBuilder
+    func shadowOptional(color: Color?, radius: CGFloat, offset: CGPoint) -> some View {
+        if let color = color {
+            shadow(color: color, radius: radius, x: offset.x, y: offset.y)
+        } else {
+            self
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
         }
     }
 }

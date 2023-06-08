@@ -24,7 +24,20 @@
         "repositoryURL": "https://github.com/flocked/FZUIKit.git",
         "state": {
           "branch": "main",
+<<<<<<< HEAD
           "revision": "5317361f0dd0853ca89e0861c1278b8bd2a7950d",
+=======
+          "revision": "bb45a5cd8eb3c5a743af567c90561d84f200da07",
+          "version": null
+        }
+      },
+      {
+        "package": "InterposeKit",
+        "repositoryURL": "https://github.com/steipete/InterposeKit.git",
+        "state": {
+          "branch": "master",
+          "revision": "2d48227c359b71be057fe9fd403ff791e5322b32",
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
           "version": null
         }
       }

@@ -352,6 +352,7 @@ public extension NSTableRowView {
     internal func setCellViewsNeedAutomaticUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
+<<<<<<< HEAD
     
     
     @objc internal var swizzledIsSelected: Bool {
@@ -363,6 +364,52 @@ public extension NSTableRowView {
                 self.configurateBackgroundView()
                 self.setNeedsAutomaticUpdateConfiguration()
                 self.setCellViewsNeedAutomaticUpdateConfiguration()
+=======
+        
+    @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
+        if (didSwizzleTableRowView == false) {
+            didSwizzleTableRowView = true
+            do {
+                let hooks = [
+                    try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
+                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                                       store in { (object) in
+                                           self.tableView?.setupObserverView()
+                                           store.original(object, store.selector)
+                                       }
+                                   },
+                    
+                    try self.hook(#selector(setter: isSelected),
+                                   methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
+                                       store in { (object, isSelected) in
+                                           if self.isSelected != isSelected {
+                                                   self.configurateBackgroundView()
+                                                   self.setNeedsAutomaticUpdateConfiguration()
+                                               self.setCellViewsNeedAutomaticUpdateConfiguration()
+                                           }
+                                           store.original(object, store.selector, isSelected)
+                                       }
+                                   },
+                    try  self.hook(#selector(prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
+                ]
+                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
+            } catch {
+                Swift.print(error)
+            }
+            
+            superviewObserver = self.observeChange(\.superview) { [weak self] object, old, new in
+                guard let self = self else { return }
+                self.tableView?.setupObserverView()
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
             }
         }
     }
@@ -371,6 +418,7 @@ public extension NSTableRowView {
         self.tableView?.setupObserverView()
         self.swizzledViewDidMoveToSuperview()
     }
+<<<<<<< HEAD
 
         
     @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
@@ -387,4 +435,6 @@ public extension NSTableRowView {
             }
         }
     }
+=======
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
 }

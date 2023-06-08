@@ -11,7 +11,10 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSItemContentConfiguration {
+<<<<<<< HEAD
     /// Properties for configuring the text of an item.
+=======
+>>>>>>> e0fc0d95385e539c598c591a5d7809097c310dd3
     struct TextProperties {
         public enum TextTransform: Hashable {
             case none
