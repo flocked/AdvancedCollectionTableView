@@ -18,14 +18,7 @@ extension CollectionViewDiffableDataSource {
             self.dataSource.collectionView.delegate = self
             self.dataSource.collectionView.prefetchDataSource = self
         }
-        
-        func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
-            if (self.dataSource.draggingElements.isEmpty == false) {
-                self.dataSource.reorderingHandlers.didReorder?(self.dataSource.draggingElements)
-            }
-            self.dataSource.draggingIndexPaths = []
-        }
-        
+                
         func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
             self.dataSource.prefetchHandlers.willPrefetch?(elements)
@@ -34,6 +27,13 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
             self.dataSource.prefetchHandlers.didCancelPrefetching?(elements)
+        }
+        
+        func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
+            if (self.dataSource.draggingElements.isEmpty == false) {
+                self.dataSource.reorderingHandlers.didReorder?(self.dataSource.draggingElements)
+            }
+            self.dataSource.draggingIndexPaths = []
         }
         
         func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexes: IndexSet, with event: NSEvent) -> Bool {
@@ -46,14 +46,16 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-            if let elementID = self.dataSource.element(for: indexPath)?.id {
+            if let element = self.dataSource.element(for: indexPath) {
+                if let writing = self.dataSource.dragDropHandlers.dropOutside?(element).nsPasteboardWriting {
+                    return writing
+                }
+                
                 let item = NSPasteboardItem()
-                item.setString(String(elementID.hashValue), forType: self.dataSource.pasteboardType)
+                item.setString(String(element.id.hashValue), forType: self.dataSource.pasteboardType)
                 return item
-            } else {
-                return nil
             }
-            
+            return nil
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {

@@ -112,6 +112,9 @@ public extension NSTableCellContentConfiguration {
         public var imageSymbolConfiguration: SymbolConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
+        
+        // Resets the border width to 0 if isSelected is false.
+        internal var needsBorderWidthReset: Bool = true
     }
 }
 

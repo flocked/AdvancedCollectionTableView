@@ -11,14 +11,12 @@ import FZSwiftUtils
 import FZUIKit
 
 /**
- A content configuration for a table item-based content view.
+ A content configuration for a collection item-based content view.
  
- A table item content configuration describes the styling and content for an individual element that might appear in a list, like a item, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to items, headers, and footers in ``NSCollectionView``, or to your own custom list content view (``NSContentView``).
- 
- For views like items, headers, and footers, use their ``defaultContentConfiguration()`` to get a list content configuration that has preconfigured default styling. Alternatively, you can create a list content configuration from one of the system default styles. After you get the configuration, you assign your content to it, customize any other properties, and assign it to your view as the current content configuration.
+ An item content configuration describes the styling and content for an individual element that might appear in a collection view. Using a item content configuration, you can obtain system default styling for a variety of different item states. You fill the configuration with your content, and then assign it directly to collection view items via ``NSCollectionViewItem.contentConfiguration``, or to your own view via ``NSItemContentConfiguration.makeContentView()``.
  
  ```
- public var content = item.defaultContentConfiguration()
+ public var content = collectionViewItem.defaultContentConfiguration()
 
  // Configure content.
  content.text = "Favorites"
@@ -27,7 +25,7 @@ import FZUIKit
  // Customize appearance.
  content.imageProperties.tintColor = .purple
 
- item.contentConfiguration = content
+ collectionViewItem.contentConfiguration = content
  ```
  */
 public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
@@ -52,16 +50,9 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Properties for configuring the content.
      
-     The content view is displayed if there is a item view, image and/or contentProperties.backgroundColor.
+     The content displays the configurated ``view``, ``image`` and/or ``contentProperties.backgroundColor``.
      */
     public var contentProperties: ContentProperties = ContentProperties()
-   
-    /**
-     The orientation of the content view and text.
-     
-     If vertical the text appears below the content view, if horizontal it appears on the right side.
-     */
-    public var orientation: NSUserInterfaceLayoutOrientation = .vertical
 
     /**
      The padding between the content view and text.
@@ -77,8 +68,18 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
     
+    /// The position of the content next to the text.
+    public var contentPosition: ContentPosition = .top
+    
     /// The margins between the content and the edges of the content view.
     public var padding: NSDirectionalEdgeInsets = .init(4.0)
+    
+    /**
+    The scaling of the item.
+     
+    The default is 1.0, which displays the item at it's original scale.
+     */
+    public var scaleTransform: CGFloat = 1.0
     
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
@@ -89,7 +90,34 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
      */
     public func updated(for state: NSConfigurationState) -> Self {
-        return self
+        var configuration = self
+        if let state = state as? NSItemConfigurationState {
+            if state.isSelected {
+                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
+                if configuration.contentProperties.borderWidth == 0.0 {
+                    configuration.contentProperties.borderWidth = 1.0
+                    configuration.contentProperties.needsBorderWidthReset = true
+                }
+                configuration.contentProperties.shadowProperties.colorTransform = .color(.controlAccentColor)
+                if configuration.hasContent == false {
+                    configuration.textProperties.textColorTansform = .color(.controlAccentColor)
+                    configuration.secondaryTextProperties.textColorTansform = .color(.controlAccentColor)
+                } else {
+                    configuration.textProperties.textColorTansform = nil
+                    configuration.secondaryTextProperties.textColorTansform = nil
+                }
+            } else {
+                configuration.contentProperties.borderColorTransform = nil
+                configuration.contentProperties.shadowProperties.colorTransform = nil
+                configuration.textProperties.textColorTansform = nil
+                configuration.secondaryTextProperties.textColorTansform = nil
+                if configuration.contentProperties.needsBorderWidthReset == true {
+                    configuration.contentProperties.borderWidth = 0.0
+                }
+            }
+        }
+        configuration.updateResolvedColors()
+        return configuration
     }
     
     internal var hasText: Bool {
@@ -104,6 +132,25 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.image != nil || self.contentProperties.backgroundColor != nil || self.view != nil
     }
     
+    mutating internal func updateResolvedColors() {
+        self.contentProperties.updateResolvedColors()
+        self.contentProperties.shadowProperties.updateResolvedColor()
+        self.textProperties.updateResolvedTextColor()
+        self.secondaryTextProperties.updateResolvedTextColor()
+    }
+    
+    /// The position of the content.
+    public enum ContentPosition: Hashable {
+        /// The content is displayed before the text.
+        case leading
+        /// The content is displayed after the text.
+        case trailing
+        /// The content is displayed above the text.
+        case top
+        /// The content is displayed bellow the text.
+        case bottom
+    }
+
     init(text: String? = nil,
          attributedText: AttributedString? = nil,
          secondaryText: String? = nil,
@@ -113,10 +160,10 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          textProperties: TextProperties = .body,
          secondaryTextProperties: TextProperties = .caption1,
          contentProperties: ContentProperties = ContentProperties(),
-         orientation: NSUserInterfaceLayoutOrientation = .vertical,
+         contentPosition: ContentPosition = .top,
          contentToTextPadding: CGFloat = 6.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
-         padding: NSDirectionalEdgeInsets = .zero) {
+         padding: NSDirectionalEdgeInsets = .zero, scaleTransform: CGFloat = 1.0) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText
@@ -125,15 +172,16 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.view = view
         self.textProperties = textProperties
         self.secondaryTextProperties = secondaryTextProperties
-        self.orientation = orientation
+        self.contentPosition = .top
         self.contentProperties = contentProperties
         self.contentToTextPadding = contentToTextPadding
         self.textToSecondaryTextPadding = textToSecondaryTextPadding
         self.padding = padding
+        self.scaleTransform = scaleTransform
     }
     
     static func image(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 0.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, contentProperties: ContentProperties(shape: .roundedRectangular(cornerRadius)))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRectangular(cornerRadius)))
     }
 }
 

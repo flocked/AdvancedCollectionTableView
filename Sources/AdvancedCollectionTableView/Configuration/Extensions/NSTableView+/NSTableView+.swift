@@ -38,15 +38,6 @@ public extension NSTableView {
             set(associatedValue: newValue.rawValue, key: "NSTableView_selfSizingInvalidation", object: self)
         }
     }
-    
-    internal func updateHoveredRow(_ mouseLocation: CGPoint) {
-        let newHoveredRowView = self.rowView(at: mouseLocation)
-        if newHoveredRowView != self.hoveredRowView {
-            self.removeHoveredRow()
-        }
-        newHoveredRowView?.isHovered = true
-        self.hoveredRowView = newHoveredRowView
-    }
         
     internal func removeHoveredRow() {
         self.hoveredRowView?.isHovered = false
@@ -62,50 +53,6 @@ public extension NSTableView {
                 self.removeHoveredRow()
             }
             self.visibleRows(makeIfNecessary: false).forEach({$0.isEmphasized = newValue})
-        }
-    }
-    
-    internal func setupObservingView(shouldObserve: Bool = true) {
-        if shouldObserve {
-            if (self.observingView == nil) {
-                self.observingView = ObservingView()
-                self.addSubview(withConstraint: self.observingView!)
-                self.observingView!.sendToBack()
-                self.observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
-                    guard let self = self else { return }
-                    self.isEmphasized = windowIsKey
-                }
-                
-                self.observingView?.mouseHandlers.exited = { [weak self] event in
-                    guard let self = self else { return true }
-                    self.removeHoveredRow()
-                    return true
-                }
-                
-                self.observingView?.mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return true }
-                    let location = event.location(in: self)
-                    if self.bounds.contains(location) {
-                        self.updateHoveredRow(location)
-                    }
-                    return true
-                }
-            }
-        } else {
-            self.observingView?.removeFromSuperview()
-            self.observingView = nil
-        }
-    }
-        
-    internal var observingView: ObservingView? {
-        get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
-        }
-    }
-    
-    internal var hoveredRowView: NSTableRowView? {
-        get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
-        set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
         }
     }
 }

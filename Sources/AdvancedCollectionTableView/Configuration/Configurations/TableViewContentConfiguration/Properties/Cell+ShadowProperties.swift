@@ -12,24 +12,19 @@ import FZUIKit
 public extension NSTableCellContentConfiguration {
     struct ShadowProperties: Hashable {
         public var radius: CGFloat = 0.0
-        public var color: NSColor? = nil
         public var opacity: CGFloat = 0.0
         public var offset: CGPoint = .zero
+        public var color: NSColor? = nil
         public var colorTransform: NSConfigurationColorTransformer? = nil
-
         public func resolvedColor() -> NSColor? {
             if let color = self.color {
-                return self.colorTransform?(color) ?? color
+                return self.colorTransform?(color)
             }
             return nil
         }
         
         public static func black() -> ShadowProperties {
-            var property = ShadowProperties()
-            property.radius = 3.0
-            property.color = .black
-            property.opacity = 1.0
-            return property
+            return ShadowProperties(radius: 3.0, opacity: 1.0, color: .shadowColor)
         }
         
         public static func `default`() -> ShadowProperties {
@@ -40,11 +35,11 @@ public extension NSTableCellContentConfiguration {
             return ShadowProperties()
         }
         
-        public init(radius: CGFloat = 0.0, color: NSColor? = nil, opacity: CGFloat = 0.0, offset: CGPoint = .zero, colorTransform: NSConfigurationColorTransformer? = nil) {
+        public init(radius: CGFloat = 0.0, opacity: CGFloat = 0.0, offset: CGPoint = .zero, color: NSColor? = nil, colorTransform: NSConfigurationColorTransformer? = nil) {
             self.radius = radius
-            self.color = color
             self.opacity = opacity
             self.offset = offset
+            self.color = color
             self.colorTransform = colorTransform
         }
     }

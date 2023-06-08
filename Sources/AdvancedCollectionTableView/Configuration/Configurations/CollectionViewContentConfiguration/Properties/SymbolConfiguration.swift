@@ -16,13 +16,43 @@ public extension NSItemContentConfiguration.ContentProperties {
     struct SymbolConfiguration: Hashable {
         /// The font for the symbol configuration.
         public var font: FontConfiguration? = .textStyle(.body)
+        
         /// The color configuration of the symbol configuration.
-        public var colorConfiguration: ColorConfiguration? = nil
+        public var colorConfiguration: ColorConfiguration? = nil {
+            didSet { updateResolvedColors() } }
+        
         /// The image scaling of the symbol configuration.
         public var imageScale: ImageScale? = nil
         
+        public func imageScale(_ scale: ImageScale?) -> Self {
+            var configuration = self
+            configuration.imageScale = imageScale
+            return configuration
+        }
+        
+        public func font(_ font: FontConfiguration?) -> Self {
+            var configuration = self
+            configuration.font = font
+            return configuration
+        }
+        
+        public func colorConfiguration(_ configuration: ColorConfiguration?) -> Self {
+            var newConfiguration = self
+            newConfiguration.colorConfiguration = configuration
+            return newConfiguration
+        }
+        
         /// The color transformer for resolving the color style.
-        public var colorTransform: NSConfigurationColorTransformer? = nil
+        public var colorTransform: NSConfigurationColorTransformer? = nil {
+            didSet { updateResolvedColors() } }
+        
+        public init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, imageScale: ImageScale? = nil, colorTransform: NSConfigurationColorTransformer? = nil) {
+            self.font = font
+            self.colorConfiguration = colorConfiguration
+            self.imageScale = imageScale
+            self.colorTransform = colorTransform
+            self.updateResolvedColors()
+        }
         
         /// Generates the resolved primary color for the specified color style, using the color style and color transformer.
         public func resolvedPrimaryColor() -> NSColor? {
@@ -48,27 +78,13 @@ public extension NSItemContentConfiguration.ContentProperties {
             return nil
         }
         
-        public struct FontStylee: Hashable {
-            internal var font: Font
-            static var body: Self = FontStylee(font: .body)
-            static var largeTitle: Self = FontStylee(font: .largeTitle)
-            static var title1: Self = FontStylee(font: .title)
-            static var title2: Self = FontStylee(font: .title2)
-            static var title3: Self = FontStylee(font: .title3)
-            static var callout: Self = FontStylee(font: .callout)
-            static var caption1: Self = FontStylee(font: .caption)
-            static var caption2: Self = FontStylee(font: .caption2)
-            static var headline: Self = FontStylee(font: .headline)
-            static var subheadline: Self = FontStylee(font: .subheadline)
-            static func system(size: CGFloat) -> Self {
-                return FontStylee(font: .system(size: size))
-            }
-            public func weight(_ weight: NSFont.Weight) -> Self {
-                var style = self
-                style.font = style.font.weight(weight.swiftUI)
-                return style
-            }
-            
+        internal var _resolvedPrimaryColor: NSColor? = nil
+        internal var _resolvedSecondaryColor: NSColor? = nil
+        internal var _resolvedTertiaryColor: NSColor? = nil
+        internal mutating func updateResolvedColors() {
+            _resolvedPrimaryColor = resolvedPrimaryColor()
+            _resolvedSecondaryColor = resolvedSecondaryColor()
+            _resolvedTertiaryColor = resolvedTertiaryColor()
         }
         
         /// Constants that specify the font of a symbol image.
@@ -96,6 +112,14 @@ public extension NSItemContentConfiguration.ContentProperties {
             /// A scale that produces large images.
             case large
             
+            internal var nsSymbolScale: NSImage.SymbolScale {
+                switch self {
+                case .small: return .small
+                case .medium: return .medium
+                case .large: return .large
+                }
+            }
+            
             internal var swiftui: Image.Scale {
                 switch self {
                 case .small: return .small
@@ -110,7 +134,7 @@ public extension NSItemContentConfiguration.ContentProperties {
             /// A color configuration by specifying a palette of colors.
             case palette(NSColor, NSColor, NSColor? = nil)
             ///  A monochrome color configuration using the color you specify.
-            case monochrome(NSColor)
+            case monochrome
             ///  A multicolor color configuration using the color you specify as primary color.
             case multicolor(NSColor)
             ///  A hierarchical color configuration using the color you specify.
@@ -119,13 +143,13 @@ public extension NSItemContentConfiguration.ContentProperties {
             internal var renderingMode: SymbolRenderingMode {
                 switch self {
                 case .palette(_, _, _): return .palette
-                case .monochrome(_): return .monochrome
+                case .monochrome: return .monochrome
                 case .multicolor(_): return .multicolor
                 case .hierarchical(_): return .hierarchical
                 }
             }
             
-            internal var primary: NSColor {
+            internal var primary: NSColor? {
                 switch self {
                 case .palette(let primary, _, _):
                     return primary
@@ -133,8 +157,8 @@ public extension NSItemContentConfiguration.ContentProperties {
                     return primary
                 case .hierarchical(let primary):
                     return primary
-                case .monochrome(let primary):
-                    return primary
+                case .monochrome:
+                    return nil
                 }
             }
             
@@ -159,12 +183,47 @@ public extension NSItemContentConfiguration.ContentProperties {
     }
 }
 
+internal extension NSItemContentConfiguration.ContentProperties.SymbolConfiguration {
+    func nsSymbolConfiguration() -> NSImage.SymbolConfiguration {
+        var configuration: NSImage.SymbolConfiguration
+        switch self.colorConfiguration {
+        case .hierarchical(let color):
+            configuration = .hierarchical(color)
+        case .monochrome:
+            configuration = .monochrome()
+        case .palette(let primary, let secondary, let tertiary):
+            configuration = .palette(primary, secondary, tertiary)
+        case .multicolor(let color):
+            configuration = .multicolor(color)
+        case .none:
+            configuration = .unspecified
+        }
+        
+        switch self.font {
+            case .systemFont(size: let size, weight: let weight):
+                configuration = configuration.font(size: size)
+                configuration = configuration.weight(weight)
+            case .textStyle(let style, weight: let weight):
+                configuration = configuration.font(style)
+                configuration = configuration.weight(weight)
+            case .none:
+                break
+        }
+        
+        if let symbolScale = self.imageScale?.nsSymbolScale {
+            configuration = configuration.scale(symbolScale)
+        }
+        
+        return configuration
+    }
+}
+
 internal extension View {
     @ViewBuilder func symbolConfiguration(_ configuration: NSItemContentConfiguration.ContentProperties.SymbolConfiguration?) -> some View {
         if let configuration = configuration {
             self
                 .symbolRenderingMode(configuration.colorConfiguration?.renderingMode)
-                .foregroundStyle(configuration.colorConfiguration?.primary.swiftUI, configuration.colorConfiguration?.secondary?.swiftUI, configuration.colorConfiguration?.tertiary?.swiftUI)
+                .foregroundStyle(configuration.colorConfiguration?.primary?.swiftUI, configuration.colorConfiguration?.secondary?.swiftUI, configuration.colorConfiguration?.tertiary?.swiftUI)
                 .imageScale(configuration.imageScale?.swiftui)
                 .font(configuration.font?.swiftui)
         } else {

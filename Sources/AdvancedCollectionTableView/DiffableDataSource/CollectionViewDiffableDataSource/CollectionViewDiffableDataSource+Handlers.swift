@@ -6,6 +6,13 @@
 //
 
 import AppKit
+import FZUIKit
+
+internal extension PasteboardWriting {
+    var nsPasteboardWriting: NSPasteboardWriting? {
+        return (self as? NSPasteboardWriting) ?? (self as? NSURL)
+    }
+}
 
 extension CollectionViewDiffableDataSource {
     /// Handlers for selection.
@@ -18,7 +25,7 @@ extension CollectionViewDiffableDataSource {
     
     public struct DragdropHandlers<E> {
         public var canDropOutside: ((_ elements: [E]) -> [E])? = nil
-        public var dropOutside: ((_ elements: [E]) -> [AnyObject])? = nil
+        public var dropOutside: ((_ element: E) -> PasteboardWriting)? = nil
         public var canDrag: (([AnyObject]) -> Bool)? = nil
         public var dragOutside: ((_ elements: [E]) -> [AnyObject])? = nil
         public var draggingImage: ((_ elements: [E], NSEvent, NSPointPointer) -> NSImage?)? = nil
@@ -47,7 +54,7 @@ extension CollectionViewDiffableDataSource {
         public var didCancelPrefetching: ((_ elements: [E]) -> ())? = nil
     }
     
-    /// Handlers for displayig items.
+    /// Handlers for the displaying items.
     public struct DisplayHandlers<E> {
         public var isDisplaying: ((_ elements: [E]) -> ())?
         public var didEndDisplaying: ((_ elements: [E]) -> ())?
@@ -63,12 +70,15 @@ extension CollectionViewDiffableDataSource {
         public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> ())? = nil
         public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
     //   var mouseEntered: ((CGPoint) -> ())? = nil
-        public var mouseMoved: ((CGPoint) -> ())? = nil
+//        public var mouseMoved: ((CGPoint) -> ())? = nil
      //   var mouseExited: ((CGPoint) -> ())? = nil
     }
     
+    /// Handlers that get called whenever the mouse is hovering an item.
     public struct HoverHandlers<E> {
+        /// The handler that gets called whenever the mouse is hovering an item.
         public var isHovering: ((_ element: E) -> ())?
+        /// The handler that gets called whenever the mouse did end hovering an item.
         public var didEndHovering: ((_ element: E) -> ())?
     }
     
@@ -82,7 +92,7 @@ extension CollectionViewDiffableDataSource {
         public var willCollapse: ((_ section: Section) -> ())?
         /// The handler that prepares the diffable data source for expanding an section.
         public var willExpand: ((_ section: Section) -> ())?
-        ///         /// The handler that determines whether a particular section can be reordered.
+        /// The handler that determines whether a particular section can be reordered.
         public var canReorder: ((_ section: Section) -> Bool)?
         public var didReorder: ((_ section: Section) -> ())?
     }

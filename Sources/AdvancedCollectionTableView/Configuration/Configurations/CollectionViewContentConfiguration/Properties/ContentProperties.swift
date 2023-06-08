@@ -52,13 +52,26 @@ public extension NSItemContentConfiguration {
             }
         }
         
+        public enum SizeOption: Hashable {
+            case max(width: CGFloat?, height: CGFloat?)
+            case textAndSecondaryTextHeight
+            case size(CGSize)
+        }
+                
         /// The shape of the content.
         public var shape: Shape = .roundedRectangular(8.0)
         /// The outer shadow properties.
         public var shadowProperties: ShadowProperties = .black()
         
-        /// The maximum size of the content.
-        public var maxSize: CGSize? = nil
+        /// The maximum width of the content.
+        public var maxWidth: CGFloat? = nil
+        
+        /// The size of the content.
+        public var sizing: SizeOption? = nil
+
+        
+        /// The maximum height of the content.
+        public var maxHeight: CGFloat? = nil
         
         /// The background color.
         public var backgroundColor: NSColor? = .systemGray
@@ -102,16 +115,44 @@ public extension NSItemContentConfiguration {
         public var imageSymbolConfiguration: SymbolConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
+        
+        /**
+        The scaling of the content.
+         
+        The default is 1.0, which displays the content at it's original scale.
+         */
+        public var scaleTransform: CGFloat = 1.0
+        
+        /// Resets the  border width to 0 when the item state isSelected is false.
+        internal var needsBorderWidthReset: Bool = true
+        
+        internal var _resolvedImageTintColor: NSColor? = nil
+        internal var _resolvedBorderColor: NSColor? = nil
+        internal var _resolvedBackgroundColor: NSColor? = nil
+        internal mutating func updateResolvedColors() {
+            imageSymbolConfiguration?.updateResolvedColors()
+            _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
+            _resolvedBorderColor = resolvedBorderColor()
+            _resolvedBackgroundColor = resolvedBackgroundColor()
+        }
+        
+        public init(shape: Shape = .rectangular, shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = nil, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
+            self.shape = shape
+            self.shadowProperties = shadowProperties
+            self.maxWidth = maxWidth
+            self.maxHeight = maxHeight
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTransform = backgroundColorTransform
+            self.borderWidth = borderWidth
+            self.borderColor = borderColor
+            self.borderColorTransform = borderColorTransform
+            self.imageTintColor = imageTintColor
+            self.imageTintColorTransform = imageTintColorTransform
+            self.imageSymbolConfiguration = imageSymbolConfiguration
+            self.imageScaling = imageScaling
+            self.needsBorderWidthReset = (borderWidth != 0.0)
+            self.scaleTransform = scaleTransform
+            self.updateResolvedColors()
+        }
     }
 }
-
-/*
- public enum ImageSize: Hashable {
-     case fullSize
-     case textHeight
-     case secondaryTextHeight
-     case textAndSecondaryTextHeight
-     case size(CGSize)
-     case maxSize(CGSize)
- }
- */

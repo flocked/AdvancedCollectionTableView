@@ -18,13 +18,13 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Element.ID>
 
-    var rowProvider: RowProvider = {tableView, row, element in
+    public var rowProvider: RowProvider = {tableView, row, element in
         return nil
     }
     
-    var cellProvider: CellProvider
+    public var cellProvider: CellProvider
     
-    let tableView: NSTableView
+    public let tableView: NSTableView
     internal var dataSource: DataSoure!
     internal var draggingRows = Set<Int>()
     internal let quicklookPanel = QuicklookPanel.shared
@@ -47,44 +47,44 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         }
     }
     
-    open var mouseHandlers = MouseHandlers<Element>()
-    open var hoverHandlers = HoverHandlers<Element>() {
-        didSet { self.ensureTrackingArea()} }
-    open var selectionHandlers = SelectionHandlers<Element>()
-    open var reorderHandlers = ReorderHandlers<Element>()
-    open var displayHandlers = DisplayHandlers<Element>() {
+    public var mouseHandlers = MouseHandlers<Element>()
+    public var hoverHandlers = HoverHandlers<Element>() {
+        didSet { self.setupHoverObserving()} }
+    public var selectionHandlers = SelectionHandlers<Element>()
+    public var reorderHandlers = ReorderHandlers<Element>()
+    public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingRows() } }
-    open var prefetchHandlers = PrefetchHandlers<Element>()
-    open var dragDropHandlers = DragdropHandlers<Element>()
-    open var quicklookHandlers = QuicklookHandlers<Element>()
-    open var columnHandlers = ColumnHandlers<Element>()
-    open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
-    open var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
+    public var prefetchHandlers = PrefetchHandlers<Element>()
+    public var dragDropHandlers = DragdropHandlers<Element>()
+    public var quicklookHandlers = QuicklookHandlers<Element>()
+    public var columnHandlers = ColumnHandlers<Element>()
+    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    public var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
 
      If the value of this property is true (the default is false), users can delete items.
      */
-    open var allowsDeleting: Bool = false
+    public var allowsDeleting: Bool = false
     /**
      A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
 
      If the value of this property is true (the default is false), users can reorder items in the table view.
      */
-    open var allowsReordering: Bool = false
+    public var allowsReordering: Bool = false
     /**
      A Boolean value that indicates whether users can select items while an section is collapsed in the table view.
 
      If the value of this property is true (the default), users can select items while an section is collapsed.
      */
-    open var allowsSectionCollapsing: Bool = true
+    public var allowsSectionCollapsing: Bool = true
     /**
      A Boolean value that indicates whether users can select items in the table view.
 
      If the value of this property is true (the default), users can select items.
      */
-    open var allowsSelectable: Bool {
+    public var allowsSelectable: Bool {
         get { self.tableView.isEnabled }
         set { self.tableView.isEnabled = newValue } }
     /**
@@ -93,7 +93,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
      This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
      When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
      */
-    open var allowsMultipleSelection: Bool {
+    public var allowsMultipleSelection: Bool {
         get { self.tableView.allowsMultipleSelection }
         set { self.tableView.allowsMultipleSelection = newValue } }
     /**
@@ -101,36 +101,34 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
 
      The default value of this property is true, which allows the table view to have no selected items. Setting this property to false causes the table view to always leave at least one item selected.
      */
-    open var allowsEmptySelection: Bool {
+    public var allowsEmptySelection: Bool {
         get { self.tableView.allowsEmptySelection }
         set { self.tableView.allowsEmptySelection = newValue } }
-
-    internal func ensureTrackingArea() {
-        if let trackingArea = trackingArea {
-            self.tableView.removeTrackingArea(trackingArea)
-            self.trackingArea = nil
-        }
+    
+    internal func isHovering(_ row: NSTableRowView) {
         
-        if (self.needsTrackingArea) {
-            trackingArea = NSTrackingArea(
-                rect: self.tableView.bounds,
-                options: [
-                    .mouseMoved,
-                    .mouseEnteredAndExited,
-                    .activeAlways,
-                    .inVisibleRect],
-                owner: self.responder)
-            self.tableView.addTrackingArea(self.trackingArea!)
-        }
     }
     
-    internal var needsTrackingArea: Bool {
-        return  (hoverHandlers.didEndHovering != nil ||
-                    hoverHandlers.isHovering != nil ||
-             //       mouseHandlers.mouseEntered != nil ||
-                 //   mouseHandlers.mouseMoved != nil ||
-                 //       mouseHandlers.mouseExited != nil ||
-                    mouseHandlers.mouseDragged != nil )
+    internal func didEndHovering(_ row: NSTableRowView) {
+        
+    }
+    
+    internal func setupHoverObserving() {
+        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
+            self.tableView.setupObservingView()
+            if self.tableView.hoverHandlers == nil {
+                let hoverHandlers = NSTableView.HoverHandlers()
+                hoverHandlers.isHovering = { [weak self] item in
+                    guard let self = self else { return }
+                    self.isHovering(item)
+                }
+                hoverHandlers.didEndHovering = { [weak self] item in
+                    guard let self = self else { return }
+                    self.didEndHovering(item)
+                }
+                self.tableView.hoverHandlers = hoverHandlers
+            }
+        }
     }
     
     internal func ensureTrackingDisplayingRows() {
@@ -177,7 +175,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
 
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
-    func snapshot() -> CollectionSnapshot {
+    public func snapshot() -> CollectionSnapshot {
         var snapshot = CollectionSnapshot()
         snapshot.appendSections(currentSnapshot.sectionIdentifiers)
         for section in currentSnapshot.sectionIdentifiers {
@@ -195,7 +193,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    open func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
 
@@ -212,7 +210,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         - snapshot: The snapshot that reflects the new state of the data in the table view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    open func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
+    public func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
 

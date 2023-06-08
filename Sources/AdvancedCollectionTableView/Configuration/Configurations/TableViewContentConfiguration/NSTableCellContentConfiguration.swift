@@ -89,7 +89,33 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
      Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
      */
     public func updated(for state: NSConfigurationState) -> Self {
-        return self
+        var configuration = self
+        if let state = state as? NSTableCellConfigurationState {
+            if state.isSelected {
+                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
+                if configuration.contentProperties.borderWidth == 0.0 {
+                    configuration.contentProperties.borderWidth = 1.0
+                    configuration.contentProperties.needsBorderWidthReset = true
+                }
+                configuration.contentProperties.shadowProperties.colorTransform = .color(.controlAccentColor)
+                if configuration.hasContent == false {
+                    configuration.textProperties.textColorTansform = .color(.controlAccentColor)
+                    configuration.secondaryTextProperties.textColorTansform = .color(.controlAccentColor)
+                } else {
+                    configuration.textProperties.textColorTansform = nil
+                    configuration.secondaryTextProperties.textColorTansform = nil
+                }
+            } else {
+                configuration.contentProperties.borderColorTransform = nil
+                configuration.contentProperties.shadowProperties.colorTransform = nil
+                configuration.textProperties.textColorTansform = nil
+                configuration.secondaryTextProperties.textColorTansform = nil
+                if configuration.contentProperties.needsBorderWidthReset == true {
+                    configuration.contentProperties.borderWidth = 0.0
+                }
+            }
+        }
+        return configuration
     }
     
     internal var hasText: Bool {

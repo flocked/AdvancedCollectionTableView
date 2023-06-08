@@ -159,13 +159,13 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     public var mouseHandlers = MouseHandlers<Element>()
     public var hoverHandlers = HoverHandlers<Element>() {
-        didSet { self.ensureTrackingArea()} }
+        didSet { self.setupHoverObserving()} }
     public var selectionHandlers = SelectionHandlers<Element>()
     public var reorderingHandlers = ReorderingHandlers<Element>()
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
-    public var sectionHandlers = SectionHandlers<Section>() {
-        didSet { self.ensureTrackingArea()} }
+ //   public var sectionHandlers = SectionHandlers<Section>() {
+  //      didSet { self.ensureTrackingArea()} }
     public var prefetchHandlers = PrefetchHandlers<Element>()
     public var dragDropHandlers = DragdropHandlers<Element>()
     public var highlightHandlers = HighlightHandlers<Element>()
@@ -262,6 +262,18 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
+    internal func isHovering(_ item: NSCollectionViewItem) {
+        if let indexPath = self.collectionView.indexPath(for: item), let element = element(for: indexPath) {
+            self.hoverHandlers.isHovering?(element)
+        }
+    }
+    
+    internal func didEndHovering(_ item: NSCollectionViewItem) {
+        if let indexPath = self.collectionView.indexPath(for: item), let element = element(for: indexPath) {
+            self.hoverHandlers.didEndHovering?(element)
+        }
+    }
+    
     internal var pinchElement: Element? = nil
     @objc internal func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
         let pinchLocation = gesture.location(in: self.collectionView)
@@ -290,22 +302,21 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func ensureTrackingArea() {
-        if let trackingArea = trackingArea {
-            self.collectionView.removeTrackingArea(trackingArea)
-            self.trackingArea = nil
-        }
-        
-        if (self.needsTrackingArea) {
-            trackingArea = NSTrackingArea(
-                rect: self.collectionView.bounds,
-                options: [
-                    .mouseMoved,
-                    .mouseEnteredAndExited,
-                    .activeAlways,
-                    .inVisibleRect],
-                owner: self.responder)
-            self.collectionView.addTrackingArea(self.trackingArea!)
+    internal func setupHoverObserving() {
+        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
+            self.collectionView.setupObservingView()
+            if self.collectionView.hoverHandlers == nil {
+                let hoverHandlers = NSCollectionView.HoverHandlers()
+                hoverHandlers.isHovering = { [weak self] item in
+                    guard let self = self else { return }
+                    self.isHovering(item)
+                }
+                hoverHandlers.didEndHovering = { [weak self] item in
+                    guard let self = self else { return }
+                    self.didEndHovering(item)
+                }
+                self.collectionView.hoverHandlers = hoverHandlers
+            }
         }
     }
     
@@ -332,15 +343,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             self.displayHandlers.didEndDisplaying?(removed)
         }
         previousDisplayingElements = displayingElements
-    }
-    
-    internal var needsTrackingArea: Bool {
-        return  (hoverHandlers.didEndHovering != nil ||
-                    hoverHandlers.isHovering != nil ||
-             //       mouseHandlers.mouseEntered != nil ||
-                 //   mouseHandlers.mouseMoved != nil ||
-                 //       mouseHandlers.mouseExited != nil ||
-                    mouseHandlers.mouseDragged != nil )
     }
     
     /*
