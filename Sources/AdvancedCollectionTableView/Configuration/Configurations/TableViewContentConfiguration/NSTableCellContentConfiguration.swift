@@ -28,7 +28,7 @@ import FZUIKit
  cell.contentConfiguration = content
  ```
  */
-public struct NSTableCellContentConfiguration: NSContentConfiguration {
+public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable {
     /// The primary text.
     public var text: String? = nil
     /// An attributed variant of the primary text.
@@ -36,22 +36,25 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     /// The secondary text.
     public var secondaryText: String? = nil
     /// An attributed variant of the secondary text.
-    public var secondaryattributedText: AttributedString? = nil
+    public var secondaryAttributedText: AttributedString? = nil
     /// The image to display.
     public var image: NSImage? = nil
     
-    /**
-     Array of properties for configuring additional accesories.
-     */
-    public var accessories: [AccessoryProperties] = []
+    /// Array of accessories display at the top of the cell.
+    public var topAccessories: [Accessory] = []
+
+    /// Array of accessories display at the bottom of the cell.
+    public var bottomAccessories: [Accessory] = []
 
     /// Properties for configuring the image.
     public var imageProperties: ImageProperties = ImageProperties()
     /// Properties for configuring the primary text.
-    public var textProperties: TextProperties = .textStyle(.body, weight: .bold)
+    public var textProperties: TextProperties = .body.weight(.bold)
     /// Properties for configuring the secondary text.
-    public var secondaryTextProperties: TextProperties = .textStyle(.body)
-   
+    public var secondaryTextProperties: TextProperties = .body
+    /// Properties for configuring the content.
+    public var contentProperties: ContentProperties = ContentProperties()
+    
     /**
      The padding between the image and text.
      
@@ -91,7 +94,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration {
     }
     
     internal var hasSecondaryText: Bool {
-        self.secondaryText != nil || self.secondaryattributedText != nil
+        self.secondaryText != nil || self.secondaryAttributedText != nil
     }
     
     internal var hasImage: Bool {

@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public struct NSBackgroundConfiguration: NSContentConfiguration {
+public struct NSBackgroundConfiguration: NSContentConfiguration, Hashable {
     public func makeContentView() -> NSView & NSContentView {
         ContentView(configuration: self)
     }

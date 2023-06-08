@@ -12,6 +12,8 @@ import FZUIKit
 extension NSTableRowContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         let contentView: NSView = NSView(frame: .zero)
+        var backgroundView: NSView? = nil
+        
         var configuration: NSContentConfiguration  {
             get { self.appliedConfiguration }
             set {
@@ -23,7 +25,9 @@ extension NSTableRowContentConfiguration {
         
         internal var appliedConfiguration: NSTableRowContentConfiguration {
             didSet {
-                self.updateConfiguration(with: self.appliedConfiguration)
+                if oldValue != appliedConfiguration {
+                    self.updateConfiguration(with: self.appliedConfiguration)
+                }
             }
         }
         
@@ -31,9 +35,20 @@ extension NSTableRowContentConfiguration {
             contentView.roundedCorners = configuration.roundedCorners
             contentView.cornerRadius = configuration.cornerRadius
             contentView.backgroundColor = configuration.resolvedBackgroundColor()
-            contentView.layer?.contents = configuration.backgroundImage
-            contentView.layer?.contentsGravity = configuration.imageProperties.scaling
+         //   contentView.layer?.contents = configuration.backgroundImage
+        //    contentView.layer?.contentsGravity = configuration.imageProperties.scaling
             
+            if let backgroundView = configuration.backgroundView {
+                if self.backgroundView != backgroundView {
+                    self.backgroundView?.removeFromSuperview()
+                    self.backgroundView = backgroundView
+                    self.contentView.addSubview(withConstraint: backgroundView)
+                }
+            } else {
+                self.backgroundView?.removeFromSuperview()
+                self.backgroundView = nil
+            }
+                        
             contentViewConstraits[0].constant = -configuration.backgroundPadding.bottom
             contentViewConstraits[1].constant = configuration.backgroundPadding.top
             contentViewConstraits[2].constant = configuration.backgroundPadding.leading
@@ -41,7 +56,7 @@ extension NSTableRowContentConfiguration {
         }
         
         func supports(_ configuration: NSContentConfiguration) -> Bool {
-            return (configuration as? NSTableRowContentConfiguration) != nil
+            return configuration is NSTableRowContentConfiguration
         }
         
         var contentViewConstraits: [NSLayoutConstraint] = []

@@ -1,16 +1,16 @@
 //
-//  File.swift
+//  TextProperties.swift
 //  
 //
-//  Created by Florian Zand on 02.06.23.
+//  Created by Florian Zand on 08.06.23.
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
-public extension NSItemContentConfiguration {
+public extension NSTableCellContentConfiguration {
     /// Properties for configuring the text of an item.
     struct TextProperties {
         public enum TextTransform: Hashable {
@@ -33,6 +33,7 @@ public extension NSItemContentConfiguration {
          If true, the text field becomes selectable but not editable. Use isEditable to make the text field selectable and editable. If false, the text is neither editable nor selectable.
          */
         public var isSelectable: Bool = false
+        
         /**
          A Boolean value that controls whether the user can edit the value in the text field.
 
@@ -100,8 +101,8 @@ public extension NSItemContentConfiguration {
     }
 }
 
-extension NSItemContentConfiguration.TextProperties: Hashable {
-    public static func == (lhs: NSItemContentConfiguration.TextProperties, rhs: NSItemContentConfiguration.TextProperties) -> Bool {
+extension NSTableCellContentConfiguration.TextProperties: Hashable {
+    public static func == (lhs: NSTableCellContentConfiguration.TextProperties, rhs: NSTableCellContentConfiguration.TextProperties) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
@@ -119,50 +120,3 @@ extension NSItemContentConfiguration.TextProperties: Hashable {
         hasher.combine(lineBreakMode)
     }
 }
-
-internal extension String {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self
-        case .capitalized:
-            return self.capitalized
-        case .lowercase:
-            return self.lowercased()
-        case .uppercase:
-            return self.uppercased()
-        }
-    }
-}
-
-internal extension NSAttributedString {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-            return self.string
-        case .capitalized:
-            return self.string.capitalized
-        case .lowercase:
-            return self.string.lowercased()
-        case .uppercase:
-            return self.string.uppercased()
-        }
-    }
-}
-
-extension AttributedString {
-    func transform(using transform: NSItemContentConfiguration.TextProperties.TextTransform) -> String {
-        switch transform {
-        case .none:
-           return String(self.characters[...])
-        case .capitalized:
-            return String(self.characters[...]).capitalized
-        case .lowercase:
-            return String(self.characters[...]).lowercased()
-        case .uppercase:
-            return String(self.characters[...]).uppercased()
-        }
-    }
-}
-
-

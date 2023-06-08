@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Florian Zand on 02.06.23.
 //
@@ -10,7 +10,7 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSItemContentConfiguration {
+public extension NSTableCellContentConfiguration {
     /**
      Properties for configuring the content of an item.
      

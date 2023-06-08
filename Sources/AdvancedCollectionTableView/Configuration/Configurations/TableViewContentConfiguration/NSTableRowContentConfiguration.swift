@@ -25,23 +25,22 @@ import FZUIKit
  rowView.contentConfiguration = content
  ```
  */
-public struct NSTableRowContentConfiguration: NSContentConfiguration {
-    /**
-     The background color.
-     */
+public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
+    /// The background color.
     var backgroundColor: NSColor? = nil
-    /**
-     The background color.
-     */
-    var selectionBackgroundColor: NSColor? = nil
-    /**
-     The corner radius..
-     */
+    /// The color transformer of the background color.
+    public var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+    /// Generates the resolved background color for the specified background color, using the color and color transformer.
+    public func resolvedBackgroundColor() -> NSColor? {
+        if let backgroundColor = self.backgroundColor {
+            return backgroundColorTansform?(backgroundColor) ?? backgroundColor
+        }
+        return nil
+    }
+    /// The corner radius.
     var cornerRadius: CGFloat = 0.0
-    /**
-     The image to display.
-     */
-    var backgroundImage: NSImage? = nil
+    /// The background view.
+    var backgroundView: NSView? = nil
     
     /**
      The margins between the content and the edges of the content view.
@@ -53,15 +52,9 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
     internal var roundedCorners: CACornerMask = .all
     
     /**
-     Properties for configuring the image.
-     */
-    var imageProperties: ImageProperties = ImageProperties()
-    /**
      Properties for configuring the seperator.
      */
     var seperatorProperties: SeperatorProperties = .default()
-    var backgroundColorTansform: NSConfigurationColorTransformer? = nil
-    var selectionBackgroundColorTansform: NSConfigurationColorTransformer? = nil
     
     internal var tableViewStyle: NSTableView.Style? = nil
     
@@ -96,7 +89,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
     public static func fullWidth() -> NSTableRowContentConfiguration {
         var configuration = NSTableRowContentConfiguration()
         configuration.tableViewStyle = .fullWidth
-        configuration.selectionBackgroundColor = .systemBlue
         configuration.backgroundPadding = .zero
         configuration.cornerRadius = 0.0
         return configuration
@@ -107,8 +99,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
         configuration.tableViewStyle = .sourceList
         configuration.backgroundPadding = .init(top: 4.0, leading: 4.0, bottom: 4.0, trailing: 4.0)
         configuration.cornerRadius = 4.0
-        configuration.imageProperties.tintColor = .controlAccentColor
-        configuration.selectionBackgroundColor = .controlAccentColor
         return configuration
     }
     
@@ -122,30 +112,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
         var configuration = NSTableRowContentConfiguration()
         configuration.tableViewStyle = .inset
         return configuration
-    }
-
-    /**
-    Generates the resolved background color, using the background color and background color transformer.
-
-    The resulting tint color depends on backgroundColor and backgroundColorTransformer.
-    */
-    func resolvedBackgroundColor() -> NSColor? {
-        if let backgroundColor = self.backgroundColor {
-            return self.backgroundColorTansform?(backgroundColor) ?? backgroundColor
-        }
-        return nil
-    }
-    
-    /**
-    Generates the resolved background color, using the background color and background color transformer.
-
-    The resulting tint color depends on backgroundColor and backgroundColorTransformer.
-    */
-    func resolvedSelectionBackgroundColor() -> NSColor? {
-        if let selectionBackgroundColor = self.selectionBackgroundColor {
-            return self.selectionBackgroundColorTansform?(selectionBackgroundColor) ?? selectionBackgroundColor
-        }
-        return nil
     }
     
     // Creates a new instance of the content view using the configuration.
@@ -180,7 +146,7 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration {
 }
 
 public extension NSTableRowContentConfiguration {
-    struct SeperatorProperties {
+    struct SeperatorProperties: Hashable {
         var color: NSColor = .separatorColor
         var colorTransform: NSConfigurationColorTransformer? = nil
         var height: CGFloat = 1.0
@@ -192,197 +158,6 @@ public extension NSTableRowContentConfiguration {
         
         static func `default`() -> SeperatorProperties {
             return SeperatorProperties()
-        }
-    }
-    
-    struct ImageProperties {
-        enum ImageSize {
-            case fullHeight
-            case textHeight
-            case secondaryTextHeight
-            case size(CGSize)
-            case maxSize(CGSize)
-        }
-        
-        var symbolConfiguration: SymbolConfiguration = SymbolConfiguration()
-        var tintColor: NSColor? = nil
-        var cornerRadius: CGFloat = 0.0
-        var backgroundColor: NSColor? = nil
-        var shadowProperties: ShadowProperties = .black()
-        
-        var backgroundColorTransform: NSConfigurationColorTransformer? = nil
-        var tintColorTransform: NSConfigurationColorTransformer? = nil
-        var size: ImageSize = .fullHeight
-        var scaling: CALayerContentsGravity = .resizeAspectFill
-        
-        static func `default`() -> ImageProperties {
-            return ImageProperties()
-        }
-
-        /**
-         Generates the resolved background color, using the background color and background color transformer.
-
-         The resulting tint color depends on backgroundColor and backgroundColorTransformer.
-         */
-        func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
-                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
-            }
-            return nil
-        }
-
-        /**
-         Generates the resolved tint color, using the tint color and tint color transformer.
-
-         The resulting tint color depends on tintColor and tintColorTransformer.
-         */
-        func resolvedTintColor() -> NSColor? {
-            if let tintColor = self.tintColor {
-                return self.tintColorTransform?(tintColor) ?? tintColor
-            }
-            return nil
-        }
-        
-        struct SymbolConfiguration {
-            var fontStyle: FontStyle? = .textStyle(.body)
-            var colorStyle: ColorStyle? = .monochrome
-            var colorTransform: NSConfigurationColorTransformer? = nil
-            
-            static func `default`() -> SymbolConfiguration {
-                return SymbolConfiguration()
-            }
-            
-            /**
-             Generates the resolved primary color, using the primary color and color transformer.
-
-             The resulting tint color depends on oolor and colorTransformer.
-             */
-            func resolvedPrimaryColor() -> NSColor? {
-                if let primary = self.colorStyle?.primary {
-                    return self.colorTransform?(primary) ?? primary
-                }
-                return nil
-            }
-            
-            func resolvedSecondaryColor() -> NSColor? {
-                if let secondary = self.colorStyle?.secondary {
-                    return self.colorTransform?(secondary) ?? secondary
-                }
-                return nil
-            }
-            
-            func resolvedTertiaryColor() -> NSColor? {
-                if let tertiary = self.colorStyle?.tertiary {
-                    return self.colorTransform?(tertiary) ?? tertiary
-                }
-                return nil
-            }
-            
-            enum FontStyle {
-                case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
-                case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
-            }
-            
-            enum ColorStyle {
-                case palette(NSColor, NSColor, NSColor? = nil)
-                case monochrome
-                case multicolor(NSColor)
-                case hierarchical(NSColor)
-                
-                internal var primary: NSColor? {
-                    switch self {
-                    case .palette(let primary, _, _):
-                        return primary
-                    case .multicolor(let primary):
-                        return primary
-                    case .hierarchical(let primary):
-                        return primary
-                    case .monochrome:
-                        return nil
-                    }
-                }
-                
-                internal var secondary: NSColor? {
-                    switch self {
-                    case .palette(_, let secondary, _):
-                        return secondary
-                    default:
-                        return nil
-                    }
-                }
-                
-                internal var tertiary: NSColor? {
-                    switch self {
-                    case .palette(_, _, let tertiary):
-                        return tertiary
-                    default:
-                        return nil
-                    }
-                }
-            }
-            
-            internal var symbolConfiguration: NSImage.SymbolConfiguration {
-                var symbolConfiguration = NSImage.SymbolConfiguration()
-         
-                if let fontStyle = fontStyle {
-                    switch fontStyle {
-                    case .systemFont(size: let pointSize, weight: let weight):
-                        symbolConfiguration = symbolConfiguration.font(size: pointSize).weight(weight)
-                    case .textStyle(let style, weight: let weight):
-                        symbolConfiguration = symbolConfiguration.font(style).weight(weight)
-                    }
-                }
-
-                if let colorStyle = colorStyle {
-                    switch colorStyle {
-                    case .palette(let primary, let secondary, let tertiary):
-                        symbolConfiguration = symbolConfiguration.palette(primary, secondary, tertiary)
-                    case .monochrome:
-                        symbolConfiguration = symbolConfiguration.monochrome()
-                    case .multicolor(let color):
-                        symbolConfiguration = symbolConfiguration.multicolor(color)
-                    case .hierarchical(let color):
-                        symbolConfiguration = symbolConfiguration.hierarchical(color)
-                    }
-                }
-                return symbolConfiguration
-            }
-        }
-        
-        public struct ShadowProperties {
-            public var radius: CGFloat = 0.0
-            public var color: NSColor? = nil
-            public var opacity: CGFloat = 0.0
-            public var offset: CGPoint = .zero
-            var colorTransform: NSConfigurationColorTransformer? = nil
-
-            /**
-             Generates the resolved shadow color, using the color and color transformer.
-
-             The resulting tint color depends on oolor and colorTransformer.
-             */
-            func resolvedColor() -> NSColor? {
-                if let color = self.color {
-                    return self.colorTransform?(color) ?? color
-                }
-                return nil
-            }
-            
-            static func `default`() -> ShadowProperties {
-                return ShadowProperties()
-            }
-            
-            public static func black() -> ShadowProperties {
-                var property = ShadowProperties()
-                property.radius = 3.0
-                property.color = .black
-                property.opacity = 1.0
-                return property
-            }
-            
-            public static func none() -> ShadowProperties {
-                return ShadowProperties()
-            }
         }
     }
 }

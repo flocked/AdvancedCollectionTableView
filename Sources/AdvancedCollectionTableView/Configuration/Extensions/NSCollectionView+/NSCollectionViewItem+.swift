@@ -8,7 +8,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import InterposeKit
 
 public extension NSCollectionViewItem {
     /**
@@ -462,7 +461,7 @@ public extension NSCollectionViewItem {
 
 
         
-    // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
+    // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             self.didSwizzleCollectionItem = true
@@ -503,13 +502,13 @@ public extension NSCollectionViewItem {
         self.view.firstSuperview(for: NSCollectionView.self)
     }
             
-    // Detect when the itemView gets added to the collectionView to add an observerView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
+    // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
         if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
         } else {
             let observer = self.view.observeChange(\.superview) { [weak self] object, old, new in
                 guard let self = self else { return }
-                self._collectionView?.setupObserverView()
+                self._collectionView?.setupObservingView()
             }
             set(associatedValue: observer, key: "NSCollectionViewItem_superviewObserver", object: self.view)
         }

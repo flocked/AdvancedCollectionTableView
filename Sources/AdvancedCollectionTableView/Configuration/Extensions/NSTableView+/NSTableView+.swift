@@ -9,7 +9,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import InterposeKit
 
 public extension NSTableView {
     /**
@@ -66,39 +65,41 @@ public extension NSTableView {
         }
     }
     
-    internal func setupObserverView(shouldObserve: Bool = true) {
+    internal func setupObservingView(shouldObserve: Bool = true) {
         if shouldObserve {
-            if (self.observerView == nil) {
-                self.observerView = ObserverView()
-                self.addSubview(withConstraint: self.observerView!)
-                self.observerView!.sendToBack()
-                self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
+            if (self.observingView == nil) {
+                self.observingView = ObservingView()
+                self.addSubview(withConstraint: self.observingView!)
+                self.observingView!.sendToBack()
+                self.observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     self.isEmphasized = windowIsKey
                 }
                 
-                self.observerView?.mouseHandlers.exited = { [weak self] event in
-                    guard let self = self else { return }
+                self.observingView?.mouseHandlers.exited = { [weak self] event in
+                    guard let self = self else { return true }
                     self.removeHoveredRow()
+                    return true
                 }
                 
-                self.observerView?.mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return }
+                self.observingView?.mouseHandlers.moved = { [weak self] event in
+                    guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         self.updateHoveredRow(location)
                     }
+                    return true
                 }
             }
         } else {
-            self.observerView?.removeFromSuperview()
-            self.observerView = nil
+            self.observingView?.removeFromSuperview()
+            self.observingView = nil
         }
     }
         
-    internal var observerView: ObserverView? {
-        get { getAssociatedValue(key: "NSTableView_observerView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableView_observerView", object: self)
+    internal var observingView: ObservingView? {
+        get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
+        set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
         }
     }
     
@@ -114,7 +115,7 @@ public extension NSTableView {
 /*
  func setupObservers(shouldObserve: Bool = true) {
      self.setupSelectionObserver(shouldObserve: shouldObserve)
-     self.setupObserverView(shouldObserve: shouldObserve)
+     self.setupObservingView(shouldObserve: shouldObserve)
  }
  
  func setupSelectionObserver(shouldObserve: Bool = true) {

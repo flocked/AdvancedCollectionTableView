@@ -232,7 +232,7 @@ public extension NSTableCellView {
     
     @objc internal func swizzledViewDidMoveToSuperview() {
         self.rowView?.swizzleTableRowViewIfNeeded()
-        self.tableView?.setupObserverView()
+        self.tableView?.setupObservingView()
         self.swizzledViewDidMoveToSuperview()
     }
     

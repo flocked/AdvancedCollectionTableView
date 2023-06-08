@@ -82,39 +82,41 @@ public extension NSCollectionView {
         hoveredItem = nil
     }
         
-    func setupObserverView(shouldObserve: Bool = true) {
+    func setupObservingView(shouldObserve: Bool = true) {
         if shouldObserve {
-            if (self.observerView == nil) {
-                self.observerView = ObserverView()
-                self.addSubview(withConstraint: self.observerView!)
-                self.observerView!.sendToBack()
-                self.observerView?.windowHandlers.isKey = { [weak self] windowIsKey in
+            if (self.observingView == nil) {
+                self.observingView = ObservingView()
+                self.addSubview(withConstraint: self.observingView!)
+                self.observingView!.sendToBack()
+                self.observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     self.isEmphasized = windowIsKey
                 }
                 
-                self.observerView?.mouseHandlers.exited = { [weak self] event in
-                    guard let self = self else { return }
+                self.observingView?.mouseHandlers.exited = { [weak self] event in
+                    guard let self = self else { return true }
                     self.removeHoveredItem()
+                    return true
                 }
                 
-                self.observerView?.mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return }
+                self.observingView?.mouseHandlers.moved = { [weak self] event in
+                    guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         self.updateItemHoverState(event)
                     }
+                    return true
                 }
             }
         } else {
-            observerView?.removeFromSuperview()
-            observerView = nil
+            observingView?.removeFromSuperview()
+            observingView = nil
         }
     }
         
-    var observerView: ObserverView? {
-        get { getAssociatedValue(key: "NSCollectionView_observerView", object: self) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_observerView", object: self)
+    var observingView: ObservingView? {
+        get { getAssociatedValue(key: "NSCollectionView_observingView", object: self) }
+        set { set(associatedValue: newValue, key: "NSCollectionView_observingView", object: self)
         }
     }
 }

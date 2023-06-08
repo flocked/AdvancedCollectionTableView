@@ -11,8 +11,9 @@ import FZUIKit
 
 extension NSTableCellContentConfiguration {
     internal class ContentView: NSView, NSContentView {
-        let textField: NSTextField = NSTextField(wrappingLabelWithString: "")
-        let secondaryTextField: NSTextField = NSTextField(wrappingLabelWithString: "")
+        lazy var textField: TableCellTextField = TableCellTextField(properties: appliedConfiguration.textProperties)
+        lazy var secondaryTextField: TableCellTextField = TableCellTextField(properties: appliedConfiguration.secondaryTextProperties)
+
         let imageView: ImageView = ImageView()
         
         let contentView: NSView = NSView(frame: .zero)
@@ -34,7 +35,6 @@ extension NSTableCellContentConfiguration {
         }()
                 
         internal func updateConfiguration(with configuration: NSTableCellContentConfiguration) {
-            
             if configuration.imageProperties.position == .leading {
                 if (stackView.arrangedSubviews.last != self.textStackView) {
                     stackView.removeArrangedSubview(textStackView)
@@ -47,26 +47,28 @@ extension NSTableCellContentConfiguration {
                 }
             }
             
-            textField.maximumNumberOfLines = configuration.textProperties.numberOfLines ?? 0
-            textField.isHidden = (configuration.hasText == false)
-            textField.alignment = configuration.textProperties.alignment
-            textField.font = configuration.textProperties.font
-            textField.textColor = configuration.textProperties.resolvedTextColor()
-            textField.lineBreakMode = configuration.textProperties.lineBreakMode
-            textField.isSelectable = configuration.textProperties.isSelectable
-            textField.isEditable = configuration.textProperties.isEditable
-            textField.backgroundColor = configuration.textProperties.resolvedBackgroundColor()
-            textField.drawsBackground = (textField.backgroundColor != nil)
-            textField.bezelStyle = configuration.textProperties.bezelStyle ?? .roundedBezel
-            textField.isBezeled = (configuration.textProperties.bezelStyle != nil)
+            textField.properties = configuration.textProperties
+            textField.isHidden = configuration.hasText
             if let attributedText = configuration.attributedText {
                 textField.attributedStringValue = NSAttributedString(attributedText)
                 //                 textField.attributedStringValue = attributedText.transform(using: configuration.textProperties.transform)
 
             } else {
-                textField.stringValue = configuration.text?.transform(using: configuration.textProperties.textTransform) ?? ""
+                textField.stringValue = configuration.text ?? ""
+             //   textField.stringValue = configuration.text?.transform(using: configuration.textProperties.textTransform) ?? ""
             }
             
+            secondaryTextField.properties = configuration.secondaryTextProperties
+            secondaryTextField.isHidden = configuration.hasSecondaryText
+            if let attributedText = configuration.secondaryAttributedText {
+                secondaryTextField.attributedStringValue = NSAttributedString(attributedText)
+                //                 textField.attributedStringValue = attributedText.transform(using: configuration.textProperties.transform)
+
+            } else {
+                secondaryTextField.stringValue = configuration.secondaryText ?? ""
+             //   textField.stringValue = configuration.text?.transform(using: configuration.textProperties.textTransform) ?? ""
+            }
+                    
             /*
             var topAccessorVyiews: [NSView] = []
             var bottomAccessorVyiews: [NSView] = []
@@ -76,26 +78,7 @@ extension NSTableCellContentConfiguration {
                 }
             }
              */
-            
-            secondaryTextField.isHidden = (configuration.hasSecondaryText == false)
-            secondaryTextField.maximumNumberOfLines = configuration.secondaryTextProperties.numberOfLines ?? 0
-            secondaryTextField.alignment = configuration.secondaryTextProperties.alignment
-            secondaryTextField.font = configuration.secondaryTextProperties.font
-            secondaryTextField.textColor = configuration.secondaryTextProperties.resolvedTextColor()
-            secondaryTextField.lineBreakMode = configuration.secondaryTextProperties.lineBreakMode
-            secondaryTextField.isSelectable = configuration.secondaryTextProperties.isSelectable
-            secondaryTextField.isEditable = configuration.secondaryTextProperties.isEditable
-            secondaryTextField.backgroundColor = configuration.secondaryTextProperties.resolvedBackgroundColor()
-            secondaryTextField.drawsBackground = (secondaryTextField.backgroundColor != nil)
-            secondaryTextField.bezelStyle = configuration.secondaryTextProperties.bezelStyle ?? .roundedBezel
-            secondaryTextField.isBezeled = (configuration.secondaryTextProperties.bezelStyle != nil)
-
-            if let secondaryattributedText = configuration.secondaryattributedText {
-                secondaryTextField.attributedStringValue = NSAttributedString(secondaryattributedText)
-            } else {
-                secondaryTextField.stringValue = configuration.secondaryText?.transform(using: configuration.secondaryTextProperties.textTransform) ?? ""
-            }
-              
+                          
             imageView.isHidden = (configuration.hasImage == false)
             if let image = configuration.image {
                 imageView.images = [image]
@@ -189,19 +172,21 @@ extension NSTableCellContentConfiguration {
         
         internal var appliedConfiguration: NSTableCellContentConfiguration {
             didSet {
-                self.updateConfiguration(with: self.appliedConfiguration)
+                if oldValue != self.appliedConfiguration {
+                    self.updateConfiguration(with: self.appliedConfiguration)
+                }
             }
         }
         
         func supports(_ configuration: NSContentConfiguration) -> Bool {
-            return (configuration as? NSTableCellContentConfiguration) != nil
+            return configuration is NSTableCellContentConfiguration
         }
         
         init(configuration: NSTableCellContentConfiguration) {
             self.appliedConfiguration = configuration
             super.init(frame: .zero)
             self.addSubview(withConstraint: contentView)
-            _constraints = contentView.addSubview(withConstraint: stackView)
+            self._constraints = contentView.addSubview(withConstraint: stackView)
             self.updateConfiguration(with: configuration)
         }
         
@@ -212,12 +197,43 @@ extension NSTableCellContentConfiguration {
     }
 }
 
-extension NSTableCellContentConfiguration {
-    internal class AccessoryView: NSView {
-        var properties: NSTableCellContentConfiguration.AccessoryProperties
-        init(properties: NSTableCellContentConfiguration.AccessoryProperties) {
+internal extension NSTableCellContentConfiguration.ContentView {
+    class TableCellTextField: NSTextField {
+        var properties: NSTableCellContentConfiguration.TextProperties {
+            didSet {
+                if oldValue != self.properties {
+                self.update() }
+            }
+        }
+        
+        internal func update() {
+            self.maximumNumberOfLines = properties.numberOfLines ?? 0
+            self.alignment = properties.alignment
+            self.font = properties.font
+            self.textColor = properties.resolvedTextColor()
+            self.lineBreakMode = properties.lineBreakMode
+            self.isSelectable = properties.isSelectable
+            self.isEditable = properties.isEditable
+            self.actionBlock = { [weak self] textField in
+                guard let self = self else { return }
+                properties.onEditEnd?(self.stringValue)
+            }
+            self.drawsBackground = (self.backgroundColor != nil)
+         //   textField.bezelStyle = configuration.textProperties.bezelStyle ?? .roundedBezel
+        //    textField.isBezeled = (configuration.textProperties.bezelStyle != nil)
+            self.isBezeled = false
+        }
+        
+        init(properties: NSTableCellContentConfiguration.TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
+            self.lineBreakMode = .byWordWrapping
+            self.usesSingleLineMode = false
+            self.cell?.wraps = true
+            self.truncatesLastVisibleLine = true
+            self.cell?.isScrollable = false
+            self.setContentCompressionResistancePriority( .fittingSizeCompression , for: .horizontal)
+            self.update()
         }
         
         required init?(coder: NSCoder) {
