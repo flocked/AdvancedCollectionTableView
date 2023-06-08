@@ -151,7 +151,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         case bottom
     }
 
-    init(text: String? = nil,
+    public init(text: String? = nil,
          attributedText: AttributedString? = nil,
          secondaryText: String? = nil,
          secondaryAttributedText: AttributedString? = nil,
