@@ -149,7 +149,7 @@ internal extension NSTableCellContentConfiguration.AccessoryConfiguration {
                 }
            //     .backgroundOptional(configuration.contentProperties.backgroundColor?.swiftUI)
              //   .clipShape(configuration.contentProperties.shape.swiftui)
-                .frame(maxWidth: configuration.contentProperties.maxSize?.width, maxHeight:  configuration.contentProperties.maxSize?.height)
+              //  .frame(maxWidth: configuration.contentProperties.maxSize?.width, maxHeight:  configuration.contentProperties.maxSize?.height)
                 .clipShape(configuration.contentProperties.shape.swiftui)
                 .shadow(color: configuration.contentProperties.shadowProperties.color?.swiftUI, radius: configuration.contentProperties.shadowProperties.radius, offset: configuration.contentProperties.shadowProperties.offset)
             

@@ -35,6 +35,7 @@ extension NSTableRowContentConfiguration {
             contentView.roundedCorners = configuration.roundedCorners
             contentView.cornerRadius = configuration.cornerRadius
             contentView.backgroundColor = configuration.resolvedBackgroundColor()
+            
          //   contentView.layer?.contents = configuration.backgroundImage
         //    contentView.layer?.contentsGravity = configuration.imageProperties.scaling
             

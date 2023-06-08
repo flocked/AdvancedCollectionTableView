@@ -13,12 +13,11 @@ extension NSTableCellContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         lazy var textField: TableCellTextField = TableCellTextField(properties: appliedConfiguration.textProperties)
         lazy var secondaryTextField: TableCellTextField = TableCellTextField(properties: appliedConfiguration.secondaryTextProperties)
-
-        let imageView: ImageView = ImageView()
         
-        let contentView: NSView = NSView(frame: .zero)
+        let containerView: NSView = NSView(frame: .zero)
+        lazy var contentView = TableCellContentView(properties: self.appliedConfiguration.contentProperties)
         var _constraints: [NSLayoutConstraint] = []
-        var imageViewConstraints: [NSLayoutConstraint] = []
+        var contentViewConstraints: [NSLayoutConstraint] = []
         var accessoryViews: [NSView] = []
         
         lazy var textStackView: NSStackView = {
@@ -28,22 +27,22 @@ extension NSTableCellContentConfiguration {
         }()
         
         lazy var stackView: NSStackView = {
-            let stackView = NSStackView(views: [imageView, textStackView])
+            let stackView = NSStackView(views: [contentView, textStackView])
             stackView.orientation = .horizontal
             stackView.alignment = .firstBaseline
             return stackView
         }()
-                
+        
         internal func updateConfiguration(with configuration: NSTableCellContentConfiguration) {
-            if configuration.imageProperties.position == .leading {
+            if configuration.contentPosition == .leading {
                 if (stackView.arrangedSubviews.last != self.textStackView) {
                     stackView.removeArrangedSubview(textStackView)
                     stackView.addArrangedSubview(textStackView)
                 }
             } else {
-                if (stackView.arrangedSubviews.last != self.imageView) {
-                    stackView.removeArrangedSubview(imageView)
-                    stackView.addArrangedSubview(imageView)
+                if (stackView.arrangedSubviews.last != self.contentView) {
+                    stackView.removeArrangedSubview(contentView)
+                    stackView.addArrangedSubview(contentView)
                 }
             }
             
@@ -79,80 +78,100 @@ extension NSTableCellContentConfiguration {
             }
              */
                           
-            imageView.isHidden = (configuration.hasImage == false)
-            if let image = configuration.image {
-                imageView.images = [image]
-            }
-            imageView.layer?.shadowColor = configuration.imageProperties.shadowProperties.resolvedColor()?.cgColor
-            imageView.layer?.shadowOffset = CGSize(width:  configuration.imageProperties.shadowProperties.offset.x, height: configuration.imageProperties.shadowProperties.offset.y)
-            imageView.layer?.shadowRadius = configuration.imageProperties.shadowProperties.radius
-            imageView.layer?.shadowOpacity = Float( configuration.imageProperties.shadowProperties.opacity)
-            
-            imageView.cornerRadius = configuration.imageProperties.cornerRadius
-            imageView.backgroundColor = configuration.imageProperties.resolvedBackgroundColor()
-            imageView.contentTintColor = configuration.imageProperties.resolvedTintColor()
-            imageView.imageScaling = .center
-        //    imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration.nsImageSymbolConfiguration
-            
+            contentView.isHidden = configuration.contentIsHidden
+            contentView.properties = configuration.contentProperties
+            contentView.view = configuration.view
+            contentView.image = configuration.image
+
             stackView.spacing = configuration.imageToTextPadding
             textStackView.spacing = configuration.textToSecondaryTextPadding
             textStackView.alignment = .leading
             
-            _constraints[0].constant = -configuration.padding.bottom
-            _constraints[1].constant = configuration.padding.top
-            _constraints[2].constant = configuration.padding.leading
-            _constraints[3].constant = configuration.padding.trailing
+            self.updateConstraints()
+        }
+                
+        override func updateConstraints() {
+            super.updateConstraints()
+            _constraints[0].constant = -appliedConfiguration.padding.bottom
+            _constraints[1].constant = appliedConfiguration.padding.top
+            _constraints[2].constant = appliedConfiguration.padding.leading
+            _constraints[3].constant = appliedConfiguration.padding.trailing
             
-            NSLayoutConstraint.deactivate(imageViewConstraints)
-            switch configuration.imageProperties.size {
-            case .cellHeight:
-                imageViewConstraints = [
-                    imageView.topAnchor.constraint(equalTo: textStackView.topAnchor, constant: 0.0),
-                    imageView.centerYAnchor.constraint(equalTo: textStackView.centerYAnchor, constant: 0.0),
-                    imageView.bottomAnchor.constraint(equalTo: textStackView.bottomAnchor, constant: 0.0),
-                    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, constant: 0.0),
-                ]
-            case .textHeight:
-                imageViewConstraints = [
-                    imageView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0.0),
-                    //     _imageView.centerYAnchor.constraint(equalTo: textTextField.centerYAnchor, constant: 0.0),
-                    imageView.bottomAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0.0),
-                    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, constant: 0.0),
-                ]
-            case .secondaryTextHeight:
-                imageViewConstraints = [
-                    imageView.topAnchor.constraint(equalTo: secondaryTextField.topAnchor, constant: 0.0),
-                    imageView.centerYAnchor.constraint(equalTo: secondaryTextField.centerYAnchor, constant: 0.0),
-                    imageView.bottomAnchor.constraint(equalTo: secondaryTextField.bottomAnchor, constant: 0.0),
-                    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, constant: 0.0),
-                ]
-            case .size(let size):
-                imageViewConstraints = [
-                    imageView.heightAnchor.constraint(equalToConstant: size.height),
-                    imageView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
-                    imageView.widthAnchor.constraint(equalToConstant: size.width),]
-            case .maxSize(let size):
-                if let image = configuration.image {
-                    if (image.size.width > size.width || image.size.height > size.height) {
-                        imageViewConstraints = [
-                            imageView.heightAnchor.constraint(equalToConstant:  size.height),
-                            imageView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
-                            imageView.widthAnchor.constraint(equalToConstant: size.width),]
-                    } else {
-                        imageViewConstraints = [
-                            imageView.heightAnchor.constraint(equalToConstant:  image.size.height),
-                            imageView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
-                            imageView.widthAnchor.constraint(equalToConstant: size.width),]
+            NSLayoutConstraint.deactivate(contentViewConstraints)
+            if appliedConfiguration.contentIsHidden == false {
+                switch appliedConfiguration.contentProperties.size {
+                case .textAndSecondaryTextHeight:
+                    switch (appliedConfiguration.hasText, appliedConfiguration.hasSecondaryText) {
+                    case (true, false):
+                        self.applyContentConstraint(.textHeight)
+                    case (false, true):
+                        self.applyContentConstraint(.secondaryTextHeight)
+                    case (true, true):
+                        self.applyContentConstraint(.textAndSecondaryTextHeight)
+                    case (false, false):
+                        break
                     }
-                } else {
-                    imageViewConstraints = [
-                        imageView.heightAnchor.constraint(equalToConstant:  size.height),
-                        imageView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
-                        imageView.widthAnchor.constraint(equalToConstant: size.width),]
+                default:
+                    self.applyContentConstraint(self.appliedConfiguration.contentProperties.size)
                 }
             }
-            NSLayoutConstraint.activate(imageViewConstraints)
-            
+        }
+        
+        internal func applyContentConstraint(_ contentSize: NSTableCellContentConfiguration.ContentProperties.ContentSize) {
+            switch contentSize {
+            case .textHeight:
+                contentViewConstraints = [
+                    contentView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0.0),
+                    contentView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
+                    contentView.bottomAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0.0),
+                    contentView.widthAnchor.constraint(equalTo: contentView.heightAnchor, constant: 0.0),
+                ]
+            case .secondaryTextHeight:
+                contentViewConstraints = [
+                    contentView.topAnchor.constraint(equalTo: secondaryTextField.topAnchor, constant: 0.0),
+                    contentView.centerYAnchor.constraint(equalTo: secondaryTextField.centerYAnchor, constant: 0.0),
+                    contentView.bottomAnchor.constraint(equalTo: secondaryTextField.bottomAnchor, constant: 0.0),
+                    contentView.widthAnchor.constraint(equalTo: contentView.heightAnchor, constant: 0.0),
+                ]
+            case .size(let size):
+                contentViewConstraints = [
+                    contentView.heightAnchor.constraint(equalToConstant: size.height),
+                    contentView.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0.0),
+                    contentView.widthAnchor.constraint(equalToConstant: size.width),]
+            case .contentHeight(let maxSize):
+                Swift.print("Missing", maxSize ?? "")
+                var size: CGSize? = nil
+                if let imageSize = contentView.image?.size, imageSize != .zero {
+                    size = imageSize
+                }
+                
+                if let viewSize = contentView.view?.intrinsicContentSize, viewSize != .zero {
+                    if let _size = size {
+                        size = CGSize(max(_size.width, viewSize.width), max(_size.height, viewSize.height))
+                    } else {
+                        size = viewSize
+                    }
+                }
+                
+                if let maxSize = maxSize, let _size = size {
+                    size = CGSize(max(_size.width, maxSize.width), max(_size.height, maxSize.height))
+                }
+                
+                if let size = size {
+                    contentViewConstraints = [
+                        contentView.heightAnchor.constraint(equalToConstant:  size.height),
+                        contentView.widthAnchor.constraint(equalToConstant: size.width),
+                        contentView.centerYAnchor.constraint(equalTo: textStackView.centerYAnchor, constant: 0.0),
+                    ]
+                }
+            case .textAndSecondaryTextHeight:
+                contentViewConstraints = [
+                    contentView.topAnchor.constraint(equalTo: textField.topAnchor, constant: 0.0),
+                    contentView.bottomAnchor.constraint(equalTo: secondaryTextField.bottomAnchor, constant: 0.0),
+                    contentView.widthAnchor.constraint(equalTo: contentView.heightAnchor, constant: 0.0),
+                ]
+            }
+            NSLayoutConstraint.activate(contentViewConstraints)
         }
         
         
@@ -185,8 +204,8 @@ extension NSTableCellContentConfiguration {
         init(configuration: NSTableCellContentConfiguration) {
             self.appliedConfiguration = configuration
             super.init(frame: .zero)
-            self.addSubview(withConstraint: contentView)
-            self._constraints = contentView.addSubview(withConstraint: stackView)
+            self.addSubview(withConstraint: containerView)
+            self._constraints = containerView.addSubview(withConstraint: stackView)
             self.updateConfiguration(with: configuration)
         }
         
@@ -198,6 +217,79 @@ extension NSTableCellContentConfiguration {
 }
 
 internal extension NSTableCellContentConfiguration.ContentView {
+    class TableCellContentView: NSView {
+        var imageView: NSImageView?
+        
+        var view: NSView? {
+            didSet {
+                if oldValue != self.view {
+                    oldValue?.removeFromSuperview()
+                    if let newView = self.view {
+                        self.addSubview(withConstraint: newView)
+                    }
+                }
+                
+            }
+        }
+        var image: NSImage? {
+            didSet {
+                if let image = self.image {
+                    if self.imageView == nil {
+                        self.imageView = NSImageView(image: image)
+                        self.update()
+                    }
+                } else {
+                    self.imageView?.image = nil
+                }
+            }
+        }
+        
+        var properties: NSTableCellContentConfiguration.ContentProperties {
+            didSet {
+                if oldValue != self.properties {
+                self.update() }
+            }
+        }
+        
+        override func layout() {
+            super.layout()
+            self.updateShape()
+        }
+        
+        internal func updateShape() {
+            switch properties.shape {
+            case .circle:
+                self.cornerRadius = self.frame.size.height/2.0
+            case .roundedRectangular(let cornerRadius):
+                self.cornerRadius = cornerRadius
+            case .rectangular:
+                self.cornerRadius = 0.0
+            }
+        }
+        
+        internal func update() {
+            self.backgroundColor = properties.resolvedBackgroundColor()
+            self.updateShape()
+            self.borderColor = properties.resolvedBorderColor()
+            self.borderWidth = properties.borderWidth
+            self.imageView?.imageScaling = properties.imageScaling.nsImageScaling
+            self.imageView?.contentTintColor = properties.resolvedImageTintColor()
+            self.layer?.shadowOffset = CGSize(properties.shadowProperties.offset.x, properties.shadowProperties.offset.y)
+            self.layer?.shadowColor = properties.shadowProperties.color?.withAlphaComponent(self.properties.shadowProperties.opacity).cgColor
+            self.layer?.shadowRadius = properties.shadowProperties.radius
+        }
+        
+        init(properties: NSTableCellContentConfiguration.ContentProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.maskToBounds = true
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
     class TableCellTextField: NSTextField {
         var properties: NSTableCellContentConfiguration.TextProperties {
             didSet {

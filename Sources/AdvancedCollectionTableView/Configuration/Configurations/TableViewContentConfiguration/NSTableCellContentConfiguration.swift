@@ -39,6 +39,8 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     public var secondaryAttributedText: AttributedString? = nil
     /// The image to display.
     public var image: NSImage? = nil
+    /// The view to display.
+    public var view: NSView? = nil
     
     /// Array of accessories display at the top of the cell.
     public var topAccessories: [Accessory] = []
@@ -46,8 +48,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     /// Array of accessories display at the bottom of the cell.
     public var bottomAccessories: [Accessory] = []
 
-    /// Properties for configuring the image.
-    public var imageProperties: ImageProperties = ImageProperties()
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .body.weight(.bold)
     /// Properties for configuring the secondary text.
@@ -71,6 +71,9 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
      The margins between the content and the edges of the content view.
      */
     public var padding: NSDirectionalEdgeInsets = .init(4.0)
+    
+    /// The position of the content.
+    public var contentPosition: ContentPosition = .leading
     
     public static func `default`() -> NSTableCellContentConfiguration {
         return NSTableCellContentConfiguration()
@@ -97,8 +100,30 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
         self.secondaryText != nil || self.secondaryAttributedText != nil
     }
     
-    internal var hasImage: Bool {
-        self.image != nil || self.imageProperties.resolvedBackgroundColor() != nil
+    internal var hasContent: Bool {
+        self.image != nil || self.view != nil ||   self.contentProperties.resolvedBackgroundColor() != nil
+    }
+    
+    internal var contentIsHidden: Bool {
+        var contentIsHidden = (self.hasContent == false)
+        if contentIsHidden == false {
+            switch self.contentProperties.size {
+                case .textHeight:
+                contentIsHidden = self.hasText
+            case .secondaryTextHeight:
+                contentIsHidden = self.hasSecondaryText
+            case .textAndSecondaryTextHeight:
+                contentIsHidden = self.hasText || self.hasSecondaryText
+            default:
+                break
+            }
+        }
+        return contentIsHidden
+    }
+    
+    public enum ContentPosition: Hashable {
+        case leading
+        case trailing
     }
     
     /*

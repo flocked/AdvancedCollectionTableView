@@ -21,9 +21,6 @@ public extension NSTableCellContentConfiguration {
         public enum Shape: Hashable {
             /// A circular shape.
             case circle
-            /// A capsular shape.
-            case capsule
-            /// A shape with rounded corners.
             case roundedRectangular(_ cornerRadius: CGFloat)
             /// A rectangular shape.
             case rectangular
@@ -31,11 +28,18 @@ public extension NSTableCellContentConfiguration {
             @ShapeBuilder internal var swiftui: some SwiftUI.Shape {
                 switch self {
                 case .circle: Circle()
-                case .capsule: Capsule()
                 case .roundedRectangular(let cornerRadius): RoundedRectangle(cornerRadius: cornerRadius)
                 case .rectangular: Rectangle()
                 }
             }
+        }
+        
+        public enum ContentSize: Hashable {
+            case contentHeight(max: CGSize? = nil)
+            case textHeight
+            case secondaryTextHeight
+            case textAndSecondaryTextHeight
+            case size(CGSize)
         }
         
         /// The image scaling of an item image.
@@ -44,6 +48,12 @@ public extension NSTableCellContentConfiguration {
             case fit
             /// An option that resizes the image so it occupies all available space, both vertically and horizontally.
             case fill
+            internal var nsImageScaling: NSImageScaling {
+                switch self {
+                case .fit: return .reizeAspect
+                case .fill: return .reizeAspectFill
+                }
+            }
             internal var swiftui: ContentMode {
                 switch self {
                 case .fit: return .fit
@@ -57,8 +67,8 @@ public extension NSTableCellContentConfiguration {
         /// The outer shadow properties.
         public var shadowProperties: ShadowProperties = .black()
         
-        /// The maximum size of the content.
-        public var maxSize: CGSize? = nil
+        /// The  size of the content.
+        public var size: ContentSize = .textAndSecondaryTextHeight
         
         /// The background color.
         public var backgroundColor: NSColor? = .systemGray
@@ -106,12 +116,11 @@ public extension NSTableCellContentConfiguration {
 }
 
 /*
- public enum ImageSize: Hashable {
-     case fullSize
+ public enum ContentSize: Hashable {
+     case contentHeight(max: CGSize? = nil)
      case textHeight
      case secondaryTextHeight
      case textAndSecondaryTextHeight
      case size(CGSize)
-     case maxSize(CGSize)
  }
  */
