@@ -460,11 +460,13 @@ internal class EventHostingView<Content: View>: NSHostingView<Content> {
         }
         
         self.nextResponder?.mouseDown(with: event)
+        /*
         self.parentViewController?.mouseDown(with: event)
         self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
         self.superview?.mouseDown(with: event)
 
         super.mouseDown(with: event)
+         */
     }
     
     override func mouseDragged(with event: NSEvent) {
