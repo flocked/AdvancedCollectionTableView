@@ -68,13 +68,7 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     internal func updateConfiguration() {
-        hostingView.rootView =  ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
-            guard let self = self else { return }
-            if let event = NSEvent.current, event.type == .leftMouseDown {
-                forwardMouseDown = true
-                self.mouseDown(with: event)
-            }
-        })
+        hostingView.rootView =  ContentView(configuration: self._configuration)
         /*
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
@@ -86,15 +80,9 @@ internal class NSItemContentView: NSView, NSContentView {
          */
     }
     
-    internal lazy var hostingView: EventHostingView<ContentView> = {
-        let contentView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
-            guard let self = self else { return }
-            if let event = NSEvent.current, event.type == .leftMouseDown {
-                forwardMouseDown = true
-                self.mouseDown(with: event)
-            }
-        })
-        let hostingView = EventHostingView(rootView: contentView)
+    internal lazy var hostingView: CollectionItemHostingView<ContentView> = {
+        let contentView = ContentView(configuration: self._configuration)
+        let hostingView = CollectionItemHostingView(rootView: contentView)
         hostingView.backgroundColor = .clear
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         hostingView.maskToBounds = false
@@ -102,13 +90,7 @@ internal class NSItemContentView: NSView, NSContentView {
     }()
     
     internal lazy var hostingController: NSHostingController<ContentView> = {
-        let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
-            guard let self = self else { return }
-            if let event = NSEvent.current, event.type == .leftMouseDown {
-                forwardMouseDown = true
-                self.mouseDown(with: event)
-            }
-        })
+        let hostingView = ContentView(configuration: self._configuration)
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -150,7 +132,6 @@ internal extension NSItemContentView {
         let image: NSImage?
         let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
-        let mouseHandler: (()->())?
                 
         @ViewBuilder
         var contentStack: some View {
@@ -235,7 +216,7 @@ internal extension NSItemContentView {
     
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
-        let mouseHandler: (()->())?
+
         @ViewBuilder
         var textItems: some View {
             VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
@@ -248,7 +229,7 @@ internal extension NSItemContentView {
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties, mouseHandler: mouseHandler)
+            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder
@@ -377,19 +358,19 @@ struct CollectionItemView_Previews: PreviewProvider {
     
     static var previews: some View {
         VStack(spacing: 10.0) {
-            NSItemContentView.ContentView(configuration: configuration, mouseHandler: nil)
+            NSItemContentView.ContentView(configuration: configuration)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationVertical, mouseHandler: nil)
+            NSItemContentView.ContentView(configuration: configurationVertical)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationView, mouseHandler: nil)
+            NSItemContentView.ContentView(configuration: configurationView)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationFill, mouseHandler: nil)
+            NSItemContentView.ContentView(configuration: configurationFill)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationText, mouseHandler: nil)
+            NSItemContentView.ContentView(configuration: configurationText)
                 .frame(width: 200, height: 120)
                 .padding()
         }
@@ -428,41 +409,10 @@ struct ShapedImage: View {
     }
 }
 
-internal struct PressActions: ViewModifier {
-    var onPress: () -> Void
-    var onRelease: () -> Void
-    func body(content: Content) -> some View {
-        content
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onPress()
-                    })
-                    .onEnded({ _ in
-                        onRelease()
-                    })
-            )
-    }
-}
-
-internal class EventHostingView<Content: View>: NSHostingView<Content> {
-    override func mouseDown(with event: NSEvent) {
-        self.parentViewController?.mouseDown(with: event)
-    }
-    
-    override func mouseUp(with event: NSEvent) {
-        self.parentViewController?.mouseUp(with: event)
-    }
-    
-    override func rightMouseDown(with event: NSEvent) {
-        self.parentViewController?.rightMouseDown(with: event)
-    }
-    
-    override func rightMouseUp(with event: NSEvent) {
-        self.parentViewController?.rightMouseUp(with: event)
-    }
-        
-    override func mouseDragged(with event: NSEvent) {
-        self.parentViewController?.mouseDragged(with: event)
+internal class CollectionItemHostingView<Content: View>: NSHostingView<Content> {
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        Swift.print("hitTest")
+        guard let hitTest = super.hitTest(point) else { return self.firstSuperview(for: NSCollectionView.self) }
+        return hitTest
     }
 }
