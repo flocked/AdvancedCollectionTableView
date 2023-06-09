@@ -68,7 +68,7 @@ public extension NSItemContentConfiguration {
         }
                 
         /// The shape of the content.
-        public var shape: Shape = .roundedRect(6.0)
+        public var shape: Shape = .roundedRect(10.0)
         
         /// The maximum width of the content.
         public var maxWidth: CGFloat? = nil
@@ -146,7 +146,7 @@ public extension NSItemContentConfiguration {
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        public init(shape: Shape = .roundedRect(6.0), shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = .lightGray, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
+        public init(shape: Shape = .roundedRect(10.0), shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = .lightGray, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
             self.shape = shape
             self.shadowProperties = shadowProperties
             self.maxWidth = maxWidth
