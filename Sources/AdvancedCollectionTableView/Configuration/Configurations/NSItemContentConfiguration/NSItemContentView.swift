@@ -411,7 +411,10 @@ struct ShapedImage: View {
 
 internal class CollectionItemHostingView<Content: View>: NSHostingView<Content> {
     override func hitTest(_ point: NSPoint) -> NSView? {
-        guard let hitTest = super.hitTest(point) else { return self.firstSuperview(for: NSCollectionView.self) }
+        guard let hitTest = super.hitTest(point) else {
+            Swift.print("hitTest nil")
+            return self.firstSuperview(for: NSCollectionView.self) }
+        Swift.print("hitTest")
         return hitTest
     }
 }
