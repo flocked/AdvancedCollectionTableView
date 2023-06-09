@@ -318,13 +318,13 @@ struct CollectionItemView_Previews: PreviewProvider {
     static var configuration: NSItemContentConfiguration {
         let contentProperties = self.contentProperties(isSelected: true)
         let textProperties: NSItemContentConfiguration.TextProperties = .body
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
     }
     
     static var configurationFill: NSItemContentConfiguration {
         var contentProperties = self.contentProperties(isSelected: true)
         contentProperties.imageScaling = .fill
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/Images/Likes/Likes 06.2020-04.2021/tumblr_bobbycamp_628203143674691584_01.jpg")), view: nil, contentProperties: contentProperties)
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, contentProperties: contentProperties)
     }
     
     
@@ -353,7 +353,7 @@ struct CollectionItemView_Previews: PreviewProvider {
         var secondaryTextProperties: NSItemContentConfiguration.TextProperties = .caption1
         secondaryTextProperties.alignment = .leading
         textProperties.alignment = .leading
-        return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1492943419580239874_1.jpg")), view: nil, textProperties: textProperties, secondaryTextProperties: secondaryTextProperties, contentProperties: contentProperties, contentPosition: .leading)
+        return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, secondaryTextProperties: secondaryTextProperties, contentProperties: contentProperties, contentPosition: .leading)
     }
     
     static var previews: some View {
