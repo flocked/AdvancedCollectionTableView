@@ -447,33 +447,22 @@ internal struct PressActions: ViewModifier {
 
 internal class EventHostingView<Content: View>: NSHostingView<Content> {
     override func mouseDown(with event: NSEvent) {
-        Swift.print("EventHostingView mouseDown", self.subviews)
-        Swift.print("AA",   self.hitTest(event.location(in: self)))
-        
-        Swift.print(self.nextResponder)
-        Swift.print(self.parentViewController)
-        Swift.print(self.firstSuperview(for: NSCollectionView.self))
-        
-        for subview in self.subviews {
-            Swift.print( subview.subviews)
-            Swift.print("----")
-        }
-        
         self.parentViewController?.mouseDown(with: event)
-
-        
-    //    self.nextResponder?.mouseDown(with: event)
-        /*
-        self.parentViewController?.mouseDown(with: event)
-        self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
-        self.superview?.mouseDown(with: event)
-
-        super.mouseDown(with: event)
-         */
     }
     
+    override func mouseUp(with event: NSEvent) {
+        self.parentViewController?.mouseUp(with: event)
+    }
+    
+    override func rightMouseDown(with event: NSEvent) {
+        self.parentViewController?.rightMouseDown(with: event)
+    }
+    
+    override func rightMouseUp(with event: NSEvent) {
+        self.parentViewController?.rightMouseUp(with: event)
+    }
+        
     override func mouseDragged(with event: NSEvent) {
-        Swift.print("EventHostingView mouseDragged")
-        super.mouseDragged(with: event)
+        self.parentViewController?.mouseDragged(with: event)
     }
 }
