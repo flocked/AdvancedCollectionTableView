@@ -164,7 +164,7 @@ internal extension NSItemContentView {
                 .font(properties.swiftuiFont ?? properties.font.swiftUI)
                 .lineLimit(properties.numberOfLines)
                 .foregroundColor(properties._resolvedTextColor.swiftUI)
-                .textSelection((properties.isSelectable == true) ? .enabled : .enabled)
+                .textSelection(properties.isSelectable)
         }
     }
     
