@@ -97,11 +97,11 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
                     configuration.contentProperties.borderWidth = 2.0
                     configuration.contentProperties.needsBorderWidthReset = true
                 }
+                if configuration.contentProperties.borderColor == nil {
+                    configuration.contentProperties.borderColor = .controlAccentColor
+                    configuration.contentProperties.needsBorderColorReset = true
+                }
                 configuration.contentProperties.shadowProperties.colorTransform = .color(.controlAccentColor)
-                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
-                Swift.print("_resolvedBorderColor", configuration.contentProperties._resolvedBorderColor)
-                Swift.print("_resolvedShadowColor", configuration.contentProperties.shadowProperties._resolvedColor)
-
                 if configuration.hasContent == false {
                     configuration.textProperties.textColorTansform = .color(.controlAccentColor)
                     configuration.secondaryTextProperties.textColorTansform = .color(.controlAccentColor)
@@ -116,6 +116,10 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
                 configuration.secondaryTextProperties.textColorTansform = nil
                 if configuration.contentProperties.needsBorderWidthReset == true {
                     configuration.contentProperties.borderWidth = 0.0
+                }
+                
+                if configuration.contentProperties.needsBorderColorReset == true {
+                    configuration.contentProperties.borderColor = nil
                 }
             }
         }

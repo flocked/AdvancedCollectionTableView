@@ -134,7 +134,9 @@ public extension NSItemContentConfiguration {
         public var shadowProperties: ShadowProperties = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
-        internal var needsBorderWidthReset: Bool = true
+        internal var needsBorderWidthReset: Bool = false
+        /// Resets the  border width to 0 when the item state isSelected is false.
+        internal var needsBorderColorReset: Bool = false
         
         internal var _resolvedImageTintColor: NSColor? = nil
         internal var _resolvedBorderColor: NSColor? = nil
@@ -143,6 +145,7 @@ public extension NSItemContentConfiguration {
             imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
             _resolvedBorderColor = resolvedBorderColor()
+            
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
@@ -161,6 +164,7 @@ public extension NSItemContentConfiguration {
             self.imageSymbolConfiguration = imageSymbolConfiguration
             self.imageScaling = imageScaling
             self.needsBorderWidthReset = (borderWidth != 0.0)
+            self.needsBorderColorReset = (borderColor != nil)
             self.scaleTransform = scaleTransform
             self.updateResolvedColors()
         }
