@@ -27,7 +27,12 @@ internal class NSItemContentView: NSView, NSContentView {
             Swift.print("nextResponder", nextResponder)
             Swift.print("parentViewController", parentViewController)
             Swift.print("collectionView", self.firstSuperview(for: NSCollectionView.self))
+            
+            if let item = (self.nextResponder as? NSCollectionViewItem) {
+                item.isSelected = !item.isSelected
+            }
 
+            
             self.nextResponder?.mouseDown(with: event)
             self.parentViewController?.mouseDown(with: event)
             self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
