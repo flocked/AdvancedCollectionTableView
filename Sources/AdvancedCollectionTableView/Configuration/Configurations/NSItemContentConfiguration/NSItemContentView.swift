@@ -24,9 +24,11 @@ internal class NSItemContentView: NSView, NSContentView {
     override func mouseDown(with event: NSEvent) {
         Swift.print("mouseDown", event.location(in: self.hostingController.view), forwardMouseDown)
         if  forwardMouseDown {
-            super.mouseDown(with: event)
             self.nextResponder?.mouseDown(with: event)
+            self.parentViewController?.mouseDown(with: event)
             forwardMouseDown = false
+            super.mouseDown(with: event)
+
         }
         /*
        let location = event.location(in: self.hostingController.view)
