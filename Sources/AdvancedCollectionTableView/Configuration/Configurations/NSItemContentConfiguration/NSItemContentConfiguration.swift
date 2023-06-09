@@ -93,13 +93,15 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         var configuration = self
         if let state = state as? NSItemConfigurationState {
             if state.isSelected {
-                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
                 if configuration.contentProperties.borderWidth == 0.0 {
                     configuration.contentProperties.borderWidth = 2.0
                     configuration.contentProperties.needsBorderWidthReset = true
                 }
                 configuration.contentProperties.shadowProperties.colorTransform = .color(.controlAccentColor)
+                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
                 Swift.print("_resolvedBorderColor", configuration.contentProperties._resolvedBorderColor)
+                Swift.print("_resolvedShadowColor", configuration.contentProperties.shadowProperties._resolvedColor)
+
                 if configuration.hasContent == false {
                     configuration.textProperties.textColorTansform = .color(.controlAccentColor)
                     configuration.secondaryTextProperties.textColorTansform = .color(.controlAccentColor)
