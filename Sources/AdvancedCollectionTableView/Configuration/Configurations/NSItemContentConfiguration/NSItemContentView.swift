@@ -452,10 +452,11 @@ internal class EventHostingView<Content: View>: NSHostingView<Content> {
             Swift.print( subview.subviews)
             Swift.print("----")
         }
+        super.mouseDown(with: event)
     }
     
     override func mouseDragged(with event: NSEvent) {
         Swift.print("EventHostingView mouseDragged")
-
+        super.mouseDragged(with: event)
     }
 }
