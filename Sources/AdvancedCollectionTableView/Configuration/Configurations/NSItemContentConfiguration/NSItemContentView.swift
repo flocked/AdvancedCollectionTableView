@@ -21,6 +21,11 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     override func mouseDown(with event: NSEvent) {
+       let location = event.location(in: self.hostingController.view)
+        
+       let views = self.hostingController.view.subviews(where: {$0.frame.contains(location)}, depth: 10000)
+        
+        Swift.print(views)
         
     }
     
