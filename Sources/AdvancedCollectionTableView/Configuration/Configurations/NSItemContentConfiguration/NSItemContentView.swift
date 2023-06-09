@@ -33,6 +33,12 @@ internal class NSItemContentView: NSView, NSContentView {
             Swift.print("parentViewController", parentViewController)
             Swift.print("collectionView", self.firstSuperview(for: NSCollectionView.self))
 
+            var _item = (self.nextResponder as? NSCollectionViewItem)
+            Swift.print("item", _item)
+            Swift.print("item collectionview", _item?.collectionView)
+            Swift.print("item indexpath", _item?.indexPath)
+
+            
             if let item = (self.nextResponder as? NSCollectionViewItem), let indexPath = item.indexPath, let collectionView = item.collectionView {
                 if item.isSelected {
                     collectionView.deselectItems(at: Set([indexPath]))
