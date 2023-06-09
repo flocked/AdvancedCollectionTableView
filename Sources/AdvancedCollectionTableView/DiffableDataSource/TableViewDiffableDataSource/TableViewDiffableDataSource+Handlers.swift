@@ -6,7 +6,7 @@
 //
 
 import AppKit
-
+import FZUIKit
 
 
 extension TableViewDiffableDataSource {
@@ -18,11 +18,17 @@ extension TableViewDiffableDataSource {
     }
     
     public struct DragdropHandlers<E> {
-        var canDropOutside: (([E]) -> [E])? = nil
-        var dropOutside: (([E]) -> [AnyObject])? = nil
-        var canDrag: (([AnyObject]) -> Bool)? = nil
-        var dragOutside: (([E]) -> [AnyObject])? = nil
-        var draggingImage: (([E], NSEvent, NSPointPointer) -> NSImage?)? = nil
+        var canDropOutside: ((E) -> PasteboardWriting)? = nil
+        var didDropOutside: ((E) -> ())? = nil
+        var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
+        var didDragInside:  (([PasteboardWriting]) -> ())? = nil
+        internal var acceptsDropInside: Bool {
+            self.canDragInside != nil && self.didDragInside != nil
+        }
+        
+        internal var acceptsDragOutside: Bool {
+            self.canDropOutside != nil
+        }
     }
     
     public struct ReorderHandlers<E> {

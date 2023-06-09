@@ -35,7 +35,6 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
-    internal var trackingArea: NSTrackingArea? = nil
     internal var hoverElement: Element? = nil {
         didSet {
             if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
@@ -55,7 +54,8 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingRows() } }
     public var prefetchHandlers = PrefetchHandlers<Element>()
-    public var dragDropHandlers = DragdropHandlers<Element>()
+    public var dragDropHandlers = DragdropHandlers<Element>() {
+        didSet { self.setupDragging() } }
     public var quicklookHandlers = QuicklookHandlers<Element>()
     public var columnHandlers = ColumnHandlers<Element>()
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
@@ -105,12 +105,30 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         get { self.tableView.allowsEmptySelection }
         set { self.tableView.allowsEmptySelection = newValue } }
     
-    internal func isHovering(_ row: NSTableRowView) {
+    internal func setupDragging() {
+        if dragDropHandlers.acceptsDropInside {
+            self.tableView.registerForDraggedTypes([.fileURL, .png, .tiff, .string])
+        } else {
+            self.tableView.unregisterDraggedTypes()
+        }
         
+        if (dragDropHandlers.acceptsDragOutside) {
+            self.tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
+        } else {
+            self.tableView.setDraggingSourceOperationMask([], forLocal: false)
+        }
+    }
+    
+    internal func isHovering(_ row: NSTableRowView) {
+        let rowIndex = self.tableView.row(for: row)
+        guard rowIndex >= 0, let element = self.element(for: rowIndex) else { return }
+        self.hoverHandlers.isHovering?(element)
     }
     
     internal func didEndHovering(_ row: NSTableRowView) {
-        
+        let rowIndex = self.tableView.row(for: row)
+        guard rowIndex >= 0, let element = self.element(for: rowIndex) else { return }
+        self.hoverHandlers.didEndHovering?(element)
     }
     
     internal func setupHoverObserving() {
@@ -128,6 +146,8 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
                 }
                 self.tableView.hoverHandlers = hoverHandlers
             }
+        } else {
+            self.tableView.hoverHandlers = nil
         }
     }
     

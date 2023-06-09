@@ -56,6 +56,15 @@ public extension NSItemContentConfiguration {
             case max(width: CGFloat?, height: CGFloat?)
             case textAndSecondaryTextHeight
             case size(CGSize)
+            case min(width: CGFloat?, height: CGFloat?)
+        }
+        
+        public enum ContentSizing: Hashable {
+            case contentHeight(max: CGSize? = nil)
+            case textHeight
+            case secondaryTextHeight
+            case textAndSecondaryTextHeight
+            case size(CGSize)
         }
                 
         /// The shape of the content.

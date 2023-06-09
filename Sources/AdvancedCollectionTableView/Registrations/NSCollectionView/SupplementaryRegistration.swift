@@ -67,7 +67,6 @@ public extension NSCollectionView {
         internal let nib: NSNib?
         internal let handler: Handler
         public let elementKind: SupplementaryElementKind
-        internal weak var registeredCollectionView: NSCollectionView? = nil
                 
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
@@ -88,10 +87,6 @@ public extension NSCollectionView {
                 self.register(for: collectionView)
             }
             
-            if (registeredCollectionView != collectionView) {
-                self.register(for: collectionView)
-            }
-            
             let view = collectionView.makeSupplementaryView(ofKind: self.elementKind, withIdentifier: self.identifier, for: indexPath) as! SupplementaryView
             self.handler(view, elementKind, indexPath)
             return view
@@ -103,21 +98,13 @@ public extension NSCollectionView {
             } else {
                 collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: self.elementKind, withIdentifier: self.identifier)
             }
-            self.registeredCollectionView = collectionView
             collectionView.registeredSupplementaryRegistrations.append(self.identifier)
         }
         
         internal func unregister(for collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forItemWithIdentifier: self.identifier)
-            self.registeredCollectionView = nil
             collectionView.registeredSupplementaryRegistrations.remove(self.identifier)
-        }
-        
-        deinit {
-            if let registeredCollectionView = registeredCollectionView {
-                self.unregister(for: registeredCollectionView)
-            }
         }
     }
 }

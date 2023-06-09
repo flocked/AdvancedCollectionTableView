@@ -21,7 +21,6 @@ let package = Package(
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "AdvancedCollectionTableViewObjC"]),
-        .target(name: "AdvancedCollectionTableViewObjC", dependencies: [])
+            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook"]),
     ]
 )

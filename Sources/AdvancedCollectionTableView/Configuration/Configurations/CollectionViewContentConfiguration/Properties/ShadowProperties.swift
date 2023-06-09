@@ -11,7 +11,7 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSItemContentConfiguration {
-    /// Properties for configuring the shadow of an item.
+    /// Properties for configuring the shadow of an item content.
     struct ShadowProperties: Hashable {
         /// The blur radius of the shadow.
         public var radius: CGFloat = 0.0

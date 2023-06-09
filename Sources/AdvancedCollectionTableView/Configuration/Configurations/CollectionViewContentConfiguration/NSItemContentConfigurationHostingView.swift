@@ -31,6 +31,19 @@ internal class NSItemContentConfigurationHostingView: NSView, NSContentView {
         self.updateConfiguration()
     }
     
+    internal var hostingViewConstraints: [NSLayoutConstraint] = []
+
+    internal var directionalLayoutMargins: NSDirectionalEdgeInsets {
+        get { return NSDirectionalEdgeInsets(top: -hostingViewConstraints[0].constant, leading: -hostingViewConstraints[1].constant , bottom: hostingViewConstraints[2].constant , trailing: hostingViewConstraints[3].constant)
+        }
+        set {
+            hostingViewConstraints[0].constant = -newValue.bottom
+            hostingViewConstraints[1].constant = newValue.top
+            hostingViewConstraints[2].constant = newValue.leading
+            hostingViewConstraints[3].constant = -newValue.trailing
+        }
+    }
+    
     internal var _configuration: NSItemContentConfiguration {
         didSet {
             if oldValue != _configuration {
@@ -84,6 +97,7 @@ internal extension NSItemContentConfigurationHostingView {
     struct ContentItem: View {
         let view: NSView?
         let image: NSImage?
+        let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
         
         var body: some View {
@@ -106,7 +120,7 @@ internal extension NSItemContentConfigurationHostingView {
                 }
             }
           //  .frame(maxWidth: properties.maxWidth, maxHeight:  properties.maxHeight)
-            .sizing(properties.sizing)
+            .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
             .clipShape(properties.shape.swiftui)
             .background(
                 properties.shape.swiftui
@@ -114,7 +128,7 @@ internal extension NSItemContentConfigurationHostingView {
             )
             .overlay(
                 properties.shape.swiftui
-                    .stroke(properties._resolvedBorderColor?.swiftUI, lineWidth: properties.borderWidth))
+                    .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
         }
     }
@@ -165,17 +179,17 @@ internal extension NSItemContentConfigurationHostingView {
                 NSItemContentConfigurationHostingView.TextItem(text:  configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
                 
                 NSItemContentConfigurationHostingView.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
-            }
+            }         .fixedSize(horizontal: configuration.contentPosition.isVertical ? false : true, vertical: configuration.contentPosition.isVertical ? true : false)
         }
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentConfigurationHostingView.ContentItem(view: configuration.view, image: configuration.image, properties: configuration.contentProperties)
+            NSItemContentConfigurationHostingView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder
         var stackItem: some View {
-            if configuration.contentPosition == .top || configuration.contentPosition == .bottom {
+            if configuration.contentPosition.isVertical {
                 VStack(spacing: configuration.contentToTextPadding) {
                     if configuration.contentPosition == .top {
                         contentItem
@@ -220,7 +234,7 @@ internal struct ContainerView<V: NSView>: NSViewRepresentable {
 
 internal extension View {
     @ViewBuilder
-    func sizing(_ sizing: NSItemContentConfiguration.ContentProperties.SizeOption?) -> some View {
+    func sizing(_ sizing: NSItemContentConfiguration.ContentProperties.SizeOption?, hasImage: Bool, isVertical: Bool) -> some View {
         switch sizing {
         case .size(let size):
             self
@@ -228,35 +242,54 @@ internal extension View {
         case .max(width: let maxWidth, height: let maxHeight):
             self
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight)
+        case .min(width: let minWidth, height: let minHeight):
+            self
+                .frame(minWidth: minWidth, minHeight: minHeight)
         case .textAndSecondaryTextHeight:
             self
              //   .frame(maxWidth: .infinite, maxHeight: .infinite)
         case .none:
-            self
+            if hasImage {
+                self
+                .fixedSize(horizontal: isVertical ? true : false, vertical: isVertical ? false : true)
+            } else {
+                self
+            }
         }
     }
 }
 
 struct CollectionItemView_Previews: PreviewProvider {
-    static var configuration: NSItemContentConfiguration {
-        let view = NSView()
-        view.backgroundColor = .lightGray
-        view.maskToBounds = true
-        let shadowProperties = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: .controlAccentColor)
-        let contentProperties = NSItemContentConfiguration.ContentProperties(shape: .roundedRectangular(10.0), shadowProperties: shadowProperties, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: .controlAccentColor)
-
-       return NSItemContentConfiguration(text: "A fun title", secondaryText: "A fun title that fits", view: nil, contentProperties: contentProperties)
+    static func contentProperties(isSelected: Bool) -> NSItemContentConfiguration.ContentProperties {
+        let shadowProperties = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: isSelected ? .controlAccentColor : nil)
+        return NSItemContentConfiguration.ContentProperties(shape: .roundedRectangular(10.0), shadowProperties: shadowProperties, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil)
     }
     
-    static var configuration1: NSItemContentConfiguration {
+    static var configuration: NSItemContentConfiguration {
+        let contentProperties = self.contentProperties(isSelected: true)
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, contentProperties: contentProperties)
+    }
+    
+    static var configurationFill: NSItemContentConfiguration {
+        var contentProperties = self.contentProperties(isSelected: true)
+        contentProperties.imageScaling = .fill
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, contentProperties: contentProperties)
+    }
+    
+    
+    static var configurationView: NSItemContentConfiguration {
         let view = NSView()
         view.backgroundColor = .lightGray
         view.maskToBounds = true
-        let shadowProperties = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: .controlAccentColor)
-        
-        let contentProperties = NSItemContentConfiguration.ContentProperties(shape: .roundedRectangular(10.0), shadowProperties: shadowProperties, maxWidth: 40, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: .controlAccentColor)
+        let contentProperties = self.contentProperties(isSelected: false)
 
-        return NSItemContentConfiguration(text: "A fun title", secondaryText: "A fun title that fits", view: nil, contentProperties: contentProperties, contentPosition: .leading)
+       return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", view: view, contentProperties: contentProperties)
+    }
+    
+    static var configurationVertical: NSItemContentConfiguration {
+        var contentProperties = self.contentProperties(isSelected: false)
+        contentProperties.sizing = .min(width: 80, height: nil)
+        return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1492943419580239874_1.jpg")), view: nil, contentProperties: contentProperties, contentPosition: .leading)
     }
     
     static var previews: some View {
@@ -264,7 +297,13 @@ struct CollectionItemView_Previews: PreviewProvider {
             NSItemContentConfigurationHostingView.ContentView(configuration: configuration)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentConfigurationHostingView.ContentView(configuration: configuration1)
+            NSItemContentConfigurationHostingView.ContentView(configuration: configurationVertical)
+                .frame(width: 200, height: 140)
+                .padding()
+            NSItemContentConfigurationHostingView.ContentView(configuration: configurationView)
+                .frame(width: 200, height: 140)
+                .padding()
+            NSItemContentConfigurationHostingView.ContentView(configuration: configurationFill)
                 .frame(width: 200, height: 140)
                 .padding()
         }

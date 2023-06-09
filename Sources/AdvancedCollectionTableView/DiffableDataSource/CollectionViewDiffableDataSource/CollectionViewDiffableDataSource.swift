@@ -87,7 +87,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.draggingIndexPaths.compactMap({self.element(for: $0)})
     }
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
-    internal var trackingArea: NSTrackingArea? = nil
     internal var hoverElement: Element? = nil {
         didSet {
             if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
@@ -317,6 +316,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                 }
                 self.collectionView.hoverHandlers = hoverHandlers
             }
+        } else {
+            self.collectionView.hoverHandlers = nil
         }
     }
     

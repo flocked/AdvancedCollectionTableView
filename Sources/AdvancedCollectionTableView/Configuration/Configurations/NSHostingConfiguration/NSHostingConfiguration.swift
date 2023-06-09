@@ -6,7 +6,7 @@ import FZUIKit
 /**
  A content configuration suitable for hosting a hierarchy of SwiftUI views.
 
- Use a value of this type, which conforms to the UIContentConfiguration protocol, with a NSCollectionViewItem or NSTableCellView to host a hierarchy of SwiftUI views in a collection or table view, respectively. For example, the following shows a stack with an image and text inside the cell:
+ Use a value of this type, which conforms to the NSContentConfiguration protocol, with a NSCollectionViewItem or NSTableCellView to host a hierarchy of SwiftUI views in a collection or table view, respectively. For example, the following shows a stack with an image and text inside the cell:
  
  ```
  myItem.contentConfiguration = NSHostingConfiguration {

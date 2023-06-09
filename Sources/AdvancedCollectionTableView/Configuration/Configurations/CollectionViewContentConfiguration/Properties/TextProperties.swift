@@ -71,10 +71,8 @@ public extension NSItemContentConfiguration {
         /**
          The edit handler that gets called when editing of the text ended.
          
-         It only gets called, if ``´isEditable`` and ``´isSelectable`` is true.
+         It only gets called, if ``isEditable`` and ``isSelectable`` is true.
          */
-        
-        /// The edit handler that gets called when editing of the text ended.
         public var onEditEnd: ((String)->())? = nil
         
         /// The color of the text.

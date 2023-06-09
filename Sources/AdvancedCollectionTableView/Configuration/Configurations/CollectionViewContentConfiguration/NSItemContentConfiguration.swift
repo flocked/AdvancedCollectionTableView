@@ -42,6 +42,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var image: NSImage? = nil
     /// The view to display.
     public var view: NSView? = nil
+    /// The view to display.
+    public var nsView: NSView? = nil
     
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .body
@@ -149,6 +151,10 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         case top
         /// The content is displayed bellow the text.
         case bottom
+        
+        internal var isVertical: Bool {
+            self == .top || self == .bottom
+        }
     }
 
     public init(text: String? = nil,
@@ -163,7 +169,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          contentPosition: ContentPosition = .top,
          contentToTextPadding: CGFloat = 6.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
-         padding: NSDirectionalEdgeInsets = .zero, scaleTransform: CGFloat = 1.0) {
+         padding: NSDirectionalEdgeInsets = .init(4.0), scaleTransform: CGFloat = 1.0) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText
@@ -172,7 +178,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.view = view
         self.textProperties = textProperties
         self.secondaryTextProperties = secondaryTextProperties
-        self.contentPosition = .top
+        self.contentPosition = contentPosition
         self.contentProperties = contentProperties
         self.contentToTextPadding = contentToTextPadding
         self.textToSecondaryTextPadding = textToSecondaryTextPadding
@@ -185,11 +191,3 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
 }
 
-/*
-/**
- A Boolean value that determines whether the configuration positions the text and secondary text side by side.
- 
- When this value is true, the configuration positions the text and secondary text side by side if there’s sufficient space. Otherwise, the configuration stacks the text in a vertical layout.
- */
-public var prefersSideBySideTextAndSecondaryText: Bool = false
- */
