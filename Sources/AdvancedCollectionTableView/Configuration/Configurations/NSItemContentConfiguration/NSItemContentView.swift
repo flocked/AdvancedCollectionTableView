@@ -448,10 +448,12 @@ internal struct PressActions: ViewModifier {
 internal class EventHostingView<Content: View>: NSHostingView<Content> {
     override func mouseDown(with event: NSEvent) {
         Swift.print("EventHostingView mouseDown", self.subviews)
+        Swift.print("AA",   self.hitTest(event.location(in: self)))
         for subview in self.subviews {
             Swift.print( subview.subviews)
             Swift.print("----")
         }
+      
         super.mouseDown(with: event)
     }
     
