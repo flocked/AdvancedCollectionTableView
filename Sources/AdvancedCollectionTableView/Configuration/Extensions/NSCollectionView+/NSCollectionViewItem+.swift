@@ -35,7 +35,7 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.swizzleCollectionItemViewIfNeeded()
-                self.swizzleCollectionItemIfNeeded()
+                Self.swizzleCollectionItemIfNeeded()
             }
             self.configurateBackgroundView()
         }
@@ -138,7 +138,7 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleCollectionItemIfNeeded()
+                Self.swizzleCollectionItemIfNeeded()
             }
             self.configurateContentView()
         }
@@ -433,7 +433,7 @@ public extension NSCollectionViewItem {
         }
     }
             
-     internal var didSwizzleCollectionItem: Bool {
+     internal static var didSwizzleCollectionItem: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_didSwizzle", object: self, initialValue: false) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
@@ -462,7 +462,7 @@ public extension NSCollectionViewItem {
 
         
     // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
-    @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
+    @objc internal static func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
             Swift.print("swizzleCollectionItemIfNeeded")
             self.didSwizzleCollectionItem = true
@@ -473,17 +473,11 @@ public extension NSCollectionViewItem {
                     #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
                     #selector(setter: highlightState) <-> #selector(setter: swizzledHighlightState)
+                    #selector(setter: isSelected) <-> #selector(setter: swizzledIsSelected)
+
                 }
             } catch {
                 Swift.print(error)
-            }
-            
-            isSelectedObserver = self.observeChange(\.isSelected) { [weak self] object, old, new in
-                guard let self = self else { return }
-                if new != old {
-                    Swift.print("SelectionCCC ")
-                    self.setNeedsAutomaticUpdateConfiguration()
-                }
             }
         }
     }
@@ -525,7 +519,6 @@ public extension NSCollectionViewItem {
         get { return self.isSelected }
         set {
             Swift.print("swizzledIsSelected")
-
             let oldValue = self.isSelected
             self.swizzledIsSelected = newValue
             if newValue != oldValue {
@@ -574,9 +567,9 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
-     //   Swift.print("swizzled_viewDidLayout")
+        Swift.print("swizzled_viewDidLayout")
 
-    //    swizzled_viewDidLayout()
+        swizzled_viewDidLayout()
         switch collectionView?.selfSizingInvalidation {
         case .enabled:
             if let cachedLayoutAttributes = cachedLayoutAttributes {
