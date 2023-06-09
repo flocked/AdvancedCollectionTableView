@@ -11,30 +11,30 @@ import FZUIKit
 import SwiftUI
 
 public class NSItemContentViewNS: NSView, NSContentView {
-    lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
-    lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
+    public lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
+    public lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
 
-    lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image)
+    public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image)
     
-    var _constraints: [NSLayoutConstraint] = []
-    var imageViewConstraints: [NSLayoutConstraint] = []
+    public var _constraints: [NSLayoutConstraint] = []
+    public  var imageViewConstraints: [NSLayoutConstraint] = []
     
-    lazy var textStackView: NSStackView = {
+    public lazy var textStackView: NSStackView = {
         let textStackView = NSStackView(views: [textField, secondaryTextField])
         textStackView.orientation = .vertical
         return textStackView
     }()
     
-    lazy var stackView: NSStackView = {
+    public lazy var stackView: NSStackView = {
         let stackView = NSStackView(views: [contentView, textStackView])
         stackView.orientation = .vertical
         stackView.alignment = .firstBaseline
         return stackView
     }()
     
-    internal func update() {
+    public func update() {
         textField.properties = _configuration.textProperties
-        textField.isHidden = _configuration.hasText
+        textField.isHidden = _configuration.hasText == false
         if let attributedText = _configuration.attributedText {
             textField.attributedStringValue = NSAttributedString(attributedText)
         } else {
@@ -42,7 +42,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         }
         
         secondaryTextField.properties = _configuration.secondaryTextProperties
-        secondaryTextField.isHidden = _configuration.hasSecondaryText
+        secondaryTextField.isHidden = _configuration.hasSecondaryText == false
         if let attributedText = _configuration.secondaryAttributedText {
             secondaryTextField.attributedStringValue = NSAttributedString(attributedText)
         } else {
@@ -54,6 +54,9 @@ public class NSItemContentViewNS: NSView, NSContentView {
         
         stackView.spacing = _configuration.contentToTextPadding
         textStackView.spacing = _configuration.textToSecondaryTextPadding
+        
+        contentView.isHidden = _configuration.hasContent == false
+        
     }
     
     public var configuration: NSContentConfiguration {
@@ -112,6 +115,7 @@ public extension NSItemContentViewNS {
         
         func update() {
             self.backgroundColor = properties._resolvedBackgroundColor
+            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.imageView.contentTintColor = properties._resolvedImageTintColor
             self.borderWidth = properties.borderWidth
