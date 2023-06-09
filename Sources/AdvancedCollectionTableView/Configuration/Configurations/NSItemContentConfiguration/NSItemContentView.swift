@@ -24,6 +24,8 @@ internal class NSItemContentView: NSView, NSContentView {
     override func mouseDown(with event: NSEvent) {
         Swift.print("mouseDown", event.location(in: self.hostingController.view), forwardMouseDown)
         
+        
+        
         Swift.print("subviews", self.hostingController.view.subviews)
         
         if  forwardMouseDown {
@@ -31,6 +33,13 @@ internal class NSItemContentView: NSView, NSContentView {
             Swift.print("parentViewController", parentViewController)
             Swift.print("collectionView", self.firstSuperview(for: NSCollectionView.self))
 
+            if let item = (self.nextResponder as? NSCollectionViewItem), let indexPath = item.indexPath, let collectionView = item.collectionView {
+                if item.isSelected {
+                    collectionView.deselectItems(at: Set([indexPath]))
+                } else {
+                    collectionView.selectItems(at: Set([indexPath]), scrollPosition: [])
+                }
+            }
             
             self.nextResponder?.mouseDown(with: event)
             self.parentViewController?.mouseDown(with: event)
