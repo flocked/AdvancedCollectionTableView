@@ -73,7 +73,7 @@ internal class NSItemContentView: NSView, NSContentView {
     internal func updateConfiguration() {
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
-            Swift.print("Content Pressed")
+            Swift.print("Content Pressed", NSEvent.current?.type.rawValue)
             if let event = NSEvent.current, event.type == .leftMouseDown {
                 forwardMouseDown = true
                 self.mouseDown(with: event)
@@ -86,7 +86,7 @@ internal class NSItemContentView: NSView, NSContentView {
     internal lazy var hostingController: NSHostingController<ContentView> = {
         let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
             guard let self = self else { return }
-            Swift.print("Content Pressed")
+            Swift.print("Content Pressed", NSEvent.current?.type.rawValue)
             if let event = NSEvent.current, event.type == .leftMouseDown {
                 forwardMouseDown = true
                 self.mouseDown(with: event)
