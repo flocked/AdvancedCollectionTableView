@@ -29,27 +29,8 @@ internal class NSItemContentView: NSView, NSContentView {
         Swift.print("subviews", self.hostingController.view.subviews)
         
         if  forwardMouseDown {
-            Swift.print("nextResponder", nextResponder)
-            Swift.print("parentViewController", parentViewController)
-            Swift.print("collectionView", self.firstSuperview(for: NSCollectionView.self))
-
-            var _item = (self.nextResponder as? NSCollectionViewItem)
-            Swift.print("item", _item)
-            Swift.print("item collectionview", _item?._collectionView)
-            Swift.print("item indexpath", _item?.indexPath)
-
-            if let item = (self.nextResponder as? NSCollectionViewItem), let collectionView =      self.firstSuperview(for: NSCollectionView.self) {
-                Swift.print("found", collectionView.indexPath(for: item))
-                
+            if let item = (self.nextResponder as? NSCollectionViewItem) {
                 item.select()
-            }
-            
-            if let item = (self.nextResponder as? NSCollectionViewItem), let indexPath = item.indexPath, let collectionView = item.collectionView {
-                if item.isSelected {
-                    collectionView.deselectItems(at: Set([indexPath]))
-                } else {
-                    collectionView.selectItems(at: Set([indexPath]), scrollPosition: [])
-                }
             }
             
             self.nextResponder?.mouseDown(with: event)
@@ -93,12 +74,9 @@ internal class NSItemContentView: NSView, NSContentView {
     internal func updateConfiguration() {
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
-            Swift.print("Content Pressed", NSEvent.current?.type.rawValue)
             if let event = NSEvent.current, event.type == .leftMouseDown {
                 forwardMouseDown = true
                 self.mouseDown(with: event)
-                Swift.print(event.type.rawValue)
-                Swift.print(event.location(in: self.hostingController.view))
             }
         })
     }
@@ -106,12 +84,9 @@ internal class NSItemContentView: NSView, NSContentView {
     internal lazy var hostingController: NSHostingController<ContentView> = {
         let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
             guard let self = self else { return }
-            Swift.print("Content Pressed", NSEvent.current?.type.rawValue)
             if let event = NSEvent.current, event.type == .leftMouseDown {
                 forwardMouseDown = true
                 self.mouseDown(with: event)
-                Swift.print(event.type.rawValue)
-                Swift.print(event.location(in: self.hostingController.view))
             }
         })
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
