@@ -322,6 +322,7 @@ public extension NSCollectionViewItem {
     
     internal func toggleIsSelected() {
         if let collectionView = self._collectionView, let indexPath = collectionView.indexPath(for: self) {
+            collectionView.deselectAll(nil)
             if self.isSelected {
                 collectionView.deselectItems(at: Set([indexPath]))
             } else {
