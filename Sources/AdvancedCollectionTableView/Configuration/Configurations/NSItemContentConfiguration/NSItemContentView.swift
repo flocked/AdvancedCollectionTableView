@@ -51,11 +51,17 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     internal func updateConfiguration() {
-        hostingController.rootView = ContentView(configuration: self._configuration)
+        hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
+            guard let self = self else { return }
+            Swift.print("Content Pressed")
+        })
     }
     
     internal lazy var hostingController: NSHostingController<ContentView> = {
-        let hostingView = ContentView(configuration: self._configuration)
+        let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
+            guard let self = self else { return }
+            Swift.print("Content Pressed")
+        })
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -97,6 +103,7 @@ internal extension NSItemContentView {
         let image: NSImage?
         let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
+        let mouseHandler: (()->())?
                 
         @ViewBuilder
         var contentStack: some View {
@@ -137,6 +144,13 @@ internal extension NSItemContentView {
                 properties.shape.swiftui
                     .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
+            .modifier(PressActions(
+                      onPress: {
+                          mouseHandler?()
+                      },
+                      onRelease: {
+                      }
+                  ))
         }
     }
     
@@ -179,7 +193,7 @@ internal extension NSItemContentView {
     
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
-            
+        let mouseHandler: (()->())?
         @ViewBuilder
         var textItems: some View {
             VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
@@ -192,7 +206,7 @@ internal extension NSItemContentView {
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties, mouseHandler: mouseHandler)
         }
         
         @ViewBuilder
@@ -321,19 +335,19 @@ struct CollectionItemView_Previews: PreviewProvider {
     
     static var previews: some View {
         VStack(spacing: 10.0) {
-            NSItemContentView.ContentView(configuration: configuration)
+            NSItemContentView.ContentView(configuration: configuration, mouseHandler: nil)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationVertical)
+            NSItemContentView.ContentView(configuration: configurationVertical, mouseHandler: nil)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationView)
+            NSItemContentView.ContentView(configuration: configurationView, mouseHandler: nil)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationFill)
+            NSItemContentView.ContentView(configuration: configurationFill, mouseHandler: nil)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationText)
+            NSItemContentView.ContentView(configuration: configurationText, mouseHandler: nil)
                 .frame(width: 200, height: 120)
                 .padding()
         }
@@ -369,5 +383,22 @@ struct ShapedImage: View {
              //   .clipShape(shape)
            //     .fixedSize(horizontal: true, vertical: false)
         }
+    }
+}
+
+internal struct PressActions: ViewModifier {
+    var onPress: () -> Void
+    var onRelease: () -> Void
+    func body(content: Content) -> some View {
+        content
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged({ _ in
+                        onPress()
+                    })
+                    .onEnded({ _ in
+                        onRelease()
+                    })
+            )
     }
 }
