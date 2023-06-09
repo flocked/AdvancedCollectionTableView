@@ -35,9 +35,14 @@ internal class NSItemContentView: NSView, NSContentView {
 
             var _item = (self.nextResponder as? NSCollectionViewItem)
             Swift.print("item", _item)
-            Swift.print("item collectionview", _item?.collectionView)
+            Swift.print("item collectionview", _item?._collectionView)
             Swift.print("item indexpath", _item?.indexPath)
 
+            if let item = (self.nextResponder as? NSCollectionViewItem), let collectionView =      self.firstSuperview(for: NSCollectionView.self) {
+                Swift.print("found", collectionView.indexPath(for: item))
+                
+                item.toggleIsSelected()
+            }
             
             if let item = (self.nextResponder as? NSCollectionViewItem), let indexPath = item.indexPath, let collectionView = item.collectionView {
                 if item.isSelected {
