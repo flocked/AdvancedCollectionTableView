@@ -176,9 +176,16 @@ internal extension NSItemContentView {
                 properties.shape.swiftui
                     .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
-            .onTapGesture {
-                mouseHandler?()
-            }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged({ _ in
+                        self.mouseHandler?()
+                    })
+                    .onEnded({ _ in
+                       
+                    })
+            )
+   
         }
     }
     
