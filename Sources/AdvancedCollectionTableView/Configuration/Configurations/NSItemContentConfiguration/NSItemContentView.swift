@@ -29,6 +29,8 @@ internal class NSItemContentView: NSView, NSContentView {
         super.init(frame: .zero)
         addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
+        self.maskToBounds = false
+        self.hostingController.view.maskToBounds = false
     }
     
     internal var _configuration: NSItemContentConfiguration {
