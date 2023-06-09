@@ -27,10 +27,6 @@ internal class NSItemContentView: NSView, NSContentView {
             Swift.print("nextResponder", nextResponder)
             Swift.print("parentViewController", parentViewController)
             Swift.print("collectionView", self.firstSuperview(for: NSCollectionView.self))
-            
-            if let item = (self.nextResponder as? NSCollectionViewItem) {
-                item.isSelected = !item.isSelected
-            }
 
             
             self.nextResponder?.mouseDown(with: event)
@@ -177,13 +173,9 @@ internal extension NSItemContentView {
                 properties.shape.swiftui
                     .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
-            .modifier(PressActions(
-                      onPress: {
-                          mouseHandler?()
-                      },
-                      onRelease: {
-                      }
-                  ))
+            .onTapGesture {
+                mouseHandler?()
+            }
         }
     }
     
