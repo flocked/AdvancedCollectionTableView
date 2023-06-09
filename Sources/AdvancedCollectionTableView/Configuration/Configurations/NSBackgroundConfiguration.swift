@@ -73,18 +73,13 @@ internal extension NSBackgroundConfiguration {
                 self.imageView = nil
             }
             
-            self.backgroundColor = _configuration.backgroundColor
             if let backgroundColor = _configuration.backgroundColor {
                 self.borderColor = _configuration.resolvedBackgroundColor(for: backgroundColor)
             } else {
                 self.borderColor = nil
             }
             self.borderWidth = _configuration.border.width
-            if let borderColor = _configuration.border.color {
-                self.borderColor = _configuration.border.resolvedColor(for: borderColor)
-            } else {
-                self.borderColor = nil
-            }
+            self.borderColor = _configuration.border.resolvedColor()
             
             self.visualEffect = _configuration.visualEffect
             self.cornerRadius = _configuration.cornerRadius
