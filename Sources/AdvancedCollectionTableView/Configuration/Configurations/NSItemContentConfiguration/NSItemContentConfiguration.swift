@@ -42,8 +42,6 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var image: NSImage? = nil
     /// The view to display.
     public var view: NSView? = nil
-    /// The view to display.
-    public var nsView: NSView? = nil
     
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .body
@@ -52,7 +50,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Properties for configuring the content.
      
-     The content displays the configurated ``view``, ``image`` and/or ``contentProperties.backgroundColor``.
+     The content displays the ``view``, ``image`` and/or ``contentProperties.backgroundColor``.
      */
     public var contentProperties: ContentProperties = ContentProperties()
 
@@ -85,7 +83,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
-        return NSItemContentConfigurationHostingView(configuration: self)
+        return NSItemContentView(configuration: self)
     }
     
     /**
@@ -169,7 +167,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          contentPosition: ContentPosition = .top,
          contentToTextPadding: CGFloat = 6.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
-         padding: NSDirectionalEdgeInsets = .init(4.0), scaleTransform: CGFloat = 1.0) {
+         padding: NSDirectionalEdgeInsets = .init(4.0),
+         scaleTransform: CGFloat = 1.0) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText
@@ -186,8 +185,12 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         self.scaleTransform = scaleTransform
     }
     
-    static func image(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 0.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRectangular(cornerRadius)))
+    public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
+    }
+    
+    public static func viewItem(_ view: NSView, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
     }
 }
 

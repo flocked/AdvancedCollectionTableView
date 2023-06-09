@@ -10,8 +10,52 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-/*
-public class NSItemContentView: NSView, NSContentView {
+public class NSItemContentViewNS: NSView, NSContentView {
+    lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
+    lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
+
+    lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image)
+    
+    var _constraints: [NSLayoutConstraint] = []
+    var imageViewConstraints: [NSLayoutConstraint] = []
+    
+    lazy var textStackView: NSStackView = {
+        let textStackView = NSStackView(views: [textField, secondaryTextField])
+        textStackView.orientation = .vertical
+        return textStackView
+    }()
+    
+    lazy var stackView: NSStackView = {
+        let stackView = NSStackView(views: [contentView, textStackView])
+        stackView.orientation = .vertical
+        stackView.alignment = .firstBaseline
+        return stackView
+    }()
+    
+    internal func update() {
+        textField.properties = _configuration.textProperties
+        textField.isHidden = _configuration.hasText
+        if let attributedText = _configuration.attributedText {
+            textField.attributedStringValue = NSAttributedString(attributedText)
+        } else {
+            textField.stringValue = _configuration.text ?? ""
+        }
+        
+        secondaryTextField.properties = _configuration.secondaryTextProperties
+        secondaryTextField.isHidden = _configuration.hasSecondaryText
+        if let attributedText = _configuration.secondaryAttributedText {
+            secondaryTextField.attributedStringValue = NSAttributedString(attributedText)
+        } else {
+            secondaryTextField.stringValue = _configuration.secondaryText ?? ""
+        }
+        contentView.properties = _configuration.contentProperties
+        contentView.image = _configuration.image
+        contentView.view = _configuration.view
+        
+        stackView.spacing = _configuration.contentToTextPadding
+        textStackView.spacing = _configuration.textToSecondaryTextPadding
+    }
+    
     public var configuration: NSContentConfiguration {
         get { _configuration }
         set {
@@ -21,11 +65,19 @@ public class NSItemContentView: NSView, NSContentView {
         }
     }
     
-    internal var _configuration: NSItemContentConfiguration
+    internal var _configuration: NSItemContentConfiguration {
+        didSet {
+            if oldValue != self._configuration {
+                update()
+            }
+        }
+    }
     
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
+        _constraints = self.addSubview(withConstraint: stackView)
+        self.update()
     }
     
     required init?(coder: NSCoder) {
@@ -33,50 +85,99 @@ public class NSItemContentView: NSView, NSContentView {
     }
 }
 
-extension NSItemContentView {
-    internal struct ContentView: View {
-        let configuration: NSItemContentConfiguration
-        
-        @ViewBuilder
-        var contentItem: some View {
-          configuration.contentProperties.shape.swiftui
-               .fill(.clear)
+public extension NSItemContentViewNS {
+    class ItemContentView: NSView {
+        let imageView: NSImageView = NSImageView()
+        var view: NSView? = nil {
+            didSet {
+                if oldValue != self.view {
+                    oldValue?.removeFromSuperview()
+                    if let newView = self.view {
+                        self.addSubview(withConstraint: newView)
+                    }
+                }
+            }
+        }
+        var image: NSImage? {
+            get { imageView.image }
+            set { imageView.image = newValue }
         }
         
-        @ViewBuilder
-        var textItem: some View {
-            if let attributedText = configuration.attributedText {
-                Text(attributedText)
-            } else if let text = configuration.text {
-                Text(text)
+        var properties: NSItemContentConfiguration.ContentProperties {
+            didSet {
+                if oldValue != properties {
+                update() }
             }
         }
         
-        @ViewBuilder
-        var secondaryTextItem: some View {
-            if let attributedText = configuration.secondaryattributedText {
-                Text(attributedText)
-            } else if let text = configuration.secondaryText {
-                Text(text)
+        func update() {
+            self.backgroundColor = properties._resolvedBackgroundColor
+            self.borderColor = properties._resolvedBorderColor
+            self.imageView.contentTintColor = properties._resolvedImageTintColor
+            self.borderWidth = properties.borderWidth
+            self.imageView.imageScaling = properties.imageScaling == .fill ? .reizeAspectFill : .reizeAspect
+            switch properties.shape {
+            case .rect:
+                self.cornerRadius = 0.0
+            case .roundedRect(let cornerRadius):
+                self.cornerRadius = cornerRadius
+            case .circle:
+                self.cornerRadius = self.frame.size.height/2.0
+            case .capsule:
+                self.cornerRadius = self.frame.size.height/2.0
             }
         }
         
-        @ViewBuilder
-        var textItems: some View {
-            VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
-                textItem
-                secondaryTextItem
+        public init(properties: NSItemContentConfiguration.ContentProperties, view: NSView?, image: NSImage?) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.addSubview(withConstraint: imageView)
+            self.view = view
+            self.image = image
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
+    class ItemTextField: NSTextField {
+        var properties: NSItemContentConfiguration.TextProperties {
+            didSet {
+                if oldValue != properties {
+                update() }
             }
         }
         
+        init(properties: NSItemContentConfiguration.TextProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.drawsBackground = false
+            self.isBezeled = false
+        }
         
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
         
-        var body: some View {
-            textItems
+        func update() {
+            self.maximumNumberOfLines = properties.numberOfLines ?? 0
+            self.alignment = properties.alignment.nsTextAlignment
+            self.font = properties.font
+            self.textColor = properties._resolvedTextColor
+          //  self.lineBreakMode = properties.li
+            self.isSelectable = properties.isSelectable
+            self.isEditable = properties.isEditable
+        }
+        
+        public override func textDidEndEditing(_ notification: Notification) {
+            super.textDidEndEditing(notification)
+            properties.onEditEnd?(self.stringValue)
         }
     }
 }
 
+/*
 extension NSItemContentConfiguration {
     internal class ContentView: NSView, NSContentView {
         let textField: NSTextField = NSTextField(wrappingLabelWithString: "")

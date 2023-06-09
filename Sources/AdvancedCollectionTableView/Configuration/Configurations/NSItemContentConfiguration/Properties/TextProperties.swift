@@ -14,7 +14,7 @@ public extension NSItemContentConfiguration {
     /// Properties for configuring the text of an item.
     struct TextProperties {
         /// Constants that specify text alignment.
-        public enum TextAlignment: Hashable {
+        public enum Alignment: Hashable {
             /// Text is leading-aligned.
             case leading
             /// Text is center-aligned.
@@ -51,11 +51,11 @@ public extension NSItemContentConfiguration {
         public var font: NSFont = .body
         internal var swiftuiFont: Font? = nil
         
-        /// The line limit of the text field. If nil, no line limit applies.
+        /// The line limit of the text. If nil, no line limit applies.
         public var numberOfLines: Int? = 1
         
         /// The alignment of the text.
-        public var alignment: TextAlignment = .leading
+        public var alignment: Alignment = .center
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
@@ -88,14 +88,15 @@ public extension NSItemContentConfiguration {
             textColorTansform?(textColor) ?? textColor
         }
         
-        internal init(font: NSFont = .body, swiftuiFont: Font? = nil, numberOfLines: Int? = nil, alignment: TextAlignment = .leading, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil, textColorTansform: NSConfigurationColorTransformer? = nil) {
+        public init(font: NSFont = .body, numberOfLines: Int? = nil, alignment: Alignment = .center, textColor: NSColor = .labelColor, textColorTansform: NSConfigurationColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
             self.font = font
-            self.swiftuiFont = swiftuiFont
+            self.swiftuiFont = font.swiftUI
             self.numberOfLines = numberOfLines
             self.alignment = alignment
             self.isSelectable = isSelectable
             self.isEditable = isEditable
             self.onEditEnd = onEditEnd
+            self.textColor = textColor
             self.textColorTansform = textColorTansform
             self.updateResolvedTextColor()
         }
@@ -105,7 +106,7 @@ public extension NSItemContentConfiguration {
             _resolvedTextColor = resolvedTextColor()
         }
         
-        /// Sets the weight of the font.
+        /// Configurates the weight of the font.
         public func weight(_ weight: NSFont.Weight) -> Self {
             var properties = self
             properties.font = properties.font.weight(weight)

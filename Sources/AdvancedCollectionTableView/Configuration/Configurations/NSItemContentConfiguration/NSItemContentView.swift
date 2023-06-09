@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-internal class NSItemContentConfigurationHostingView: NSView, NSContentView {
+internal class NSItemContentView: NSView, NSContentView {
     public var configuration: NSContentConfiguration {
         get { _configuration }
         set {
@@ -29,19 +29,6 @@ internal class NSItemContentConfigurationHostingView: NSView, NSContentView {
         super.init(frame: .zero)
         addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
-    }
-    
-    internal var hostingViewConstraints: [NSLayoutConstraint] = []
-
-    internal var directionalLayoutMargins: NSDirectionalEdgeInsets {
-        get { return NSDirectionalEdgeInsets(top: -hostingViewConstraints[0].constant, leading: -hostingViewConstraints[1].constant , bottom: hostingViewConstraints[2].constant , trailing: hostingViewConstraints[3].constant)
-        }
-        set {
-            hostingViewConstraints[0].constant = -newValue.bottom
-            hostingViewConstraints[1].constant = newValue.top
-            hostingViewConstraints[2].constant = newValue.leading
-            hostingViewConstraints[3].constant = -newValue.trailing
-        }
     }
     
     internal var _configuration: NSItemContentConfiguration {
@@ -93,14 +80,15 @@ internal class NSItemContentConfigurationHostingView: NSView, NSContentView {
     }
 }
 
-internal extension NSItemContentConfigurationHostingView {
+internal extension NSItemContentView {
     struct ContentItem: View {
         let view: NSView?
         let image: NSImage?
         let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
-        
-        var body: some View {
+                
+        @ViewBuilder
+        var contentStack: some View {
             ZStack() {
                 if let backgroundColor = properties._resolvedBackgroundColor {
                     properties.shape.swiftui
@@ -112,19 +100,27 @@ internal extension NSItemContentConfigurationHostingView {
                 }
                 
                 if let image = image {
-                    Image(image)
-                        .resizable()
-                        .aspectRatio(contentMode: properties.imageScaling.swiftui)
-                        .foregroundColor(properties._resolvedImageTintColor?.swiftUI)
-                        .symbolConfiguration(properties.imageSymbolConfiguration)
+                    ShapedImage(image: image, shape: properties.shape.swiftui, aspectRatio: properties.imageScaling.swiftui)
                 }
             }
-          //  .frame(maxWidth: properties.maxWidth, maxHeight:  properties.maxHeight)
-            .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
-            .clipShape(properties.shape.swiftui)
+        }
+        
+        @ViewBuilder
+        var contentItem: some View {
+            if properties.imageScaling == .fill {
+                contentStack
+            } else {
+                contentStack
+                    .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
+            }
+        }
+        
+        var body: some View {
+            contentItem
+                .clipShape(properties.shape.swiftui)
             .background(
                 properties.shape.swiftui
-                    .shadow(color: properties.shadowProperties._resolvedColor?.swiftUI, radius: properties.shadowProperties.radius, offset: properties.shadowProperties.offset)
+                    .shadow(properties.shadowProperties)
             )
             .overlay(
                 properties.shape.swiftui
@@ -161,8 +157,8 @@ internal extension NSItemContentConfigurationHostingView {
         
         var body: some View {
             item
+                .frame(maxWidth: .infinity, alignment: properties.alignment.swiftui)
                 .multilineTextAlignment(properties.alignment.swiftuiMultiline)
-                .frame(alignment: properties.alignment.swiftui)
                 .font(properties.swiftuiFont ?? properties.font.swiftUI)
                 .lineLimit(properties.numberOfLines)
                 .foregroundColor(properties._resolvedTextColor.swiftUI)
@@ -175,16 +171,17 @@ internal extension NSItemContentConfigurationHostingView {
             
         @ViewBuilder
         var textItems: some View {
-            VStack(spacing: configuration.textToSecondaryTextPadding) {
-                NSItemContentConfigurationHostingView.TextItem(text:  configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
+            VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
+                NSItemContentView.TextItem(text: configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
                 
-                NSItemContentConfigurationHostingView.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
-            }         .fixedSize(horizontal: configuration.contentPosition.isVertical ? false : true, vertical: configuration.contentPosition.isVertical ? true : false)
+                NSItemContentView.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
+            }
+
         }
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentConfigurationHostingView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder
@@ -200,11 +197,13 @@ internal extension NSItemContentConfigurationHostingView {
                     }
                 }
             } else {
-                HStack(spacing: configuration.contentToTextPadding) {
+                HStack(alignment: .top, spacing: configuration.contentToTextPadding) {
                     if configuration.contentPosition == .leading {
                         contentItem
                         textItems
+                        Spacer()
                     } else {
+                        Spacer()
                         textItems
                         contentItem
                     }
@@ -221,18 +220,21 @@ internal extension NSItemContentConfigurationHostingView {
     }
 }
 
-internal struct ContainerView<V: NSView>: NSViewRepresentable {
-    let view: V
-  func makeNSView(context: Context) -> V {
-    return view
-  }
-  
-  func updateNSView(_ nsView: V, context: Context) {
-    // Nothing to do.
-  }
+internal extension Shape {
+    @ViewBuilder
+    func stroke(_ properties: NSItemContentConfiguration.ContentProperties) -> some View {
+        self
+            .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth)
+    }
 }
 
 internal extension View {
+    @ViewBuilder
+    func shadow(_ properties: NSItemContentConfiguration.ShadowProperties) -> some View {
+        self
+            .shadow(color: properties._resolvedColor?.swiftUI, radius: properties.radius, offset: properties.offset)
+    }
+    
     @ViewBuilder
     func sizing(_ sizing: NSItemContentConfiguration.ContentProperties.SizeOption?, hasImage: Bool, isVertical: Bool) -> some View {
         switch sizing {
@@ -262,18 +264,19 @@ internal extension View {
 struct CollectionItemView_Previews: PreviewProvider {
     static func contentProperties(isSelected: Bool) -> NSItemContentConfiguration.ContentProperties {
         let shadowProperties = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: isSelected ? .controlAccentColor : nil)
-        return NSItemContentConfiguration.ContentProperties(shape: .roundedRectangular(10.0), shadowProperties: shadowProperties, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil)
+        return NSItemContentConfiguration.ContentProperties(shape: .roundedRect(10.0), shadowProperties: shadowProperties, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
     }
     
     static var configuration: NSItemContentConfiguration {
         let contentProperties = self.contentProperties(isSelected: true)
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, contentProperties: contentProperties)
+        let textProperties: NSItemContentConfiguration.TextProperties = .body
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
     }
     
     static var configurationFill: NSItemContentConfiguration {
         var contentProperties = self.contentProperties(isSelected: true)
         contentProperties.imageScaling = .fill
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1591785825108627457_1.jpg")), view: nil, contentProperties: contentProperties)
+       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/Images/Likes/Likes 06.2020-04.2021/tumblr_bobbycamp_628203143674691584_01.jpg")), view: nil, contentProperties: contentProperties)
     }
     
     
@@ -286,27 +289,74 @@ struct CollectionItemView_Previews: PreviewProvider {
        return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", view: view, contentProperties: contentProperties)
     }
     
+    static var configurationText: NSItemContentConfiguration {
+        var contentProperties = self.contentProperties(isSelected: false)
+        contentProperties.backgroundColor = nil
+       return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", contentProperties: contentProperties)
+    }
+    
     static var configurationVertical: NSItemContentConfiguration {
         var contentProperties = self.contentProperties(isSelected: false)
         contentProperties.sizing = .min(width: 80, height: nil)
-        return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1492943419580239874_1.jpg")), view: nil, contentProperties: contentProperties, contentPosition: .leading)
+        contentProperties.imageScaling = .fill
+        var textProperties: NSItemContentConfiguration.TextProperties = .body
+        textProperties.alignment = .leading
+        textProperties.alignment = .leading
+        var secondaryTextProperties: NSItemContentConfiguration.TextProperties = .caption1
+        secondaryTextProperties.alignment = .leading
+        textProperties.alignment = .leading
+        return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Movies/ Porn/1492943419580239874_1.jpg")), view: nil, textProperties: textProperties, secondaryTextProperties: secondaryTextProperties, contentProperties: contentProperties, contentPosition: .leading)
     }
     
     static var previews: some View {
         VStack(spacing: 10.0) {
-            NSItemContentConfigurationHostingView.ContentView(configuration: configuration)
+            NSItemContentView.ContentView(configuration: configuration)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentConfigurationHostingView.ContentView(configuration: configurationVertical)
+            NSItemContentView.ContentView(configuration: configurationVertical)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentConfigurationHostingView.ContentView(configuration: configurationView)
-                .frame(width: 200, height: 140)
+            NSItemContentView.ContentView(configuration: configurationView)
+                .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentConfigurationHostingView.ContentView(configuration: configurationFill)
-                .frame(width: 200, height: 140)
+            NSItemContentView.ContentView(configuration: configurationFill)
+                .frame(width: 200, height: 160)
+                .padding()
+            NSItemContentView.ContentView(configuration: configurationText)
+                .frame(width: 200, height: 120)
                 .padding()
         }
     }
 }
 
+struct ShapedImage: View {
+    let image: NSImage
+    let shape: FZUIKit.AnyShape
+    let aspectRatio: ContentMode
+    
+    init<S: Shape>(image: NSImage, shape: S, aspectRatio: ContentMode) {
+        self.image = image
+        self.shape = shape.asAnyShape()
+        self.aspectRatio = aspectRatio
+    }
+    var body: some View {
+        if aspectRatio == .fill {
+            Image(image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(
+                minWidth: 0,
+                maxWidth: .infinity,
+                minHeight: 0,
+                maxHeight: .infinity
+            )
+            .clipShape(shape)
+        } else {
+            Image(image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+             //   .clipShape(shape)
+           //     .fixedSize(horizontal: true, vertical: false)
+        }
+    }
+}

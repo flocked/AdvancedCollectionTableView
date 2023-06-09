@@ -54,12 +54,12 @@ public extension NSItemContentConfiguration {
         
         /// Shadow properties for a black shadow.
         public static func black() -> ShadowProperties {
-            return ShadowProperties(radius: 3.0, opacity: 1.0, offset: CGPoint(1, 1), color: .shadowColor)
+            return ShadowProperties(radius: 3.0, opacity: 0.7, offset: CGPoint(1, 1), color: .shadowColor)
         }
         
         /// Shadow properties for a black shadow.
         public static func colored(_ color: NSColor) -> ShadowProperties {
-            return ShadowProperties(radius: 3.0, opacity: 1.0, offset: CGPoint(1, 1), color: color)
+            return ShadowProperties(radius: 3.0, opacity: 0.7, offset: CGPoint(1, 1), color: color)
         }
         
         /// Shadow properties for a none shadow.

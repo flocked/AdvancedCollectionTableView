@@ -24,16 +24,16 @@ public extension NSItemContentConfiguration {
             /// A capsular shape.
             case capsule
             /// A shape with rounded corners.
-            case roundedRectangular(_ cornerRadius: CGFloat)
+            case roundedRect(_ cornerRadius: CGFloat)
             /// A rectangular shape.
-            case rectangular
+            case rect
             
             @ShapeBuilder internal var swiftui: some SwiftUI.Shape {
                 switch self {
                 case .circle: Circle()
                 case .capsule: Capsule()
-                case .roundedRectangular(let cornerRadius): RoundedRectangle(cornerRadius: cornerRadius)
-                case .rectangular: Rectangle()
+                case .roundedRect(let cornerRadius): RoundedRectangle(cornerRadius: cornerRadius)
+                case .rect: Rectangle()
                 }
             }
         }
@@ -68,24 +68,29 @@ public extension NSItemContentConfiguration {
         }
                 
         /// The shape of the content.
-        public var shape: Shape = .roundedRectangular(8.0)
-        /// The outer shadow properties.
-        public var shadowProperties: ShadowProperties = .black()
+        public var shape: Shape = .roundedRect(6.0)
         
         /// The maximum width of the content.
         public var maxWidth: CGFloat? = nil
-        
-        /// The size of the content.
-        public var sizing: SizeOption? = nil
-
-        
         /// The maximum height of the content.
         public var maxHeight: CGFloat? = nil
         
+        /// The size of the content.
+        public var sizing: SizeOption? = nil
+        /**
+        The scaling of the content.
+         
+        The default is 1.0, which displays the content at it's original scale.
+         */
+        public var scaleTransform: CGFloat = 1.0
+        
         /// The background color.
-        public var backgroundColor: NSColor? = .systemGray
+        public var backgroundColor: NSColor? = .lightGray {
+            didSet { updateResolvedColors() } }
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil
+        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil {
+            didSet { updateResolvedColors() } }
+        /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = self.backgroundColor {
                 return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
@@ -96,11 +101,12 @@ public extension NSItemContentConfiguration {
         /// The border width.
         public var borderWidth: CGFloat = 0.0
         /// The border color.
-        public var borderColor: NSColor? = nil
+        public var borderColor: NSColor? = nil {
+            didSet { updateResolvedColors() } }
         /// The color transformer for resolving the border color.
-        public var borderColorTransform: NSConfigurationColorTransformer? = nil
-        /// Generates the resolved background color for the specified background color, using the background color and color transformer.
-        ///         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
+        public var borderColorTransform: NSConfigurationColorTransformer? = nil {
+            didSet { updateResolvedColors() } }
+        /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
             if let borderColor = self.borderColor {
                 return self.borderColorTransform?(borderColor) ?? borderColor
@@ -108,29 +114,24 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        /// The image tint color.
+        /// The symbol configuration for the image.
+        public var imageSymbolConfiguration: SymbolConfiguration? = nil
+        /// The image scaling.
+        public var imageScaling: ImageScaling = .fit
+        /// The image tint color for an image that is a template or symbol image.
         public var imageTintColor: NSColor? = nil
         /// The color transformer for resolving the image tint color.
         public var imageTintColorTransform: NSConfigurationColorTransformer? = nil
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedImageTintColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
-                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
+            if let imageTintColor = self.imageTintColor {
+                return self.imageTintColorTransform?(imageTintColor) ?? imageTintColor
             }
             return nil
         }
-
-        /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: SymbolConfiguration? = nil
-        /// The image scaling.
-        public var imageScaling: ImageScaling = .fit
         
-        /**
-        The scaling of the content.
-         
-        The default is 1.0, which displays the content at it's original scale.
-         */
-        public var scaleTransform: CGFloat = 1.0
+        /// The outer shadow properties.
+        public var shadowProperties: ShadowProperties = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
         internal var needsBorderWidthReset: Bool = true
@@ -145,7 +146,7 @@ public extension NSItemContentConfiguration {
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        public init(shape: Shape = .rectangular, shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = nil, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
+        public init(shape: Shape = .roundedRect(6.0), shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = .lightGray, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
             self.shape = shape
             self.shadowProperties = shadowProperties
             self.maxWidth = maxWidth
