@@ -55,7 +55,7 @@ internal class NSItemContentView: NSView, NSContentView {
             guard let self = self else { return }
             Swift.print("Content Pressed")
             if let event = NSEvent.current {
-                Swift.print(event.type)
+                Swift.print(event.type.rawValue)
                 Swift.print(event.location(in: self.hostingController.view))
             }
         })
@@ -66,7 +66,7 @@ internal class NSItemContentView: NSView, NSContentView {
             guard let self = self else { return }
             Swift.print("Content Pressed")
             if let event = NSEvent.current {
-                Swift.print(event.type)
+                Swift.print(event.type.rawValue)
                 Swift.print(event.location(in: self.hostingController.view))
             }
         })
