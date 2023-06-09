@@ -464,6 +464,7 @@ public extension NSCollectionViewItem {
     // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleCollectionItem == false) {
+            Swift.print("swizzleCollectionItemIfNeeded")
             self.didSwizzleCollectionItem = true
             do {
                 _ = try Swizzle(NSCollectionViewItem.self) {
@@ -523,6 +524,8 @@ public extension NSCollectionViewItem {
     @objc internal var swizzledIsSelected: Bool {
         get { return self.isSelected }
         set {
+            Swift.print("swizzledIsSelected")
+
             let oldValue = self.isSelected
             self.swizzledIsSelected = newValue
             if newValue != oldValue {
@@ -532,9 +535,12 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzledViewDidMoveToSuperview() {
+        Swift.print("swizzledViewDidMoveToSuperview")
     }
             
     @objc internal func swizzled_PrepareForReuse() {
+        Swift.print("swizzled_PrepareForReuse")
+
         self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
         self.isEnabled = true
@@ -546,11 +552,15 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
+        Swift.print("swizzled_apply")
+
         self.cachedLayoutAttributes = layoutAttributes
         self.swizzled_apply(layoutAttributes)
     }
     
     @objc internal func swizzled_preferredLayoutAttributesFitting(_ layoutAttributes: NSCollectionViewLayoutAttributes) -> NSCollectionViewLayoutAttributes {
+        Swift.print("swizzled_preferredLayoutAttributesFitting")
+
         
         if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
             
@@ -564,6 +574,8 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
+        Swift.print("swizzled_viewDidLayout")
+
         swizzled_viewDidLayout()
         switch collectionView?.selfSizingInvalidation {
         case .enabled:
