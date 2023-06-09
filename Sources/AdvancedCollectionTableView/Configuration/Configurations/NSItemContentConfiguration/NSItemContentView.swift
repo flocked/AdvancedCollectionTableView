@@ -459,7 +459,10 @@ internal class EventHostingView<Content: View>: NSHostingView<Content> {
             Swift.print("----")
         }
         
-        self.nextResponder?.mouseDown(with: event)
+        self.parentViewController?.mouseDown(with: event)
+
+        
+    //    self.nextResponder?.mouseDown(with: event)
         /*
         self.parentViewController?.mouseDown(with: event)
         self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
