@@ -54,6 +54,10 @@ internal class NSItemContentView: NSView, NSContentView {
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
             Swift.print("Content Pressed")
+            if let event = NSEvent.current {
+                Swift.print(event.type)
+                Swift.print(event.location(in: self.hostingController.view))
+            }
         })
     }
     
@@ -61,6 +65,10 @@ internal class NSItemContentView: NSView, NSContentView {
         let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
             guard let self = self else { return }
             Swift.print("Content Pressed")
+            if let event = NSEvent.current {
+                Swift.print(event.type)
+                Swift.print(event.location(in: self.hostingController.view))
+            }
         })
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
