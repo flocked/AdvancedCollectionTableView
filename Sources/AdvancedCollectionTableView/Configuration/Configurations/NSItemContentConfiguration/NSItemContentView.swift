@@ -23,6 +23,9 @@ internal class NSItemContentView: NSView, NSContentView {
     internal var forwardMouseDown = false
     override func mouseDown(with event: NSEvent) {
         Swift.print("mouseDown", event.location(in: self.hostingController.view), forwardMouseDown)
+        
+        Swift.print("subviews", self.hostingController.view.subviews)
+        
         if  forwardMouseDown {
             Swift.print("nextResponder", nextResponder)
             Swift.print("parentViewController", parentViewController)
