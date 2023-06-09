@@ -20,12 +20,19 @@ internal class NSItemContentView: NSView, NSContentView {
         }
     }
     
+    internal var forwardMouseDown = false
     override func mouseDown(with event: NSEvent) {
+        if  forwardMouseDown {
+            super.mouseDown(with: event)
+            forwardMouseDown = false
+        }
+        /*
        let location = event.location(in: self.hostingController.view)
         
        let views = self.hostingController.view.subviews(where: {$0.frame.contains(location)}, depth: 10000)
         
         Swift.print(views)
+         */
         
     }
     
@@ -54,7 +61,9 @@ internal class NSItemContentView: NSView, NSContentView {
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
             Swift.print("Content Pressed")
-            if let event = NSEvent.current {
+            if let event = NSEvent.current, event.type == .leftMouseDown {
+                forwardMouseDown = true
+                self.mouseDown(with: event)
                 Swift.print(event.type.rawValue)
                 Swift.print(event.location(in: self.hostingController.view))
             }
@@ -65,7 +74,9 @@ internal class NSItemContentView: NSView, NSContentView {
         let hostingView = ContentView(configuration: self._configuration, mouseHandler:  { [weak self] in
             guard let self = self else { return }
             Swift.print("Content Pressed")
-            if let event = NSEvent.current {
+            if let event = NSEvent.current, event.type == .leftMouseDown {
+                forwardMouseDown = true
+                self.mouseDown(with: event)
                 Swift.print(event.type.rawValue)
                 Swift.print(event.location(in: self.hostingController.view))
             }
