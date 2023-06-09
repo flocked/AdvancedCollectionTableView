@@ -469,7 +469,7 @@ public extension NSCollectionViewItem {
             do {
                 _ = try Swizzle(NSCollectionViewItem.self) {
                     #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
-                    #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
+                //    #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
                     #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
                     #selector(setter: highlightState) <-> #selector(setter: swizzledHighlightState)
