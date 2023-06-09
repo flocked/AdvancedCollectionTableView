@@ -20,6 +20,10 @@ internal class NSItemContentView: NSView, NSContentView {
         }
     }
     
+    override func mouseDown(with event: NSEvent) {
+        
+    }
+    
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
