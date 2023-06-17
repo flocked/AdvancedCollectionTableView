@@ -16,7 +16,7 @@ extension CollectionViewDiffableDataSource {
     }
     
     public var selectionIndexPaths: [IndexPath] {
-        return Array(self.collectionView.selectionIndexPaths).sorted()
+        return Array(self.collectionView.selectionIndexPaths)
     }
     
     public var selectedElements: [Element] {
@@ -31,20 +31,12 @@ extension CollectionViewDiffableDataSource {
         self.displayingIndexPaths.compactMap({self.element(for: $0)})
     }
     
-    public var nonSelectionIndexPaths: [IndexPath] {
-        return self.collectionView.nonSelectedIndexPaths.sorted()
-    }
-    
-    public var nonSelectedElements: [Element] {
-        return self.nonSelectionIndexPaths.compactMap({element(for: $0)})
-    }
-    
-    public func indexPathsForVisibleItems() -> [IndexPath] {
+    public func visibleIndexPaths() -> [IndexPath] {
         return Array(self.collectionView.indexPathsForVisibleItems())
     }
     
     public func visibleElements() -> [Element] {
-        return indexPathsForVisibleItems().compactMap({element(for: $0)})
+        return visibleIndexPaths().compactMap({element(for: $0)})
     }
     
     public func visibleItems() -> [NSCollectionViewItem] {
@@ -58,6 +50,7 @@ extension CollectionViewDiffableDataSource {
         }
         return nil
     }
+    
     
     internal func quicklookItems(for elements: [Element]) -> [QuicklookItem] {
         /*
@@ -122,7 +115,7 @@ extension CollectionViewDiffableDataSource {
         return self.currentSnapshot.sectionIdentifier(containingItem: element)
     }
     
-    public func section(for indexPath: IndexPath) -> Section? {
+    public func section(at indexPath: IndexPath) -> Section? {
         if (indexPath.section <= self.sections.count-1) {
             return sections[indexPath.section]
         }
@@ -141,26 +134,25 @@ extension CollectionViewDiffableDataSource {
     }
     */
     
-    internal func supplementaryHeaderView(for section: Section) -> (NSView & NSCollectionViewElement)? {
-        if let sectionIndex = currentSnapshot.indexOfSection(section) {
-            let sectionIndexPath = IndexPath(item: 0, section: sectionIndex)
-           return collectionView.supplementaryView(forElementKind: NSCollectionView.ElementKind.sectionHeader, at: sectionIndexPath)
+    internal func supplementaryView(for section: Section, kind: String) -> (NSView & NSCollectionViewElement)? {
+        if let indexPath = self.indexPaths(for: [section]).first {
+           return collectionView.supplementaryView(forElementKind: kind, at: indexPath)
         }
         return nil
     }
     
-    public func isItemSelected(at indexPath: IndexPath) -> Bool {
+    public func isSelected(at indexPath: IndexPath) -> Bool {
         self.collectionView.selectionIndexPaths.contains(indexPath)
     }
     
-    public func isItemSelected(_ element: Element) -> Bool {
+    public func isSelected(for element: Element) -> Bool {
         if let indexPath = indexPath(for: element) {
-            return isItemSelected(at: indexPath)
+            return isSelected(at: indexPath)
         }
         return false
     }
     
-    public func reconfigurateItems(for elements: [Element]) {
+    public func reconfigurateElements(_ elements: [Element]) {
         let indexPaths = elements.compactMap({self.indexPath(for:$0)})
         self.reconfigurateItems(at: indexPaths)
     }
@@ -180,10 +172,14 @@ extension CollectionViewDiffableDataSource {
         dataSource.apply(snapshot, animated ? .animated : nil)
     }
     
-    public func reloadAllItems(complection: (() -> Void)? = nil) {
+    public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
         var snapshot = snapshot()
         snapshot.reloadItems(snapshot.itemIdentifiers)
-        self.applySnapshotUsingReloadData(snapshot, completion: complection)
+        if animated {
+            self.apply(snapshot, animatingDifferences: true)
+        } else {
+            self.applySnapshotUsingReloadData(snapshot, completion: complection)
+        }
     }
     
     
@@ -221,33 +217,10 @@ extension CollectionViewDiffableDataSource {
     public func deselectElements(_ elements: [Element]) {
         self.deselectItems(at: indexPaths(for: elements))
     }
-        
-    public func scrollToItems(at indexPaths: [IndexPath], positioned: NSCollectionView.ScrollPosition = .centeredVertically) {
-        self.collectionView.scrollToItems(at: Set(indexPaths), scrollPosition: positioned)
-    }
     
-    public func scrollTo(_ element: Element, positioned: NSCollectionView.ScrollPosition = .centeredVertically) {
-        self.scrollTo([element], positioned: positioned)
-    }
-    
-    public func scrollTo(_ elements: [Element], positioned: NSCollectionView.ScrollPosition = .centeredVertically) {
-        if let topMostIndexPath = self.indexPaths(for: elements).sorted(by: {$0.item < $1.item}).first, var origin = self.collectionView.frameForItem(at: topMostIndexPath)?.origin {
-            if (origin.x > 50) {
-                origin.x = origin.x - 50
-            }
-        }
-    }
-    
-    public func moveElement( _ element: Element, before beforeElement: Element) {
-        var snapshot = self.snapshot()
-        snapshot.moveItem(element, beforeItem: beforeElement)
-        self.apply(snapshot)
-    }
-    
-    public func moveElement( _ element: Element, after afterElement: Element) {
-        var snapshot = self.snapshot()
-        snapshot.moveItem(element, afterItem: afterElement)
-        self.apply(snapshot)
+    public func scrollTo(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition = []) {
+        let indexPaths = Set(self.indexPaths(for: elements))
+        self.collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
     public func moveElements( _ elements: [Element], before beforeElement: Element) {
