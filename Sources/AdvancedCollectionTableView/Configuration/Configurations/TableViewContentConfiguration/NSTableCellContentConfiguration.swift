@@ -152,6 +152,38 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
         case trailing
     }
     
+    public init(text: String? = nil,
+         attributedText: AttributedString? = nil,
+         secondaryText: String? = nil,
+         secondaryAttributedText: AttributedString? = nil,
+         image: NSImage? = nil,
+         view: NSView? = nil,
+         topAccessories: [Accessory] = [],
+         bottomAccessories: [Accessory] = [],
+                textProperties: TextProperties = .init(),
+                secondaryTextProperties: TextProperties = .init(),
+                contentProperties: ContentProperties = .init(),
+                imageToTextPadding: CGFloat = 4.0,
+                textToSecondaryTextPadding: CGFloat = 4.0,
+         padding: NSDirectionalEdgeInsets = .init(4.0),
+                contentPosition: ContentPosition = .leading) {
+        self.text = text
+        self.attributedText = attributedText
+        self.secondaryText = secondaryText
+        self.secondaryAttributedText = secondaryAttributedText
+        self.image = image
+        self.view = view
+        self.topAccessories = topAccessories
+        self.bottomAccessories = bottomAccessories
+        self.textProperties = textProperties
+        self.secondaryTextProperties = secondaryTextProperties
+        self.contentProperties = contentProperties
+        self.imageToTextPadding = imageToTextPadding
+        self.textToSecondaryTextPadding = textToSecondaryTextPadding
+        self.padding = padding
+        self.contentPosition = contentPosition
+    }
+    
     /*
    public init(text: String? = nil, attributedText: AttributedString? = nil, secondaryText: String? = nil, secondaryattributedText: AttributedString? = nil, image: NSImage? = nil, accessories: [AccessoryProperties] = [], imageProperties: ImageProperties = ImageProperties(), textProperties: TextProperties = TextProperties(), secondaryTextProperties: TextProperties = TextProperties(), imageToTextPadding: CGFloat = 4.0, textToSecondaryTextPadding: CGFloat = 4.0, padding: NSDirectionalEdgeInsets = .init(4.0)) {
         self.text = text

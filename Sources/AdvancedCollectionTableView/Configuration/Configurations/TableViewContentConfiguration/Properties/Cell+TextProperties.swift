@@ -13,6 +13,8 @@ import SwiftUI
 public extension NSTableCellContentConfiguration {
     /// Properties for configuring the text of an item.
     struct TextProperties {
+        
+        
         public enum TextTransform: Hashable {
             case none
             case capitalized
@@ -49,6 +51,30 @@ public extension NSTableCellContentConfiguration {
         /// Generates the resolved text color for the specified text color, using the color and color transformer.
         public func resolvedTextColor() -> NSColor {
             textColorTansform?(textColor) ?? textColor
+        }
+        
+        public init(font: NSFont = .body,
+                    swiftuiFont: Font? = nil,
+                    numberOfLines: Int? = nil,
+                    alignment: NSTextAlignment = .left,
+                    lineBreakMode: NSLineBreakMode = .byWordWrapping,
+                    textTransform: TextTransform = .none,
+                    isSelectable: Bool = false,
+                    isEditable: Bool = false,
+                    onEditEnd: ((String) -> ())? = nil,
+                    textColor: NSColor = .labelColor,
+                    textColorTansform: NSConfigurationColorTransformer? = nil) {
+            self.font = font
+            self.swiftuiFont = swiftuiFont
+            self.numberOfLines = numberOfLines
+            self.alignment = alignment
+            self.lineBreakMode = lineBreakMode
+            self.textTransform = textTransform
+            self.isSelectable = isSelectable
+            self.isEditable = isEditable
+            self.onEditEnd = onEditEnd
+            self.textColor = textColor
+            self.textColorTansform = textColorTansform
         }
         
         public func weight(_ weight: NSFont.Weight) -> Self {
@@ -99,6 +125,8 @@ public extension NSTableCellContentConfiguration {
             return properties
         }
     }
+    
+    
 }
 
 extension NSTableCellContentConfiguration.TextProperties: Hashable {

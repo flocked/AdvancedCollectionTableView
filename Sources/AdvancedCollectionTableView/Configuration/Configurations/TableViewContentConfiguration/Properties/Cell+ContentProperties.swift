@@ -115,6 +115,34 @@ public extension NSTableCellContentConfiguration {
         
         // Resets the border width to 0 if isSelected is false.
         internal var needsBorderWidthReset: Bool = true
+        
+        public init(shape: Shape = .roundedRectangular(8.0),
+             shadowProperties: ShadowProperties = .black(),
+             size: ContentSize = .textAndSecondaryTextHeight,
+             backgroundColor: NSColor? = nil,
+             backgroundColorTransform: NSConfigurationColorTransformer? = nil,
+             borderWidth: CGFloat = 0.0,
+             borderColor: NSColor? = nil,
+             borderColorTransform: NSConfigurationColorTransformer? = nil,
+             imageTintColor: NSColor? = nil,
+             imageTintColorTransform: NSConfigurationColorTransformer? = nil,
+             imageSymbolConfiguration: SymbolConfiguration? = nil,
+             imageScaling: ImageScaling = .fit) {
+            self.shape = shape
+            self.shadowProperties = shadowProperties
+            self.size = size
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTransform = backgroundColorTransform
+            self.borderWidth = borderWidth
+            self.borderColor = borderColor
+            self.borderColorTransform = borderColorTransform
+            self.imageTintColor = imageTintColor
+            self.imageTintColorTransform = imageTintColorTransform
+            self.imageSymbolConfiguration = imageSymbolConfiguration
+            self.imageScaling = imageScaling
+            self.needsBorderWidthReset = (borderWidth == 0.0)
+        }
+        
     }
 }
 
