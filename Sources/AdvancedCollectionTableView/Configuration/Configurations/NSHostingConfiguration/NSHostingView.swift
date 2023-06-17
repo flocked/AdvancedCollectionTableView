@@ -28,7 +28,7 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     public init(configuration: NSHostingConfiguration<Content, Background>) {
         self._configuration = configuration
         super.init(frame: .zero)
-        hostingViewConstraints = addSubview(withConstraint: hostingController.view)
+        hostingViewConstraints = addSubview(withConstraint: hostingView)
         self.updateConfiguration()
     }
     
@@ -37,16 +37,16 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     }
     
     internal func updateConfiguration() {
-        hostingController.rootView = HostingView(configuration: _configuration)
+        hostingView.rootView = HostingView(configuration: _configuration)
         directionalLayoutMargins = _configuration.margins
     }
     
-    internal lazy var hostingController: NSHostingController<HostingView<Content, Background>> = {
+    internal lazy var hostingView: HitHostingView<HostingView<Content, Background>> = {
         let hostingView = HostingView(configuration: _configuration)
-        let hostingController = NSHostingController<HostingView<Content, Background>>(rootView: hostingView)
-        hostingController.view.backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        return hostingController
+        let hitHostingView = HitHostingView<HostingView<Content, Background>>(rootView: hostingView)
+        hitHostingView.backgroundColor = .clear
+        hitHostingView.translatesAutoresizingMaskIntoConstraints = false
+        return hitHostingView
     }()
         
     override func invalidateIntrinsicContentSize() {
@@ -54,11 +54,12 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     }
     
     public func sizeThatFits(_ size: CGSize) -> CGSize {
-        return hostingController.sizeThatFits(in: size)
+        return self.fittingSize
+     //   return hostingController.sizeThatFits(in: size)
     }
     
     override var fittingSize: NSSize {
-        return hostingController.fittingSize
+        return hostingView.fittingSize
     }
     
     internal var hostingViewConstraints: [NSLayoutConstraint] = []
@@ -92,15 +93,6 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidMoveToSuperview() {
-        if superview == nil {
-            hostingController.removeFromParent()
-        } else {
-            if (hostingController.parent == nil) {
-                parentViewController?.addChild(hostingController)
-            }
-        }
-    }
 }
 
 extension NSHostingContentView {
@@ -126,6 +118,16 @@ public struct _NSHostingConfigurationBackgroundView<S>: View where S: ShapeStyle
     
     public var body: some View {
         Rectangle().fill(style)
+    }
+}
+
+internal class HitHostingView<Content: View>: NSHostingView<Content> {
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        guard let hitTest = super.hitTest(point) else {
+            Swift.print("hitTest nil")
+            return self.firstSuperview(for: NSCollectionView.self) }
+        Swift.print("hitTest")
+        return hitTest
     }
 }
 

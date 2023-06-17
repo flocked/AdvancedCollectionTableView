@@ -226,3 +226,4 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
     return NSHostingContentView<Content, Background>(configuration: self)
   }
 }
+

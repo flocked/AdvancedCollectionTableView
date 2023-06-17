@@ -80,9 +80,9 @@ internal class NSItemContentView: NSView, NSContentView {
          */
     }
     
-    internal lazy var hostingView: CollectionItemHostingView<ContentView> = {
+    internal lazy var hostingView: HitHostingView<ContentView> = {
         let contentView = ContentView(configuration: self._configuration)
-        let hostingView = CollectionItemHostingView(rootView: contentView)
+        let hostingView = HitHostingView(rootView: contentView)
         hostingView.backgroundColor = .clear
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         hostingView.maskToBounds = false
@@ -406,15 +406,5 @@ struct ShapedImage: View {
              //   .clipShape(shape)
            //     .fixedSize(horizontal: true, vertical: false)
         }
-    }
-}
-
-internal class CollectionItemHostingView<Content: View>: NSHostingView<Content> {
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        guard let hitTest = super.hitTest(point) else {
-            Swift.print("hitTest nil")
-            return self.firstSuperview(for: NSCollectionView.self) }
-        Swift.print("hitTest")
-        return hitTest
     }
 }
