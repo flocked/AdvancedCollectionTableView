@@ -8,18 +8,16 @@
 import AppKit
 import FZUIKit
 
-internal extension PasteboardWriting {
-    var nsPasteboardWriting: NSPasteboardWriting? {
-        return (self as? NSPasteboardWriting) ?? (self as? NSURL)
-    }
-}
-
 extension CollectionViewDiffableDataSource {
     /// Handlers for selection.
     public struct SelectionHandlers<E> {
+        /// Handler that determines whether elements should get selected.
         public var shouldSelect: ((_ elements: [E]) -> [E])? = nil
+        /// Handler that determines whether elements should get deselected.
         public var shouldDeselect: ((_ elements: [E]) -> [E])? = nil
+        /// Handler that gets called whenever elements get selected.
         public var didSelect: ((_ elements: [E]) -> ())? = nil
+        /// Handler that gets called whenever elements get deselected.
         public var didDeselect: ((_ elements: [E]) -> ())? = nil
     }
     
@@ -38,11 +36,11 @@ extension CollectionViewDiffableDataSource {
     
     /// Handlers for reordering items.
     public struct ReorderingHandlers<E> {
-        /// The handler that determines whether you can reorder a particular item.
+        /// Handler that determines whether you can reorder a particular item.
         public var canReorder: ((_ elements: [E]) -> Bool)? = nil
-        /// The handler that prepares the diffable data source for reordering its items.
+        /// Handler that prepares the diffable data source for reordering its items.
         public var willReorder: ((_ elements: [E]) -> ())? = nil
-        /// The handler that processes a reordering transaction.
+        /// Handler that processes a reordering transaction.
         public var didReorder: ((_ elements: [E]) -> ())? = nil
     }
     
@@ -56,19 +54,27 @@ extension CollectionViewDiffableDataSource {
     
     /// Handlers for the displaying items.
     public struct DisplayHandlers<E> {
+        /// Handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [E]) -> ())?
+        /// Handler that gets called whenever elements end getting displayed.
         public var didEndDisplaying: ((_ elements: [E]) -> ())?
     }
     
+    /// Handlers that get called whenever items are entering or exiting quicklook.
     public struct QuicklookHandlers<E> {
+        /// Handler that gets called whenever elements are entering quicklook.
         public var preview: (([E]) -> [(element: Element, url: URL)]?)?
+        /// Handler that gets called whenever elements are exiting quicklook.
         public var endPreviewing: ((_ elements: [E]) ->  [(element: Element, url: URL)]?)?
     }
     
+    /// Handlers that get called whenever the mouse is clicking an item.
     public struct MouseHandlers<E> {
-        public var mouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> ())? = nil
-        public var rightMouseClick: ((_ point: CGPoint, _ count: Int, _ element: E?) -> ())? = nil
-        public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
+        /// Handler that gets called whenever the mouse is clicking an element.
+        public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
+        /// Handler that gets called whenever the mouse is right-clicking an element.
+        public var rightMouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
+   //     public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
     //   var mouseEntered: ((CGPoint) -> ())? = nil
 //        public var mouseMoved: ((CGPoint) -> ())? = nil
      //   var mouseExited: ((CGPoint) -> ())? = nil
@@ -82,6 +88,7 @@ extension CollectionViewDiffableDataSource {
         public var didEndHovering: ((_ element: E) -> ())?
     }
     
+    /*
     /// Handlers for expanding and collapsing items.
     public struct SectionHandlers<Section> {
         /// The handler that determines whether a particular section is collapsable.
@@ -96,4 +103,5 @@ extension CollectionViewDiffableDataSource {
         public var canReorder: ((_ section: Section) -> Bool)?
         public var didReorder: ((_ section: Section) -> ())?
     }
+     */
 }

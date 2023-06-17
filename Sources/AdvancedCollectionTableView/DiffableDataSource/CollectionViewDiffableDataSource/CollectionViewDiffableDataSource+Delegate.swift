@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import FZUIKit
 
 extension CollectionViewDiffableDataSource {
     internal class DelegateBridge<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
@@ -155,5 +156,12 @@ extension CollectionViewDiffableDataSource {
             }
             return collectionView.draggingImageForItems(at: indexPaths, with: event, offset: dragImageOffset)
         }
+    }
+}
+
+
+internal extension PasteboardWriting {
+    var nsPasteboardWriting: NSPasteboardWriting? {
+        return (self as? NSPasteboardWriting) ?? (self as? NSURL)
     }
 }

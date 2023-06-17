@@ -46,7 +46,8 @@ extension CollectionViewDiffableDataSource {
             Swift.print("mouseup")
             if let mouseClick = self.dataSource.mouseHandlers.mouseClick {
                 let point = event.location(in: self.dataSource.collectionView)
-                mouseClick(point, event.clickCount, self.dataSource.element(at: point))
+                guard let element = self.dataSource.element(at: point) else { return }
+                mouseClick(point, event.clickCount, element)
             }
             super.mouseUp(with: event)
         }
@@ -54,7 +55,8 @@ extension CollectionViewDiffableDataSource {
         override func rightMouseUp(with event: NSEvent) {
             if let rightMouseClick = self.dataSource.mouseHandlers.rightMouseClick {
                 let point = event.location(in: self.dataSource.collectionView)
-                rightMouseClick(point, event.clickCount, self.dataSource.element(at: point))
+                guard let element = self.dataSource.element(at: point) else { return }
+                rightMouseClick(point, event.clickCount, element)
             }
             
             if let menuProvider = self.dataSource.menuProvider {
@@ -69,10 +71,12 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func mouseDragged(with event: NSEvent) {
+            /*
             if let mouseDragged = self.dataSource.mouseHandlers.mouseDragged {
                 let point = event.location(in: self.dataSource.collectionView)
                 mouseDragged(point, self.dataSource.element(at: point))
             }
+             */
             super.mouseDragged(with: event)
         }
         
