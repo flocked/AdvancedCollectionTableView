@@ -11,17 +11,17 @@ import FZUIKit
 
 extension TableViewDiffableDataSource {
     public struct SelectionHandlers<E> {
-        var shouldSelect: (([E]) -> [E])? = nil
-        var shouldDeselect: (([E]) -> [E])? = nil
-        var didSelect: (([E]) -> Void)? = nil
-        var didDeselect: (([E]) -> Void)? = nil
+        public var shouldSelect: (([E]) -> [E])? = nil
+        public var shouldDeselect: (([E]) -> [E])? = nil
+        public var didSelect: (([E]) -> Void)? = nil
+        public var didDeselect: (([E]) -> Void)? = nil
     }
     
     public struct DragdropHandlers<E> {
-        var canDropOutside: ((E) -> PasteboardWriting)? = nil
-        var didDropOutside: ((E) -> ())? = nil
-        var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
-        var didDragInside:  (([PasteboardWriting]) -> ())? = nil
+        public var canDropOutside: ((E) -> PasteboardWriting)? = nil
+        public var didDropOutside: ((E) -> ())? = nil
+        public var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
+        public var didDragInside:  (([PasteboardWriting]) -> ())? = nil
         internal var acceptsDropInside: Bool {
             self.canDragInside != nil && self.didDragInside != nil
         }
@@ -32,43 +32,43 @@ extension TableViewDiffableDataSource {
     }
     
     public struct ReorderHandlers<E> {
-        var canReorder: (([E]) -> Bool)? = nil
-        var willReorder: (([E]) -> Void)? = nil
-        var didReorder: (([E]) -> Void)? = nil
+        public var canReorder: (([E]) -> Bool)? = nil
+        public var willReorder: (([E]) -> Void)? = nil
+        public var didReorder: (([E]) -> Void)? = nil
     }
     
     public struct PrefetchHandlers<E> {
-        var willPrefetch: (([E]) -> Void)? = nil
-        var didCancelPrefetching: (([E]) -> Void)? = nil
+        public var willPrefetch: (([E]) -> Void)? = nil
+        public var didCancelPrefetching: (([E]) -> Void)? = nil
     }
     
     public struct DisplayHandlers<E> {
-        var isDisplaying: (([E]) -> Void)?
-        var didEndDisplaying: (([E]) -> Void)?
+        public var isDisplaying: (([E]) -> Void)?
+        public var didEndDisplaying: (([E]) -> Void)?
     }
     
     public struct QuicklookHandlers<E> {
-        var preview: (([E]) -> [(element: Element, url: URL)]?)?
-        var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
+        public var preview: (([E]) -> [(element: Element, url: URL)]?)?
+        public var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
     }
     
     public struct MouseHandlers<E> {
-        var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        var mouseDragged: ((CGPoint, E?) -> Void)? = nil
+        public var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
+        public var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil
+        public var mouseDragged: ((CGPoint, E?) -> Void)? = nil
     }
     
     public struct HoverHandlers<E> {
-        var isHovering: ((E) -> Void)?
-        var didEndHovering: ((E) -> Void)?
+        public var isHovering: ((E) -> Void)?
+        public var didEndHovering: ((E) -> Void)?
     }
     
     public struct ColumnHandlers<Section> {
-        var allowsRenaming: ((NSTableColumn) -> Bool)?
-        var didRename: (([NSTableColumn]) -> ())?
-        var alowsReordering: (([NSTableColumn]) -> Bool)?
-        var didReorder: (([NSTableColumn]) -> ())?
-        var didSelect: ((NSTableColumn) -> ())?
-        var shouldSelect:((NSTableColumn?) -> Bool)?
+        public var allowsRenaming: ((NSTableColumn) -> Bool)?
+        public var didRename: (([NSTableColumn]) -> ())?
+        public var alowsReordering: (([NSTableColumn]) -> Bool)?
+        public var didReorder: (([NSTableColumn]) -> ())?
+        public var didSelect: ((NSTableColumn) -> ())?
+        public var shouldSelect:((NSTableColumn?) -> Bool)?
     }
 }
