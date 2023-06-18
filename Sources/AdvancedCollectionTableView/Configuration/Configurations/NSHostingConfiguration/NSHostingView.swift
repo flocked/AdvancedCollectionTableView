@@ -28,7 +28,7 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     public init(configuration: NSHostingConfiguration<Content, Background>) {
         self._configuration = configuration
         super.init(frame: .zero)
-        hostingViewConstraints = addSubview(withConstraint: hostingView)
+        hostingViewConstraints = addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
     }
     
@@ -37,16 +37,16 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     }
     
     internal func updateConfiguration() {
-        hostingView.rootView = HostingView(configuration: _configuration)
+        hostingController.rootView = HostingView(configuration: _configuration)
         directionalLayoutMargins = _configuration.margins
     }
     
-    internal lazy var hostingView: NSHostingView<HostingView<Content, Background>> = {
+    internal lazy var hostingController: NSHostingController<HostingView<Content, Background>> = {
         let hostingView = HostingView(configuration: _configuration)
-        let NSHostingView = NSHostingView<HostingView<Content, Background>>(rootView: hostingView)
-        NSHostingView.backgroundColor = .clear
-        NSHostingView.translatesAutoresizingMaskIntoConstraints = false
-        return NSHostingView
+        let hostingController = NSHostingController<HostingView<Content, Background>>(rootView: hostingView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        return hostingController
     }()
         
     override func invalidateIntrinsicContentSize() {
@@ -55,11 +55,11 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         return self.fittingSize
-     //   return hostingController.sizeThatFits(in: size)
+        return hostingController.sizeThatFits(in: size)
     }
     
     override var fittingSize: NSSize {
-        return hostingView.fittingSize
+        return hostingController.fittingSize
     }
     
     internal var hostingViewConstraints: [NSLayoutConstraint] = []
