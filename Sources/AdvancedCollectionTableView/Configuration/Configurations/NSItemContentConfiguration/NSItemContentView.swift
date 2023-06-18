@@ -80,9 +80,9 @@ internal class NSItemContentView: NSView, NSContentView {
          */
     }
     
-    internal lazy var hostingView: HitHostingView<ContentView> = {
+    internal lazy var hostingView: NSHostingView<ContentView> = {
         let contentView = ContentView(configuration: self._configuration)
-        let hostingView = HitHostingView(rootView: contentView)
+        let hostingView = NSHostingView(rootView: contentView)
         hostingView.backgroundColor = .clear
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         hostingView.maskToBounds = false

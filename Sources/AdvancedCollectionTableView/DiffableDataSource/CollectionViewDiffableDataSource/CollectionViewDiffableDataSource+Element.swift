@@ -11,39 +11,31 @@ import FZUIKit
 import FZQuicklook
 
 extension CollectionViewDiffableDataSource {
+    /// An array of all elements of the last applied snapshot.
     public var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
     }
     
-    public var selectionIndexPaths: [IndexPath] {
-        return Array(self.collectionView.selectionIndexPaths)
-    }
-    
+    /// An array of the selected elements.
     public var selectedElements: [Element] {
-        return self.selectionIndexPaths.compactMap({element(for: $0)})
+        return self.collectionView.selectionIndexPaths.compactMap({element(for: $0)})
     }
     
-    public var displayingIndexPaths: [IndexPath] {
-        return self.collectionView.displayingIndexPaths()
-    }
-    
+    /// An array of elements that are displaying (currently visible).
     public var displayingElements: [Element] {
-        self.displayingIndexPaths.compactMap({self.element(for: $0)})
+        self.collectionView.displayingIndexPaths().compactMap({self.element(for: $0)})
     }
-    
-    public func visibleIndexPaths() -> [IndexPath] {
-        return Array(self.collectionView.indexPathsForVisibleItems())
-    }
-    
+    /// An array of elements that are visible.
     public func visibleElements() -> [Element] {
-        return visibleIndexPaths().compactMap({element(for: $0)})
-    }
-    
-    public func visibleItems() -> [NSCollectionViewItem] {
-        return self.collectionView.visibleItems()
+        return self.collectionView.indexPathsForVisibleItems().compactMap({element(for: $0)})
     }
         
-
+    /**
+     Returns the element at the specified index path.
+     
+     - Parameters indexPath: The indexPath
+     - Returns: The element at the index path or nil if there isn't any element at the index path.
+     */
     public func element(for indexPath: IndexPath) ->  Element? {
         if let itemId = self.dataSource.itemIdentifier(for: indexPath) {
             return self.currentSnapshot.itemIdentifiers[id: itemId]
@@ -66,6 +58,12 @@ extension CollectionViewDiffableDataSource {
         return []
     }
     
+    /**
+     Returns the element of the specified index path.
+     
+     - Parameters indexPath: The indexPath
+     - Returns: The element at the index path or nil if there isn't any element at the index path.
+     */
     public func element(at point: CGPoint) -> Element? {
         if let indexPath = self.collectionView.indexPathForItem(at: point) {
             return element(for: indexPath)

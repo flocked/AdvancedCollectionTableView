@@ -41,12 +41,12 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         directionalLayoutMargins = _configuration.margins
     }
     
-    internal lazy var hostingView: HitHostingView<HostingView<Content, Background>> = {
+    internal lazy var hostingView: NSHostingView<HostingView<Content, Background>> = {
         let hostingView = HostingView(configuration: _configuration)
-        let hitHostingView = HitHostingView<HostingView<Content, Background>>(rootView: hostingView)
-        hitHostingView.backgroundColor = .clear
-        hitHostingView.translatesAutoresizingMaskIntoConstraints = false
-        return hitHostingView
+        let NSHostingView = NSHostingView<HostingView<Content, Background>>(rootView: hostingView)
+        NSHostingView.backgroundColor = .clear
+        NSHostingView.translatesAutoresizingMaskIntoConstraints = false
+        return NSHostingView
     }()
         
     override func invalidateIntrinsicContentSize() {
@@ -118,14 +118,6 @@ public struct _NSHostingConfigurationBackgroundView<S>: View where S: ShapeStyle
     
     public var body: some View {
         Rectangle().fill(style)
-    }
-}
-
-internal class HitHostingView<Content: View>: NSHostingView<Content> {
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        guard let hitTest = super.hitTest(point) else {
-            return self.firstSuperview(for: NSCollectionView.self) }
-        return hitTest
     }
 }
 
