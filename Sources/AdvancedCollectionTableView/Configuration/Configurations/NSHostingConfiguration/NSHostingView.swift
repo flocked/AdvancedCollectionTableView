@@ -54,7 +54,6 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
     }
     
     public func sizeThatFits(_ size: CGSize) -> CGSize {
-        return self.fittingSize
         return hostingController.sizeThatFits(in: size)
     }
     

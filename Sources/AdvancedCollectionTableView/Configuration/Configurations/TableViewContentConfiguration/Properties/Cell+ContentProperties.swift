@@ -50,8 +50,8 @@ public extension NSTableCellContentConfiguration {
             case fill
             internal var nsImageScaling: NSImageScaling {
                 switch self {
-                case .fit: return .reizeAspect
-                case .fill: return .reizeAspectFill
+                case .fit: return .scaleProportionallyDown
+                case .fill: return .scaleProportionallyUpOrDown
                 }
             }
             internal var swiftui: ContentMode {
