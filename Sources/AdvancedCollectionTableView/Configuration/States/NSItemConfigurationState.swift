@@ -18,20 +18,22 @@ import AppKit
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the item is in a selected state.
     public var isSelected: Bool = false
-    /// A Boolean value that indicates whether the item is in a enabled state.
-    public var isEnabled: Bool = true
-    /// A Boolean value that indicates whether the item is in a focused state.
-    public var isFocused: Bool = false
-    /// A Boolean value that indicates whether the item is in a hovered state (if the mouse is above the item).
-    public var isHovered: Bool = false
-    /// A Boolean value that indicates whether the item is in a editing state.
-    public var isEditing: Bool = false
-    /// A Boolean value that indicates whether the item is in a expanded state.
-    public var isExpanded: Bool = false
     /// A value that indicates  the items highlight state.
     public var highlight: NSCollectionViewItem.HighlightState = .none
     /// A Boolean value that indicates whether the item is in a emphasized state.
     public var isEmphasized: Bool = false
+    /// A Boolean value that indicates whether the item is in a hovered state (if the mouse is above the item).
+    public var isHovered: Bool = false
+
+    /// A Boolean value that indicates whether the item is in a enabled state.
+    internal var isEnabled: Bool = true
+    /// A Boolean value that indicates whether the item is in a focused state.
+    internal var isFocused: Bool = false
+    /// A Boolean value that indicates whether the item is in a editing state.
+    internal var isEditing: Bool = false
+    /// A Boolean value that indicates whether the item is in a expanded state.
+    internal var isExpanded: Bool = false
+    
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
@@ -40,14 +42,26 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     
     internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
-    public init(isSelected: Bool = false,
-        isEnabled: Bool = true,
-         isFocused: Bool = false,
-         isHovered: Bool = false,
-         isEditing: Bool = false,
-         isExpanded: Bool = false,
-         highlight: NSCollectionViewItem.HighlightState = .none,
-         isEmphasized: Bool = false) {
+    public init(
+        isSelected: Bool = false,
+        highlight: NSCollectionViewItem.HighlightState = .none,
+        isEmphasized: Bool = false,
+        isHovered: Bool = false
+    ) {
+        self.isSelected = isSelected
+        self.highlight = highlight
+        self.isEmphasized = isEmphasized
+        self.isHovered = isHovered
+    }
+    
+    public init(isSelected: Bool,
+        isEnabled: Bool,
+         isFocused: Bool,
+         isHovered: Bool,
+         isEditing: Bool,
+         isExpanded: Bool,
+         highlight: NSCollectionViewItem.HighlightState,
+         isEmphasized: Bool) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isFocused = isFocused

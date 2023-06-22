@@ -93,7 +93,7 @@ public extension NSTableCellView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableCellConfigurationState {
-        let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized)
+        let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEmphasized: self.isEmphasized, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false)
         return state
     }
     

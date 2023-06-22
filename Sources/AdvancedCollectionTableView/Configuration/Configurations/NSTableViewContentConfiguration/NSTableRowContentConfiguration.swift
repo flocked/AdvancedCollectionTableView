@@ -17,19 +17,31 @@ import FZUIKit
  
  ```
  var content = rowView.defaultContentConfiguration()
-
+ 
  // Configure content.
  content.backgroundColor = .controlAccentColor
  content.cornerRadius = 4.0
-
+ 
  rowView.contentConfiguration = content
  ```
  */
 public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
     /// The background color.
-    var backgroundColor: NSColor? = nil
+    var backgroundColor: NSColor? = nil {
+        didSet {
+            if oldValue != backgroundColor {
+                self.updateResolvedColors()
+            }
+        }
+    }
     /// The color transformer of the background color.
-    public var backgroundColorTansform: NSConfigurationColorTransformer? = nil
+    public var backgroundColorTansform: NSConfigurationColorTransformer? = nil {
+        didSet {
+            if oldValue != backgroundColorTansform {
+                self.updateResolvedColors()
+            }
+        }
+    }
     /// Generates the resolved background color for the specified background color, using the color and color transformer.
     public func resolvedBackgroundColor() -> NSColor? {
         if let backgroundColor = self.backgroundColor {
@@ -37,10 +49,41 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
         }
         return nil
     }
+    
+    /// The border width.
+    var borderWidth: CGFloat = 0.0
+    
+    /// The border color.
+    var borderColor: NSColor? = nil {
+        didSet {
+            if oldValue != borderColor {
+                self.updateResolvedColors()
+            }
+        }
+    }
+    /// The color transformer of the border color.
+    public var borderColorColorTansform: NSConfigurationColorTransformer? = nil {
+        didSet {
+            if oldValue != borderColorColorTansform {
+                self.updateResolvedColors()
+            }
+        }
+    }
+    /// Generates the resolved border color for the specified border color, using the color and color transformer.
+    public func resolvedBorderColor() -> NSColor? {
+        if let borderColor = self.borderColor {
+            return borderColorColorTansform?(borderColor) ?? borderColor
+        }
+        return nil
+    }
+    
     /// The corner radius.
     var cornerRadius: CGFloat = 0.0
     /// The background view.
     var backgroundView: NSView? = nil
+    
+    /// The  image.
+    var image: NSImage? = nil
     
     /**
      The margins between the content and the edges of the content view.
@@ -49,7 +92,8 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
     
     var backgroundPadding: NSDirectionalEdgeInsets = .zero
     
-    internal var roundedCorners: CACornerMask = .all
+    /// The rounded corners.
+    var roundedCorners: CACornerMask = []
     
     /**
      Properties for configuring the seperator.
@@ -57,7 +101,6 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
     var seperatorProperties: SeperatorProperties = .default()
     
     internal var tableViewStyle: NSTableView.Style? = nil
-    
     
     public static func `default`() -> NSTableRowContentConfiguration {
         return.automatic()
@@ -107,7 +150,7 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
         configuration.tableViewStyle = .plain
         return configuration
     }
-
+    
     public static func inset() -> NSTableRowContentConfiguration {
         var configuration = NSTableRowContentConfiguration()
         configuration.tableViewStyle = .inset
@@ -143,6 +186,14 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
         }
         return configuration
     }
+    
+    internal var _resolvedBackgroundColor: NSColor? = nil
+    internal var _resolvedBorderColor: NSColor? = nil
+    
+    internal mutating func updateResolvedColors() {
+        _resolvedBackgroundColor = resolvedBackgroundColor()
+        _resolvedBorderColor = resolvedBorderColor()
+    }
 }
 
 public extension NSTableRowContentConfiguration {
@@ -151,7 +202,7 @@ public extension NSTableRowContentConfiguration {
         var colorTransform: NSConfigurationColorTransformer? = nil
         var height: CGFloat = 1.0
         var insets: NSDirectionalEdgeInsets = .init(top: 0, leading: 4.0, bottom: 0, trailing: 4.0)
-
+        
         func resolvedColor() -> NSColor? {
             return self.colorTransform?(color) ?? color
         }
