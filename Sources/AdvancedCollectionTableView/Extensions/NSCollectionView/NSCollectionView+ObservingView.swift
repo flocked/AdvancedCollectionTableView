@@ -28,8 +28,9 @@ internal extension NSCollectionView {
     }
         
     func updateItemHoverState(_ event: NSEvent) {
-        
         let mouseItem = self.item(for: event)
+        Swift.print("updateItemHoverState", mouseItem)
+
         if hoveredItem != mouseItem {
             if let hoveredItem = self.hoveredItem {
                 hoverHandlers?.didEndHovering?(hoveredItem)
@@ -69,7 +70,6 @@ internal extension NSCollectionView {
                 
                 self.observingView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return true }
-                    Swift.print("moved") 
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         self.updateItemHoverState(event)
