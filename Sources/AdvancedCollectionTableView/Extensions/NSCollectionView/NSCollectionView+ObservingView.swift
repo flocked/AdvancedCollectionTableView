@@ -29,7 +29,8 @@ internal extension NSCollectionView {
         
     func updateItemHoverState(_ event: NSEvent) {
         let mouseItem = self.item(for: event)
-        Swift.print("updateItemHoverState", self.indexPathForItem(at: event.location(in: self)))
+        let location = event.location(in: self)
+        Swift.print("updateItemHoverState", self.subviews.first(where: {$0.frame.contains(location)}))
 
         if hoveredItem != mouseItem {
             if let hoveredItem = self.hoveredItem {
