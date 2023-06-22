@@ -29,7 +29,7 @@ internal extension NSCollectionView {
         
     func updateItemHoverState(_ event: NSEvent) {
         let mouseItem = self.item(for: event)
-        Swift.print("updateItemHoverState", mouseItem)
+        Swift.print("updateItemHoverState", self.indexPathForItem(at: event.location(in: self)))
 
         if hoveredItem != mouseItem {
             if let hoveredItem = self.hoveredItem {
