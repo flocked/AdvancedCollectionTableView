@@ -7,7 +7,7 @@
 
 import Foundation
 import AppKit
-
+import FZUIKit
 /**
  A structure that encapsulates a item’s state.
 

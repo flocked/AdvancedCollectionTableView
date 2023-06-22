@@ -109,12 +109,12 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     }
     
     /// Creates a new instance of the content view using the configuration.
-    public func makeContentView() -> NSView & AdvancedCollectionTableView.NSContentView {
+    public func makeContentView() -> NSView & NSContentView {
         return NSTableCellContentView(configuration: self)
     }
     
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
-    public func updated(for state: AdvancedCollectionTableView.NSConfigurationState) -> NSTableCellContentConfiguration {
+    public func updated(for state: NSConfigurationState) -> NSTableCellContentConfiguration {
         return self
         /*
         guard let state = state as? NSTableCellConfigurationState else { return self }
