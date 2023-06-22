@@ -10,8 +10,32 @@ import FZSwiftUtils
 import FZUIKit
 
 internal class NSTableRowContentView: NSView, NSContentView {
-    let contentView: NSView = NSView(frame: .zero)
-    var backgroundView: NSView? = nil {
+    /// The current configuration of the view.
+    public var configuration: NSContentConfiguration  {
+        get { self._configuration }
+        set {
+            if let newValue = newValue as? NSTableRowContentConfiguration {
+                self._configuration = newValue
+            }
+        }
+    }
+    
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        return configuration is NSTableRowContentConfiguration
+    }
+        
+    /// Creates a table row content view with the specified content configuration.
+    public init(configuration: NSTableRowContentConfiguration) {
+        self._configuration = configuration
+        super.init(frame: .zero)
+        self.contentView.wantsLayer = true
+        self.contentViewConstraits = self.addSubview(withConstraint: contentView)
+        self.updateConfiguration()
+    }
+    
+    internal let contentView: NSView = NSView(frame: .zero)
+    internal var backgroundView: NSView? = nil {
         didSet {
             if oldValue != self.backgroundView {
                 oldValue?.removeFromSuperview()
@@ -21,8 +45,8 @@ internal class NSTableRowContentView: NSView, NSContentView {
             }
         }
     }
-    var imageView: NSImageView? = nil
-    var image: NSImage? = nil {
+    internal var imageView: NSImageView? = nil
+    internal var image: NSImage? = nil {
         didSet {
             if let image = self.image {
                 if (imageView == nil) {
@@ -37,16 +61,7 @@ internal class NSTableRowContentView: NSView, NSContentView {
             }
         }
     }
-    
-    var configuration: NSContentConfiguration  {
-        get { self._configuration }
-        set {
-            if let newValue = newValue as? NSTableRowContentConfiguration {
-                self._configuration = newValue
-            }
-        }
-    }
-    
+        
     internal var _configuration: NSTableRowContentConfiguration {
         didSet {
             if oldValue != _configuration {
@@ -72,19 +87,7 @@ internal class NSTableRowContentView: NSView, NSContentView {
         contentViewConstraits[3].constant = -_configuration.backgroundPadding.trailing
     }
     
-    func supports(_ configuration: NSContentConfiguration) -> Bool {
-        return configuration is NSTableRowContentConfiguration
-    }
-    
-    var contentViewConstraits: [NSLayoutConstraint] = []
-    
-    init(configuration: NSTableRowContentConfiguration) {
-        self._configuration = configuration
-        super.init(frame: .zero)
-        self.contentView.wantsLayer = true
-        self.contentViewConstraits = self.addSubview(withConstraint: contentView)
-        self.updateConfiguration()
-    }
+    internal var contentViewConstraits: [NSLayoutConstraint] = []
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

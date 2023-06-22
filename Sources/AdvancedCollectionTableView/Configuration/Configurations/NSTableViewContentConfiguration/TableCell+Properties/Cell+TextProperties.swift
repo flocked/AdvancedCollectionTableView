@@ -23,7 +23,6 @@ public extension NSTableCellContentConfiguration {
         /// The color transformer of the text color.
         public var colorTansform: NSConfigurationColorTransformer? = nil {
             didSet { updateResolvedColor() } }
-        
         /// Generates the resolved text color for the specified text color, using the color and color transformer.
         public func resolvedColor() -> NSColor {
             colorTansform?(color) ?? color

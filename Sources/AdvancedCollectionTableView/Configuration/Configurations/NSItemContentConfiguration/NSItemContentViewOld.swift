@@ -59,6 +59,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         
     }
     
+    /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
         set {
@@ -66,6 +67,11 @@ public class NSItemContentViewNS: NSView, NSContentView {
                 self._configuration = newValue
             }
         }
+    }
+    
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSItemContentConfiguration
     }
     
     internal var _configuration: NSItemContentConfiguration {
@@ -76,6 +82,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         }
     }
     
+    /// Creates a item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)

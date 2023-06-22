@@ -11,6 +11,7 @@ import FZUIKit
 import SwiftUI
 
 internal class NSItemContentView: NSView, NSContentView {
+    /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
         set {
@@ -44,10 +45,12 @@ internal class NSItemContentView: NSView, NSContentView {
         
     }
     
+    /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
     
+    /// Creates a item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)

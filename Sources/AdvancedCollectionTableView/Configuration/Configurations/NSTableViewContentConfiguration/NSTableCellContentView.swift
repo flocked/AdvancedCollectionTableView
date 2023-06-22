@@ -11,6 +11,29 @@ import FZUIKit
 
 public class NSTableCellContentView: NSView, NSContentView {
     
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSTableCellContentConfiguration
+    }
+    
+    /// The current configuration of the view.
+    public var configuration: NSContentConfiguration {
+        get { _configuration }
+        set {
+            if let newValue = newValue as? NSTableCellContentConfiguration {
+                _configuration = newValue
+            }
+        }
+    }
+    
+    /// Creates a table cell content view with the specified content configuration.
+    public init(configuration: NSTableCellContentConfiguration) {
+        self._configuration = configuration
+        super.init(frame: .zero)
+        self.initialSetup()
+        self.updateConfiguration()
+    }
+    
     internal lazy var textField = CellTextField(properties: self._configuration.textProperties)
     internal lazy var secondaryTextField = CellTextField(properties: self._configuration.secondaryTextProperties)
     internal lazy var imageView = CellImageView(properties: self._configuration.imageProperties)
@@ -33,27 +56,7 @@ public class NSTableCellContentView: NSView, NSContentView {
      //   stackView.setDistribution(.firstBaseline)
         return stackView
     }()
-    
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
-        configuration is NSTableCellContentConfiguration
-    }
-    
-    public var configuration: NSContentConfiguration {
-        get { _configuration }
-        set {
-            if let newValue = newValue as? NSTableCellContentConfiguration {
-                _configuration = newValue
-            }
-        }
-    }
-    
-    public init(configuration: NSTableCellContentConfiguration) {
-        self._configuration = configuration
-        super.init(frame: .zero)
-        self.initialSetup()
-        self.updateConfiguration()
-    }
-    
+        
     internal var stackViewConstraints: [NSLayoutConstraint] = []
     internal func initialSetup() {
         self.maskToBounds = false

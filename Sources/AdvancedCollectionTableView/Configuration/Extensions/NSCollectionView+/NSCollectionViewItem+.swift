@@ -298,10 +298,7 @@ public extension NSCollectionViewItem {
     }
     
     func sizeThatFits(_ size: CGSize) -> CGSize {
-        if let contentView = self.contentView {
-            return contentView.sizeThatFits(size)
-        }
-        return self.sizeThatFits(size)
+        return self.view.sizeThatFits(size)  
     }
     
     var fittingSize: CGSize {

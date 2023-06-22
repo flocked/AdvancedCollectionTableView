@@ -23,6 +23,7 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.swizzleTableCellIfNeeded()
+                self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
         }
@@ -235,6 +236,10 @@ public extension NSTableCellView {
     }
     
     @objc internal func swizzledViewDidMoveToSuperview() {
+        if self.contentConfiguration != nil {
+            self.tableView?.usesAutomaticRowHeights = true
+        }
+        
         if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
             self.setNeedsUpdateConfiguration()
         }

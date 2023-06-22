@@ -12,6 +12,7 @@ import FZUIKit
 
 internal class NSHostingContentView<Content, Background>: NSView, NSContentView where Content: View, Background: View {
     
+    /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
         set {
@@ -21,10 +22,12 @@ internal class NSHostingContentView<Content, Background>: NSView, NSContentView 
         }
     }
     
+    /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSHostingConfiguration<Content, Background>
     }
     
+    /// Creates a hosting content view with the specified content configuration.
     public init(configuration: NSHostingConfiguration<Content, Background>) {
         self._configuration = configuration
         super.init(frame: .zero)

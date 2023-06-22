@@ -9,60 +9,75 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal class NSBackgroundContentView: NSView, NSContentView {
-    internal var customView: NSView? = nil
-    internal var imageView: ImageView? = nil
-    
+public class NSBackgroundContentView: NSView, NSContentView {
+    /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
-        set { if let newValue = newValue as? NSBackgroundConfiguration {
-            _configuration = newValue
-        } }  }
+        set {
+            if let newValue = newValue as? NSBackgroundConfiguration {
+                _configuration = newValue
+            }
+        }
+    }
     
-    internal var _configuration: NSBackgroundConfiguration {
-        didSet {  self.updateConfiguration() } }
-    
+    /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSBackgroundConfiguration
     }
     
+    /// Creates a background content view with the specified content configuration.
+    public init(configuration: NSBackgroundConfiguration) {
+        self._configuration = configuration
+        super.init(frame: .zero)
+        self.maskToBounds = false
+        self.updateConfiguration()
+    }
+    
+    internal var view: NSView? = nil {
+        didSet {
+            if oldValue != self.view {
+                oldValue?.removeFromSuperview()
+                if let view = self.view {
+                    self.addSubview(withConstraint: view)
+                }
+            }
+        }
+    }
+    internal var imageView: ImageView? = nil
+    internal var image: NSImage? {
+        get { imageView?.image }
+        set {
+            guard newValue != imageView?.image else { return }
+            if let image = newValue {
+                if (self.imageView == nil) {
+                    let imageView = ImageView()
+                    self.imageView = imageView
+                    self.addSubview(withConstraint: imageView)
+                }
+                self.imageView?.image = image
+                self.imageView?.imageScaling = _configuration.imageScaling
+            } else {
+                self.imageView?.removeFromSuperview()
+                self.imageView = nil
+            }
+        }
+    }
+    
+    internal var _configuration: NSBackgroundConfiguration {
+        didSet { if oldValue != _configuration {
+            self.updateConfiguration() } } }
+    
     internal func updateConfiguration() {
-        if let customView = _configuration.customView {
-            if (self.customView != customView) {
-                self.customView?.removeFromSuperview()
-                self.customView = customView
-                self.addSubview(withConstraint: customView)
-            }
-        } else {
-            self.customView?.removeFromSuperview()
-            self.customView = nil
-        }
-        
-        if let image = _configuration.image {
-            if (self.imageView == nil) {
-                let imageView = ImageView()
-                self.imageView = imageView
-                self.addSubview(withConstraint: imageView)
-            }
-            self.imageView?.image = image
-            self.imageView?.imageScaling = _configuration.imageScaling
-        } else {
-            self.imageView?.removeFromSuperview()
-            self.imageView = nil
-        }
+        self.view = _configuration.view
+        self.image = _configuration.image
         
         self.backgroundColor =  _configuration._resolvedColor
-        self.borderWidth = _configuration.border.width
-        self.borderColor = _configuration._resolvedBorderColor
         
         self.visualEffect = _configuration.visualEffect
         self.cornerRadius = _configuration.cornerRadius
         
-    }
-    
-    public init(configuration: NSBackgroundConfiguration) {
-        self._configuration = configuration
-        super.init(frame: .zero)
+        self.configurate(using: _configuration.shadow)
+        self.configurate(using: _configuration.border)
     }
     
     required init?(coder: NSCoder) {
