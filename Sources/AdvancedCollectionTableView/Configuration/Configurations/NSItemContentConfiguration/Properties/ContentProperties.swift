@@ -145,7 +145,6 @@ public extension NSItemContentConfiguration {
             imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
             _resolvedBorderColor = resolvedBorderColor()
-            
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         

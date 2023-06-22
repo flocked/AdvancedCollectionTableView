@@ -49,7 +49,7 @@ public extension NSTableCellView {
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     func defaultContentConfiguration() -> NSTableCellContentConfiguration {
-        return NSTableCellContentConfiguration.default()
+        return NSTableCellContentConfiguration.sidebar()
     }
     
     /**

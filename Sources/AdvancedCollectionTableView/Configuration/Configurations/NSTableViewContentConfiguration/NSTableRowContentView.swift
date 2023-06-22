@@ -9,8 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension NSTableRowContentConfiguration {
-    internal class ContentView: NSView, NSContentView {
+internal class NSTableRowContentView: NSView, NSContentView {
         let contentView: NSView = NSView(frame: .zero)
         var backgroundView: NSView? = nil
         
@@ -74,4 +73,3 @@ extension NSTableRowContentConfiguration {
             fatalError("init(coder:) has not been implemented")
         }
     }
-}

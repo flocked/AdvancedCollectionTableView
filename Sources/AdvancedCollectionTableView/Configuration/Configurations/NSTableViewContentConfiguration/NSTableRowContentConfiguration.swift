@@ -116,7 +116,7 @@ public struct NSTableRowContentConfiguration: NSContentConfiguration, Hashable {
     
     // Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
-        let contentView = ContentView(configuration: self)
+        let contentView = NSTableRowContentView(configuration: self)
         return contentView
     }
     
