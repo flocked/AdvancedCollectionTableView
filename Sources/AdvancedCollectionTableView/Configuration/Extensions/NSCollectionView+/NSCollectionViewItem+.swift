@@ -80,31 +80,23 @@ public extension NSCollectionViewItem {
     }
     
     internal var configurationBackgroundView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "NSCollectionItem_configurationBackgroundView", object: self) }
-        set {
-            self.configurationBackgroundView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "NSCollectionItem_configurationBackgroundView", object: self)
-        }
+        self.backgroundView as? (NSView & NSContentView)
     }
     
     internal func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            self.backgroundView?.removeFromSuperview()
-            self.backgroundView = nil
             self.selectedBackgroundView?.removeFromSuperview()
             self.selectedBackgroundView = nil
             if var backgroundView = configurationBackgroundView,  backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
-                configurationBackgroundView?.removeFromSuperview()
+                self.backgroundView?.removeFromSuperview()
                 var backgroundView = backgroundConfiguration.makeContentView()
                 backgroundView.configuration = backgroundConfiguration
-                configurationBackgroundView = backgroundView
                 self.view.addSubview(withConstraint: backgroundView)
+                self.backgroundView = backgroundView
             }
         } else {
-            configurationBackgroundView?.removeFromSuperview()
-            configurationBackgroundView = nil
             if self.isSelected {
                 self.backgroundView?.removeFromSuperview()
                 if let selectedBackgroundView = self.selectedBackgroundView {
@@ -191,7 +183,9 @@ public extension NSCollectionViewItem {
             } else {
                 self.cachedLayoutAttributes = nil
                 self.view = contentConfiguration.makeContentView()
+                self.view.translatesAutoresizingMaskIntoConstraints = false
                 self.view.wantsLayer = true
+                self.view.maskToBounds = false
             }
         } else {
             self.cachedLayoutAttributes = nil

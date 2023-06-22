@@ -141,7 +141,7 @@ public struct NSHostingConfiguration<Content, Background>: NSContentConfiguratio
         - edges: The edges to apply the insets. Any edges not specified will use the system default values. The default value is all.
         - insets: The insets to apply.
      */
-  public func margins(_ edges: Edge.Set = .all,_ insets: EdgeInsets) -> NSHostingConfiguration<Content, Background> {
+  public func margins(_ edges: Edge.Set = .all, _ insets: EdgeInsets) -> NSHostingConfiguration<Content, Background> {
     return NSHostingConfiguration<Content, Background>(
       content: content,
       background: background,
