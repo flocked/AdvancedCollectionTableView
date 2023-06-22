@@ -144,7 +144,7 @@ internal extension NSTableCellContentView {
         }
         
         func update() {
-            self.maximumNumberOfLines = properties.maxNumberOfLines ?? 0
+            self.maximumNumberOfLines = properties.maxNumberOfLines
             self.textColor = properties._resolvedTextColor
             self.font = properties.font
             self.alignment = properties.alignment.nsTextAlignment
@@ -210,9 +210,11 @@ internal extension NSTableCellContentView {
                 height = max(_height, maxHeight)
             }
             
+            /*
             if let pointSize = self.properties.symbolConfiguration?.font?.pointSize {
               //  width = pointSize * 2
             }
+             */
             
             if let width = width {
                 widthA = self.widthAnchor.constraint(equalToConstant: width)

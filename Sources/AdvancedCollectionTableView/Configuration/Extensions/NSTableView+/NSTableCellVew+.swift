@@ -29,7 +29,7 @@ public extension NSTableCellView {
     }
     
     /**
-     Retrieves a default content configuration for the cell’s style.
+     Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view and it’s style.
      
      The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
      
@@ -49,7 +49,7 @@ public extension NSTableCellView {
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     func defaultContentConfiguration() -> NSTableCellContentConfiguration {
-        return NSTableCellContentConfiguration.sidebar()
+        return NSTableCellContentConfiguration.automatic()
     }
     
     /**
@@ -108,6 +108,10 @@ public extension NSTableCellView {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
+        if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
+        }
+        
         if isConfigurationUpdatesEnabled {
             let state = self.configurationState
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
@@ -146,7 +150,7 @@ public extension NSTableCellView {
      
      ```
      cell.configurationUpdateHandler = { cell, state in
-         var content = NSTableCellContentConfiguration.default().updated(for: state)
+         var content = NSTableCellContentConfiguration.sidebar().updated(for: state)
          content.text = "Hello world!"
          if state.isDisabled {
              content.textProperties.color = .systemGray
@@ -231,11 +235,15 @@ public extension NSTableCellView {
     }
     
     @objc internal func swizzledViewDidMoveToSuperview() {
+        if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+            self.setNeedsUpdateConfiguration()
+        }
+        
         self.rowView?.swizzleTableRowViewIfNeeded()
         self.tableView?.setupObservingView()
         self.swizzledViewDidMoveToSuperview()
     }
-    
+        
     @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleTableCellView == false) {
             didSwizzleTableCellView = true

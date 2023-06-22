@@ -24,14 +24,16 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     public var textToSecondaryTextPadding: CGFloat = 2.0
     public var insets = NSEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0, right: 8.0)
     
-    internal var cellType: CellType? = nil
+    internal var type: TableCellType? = nil
+    internal var tableViewStyle: NSTableView.Style? = nil
     
-    internal enum CellType {
+    internal enum TableCellType {
         case sidebar
-        case sidebarAlt
+        case large
+        case automatic
+        case sidebarHeader
         var isSelectedTextColor: NSColor? {
             switch self {
-            case .sidebarAlt: return .white
             default: return nil
             }
         }
@@ -126,6 +128,12 @@ public extension NSTableCellContentConfiguration {
         return configuration
     }
     
+    internal static func automatic() -> NSTableCellContentConfiguration {
+        var configuration = sidebar(.body, imageColor: .accentColor)
+        configuration.type = .automatic
+        return configuration 
+    }
+    
     static func sidebar(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
         return sidebar(.body, imageColor: imageColor)
     }
@@ -146,12 +154,52 @@ public extension NSTableCellContentConfiguration {
         return configuration
     }
     
+    internal func tableViewStyle(_ style: NSTableView.Style) -> NSTableCellContentConfiguration {
+        var configuration = self
+        configuration.tableViewStyle = style
+        switch style {
+        case .automatic: return .sidebar()
+        case .fullWidth, .plain, .inset:
+            configuration.textProperties.font = .body
+            configuration.secondaryTextProperties.font = .body
+            configuration.imageToTextPadding = 6.0
+            configuration.insets = NSEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+        case .sourceList:
+            configuration.textProperties.font = .body
+            configuration.secondaryTextProperties.font = .body
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
+            configuration.imageToTextPadding = 8.0
+            configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+        @unknown default:
+            configuration.textProperties.font = .body
+            configuration.secondaryTextProperties.font = .body
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
+            configuration.imageToTextPadding = 8.0
+            configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+        }
+        return configuration
+    }
+    
+    internal static func tableViewStyle(_ style: NSTableView.Style) -> NSTableCellContentConfiguration {
+        switch style {
+        case .automatic: return .sidebar()
+        case .fullWidth:  return .plain()
+        case .inset: return .plain()
+        case .sourceList: return .sidebar()
+        case .plain: return .plain()
+        @unknown default: return .sidebar()
+        }
+    }
+    
     internal static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
         var configuration = NSTableCellContentConfiguration()
         configuration.textProperties.font = .system(style).weight(weight)
+        configuration.secondaryTextProperties.font = .system(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(style, weight: weight.symbolWeight()))
         configuration.imageProperties.tintColor = imageColor.tintColor
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline), colorConfiguration: imageColor.symbolColorConfiguration)
+        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(style), colorConfiguration: imageColor.symbolColorConfiguration)
         configuration.imageToTextPadding = 8.0
         configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
         return configuration

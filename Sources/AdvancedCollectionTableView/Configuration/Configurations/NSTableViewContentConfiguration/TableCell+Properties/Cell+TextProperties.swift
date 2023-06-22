@@ -47,10 +47,12 @@ public extension NSTableCellContentConfiguration {
             }
         }
         
+        /// The font of the text.
         public var font: NSFont = .body
+        
+        /// The color of the text.
         public var textColor: NSColor = .labelColor {
             didSet { updateResolvedTextColor() } }
-        
         /// The color transformer of the text color.
         public var textColorTansform: NSConfigurationColorTransformer? = nil {
             didSet { updateResolvedTextColor() } }
@@ -60,10 +62,19 @@ public extension NSTableCellContentConfiguration {
             textColorTansform?(textColor) ?? textColor
         }
         
-        public var maxNumberOfLines: Int? = nil
+        /// The maximum number of lines.
+        /**
+         The maximum number of lines.
+         
+         The default value of 0 indicates no limit to the number of lines.
+         */
+        public var maxNumberOfLines: Int = 0
+        /// The  text alignment.
         public var alignment: Alignment = .leading
         
+        /// A Boolean value that determines whether the user can select the text.
         public var isSelectable: Bool = false
+        /// A Boolean value that controls whether the user can edit the text.
         public var isEditable: Bool = false
         
         public static func primary() -> Self { TextProperties(maxNumberOfLines: 1) }
