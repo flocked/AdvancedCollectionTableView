@@ -10,15 +10,12 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-/// The content properties of an item configuraton.
 public extension NSTableCellContentConfiguration {
+    /// Properties that affect the cell image’s shadow.
     struct ShadowProperties: Hashable {
+        /// The color of the shadow.
         public var color: NSColor? = nil {
             didSet { updateResolvedColor() } }
-        
-        public var offset: CGPoint = CGPoint(1, 1)
-        public var opacity: CGFloat = 0.7
-        public var radius: CGFloat = 0.3
         
         /// The color transformer for resolving the shadow color.
         public var colorTransform: NSConfigurationColorTransformer? = nil {
@@ -31,6 +28,28 @@ public extension NSTableCellContentConfiguration {
             }
             return nil
         }
+        
+        /// The offset of the shadow.
+        public var offset: CGPoint = CGPoint(1, 1)
+        /// The opacity of the shadow.
+        public var opacity: CGFloat = 0.7
+        /// The blur radius of the shadow.
+        public var radius: CGFloat = 0.3
+    
+        
+        /// Creates shadow properties.
+        public init(color: NSColor? = nil,
+                    colorTransform: NSConfigurationColorTransformer? = nil,
+                    offset: CGPoint = CGPoint(1, 1),
+                    opacity: CGFloat = 0.7,
+                    radius: CGFloat = 0.3) {
+            self.color = color
+            self.colorTransform = colorTransform
+            self.offset = offset
+            self.opacity = opacity
+            self.radius = radius
+        }
+
         
         internal var _resolvedColor: NSColor? = nil
         internal mutating func updateResolvedColor() {

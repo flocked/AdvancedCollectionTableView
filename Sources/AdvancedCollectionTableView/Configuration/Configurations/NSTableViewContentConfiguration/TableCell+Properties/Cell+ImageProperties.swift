@@ -10,18 +10,23 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-/// The content properties of an item configuraton.
 public extension NSTableCellContentConfiguration {
+    /// Properties that affect the cell content configuration’s image.
     struct ImageProperties: Hashable {
         public enum ImageSizing: Hashable {
             case firstTextHeight
             case totalTextHeight
         }
         
+        /// The position of the image.
         public enum ImagePosition: Hashable {
+            /// The image is positioned leading the text.
             case leading
+            /// The image is positioned trailing the text.
             case trailing
+            /// The image is positioned below the text.
             case bottom
+            /// The image is positioned above the text.
             case top
             internal var orientation: NSUserInterfaceLayoutOrientation {
                 switch self {
@@ -33,13 +38,13 @@ public extension NSTableCellContentConfiguration {
             }
         }
         
-        /// The image tint color for an image that is a template or symbol image.
+        /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: NSConfigurationColorTransformer? = nil {
             didSet { updateResolvedColors() } }
-        /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
+        /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = self.tintColor {
                 return self.tintColorTransform?(tintColor) ?? tintColor
@@ -61,10 +66,12 @@ public extension NSTableCellContentConfiguration {
             return nil
         }
         
+        /// The border width of the image.
         public var borderWidth: CGFloat = 0.0
+        /// The border color of the image.
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
-        
+        /// The color transformer of the border color.
         public var borderColorTransform: NSConfigurationColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
@@ -75,16 +82,60 @@ public extension NSTableCellContentConfiguration {
             return nil
         }
         
+        /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
+        /// The shadow properties of the image.
         public var shadowProperties: ShadowProperties = ShadowProperties()
         
+        /// The symbol configuration of the image.
         public var symbolConfiguration: SymbolConfiguration? = SymbolConfiguration().font(.textStyle(.body, weight: nil))
         
-        public var imageScaling: NSImageScaling = .scaleNone
-        public var imageMaxWidth: CGFloat? = nil
-        public var imageMaxHeight: CGFloat? = nil
-        public var imageSizing: ImageSizing = .firstTextHeight
-        public var imagePosition: ImagePosition = .leading
+        /// The image scaling.
+        public var scaling: NSImageScaling = .scaleNone
+        
+        /// The maximum width of the image.
+        public var maxWidth: CGFloat? = nil
+        /// The maximum height of the image.
+        public var maxHeight: CGFloat? = nil
+        
+        /// The sizing option for the image.
+        public var sizing: ImageSizing = .firstTextHeight
+        
+        /// The position of the image.
+        public var position: ImagePosition = .leading
+        
+        /// Creates image properties.
+        public init(tintColor: NSColor? = nil,
+                    tintColorTransform: NSConfigurationColorTransformer? = nil,
+                    backgroundColor: NSColor? = nil,
+                    backgroundColorTransform: NSConfigurationColorTransformer? = nil,
+                    borderWidth: CGFloat = 0.0,
+                    borderColor: NSColor? = nil,
+                    borderColorTransform: NSConfigurationColorTransformer? = nil,
+                    cornerRadius: CGFloat = 0.0,
+                    shadowProperties: ShadowProperties = ShadowProperties(),
+                    symbolConfiguration: SymbolConfiguration? = nil,
+                    scaling: NSImageScaling = .scaleNone,
+                    maxWidth: CGFloat? = nil,
+                    maxHeight: CGFloat? = nil,
+                    sizing: ImageSizing = .firstTextHeight,
+                    position: ImagePosition = .leading) {
+            self.tintColor = tintColor
+            self.tintColorTransform = tintColorTransform
+            self.backgroundColor = backgroundColor
+            self.backgroundColorTransform = backgroundColorTransform
+            self.borderWidth = borderWidth
+            self.borderColor = borderColor
+            self.borderColorTransform = borderColorTransform
+            self.cornerRadius = cornerRadius
+            self.shadowProperties = shadowProperties
+            self.symbolConfiguration = symbolConfiguration
+            self.scaling = scaling
+            self.maxWidth = maxWidth
+            self.maxHeight = maxHeight
+            self.sizing = sizing
+            self.position = position
+        }
         
         internal var _resolvedTintColor: NSColor? = nil
         internal var _resolvedBorderColor: NSColor? = nil
@@ -117,10 +168,10 @@ internal extension NSTableCellContentConfiguration.SymbolConfiguration {
         switch self.font {
             case .systemFont(size: let size, weight: let weight):
                 configuration = configuration.font(size: size)
-                configuration = configuration.weight(weight)
+            configuration = configuration.weight(weight?.symbolWeight())
             case .textStyle(let style, weight: let weight):
                 configuration = configuration.font(style)
-                configuration = configuration.weight(weight)
+            configuration = configuration.weight(weight?.symbolWeight())
             case .none:
                 break
         }

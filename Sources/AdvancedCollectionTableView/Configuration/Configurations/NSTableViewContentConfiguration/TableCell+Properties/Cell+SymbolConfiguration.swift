@@ -10,9 +10,8 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-/// The content properties of an item configuraton.
 public extension NSTableCellContentConfiguration {
-    /// An object that contains the specific font, style, and weight attributes to apply to a item symbol image.
+    /// An object that contains the specific font, style, and weight attributes to apply to a image symbol configuration.
     struct SymbolConfiguration: Hashable {
         /// The font for the symbol configuration.
         public var font: FontConfiguration? = .textStyle(.body)
@@ -24,28 +23,62 @@ public extension NSTableCellContentConfiguration {
         /// The image scaling of the symbol configuration.
         public var imageScale: ImageScale? = nil
         
+        /// The color transformer for resolving the color configuration.
+        public var colorTransform: NSConfigurationColorTransformer? = nil {
+            didSet { updateResolvedColors() } }
+        
+        /// Applies the specified image scaling of the symbol configuration.
         public func imageScale(_ scale: ImageScale?) -> Self {
             var configuration = self
             configuration.imageScale = imageScale
             return configuration
         }
         
+        /// Applies the font for the symbol configuration.
         public func font(_ font: FontConfiguration?) -> Self {
             var configuration = self
             configuration.font = font
             return configuration
         }
         
+        /// Applies the color configuration of the symbol configuration.
         public func colorConfiguration(_ configuration: ColorConfiguration?) -> Self {
             var newConfiguration = self
             newConfiguration.colorConfiguration = configuration
             return newConfiguration
         }
         
-        /// The color transformer for resolving the color style.
-        public var colorTransform: NSConfigurationColorTransformer? = nil {
-            didSet { updateResolvedColors() } }
+        /// Creates a configuration with a monochrome color configuration.
+        public static func monochrome() -> SymbolConfiguration {
+            SymbolConfiguration(colorConfiguration: .monochrome)
+        }
         
+        /// Creates a configuration with a hierarchical color configuration with the specified color.
+        public static func hierarchical(_ color: NSColor) -> SymbolConfiguration {
+            SymbolConfiguration(colorConfiguration: .hierarchical(color))
+        }
+        
+        /// Creates a configuration with a multicolor configuration with the specified color.
+        public static func multicolor(_ color: NSColor) -> SymbolConfiguration {
+            SymbolConfiguration(colorConfiguration: .multicolor(color))
+        }
+        
+        /// Creates a configuration with a palette color configuration with the specified primary, secondary and tertiary color.
+        public static func palette(_ primary: NSColor, secondary: NSColor, tertiary: NSColor? = nil) -> SymbolConfiguration {
+            SymbolConfiguration(colorConfiguration: .palette(primary, secondary, tertiary))
+        }
+        
+        /// Creates a configuration with the specified font style and weight.
+        public static func font(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular) -> SymbolConfiguration {
+            SymbolConfiguration(font: .textStyle(style, weight:  weight))
+        }
+        
+        /// Creates a configuration with the specified font size and weight.
+        public static func font(size: CGFloat, weight: NSFont.Weight = .regular) -> SymbolConfiguration {
+            SymbolConfiguration(font: .systemFont(size: size, weight: weight))
+        }
+
+        /// Creates a symbol configuration.
         public init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, imageScale: ImageScale? = nil, colorTransform: NSConfigurationColorTransformer? = nil) {
             self.font = font
             self.colorConfiguration = colorConfiguration
@@ -90,18 +123,18 @@ public extension NSTableCellContentConfiguration {
         /// Constants that specify the font of a symbol image.
         public enum FontConfiguration: Hashable {
             /// A font with the specified point size and font weight.
-            case systemFont(size: CGFloat, weight: NSImage.SymbolWeight? = nil)
+            case systemFont(size: CGFloat, weight: NSFont.Weight? = nil)
             /// A font with the specified text style and font weight.
-            case textStyle(NSFont.TextStyle, weight: NSImage.SymbolWeight? = nil)
+            case textStyle(NSFont.TextStyle, weight: NSFont.Weight? = nil)
             internal var pointSize: CGFloat {
                 switch self {
                 case .textStyle(let style, weight: let weight):
-                    if let weight = weight?.nsFontWeight {
+                    if let weight = weight {
                         return NSFont.system(style).weight(weight).pointSize
                     }
                     return NSFont.system(style).pointSize
                 case .systemFont(size: let size, weight: let weight):
-                    if let weight = weight?.nsFontWeight {
+                    if let weight = weight {
                         return NSFont.systemFont(ofSize: size).weight(weight).pointSize
                     }
                     return NSFont.systemFont(ofSize: size).pointSize

@@ -78,9 +78,9 @@ public class NSTableCellContentView: NSView, NSContentView {
         
         textStackView.spacing = _configuration.textToSecondaryTextPadding
         stackView.spacing = _configuration.imageToTextPadding
-        stackView.orientation = _configuration.imageProperties.imagePosition.orientation
+        stackView.orientation = _configuration.imageProperties.position.orientation
         
-        switch _configuration.imageProperties.imagePosition {
+        switch _configuration.imageProperties.position {
         case .leading, .top:
             if stackView.arrangedSubviews.first != imageView {
                 stackView.addArrangedSubview(imageView)
@@ -92,9 +92,9 @@ public class NSTableCellContentView: NSView, NSContentView {
                 stackView.addArrangedSubview(imageView)
             }
         }
-        if _configuration.imageProperties.imagePosition == .leading && stackView.arrangedSubviews.first != imageView {
+        if _configuration.imageProperties.position == .leading && stackView.arrangedSubviews.first != imageView {
             stackView.addArrangedSubview(imageView)
-        } else if _configuration.imageProperties.imagePosition == .trailing && stackView.arrangedSubviews.first != textStackView {
+        } else if _configuration.imageProperties.position == .trailing && stackView.arrangedSubviews.first != textStackView {
             stackView.addArrangedSubview(textStackView)
             stackView.addArrangedSubview(imageView)
         }
@@ -145,9 +145,10 @@ internal extension NSTableCellContentView {
         
         func update() {
             self.maximumNumberOfLines = properties.maxNumberOfLines
-            self.textColor = properties._resolvedTextColor
+            self.textColor = properties._resolvedColor
+            self.lineBreakMode = properties.lineBreakMode
             self.font = properties.font
-            self.alignment = properties.alignment.nsTextAlignment
+            self.alignment = properties.alignment
             self.isSelectable = properties.isSelectable
             self.isEditable = properties.isEditable
             self.drawsBackground = false
@@ -158,6 +159,8 @@ internal extension NSTableCellContentView {
         init(properties: NSTableCellContentConfiguration.TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
+            self.drawsBackground = false
+            self.backgroundColor = nil
             self.textLayout = .wraps
             self.update()
         }
@@ -191,7 +194,7 @@ internal extension NSTableCellContentView {
     
         
         func update() {
-            self.imageScaling = properties.imageScaling
+            self.imageScaling = properties.scaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
@@ -202,11 +205,11 @@ internal extension NSTableCellContentView {
             
             var width: CGFloat? =  image?.size.width
             var height: CGFloat? =  image?.size.height
-            if let maxWidth = properties.imageMaxWidth, let _width = width {
+            if let maxWidth = properties.maxWidth, let _width = width {
                 width = max(_width, maxWidth)
             }
             
-            if let maxHeight = properties.imageMaxHeight, let _height = height {
+            if let maxHeight = properties.maxHeight, let _height = height {
                 height = max(_height, maxHeight)
             }
             

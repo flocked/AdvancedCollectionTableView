@@ -10,91 +10,75 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-/// The content properties of an item configuraton.
 public extension NSTableCellContentConfiguration {
+    /// Properties that affect the cell content configuration’s text.
     struct TextProperties: Hashable {
-        /// Constants that specify text alignment.
-        public enum Alignment: Hashable {
-            /// Text is leading-aligned.
-            case leading
-            /// Text is center-aligned.
-            case center
-            /// Text is trailing-aligned.
-            case trailing
-                        
-            internal var swiftuiMultiline: SwiftUI.TextAlignment {
-                switch self {
-                    case .leading: return .leading
-                    case .trailing: return .trailing
-                    case .center: return .center
-                }
-            }
-            
-            internal var swiftui: SwiftUI.Alignment {
-                switch self {
-                    case .leading: return .leading
-                    case .trailing: return .trailing
-                    case .center: return .center
-                }
-            }
-            
-            internal var nsTextAlignment: NSTextAlignment {
-                switch self {
-                    case .leading: return .left
-                    case .trailing: return .right
-                    case .center: return .center
-                }
-            }
-        }
         
         /// The font of the text.
         public var font: NSFont = .body
         
         /// The color of the text.
-        public var textColor: NSColor = .labelColor {
-            didSet { updateResolvedTextColor() } }
+        public var color: NSColor = .labelColor {
+            didSet { updateResolvedColor() } }
         /// The color transformer of the text color.
-        public var textColorTansform: NSConfigurationColorTransformer? = nil {
-            didSet { updateResolvedTextColor() } }
+        public var colorTansform: NSConfigurationColorTransformer? = nil {
+            didSet { updateResolvedColor() } }
         
         /// Generates the resolved text color for the specified text color, using the color and color transformer.
-        public func resolvedTextColor() -> NSColor {
-            textColorTansform?(textColor) ?? textColor
+        public func resolvedColor() -> NSColor {
+            colorTansform?(color) ?? color
         }
         
-        /// The maximum number of lines.
+        /// The  text alignment.
+        public var alignment: NSTextAlignment = .left
+        
+        
+        /// The line break mode to use for the text.
+        public var lineBreakMode: NSLineBreakMode = .byWordWrapping
+        
         /**
          The maximum number of lines.
          
          The default value of 0 indicates no limit to the number of lines.
          */
         public var maxNumberOfLines: Int = 0
-        /// The  text alignment.
-        public var alignment: Alignment = .leading
         
         /// A Boolean value that determines whether the user can select the text.
         public var isSelectable: Bool = false
         /// A Boolean value that controls whether the user can edit the text.
         public var isEditable: Bool = false
         
+        /// A default configuration for a primary text.
         public static func primary() -> Self { TextProperties(maxNumberOfLines: 1) }
-        public static func secondary() -> Self { TextProperties(font: .callout, textColor: .secondaryLabelColor) }
+        /// A default configuration for a secondary text.
+        public static func secondary() -> Self { TextProperties(font: .callout, color: .secondaryLabelColor) }
         
+        /// A configuration with a font for captions.
         public static func caption2() -> Self { TextProperties(font: .caption2) }
+        /// A configuration with a font for captions.
         public static func caption() -> Self { TextProperties(font: .caption) }
+        /// A configuration with a font for footnotes.
         public static func footnote() -> Self { TextProperties(font: .footnote) }
+        /// A configuration with a font for callouts.
         public static func callout() -> Self { TextProperties(font: .callout) }
+        /// A configuration with a font for body.
         public static func body() -> Self { TextProperties(font: .body) }
+        /// A configuration with a font for subheadlines.
         public static func subheadline() -> Self { TextProperties(font: .subheadline) }
+        /// A configuration with a font for headlines.
         public static func headline() -> Self { TextProperties(font: .headline) }
+        /// A configuration with a font for titles.
         public static func title() -> Self { TextProperties(font: .title) }
+        /// A configuration with a font for titles.
         public static func title2() -> Self { TextProperties(font: .title2) }
+        /// A configuration with a font for titles.
         public static func title3() -> Self { TextProperties(font: .title3) }
+        /// A configuration with a font for large titles.
         public static func largeTitle() -> Self { TextProperties(font: .largeTitle) }
         
-        internal var _resolvedTextColor: NSColor = .labelColor
-        internal mutating func updateResolvedTextColor() {
-            _resolvedTextColor = resolvedTextColor()
+        internal var _resolvedColor: NSColor = .labelColor
+        internal mutating func updateResolvedColor() {
+            _resolvedColor = resolvedColor()
         }
         
     }
