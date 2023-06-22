@@ -69,6 +69,7 @@ internal extension NSCollectionView {
                 
                 self.observingView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return true }
+                    Swift.print("moved") 
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         self.updateItemHoverState(event)
