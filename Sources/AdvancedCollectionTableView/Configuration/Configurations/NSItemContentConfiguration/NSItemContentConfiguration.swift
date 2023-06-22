@@ -101,7 +101,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
                     configuration.contentProperties.borderColor = .controlAccentColor
                     configuration.contentProperties.needsBorderColorReset = true
                 }
-                configuration.contentProperties.shadowProperties.colorTransform = .color(.controlAccentColor)
+                configuration.contentProperties.shadow.colorTransform = .color(.controlAccentColor)
                 if configuration.hasContent == false {
                     configuration.textProperties.textColorTansform = .color(.controlAccentColor)
                     configuration.secondaryTextProperties.textColorTansform = .color(.controlAccentColor)
@@ -111,7 +111,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
                 }
             } else {
                 configuration.contentProperties.borderColorTransform = nil
-                configuration.contentProperties.shadowProperties.colorTransform = nil
+                configuration.contentProperties.shadow.colorTransform = nil
                 configuration.textProperties.textColorTansform = nil
                 configuration.secondaryTextProperties.textColorTansform = nil
                 if configuration.contentProperties.needsBorderWidthReset == true {
@@ -141,7 +141,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     mutating internal func updateResolvedColors() {
         self.contentProperties.updateResolvedColors()
-        self.contentProperties.shadowProperties.updateResolvedColor()
+        self.contentProperties.shadow.updateResolvedColor()
         self.textProperties.updateResolvedTextColor()
         self.secondaryTextProperties.updateResolvedTextColor()
     }

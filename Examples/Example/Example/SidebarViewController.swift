@@ -33,7 +33,6 @@ class SidebarViewController: NSViewController {
         
         tableView.dataSource = self.dataSource
         applySnapshot()
-        tableView.selectRowIndexes([0], byExtendingSelection: true)
     }
     
     func applySnapshot() {

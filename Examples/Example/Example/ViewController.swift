@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import FZUIKit
 import AdvancedCollectionTableView
 
 class ViewController: NSViewController {
@@ -16,18 +17,39 @@ class ViewController: NSViewController {
     
     lazy var itemRegistration: ItemRegistration = {
         var itemRegistration = ItemRegistration(handler: {item, indexPath, collectionItem in
+            var configuration = NSItemContentConfiguration()
+            configuration.text = collectionItem.title
+            configuration.secondaryText = collectionItem.detail
+            configuration.image = NSImage(systemSymbolName: collectionItem.imageName)
+            configuration.contentProperties.shadowProperties = .black()
+            item.contentConfiguration = configuration
+
             let hostingConfiguration = NSHostingConfiguration {
                 CollectionItemView(collectionItem, state: item.configurationState)
             }.margins(.all, .init(10))
-            item.contentConfiguration = hostingConfiguration
+          //  item.contentConfiguration = hostingConfiguration
             item.configurationUpdateHandler = { [weak self] item, state in
-                if state.isHovered == true {
-                    Swift.print(state.isHovered)
-                }
                 let hostingConfiguration = NSHostingConfiguration {
                     CollectionItemView(collectionItem, state: state)
                 }.margins(.all, .init(10))
-                item.contentConfiguration = hostingConfiguration
+             //   item.contentConfiguration = hostingConfiguration
+                
+                var configuration = NSItemContentConfiguration()
+                configuration.text = collectionItem.title
+                configuration.contentProperties.shadowProperties = .black()
+                configuration.secondaryText = collectionItem.detail
+                configuration.image = NSImage(named: collectionItem.imageName)
+                if state.isHovered {
+                    configuration.contentProperties.scaleTransform = 1.05
+                }
+                if state.isSelected {
+                    configuration.contentProperties.borderColor = .controlAccentColor
+                    configuration.contentProperties.borderWidth = 2.0
+                    configuration.contentProperties.shadowProperties = .colored(.controlAccentColor)
+                }
+                
+                item.contentConfiguration = configuration
+                
             }
         })
         return itemRegistration

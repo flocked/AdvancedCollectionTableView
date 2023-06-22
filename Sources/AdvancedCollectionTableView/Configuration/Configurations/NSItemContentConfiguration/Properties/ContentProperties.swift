@@ -84,6 +84,8 @@ public extension NSItemContentConfiguration {
          */
         public var scaleTransform: CGFloat = 1.0
         
+        public var overlayView: NSView? = nil
+        
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
             didSet { updateResolvedColors() } }
@@ -131,7 +133,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The outer shadow properties.
-        public var shadowProperties: ShadowProperties = .black()
+        public var shadow: ShadowProperties = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
         internal var needsBorderWidthReset: Bool = false
@@ -148,9 +150,24 @@ public extension NSItemContentConfiguration {
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        public init(shape: Shape = .roundedRect(10.0), shadowProperties: ShadowProperties = .none(), maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, backgroundColor: NSColor? = .lightGray, backgroundColorTransform: NSConfigurationColorTransformer? = nil, borderWidth: CGFloat = 0.0, borderColor: NSColor? = nil, borderColorTransform: NSConfigurationColorTransformer? = nil, imageTintColor: NSColor? = nil, imageTintColorTransform: NSConfigurationColorTransformer? = nil, imageSymbolConfiguration: SymbolConfiguration? = nil, imageScaling: ImageScaling = .fit, scaleTransform: CGFloat = 1.0) {
+        public init(shape: Shape = .roundedRect(10.0),
+                    shadow: ShadowProperties = .none(),
+                    maxWidth: CGFloat? = nil,
+                    maxHeight: CGFloat? = nil,
+                    backgroundColor: NSColor? = .lightGray,
+                    backgroundColorTransform: NSConfigurationColorTransformer? = nil,
+                    borderWidth: CGFloat = 0.0,
+                    borderColor: NSColor? = nil,
+                    borderColorTransform: NSConfigurationColorTransformer? = nil,
+                    imageTintColor: NSColor? = nil,
+                    imageTintColorTransform: NSConfigurationColorTransformer? = nil,
+                    imageSymbolConfiguration: SymbolConfiguration? = nil,
+                    imageScaling: ImageScaling = .fit,
+                    scaleTransform: CGFloat = 1.0,
+                    overlayView: NSView? = nil
+        ) {
             self.shape = shape
-            self.shadowProperties = shadowProperties
+            self.shadow = shadow
             self.maxWidth = maxWidth
             self.maxHeight = maxHeight
             self.backgroundColor = backgroundColor
@@ -165,6 +182,7 @@ public extension NSItemContentConfiguration {
             self.needsBorderWidthReset = (borderWidth != 0.0)
             self.needsBorderColorReset = (borderColor != nil)
             self.scaleTransform = scaleTransform
+            self.overlayView = overlayView
             self.updateResolvedColors()
         }
     }

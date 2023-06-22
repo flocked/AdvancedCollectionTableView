@@ -133,6 +133,7 @@ internal extension NSItemContentView {
     struct ContentItem: View {
         let view: NSView?
         let image: NSImage?
+        let overlayView: NSView?
         let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
                 
@@ -150,6 +151,10 @@ internal extension NSItemContentView {
                 
                 if let image = image {
                     ShapedImage(image: image, shape: properties.shape.swiftui, aspectRatio: properties.imageScaling.swiftui)
+                }
+                
+                if let overlayView = overlayView {
+                    ContainerView(view: overlayView)
                 }
             }
         }
@@ -169,7 +174,7 @@ internal extension NSItemContentView {
                 .clipShape(properties.shape.swiftui)
             .background(
                 properties.shape.swiftui
-                    .shadow(properties.shadowProperties)
+                    .shadow(properties.shadow)
             )
             .overlay(
                 properties.shape.swiftui
@@ -232,7 +237,7 @@ internal extension NSItemContentView {
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.contentProperties.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder
@@ -314,8 +319,8 @@ internal extension View {
 
 struct CollectionItemView_Previews: PreviewProvider {
     static func contentProperties(isSelected: Bool) -> NSItemContentConfiguration.ContentProperties {
-        let shadowProperties = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: isSelected ? .controlAccentColor : nil)
-        return NSItemContentConfiguration.ContentProperties(shape: .roundedRect(10.0), shadowProperties: shadowProperties, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
+        let shadow = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: isSelected ? .controlAccentColor : nil)
+        return NSItemContentConfiguration.ContentProperties(shape: .roundedRect(10.0), shadow: shadow, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
     }
     
     static var configuration: NSItemContentConfiguration {
