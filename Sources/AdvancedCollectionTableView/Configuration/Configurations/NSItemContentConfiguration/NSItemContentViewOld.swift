@@ -142,7 +142,7 @@ public extension NSItemContentViewNS {
             self.borderColor = properties._resolvedBorderColor
             self.imageView.contentTintColor = properties._resolvedImageTintColor
             self.borderWidth = properties.borderWidth
-            self.imageView.imageScaling = properties.imageScaling == .fill ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
+            self.imageView.imageScaling = properties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
             switch properties.shape {
             case .rect:
                 self.cornerRadius = 0.0
