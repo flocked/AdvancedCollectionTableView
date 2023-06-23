@@ -15,7 +15,6 @@ struct CollectionItemView: View {
     
     @Namespace var animation
 
-    
     init(_ item: CollectionItem, state: NSItemConfigurationState) {
         self.item = item
         self.state = state

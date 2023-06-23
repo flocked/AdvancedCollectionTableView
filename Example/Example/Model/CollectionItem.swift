@@ -6,12 +6,32 @@
 //
 
 import Foundation
+import FZQuicklook
 
-struct CollectionItem: Hashable, Identifiable {
+class CollectionItem: NSObject, Identifiable, QLPreviewable {
     let id = UUID()
     var title: String
     var detail: String
     var imageName: String
+    
+    var previewContent: QLPreviewableContent? {
+        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+    }
+    
+    var previewItemURL: URL! {
+        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+    }
+    
+    
+    var previewItemTitle: String! {
+        return self.title
+    }
+    
+    init(title: String, detail: String, imageName: String) {
+        self.title = title
+        self.detail = detail
+        self.imageName = imageName
+    }
     
     static var sample: [CollectionItem] {
         return [CollectionItem(title: "Astronaut Cat", detail: "Liquid ink", imageName: "astronaut cat"),
