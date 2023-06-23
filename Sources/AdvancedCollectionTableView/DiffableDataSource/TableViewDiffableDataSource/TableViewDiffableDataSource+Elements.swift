@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import FZQuicklook
 
 extension TableViewDiffableDataSource {
     public var allElements: [Element] {
@@ -213,6 +214,12 @@ extension TableViewDiffableDataSource {
         var snapshot = self.snapshot()
         snapshot.deleteItems(elements)
         self.apply(snapshot)
+    }
+}
+
+extension TableViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
+    public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
+        self.element(for: indexPath.item)
     }
 }
 
