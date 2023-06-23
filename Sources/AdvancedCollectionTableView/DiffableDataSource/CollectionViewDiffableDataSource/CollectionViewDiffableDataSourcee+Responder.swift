@@ -82,7 +82,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func keyDown(with event: NSEvent) {
-            Swift.print("responder keyDown", event)
+            Swift.print("responder keyDown", event.keyCode, self.dataSource.quicklookItems(for: self.dataSource.selectedElements))
             let shouldKeyDown = self.dataSource.keydownHandler?(event) ?? true
             if (shouldKeyDown) {
                 switch event.keyCode {

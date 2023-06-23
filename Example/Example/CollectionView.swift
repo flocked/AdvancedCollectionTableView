@@ -10,6 +10,7 @@ import AppKit
 class CollectionView: NSCollectionView {
     override func keyDown(with event: NSEvent) {
         super.keyDown(with: event)
-        Swift.print("CollectionView keydown")
+        self.nextResponder?.keyDown(with: event)
+        Swift.print("CollectionView keydown", self.nextResponder)
     }
 }
