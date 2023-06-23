@@ -138,11 +138,11 @@ internal extension NSCollectionView {
     }
     
     @objc func swizzledKeyDown(with event: NSEvent) {
-        Swift.print("swizzledKeyDown")
+        Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
         if let responder = self.nextResponder as? CollectionViewResponder {
             responder.keyDown(with: event)
         } else {
-            self.swizzledKeyDown(with: event)
+         //   self.swizzledKeyDown(with: event)
         }
     }
     

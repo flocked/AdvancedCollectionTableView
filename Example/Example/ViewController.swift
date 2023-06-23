@@ -63,18 +63,20 @@ class ViewController: NSViewController {
         applySnapshot()
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
-        NSCollectionView.swizzleCollectionViewResponderEventsA()
+     //   NSCollectionView.swizzleCollectionViewResponderEventsA()
         collectionView.tester()
         super.viewDidLoad()
     }
     
     override func viewDidAppear() {
 
-        self.view.window?.makeFirstResponder(self.collectionView)
+      //  self.view.window?.makeFirstResponder(self.collectionView)
     }
     
     override func keyDown(with event: NSEvent) {
         Swift.print("viewController keyDown")
+        self.collectionView.keyDown(with: event)
+
 
     }
     

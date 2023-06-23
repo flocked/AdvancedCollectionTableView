@@ -453,7 +453,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         self.responder = Responder(self)
       //  let collectionViewNextResponder = self.collectionView.nextResponder
-      //  self.collectionView.nextResponder = self.responder
+        self.collectionView.nextResponder = self.responder
       //  self.responder.nextResponder = collectionViewNextResponder
         NSCollectionView.swizzleCollectionViewResponderEvents()
         
