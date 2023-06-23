@@ -143,6 +143,7 @@ public extension NSItemContentViewNS {
             self.imageView.contentTintColor = properties._resolvedImageTintColor
             self.borderWidth = properties.borderWidth
             self.imageView.imageScaling = properties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
+            self.layer?.scale = CGPoint(x: self.properties.scaleTransform, y: self.properties.scaleTransform)
             switch properties.shape {
             case .rect:
                 self.cornerRadius = 0.0
@@ -158,6 +159,7 @@ public extension NSItemContentViewNS {
         public init(properties: NSItemContentConfiguration.ContentProperties, view: NSView?, image: NSImage?, overlayView: NSView?) {
             self.properties = properties
             super.init(frame: .zero)
+            self.wantsLayer = true
             self.addSubview(withConstraint: imageView)
             self.update()
             self.view = view
@@ -185,7 +187,6 @@ public extension NSItemContentViewNS {
             } else {
                 self.stringValue = text ?? ""
                 self.isHidden = (text == nil)
-                Swift.print("text.isHidden", self.isHidden)
             }
         }
         
