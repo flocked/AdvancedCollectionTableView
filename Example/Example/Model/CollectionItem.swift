@@ -8,24 +8,11 @@
 import Foundation
 import FZQuicklook
 
-class CollectionItem: NSObject, Identifiable, QLPreviewable {
+class CollectionItem: NSObject, Identifiable {
     let id = UUID()
     var title: String
     var detail: String
     var imageName: String
-    
-    var previewContent: QLPreviewableContent? {
-        return Bundle.main.url(forResource: imageName, withExtension: "png")!
-    }
-    
-    var previewItemURL: URL! {
-        return Bundle.main.url(forResource: imageName, withExtension: "png")!
-    }
-    
-    
-    var previewItemTitle: String! {
-        return self.title
-    }
     
     init(title: String, detail: String, imageName: String) {
         self.title = title
@@ -42,5 +29,20 @@ class CollectionItem: NSObject, Identifiable, QLPreviewable {
                 CollectionItem(title: "Techno Club", detail: "Surrealist painting", imageName: "techno club surrealist"),
                 CollectionItem(title: "Techno Club", detail: "Oil painting", imageName: "techno club oil"),
         ]
+    }
+}
+
+extension CollectionItem: QLPreviewable {
+    var previewContent: QLPreviewableContent? {
+        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+    }
+    
+    var previewItemURL: URL! {
+        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+    }
+    
+    
+    var previewItemTitle: String! {
+        return self.title
     }
 }

@@ -32,6 +32,10 @@ class ViewController: NSViewController {
                 configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
                 configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
                 configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
+                
+                if (state.isSelected) {
+                    Swift.print("issel")
+                }
 
                 item.contentConfiguration = configuration
             }
@@ -58,9 +62,11 @@ class ViewController: NSViewController {
     }
     
     override func viewDidAppear() {
-        for subview in self.collectionView.subviews {
-            Swift.print(subview)
-        }
+        self.view.window?.makeFirstResponder(self)
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        Swift.print("keyd")
     }
     
     func applySnapshot() {
