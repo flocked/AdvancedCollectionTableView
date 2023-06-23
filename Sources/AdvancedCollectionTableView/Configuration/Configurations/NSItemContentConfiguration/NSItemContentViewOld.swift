@@ -49,6 +49,12 @@ public class NSItemContentViewNS: NSView, NSContentView {
         
         stackView.spacing = _configuration.contentToTextPadding
         textStackView.spacing = _configuration.textToSecondaryTextPadding
+        
+        _constraints[0].constant = _configuration.padding.leading
+        _constraints[1].constant = _configuration.padding.bottom
+        _constraints[2].constant = -_configuration.padding.trailing
+        _constraints[3].constant = -_configuration.padding.top
+
     }
     
     /// The current configuration of the view.
