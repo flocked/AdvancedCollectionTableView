@@ -22,6 +22,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var textStackView: NSStackView = {
         let textStackView = NSStackView(views: [textField, secondaryTextField])
         textStackView.orientation = .vertical
+        textStackView.spacing = _configuration.textToSecondaryTextPadding
         textStackView.distribution = .fill
         return textStackView
     }()
@@ -29,7 +30,8 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var stackView: NSStackView = {
         let stackView = NSStackView(views: [contentView, textStackView])
         stackView.orientation = .vertical
-        stackView.alignment = .firstBaseline
+       // stackView.alignment = .firstBaseline
+        stackView.spacing = _configuration.contentToTextPadding
         return stackView
     }()
     
@@ -177,6 +179,7 @@ public extension NSItemContentViewNS {
             } else {
                 self.stringValue = text ?? ""
                 self.isHidden = (text == nil)
+                Swift.print("text.isHidden", self.isHidden)
             }
         }
         
