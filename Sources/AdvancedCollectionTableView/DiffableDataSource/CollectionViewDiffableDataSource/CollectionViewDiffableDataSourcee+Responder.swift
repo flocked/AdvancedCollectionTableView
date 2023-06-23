@@ -141,8 +141,7 @@ internal extension NSCollectionView {
     }
     
     @objc func swizzledKeyDown(with event: NSEvent) {
-        Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
-        if let responder = self.nextResponder as? CollectionViewResponder {
+        if let responder = self.nextResponder as? (any CollectionViewResponder) {
             switch event.keyCode {
             case 49, 51:
                 responder.keyDown(with: event)
@@ -150,9 +149,11 @@ internal extension NSCollectionView {
                 if (event.modifierFlags.contains(.command)) {
                     responder.keyDown(with: event)
                 } else {
+                    Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
                     self.swizzledKeyDown(with: event)
                 }
             default:
+                Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
                 self.swizzledKeyDown(with: event)
             }
         }
