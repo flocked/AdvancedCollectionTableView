@@ -42,13 +42,15 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var image: NSImage? = nil
     /// The view to display.
     public var view: NSView? = nil
+    /// The overlay view for the image and view.
+    public var overlayView: NSView? = nil
     
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .body
     /// Properties for configuring the secondary text.
     public var secondaryTextProperties: TextProperties = .caption1
     /**
-     Properties for configuring the content.
+     Properties for configuring the content).
      
      The content displays the ``view``, ``image`` and/or ``contentProperties.backgroundColor``.
      */

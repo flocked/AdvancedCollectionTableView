@@ -237,7 +237,7 @@ internal extension NSItemContentView {
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.contentProperties.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder

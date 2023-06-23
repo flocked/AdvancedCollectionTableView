@@ -20,8 +20,8 @@ class ViewController: NSViewController {
             var configuration = NSItemContentConfiguration()
             configuration.text = collectionItem.title
             configuration.secondaryText = collectionItem.detail
-            configuration.image = NSImage(systemSymbolName: collectionItem.imageName)
-            configuration.contentProperties.shadowProperties = .black()
+            configuration.image = NSImage(named: collectionItem.imageName)
+            configuration.contentProperties.shadow = .black()
             item.contentConfiguration = configuration
 
             let hostingConfiguration = NSHostingConfiguration {
@@ -34,20 +34,13 @@ class ViewController: NSViewController {
                 }.margins(.all, .init(10))
              //   item.contentConfiguration = hostingConfiguration
                 
-                var configuration = NSItemContentConfiguration()
-                configuration.text = collectionItem.title
-                configuration.contentProperties.shadowProperties = .black()
-                configuration.secondaryText = collectionItem.detail
-                configuration.image = NSImage(named: collectionItem.imageName)
-                if state.isHovered {
-                    configuration.contentProperties.scaleTransform = 1.05
-                }
-                if state.isSelected {
-                    configuration.contentProperties.borderColor = .controlAccentColor
-                    configuration.contentProperties.borderWidth = 2.0
-                    configuration.contentProperties.shadowProperties = .colored(.controlAccentColor)
-                }
+                configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
+                configuration.contentProperties.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
                 
+                configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
+                configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
+                configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
+
                 item.contentConfiguration = configuration
                 
             }

@@ -83,9 +83,7 @@ public extension NSItemContentConfiguration {
         The default is 1.0, which displays the content at it's original scale.
          */
         public var scaleTransform: CGFloat = 1.0
-        
-        public var overlayView: NSView? = nil
-        
+                
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
             didSet { updateResolvedColors() } }
@@ -163,8 +161,7 @@ public extension NSItemContentConfiguration {
                     imageTintColorTransform: NSConfigurationColorTransformer? = nil,
                     imageSymbolConfiguration: SymbolConfiguration? = nil,
                     imageScaling: ImageScaling = .fit,
-                    scaleTransform: CGFloat = 1.0,
-                    overlayView: NSView? = nil
+                    scaleTransform: CGFloat = 1.0
         ) {
             self.shape = shape
             self.shadow = shadow
@@ -182,7 +179,6 @@ public extension NSItemContentConfiguration {
             self.needsBorderWidthReset = (borderWidth != 0.0)
             self.needsBorderColorReset = (borderColor != nil)
             self.scaleTransform = scaleTransform
-            self.overlayView = overlayView
             self.updateResolvedColors()
         }
     }
