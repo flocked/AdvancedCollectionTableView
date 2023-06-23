@@ -45,6 +45,7 @@ extension CollectionViewDiffableDataSource {
     
     
     internal func quicklookItems(for elements: [Element]) -> [QuicklookItem] {
+        return elements.compactMap({$0 as? QLPreviewable}).filter({$0.previewContent != nil}).compactMap({QuicklookItem(content: $0.previewContent!, title: $0.previewItemTitle, frame: $0.previewItemFrame , transitionImage: $0.previewItemTransitionImage)})
         /*
         if let _elements = shouldStartDisplaySpotlightHandlers(self.dataSource.selectedElements) {
             var previewItems: [QuicklookItem] = []
@@ -55,7 +56,6 @@ extension CollectionViewDiffableDataSource {
             }
         }
         */
-        return []
     }
     
     /**
