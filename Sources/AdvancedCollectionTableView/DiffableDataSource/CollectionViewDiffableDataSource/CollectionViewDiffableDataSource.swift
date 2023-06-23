@@ -455,6 +455,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         let collectionViewNextResponder = self.collectionView.nextResponder
         self.collectionView.nextResponder = self.responder
         self.responder.nextResponder = collectionViewNextResponder
+        NSCollectionView.swizzleCollectionViewResponderEvents()
         
         self.delegateBridge = DelegateBridge(self)
     }

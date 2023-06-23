@@ -51,7 +51,10 @@ class ViewController: NSViewController {
     var items: [CollectionItem] = CollectionItem.sample
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        
+        for item in items {
+            Swift.print("item::", item.previewItemURL ?? "noItem")
+        }
         
         collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, insets: .init(6.0))
         collectionView.dataSource = self.dataSource
@@ -59,9 +62,11 @@ class ViewController: NSViewController {
         applySnapshot()
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
+        super.viewDidLoad()
     }
     
     override func viewDidAppear() {
+
         self.view.window?.makeFirstResponder(self)
     }
     

@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
+
 extension CollectionViewDiffableDataSource {
     internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
         weak var dataSource: CollectionViewDiffableDataSource<S,E>!
@@ -127,3 +128,33 @@ extension CollectionViewDiffableDataSource {
     }
 }
 
+internal protocol CollectionViewResponder: NSResponder { }
+extension CollectionViewDiffableDataSource.Responder: CollectionViewResponder { }
+
+internal extension NSCollectionView {
+    static var didSwizzleResponderEvents: Bool {
+        get { getAssociatedValue(key: "NSCollectionItem_didSwizzleResponderEvents", object: self, initialValue: false) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleResponderEvents", object: self) }
+    }
+    
+    @objc func swizzledKeyDown(with event: NSEvent) {
+        if let responder = self.nextResponder as? CollectionViewResponder {
+            responder.keyDown(with: event)
+        } else {
+            self.swizzledKeyDown(with: event)
+        }
+    }
+    
+    @objc static func swizzleCollectionViewResponderEvents() {
+        if (didSwizzleResponderEvents == false) {
+            self.didSwizzleResponderEvents = true
+            do {
+                _ = try Swizzle(NSCollectionView.self) {
+                    #selector(keyDown(with: )) <-> #selector(swizzledKeyDown(with:))
+                }
+            } catch {
+                Swift.print(error)
+            }
+        }
+    }
+}

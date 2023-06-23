@@ -34,11 +34,11 @@ class CollectionItem: NSObject, Identifiable {
 
 extension CollectionItem: QLPreviewable {
     var previewContent: QLPreviewableContent? {
-        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+        return Bundle.main.url(forResource: imageName, withExtension: "png")
     }
     
     var previewItemURL: URL! {
-        return Bundle.main.url(forResource: imageName, withExtension: "png")!
+        return Bundle.main.url(forResource: imageName, withExtension: "png") ?? URL(fileURLWithPath: "/Users/florianzand/Developer/Github/AdvancedCollectionTableView/Example/Example/Assets.xcassets/astronaut cat.imageset/astronaut cat closeup liquid ink.png")
     }
     
     
