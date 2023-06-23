@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import FZQuicklook
 
 extension CollectionViewDiffableDataSource {
     internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
@@ -81,61 +82,41 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func keyDown(with event: NSEvent) {
-            var shouldKeyDown = true
-            if let keydownHandler = self.dataSource.keydownHandler?(event) {
-                shouldKeyDown = keydownHandler
-            }
+            let shouldKeyDown = self.dataSource.keydownHandler?(event) ?? true
             if (shouldKeyDown) {
-                let commandPressed = event.modifierFlags.contains(.command)
-                /*
-                if (event.keyCode == 49) { // SpaceBar
+                switch event.keyCode {
+                case 49:
+                    let previewItems = self.dataSource.quicklookItems(for: self.dataSource.selectedElements)
                     if (self.dataSource.quicklookPanel.isVisible == false) {
-                        if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
-                            var previewItems: [QuicklookItem] = []
-                            for _element in _elements {
-                                if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                }
-                            }
                             if (previewItems.isEmpty == false) {
                                 self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
                                 self.dataSource.quicklookPanel.present(previewItems)
                             }
-                        }
                     } else {
-                        var previewItems: [QuicklookItem] = []
-                        if let _elements = self.dataSource.quicklookHandlers.endPreviewing?(self.dataSource.selectedElements) {
-                            for _element in _elements {
-                                if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                }
-                            }
-                            if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                self.dataSource.quicklookPanel.present(previewItems)
+                        self.dataSource.quicklookPanel.close()
+                    }
+                case 51:
+                    if self.dataSource.allowsDeleting {
+                        let selectedElements = self.dataSource.selectedElements
+                        if (selectedElements.isEmpty == false) {
+                            if (self.dataSource.allowsDeleting) {
+                                self.dataSource.removeElements(selectedElements)
                             }
                         }
-                        if (previewItems.isEmpty == false) {
-                            self.dataSource.quicklookPanel.close(previewItems)
-                        } else {
-                            self.dataSource.quicklookPanel.close()
-                        }
                     }
-                } else */
-                if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
-                    let selectedElements = self.dataSource.selectedElements
-                    if (selectedElements.isEmpty == false) {
-                        if (self.dataSource.allowsDeleting) {
-                            self.dataSource.removeElements(selectedElements)
-                        }
+                case 0:
+                    if (event.modifierFlags.contains(.command)) {
+                        self.dataSource.selectAll()
                     }
-                } else if (event.keyCode == 0 && commandPressed) {
-                    self.dataSource.selectAll()
-                } else if (event.keyCode == 30 && commandPressed) {  // Handle Zoom In
-                    
-                } else if (event.keyCode == 44 && commandPressed) {  // Handle Zoom Out
-                    
-                } else  {
+                case 30:
+                    if (event.modifierFlags.contains(.command)) {
+                       // self.dataSource.selectAll()
+                    }
+                case 44:
+                    if (event.modifierFlags.contains(.command)) {
+                     //   self.dataSource.selectAll()
+                    }
+                default:
                     self.dataSource.collectionView.keyDown(with: event)
                 }
             } else {
