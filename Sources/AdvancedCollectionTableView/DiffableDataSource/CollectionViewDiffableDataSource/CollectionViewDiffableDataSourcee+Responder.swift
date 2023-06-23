@@ -82,13 +82,13 @@ extension CollectionViewDiffableDataSource {
             super.mouseDragged(with: event)
         }
         
+        internal func shouldKeyDown(for event: NSEvent) -> Bool {
+            self.dataSource.keydownHandler?(event) ?? true
+        }
+        
         override func keyDown(with event: NSEvent) {
-            Swift.print("responder keyDown", event.keyCode, self.dataSource.quicklookItems(for: self.dataSource.selectedElements))
-            let shouldKeyDown = self.dataSource.keydownHandler?(event) ?? true
-            
-
-            
-            if (shouldKeyDown) {
+            Swift.print("responder keyDown", event.keyCode, self.dataSource.quicklookItems(for: self.dataSource.selectedElements).count)
+            if (self.shouldKeyDown(for: event)) {
                 switch event.keyCode {
                 case 49:
                     let previewItems = self.dataSource.quicklookItems(for: self.dataSource.selectedElements)
@@ -109,18 +109,6 @@ extension CollectionViewDiffableDataSource {
                             }
                         }
                     }
-                case 0:
-                    if (event.modifierFlags.contains(.command)) {
-                        self.dataSource.selectAll()
-                    }
-                case 30:
-                    if (event.modifierFlags.contains(.command)) {
-                       // self.dataSource.selectAll()
-                    }
-                case 44:
-                    if (event.modifierFlags.contains(.command)) {
-                     //   self.dataSource.selectAll()
-                    }
                 default:
                     self.dataSource.collectionView.keyDown(with: event)
                 }
@@ -131,31 +119,46 @@ extension CollectionViewDiffableDataSource {
     }
 }
 
-internal protocol CollectionViewResponder: NSResponder { }
-extension CollectionViewDiffableDataSource.Responder: CollectionViewResponder { }
+internal protocol CollectionViewResponder: NSResponder {
+    func shouldKeyDown(for event: NSEvent) -> Bool
+}
 
+extension CollectionViewDiffableDataSource.Responder: CollectionViewResponder { }
+extension CollectionViewDiffableDataSource: DeletableDataSource {
+    public func deleteItems(for indexPaths: Set<IndexPath>) {
+        let elements = indexPaths.compactMap({ self.element(for: $0) })
+        self.removeElements(elements)
+    }
+}
+/*
 internal extension NSCollectionView {
+    var quicklookItemsEnabled: Bool {
+        get { getAssociatedValue(key: "NSCollectionItem_quicklookItemsEnabled", object: self, initialValue: false) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_quicklookItemsEnabled", object: self) }
+    }
+    
+    func quicklookItems(for items: [NSCollectionView]) -> [QLPreviewable] {
+        self.dataSource as?
+    }
+    
     static var didSwizzleResponderEvents: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_didSwizzleResponderEvents", object: self, initialValue: false) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleResponderEvents", object: self) }
     }
     
     @objc func swizzledKeyDown(with event: NSEvent) {
-        if let responder = self.nextResponder as? (any CollectionViewResponder) {
-            switch event.keyCode {
-            case 49, 51:
-                responder.keyDown(with: event)
-            case 0, 30, 44:
-                if (event.modifierFlags.contains(.command)) {
+        if let responder = self.nextResponder as? CollectionViewResponder {
+            if responder.shouldKeyDown(for: event) {
+                switch event.keyCode {
+                case 49, 51:
                     responder.keyDown(with: event)
-                } else {
-                    Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
+                default:
+                    Swift.print("swizzledKeyDown", event.keyCode )
                     self.swizzledKeyDown(with: event)
                 }
-            default:
-                Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
-                self.swizzledKeyDown(with: event)
             }
+        } else {
+            self.swizzledKeyDown(with: event)
         }
     }
     
@@ -173,3 +176,4 @@ internal extension NSCollectionView {
         }
     }
 }
+*/
