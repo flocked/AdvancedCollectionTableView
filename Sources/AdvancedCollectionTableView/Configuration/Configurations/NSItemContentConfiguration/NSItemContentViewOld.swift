@@ -47,6 +47,8 @@ public class NSItemContentViewNS: NSView, NSContentView {
         contentView.view = _configuration.view
         contentView.overlayView = _configuration.overlayView
         
+        layer?.scale = CGPoint(x: _configuration.scaleTransform, y: _configuration.scaleTransform)
+        
         stackView.spacing = _configuration.contentToTextPadding
         textStackView.spacing = _configuration.textToSecondaryTextPadding
         
@@ -84,7 +86,8 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
-        _constraints = self.addSubview(withConstraint: stackView)
+        self._constraints = self.addSubview(withConstraint: stackView)
+        self.wantsLayer = true
         self.update()
     }
     
@@ -136,23 +139,37 @@ public extension NSItemContentViewNS {
             }
         }
         
+        let borderLayer = CALayer()
+        
         func update() {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsSymbolConfiguration()
-            self.borderColor = properties._resolvedBorderColor
+            
+            borderLayer.borderColor = properties._resolvedBorderColor?.cgColor
+            borderLayer.borderWidth = properties.borderWidth
+            borderLayer.shadowOpacity = Float(properties.shadow.opacity)
+            borderLayer.shadowRadius = properties.shadow.radius
+            borderLayer.shadowOffset = CGSize(properties.shadow.offset.x, properties.shadow.offset.y)
+            
+         //   self.borderColor = properties._resolvedBorderColor
+         //   self.borderWidth = properties.borderWidth
+
             self.imageView.contentTintColor = properties._resolvedImageTintColor
-            self.borderWidth = properties.borderWidth
             self.imageView.imageScaling = properties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
             self.layer?.scale = CGPoint(x: self.properties.scaleTransform, y: self.properties.scaleTransform)
             switch properties.shape {
             case .rect:
                 self.cornerRadius = 0.0
+                self.borderLayer.cornerRadius = 0.0
             case .roundedRect(let cornerRadius):
                 self.cornerRadius = cornerRadius
+                self.borderLayer.cornerRadius = cornerRadius
             case .circle:
                 self.cornerRadius = self.frame.size.height/2.0
+                self.borderLayer.cornerRadius = self.frame.size.height/2.0
             case .capsule:
                 self.cornerRadius = self.frame.size.height/2.0
+                self.borderLayer.cornerRadius = self.frame.size.height/2.0
             }
         }
         
@@ -160,6 +177,8 @@ public extension NSItemContentViewNS {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
+            self.maskToBounds = false
+            self.layer?.addSublayer(borderLayer)
             self.addSubview(withConstraint: imageView)
             self.update()
             self.view = view
