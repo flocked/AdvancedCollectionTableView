@@ -1,41 +1,34 @@
 {
-  "pins" : [
-    {
-      "identity" : "advancedcollectiontableview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flocked/AdvancedCollectionTableView.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "6c1fe1931e5baad4293aa7366827f1951dcfcac1"
+  "object": {
+    "pins": [
+      {
+        "package": "FZQuicklook",
+        "repositoryURL": "https://github.com/flocked/FZQuicklook.git",
+        "state": {
+          "branch": "main",
+          "revision": "0591e2e4a6f4a8afbf8028e67ef450c20170b853",
+          "version": null
+        }
+      },
+      {
+        "package": "FZSwiftUtils",
+        "repositoryURL": "https://github.com/flocked/FZSwiftUtils.git",
+        "state": {
+          "branch": "main",
+          "revision": "428893fb543c24b82c34ef01ded328acdc828d61",
+          "version": null
+        }
+      },
+      {
+        "package": "FZUIKit",
+        "repositoryURL": "https://github.com/flocked/FZUIKit.git",
+        "state": {
+          "branch": "main",
+          "revision": "c51881de5e67bf926b24281d28eb53646469d85f",
+          "version": null
+        }
       }
-    },
-    {
-      "identity" : "fzquicklook",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flocked/FZQuicklook.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "0591e2e4a6f4a8afbf8028e67ef450c20170b853"
-      }
-    },
-    {
-      "identity" : "fzswiftutils",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flocked/FZSwiftUtils.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "428893fb543c24b82c34ef01ded328acdc828d61"
-      }
-    },
-    {
-      "identity" : "fzuikit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flocked/FZUIKit.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "c51881de5e67bf926b24281d28eb53646469d85f"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }

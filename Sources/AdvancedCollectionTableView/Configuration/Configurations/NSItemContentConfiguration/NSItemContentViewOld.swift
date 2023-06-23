@@ -14,7 +14,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
     public lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
 
-    public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image)
+    public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image, overlayView: _configuration.overlayView)
     
     public var _constraints: [NSLayoutConstraint] = []
     public  var imageViewConstraints: [NSLayoutConstraint] = []
@@ -22,6 +22,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var textStackView: NSStackView = {
         let textStackView = NSStackView(views: [textField, secondaryTextField])
         textStackView.orientation = .vertical
+        textStackView.distribution = .fill
         return textStackView
     }()
     
@@ -34,29 +35,18 @@ public class NSItemContentViewNS: NSView, NSContentView {
     
     public func update() {
         textField.properties = _configuration.textProperties
-        textField.isHidden = _configuration.hasText == false
-        if let attributedText = _configuration.attributedText {
-            textField.attributedStringValue = NSAttributedString(attributedText)
-        } else {
-            textField.stringValue = _configuration.text ?? ""
-        }
+        textField.text(_configuration.text, attributedText: _configuration.attributedText)
         
         secondaryTextField.properties = _configuration.secondaryTextProperties
-        secondaryTextField.isHidden = _configuration.hasSecondaryText == false
-        if let attributedText = _configuration.secondaryAttributedText {
-            secondaryTextField.attributedStringValue = NSAttributedString(attributedText)
-        } else {
-            secondaryTextField.stringValue = _configuration.secondaryText ?? ""
-        }
+        secondaryTextField.text(_configuration.secondaryText, attributedText: _configuration.secondaryAttributedText)
+        
         contentView.properties = _configuration.contentProperties
         contentView.image = _configuration.image
         contentView.view = _configuration.view
+        contentView.overlayView = _configuration.overlayView
         
         stackView.spacing = _configuration.contentToTextPadding
         textStackView.spacing = _configuration.textToSecondaryTextPadding
-        
-        contentView.isHidden = _configuration.hasContent == false
-        
     }
     
     /// The current configuration of the view.
@@ -104,13 +94,31 @@ public extension NSItemContentViewNS {
                     oldValue?.removeFromSuperview()
                     if let newView = self.view {
                         self.addSubview(withConstraint: newView)
+                        self.overlayView?.sendToFront()
+                        self.isHidden = (self.image == nil && self.view == nil)
                     }
                 }
             }
         }
+        
+        var overlayView: NSView? = nil {
+            didSet {
+                if oldValue != self.overlayView {
+                    oldValue?.removeFromSuperview()
+                    if let newView = self.overlayView {
+                        self.addSubview(withConstraint: newView)
+                    }
+                }
+            }
+        }
+        
         var image: NSImage? {
             get { imageView.image }
-            set { imageView.image = newValue }
+            set {
+                self.imageView.image = newValue
+                self.imageView.isHidden = newValue == nil
+                self.isHidden = (self.image == nil && self.view == nil)
+            }
         }
         
         var properties: NSItemContentConfiguration.ContentProperties {
@@ -139,12 +147,14 @@ public extension NSItemContentViewNS {
             }
         }
         
-        public init(properties: NSItemContentConfiguration.ContentProperties, view: NSView?, image: NSImage?) {
+        public init(properties: NSItemContentConfiguration.ContentProperties, view: NSView?, image: NSImage?, overlayView: NSView?) {
             self.properties = properties
             super.init(frame: .zero)
             self.addSubview(withConstraint: imageView)
+            self.update()
             self.view = view
             self.image = image
+            self.overlayView = overlayView
         }
         
         required init?(coder: NSCoder) {
@@ -157,6 +167,16 @@ public extension NSItemContentViewNS {
             didSet {
                 if oldValue != properties {
                 update() }
+            }
+        }
+        
+        func text(_ text: String?, attributedText: AttributedString?) {
+            if let attributedText = attributedText {
+                self.attributedStringValue = NSAttributedString(attributedText)
+                self.isHidden = false
+            } else {
+                self.stringValue = text ?? ""
+                self.isHidden = (text == nil)
             }
         }
         

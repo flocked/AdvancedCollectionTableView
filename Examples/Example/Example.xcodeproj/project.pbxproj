@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		72462DD42A29160900F52C62 /* FZSwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 72462DD32A29160900F52C62 /* FZSwiftUtils */; };
-		72462DD72A29161700F52C62 /* FZUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 72462DD62A29161700F52C62 /* FZUIKit */; };
 		72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */; };
 		72AFC23C29804CA700FEA1C8 /* CollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23B29804CA700FEA1C8 /* CollectionItemView.swift */; };
 		72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */; };
@@ -16,9 +14,9 @@
 		72DE398B2979905C007EACAF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE398A2979905C007EACAF /* ViewController.swift */; };
 		72DE398D2979905D007EACAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398C2979905D007EACAF /* Assets.xcassets */; };
 		72DE39902979905D007EACAF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398E2979905D007EACAF /* Main.storyboard */; };
-		72DE399C29799075007EACAF /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72DE399B29799075007EACAF /* AdvancedCollectionTableView */; };
 		72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B652A44FBCB00DDDA1E /* Section.swift */; };
 		72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */; };
+		72F99B6E2A45196A00DDDA1E /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72F99B6D2A45196A00DDDA1E /* AdvancedCollectionTableView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +31,8 @@
 		72DE39912979905D007EACAF /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		72F99B652A44FBCB00DDDA1E /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
+		72F99B6A2A45195200DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
+		72F99B6B2A45195F00DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,9 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72462DD42A29160900F52C62 /* FZSwiftUtils in Frameworks */,
-				72462DD72A29161700F52C62 /* FZUIKit in Frameworks */,
-				72DE399C29799075007EACAF /* AdvancedCollectionTableView in Frameworks */,
+				72F99B6E2A45196A00DDDA1E /* AdvancedCollectionTableView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +50,7 @@
 		72DE397C2979905C007EACAF = {
 			isa = PBXGroup;
 			children = (
+				72F99B692A45195200DDDA1E /* Packages */,
 				72DE39872979905C007EACAF /* Example */,
 				72DE39862979905C007EACAF /* Products */,
 			);
@@ -90,6 +89,15 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		72F99B692A45195200DDDA1E /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				72F99B6A2A45195200DDDA1E /* AdvancedCollectionTableView */,
+				72F99B6B2A45195F00DDDA1E /* AdvancedCollectionTableView */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -107,9 +115,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				72DE399B29799075007EACAF /* AdvancedCollectionTableView */,
-				72462DD32A29160900F52C62 /* FZSwiftUtils */,
-				72462DD62A29161700F52C62 /* FZUIKit */,
+				72F99B6D2A45196A00DDDA1E /* AdvancedCollectionTableView */,
 			);
 			productName = CollectionViewTemplate;
 			productReference = 72DE39852979905C007EACAF /* Example.app */;
@@ -141,9 +147,7 @@
 			);
 			mainGroup = 72DE397C2979905C007EACAF;
 			packageReferences = (
-				72DE399A29799075007EACAF /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */,
-				72462DD22A29160900F52C62 /* XCRemoteSwiftPackageReference "FZSwiftUtils" */,
-				72462DD52A29161700F52C62 /* XCRemoteSwiftPackageReference "FZUIKit" */,
+				72F99B6C2A45196A00DDDA1E /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */,
 			);
 			productRefGroup = 72DE39862979905C007EACAF /* Products */;
 			projectDirPath = "";
@@ -387,23 +391,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		72462DD22A29160900F52C62 /* XCRemoteSwiftPackageReference "FZSwiftUtils" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/flocked/FZSwiftUtils.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		72462DD52A29161700F52C62 /* XCRemoteSwiftPackageReference "FZUIKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/flocked/FZUIKit.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		72DE399A29799075007EACAF /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */ = {
+		72F99B6C2A45196A00DDDA1E /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/flocked/AdvancedCollectionTableView.git";
 			requirement = {
@@ -414,19 +402,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		72462DD32A29160900F52C62 /* FZSwiftUtils */ = {
+		72F99B6D2A45196A00DDDA1E /* AdvancedCollectionTableView */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 72462DD22A29160900F52C62 /* XCRemoteSwiftPackageReference "FZSwiftUtils" */;
-			productName = FZSwiftUtils;
-		};
-		72462DD62A29161700F52C62 /* FZUIKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 72462DD52A29161700F52C62 /* XCRemoteSwiftPackageReference "FZUIKit" */;
-			productName = FZUIKit;
-		};
-		72DE399B29799075007EACAF /* AdvancedCollectionTableView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 72DE399A29799075007EACAF /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */;
+			package = 72F99B6C2A45196A00DDDA1E /* XCRemoteSwiftPackageReference "AdvancedCollectionTableView" */;
 			productName = AdvancedCollectionTableView;
 		};
 /* End XCSwiftPackageProductDependency section */

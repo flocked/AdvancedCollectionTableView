@@ -17,32 +17,23 @@ class ViewController: NSViewController {
     
     lazy var itemRegistration: ItemRegistration = {
         var itemRegistration = ItemRegistration(handler: {item, indexPath, collectionItem in
+            
             var configuration = NSItemContentConfiguration()
             configuration.text = collectionItem.title
             configuration.secondaryText = collectionItem.detail
             configuration.image = NSImage(named: collectionItem.imageName)
-            configuration.contentProperties.shadow = .black()
+            configuration.padding = .init(10.0)
             item.contentConfiguration = configuration
-
-            let hostingConfiguration = NSHostingConfiguration {
-                CollectionItemView(collectionItem, state: item.configurationState)
-            }.margins(.all, .init(10))
-          //  item.contentConfiguration = hostingConfiguration
+            
             item.configurationUpdateHandler = { [weak self] item, state in
-                let hostingConfiguration = NSHostingConfiguration {
-                    CollectionItemView(collectionItem, state: state)
-                }.margins(.all, .init(10))
-             //   item.contentConfiguration = hostingConfiguration
-                
                 configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
-                configuration.contentProperties.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
+                configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
                 
                 configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
                 configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
                 configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
 
                 item.contentConfiguration = configuration
-                
             }
         })
         return itemRegistration
