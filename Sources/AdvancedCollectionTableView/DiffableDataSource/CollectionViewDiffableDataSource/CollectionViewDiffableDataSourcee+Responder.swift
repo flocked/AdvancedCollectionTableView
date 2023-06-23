@@ -138,6 +138,7 @@ internal extension NSCollectionView {
     }
     
     @objc func swizzledKeyDown(with event: NSEvent) {
+        Swift.print("swizzledKeyDown")
         if let responder = self.nextResponder as? CollectionViewResponder {
             responder.keyDown(with: event)
         } else {
@@ -146,6 +147,7 @@ internal extension NSCollectionView {
     }
     
     @objc static func swizzleCollectionViewResponderEvents() {
+        Swift.print("swizzleCollectionViewResponderEvents")
         if (didSwizzleResponderEvents == false) {
             self.didSwizzleResponderEvents = true
             do {
