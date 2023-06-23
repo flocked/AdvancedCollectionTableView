@@ -85,6 +85,9 @@ extension CollectionViewDiffableDataSource {
         override func keyDown(with event: NSEvent) {
             Swift.print("responder keyDown", event.keyCode, self.dataSource.quicklookItems(for: self.dataSource.selectedElements))
             let shouldKeyDown = self.dataSource.keydownHandler?(event) ?? true
+            
+
+            
             if (shouldKeyDown) {
                 switch event.keyCode {
                 case 49:
@@ -140,9 +143,18 @@ internal extension NSCollectionView {
     @objc func swizzledKeyDown(with event: NSEvent) {
         Swift.print("swizzledKeyDown", self.nextResponder as? CollectionViewResponder )
         if let responder = self.nextResponder as? CollectionViewResponder {
-            responder.keyDown(with: event)
-        } else {
-         //   self.swizzledKeyDown(with: event)
+            switch event.keyCode {
+            case 49, 51:
+                responder.keyDown(with: event)
+            case 0, 30, 44:
+                if (event.modifierFlags.contains(.command)) {
+                    responder.keyDown(with: event)
+                } else {
+                    self.swizzledKeyDown(with: event)
+                }
+            default:
+                self.swizzledKeyDown(with: event)
+            }
         }
     }
     
