@@ -17,6 +17,7 @@
 		72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B652A44FBCB00DDDA1E /* Section.swift */; };
 		72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */; };
 		72F99B6E2A45196A00DDDA1E /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72F99B6D2A45196A00DDDA1E /* AdvancedCollectionTableView */; };
+		72F99BB92A45768800DDDA1E /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99BB82A45768800DDDA1E /* CollectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
 		72F99B6A2A45195200DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
 		72F99B6B2A45195F00DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
+		72F99BB82A45768800DDDA1E /* CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 			children = (
 				72DE39882979905C007EACAF /* AppDelegate.swift */,
 				72DE398A2979905C007EACAF /* ViewController.swift */,
+				72F99BB82A45768800DDDA1E /* CollectionView.swift */,
 				72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */,
 				72AFC23B29804CA700FEA1C8 /* CollectionItemView.swift */,
 				72F99B642A44FBC000DDDA1E /* Model */,
@@ -181,6 +184,7 @@
 				72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */,
 				72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */,
 				72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */,
+				72F99BB92A45768800DDDA1E /* CollectionView.swift in Sources */,
 				72DE39892979905C007EACAF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
