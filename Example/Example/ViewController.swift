@@ -63,8 +63,6 @@ class ViewController: NSViewController {
         applySnapshot()
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
-     //   NSCollectionView.swizzleCollectionViewResponderEventsA()
-        collectionView.tester()
         super.viewDidLoad()
     }
     
@@ -88,39 +86,3 @@ class ViewController: NSViewController {
     }
 }
 
-
-internal extension NSCollectionView {
-    static var didSwizzleResponderEvents: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_didSwizzleResponderEventsA", object: self, initialValue: false) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzleResponderEventsA", object: self) }
-    }
-    
-    @objc func swizzledKeyDown(with event: NSEvent) {
-        Swift.print("swizzledKeyDown")
-        self.swizzledKeyDown(with: event)
-    }
-    
-    @objc func tester() {
-        Swift.print("tester")
-    }
-    
-    @objc func swizzledTester() {
-        Swift.print("swizzledTester")
-
-    }
-    
-    @objc static func swizzleCollectionViewResponderEventsA() {
-        Swift.print("swizzleCollectionViewResponderEvents")
-        if (didSwizzleResponderEvents == false) {
-            self.didSwizzleResponderEvents = true
-            do {
-                _ = try Swizzle(NSCollectionView.self) {
-                    #selector(tester) <-> #selector(swizzledTester)
-                    #selector(keyDown(with: )) <-> #selector(swizzledKeyDown(with:))
-                }
-            } catch {
-                Swift.print(error)
-            }
-        }
-    }
-}

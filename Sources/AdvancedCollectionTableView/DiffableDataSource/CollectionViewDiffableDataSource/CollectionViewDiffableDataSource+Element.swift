@@ -249,6 +249,10 @@ extension CollectionViewDiffableDataSource {
 
 extension CollectionViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
     public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
-        self.element(for: indexPath)
+        Swift.print("collectionView qlPreviewable")
+        if let previable = self.element(for: indexPath), let item = self.itemView(for: previable) {
+            return QuicklookItem(content: previable.previewItemURL, title: previable.previewItemTitle, frame: item.view.frame, transitionImage: item.view.renderedImage)
+        }
+        return nil
     }
 }
