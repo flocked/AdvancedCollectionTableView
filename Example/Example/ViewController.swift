@@ -70,7 +70,7 @@ class ViewController: NSViewController {
     
     override func viewDidAppear() {
 
-      //  self.view.window?.makeFirstResponder(self.collectionView)
+        self.view.window?.makeFirstResponder(self.collectionView)
     }
     
     override func keyDown(with event: NSEvent) {

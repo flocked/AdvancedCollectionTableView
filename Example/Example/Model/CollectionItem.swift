@@ -36,6 +36,7 @@ extension CollectionItem: QuicklookPreviewable {
   
     
     var previewItemURL: URL? {
+        Swift.print("previewItemURL")
         return Bundle.main.url(forResource: imageName, withExtension: "png") ?? URL(fileURLWithPath: "/Users/florianzand/Developer/Github/AdvancedCollectionTableView/Example/Example/Assets.xcassets/astronaut cat.imageset/astronaut cat closeup liquid ink.png")
     }
     

@@ -9,6 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
+import QuickLookUI
 
 extension CollectionViewDiffableDataSource {
     /// An array of all elements of the last applied snapshot.
@@ -304,4 +305,36 @@ public extension NSCollectionViewDiffableDataSource {
     }
     
     
+}
+
+extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
+    public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
+        if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
+            return QuicklookPreviewItem(previewable, view: item.view)
+        }
+        return nil
+    }
+}
+
+internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
+    let preview: QuicklookPreviewable
+    var view: NSView?
+    
+    public var previewItemURL: URL? {
+        preview.previewItemURL
+    }
+    public var previewItemFrame: CGRect? {
+        view?.frameOnScreen ?? preview.previewItemFrame
+    }
+    public var previewItemTitle: String? {
+        preview.previewItemTitle
+    }
+    public var previewItemTransitionImage: NSImage? {
+        view?.renderedImage ?? preview.previewItemTransitionImage
+    }
+    
+    internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
+        self.preview = preview
+        self.view = view
+    }
 }
