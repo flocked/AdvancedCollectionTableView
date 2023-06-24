@@ -21,6 +21,7 @@ extension CollectionViewDiffableDataSource {
         public var didDeselect: ((_ elements: [E]) -> ())? = nil
     }
     
+    /// Handlers for deletion.
     public struct DeletionHandlers<E> {
         /// Handler that determines whether elements should get deleted.
         public var shouldDelete: ((_ elements: [E]) -> [E])? = nil

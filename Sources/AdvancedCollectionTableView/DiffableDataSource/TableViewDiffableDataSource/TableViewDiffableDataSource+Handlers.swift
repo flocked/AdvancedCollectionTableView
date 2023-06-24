@@ -17,6 +17,14 @@ extension TableViewDiffableDataSource {
         public var didDeselect: (([E]) -> Void)? = nil
     }
     
+    /// Handlers for deletion.
+    public struct DeletionHandlers<E> {
+        /// Handler that determines whether elements should get deleted.
+        public var shouldDelete: ((_ elements: [E]) -> [E])? = nil
+        /// Handler that gets called whenever elements get deleted.
+        public var didDelete: ((_ elements: [E]) -> ())? = nil
+    }
+    
     public struct DragdropHandlers<E> {
         public var canDropOutside: ((E) -> PasteboardWriting)? = nil
         public var didDropOutside: ((E) -> ())? = nil

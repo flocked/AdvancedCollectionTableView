@@ -49,6 +49,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.setupHoverObserving()} }
     public var selectionHandlers = SelectionHandlers<Element>()
+    public var deletionHandlers = DeletionHandlers<Element>()
     public var reorderHandlers = ReorderHandlers<Element>()
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingRows() } }
@@ -64,7 +65,9 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
 
      If the value of this property is true (the default is false), users can delete items.
      */
-    public var allowsDeleting: Bool = false
+    public var allowsDeleting: Bool = false {
+        didSet { self.setupKeyDownMonitor() }
+    }
     /**
      A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
 

@@ -64,6 +64,7 @@ class ViewController: NSViewController {
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
         dataSource.allowsDeleting = true
+        dataSource.allowsReordering = true
         
         super.viewDidLoad()
     }

@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZQuicklook
 
-internal extension CollectionViewDiffableDataSource {
+internal extension TableViewDiffableDataSource {
     var keyDownMonitor: Any? {
         get { getAssociatedValue(key: "CollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
         set {
@@ -22,7 +22,7 @@ internal extension CollectionViewDiffableDataSource {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self else { return event }
-                    guard self.collectionView.window?.firstResponder == self.collectionView else { return event }
+                    guard self.tableView.window?.firstResponder == self.tableView else { return event }
                     if allowsDeleting, event.keyCode == 51 {
                         var selectedElements = self.selectedElements
                         if let shouldDelete = deletionHandlers.shouldDelete {
@@ -44,3 +44,4 @@ internal extension CollectionViewDiffableDataSource {
         }
     }
 }
+
