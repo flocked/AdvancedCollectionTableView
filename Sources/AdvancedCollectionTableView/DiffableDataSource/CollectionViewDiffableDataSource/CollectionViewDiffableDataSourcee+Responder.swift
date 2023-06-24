@@ -45,7 +45,6 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func mouseUp(with event: NSEvent) {
-            Swift.print("mouseup")
             if let mouseClick = self.dataSource.mouseHandlers.mouseClick {
                 let point = event.location(in: self.dataSource.collectionView)
                 guard let element = self.dataSource.element(at: point) else { return }
@@ -86,37 +85,7 @@ extension CollectionViewDiffableDataSource {
             self.dataSource.keydownHandler?(event) ?? true
         }
         
-        override func keyDown(with event: NSEvent) {
-            if (self.shouldKeyDown(for: event)) {
-                switch event.keyCode {
-                    /*
-                case 49:
-                    let previewItems = self.dataSource.quicklookItems(for: self.dataSource.selectedElements)
-                    if (self.dataSource.quicklookPanel.isVisible == false) {
-                            if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.collectionView
-                                self.dataSource.quicklookPanel.present(previewItems)
-                            }
-                    } else {
-                        self.dataSource.quicklookPanel.close()
-                    }
-                     */
-                case 51:
-                    if self.dataSource.allowsDeleting {
-                        let selectedElements = self.dataSource.selectedElements
-                        if (selectedElements.isEmpty == false) {
-                            if (self.dataSource.allowsDeleting) {
-                                self.dataSource.removeElements(selectedElements)
-                            }
-                        }
-                    }
-                default:
-                    self.dataSource.collectionView.keyDown(with: event)
-                }
-            } else {
-                self.dataSource.collectionView.keyDown(with: event)
-            }
-        }
+
     }
 }
 

@@ -162,6 +162,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.setupHoverObserving()} }
     public var selectionHandlers = SelectionHandlers<Element>()
+    public var deletionHandlers = DeletionHandlers<Element>()
     public var reorderingHandlers = ReorderingHandlers<Element>()
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
@@ -412,6 +413,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
+        Swift.print("ElementIsQuicklookPreviewable", Element.self is QuicklookPreviewable)
         if Element.self is QuicklookPreviewable {
             self.collectionView.isQuicklookPreviewable = true
         }

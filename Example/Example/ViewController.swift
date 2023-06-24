@@ -63,13 +63,12 @@ class ViewController: NSViewController {
         applySnapshot()
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
-        collectionView.isQuicklookPreviewable = true
+        dataSource.allowsDeleting = true
         
         super.viewDidLoad()
     }
     
     override func viewDidAppear() {
-
         self.view.window?.makeFirstResponder(self.collectionView)
     }
     
