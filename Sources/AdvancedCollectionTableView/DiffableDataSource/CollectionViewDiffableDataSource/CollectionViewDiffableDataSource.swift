@@ -9,6 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
+import QuickLookUI
 
 /**
  The object you use to manage data and provide items for a collection view.
@@ -75,7 +76,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
     internal var itemProvider: ItemProvider
-    internal let quicklookPanel = QuicklookPanel.shared
     internal var delegateBridge: DelegateBridge<Section, Element>!
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return collectionView.enclosingScrollView }
@@ -103,7 +103,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
      If the value of this property is true (the default is false), users can delete items.
      */
-    public var allowsDeleting: Bool = false
+    public var allowsDeleting: Bool = false {
+        didSet { self.setupKeyDownMonitor() }
+    }
     /**
      A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
 
@@ -168,7 +170,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var prefetchHandlers = PrefetchHandlers<Element>()
     public var dragDropHandlers = DragdropHandlers<Element>()
     public var highlightHandlers = HighlightHandlers<Element>()
-    public var quicklookHandlers = QuicklookHandlers<Element>()
 
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
     public var keydownHandler: ((_ event: NSEvent) -> Bool)? = nil
@@ -346,41 +347,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         previousDisplayingElements = displayingElements
     }
     
-    /*
-    internal func openQuicklookPanel(for elements: [(element: Element, url: URL)]) {
-            var previewItems: [QuicklookItem] = []
-            for _element in elements {
-                if let _elementRect = self.frame(for: _element.element) {
-                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                }
-            }
-        
-            if (previewItems.isEmpty == false) {
-                self.quicklookPanel.keyDownResponder = self.collectionView
-                self.quicklookPanel.present(previewItems)
-            }
-    }
-    
-    internal func closeQuicklookPanel(for elements: [(element: Element, url: URL)]) {
-        var previewItems: [QuicklookItem] = []
-            for _element in elements {
-                if let _elementRect = self.frame(for: _element.element) {
-                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                }
-            }
-            if (previewItems.isEmpty == false) {
-                self.quicklookPanel.keyDownResponder = self.collectionView
-                self.quicklookPanel.present(previewItems)
-            }
-        
-        if (previewItems.isEmpty == false) {
-            self.quicklookPanel.close(previewItems)
-        } else {
-            self.quicklookPanel.close()
-        }
-    }
-     */
-    
     internal func configurateDataSource() {
         self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
             [weak self] collectionView, indePath, elementID in
@@ -446,6 +412,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
+        if Element.self is QuicklookPreviewable {
+            self.collectionView.isQuicklookPreviewable = true
+        }
+        
         self.allowsReordering = false
         self.allowsDeleting = false
         self.collectionView.registerForDraggedTypes([pasteboardType])
@@ -459,46 +429,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.delegateBridge = DelegateBridge(self)
     }
 }
+
 /*
-public extension CollectionViewDiffableDataSource where Element: QLPreviewable {
-    
-    func quicklook(_ elements: [Element], current: Element? = nil) {
-        var index: Int = 0
-        var previewItems: [QLPreviewable] = []
-        let current = current ?? elements.first
-        for element in self.selectedElements {
-            guard let itemView = self.itemView(for: element) else { return }
-            element.previewItemView = itemView.view
-            var transitionImage: NSImage? = nil
-            if (element == current) {
-                transitionImage = element.previewItemTransitionImage ?? itemView.view.renderedImage
-                index = previewItems.count - 1
-            }
-            let previewItem = QuicklookItem(content: element.previewItemURL, frame: itemView.view.frame, transitionImage: transitionImage)
-            
-            previewItems.append(previewItem)
-        }
-        guard previewItems.isEmpty == false else { return }
-        
-        QuicklookPanel.shared.keyDownResponder = self.collectionView
-        QuicklookPanel.shared.present(previewItems, currentItemIndex: index)
-    }
-    
-    func quicklookSelectedItems() {
-        self.quicklook(self.selectedElements)
-    }
-}
-
-
-internal extension QLPreviewable {
-    var previewItemView: NSView? {
-        get { getAssociatedValue(key: "_previewItemView", object: self) }
-        set { set(associatedValue: newValue, key: "_previewItemView", object: self) }
-    }
-}
-
-*/
-
 private struct ItemIdentifierType: Hashable, Identifiable {
     let value: any Identifiable
     let id: AnyHashable
@@ -514,5 +446,40 @@ private struct ItemIdentifierType: Hashable, Identifiable {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+ */
+
+extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
+    public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
+        if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
+            return QuicklookPreviewItem(previewable, view: item.view)
+        } else if let item = collectionView.item(at: indexPath), let preview = item.quicklookPreview {
+            return QuicklookPreviewItem(preview, view: item.view)
+        }
+        return nil
+    }
+}
+
+internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
+    let preview: QuicklookPreviewable
+    var view: NSView?
+    
+    public var previewItemURL: URL? {
+        preview.previewItemURL
+    }
+    public var previewItemFrame: CGRect? {
+        view?.frameOnScreen ?? preview.previewItemFrame
+    }
+    public var previewItemTitle: String? {
+        preview.previewItemTitle
+    }
+    public var previewItemTransitionImage: NSImage? {
+        view?.renderedImage ?? preview.previewItemTransitionImage
+    }
+    
+    internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
+        self.preview = preview
+        self.view = view
     }
 }

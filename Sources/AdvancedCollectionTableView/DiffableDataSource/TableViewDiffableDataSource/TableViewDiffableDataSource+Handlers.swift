@@ -47,11 +47,6 @@ extension TableViewDiffableDataSource {
         public var didEndDisplaying: (([E]) -> Void)?
     }
     
-    public struct QuicklookHandlers<E> {
-        public var preview: (([E]) -> [(element: Element, url: URL)]?)?
-        public var endPreviewing: (([E]) ->  [(element: Element, url: URL)]?)?
-    }
-    
     public struct MouseHandlers<E> {
         public var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
         public var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil

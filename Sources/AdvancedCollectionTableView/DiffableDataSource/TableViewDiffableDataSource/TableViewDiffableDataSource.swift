@@ -27,7 +27,6 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     public let tableView: NSTableView
     internal var dataSource: DataSoure!
     internal var draggingRows = Set<Int>()
-    internal let quicklookPanel = QuicklookPanel.shared
     internal var delegateBridge: DelegateBridge<Section, Element>!
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return tableView.enclosingScrollView }
@@ -56,7 +55,6 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     public var prefetchHandlers = PrefetchHandlers<Element>()
     public var dragDropHandlers = DragdropHandlers<Element>() {
         didSet { self.setupDragging() } }
-    public var quicklookHandlers = QuicklookHandlers<Element>()
     public var columnHandlers = ColumnHandlers<Element>()
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
     public var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
@@ -322,6 +320,10 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         self.tableView.postsFrameChangedNotifications = false
         self.tableView.postsBoundsChangedNotifications = false
         
+        if Element.self is QuicklookPreviewable {
+            self.tableView.isQuicklookPreviewable = true
+        }
+        
         self.allowsReordering = false
         self.allowsDeleting = false
         self.tableView.registerForDraggedTypes([pasteboardType])
@@ -346,5 +348,14 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     }
 }
     
-
-
+extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
+    public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {
+        if let previewable = element(for: row) as? QuicklookPreviewable {
+            let rowView = tableView.rowView(atRow: row, makeIfNecessary: false)
+            return QuicklookPreviewItem(previewable, view: rowView)
+        } else if let rowView = tableView.rowView(atRow: row, makeIfNecessary: false), let preview = rowView.cellViews.first(where: {$0.quicklookPreview != nil})?.quicklookPreview {
+            return QuicklookPreviewItem(preview, view: rowView)
+        }
+        return nil
+    }
+}

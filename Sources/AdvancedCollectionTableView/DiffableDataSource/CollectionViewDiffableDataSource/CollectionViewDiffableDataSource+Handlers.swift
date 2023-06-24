@@ -60,13 +60,6 @@ extension CollectionViewDiffableDataSource {
         public var didEndDisplaying: ((_ elements: [E]) -> ())?
     }
     
-    /// Handlers that get called whenever items are entering or exiting quicklook.
-    public struct QuicklookHandlers<E> {
-        /// Handler that gets called whenever elements are entering quicklook.
-        public var preview: (([E]) -> [(element: Element, url: URL)]?)?
-        /// Handler that gets called whenever elements are exiting quicklook.
-        public var endPreviewing: ((_ elements: [E]) ->  [(element: Element, url: URL)]?)?
-    }
     
     /// Handlers that get called whenever the mouse is clicking an item.
     public struct MouseHandlers<E> {

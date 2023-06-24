@@ -82,42 +82,6 @@ extension TableViewDiffableDataSource {
             }
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
-                
-              /*  if (event.keyCode == 49) { // SpaceBar
-                    if (self.dataSource.quicklookPanel.isVisible == false) {
-                        if let _elements = self.dataSource.quicklookHandlers.preview?(self.dataSource.selectedElements) {
-                            var previewItems: [QuicklookItem] = []
-                            for _element in _elements {
-                                if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                }
-                            }
-                            if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
-                                self.dataSource.quicklookPanel.present(previewItems)
-                            }
-                        }
-                    } else {
-                        var previewItems: [QuicklookItem] = []
-                        if let _elements = self.dataSource.quicklookHandlers.endPreviewing?(self.dataSource.selectedElements) {
-                            for _element in _elements {
-                                if let _elementRect = self.dataSource.frame(for: _element.element) {
-                                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                                }
-                            }
-                            if (previewItems.isEmpty == false) {
-                                self.dataSource.quicklookPanel.keyDownResponder = self.dataSource.tableView
-                                self.dataSource.quicklookPanel.present(previewItems)
-                            }
-                        }
-                        if (previewItems.isEmpty == false) {
-                            self.dataSource.quicklookPanel.close(previewItems)
-                        } else {
-                            self.dataSource.quicklookPanel.close()
-                        }
-                    }
-                    
-                } else */
             if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
                     let selectedElements = self.dataSource.selectedElements
                     if (selectedElements.isEmpty == false) {

@@ -58,7 +58,6 @@ public extension NSCollectionView {
             set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
             self.visibleItems().forEach({$0.isEnabled = newValue })
         }
-        
     }
 }
 

@@ -8,8 +8,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import FZQuicklook
-import QuickLookUI
 
 extension CollectionViewDiffableDataSource {
     /// An array of all elements of the last applied snapshot.
@@ -43,23 +41,6 @@ extension CollectionViewDiffableDataSource {
         }
         return nil
     }
-    
-    
-    /*
-    internal func quicklookItems(for elements: [Element]) -> [QuicklookItem] {
-        return elements.compactMap({$0 as? QLPreviewable}).filter({$0.previewContent != nil}).compactMap({QuicklookItem(content: $0.previewContent!, title: $0.previewItemTitle, frame: $0.previewItemFrame , transitionImage: $0.previewItemTransitionImage)})
-        /*
-        if let _elements = shouldStartDisplaySpotlightHandlers(self.dataSource.selectedElements) {
-            var previewItems: [QuicklookItem] = []
-            for _element in _elements {
-                if let _elementRect = self.dataSource.frame(for: _element.element) {
-                    previewItems.append(QuicklookItem(url: _element.url, frame: _elementRect))
-                }
-            }
-        }
-        */
-    }
-     */
     
     /**
      Returns the element of the specified index path.
@@ -250,19 +231,6 @@ extension CollectionViewDiffableDataSource {
     }
 }
 
-/*
-extension CollectionViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
-    public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
-        Swift.print("collectionView qlPreviewable")
-        if let previable = self.element(for: indexPath), let item = self.itemView(for: previable) {
-            return QuicklookItem(content: previable.previewItemURL, title: previable.previewItemTitle, frame: item.view.frame, transitionImage: item.view.renderedImage)
-        }
-        return nil
-    }
-}
- */
-
-
 public extension NSCollectionViewDiffableDataSource {
     
     var allowsDeletingg: Bool {
@@ -305,36 +273,4 @@ public extension NSCollectionViewDiffableDataSource {
     }
     
     
-}
-
-extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
-    public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
-        if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
-            return QuicklookPreviewItem(previewable, view: item.view)
-        }
-        return nil
-    }
-}
-
-internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
-    let preview: QuicklookPreviewable
-    var view: NSView?
-    
-    public var previewItemURL: URL? {
-        preview.previewItemURL
-    }
-    public var previewItemFrame: CGRect? {
-        view?.frameOnScreen ?? preview.previewItemFrame
-    }
-    public var previewItemTitle: String? {
-        preview.previewItemTitle
-    }
-    public var previewItemTransitionImage: NSImage? {
-        view?.renderedImage ?? preview.previewItemTransitionImage
-    }
-    
-    internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
-        self.preview = preview
-        self.view = view
-    }
 }
