@@ -63,6 +63,8 @@ class ViewController: NSViewController {
         applySnapshot()
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         
+        collectionView.isQuicklookPreviewable = true
+        
         super.viewDidLoad()
     }
     
