@@ -87,9 +87,9 @@ extension CollectionViewDiffableDataSource {
         }
         
         override func keyDown(with event: NSEvent) {
-            Swift.print("responder keyDown", event.keyCode, self.dataSource.quicklookItems(for: self.dataSource.selectedElements).count)
             if (self.shouldKeyDown(for: event)) {
                 switch event.keyCode {
+                    /*
                 case 49:
                     let previewItems = self.dataSource.quicklookItems(for: self.dataSource.selectedElements)
                     if (self.dataSource.quicklookPanel.isVisible == false) {
@@ -100,6 +100,7 @@ extension CollectionViewDiffableDataSource {
                     } else {
                         self.dataSource.quicklookPanel.close()
                     }
+                     */
                 case 51:
                     if self.dataSource.allowsDeleting {
                         let selectedElements = self.dataSource.selectedElements
@@ -124,12 +125,14 @@ internal protocol CollectionViewResponder: NSResponder {
 }
 
 extension CollectionViewDiffableDataSource.Responder: CollectionViewResponder { }
+/*
 extension CollectionViewDiffableDataSource: DeletableDataSource {
     public func deleteItems(for indexPaths: Set<IndexPath>) {
         let elements = indexPaths.compactMap({ self.element(for: $0) })
         self.removeElements(elements)
     }
 }
+ */
 /*
 internal extension NSCollectionView {
     var quicklookItemsEnabled: Bool {

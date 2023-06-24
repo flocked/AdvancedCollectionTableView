@@ -499,7 +499,7 @@ public extension NSCollectionViewItem {
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
         if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
         } else {
-            let observer = self.view.observeChange(\.superview) { [weak self] object, old, new in
+            let observer = self.view.observeChanges(for: \.superview) { [weak self]  old, new in
                 guard let self = self else { return }
                 self._collectionView?.setupObservingView()
             }

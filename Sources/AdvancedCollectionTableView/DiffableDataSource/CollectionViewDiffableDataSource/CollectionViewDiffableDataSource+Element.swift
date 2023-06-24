@@ -44,6 +44,7 @@ extension CollectionViewDiffableDataSource {
     }
     
     
+    /*
     internal func quicklookItems(for elements: [Element]) -> [QuicklookItem] {
         return elements.compactMap({$0 as? QLPreviewable}).filter({$0.previewContent != nil}).compactMap({QuicklookItem(content: $0.previewContent!, title: $0.previewItemTitle, frame: $0.previewItemFrame , transitionImage: $0.previewItemTransitionImage)})
         /*
@@ -57,6 +58,7 @@ extension CollectionViewDiffableDataSource {
         }
         */
     }
+     */
     
     /**
      Returns the element of the specified index path.
@@ -247,6 +249,7 @@ extension CollectionViewDiffableDataSource {
     }
 }
 
+/*
 extension CollectionViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
     public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
         Swift.print("collectionView qlPreviewable")
@@ -255,4 +258,50 @@ extension CollectionViewDiffableDataSource: PreviewableDataSource where Element:
         }
         return nil
     }
+}
+ */
+
+
+public extension NSCollectionViewDiffableDataSource {
+    
+    var allowsDeletingg: Bool {
+        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeletingg", object: self, initialValue: true) }
+        set {
+            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_allowsDeletingg", object: self)
+            self.setupKeyDownMonitor()
+        }
+    }
+    
+    var keyDownMonitor: Any? {
+        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self) }
+    }
+    
+    func setupKeyDownMonitor () {
+        if allowsDeletingg {
+            if keyDownMonitor == nil {
+                keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
+                    guard let self = self else { return event }
+                    self.swizzledKeyDown(with: event)
+                    return event
+                })
+            }
+        } else {
+            keyDownMonitor = nil
+        }
+    }
+    
+    func swizzledKeyDown(with event: NSEvent) {
+        /*
+        (NSApp.keyWindow?.firstResponder as? NSCollectionView)?.dataSource == self
+        guard self.collectionView.window?.firstResponder == self else { return }
+        if isQuicklookPreviewable, event.keyCode == 49 {
+            if QuicklookPanel.shared.isVisible == false {
+                self.quicklookSelectedRows()
+            }
+        }
+         */
+    }
+    
+    
 }

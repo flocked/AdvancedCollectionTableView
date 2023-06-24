@@ -217,11 +217,13 @@ extension TableViewDiffableDataSource {
     }
 }
 
+/*
 extension TableViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
     public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
         self.element(for: indexPath.item)
     }
 }
+ */
 
     
     /*

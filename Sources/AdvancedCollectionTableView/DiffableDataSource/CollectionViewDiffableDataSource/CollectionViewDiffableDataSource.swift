@@ -459,7 +459,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.delegateBridge = DelegateBridge(self)
     }
 }
-
+/*
 public extension CollectionViewDiffableDataSource where Element: QLPreviewable {
     
     func quicklook(_ elements: [Element], current: Element? = nil) {
@@ -497,7 +497,7 @@ internal extension QLPreviewable {
     }
 }
 
-
+*/
 
 private struct ItemIdentifierType: Hashable, Identifiable {
     let value: any Identifiable
