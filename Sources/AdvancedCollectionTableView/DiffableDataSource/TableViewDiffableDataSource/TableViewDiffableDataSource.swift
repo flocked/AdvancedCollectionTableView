@@ -320,7 +320,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         self.tableView.postsFrameChangedNotifications = false
         self.tableView.postsBoundsChangedNotifications = false
         
-        if Element.self is QuicklookPreviewable {
+        if Element.self is QuicklookPreviewable.Type {
             self.tableView.isQuicklookPreviewable = true
         }
         
