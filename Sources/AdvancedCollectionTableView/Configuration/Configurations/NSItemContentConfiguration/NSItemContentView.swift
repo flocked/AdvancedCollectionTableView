@@ -126,7 +126,7 @@ internal extension NSItemContentView {
                 contentStack
             } else {
                 contentStack
-                    .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
+                 //   .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
             }
         }
         
@@ -141,7 +141,7 @@ internal extension NSItemContentView {
                 properties.shape.swiftui
                     .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
-
+            
    
         }
     }
