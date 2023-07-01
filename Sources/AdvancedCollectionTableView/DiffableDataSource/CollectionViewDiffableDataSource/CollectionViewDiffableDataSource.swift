@@ -415,7 +415,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         Swift.print("ElementIsQuicklookPreviewable", Element.self is QuicklookPreviewable.Type)
         if Element.self is QuicklookPreviewable.Type {
-           // self.collectionView.isQuicklookPreviewable = true
+            self.collectionView.isQuicklookPreviewable = true
         }
         
         self.allowsReordering = false
@@ -423,9 +423,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.registerForDraggedTypes([pasteboardType])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
-        self.responder = Responder(self)
+      //  self.responder = Responder(self)
       //  let collectionViewNextResponder = self.collectionView.nextResponder
-        self.collectionView.nextResponder = self.responder
+    //    self.collectionView.nextResponder = self.responder
       //  self.responder.nextResponder = collectionViewNextResponder
         
         self.delegateBridge = DelegateBridge(self)
