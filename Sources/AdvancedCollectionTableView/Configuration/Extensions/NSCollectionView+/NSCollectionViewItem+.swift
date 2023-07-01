@@ -283,7 +283,7 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
-                swizzleCollectionItemViewIfNeeded()
+         //       swizzleCollectionItemViewIfNeeded()
             }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
             /*
