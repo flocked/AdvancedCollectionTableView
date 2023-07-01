@@ -21,6 +21,11 @@ internal class NSItemContentView: NSView, NSContentView {
         }
     }
     
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        Swift.print("contentView.hitTest", super.hitTest(point) ?? "")
+        return nil
+    }
+    
     internal var forwardMouseDown = false
     override func mouseDown(with event: NSEvent) {
         if  forwardMouseDown {
