@@ -39,14 +39,15 @@ internal class NSItemContentView: NSView, NSContentView {
     override func mouseDown(with event: NSEvent) {
         Swift.print("itemMouseDown", self.nextResponder ?? "")
        
-        self.nextResponder?.mouseDown(with: event)
+        self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
         
     }
     
     override func mouseUp(with event: NSEvent) {
         Swift.print("itemMouseUp")
-        
-        self.nextResponder?.mouseUp(with: event)
+
+        self.firstSuperview(for: NSCollectionView.self)?.mouseUp(with: event)
+
 
     }
      
