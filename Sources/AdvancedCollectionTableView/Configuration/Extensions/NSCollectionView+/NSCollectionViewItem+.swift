@@ -507,7 +507,7 @@ public extension NSCollectionViewItem {
         } else {
             let observer = self.view.observeChanges(for: \.superview) { [weak self]  old, new in
                 guard let self = self else { return }
-          //      self._collectionView?.setupObservingView()
+                self._collectionView?.setupObservingView()
             }
             set(associatedValue: observer, key: "NSCollectionViewItem_superviewObserver", object: self.view)
         }
