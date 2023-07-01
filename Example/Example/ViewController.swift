@@ -53,7 +53,7 @@ class ViewController: NSViewController {
             Swift.print("item::", item.previewItemURL ?? "noItem")
         }
         
-        collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, insets: .init(14.0))
+        collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, spacing: 4.0, insets: .init(14.0))
         collectionView.dataSource = self.dataSource
         
         applySnapshot()
