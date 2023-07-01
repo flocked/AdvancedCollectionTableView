@@ -25,7 +25,7 @@ internal class NSItemContentView: NSView, NSContentView {
     override func hitTest(_ point: NSPoint) -> NSView? {
         Swift.print("contentView.hitTest", point, super.hitTest(point) ?? "")
         Swift.print("hosting.hitTest", hostingController.view.hitTest(point) ?? "")
-        return nil
+        return self
         if let view = super.hitTest(point) {
             if view != self {
                 return superview
@@ -36,7 +36,11 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     override func mouseDown(with event: NSEvent) {
-        Swift.print("item mouse down")
+        Swift.print("itemMouseDown")
+    }
+    
+    override func mouseUp(with event: NSEvent) {
+        Swift.print("itemMouseUp")
     }
      
     /*
