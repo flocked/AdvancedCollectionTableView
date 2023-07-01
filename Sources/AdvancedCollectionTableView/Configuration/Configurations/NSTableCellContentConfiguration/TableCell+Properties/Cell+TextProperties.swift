@@ -47,10 +47,13 @@ public extension NSTableCellContentConfiguration {
         /// A Boolean value that controls whether the user can edit the text.
         public var isEditable: Bool = false
         
+        
         /// A default configuration for a primary text.
         public static func primary() -> Self { TextProperties(maxNumberOfLines: 1) }
+        
         /// A default configuration for a secondary text.
         public static func secondary() -> Self { TextProperties(font: .callout, color: .secondaryLabelColor) }
+        
         
         /// A configuration with a font for captions.
         public static func caption2() -> Self { TextProperties(font: .caption2) }

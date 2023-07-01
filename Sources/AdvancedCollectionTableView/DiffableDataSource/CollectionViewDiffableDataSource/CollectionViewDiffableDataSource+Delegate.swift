@@ -156,6 +156,9 @@ extension CollectionViewDiffableDataSource {
             }
             return collectionView.draggingImageForItems(at: indexPaths, with: event, offset: dragImageOffset)
         }
+        
+        
+        
     }
 }
 

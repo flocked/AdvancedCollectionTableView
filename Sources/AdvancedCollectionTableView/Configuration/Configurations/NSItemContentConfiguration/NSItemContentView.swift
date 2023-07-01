@@ -29,7 +29,7 @@ internal class NSItemContentView: NSView, NSContentView {
             }
             
             self.nextResponder?.mouseDown(with: event)
-            self.parentViewController?.mouseDown(with: event)
+            self.parentController?.mouseDown(with: event)
             self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
             forwardMouseDown = false
             super.mouseDown(with: event)
@@ -54,12 +54,10 @@ internal class NSItemContentView: NSView, NSContentView {
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
-        addSubview(withConstraint: hostingView)
+        addSubview(withConstraint: hostingController.view)
      //   addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
         self.maskToBounds = false
-        
-        self.hostingController.view.maskToBounds = false
     }
     
     internal var _configuration: NSItemContentConfiguration {
@@ -71,7 +69,7 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     internal func updateConfiguration() {
-        hostingView.rootView =  ContentView(configuration: self._configuration)
+        hostingController.rootView =  ContentView(configuration: self._configuration)
         /*
         hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
             guard let self = self else { return }
@@ -96,6 +94,7 @@ internal class NSItemContentView: NSView, NSContentView {
         let hostingView = ContentView(configuration: self._configuration)
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
+        hostingController.view.maskToBounds = false
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }()
@@ -123,7 +122,7 @@ internal class NSItemContentView: NSView, NSContentView {
             hostingController.removeFromParent()
         } else {
             if (hostingController.parent == nil) {
-                parentViewController?.addChild(hostingController)
+                parentController?.addChild(hostingController)
             }
         }
     }

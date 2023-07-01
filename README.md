@@ -2,6 +2,8 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView. 
 
+The included example project demonstrates CollectionDiffableDataSource, NSCollectionView.ItemRegistration, 
+
 ## ItemRegistration & CellRegistration
 A port of UICollectionView.CellRegistration. A registration for collection view items / table view cells that greatly simplifies  configurating them.
 

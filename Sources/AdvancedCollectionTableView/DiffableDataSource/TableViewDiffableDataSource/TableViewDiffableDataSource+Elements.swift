@@ -33,13 +33,6 @@ extension TableViewDiffableDataSource {
         return rowIndexes.compactMap({self.element(for: $0)})
     }
     
-       public var nonSelectedRowIndexes: [Int] {
-           return Array(self.tableView.nonSelectedRowIndexes)
-       }
-       
-       public var nonSelectedElements: [Element] {
-           return self.nonSelectedRowIndexes.compactMap({element(for: $0)})
-       }
     
     
     public func element(for row: Int) ->  Element? {
