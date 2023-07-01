@@ -12,7 +12,7 @@ struct SidebarItem: Hashable, Identifiable {
     var title: String
     var symbolName: String
     
-    static var sample: [SidebarItem] {
+    static var sampleItems: [SidebarItem] {
         return [SidebarItem(title: "Person", symbolName: "person"),
                 SidebarItem(title: "Photo", symbolName: "photo"),
                 SidebarItem(title: "Video", symbolName: "film"),

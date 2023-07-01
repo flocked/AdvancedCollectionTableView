@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */; };
-		72AFC23C29804CA700FEA1C8 /* CollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23B29804CA700FEA1C8 /* CollectionItemView.swift */; };
 		72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */; };
 		72D95F512A46EDB7008B1FE6 /* astronaut cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 72D95F4A2A46EDB7008B1FE6 /* astronaut cat.png */; };
 		72D95F522A46EDB7008B1FE6 /* sea creature oil.png in Resources */ = {isa = PBXBuildFile; fileRef = 72D95F4B2A46EDB7008B1FE6 /* sea creature oil.png */; };
@@ -28,7 +27,6 @@
 
 /* Begin PBXFileReference section */
 		72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
-		72AFC23B29804CA700FEA1C8 /* CollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemView.swift; sourceTree = "<group>"; };
 		72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
 		72D95F4A2A46EDB7008B1FE6 /* astronaut cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "astronaut cat.png"; path = "imgs/astronaut cat.png"; sourceTree = SOURCE_ROOT; };
 		72D95F4B2A46EDB7008B1FE6 /* sea creature oil.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sea creature oil.png"; path = "imgs/sea creature oil.png"; sourceTree = SOURCE_ROOT; };
@@ -45,8 +43,6 @@
 		72DE39912979905D007EACAF /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		72F99B652A44FBCB00DDDA1E /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
-		72F99B6A2A45195200DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
-		72F99B6B2A45195F00DDDA1E /* AdvancedCollectionTableView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AdvancedCollectionTableView; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +74,6 @@
 		72DE397C2979905C007EACAF = {
 			isa = PBXGroup;
 			children = (
-				72F99B692A45195200DDDA1E /* Packages */,
 				72DE39872979905C007EACAF /* Example */,
 				72DE39862979905C007EACAF /* Products */,
 			);
@@ -98,9 +93,8 @@
 				72DE39882979905C007EACAF /* AppDelegate.swift */,
 				72DE398A2979905C007EACAF /* ViewController.swift */,
 				72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */,
-				72AFC23B29804CA700FEA1C8 /* CollectionItemView.swift */,
-				72D95F492A46ED86008B1FE6 /* Sample Images */,
 				72F99B642A44FBC000DDDA1E /* Model */,
+				72D95F492A46ED86008B1FE6 /* Sample Images */,
 				72DE398C2979905D007EACAF /* Assets.xcassets */,
 				72DE398E2979905D007EACAF /* Main.storyboard */,
 				72DE39912979905D007EACAF /* Example.entitlements */,
@@ -116,15 +110,6 @@
 				72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		72F99B692A45195200DDDA1E /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				72F99B6A2A45195200DDDA1E /* AdvancedCollectionTableView */,
-				72F99B6B2A45195F00DDDA1E /* AdvancedCollectionTableView */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,7 +197,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				72DE398B2979905C007EACAF /* ViewController.swift in Sources */,
-				72AFC23C29804CA700FEA1C8 /* CollectionItemView.swift in Sources */,
 				72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */,
 				72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */,
 				72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */,

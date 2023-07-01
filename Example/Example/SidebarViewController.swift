@@ -15,7 +15,11 @@ class SidebarViewController: NSViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
 
     @IBOutlet weak var tableView: NSTableView!
-    var items: [SidebarItem] = SidebarItem.sample
+    
+    lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
+    
+    /// Sample items.
+    var items: [SidebarItem] = SidebarItem.sampleItems
     
     let cellRegistration: CellRegistration = CellRegistration(identifier: "SidebarCell") { cell, column, row, sidebarItem in
         var configuration = NSTableCellContentConfiguration.sidebar()
@@ -23,11 +27,7 @@ class SidebarViewController: NSViewController {
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         cell.contentConfiguration = configuration
     }
-    
-    lazy var dataSource: DataSource = {
-        DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
-    }()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -40,6 +40,9 @@ internal extension TableViewDiffableDataSource {
                 })
             }
         } else {
+            if let keyDownMonitor = self.keyDownMonitor {
+                NSEvent.removeMonitor(keyDownMonitor)
+            }
             keyDownMonitor = nil
         }
     }
