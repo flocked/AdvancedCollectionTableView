@@ -145,11 +145,20 @@ public extension NSItemContentViewNS {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsSymbolConfiguration()
             
+            self.borderColor = properties._resolvedBorderColor
+            self.borderWidth = properties.borderWidth
+            self.layer?.shadowRadius = properties.shadow.radius
+            self.layer?.shadowColor = properties.shadow._resolvedColor?.cgColor
+            self.layer?.shadowOpacity = Float(properties.shadow.opacity)
+            self.layer?.shadowOffset = CGSize(properties.shadow.offset.x, properties.shadow.offset.y)
+
+            /*
             borderLayer.borderColor = properties._resolvedBorderColor?.cgColor
             borderLayer.borderWidth = properties.borderWidth
             borderLayer.shadowOpacity = Float(properties.shadow.opacity)
             borderLayer.shadowRadius = properties.shadow.radius
             borderLayer.shadowOffset = CGSize(properties.shadow.offset.x, properties.shadow.offset.y)
+             */
             
          //   self.borderColor = properties._resolvedBorderColor
          //   self.borderWidth = properties.borderWidth
