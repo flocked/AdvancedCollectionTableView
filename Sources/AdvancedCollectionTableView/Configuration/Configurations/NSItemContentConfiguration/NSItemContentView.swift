@@ -20,64 +20,7 @@ internal class NSItemContentView: NSView, NSContentView {
             }
         }
     }
-    
-    /*
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        Swift.print("contentView.hitTest", point, super.hitTest(point) ?? "")
-        Swift.print("hosting.hitTest", hostingController.view.hitTest(point) ?? "")
-        return self
-        if let view = super.hitTest(point) {
-            if view != self {
-                return superview
-            }
-            return view
-        }
-        return nil
-    }
-     */
-    
-     
-    /*
-    override func mouseDown(with event: NSEvent) {
-        Swift.print("itemMouseDown", self.nextResponder ?? "")
-       
-        self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
-        
-    }
-    
-    override func mouseUp(with event: NSEvent) {
-        Swift.print("itemMouseUp")
 
-        self.firstSuperview(for: NSCollectionView.self)?.mouseUp(with: event)
-    }
-    */
-     
-     
-    /*
-    internal var forwardMouseDown = false
-    override func mouseDown(with event: NSEvent) {
-        if  forwardMouseDown {
-            if let item = (self.nextResponder as? NSCollectionViewItem) {
-                item.select()
-            }
-            
-            self.nextResponder?.mouseDown(with: event)
-            self.parentController?.mouseDown(with: event)
-            self.firstSuperview(for: NSCollectionView.self)?.mouseDown(with: event)
-            forwardMouseDown = false
-            super.mouseDown(with: event)
-
-        }
-        /*
-       let location = event.location(in: self.hostingController.view)
-        
-       let views = self.hostingController.view.subviews(where: {$0.frame.contains(location)}, depth: 10000)
-        
-        Swift.print(views)
-         */
-        
-    }
-     */
     
     /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
@@ -89,7 +32,6 @@ internal class NSItemContentView: NSView, NSContentView {
         self._configuration = configuration
         super.init(frame: .zero)
         addSubview(withConstraint: hostingController.view)
-     //   addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
         self.maskToBounds = false
     }
@@ -104,25 +46,7 @@ internal class NSItemContentView: NSView, NSContentView {
     
     internal func updateConfiguration() {
         hostingController.rootView =  ContentView(configuration: self._configuration)
-        /*
-        hostingController.rootView = ContentView(configuration: self._configuration, mouseHandler: { [weak self] in
-            guard let self = self else { return }
-            if let event = NSEvent.current, event.type == .leftMouseDown {
-                forwardMouseDown = true
-                self.mouseDown(with: event)
-            }
-        })
-         */
     }
-    
-    internal lazy var hostingView: NSHostingView<ContentView> = {
-        let contentView = ContentView(configuration: self._configuration)
-        let hostingView = NSHostingView(rootView: contentView)
-        hostingView.backgroundColor = .clear
-        hostingView.translatesAutoresizingMaskIntoConstraints = false
-        hostingView.maskToBounds = false
-        return hostingView
-    }()
     
     internal lazy var hostingController: NSHostingController<ContentView> = {
         let hostingView = ContentView(configuration: self._configuration)
