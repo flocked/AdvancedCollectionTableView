@@ -66,6 +66,8 @@ class ViewController: NSViewController {
         dataSource.allowsDeleting = true
         dataSource.allowsReordering = true
         
+        self.collectionView.allowsEmptySelection = false
+        
         super.viewDidLoad()
     }
     
