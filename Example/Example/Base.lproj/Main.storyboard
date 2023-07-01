@@ -748,17 +748,17 @@
                             <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRn-s9-YfO">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <clipView key="contentView" id="scH-7B-Xch">
+                                <clipView key="contentView" drawsBackground="NO" id="scH-7B-Xch">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView id="xnc-OY-4Nz">
+                                        <collectionView selectable="YES" allowsMultipleSelection="YES" id="xnc-OY-4Nz">
                                             <rect key="frame" x="0.0" y="0.0" width="480" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="n7z-aG-lWQ">
                                                 <size key="itemSize" width="50" height="50"/>
                                             </collectionViewFlowLayout>
-                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="primaryBackgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         </collectionView>
                                     </subviews>
                                 </clipView>

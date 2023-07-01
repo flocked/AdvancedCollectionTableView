@@ -72,11 +72,7 @@ class ViewController: NSViewController {
     override func viewDidAppear() {
         self.view.window?.makeFirstResponder(self.collectionView)
     }
-    
-    override func keyDown(with event: NSEvent) {
-        Swift.print("viewController keyDown")
-        self.collectionView.keyDown(with: event)
-    }
+
     
     
     func applySnapshot() {
