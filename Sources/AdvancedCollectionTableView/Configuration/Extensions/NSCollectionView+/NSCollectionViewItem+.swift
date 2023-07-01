@@ -524,7 +524,6 @@ public extension NSCollectionViewItem {
         set {
             let oldValue = self.isSelected
             self.swizzledIsSelected = newValue
-            Swift.print("isSelected", newValue)
             if newValue != oldValue {
                 self.setNeedsAutomaticUpdateConfiguration()
             }

@@ -1,12 +1,14 @@
 # Advanced CollectionView & TableView
 
-A collection of classes and extensions for NSCollectionView and NSTableView. 
-
-The included example project demonstrates CollectionDiffableDataSource, NSCollectionView.ItemRegistration, 
+A collection of classes and extensions for NSCollectionView and NSTableView.
 
 ## ItemRegistration & CellRegistration
-A port of UICollectionView.CellRegistration. A registration for collection view items / table view cells that greatly simplifies  configurating them.
-
+A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.     
+```
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
+         item.textField.stringValue = string
+}
+```
 
 ## ContentConfiguration
 A port of UIContentConfiguration.
