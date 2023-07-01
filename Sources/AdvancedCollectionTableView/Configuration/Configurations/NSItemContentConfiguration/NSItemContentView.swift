@@ -35,7 +35,7 @@ internal class NSItemContentView: NSView, NSContentView {
         return nil
     }
      
-    
+    /*
     internal var forwardMouseDown = false
     override func mouseDown(with event: NSEvent) {
         if  forwardMouseDown {
@@ -59,6 +59,7 @@ internal class NSItemContentView: NSView, NSContentView {
          */
         
     }
+     */
     
     /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
