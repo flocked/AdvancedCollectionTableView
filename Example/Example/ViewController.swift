@@ -62,6 +62,9 @@ class ViewController: NSViewController {
         dataSource.allowsDeleting = true
         dataSource.allowsReordering = true
         
+        collectionView.isSelectable = true
+        collectionView.allowsEmptySelection = false
+        collectionView.allowsMultipleSelection = false
         
         super.viewDidLoad()
     }
