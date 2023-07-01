@@ -172,9 +172,8 @@ public extension NSCollectionViewItem {
         }
     }
     
-    internal var contentView: (NSContentView & NSView)? {
-        self.view.firstSubview(type: NSContentView.self) as? (NSContentView & NSView)
-       // self.view as? NSContentView
+    internal var contentView: NSContentView? {
+        self.view as? NSContentView
     }
     
     internal func configurateContentView() {
@@ -183,14 +182,13 @@ public extension NSCollectionViewItem {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
-                let contentView = contentConfiguration.makeContentView()
-                contentView.wantsLayer = true
-                contentView.maskToBounds = false
-                self.view.addSubview(withConstraint: contentView)
+                self.view = contentConfiguration.makeContentView()
+                self.view.wantsLayer = true
+                self.view.maskToBounds = false
             }
         } else {
             self.cachedLayoutAttributes = nil
-            contentView?.removeFromSuperview()
+            self.view = NSView()
         }
         self.configurateBackgroundView()
     }
