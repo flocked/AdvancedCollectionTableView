@@ -102,6 +102,7 @@ internal class NSItemContentView: NSView, NSContentView {
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.maskToBounds = false
+        hostingController.view.isOpaque = false
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }()
