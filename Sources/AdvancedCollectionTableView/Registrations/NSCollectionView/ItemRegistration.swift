@@ -91,23 +91,18 @@ public extension NSCollectionView {
             }
             let item: Item
             if let existingItem = collectionView.item(at: indexPath) as? Item {
-                Swift.print("existingItem")
                 item = existingItem
             } else {
-                Swift.print("makeItem")
                 item = collectionView.makeItem(withIdentifier: self.identifier, for: indexPath) as! Item
             }
             self.handler(item, indexPath, element)
-            Swift.print("returnItem")
             return item
         }
         
         internal func register(for collectionView: NSCollectionView) {
             if let nib = self.nib {
-                Swift.print("registerNib")
                 collectionView.register(nib, forItemWithIdentifier: self.identifier)
             } else {
-                Swift.print("register")
                 collectionView.register(Item.self, forItemWithIdentifier: self.identifier)
             }
             registeredCollectionView = collectionView

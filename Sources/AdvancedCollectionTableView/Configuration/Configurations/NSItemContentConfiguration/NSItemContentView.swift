@@ -32,13 +32,8 @@ internal class NSItemContentView: NSView, NSContentView {
         self._configuration = configuration
         super.init(frame: .zero)
         
-        Swift.print("NSItemContentView init 1")
-
         addSubview(withConstraint: hostingController.view)
-        Swift.print("NSItemContentView init 2")
-
         self.updateConfiguration()
-        Swift.print("NSItemContentView init 2")
         self.maskToBounds = false
     }
     

@@ -413,7 +413,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
-        Swift.print("ElementIsQuicklookPreviewable", Element.self is QuicklookPreviewable.Type)
         if Element.self is QuicklookPreviewable.Type {
             self.collectionView.isQuicklookPreviewable = true
         }
