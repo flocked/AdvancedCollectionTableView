@@ -26,7 +26,7 @@ internal class NSItemContentView: NSView, NSContentView {
         Swift.print("contentView.hitTest", super.hitTest(point) ?? "")
         if let view = super.hitTest(point) {
             if view != self {
-                return nil
+                return superview
             }
             return view
         }
