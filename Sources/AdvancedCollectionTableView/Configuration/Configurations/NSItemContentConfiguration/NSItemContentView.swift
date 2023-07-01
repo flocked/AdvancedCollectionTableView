@@ -36,8 +36,10 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     override func mouseDown(with event: NSEvent) {
-        Swift.print("itemMouseDown", self.parentController ?? "")
-        
+        Swift.print("itemMouseDown")
+        if var collectionItem = self.parentController as? NSCollectionViewItem {
+            collectionItem.isSelected = !collectionItem.isSelected
+        }
     }
     
     override func mouseUp(with event: NSEvent) {
