@@ -21,7 +21,7 @@ internal class NSItemContentView: NSView, NSContentView {
         }
     }
     
-    
+    /*
     override func hitTest(_ point: NSPoint) -> NSView? {
         Swift.print("contentView.hitTest", point, super.hitTest(point) ?? "")
         Swift.print("hosting.hitTest", hostingController.view.hitTest(point) ?? "")
@@ -34,6 +34,7 @@ internal class NSItemContentView: NSView, NSContentView {
         }
         return nil
     }
+     */
     
      
     /*
