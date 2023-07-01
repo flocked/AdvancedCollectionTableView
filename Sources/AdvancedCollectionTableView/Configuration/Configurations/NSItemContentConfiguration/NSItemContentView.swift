@@ -34,6 +34,11 @@ internal class NSItemContentView: NSView, NSContentView {
         }
         return nil
     }
+    
+    override func pressureChange(with event: NSEvent) {
+            super.pressureChange(with: event)
+        Swift.print("pressure \(event.pressure)")
+        }
      
     /*
     override func mouseDown(with event: NSEvent) {
