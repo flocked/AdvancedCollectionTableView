@@ -193,6 +193,7 @@ public extension NSItemContentViewNS {
             self.view = view
             self.image = image
             self.overlayView = overlayView
+            self.update()
         }
         
         required init?(coder: NSCoder) {
@@ -223,6 +224,9 @@ public extension NSItemContentViewNS {
             super.init(frame: .zero)
             self.drawsBackground = false
             self.isBezeled = false
+            self.isSelectable = false
+            self.isEditable = false
+            self.update()
         }
         
         required init?(coder: NSCoder) {
