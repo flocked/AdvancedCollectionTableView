@@ -24,7 +24,7 @@ internal class NSItemContentView: NSView, NSContentView {
     
     override func hitTest(_ point: NSPoint) -> NSView? {
         Swift.print("contentView.hitTest", super.hitTest(point) ?? "")
-        return self
+        return firstSuperview(for: NSCollectionView.self)
         if let view = super.hitTest(point) {
             if view != self {
                 return superview
