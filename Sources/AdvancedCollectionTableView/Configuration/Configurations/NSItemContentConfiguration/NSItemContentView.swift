@@ -34,6 +34,10 @@ internal class NSItemContentView: NSView, NSContentView {
         }
         return nil
     }
+    
+    override func mouseDown(with event: NSEvent) {
+        Swift.print("item mouse down")
+    }
      
     /*
     internal var forwardMouseDown = false
