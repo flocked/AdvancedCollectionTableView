@@ -423,10 +423,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.registerForDraggedTypes([pasteboardType])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
-      //  self.responder = Responder(self)
-      //  let collectionViewNextResponder = self.collectionView.nextResponder
-    //    self.collectionView.nextResponder = self.responder
-      //  self.responder.nextResponder = collectionViewNextResponder
+        self.responder = Responder(self)
+        let collectionViewNextResponder = self.collectionView.nextResponder
+        self.collectionView.nextResponder = self.responder
+        self.responder.nextResponder = collectionViewNextResponder
         
         self.delegateBridge = DelegateBridge(self)
     }
