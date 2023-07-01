@@ -36,7 +36,8 @@ internal class NSItemContentView: NSView, NSContentView {
     }
     
     override func mouseDown(with event: NSEvent) {
-        Swift.print("itemMouseDown")
+        Swift.print("itemMouseDown", self.parentController ?? "")
+        
     }
     
     override func mouseUp(with event: NSEvent) {
