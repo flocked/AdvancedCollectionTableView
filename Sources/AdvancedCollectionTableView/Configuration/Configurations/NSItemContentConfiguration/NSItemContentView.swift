@@ -23,7 +23,7 @@ internal class NSItemContentView: NSView, NSContentView {
     
     
     override func hitTest(_ point: NSPoint) -> NSView? {
-        Swift.print("contentView.hitTest", super.hitTest(point) ?? "")
+        Swift.print("contentView.hitTest", point, super.hitTest(point) ?? "")
         Swift.print("hosting.hitTest", hostingController.view.hitTest(point) ?? "")
         return firstSuperview(for: NSCollectionView.self)
         if let view = super.hitTest(point) {
