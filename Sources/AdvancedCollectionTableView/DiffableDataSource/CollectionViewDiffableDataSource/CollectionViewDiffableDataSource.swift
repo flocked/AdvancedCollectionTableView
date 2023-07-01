@@ -415,7 +415,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         Swift.print("ElementIsQuicklookPreviewable", Element.self is QuicklookPreviewable.Type)
         if Element.self is QuicklookPreviewable.Type {
-            self.collectionView.isQuicklookPreviewable = true
+           // self.collectionView.isQuicklookPreviewable = true
         }
         
         self.allowsReordering = false

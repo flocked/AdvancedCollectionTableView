@@ -745,44 +745,38 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EXf-VE-C69">
+                            <scrollView wantsLayer="YES" fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRn-s9-YfO">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <clipView key="contentView" drawsBackground="NO" id="eYC-ZC-Rt3">
+                                <clipView key="contentView" id="scH-7B-Xch">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView selectable="YES" allowsMultipleSelection="YES" id="Adn-ph-HSY">
-                                            <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
+                                        <collectionView id="xnc-OY-4Nz">
+                                            <rect key="frame" x="0.0" y="0.0" width="480" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                            <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="s15-FJ-3R0">
+                                            <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="n7z-aG-lWQ">
                                                 <size key="itemSize" width="50" height="50"/>
                                             </collectionViewFlowLayout>
-                                            <color key="primaryBackgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </collectionView>
                                     </subviews>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="UFn-9q-FR9">
-                                    <rect key="frame" x="-100" y="-100" width="480" height="16"/>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="442-7b-93D">
+                                    <rect key="frame" x="1" y="144" width="233" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="oyq-Eo-3G1">
-                                    <rect key="frame" x="464" y="52" width="16" height="448"/>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="QWE-UH-fTo">
+                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IlK-T0-5oP">
-                                <rect key="frame" x="403" y="380" width="48" height="48"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="kcO-Ta-XXo"/>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fze-DT-Y82"/>
                         <viewLayoutGuide key="layoutMargins" id="hOg-l1-Sgc"/>
                     </view>
                     <connections>
-                        <outlet property="collectionView" destination="Adn-ph-HSY" id="Rrp-a0-Z6P"/>
-                        <outlet property="imageView" destination="IlK-T0-5oP" id="KcE-Eo-ffg"/>
+                        <outlet property="collectionView" destination="xnc-OY-4Nz" id="FxI-Pq-7kk"/>
                     </connections>
                 </viewController>
                 <customObject id="GY0-bt-12x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

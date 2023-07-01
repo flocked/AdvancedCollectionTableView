@@ -57,7 +57,7 @@ class ViewController: NSViewController {
             Swift.print("item::", item.previewItemURL ?? "noItem")
         }
         
-        collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, insets: .init(6.0))
+        collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, insets: .init(14.0))
         collectionView.dataSource = self.dataSource
         
         applySnapshot()
@@ -76,9 +76,8 @@ class ViewController: NSViewController {
     override func keyDown(with event: NSEvent) {
         Swift.print("viewController keyDown")
         self.collectionView.keyDown(with: event)
-
-
     }
+    
     
     func applySnapshot() {
         var snapshot = Snapshot()
