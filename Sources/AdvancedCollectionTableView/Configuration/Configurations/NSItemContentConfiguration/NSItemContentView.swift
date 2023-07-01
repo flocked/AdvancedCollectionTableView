@@ -38,8 +38,7 @@ internal class NSItemContentView: NSView, NSContentView {
         Swift.print("NSItemContentView init 2")
 
         self.updateConfiguration()
-        Swift.print("NSItemContentView init 3")
-
+        Swift.print("NSItemContentView init 2")
         self.maskToBounds = false
     }
     
@@ -132,7 +131,7 @@ internal extension NSItemContentView {
                 contentStack
             } else {
                 contentStack
-                 //   .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
+                    .sizing(properties.sizing, hasImage: (image != nil), isVertical: contentPosition.isVertical)
             }
         }
         
