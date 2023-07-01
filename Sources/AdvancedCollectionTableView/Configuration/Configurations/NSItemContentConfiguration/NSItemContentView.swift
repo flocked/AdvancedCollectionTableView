@@ -31,7 +31,7 @@ internal class NSItemContentView: NSView, NSContentView {
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
-        self.translatesAutoresizingMaskIntoConstraints = false
+        
         addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
         self.maskToBounds = false
