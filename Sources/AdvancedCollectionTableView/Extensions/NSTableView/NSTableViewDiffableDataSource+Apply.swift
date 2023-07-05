@@ -41,10 +41,10 @@ public extension NSTableViewDiffableDataSource {
      */
     func apply(_ snapshot: Snapshot,_ option: NSDiffableDataSourceSnapshotApplyOption = .non, completion: (() -> Void)? = nil) {
         switch option {
-        case .reloadData:
+        case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
         case .animated(let duration):
-            self.applySnapshot(snapshot, animated: true, animationDuration: duration, completion: completion)
+            self.applySnapshot(snapshot, animated: true, animationDuration: duration != NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration ? duration : nil, completion: completion)
         case .non:
             self.applySnapshot(snapshot, animated: false, completion: completion)
         }

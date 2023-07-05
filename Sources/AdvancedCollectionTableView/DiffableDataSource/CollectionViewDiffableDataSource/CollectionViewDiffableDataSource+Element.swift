@@ -151,17 +151,13 @@ extension AdvanceColllectionViewDiffableDataSource {
     public func reloadItems(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
-        dataSource.apply(snapshot, animated ? .animated() : .non)
+        dataSource.apply(snapshot, animated ? .animated: .non)
     }
     
     public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
         var snapshot = snapshot()
         snapshot.reloadItems(snapshot.itemIdentifiers)
-        if animated {
-            self.apply(snapshot, .animated())
-        } else {
-            self.apply(snapshot, .reloadData)
-        }
+        self.apply(snapshot, animated ? .animated : .usingReloadData)
     }
     
     

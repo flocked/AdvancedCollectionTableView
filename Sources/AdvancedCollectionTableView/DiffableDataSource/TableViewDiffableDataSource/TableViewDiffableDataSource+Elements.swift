@@ -108,13 +108,13 @@ extension AdvanceTableViewDiffableDataSource {
     public func reloadItems(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
-        dataSource.apply(snapshot, animated ? .animated() : .non)
+        dataSource.apply(snapshot, animated ? .animated : .non)
     }
     
     public func reloadAllItems(complection: (() -> Void)? = nil) {
         var snapshot = snapshot()
         snapshot.reloadItems(snapshot.itemIdentifiers)
-        self.apply(snapshot, .reloadData)
+        self.apply(snapshot, .usingReloadData)
     }
     
     public func selectAll() {

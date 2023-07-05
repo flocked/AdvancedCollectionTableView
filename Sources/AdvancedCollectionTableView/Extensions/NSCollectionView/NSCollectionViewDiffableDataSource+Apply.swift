@@ -10,24 +10,34 @@ import AppKit
 /// Options for applying snapshots to a diffable data source.
 public enum NSDiffableDataSourceSnapshotApplyOption {
     /**
-     The collection view applies the snapshot using `reloadData()`.
+     The collection view applies the snapshot animated.
      
-     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     The diffable data source computes the difference between the collection view’s current state and the new state in the snapshot, which is an O(n) operation, where n is the number of items in the snapshot. The differences in the UI between the current state and new state are animated.
      */
-    case reloadData
+    public static var animated: Self { return .animated(duration: Self.noAnimationDuration) }
+    
     /**
-     The collection view applies the snapshot animated, optionally with the specified animation duration.
+     The collection view applies the snapshot animated with the specified animation duration.
      
      The diffable data source computes the difference between the collection view’s current state and the new state in the snapshot, which is an O(n) operation, where n is the number of items in the snapshot. The differences in the UI between the current state and new state are animated.
      */
 
-    case animated(duration: TimeInterval? = nil)
+    case animated(duration: TimeInterval)
+    
+    /**
+     The collection view applies the snapshot using `reloadData()`.
+     
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     */
+    case usingReloadData
     /**
      The collection view applies the snapshot without animation.
 
      The collection view UI is set to the new state without any animations, with no additional overhead for computing a diff of the previous and new state. Any ongoing item animations are interrupted and the collection view’s content is reloaded immediately.
      */
     case non
+    
+    internal static var noAnimationDuration: TimeInterval { 2344235 }
 }
 
 public extension NSCollectionViewDiffableDataSource {
@@ -64,10 +74,10 @@ public extension NSCollectionViewDiffableDataSource {
      */
     func apply(_ snapshot: Snapshot,_ option: NSDiffableDataSourceSnapshotApplyOption = .non, completion: (() -> Void)? = nil) {
         switch option {
-        case .reloadData:
+        case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
         case .animated(let duration):
-            self.applySnapshot(snapshot, animated: true, animationDuration: duration, completion: completion)
+            self.applySnapshot(snapshot, animated: true, animationDuration: duration != NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration ? duration : nil, completion: completion)
         case .non:
             self.applySnapshot(snapshot, animated: false, completion: completion)
         }

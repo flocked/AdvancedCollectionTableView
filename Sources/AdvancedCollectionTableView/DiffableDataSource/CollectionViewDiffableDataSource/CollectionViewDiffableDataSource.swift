@@ -238,7 +238,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         - option: Option how to apply the snapshot to the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated(), completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
