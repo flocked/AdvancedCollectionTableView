@@ -12,8 +12,17 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- The object you use to manage data and provide items for a collection view.
+ This object is an advanced version or NSCollectionViewDiffableDataSource. It provides:
+ 
+ - Reordering of items by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
+ - Deleting of items by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
+ - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Handlers for selection of items `selectionHandlers`.
+ - Handlers for items that get hovered by mouse `hoverHandlers`.
+ - Providing a right click menu for selected items via `menuProvider` block.
+ - Handler for pinching of the collection view via `pinchHandler`.
 
+ 
  A diffable data source object is a specialized type of data source that works together with your collection view object. It provides the behavior you need to manage updates to your collection view’s data and UI in a simple, efficient way. It also conforms to the NSCollectionViewDataSource and NSCollectionViewDelegate protocol and provides implementations and handlers for all of the protocol’s methods.
  
  To fill a collection view with data:
@@ -89,6 +98,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
     internal var hoverElement: Element? = nil {
         didSet {
+            guard oldValue != self.hoverElement else { return }
             if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
                 hoverHandlers.isHovering?(hoverElement)
             }

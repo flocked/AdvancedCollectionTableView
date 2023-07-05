@@ -75,6 +75,7 @@ extension TableViewDiffableDataSource {
             super.mouseDragged(with: event)
         }
         
+        /*
         override func keyDown(with event: NSEvent) {
             var shouldKeyDown = true
             if let keydownHandler = self.dataSource.keydownHandler?(Int(event.keyCode), event.modifierFlags) {
@@ -102,6 +103,7 @@ extension TableViewDiffableDataSource {
                 self.dataSource.tableView.keyDown(with: event)
             }
         }
+        */
     }
 }
 

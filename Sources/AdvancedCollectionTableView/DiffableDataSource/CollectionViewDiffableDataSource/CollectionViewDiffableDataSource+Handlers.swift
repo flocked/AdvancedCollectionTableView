@@ -29,6 +29,7 @@ extension CollectionViewDiffableDataSource {
         public var didDelete: ((_ elements: [E]) -> ())? = nil
     }
     
+    /// Handlers for drag and drop of files.
     public struct DragdropHandlers<E> {
         public var canDropOutside: ((_ elements: [E]) -> [E])? = nil
         public var dropOutside: ((_ element: E) -> PasteboardWriting)? = nil
@@ -37,6 +38,7 @@ extension CollectionViewDiffableDataSource {
         public var draggingImage: ((_ elements: [E], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
     
+    /// Handlers for highlight.
     public struct HighlightHandlers<E> {
         public var shouldChangeItems: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> [E])? = nil
         public var didChangeItems: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> ())? = nil
@@ -69,7 +71,7 @@ extension CollectionViewDiffableDataSource {
     }
     
     
-    /// Handlers that get called whenever the mouse is clicking an item.
+    /// Handlers mouse click of elements.
     public struct MouseHandlers<E> {
         /// Handler that gets called whenever the mouse is clicking an element.
         public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil

@@ -10,6 +10,16 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
+/**
+ This object is an advanced version or NSTableViewDiffableDataSource. It provides:
+ 
+ - Reordering of rows by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
+ - Deleting of rows by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
+ - Quicklooking of rows via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Handlers for selection of rows `selectionHandlers`.
+ - Handlers for rows that get hovered by mouse `hoverHandlers`.
+ - Providing a right click menu for selected rows via `menuProvider` block.
+ */
 public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
     public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView
@@ -36,6 +46,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
     internal var hoverElement: Element? = nil {
         didSet {
+            guard oldValue != self.hoverElement else { return }
             if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
                 hoverHandlers.isHovering?(hoverElement)
             }

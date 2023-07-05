@@ -10,24 +10,24 @@ import FZUIKit
 
 
 extension TableViewDiffableDataSource {
-    public struct SelectionHandlers<E> {
-        public var shouldSelect: (([E]) -> [E])? = nil
-        public var shouldDeselect: (([E]) -> [E])? = nil
-        public var didSelect: (([E]) -> Void)? = nil
-        public var didDeselect: (([E]) -> Void)? = nil
+    public struct SelectionHandlers<Element> {
+        public var shouldSelect: (([Element]) -> [Element])? = nil
+        public var shouldDeselect: (([Element]) -> [Element])? = nil
+        public var didSelect: (([Element]) -> Void)? = nil
+        public var didDeselect: (([Element]) -> Void)? = nil
     }
     
     /// Handlers for deletion.
-    public struct DeletionHandlers<E> {
-        /// Handler that determines whether elements should get deleted.
-        public var shouldDelete: ((_ elements: [E]) -> [E])? = nil
-        /// Handler that gets called whenever elements get deleted.
-        public var didDelete: ((_ elements: [E]) -> ())? = nil
+    public struct DeletionHandlers<Element> {
+        /// Handler that determines whether Elementlements should get deleted.
+        public var shouldDelete: ((_ element: [Element]) -> [Element])? = nil
+        /// Handler that gets called whenever Elementlements get deleted.
+        public var didDelete: ((_ element: [Element]) -> ())? = nil
     }
     
-    public struct DragdropHandlers<E> {
-        public var canDropOutside: ((E) -> PasteboardWriting)? = nil
-        public var didDropOutside: ((E) -> ())? = nil
+    public struct DragdropHandlers<Element> {
+        public var canDropOutside: ((Element) -> PasteboardWriting)? = nil
+        public var didDropOutside: ((Element) -> ())? = nil
         public var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
         public var didDragInside:  (([PasteboardWriting]) -> ())? = nil
         internal var acceptsDropInside: Bool {
@@ -39,31 +39,31 @@ extension TableViewDiffableDataSource {
         }
     }
     
-    public struct ReorderHandlers<E> {
-        public var canReorder: (([E]) -> Bool)? = nil
-        public var willReorder: (([E]) -> Void)? = nil
-        public var didReorder: (([E]) -> Void)? = nil
+    public struct ReorderHandlers<Element> {
+        public var canReorder: (([Element]) -> Bool)? = nil
+        public var willReorder: (([Element]) -> Void)? = nil
+        public var didReorder: (([Element]) -> Void)? = nil
     }
     
-    public struct PrefetchHandlers<E> {
-        public var willPrefetch: (([E]) -> Void)? = nil
-        public var didCancelPrefetching: (([E]) -> Void)? = nil
+    public struct PrefetchHandlers<Element> {
+        public var willPrefetch: (([Element]) -> Void)? = nil
+        public var didCancelPrefetching: (([Element]) -> Void)? = nil
     }
     
-    public struct DisplayHandlers<E> {
-        public var isDisplaying: (([E]) -> Void)?
-        public var didEndDisplaying: (([E]) -> Void)?
+    public struct DisplayHandlers<Element> {
+        public var isDisplaying: (([Element]) -> Void)?
+        public var didEndDisplaying: (([Element]) -> Void)?
     }
     
-    public struct MouseHandlers<E> {
-        public var mouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        public var rightMouseClick: ((CGPoint, Int, E?) -> Void)? = nil
-        public var mouseDragged: ((CGPoint, E?) -> Void)? = nil
+    public struct MouseHandlers<Element> {
+        public var mouseClick: ((CGPoint, Int, Element?) -> Void)? = nil
+        public var rightMouseClick: ((CGPoint, Int, Element?) -> Void)? = nil
+        public var mouseDragged: ((CGPoint, Element?) -> Void)? = nil
     }
     
-    public struct HoverHandlers<E> {
-        public var isHovering: ((E) -> Void)?
-        public var didEndHovering: ((E) -> Void)?
+    public struct HoverHandlers<Element> {
+        public var isHovering: ((Element) -> Void)?
+        public var didEndHovering: ((Element) -> Void)?
     }
     
     public struct ColumnHandlers<Section> {
