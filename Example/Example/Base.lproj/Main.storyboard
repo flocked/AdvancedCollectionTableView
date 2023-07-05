@@ -685,7 +685,7 @@
         <scene sceneID="0GF-HP-Ncp">
             <objects>
                 <windowController id="BqR-01-sfC" sceneMemberID="viewController">
-                    <window key="window" title="Example" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" toolbarStyle="unified" id="xAz-8K-Osm">
+                    <window key="window" title="Example" subtitle="Select elements and quicklook via spacebar and delete via backspace" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" toolbarStyle="unified" id="xAz-8K-Osm">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="245" y="301" width="700" height="500"/>
