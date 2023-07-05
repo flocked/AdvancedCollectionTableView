@@ -20,14 +20,13 @@ internal class NSItemContentView: NSView, NSContentView {
             }
         }
     }
-
     
     /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
     
-    /// Creates a item content view with the specified content configuration.
+    /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
@@ -59,11 +58,6 @@ internal class NSItemContentView: NSView, NSContentView {
         return hostingController
     }()
         
-    override func invalidateIntrinsicContentSize() {
-        super.invalidateIntrinsicContentSize()
-    }
-    
-    /*
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         return hostingController.sizeThatFits(in: size)
     }
@@ -71,9 +65,7 @@ internal class NSItemContentView: NSView, NSContentView {
     override var fittingSize: NSSize {
         return hostingController.fittingSize
     }
-     */
-    
- 
+     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
