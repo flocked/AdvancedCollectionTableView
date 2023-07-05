@@ -74,6 +74,6 @@ class ViewController: NSViewController {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(galleryItems, toSection: .main)
-        dataSource.apply(snapshot, .animated())
+        dataSource.apply(snapshot, .usingReloadData)
     }
 }

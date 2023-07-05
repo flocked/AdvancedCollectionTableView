@@ -93,8 +93,10 @@ public extension NSCollectionViewDiffableDataSource {
         animated: Bool = true,
         animationDuration: TimeInterval? = nil,
         completion: (() -> Void)? = nil) {
+            if let animationDuration = animationDuration {
+                Swift.print("animationDuration", animationDuration == NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration)
+            }
             if animated && animationDuration == nil {
-                
                 self.apply(snapshot, animatingDifferences: true, completion: completion)
             } else {
                 NSAnimationContext.beginGrouping()
