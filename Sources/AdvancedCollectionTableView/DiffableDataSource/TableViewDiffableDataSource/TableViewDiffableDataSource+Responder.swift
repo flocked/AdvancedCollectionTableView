@@ -9,10 +9,10 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension TableViewDiffableDataSource {
+extension AdvanceTableViewDiffableDataSource {
     internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
-        weak var dataSource: TableViewDiffableDataSource<S,E>!
-        init (_ dataSource: TableViewDiffableDataSource<S,E>) {
+        weak var dataSource: AdvanceTableViewDiffableDataSource<S,E>!
+        init (_ dataSource: AdvanceTableViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
         }

@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 
-extension TableViewDiffableDataSource {
+extension AdvanceTableViewDiffableDataSource {
     public struct SelectionHandlers<Element> {
         public var shouldSelect: (([Element]) -> [Element])? = nil
         public var shouldDeselect: (([Element]) -> [Element])? = nil

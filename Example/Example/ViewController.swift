@@ -11,7 +11,7 @@ import AdvancedCollectionTableView
 class ViewController: NSViewController {
     
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
-    typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
+    typealias DataSource = AdvanceColllectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
     @IBOutlet weak var collectionView: NSCollectionView!

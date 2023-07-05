@@ -48,6 +48,6 @@ It also provides convenience functions for registering and making NSCollectionVi
 ### Important
 You can only reconfigurate items that have been previously registered via provided *ItemRegistration*, *register(_ itemClass: Item.Type)* or *register(_ itemClass: Item.Type, nib: NSNib)*.
 
-## CollectionViewDiffableDataSource
+## AdvanceColllectionViewDiffableDataSource
 An extended NSCollectionViewDiffableDataSource that adds:
 

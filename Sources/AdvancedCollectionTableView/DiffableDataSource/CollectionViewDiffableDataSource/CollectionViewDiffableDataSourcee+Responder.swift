@@ -11,11 +11,11 @@ import FZUIKit
 import FZQuicklook
 
 
-extension CollectionViewDiffableDataSource {
+extension AdvanceColllectionViewDiffableDataSource {
     internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
-        weak var dataSource: CollectionViewDiffableDataSource<S,E>!
+        weak var dataSource: AdvanceColllectionViewDiffableDataSource<S,E>!
         
-        init (_ dataSource: CollectionViewDiffableDataSource<S,E>) {
+        init (_ dataSource: AdvanceColllectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
         }
@@ -93,9 +93,9 @@ internal protocol CollectionViewResponder: NSResponder {
     func shouldKeyDown(for event: NSEvent) -> Bool
 }
 
-extension CollectionViewDiffableDataSource.Responder: CollectionViewResponder { }
+extension AdvanceColllectionViewDiffableDataSource.Responder: CollectionViewResponder { }
 /*
-extension CollectionViewDiffableDataSource: DeletableDataSource {
+extension AdvanceColllectionViewDiffableDataSource: DeletableDataSource {
     public func deleteItems(for indexPaths: Set<IndexPath>) {
         let elements = indexPaths.compactMap({ self.element(for: $0) })
         self.removeElements(elements)

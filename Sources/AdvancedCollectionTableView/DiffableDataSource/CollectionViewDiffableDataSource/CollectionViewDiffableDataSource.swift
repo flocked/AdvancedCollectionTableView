@@ -1,5 +1,5 @@
 //
-//  CollectionViewDiffableDataSource.swift
+//  AdvanceColllectionViewDiffableDataSource.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -44,7 +44,7 @@ import QuickLookUI
  
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
+public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     /**
      Representation of a state for the data in the collection view.
      */
@@ -168,23 +168,49 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         get { self.collectionView.collectionViewLayout }
         set { self.collectionView.collectionViewLayout = newValue } }
     
+    /// Handlers that get called whenever the collection view receives mouse click events of items.
     public var mouseHandlers = MouseHandlers<Element>()
+    
+    /// Handlers that get called whenever the mouse is hovering an item.
     public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.setupHoverObserving()} }
+    
+    /// Handlers for selection of items.
     public var selectionHandlers = SelectionHandlers<Element>()
+    
+    /// Handlers for deletion of items.
     public var deletionHandlers = DeletionHandlers<Element>()
+    
+    /// Handlers for reordering of items.
     public var reorderingHandlers = ReorderingHandlers<Element>()
+    
+    ///Handlers for displaying of items. The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview gets scrolled to new items).
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
- //   public var sectionHandlers = SectionHandlers<Section>() {
-  //      didSet { self.ensureTrackingArea()} }
+    
+    /// Handlers for prefetching elements.
     public var prefetchHandlers = PrefetchHandlers<Element>()
+    
+    /// Handlers for drag and drop of files from and to the collection view.
     public var dragDropHandlers = DragdropHandlers<Element>()
+    
+    /// Handlers for highlight of elements.
     public var highlightHandlers = HighlightHandlers<Element>()
 
+    /**
+    Right click menu provider for selected items.
+     
+    When returning a menu to the `menuProvider`, the collection view will display a menu on right click of selected items.
+     */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    
+    /// A handler that gets called whenever collection view receives a keydown event.
     public var keydownHandler: ((_ event: NSEvent) -> Bool)? = nil
-    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { (pinchHandler == nil) ? self.removeMagnificationRecognizer() : self.addMagnificationRecognizer() } }
+    
+    /// A handler that gets called whenever collection view magnifies.
+    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
+    //   public var sectionHandlers = SectionHandlers<Section>() {
+     //      didSet { self.ensureTrackingArea()} }
 
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
@@ -209,30 +235,13 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - option: Option how to apply the snapshot to the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated(), completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
-
-        dataSource.apply(internalSnapshot, animatingDifferences ? .animated : .non, completion: completion)
-    }
-    
-    /**
-     Resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
-
-     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
-     You can safely call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
-     
-     - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the collection view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
-     */
-    public func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
-        let internalSnapshot = convertSnapshot(snapshot)
-        self.currentSnapshot = snapshot
-
-        dataSource.apply(internalSnapshot, .reloadData, completion: completion)
+        dataSource.apply(internalSnapshot, option, completion: completion)
     }
     
     /**
@@ -260,16 +269,17 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return internalSnapshot
     }
     
-    internal func addMagnificationRecognizer() {
-        if (magnifyGestureRecognizer == nil) {
-            self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
-            self.collectionView.addGestureRecognizer(self.magnifyGestureRecognizer!)
-        }
-    }
-    
-    internal func removeMagnificationRecognizer() {
-        if let magnifyGestureRecognizer = magnifyGestureRecognizer {
-            self.collectionView.removeGestureRecognizer(magnifyGestureRecognizer)
+    internal func setupMagnificationHandler() {
+        if pinchHandler != nil {
+            if (magnifyGestureRecognizer == nil) {
+                self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
+                self.collectionView.addGestureRecognizer(self.magnifyGestureRecognizer!)
+            }
+        } else {
+            if let magnifyGestureRecognizer = magnifyGestureRecognizer {
+                self.collectionView.removeGestureRecognizer(magnifyGestureRecognizer)
+            }
+            self.magnifyGestureRecognizer = nil
         }
     }
     
@@ -461,7 +471,7 @@ private struct ItemIdentifierType: Hashable, Identifiable {
 }
  */
 
-extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
+extension AdvanceColllectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
         if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
             return QuicklookPreviewItem(previewable, view: item.view)

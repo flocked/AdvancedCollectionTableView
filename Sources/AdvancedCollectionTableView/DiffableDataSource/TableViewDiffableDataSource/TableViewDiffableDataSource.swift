@@ -1,5 +1,5 @@
 //
-//  CollectionViewDiffableDataSource.swift
+//  AdvanceTableViewDiffableDataSource.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -20,7 +20,7 @@ import FZQuicklook
  - Handlers for rows that get hovered by mouse `hoverHandlers`.
  - Providing a right click menu for selected rows via `menuProvider` block.
  */
-public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
+public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
     public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView
     public typealias RowProvider = (NSTableView, Int, Element) -> NSTableRowView?
@@ -56,19 +56,44 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
         }
     }
     
+    /// Handlers that get called whenever the table view receives mouse click events of rows.
     public var mouseHandlers = MouseHandlers<Element>()
+    
+    /// Handlers that get called whenever the mouse is hovering a row.
     public var hoverHandlers = HoverHandlers<Element>() {
         didSet { self.setupHoverObserving()} }
+    
+    /// Handlers for selection of rows.
     public var selectionHandlers = SelectionHandlers<Element>()
+    
+    /// Handlers for deletion of rows.
     public var deletionHandlers = DeletionHandlers<Element>()
+    
+    /// Handlers for reordering of rows.
     public var reorderHandlers = ReorderHandlers<Element>()
+    
+    ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingRows() } }
+    
+    /// Handlers for prefetching elements.
     public var prefetchHandlers = PrefetchHandlers<Element>()
+    
+    /// Handlers for drag and drop of files from and to the table view.
     public var dragDropHandlers = DragdropHandlers<Element>() {
         didSet { self.setupDragging() } }
+    
+    /// Handlers for table columns.
     public var columnHandlers = ColumnHandlers<Element>()
+    
+    /**
+    Right click menu provider for selected rows.
+     
+    When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
+     */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    
+    /// A handler that gets called whenever table view receives a keydown event.
     public var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
     
     /**
@@ -219,34 +244,17 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
 
-     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
-     
-     - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the collection view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
-     */
-    public func apply(_ snapshot: CollectionSnapshot, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
-        let internalSnapshot = convertSnapshot(snapshot)
-        self.currentSnapshot = snapshot
-
-        dataSource.apply(internalSnapshot, animatingDifferences ? .animated : .non, completion: completion)
-    }
-    
-    /**
-     Resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
-
      The system interrupts any ongoing item animations and immediately reloads the table view’s content.
-     You can safely call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
      
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the table view.
+        - option: Option how to apply the snapshot to the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    public func applySnapshotUsingReloadData(_ snapshot: CollectionSnapshot, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated(), completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
-
-        dataSource.apply(internalSnapshot, .reloadData, completion: completion)
+        self.dataSource.apply(internalSnapshot, option, completion: completion)
     }
     
     internal func convertSnapshot(_ snapshot: CollectionSnapshot) -> InternalSnapshot {
@@ -362,7 +370,7 @@ public class TableViewDiffableDataSource<Section: Identifiable & Hashable, Eleme
     }
 }
     
-extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
+extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
     public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {
         if let previewable = element(for: row) as? QuicklookPreviewable {
             let rowView = tableView.rowView(atRow: row, makeIfNecessary: false)

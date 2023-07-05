@@ -1,5 +1,5 @@
 //
-//  CollectionViewDiffableDataSource+Delegate.swift
+//  AdvanceColllectionViewDiffableDataSource+Delegate.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -8,12 +8,12 @@
 import AppKit
 import FZUIKit
 
-extension CollectionViewDiffableDataSource {
+extension AdvanceColllectionViewDiffableDataSource {
     internal class DelegateBridge<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
-        weak var dataSource: CollectionViewDiffableDataSource<S,E>!
+        weak var dataSource: AdvanceColllectionViewDiffableDataSource<S,E>!
         
-        init(_ dataSource: CollectionViewDiffableDataSource<S,E>) {
+        init(_ dataSource: AdvanceColllectionViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.collectionView.delegate = self

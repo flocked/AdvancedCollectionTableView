@@ -1,5 +1,5 @@
 //
-//  CollectionViewDiffableDataSource+Element.swift
+//  AdvanceColllectionViewDiffableDataSource+Element.swift
 //  NSHostingViewSizeInTableView
 //
 //  Created by Florian Zand on 02.11.22.
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension CollectionViewDiffableDataSource {
+extension AdvanceColllectionViewDiffableDataSource {
     /// An array of all elements of the last applied snapshot.
     public var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
@@ -151,16 +151,16 @@ extension CollectionViewDiffableDataSource {
     public func reloadItems(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
-        dataSource.apply(snapshot, animated ? .animated : nil)
+        dataSource.apply(snapshot, animated ? .animated() : .non)
     }
     
     public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
         var snapshot = snapshot()
         snapshot.reloadItems(snapshot.itemIdentifiers)
         if animated {
-            self.apply(snapshot, animatingDifferences: true)
+            self.apply(snapshot, .animated())
         } else {
-            self.applySnapshotUsingReloadData(snapshot, completion: complection)
+            self.apply(snapshot, .reloadData)
         }
     }
     

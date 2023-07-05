@@ -9,11 +9,11 @@ import AppKit
 import FZSwiftUtils
 import FZQuicklook
 
-internal extension CollectionViewDiffableDataSource {
+internal extension AdvanceColllectionViewDiffableDataSource {
     var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "CollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+        get { getAssociatedValue(key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
         set {
-            set(associatedValue: newValue, key: "CollectionViewDiffableDataSource_keyDownMonitor", object: self)
+            set(associatedValue: newValue, key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self)
         }
     }
     

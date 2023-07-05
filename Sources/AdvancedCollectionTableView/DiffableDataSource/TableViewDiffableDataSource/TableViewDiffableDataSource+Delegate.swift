@@ -7,9 +7,9 @@
 
 import AppKit
 
-extension TableViewDiffableDataSource {
+extension AdvanceTableViewDiffableDataSource {
     internal class DelegateBridge<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSObject, NSTableViewDelegate, NSTableViewDataSource {
-        weak var dataSource: TableViewDiffableDataSource<S,E>!
+        weak var dataSource: AdvanceTableViewDiffableDataSource<S,E>!
         
         func tableView(_ tableView: NSTableView, shouldSelect tableColumn: NSTableColumn?) -> Bool {
             dataSource.columnHandlers.shouldSelect?(tableColumn) ?? true
@@ -19,7 +19,7 @@ extension TableViewDiffableDataSource {
             dataSource.columnHandlers.didSelect?(tableColumn)
         }
         
-        init (_ dataSource: TableViewDiffableDataSource<S,E>) {
+        init (_ dataSource: AdvanceTableViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.tableView.delegate = self

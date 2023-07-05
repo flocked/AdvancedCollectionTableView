@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-extension CollectionViewDiffableDataSource {
+extension AdvanceColllectionViewDiffableDataSource {
     /// Handlers for selection.
     public struct SelectionHandlers<E> {
         /// Handler that determines whether elements should get selected.
@@ -29,7 +29,7 @@ extension CollectionViewDiffableDataSource {
         public var didDelete: ((_ elements: [E]) -> ())? = nil
     }
     
-    /// Handlers for drag and drop of files.
+    /// Handlers for drag and drop of files from and to the collection view.
     public struct DragdropHandlers<E> {
         public var canDropOutside: ((_ elements: [E]) -> [E])? = nil
         public var dropOutside: ((_ element: E) -> PasteboardWriting)? = nil
@@ -62,7 +62,11 @@ extension CollectionViewDiffableDataSource {
         public var didCancelPrefetching: ((_ elements: [E]) -> ())? = nil
     }
     
-    /// Handlers for the displaying items.
+    /**
+     Handlers for displaying of items.
+     
+     Handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview gets scrolled to new items).
+     */
     public struct DisplayHandlers<E> {
         /// Handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [E]) -> ())?
@@ -71,7 +75,7 @@ extension CollectionViewDiffableDataSource {
     }
     
     
-    /// Handlers mouse click of elements.
+    /// Handlers for mouse click events of elements.
     public struct MouseHandlers<E> {
         /// Handler that gets called whenever the mouse is clicking an element.
         public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil

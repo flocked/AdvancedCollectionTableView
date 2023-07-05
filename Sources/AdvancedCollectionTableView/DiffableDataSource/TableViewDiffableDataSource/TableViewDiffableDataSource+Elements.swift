@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
-extension TableViewDiffableDataSource {
+extension AdvanceTableViewDiffableDataSource {
     public var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
     }
@@ -108,13 +108,13 @@ extension TableViewDiffableDataSource {
     public func reloadItems(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
-        dataSource.apply(snapshot, animated ? .animated : nil)
+        dataSource.apply(snapshot, animated ? .animated() : .non)
     }
     
     public func reloadAllItems(complection: (() -> Void)? = nil) {
         var snapshot = snapshot()
         snapshot.reloadItems(snapshot.itemIdentifiers)
-        self.applySnapshotUsingReloadData(snapshot, completion: complection)
+        self.apply(snapshot, .reloadData)
     }
     
     public func selectAll() {
@@ -211,7 +211,7 @@ extension TableViewDiffableDataSource {
 }
 
 /*
-extension TableViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
+extension AdvanceTableViewDiffableDataSource: PreviewableDataSource where Element: QLPreviewable {
     public func qlPreviewable(for indexPath: IndexPath) -> QLPreviewable? {
         self.element(for: indexPath.item)
     }

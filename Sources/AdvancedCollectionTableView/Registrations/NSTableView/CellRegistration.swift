@@ -48,7 +48,7 @@ public extension NSTableView {
      After you create a cell registration, you pass it in to makeCell(using:for:element:), which you cell from your data source’s cell provider.
      
      ```
-     dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
+     dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
          (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableViewCell? in
          
          return tableView.makeCell(using: cellRegistration,
@@ -59,7 +59,7 @@ public extension NSTableView {
      
      You don’t need to cell *register(_:)*, *register(_:nib:)* or *register(_:forCellWithIdentifier:)*. The table view registers your cell automatically when you pass the cell registration to makeCell(using:for:element:).
      
-     - Important: Do not create your cell registration inside a *NSTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
+     - Important: Do not create your cell registration inside a *NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
     */
     class CellRegistration<Cell, Element>: TableCellViewRegistration where Cell: NSTableCellView  {
         public func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> NSView? {
