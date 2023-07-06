@@ -52,7 +52,29 @@ public extension NSTableView {
             if newValue == false {
                 self.removeHoveredRow()
             }
-            self.visibleRows(makeIfNecessary: false).forEach({$0.isEmphasized = newValue})
+            self.visibleRows(makeIfNecessary: false).forEach({
+                $0.setNeedsAutomaticUpdateConfiguration()
+                $0.setCellViewsNeedAutomaticUpdateConfiguration()
+            })
+        }
+    }
+    
+    var _isFirstResponder: Bool {
+        get { getAssociatedValue(key: "_NSTableView__isFirstResponder", object: self, initialValue: false) }
+        set {
+            guard newValue != _isFirstResponder else { return }
+            set(associatedValue: newValue, key: "_NSTableView__isFirstResponder", object: self)
+            self.visibleRows(makeIfNecessary: false).forEach({
+                $0.setNeedsAutomaticUpdateConfiguration()
+                $0.setCellViewsNeedAutomaticUpdateConfiguration()
+            })
+        }
+    }
+    
+    internal func setupFirstResponderObserver() {
+        self.firstResponderHandler = { isFirstResponder in
+            Swift.print("tableView isFirstResponder", isFirstResponder)
+            self._isFirstResponder = isFirstResponder
         }
     }
 }

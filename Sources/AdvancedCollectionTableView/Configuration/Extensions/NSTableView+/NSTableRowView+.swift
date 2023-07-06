@@ -213,7 +213,15 @@ public extension NSTableRowView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        var emphasizedState = NSTableRowConfigurationState.EmphasizedState()
+        if isTableViewFirstResponder {
+            emphasizedState.insert(.isFirstResponder)
+        }
+        if isEmphasized {
+            emphasizedState.insert(.isKeyWindow)
+        }
+        
+        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, emphasizedState: emphasizedState, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
     
@@ -313,14 +321,12 @@ public extension NSTableRowView {
         }
     }
     
+    internal var isTableViewFirstResponder: Bool {
+        get { self.tableView?.isFirstResponder ?? false }
+    }
+    
     internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isEmphasized", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isEmphasized", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
+        get { self.tableView?.isEmphasized ?? false }
     }
     
     // A Boolean value that indicates whether automatic updating of the configuration is enabled.
@@ -335,7 +341,6 @@ public extension NSTableRowView {
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
-        self.isEmphasized = self.tableView?.isEmphasized ?? false
         self.isConfigurationUpdatesEnabled = true
     }
     

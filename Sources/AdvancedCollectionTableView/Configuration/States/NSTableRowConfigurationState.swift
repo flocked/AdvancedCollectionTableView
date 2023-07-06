@@ -17,22 +17,47 @@ import FZUIKit
  You can create your own custom states to add to a row configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
  */
 public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
+    /// The emphasized state.
+    public struct EmphasizedState: OptionSet, Hashable {
+        public let rawValue: UInt
+        /// The window of the item is key.
+        public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+        /// The collection view of the item is first responder.
+        public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+        
+        /// Creates a units structure with the specified raw value.
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+    }
+    
     /// A Boolean value that indicates whether the row is in a selected state.
     public var isSelected: Bool = false
+    
     /// A Boolean value that indicates whether the row is in a enabled state.
     public var isEnabled: Bool = true
+    
     /// A Boolean value that indicates whether the row is in a focused state.
     public var isFocused: Bool = false
+    
     /// A Boolean value that indicates whether the row is in a hovered state (if the mouse is above the row).
     public var isHovered: Bool = false
+    
     /// A Boolean value that indicates whether the row is in a editing state.
     public var isEditing: Bool = false
+    
     /// A Boolean value that indicates whether the row is in a expanded state.
     public var isExpanded: Bool = false
+    
     /// A Boolean value that indicates whether the row is in a emphasized state.
     public var isEmphasized: Bool = false
+    
+    /// The emphasized state.
+    public var emphasizedState: EmphasizedState = []
+    
     /// A Boolean value that indicates whether the next row is in a selected state.
     public var isNextRowSelected: Bool = false
+    
     /// A Boolean value that indicates whether the previous row is in a selected state.
     public var isPreviousRowSelected: Bool = false
 
@@ -51,6 +76,7 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
          isEditing: Bool = false,
          isExpanded: Bool = false,
          isEmphasized: Bool = false,
+          emphasizedState: EmphasizedState = [],
          isNextRowSelected: Bool = false,
          isPreviousRowSelected: Bool = false) {
         self.isSelected = isSelected
@@ -60,6 +86,7 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
         self.isEditing = isEditing
         self.isExpanded = isExpanded
         self.isEmphasized = isEmphasized
+        self.emphasizedState = emphasizedState
         self.isNextRowSelected = isNextRowSelected
         self.isPreviousRowSelected = isPreviousRowSelected
     }

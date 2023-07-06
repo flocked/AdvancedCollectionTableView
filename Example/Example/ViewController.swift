@@ -7,6 +7,8 @@
 
 import AppKit
 import AdvancedCollectionTableView
+import FZUIKit
+import FZSwiftUtils
 
 class ViewController: NSViewController {
     
@@ -51,7 +53,7 @@ class ViewController: NSViewController {
     }()
     
     override func viewDidLoad() {
-        
+                
         collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, spacing: 4.0, insets: .init(14.0))
         collectionView.dataSource = self.dataSource
         
@@ -67,13 +69,21 @@ class ViewController: NSViewController {
     }
     
     override func viewDidAppear() {
-        self.view.window?.makeFirstResponder(self.collectionView)
+        super.viewDidAppear()
+        collectionView.becomeFirstResponder()
     }
     
     func applySnapshot(with galleryItems: [GalleryItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(galleryItems, toSection: .main)
-        dataSource.apply(snapshot, .usingReloadData)
+        dataSource.apply(snapshot, .animated)
+    }
+    
+    func addRandomGalleryItem() {
+        if let randomItem = GalleryItem.sampleItems.randomElement(excluding: galleryItems.isEmpty ? [] : [galleryItems.first!]) {
+            self.galleryItems.insert(randomItem, at: 0)
+        }
+        self.applySnapshot(with: self.galleryItems)
     }
 }

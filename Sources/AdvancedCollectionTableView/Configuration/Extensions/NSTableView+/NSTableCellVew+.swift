@@ -95,7 +95,15 @@ public extension NSTableCellView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableCellConfigurationState {
-        let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEmphasized: self.isEmphasized, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false)
+        var emphasizedState = NSTableCellConfigurationState.EmphasizedState()
+        if isTableViewFirstResponder {
+            emphasizedState.insert(.isFirstResponder)
+        }
+        if isEmphasized {
+            emphasizedState.insert(.isKeyWindow)
+        }
+        
+        let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEmphasized: self.isEmphasized, emphasizedState: emphasizedState, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false)
         return state
     }
     
@@ -177,6 +185,10 @@ public extension NSTableCellView {
     
     internal var isEmphasized: Bool {
         self.rowView?.isEmphasized ?? false
+    }
+    
+    internal var isTableViewFirstResponder: Bool {
+        self.rowView?.isTableViewFirstResponder ?? false
     }
         
    internal var isEnabled: Bool {

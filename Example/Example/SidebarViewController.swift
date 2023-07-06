@@ -8,10 +8,11 @@
 import AppKit
 import AdvancedCollectionTableView
 
+
 class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
-    typealias DataSource = AdvanceTableViewDiffableDataSource<Section, SidebarItem>
+    typealias DataSource = NSTableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
 
     @IBOutlet weak var tableView: NSTableView!
@@ -35,10 +36,16 @@ class SidebarViewController: NSViewController {
         applySnapshot()
     }
     
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        
+       // tableView.becomeFirstResponder()
+    }
+    
     func applySnapshot() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items, toSection: .main)
-        dataSource.apply(snapshot, .non)
+        dataSource.apply(snapshot, .animated)
     }
 }

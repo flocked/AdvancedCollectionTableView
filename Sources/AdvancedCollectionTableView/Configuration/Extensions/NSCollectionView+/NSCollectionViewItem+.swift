@@ -199,7 +199,14 @@ public extension NSCollectionViewItem {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized)
+        var emphasizedState = NSItemConfigurationState.EmphasizedState()
+        if self.isEmphasized {
+            emphasizedState.insert(.isKeyWindow)
+        }
+        if self.isCollectionViewFirstResponder {
+            emphasizedState.insert(.isFirstResponder)
+        }
+        let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized, emphasizedState: emphasizedState)
         /*
          if let listConfiguration = self.collectionView?.listConfiguration {
          state["listSelectionAppearance"] = listConfiguration.resolvedSelectionAppearance
@@ -407,12 +414,11 @@ public extension NSCollectionViewItem {
     }
     
     internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isEmphasized", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isEmphasized", object: self)
-            self.setNeedsUpdateConfiguration()
-        }
+        get { self._collectionView?.isEmphasized ?? false }
+    }
+    
+    internal var isCollectionViewFirstResponder: Bool {
+        get { self._collectionView?.isFirstResponder ?? false }
     }
     
     var previousItem: NSCollectionViewItem? {
@@ -540,7 +546,6 @@ public extension NSCollectionViewItem {
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false
-        self.isEmphasized = self.collectionView?.isEmphasized ?? false
         self.isConfigurationUpdatesEnabled = true
         swizzled_PrepareForReuse()
     }

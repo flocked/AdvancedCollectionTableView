@@ -433,6 +433,8 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
+        self.collectionView.setupFirstResponderObserver()
+        
         if Element.self is QuicklookPreviewable.Type {
             self.collectionView.isQuicklookPreviewable = true
         }

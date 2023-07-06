@@ -342,6 +342,9 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
         self.tableView.postsFrameChangedNotifications = false
         self.tableView.postsBoundsChangedNotifications = false
         
+        self.tableView.setupFirstResponderObserver()
+
+        
         if Element.self is QuicklookPreviewable.Type {
             self.tableView.isQuicklookPreviewable = true
         }

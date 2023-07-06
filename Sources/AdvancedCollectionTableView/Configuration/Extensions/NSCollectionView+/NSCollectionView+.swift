@@ -48,7 +48,7 @@ public extension NSCollectionView {
             if newValue == false {
                 self.removeHoveredItem()
             }
-            self.visibleItems().forEach({$0.isEmphasized = newValue})
+            self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
         }
     }
     
@@ -57,6 +57,22 @@ public extension NSCollectionView {
         set {
             set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
             self.visibleItems().forEach({$0.isEnabled = newValue })
+        }
+    }
+    
+    var _isFirstResponder: Bool {
+        get { getAssociatedValue(key: "_NSCollectionView__isFirstResponder", object: self, initialValue: false) }
+        set {
+            guard newValue != _isFirstResponder else { return }
+            set(associatedValue: newValue, key: "_NSCollectionView__isFirstResponder", object: self)
+            self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })
+        }
+    }
+    
+    internal func setupFirstResponderObserver() {
+        self.firstResponderHandler = { isFirstResponder in
+            Swift.print("collectionView isFirstResponder", isFirstResponder)
+            self._isFirstResponder = isFirstResponder
         }
     }
 }

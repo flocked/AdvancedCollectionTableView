@@ -17,27 +17,51 @@ import FZUIKit
  You can create your own custom states to add to a cell configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
  */
 public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
+    /// The emphasized state.
+    public struct EmphasizedState: OptionSet, Hashable {
+        public let rawValue: UInt
+        /// The window of the item is key.
+        public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+        /// The collection view of the item is first responder.
+        public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+        
+        /// Creates a units structure with the specified raw value.
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+    }
+    
     /// A Boolean value that indicates whether the cell is in a selected state.
     public var isSelected: Bool = false
+    
     /// A Boolean value that indicates whether the cell is in a hovered state (if the mouse is above the cell).
     public var isHovered: Bool = false
+    
     /// A Boolean value that indicates whether the cell is in a emphasized state.
     public var isEmphasized: Bool = false
     
+    /// The emphasized state.
+    public var emphasizedState: EmphasizedState = []
+    
     /// A Boolean value that indicates whether the cell is in a enabled state.
     internal var isEnabled: Bool = true
+    
     /// A Boolean value that indicates whether the cell is in a focused state.
     internal var isFocused: Bool = false
+    
     /// A Boolean value that indicates whether the cell is in a editing state.
     internal var isEditing: Bool = false
+    
     /// A Boolean value that indicates whether the cell is in a expanded state.
     internal var isExpanded: Bool = false
     
     public init(isSelected: Bool = false,
                 isEmphasized: Bool = false,
+                emphasizedState: EmphasizedState = [],
                 isHovered: Bool = false) {
         self.isSelected = isSelected
         self.isEmphasized = isEmphasized
+        self.emphasizedState = emphasizedState
         self.isHovered = isHovered
         self.isEnabled = true
         self.isFocused = false
@@ -48,6 +72,7 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     internal init(
         isSelected: Bool,
         isEmphasized: Bool,
+        emphasizedState: EmphasizedState = [],
         isEnabled: Bool,
         isFocused: Bool,
         isHovered: Bool,
@@ -60,6 +85,7 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
         self.isEditing = isEditing
         self.isExpanded = isExpanded
         self.isEmphasized = isEmphasized
+            self.emphasizedState = emphasizedState
     }
 
     /// Accesses custom states by key.
