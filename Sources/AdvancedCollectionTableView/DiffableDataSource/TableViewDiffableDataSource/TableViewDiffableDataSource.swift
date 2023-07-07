@@ -10,17 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
-public class AATableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>: NSTableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>  where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
-    
-    override public func responds(to aSelector: Selector!) -> Bool {
-        Swift.print("respondsTo", aSelector)
-        return true
-    }
-    
-
-}
-
-
 /**
  This object is an advanced version or NSTableViewDiffableDataSource. It provides:
  
@@ -384,7 +373,6 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
             let element = self.allElements[id: elementID]!
                 return self.cellProvider(tableView, column, row, element)
         })
-        
         self.setupRowProvider()
     }
     

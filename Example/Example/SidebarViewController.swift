@@ -12,7 +12,7 @@ import AdvancedCollectionTableView
 class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
-    typealias DataSource = AdvanceTableViewDiffableDataSource<Section, SidebarItem>
+    typealias DataSource = NSTableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
 
     @IBOutlet weak var tableView: NSTableView!
@@ -27,14 +27,6 @@ class SidebarViewController: NSViewController {
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         cell.contentConfiguration = configuration
-        cell.configurationUpdateHandler = { cell, state in
-            if state.emphasizedState.contains(.isFirstResponder) {
-                Swift.print("cell isFirstResponder")
-            }
-            if state.emphasizedState.contains(.isKeyWindow) {
-                Swift.print("cell isKeyWindow")
-            }
-        }
     }
         
     override func viewDidLoad() {
@@ -42,9 +34,11 @@ class SidebarViewController: NSViewController {
         
         tableView.dataSource = self.dataSource
         
+        /*
         self.dataSource.rowActionProvider = { element, edge in
             return []
         }
+         */
         applySnapshot()
     }
     
