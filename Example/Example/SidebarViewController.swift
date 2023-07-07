@@ -27,6 +27,14 @@ class SidebarViewController: NSViewController {
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         cell.contentConfiguration = configuration
+        cell.configurationUpdateHandler = { cell, state in
+            if state.emphasizedState.contains(.isFirstResponder) {
+                Swift.print("cell isFirstResponder")
+            }
+            if state.emphasizedState.contains(.isKeyWindow) {
+                Swift.print("cell isKeyWindow")
+            }
+        }
     }
         
     override func viewDidLoad() {
@@ -39,7 +47,8 @@ class SidebarViewController: NSViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
         
-       // tableView.becomeFirstResponder()
+    //    tableView.becomeFirstResponder()
+    //    Swift.print(tableView.isFirstResponder)
     }
     
     func applySnapshot() {
