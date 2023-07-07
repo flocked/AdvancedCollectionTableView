@@ -364,7 +364,7 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
         self.tableView.nextResponder = self.responder
         self.responder.nextResponder = tableViewNextResponder
         
-        self.tableView.dataSource = self
+   //     self.tableView.dataSource = self
         self.delegateBridge = DelegateBridge(self)
     }
     

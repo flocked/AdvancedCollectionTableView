@@ -12,7 +12,7 @@ import AdvancedCollectionTableView
 class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
-    typealias DataSource = NSTableViewDiffableDataSource<Section, SidebarItem>
+    typealias DataSource = AdvanceTableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
 
     @IBOutlet weak var tableView: NSTableView!
@@ -41,6 +41,10 @@ class SidebarViewController: NSViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self.dataSource
+        
+        self.dataSource.rowActionProvider = { element, edge in
+            return []
+        }
         applySnapshot()
     }
     
@@ -54,6 +58,6 @@ class SidebarViewController: NSViewController {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items, toSection: .main)
-        dataSource.apply(snapshot, .animated)
+        dataSource.apply(snapshot, .usingReloadData)
     }
 }
