@@ -19,6 +19,13 @@ extension AdvanceTableViewDiffableDataSource {
             dataSource.columnHandlers.didSelect?(tableColumn)
         }
         
+        func tableView( _ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
+            if let rowActionProvider = dataSource.rowActionProvider, let element = dataSource.element(for: row) {
+                return rowActionProvider(element, edge)
+            }
+            return []
+        }
+        
         init (_ dataSource: AdvanceTableViewDiffableDataSource<S,E>) {
             self.dataSource = dataSource
             super.init()
@@ -26,6 +33,8 @@ extension AdvanceTableViewDiffableDataSource {
             self.dataSource.tableView.dataSource = self
         }
     }
+    
+    
 
 }
 

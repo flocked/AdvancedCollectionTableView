@@ -63,9 +63,7 @@ public extension NSCollectionView {
         
         private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
-        private let handler: Handler
-        
-        private var registeredCollectionView: NSCollectionView? = nil
+        private let handler: Handler        
         
         /**
          Creates a item registration with the specified registration handler.
@@ -86,7 +84,7 @@ public extension NSCollectionView {
         }
         
         internal func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
-            if registeredCollectionView == nil {
+            if isRegistered(collectionView) == false {
                 self.register(for: collectionView)
             }
             let item: Item
@@ -99,13 +97,17 @@ public extension NSCollectionView {
             return item
         }
         
+        internal func isRegistered(_ collectionView: NSCollectionView) -> Bool {
+            collectionView.registeredItemRegistrations.contains(self.identifier)
+        }
+        
         internal func register(for collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forItemWithIdentifier: self.identifier)
             } else {
                 collectionView.register(Item.self, forItemWithIdentifier: self.identifier)
             }
-            registeredCollectionView = collectionView
+            collectionView.registeredItemRegistrations.append(self.identifier)
         }
         
         internal func unregister(for collectionView: NSCollectionView) {

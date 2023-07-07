@@ -92,11 +92,3 @@ public extension NSTableView {
         }
     }
 }
-
-internal extension NSTableView {
-    var registeredRowRegistrations: [NSUserInterfaceItemIdentifier] {
-         get { getAssociatedValue(key: "NSTableView_registeredRowRegistrations", object: self, initialValue: []) }
-         set { set(associatedValue: newValue, key: "NSTableView_registeredRowRegistrations", object: self)
-         }
-     }
-}

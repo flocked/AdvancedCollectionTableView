@@ -83,13 +83,17 @@ public extension NSCollectionView {
         }
         
         public func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)   {
-            if (collectionView.registeredSupplementaryRegistrations.contains(self.identifier) == false) {
+            if isRegistered(collectionView) == false {
                 self.register(for: collectionView)
             }
             
             let view = collectionView.makeSupplementaryView(ofKind: self.elementKind, withIdentifier: self.identifier, for: indexPath) as! SupplementaryView
             self.handler(view, elementKind, indexPath)
             return view
+        }
+        
+        internal func isRegistered(_ collectionView: NSCollectionView) -> Bool {
+            collectionView.registeredSupplementaryRegistrations.contains(self.identifier)
         }
         
         internal func register(for collectionView: NSCollectionView) {

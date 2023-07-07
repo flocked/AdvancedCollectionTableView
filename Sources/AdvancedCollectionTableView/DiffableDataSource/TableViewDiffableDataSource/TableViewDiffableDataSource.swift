@@ -93,6 +93,11 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
     
+    /**
+    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.     
+     */
+    public var rowActionProvider: ((_ element: Element, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
+    
     /// A handler that gets called whenever table view receives a keydown event.
     public var keydownHandler: ((_ keyCode: Int, _ modifierFlags: NSEvent.ModifierFlags) -> Bool)? = nil
     
