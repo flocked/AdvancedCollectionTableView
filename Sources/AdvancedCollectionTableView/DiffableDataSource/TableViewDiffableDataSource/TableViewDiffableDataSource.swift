@@ -354,8 +354,6 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
             self.tableView.isQuicklookPreviewable = true
         }
         
-        self.allowsReordering = false
-        self.allowsDeleting = false
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         
@@ -372,6 +370,7 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
     internal func configurateDataSource() {
         self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
             tableView, column, row, elementID in
+            Swift.print("ggg")
             let element = self.allElements[id: elementID]!
                 return self.cellProvider(tableView, column, row, element)
         })
