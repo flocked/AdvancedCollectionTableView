@@ -68,9 +68,8 @@ class ViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
+        
         collectionView.becomeFirstResponder()
-    //    collectionView.resignFirstResponder()
-    //    Swift.print("collectionView after ", collectionView.isFirstResponder)
     }
     
     func applySnapshot(with galleryItems: [GalleryItem]) {

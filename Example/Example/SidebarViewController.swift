@@ -48,7 +48,6 @@ class SidebarViewController: NSViewController {
         super.viewDidAppear()
         
     //    tableView.becomeFirstResponder()
-    //    Swift.print(tableView.isFirstResponder)
     }
     
     func applySnapshot() {
