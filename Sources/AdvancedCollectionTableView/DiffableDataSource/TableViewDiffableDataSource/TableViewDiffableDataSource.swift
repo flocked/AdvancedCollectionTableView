@@ -10,6 +10,17 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
+public class AATableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>: NSTableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>  where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
+    
+    override public func responds(to aSelector: Selector!) -> Bool {
+        Swift.print("respondsTo", aSelector)
+        return true
+    }
+    
+
+}
+
+
 /**
  This object is an advanced version or NSTableViewDiffableDataSource. It provides:
  
@@ -23,13 +34,13 @@ import FZQuicklook
 public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSTableViewDataSource {
     public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
     public typealias CellProvider = (NSTableView, NSTableColumn, Int, Element) -> NSTableCellView
-    public typealias RowProvider = (NSTableView, Int, Element) -> NSTableRowView?
+    public typealias RowProvider = (NSTableView, Int, Element) -> NSTableRowView
     
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Element.ID>
 
-    public var rowProvider: RowProvider = {tableView, row, element in
-        return nil
+    public var rowProvider: RowProvider? = nil {
+        didSet { self.setupRowProvider() }
     }
     
     public var cellProvider: CellProvider
@@ -370,10 +381,21 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
     internal func configurateDataSource() {
         self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
             tableView, column, row, elementID in
-            Swift.print("ggg")
             let element = self.allElements[id: elementID]!
                 return self.cellProvider(tableView, column, row, element)
         })
+        
+        self.setupRowProvider()
+    }
+    
+    internal func setupRowProvider() {
+        if let rowProvider = self.rowProvider {
+            self.dataSource.rowViewProvider = { tableView, row, identifier in
+                return rowProvider(tableView, row, identifier as! Element)
+            }
+        } else {
+            self.dataSource.rowViewProvider = nil
+        }
     }
 }
     
