@@ -49,6 +49,11 @@ It also provides convenience functions for registering and making NSCollectionVi
 You can only reconfigurate items that have been previously registered via provided *ItemRegistration*, *register(_ itemClass: Item.Type)* or *register(_ itemClass: Item.Type, nib: NSNib)*.
 
 ## AdvanceColllectionViewDiffableDataSource
-An extended NSCollectionViewDiffableDataSource that adds:
+An extended NSCollectionViewDiffableDataSource that provides:
 
- 
+ - Reordering of rows by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
+ - Deleting of rows by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
+ - Quicklooking of rows via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Handlers for selection of rows `selectionHandlers`.
+ - Handlers for rows that get hovered by mouse `hoverHandlers`.
+ - Providing a right click menu for selected rows via `menuProvider` block.
