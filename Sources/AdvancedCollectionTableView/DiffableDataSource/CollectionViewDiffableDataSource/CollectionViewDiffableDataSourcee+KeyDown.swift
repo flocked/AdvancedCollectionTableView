@@ -31,6 +31,7 @@ internal extension AdvanceColllectionViewDiffableDataSource {
                             }
                             self.removeElements(elementsToDelete)
                             deletionHandlers.didDelete?(elementsToDelete)
+                            self.collectionView.collectionViewLayout?.invalidateLayout()
                             return nil
                         }
                     }
