@@ -9,6 +9,16 @@ A port of `UICollectionView.CellRegistration`. A registration for collection vie
 ```
 let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
          item.textField.stringValue = string
+    
+    // Gets called whenever the state of the item changes (e.g. on selection)
+    item.configurationUpdateHandler = { item, state in
+        // Updates the text color based on selection state.
+        if state.isSelected {
+            item.textField.textColor = .controlAccentColor
+        } else {
+            item.textField.stringValue = .labelColor
+        }
+    }
 }
 ```
 
