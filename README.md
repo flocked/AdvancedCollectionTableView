@@ -1,4 +1,4 @@
-# Advanced CollectionView & TableView
+# Advanced NSCollectionView & NSTableView
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of the modern UIKit.
 
