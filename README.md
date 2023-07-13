@@ -64,7 +64,7 @@ collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ```
 
 ## AdvanceColllectionViewDiffableDataSource
-An extended NSCollectionViewDiffableDataSource that provides:
+An extended `NSCollectionViewDiffableDataSource that provides:
 
  - Reordering of rows by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
  - Deleting of rows by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
