@@ -22,19 +22,8 @@ import QuickLookUI
  - Providing a right click menu for selected items via `menuProvider` block.
  - Handler for pinching of the collection view via `pinchHandler`.
 
- 
- A diffable data source object is a specialized type of data source that works together with your collection view object. It provides the behavior you need to manage updates to your collection view’s data and UI in a simple, efficient way. It also conforms to the NSCollectionViewDataSource and NSCollectionViewDelegate protocol and provides implementations and handlers for all of the protocol’s methods.
- 
- To fill a collection view with data:
- 1. Connect a diffable data source to your collection view.
- 2. Implement a item provider to configure your collection view’s items.
- 3. Generate the current state of the data.
- 4. Display the data in the UI.
- 
- To connect a diffable data source to a collection view, you create the diffable data source using its init(collectionView:itemProvider:) or init(collectionView:itemRegistration:) initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
-
  ```
- dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
+ dataSource = AdvanceColllectionViewDiffableDataSource<Int, UUID>(collectionView: collectionView) {
      (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
      // configure and return item
  }

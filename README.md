@@ -66,12 +66,13 @@ collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ## AdvanceColllectionViewDiffableDataSource
 An extended `NSCollectionViewDiffableDataSource that provides:
 
- - Reordering of rows by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
- - Deleting of rows by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
- - Quicklooking of rows via spacebar by providing elements conforming to `QuicklookPreviewable`.
- - Handlers for selection of rows `selectionHandlers`.
- - Handlers for rows that get hovered by mouse `hoverHandlers`.
- - Providing a right click menu for selected rows via `menuProvider` block.
+ - Reordering of items by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
+ - Deleting of items by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
+ - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Handlers for selection of items `selectionHandlers`.
+ - Handlers for items that get hovered by mouse `hoverHandlers`.
+ - Providing a right click menu for selected items via `menuProvider` block.
+ - Handler for pinching of the collection view via `pinchHandler`.
 
 ## AdvanceTableViewDiffableDataSource
 An extended `NSTableViewDiffableDataSource. **Currently not working.**
