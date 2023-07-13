@@ -86,6 +86,9 @@ class ViewController: NSViewController {
         
         applySnapshot(with: galleryItems)
         
+ 
+       // flowLayout.
+        
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
         super.viewDidLoad()
     }

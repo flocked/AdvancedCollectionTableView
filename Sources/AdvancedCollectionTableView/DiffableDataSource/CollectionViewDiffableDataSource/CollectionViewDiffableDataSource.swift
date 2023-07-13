@@ -53,7 +53,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
 
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
+    internal typealias DataSoure = ACollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
@@ -493,5 +493,13 @@ internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewab
     internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
         self.preview = preview
         self.view = view
+    }
+}
+
+
+public class ACollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>: NSCollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
+    override public func responds(to aSelector: Selector!) -> Bool {
+        Swift.print("responds(to", aSelector)
+        return super.responds(to: aSelector)
     }
 }

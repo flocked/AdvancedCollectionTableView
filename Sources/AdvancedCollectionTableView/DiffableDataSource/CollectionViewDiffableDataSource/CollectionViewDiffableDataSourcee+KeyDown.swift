@@ -24,16 +24,13 @@ internal extension AdvanceColllectionViewDiffableDataSource {
                     guard let self = self else { return event }
                     guard self.collectionView.window?.firstResponder == self.collectionView else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        var selectedElements = self.selectedElements
-                        if let shouldDelete = deletionHandlers.shouldDelete {
-                            selectedElements = shouldDelete(selectedElements)
-                        }
-                        if (selectedElements.isEmpty == false) {
+                      let elementsToDelete =   deletionHandlers.shouldDelete?(self.selectedElements) ?? self.selectedElements
+                        if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
-                            self.removeElements(selectedElements)
-                            deletionHandlers.didDelete?(selectedElements)
+                            self.removeElements(elementsToDelete)
+                            deletionHandlers.didDelete?(elementsToDelete)
                             return nil
                         }
                     }
