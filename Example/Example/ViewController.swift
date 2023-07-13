@@ -50,10 +50,9 @@ class ViewController: NSViewController {
         return itemRegistration
     }()
     
-    // The toolbar of the window which adds reconfigurating the first displayed item.
-    // Updates the data, preserving the existing cells for the first item.
-    lazy var toolbar = Toolbar("Toolbar") {
-        /// A toolbar button for reconfigurating the first gallery item.
+    // The toolbar of the window.
+    lazy var toolbar = Toolbar("WindowToolbar") {
+        /// A toolbar button for reconfigurating the first collection item which reconfigurates it without reloading it (much better performance).
         ToolbarItem.Button("Reconfigurate", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!).onAction {
             guard let firstItem = self.galleryItems.first, let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [firstItem]) else { return }
             
