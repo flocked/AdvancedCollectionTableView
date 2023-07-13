@@ -443,15 +443,6 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
     }
 
-    internal var itemObserver: KeyValueObserver<NSCollectionViewItem> {
-       get { getAssociatedValue(key: "NSCollectionItem_Observer", object: self, initialValue: KeyValueObserver<NSCollectionViewItem>(self)) }
-   }
-    
-    internal var itemObserverNew: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionItem_ObserverNew", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_ObserverNew", object: self)
-        }
-   }
     
     @objc internal var swizzledHighlightState: NSCollectionViewItem.HighlightState {
         get { return self.highlightState }
@@ -496,7 +487,7 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "_isSelectedObserver", object: self) }
     }
         
-    // The collectionView property isn't always returning the collection view.
+    // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     internal var _collectionView: NSCollectionView? {
         self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
     }
@@ -517,7 +508,6 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self) }
     }
-    
     
     @objc internal var swizzledIsSelected: Bool {
         get { return self.isSelected }
