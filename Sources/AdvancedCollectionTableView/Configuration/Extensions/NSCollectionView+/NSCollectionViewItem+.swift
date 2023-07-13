@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSCollectionViewItem {
+    
     /**
      The current background configuration of the item.
      
@@ -39,6 +40,25 @@ public extension NSCollectionViewItem {
             }
             self.configurateBackgroundView()
         }
+    }
+    
+    /**
+     Retrieves a default background content configuration.
+     ```
+     var background = item.defaultBackgroundConfiguration()
+     
+     // Configure background.
+     background.color = .systemGray
+     background.cornerRadius = 8.0
+     background.shadow = .black
+          
+     item.backgroundConfiguration = background
+     ```
+     
+     - Returns:A default background content configuration.
+     */
+    func  defaultBackgroundConfiguration() -> NSBackgroundConfiguration {
+        return NSBackgroundConfiguration()
     }
     
     /**
