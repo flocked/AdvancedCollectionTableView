@@ -2,6 +2,8 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView.
 
+Take a look at the included example project which demonstrates `itemRegistration`, `cellRegistration`, `NSItemContentConfiguration`, reloading of items `AdvanceColllectionViewDiffableDataSource`.
+
 ## ItemRegistration & CellRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.     
 ```
@@ -34,7 +36,6 @@ An package for MacOS that adds iOS:
 - ConfigurationState
 
 It also adds extensions to NSCollectionView, NSCollectionViewItem, NSTableView, NSTableCellView and NSTableRowView to support the configurations.
-
 
 An extension to NSCollectionView that adds iOS UICollectionView:
 - NSCollectionView ItemRegistration & SupplementaryRegistration
