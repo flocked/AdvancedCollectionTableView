@@ -34,6 +34,7 @@ internal extension AdvanceColllectionViewDiffableDataSource {
                             }
                             self.removeElements(selectedElements)
                             deletionHandlers.didDelete?(selectedElements)
+                            return nil
                         }
                     }
                     return event

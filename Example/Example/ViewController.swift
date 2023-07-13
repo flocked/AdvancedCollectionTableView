@@ -50,6 +50,30 @@ class ViewController: NSViewController {
         return itemRegistration
     }()
     
+    // The toolbar of the window which adds reconfigurating the first displayed item.
+    // Updates the data, preserving the existing cells for the first item.
+    lazy var toolbar = Toolbar("Toolbar") {
+        /// A toolbar button for reconfigurating the first gallery item.
+        ToolbarItem.Button("Reconfigurate", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!).onAction {
+            guard let firstItem = self.galleryItems.first, let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [firstItem]) else { return }
+            // Replaces the info of the first item with the new random item info.
+            
+            Swift.print("Button pressed")
+            firstItem.imageName = newRandomItem.imageName
+            firstItem.title = newRandomItem.title
+            firstItem.detail = newRandomItem.detail
+            // Reconfigurates the first item.
+            self.dataSource.reconfigurateElements([firstItem])
+        }
+        /// A toolbar button for inserting a new random gallery item.
+        ToolbarItem.Button("Add", image: NSImage(systemSymbolName: "plus.app")!).onAction {
+            let newRandomItem = GalleryItem.sampleItems.randomElement()!
+            self.galleryItems.insert(newRandomItem, at: 0)
+            self.applySnapshot(with: self.galleryItems)
+        }
+
+    }.attachedWindow(self.view.window)
+    
     override func viewDidLoad() {
                 
         collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, spacing: 4.0, insets: .init(14.0))
@@ -67,9 +91,12 @@ class ViewController: NSViewController {
     }
     
     override func viewDidAppear() {
-        super.viewDidAppear()
+        // Loads the window toolbar.
+        _ = toolbar
         
         collectionView.becomeFirstResponder()
+        
+        super.viewDidAppear()
     }
     
     func applySnapshot(with galleryItems: [GalleryItem]) {

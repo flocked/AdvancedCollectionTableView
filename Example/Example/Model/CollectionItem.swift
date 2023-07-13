@@ -21,6 +21,12 @@ class GalleryItem: NSObject, Identifiable {
         self.imageName = imageName
     }
     
+    func replaceInfo(with item: GalleryItem) {
+        self.title = item.title
+        self.detail = item.detail
+        self.imageName = item.imageName
+    }
+    
     static var sampleItems: [GalleryItem] {
         return [GalleryItem(title: "Astronaut Cat", detail: "Liquid ink", imageName: "astronaut cat"),
                 GalleryItem(title: "Cat", detail: "Painted by Vermeer", imageName: "cat vermeer"),

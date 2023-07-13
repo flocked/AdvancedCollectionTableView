@@ -8,7 +8,6 @@
 import AppKit
 import AdvancedCollectionTableView
 
-
 class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
@@ -31,7 +30,7 @@ class SidebarViewController: NSViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         tableView.dataSource = self.dataSource
         
         /*
@@ -44,6 +43,7 @@ class SidebarViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
+        
         
     //    tableView.becomeFirstResponder()
     }
