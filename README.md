@@ -8,7 +8,8 @@ Take a look at the included example project which demonstrates `itemRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.     
 ```
 let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
-         item.textField.stringValue = string
+
+    item.textField.stringValue = string
     
     // Gets called whenever the state of the item changes (e.g. on selection)
     item.configurationUpdateHandler = { item, state in
