@@ -71,7 +71,6 @@ public extension NSCollectionView {
     
     internal func setupFirstResponderObserver() {
         self.firstResponderHandler = { isFirstResponder in
-            Swift.print("collectionView isFirstResponder", isFirstResponder)
             self._isFirstResponder = isFirstResponder
         }
     }
