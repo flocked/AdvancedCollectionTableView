@@ -1,6 +1,6 @@
 # Advanced NSCollectionView & NSTableView
 
-A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of the modern UIKit.
+A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
 
 Take a look at the included example project which demonstrates `itemRegistration`, `cellRegistration`, `NSItemContentConfiguration`, `AdvanceColllectionViewDiffableDataSource` and reloading of items.
 
