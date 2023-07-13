@@ -31,7 +31,6 @@ internal extension AdvanceColllectionViewDiffableDataSource {
                             }
                             self.removeElements(elementsToDelete)
                             deletionHandlers.didDelete?(elementsToDelete)
-                            self.collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, spacing: 4.0, insets: .init(14.0))
                             return nil
                         }
                     }
