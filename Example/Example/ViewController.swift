@@ -56,27 +56,27 @@ class ViewController: NSViewController {
         /// A toolbar button for reconfigurating the first gallery item.
         ToolbarItem.Button("Reconfigurate", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!).onAction {
             guard let firstItem = self.galleryItems.first, let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [firstItem]) else { return }
-            // Replaces the info of the first item with the new random item info.
             
-            Swift.print("Button pressed")
+            // Replaces the info of the first item with the new random item info.
             firstItem.imageName = newRandomItem.imageName
             firstItem.title = newRandomItem.title
             firstItem.detail = newRandomItem.detail
+            
             // Reconfigurates the first item.
             self.dataSource.reconfigurateElements([firstItem])
         }
-        /// A toolbar button for inserting a new random gallery item.
+        /// A toolbar button for inserting a new random gallery item to the beginning of the collection.
         ToolbarItem.Button("Add", image: NSImage(systemSymbolName: "plus.app")!).onAction {
             let newRandomItem = GalleryItem.sampleItems.randomElement()!
             self.galleryItems.insert(newRandomItem, at: 0)
-            self.applySnapshot(with: self.galleryItems)
+            self.applySnapshot(with: self.galleryItems, .usingReloadData)
         }
 
     }.attachedWindow(self.view.window)
     
     override func viewDidLoad() {
-                
-        collectionView.collectionViewLayout = NSCollectionViewCompositionalLayout.grid(columns: 2, spacing: 4.0, insets: .init(14.0))
+        
+        collectionView.collectionViewLayout = .grid(columns: 2)
         collectionView.dataSource = self.dataSource
         
         // Enables deleting of selected enables via backspace
@@ -85,11 +85,8 @@ class ViewController: NSViewController {
         dataSource.allowsReordering = true
         
         applySnapshot(with: galleryItems)
-        
- 
-       // flowLayout.
-        
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
+        
         super.viewDidLoad()
     }
     
@@ -97,17 +94,18 @@ class ViewController: NSViewController {
         // Loads the window toolbar.
         _ = toolbar
         
+        // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
         
     }
     
-    func applySnapshot(with galleryItems: [GalleryItem]) {
+    func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(galleryItems, toSection: .main)
-        dataSource.apply(snapshot, .animated)
+        dataSource.apply(snapshot, applyOption)
     }
     
     func addRandomGalleryItem() {
