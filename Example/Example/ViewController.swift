@@ -97,6 +97,7 @@ class ViewController: NSViewController {
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
+        
     }
     
     func applySnapshot(with galleryItems: [GalleryItem]) {

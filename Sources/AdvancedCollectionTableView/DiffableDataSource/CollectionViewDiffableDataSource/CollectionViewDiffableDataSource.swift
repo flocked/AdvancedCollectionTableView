@@ -64,7 +64,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
 
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    public typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
+    internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
@@ -83,7 +83,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ elementKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
 
     internal weak var collectionView: NSCollectionView!
-    public var dataSource: DataSoure!
+    internal var dataSource: DataSoure!
     internal var itemProvider: ItemProvider
     internal var delegateBridge: DelegateBridge<Section, Element>!
     internal var responder: Responder<Section, Element>!

@@ -72,3 +72,6 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - Handlers for selection of rows `selectionHandlers`.
  - Handlers for rows that get hovered by mouse `hoverHandlers`.
  - Providing a right click menu for selected rows via `menuProvider` block.
+
+## AdvanceTableViewDiffableDataSource
+An extended `NSTableViewDiffableDataSource. **Currently not working.**

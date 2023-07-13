@@ -48,20 +48,3 @@ internal extension AdvanceColllectionViewDiffableDataSource {
         }
     }
 }
-/*
-public extension NSCollectionViewDiffableDataSource {
-    internal var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self)
-        }
-    }
-    
-    var allowsReordering: Bool {
-        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsReordering", object: self, initialValue: false) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_allowsReordering", object: self)
-        }
-    }
-}
-*/

@@ -241,7 +241,6 @@ public extension NSCollectionViewItem {
         }
     }
     
-    
     /**
      Updates the item’s configuration using the current state.
      
