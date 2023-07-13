@@ -289,15 +289,10 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
+                Self.swizzleCollectionItemIfNeeded()
                 swizzleCollectionItemViewIfNeeded()
             }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
-            /*
-            if (newValue != nil) {
-                self.swizzleCollectionItemViewIfNeeded()
-                Self.swizzleCollectionItemIfNeeded()
-            }
-             */
             self.setNeedsUpdateConfiguration()
         }
     }
@@ -602,6 +597,29 @@ public extension NSCollectionViewItem {
          }
         set {
             super.view = newValue
+            self.swizzleCollectionItemViewIfNeeded()
+        }
+    }
+    
+    @objc internal var swizzledView: NSView {
+        get {
+            if (self.nibName != nil) {
+                return self.swizzledView
+            } else {
+                if (self.isViewLoaded == false) {
+                    if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
+                        self.loadView()
+                    }
+                    if (self.isViewLoaded == false) {
+                        let newView = NSView()
+                        self.swizzledView = newView
+                    }
+                }
+                return self.swizzledView
+            }
+        }
+        set {
+            self.swizzledView = newValue
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
