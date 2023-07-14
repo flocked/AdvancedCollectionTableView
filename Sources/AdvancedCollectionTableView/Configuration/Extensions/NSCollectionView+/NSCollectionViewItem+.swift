@@ -560,6 +560,7 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_preferredLayoutAttributesFitting(_ layoutAttributes: NSCollectionViewLayoutAttributes) -> NSCollectionViewLayoutAttributes {
+        /*
         if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
             
             let width = layoutAttributes.size.width
@@ -568,6 +569,7 @@ public extension NSCollectionViewItem {
             layoutAttributes.size = fittingSize
             return layoutAttributes
         }
+         */
         return swizzled_preferredLayoutAttributesFitting(layoutAttributes)
     }
     
