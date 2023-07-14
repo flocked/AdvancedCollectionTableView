@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-
+import InterposeKit
 
 public extension NSTableRowView {
     /**
@@ -377,20 +377,46 @@ public extension NSTableRowView {
             didSwizzleTableRowView = true
             
             do {
-                _ = try Swizzle(NSTableRowView.self) {
-                    #selector(viewDidMoveToSuperview) <-> #selector(swizzledViewDidMoveToSuperview)
-                    #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
-                    #selector(setter: isSelected) <-> #selector(setter: swizzledIsSelected)
-                }
+                let hooks = [
+                    try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
+                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                                       store in { (object) in
+                                           self.swizzledViewDidMoveToSuperview()
+                                           store.original(object, store.selector)
+                                       }
+                                   },
+                    
+                    try self.hook(#selector(setter: isSelected),
+                                   methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
+                                   hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
+                                       store in { (object, isSelected) in
+                                           let oldValue = self.isSelected
+                                           store.original(object, store.selector, isSelected)
+                                           if oldValue != isSelected {
+                                               self.configurateBackgroundView()
+                                               self.setNeedsAutomaticUpdateConfiguration()
+                                               self.setCellViewsNeedAutomaticUpdateConfiguration()
+                                           }
+                                       }
+                                   },
+                    try  self.hook(#selector(prepareForReuse),
+                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
+                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
+                    store in { (object) in
+                        self.swizzled_PrepareForReuse()
+                        store.original(object, store.selector)
+                    }
+                },
+                ]
+                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
             } catch {
                 Swift.print(error)
             }
-            
         }
     }
     
     @objc internal func swizzledViewDidMoveToSuperview() {
         self.tableView?.setupObservingView()
-        self.swizzledViewDidMoveToSuperview()
     }
 }
