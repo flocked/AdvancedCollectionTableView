@@ -67,7 +67,7 @@ internal class NSItemContentView: NSView, NSContentView {
         
     }
     
-    /*
+    
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         return hostingController.sizeThatFits(in: size)
     }
@@ -75,7 +75,7 @@ internal class NSItemContentView: NSView, NSContentView {
     override var fittingSize: NSSize {
         return hostingController.fittingSize
     }
-     */
+     
      
     @available(*, unavailable)
     required init?(coder: NSCoder) {
