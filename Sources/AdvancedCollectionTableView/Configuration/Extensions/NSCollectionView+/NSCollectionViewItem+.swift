@@ -35,8 +35,8 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleCollectionItemViewIfNeeded()
                 Self.swizzleCollectionItemIfNeeded()
+                self.swizzleCollectionItemViewIfNeeded()
             }
             self.configurateBackgroundView()
         }
@@ -489,7 +489,8 @@ public extension NSCollectionViewItem {
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
                     #selector(setter: highlightState) <-> #selector(setter: swizzledHighlightState)
                     #selector(setter: isSelected) <-> #selector(setter: swizzledIsSelected)
-
+                    #selector(setter: view) <-> #selector(setter: swizzledView)
+                    #selector(getter: view) <-> #selector(getter: swizzledView)
                 }
             } catch {
                 Swift.print(error)
@@ -589,7 +590,31 @@ public extension NSCollectionViewItem {
             break
         }
     }
-        
+    /*
+     override var view: NSView {
+         get {
+             if (self.nibName != nil) {
+                 return super.view
+             } else {
+                 if (self.isViewLoaded == false) {
+                     if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
+                         self.loadView()
+                     }
+                     if (self.isViewLoaded == false) {
+                         let newView = NSView()
+                         super.view = newView
+                     }
+                 }
+                 return super.view
+             }
+         }
+        set {
+            super.view = newValue
+            self.swizzleCollectionItemViewIfNeeded()
+        }
+    }
+    */
+    
     @objc internal var swizzledView: NSView {
         get {
             if (self.nibName != nil) {
@@ -612,29 +637,4 @@ public extension NSCollectionViewItem {
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
-}
-
-extension NSCollectionViewItem {
-    override open var view: NSView {
-        get {
-            if (self.nibName != nil) {
-                return super.view
-            } else {
-                if (self.isViewLoaded == false) {
-                    if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
-                        self.loadView()
-                    }
-                    if (self.isViewLoaded == false) {
-                        let newView = NSView()
-                        super.view = newView
-                    }
-                }
-                return super.view
-            }
-        }
-       set {
-           super.view = newValue
-           self.swizzleCollectionItemViewIfNeeded()
-       }
-   }
 }
