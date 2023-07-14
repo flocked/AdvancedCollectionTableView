@@ -31,7 +31,8 @@ internal class NSItemContentView: NSView, NSContentView {
         self._configuration = configuration
         super.init(frame: .zero)
         
-        addSubview(withConstraint: hostingController.view)
+        addSubview(hostingController.view)
+        hostingController.view.frame.size = self.frame.size
         self.updateConfiguration()
         self.maskToBounds = false
     }
@@ -57,6 +58,12 @@ internal class NSItemContentView: NSView, NSContentView {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }()
+    
+    override func layout() {
+        self.hostingController.view.frame.size = self.frame.size
+        super.layout()
+        
+    }
     
     /*
     public func sizeThatFits(_ size: CGSize) -> CGSize {
