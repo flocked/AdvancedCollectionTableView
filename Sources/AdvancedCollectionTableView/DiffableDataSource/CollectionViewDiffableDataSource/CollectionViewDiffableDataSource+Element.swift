@@ -223,6 +223,6 @@ extension AdvanceColllectionViewDiffableDataSource {
     public func removeElements( _ elements: [Element]) {
         var snapshot = self.snapshot()
         snapshot.deleteItems(elements)
-        self.apply(snapshot, .animated)
+        self.apply(snapshot, .animated(duration: 0.1))
     }
 }
