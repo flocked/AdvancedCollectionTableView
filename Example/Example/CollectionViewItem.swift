@@ -19,10 +19,6 @@ class CollectionViewItem: NSCollectionViewItem {
         self.view.cornerRadius = 6.0
     }
     
-    override var view: NSView {
-        get { super.view }
-        set { super.view = newValue }
-    }
     
     override var isSelected: Bool {
         didSet {

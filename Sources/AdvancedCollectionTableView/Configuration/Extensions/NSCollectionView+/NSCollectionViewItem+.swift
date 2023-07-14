@@ -35,7 +35,9 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
+                Swift.print("backgroundConfiguration swizzleCollectionItemIfNeeded")
                 Self.swizzleCollectionItemIfNeeded()
+                Swift.print("backgroundConfiguration swizzleCollectionItemViewIfNeeded")
                 self.swizzleCollectionItemViewIfNeeded()
             }
             self.configurateBackgroundView()
@@ -150,6 +152,7 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
+                Swift.print("contentConfiguration swizzleCollectionItemIfNeeded")
                 Self.swizzleCollectionItemIfNeeded()
             }
             self.configurateContentView()
@@ -309,7 +312,9 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
+                Swift.print("configurationUpdateHandler swizzleCollectionItemIfNeeded")
                 Self.swizzleCollectionItemIfNeeded()
+                Swift.print("configurationUpdateHandler swizzleCollectionItemViewIfNeeded")
                 swizzleCollectionItemViewIfNeeded()
             }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
@@ -634,6 +639,7 @@ public extension NSCollectionViewItem {
         }
         set {
             self.swizzledView = newValue
+            Swift.print("swizzledView swizzleCollectionItemViewIfNeeded")
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
