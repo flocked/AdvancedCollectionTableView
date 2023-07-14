@@ -12,7 +12,7 @@ import FZSwiftUtils
 
 class ViewController: NSViewController {
     
-    typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
+    typealias ItemRegistration = NSCollectionView.ItemRegistration<CollectionViewItem, GalleryItem>
     typealias DataSource = AdvanceColllectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
@@ -21,11 +21,10 @@ class ViewController: NSViewController {
     /// Sample items.
     var galleryItems: [GalleryItem] = GalleryItem.sampleItems
     
-    lazy var dataSource = DataSource(collectionView: self.collectionView, itemRegistration: itemRegistration)
+    var dataSource: DataSource!
 
-    lazy var itemRegistration: ItemRegistration = {
-        var itemRegistration = ItemRegistration(handler: { collectionViewItem, indexPath, galleryItem in
-            
+     let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
+            /*
             Swift.print("itemRegistration", galleryItem.title)
             
             // A content configuration for items.
@@ -36,12 +35,9 @@ class ViewController: NSViewController {
             
             collectionViewItem.contentConfiguration = configuration
             
-
-            Swift.print(collectionViewItem.view, collectionViewItem.view.superview,  collectionViewItem.view.subviews)
-
             
             /// Gets called when an item gets selected, hovered by mouse, etc.
-            collectionViewItem.configurationUpdateHandler = { [weak self] item, state in
+            collectionViewItem.configurationUpdateHandler = { item, state in
                 /// Updates the configuration based on if the mouse is hovering the item.
                 configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
                 configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
@@ -53,9 +49,8 @@ class ViewController: NSViewController {
                 collectionViewItem.contentConfiguration = configuration
                 
             }
-        })
-        return itemRegistration
-    }()
+             */
+        }
     
     // The toolbar of the window.
     lazy var toolbar = Toolbar("WindowToolbar") {
@@ -75,7 +70,7 @@ class ViewController: NSViewController {
         ToolbarItem.Button("Add", image: NSImage(systemSymbolName: "plus.app")!).onAction {
             let newRandomItem = GalleryItem.sampleItems.randomElement()!
             let previousItems = self.galleryItems
-       //     self.galleryItems.insert(newRandomItem, at: 0)
+            self.galleryItems.insert(newRandomItem, at: 0)
           //  self.applySnapshot(with: self.galleryItems, .animated)
             
             Swift.print("newRandomItem", newRandomItem.title)
@@ -86,7 +81,6 @@ class ViewController: NSViewController {
                 newSnapShot.insertItems([newRandomItem], beforeItem: first)
             }
             self.dataSource.apply(newSnapShot, .animated) {
-                
             }
             
             /*
@@ -130,6 +124,9 @@ class ViewController: NSViewController {
         layout.sectionInset = .init(16.0)
     
         collectionView.collectionViewLayout = layout
+        
+        self.dataSource = DataSource(collectionView: self.collectionView, itemRegistration: itemRegistration)
+        
         collectionView.dataSource = self.dataSource
         
         // Enables deleting of selected enables via backspace

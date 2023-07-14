@@ -16,6 +16,7 @@
 		727665FD2A55E61700F1FD9F /* techno club surrealist.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F62A55E61700F1FD9F /* techno club surrealist.png */; };
 		72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */; };
 		72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */; };
+		72CC42D42A61F01700AED6A4 /* CollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CC42D32A61F01700AED6A4 /* CollectionViewItem.swift */; };
 		72DE39892979905C007EACAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE39882979905C007EACAF /* AppDelegate.swift */; };
 		72DE398B2979905C007EACAF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE398A2979905C007EACAF /* ViewController.swift */; };
 		72DE398D2979905D007EACAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398C2979905D007EACAF /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 		727665F62A55E61700F1FD9F /* techno club surrealist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "techno club surrealist.png"; path = "Example/Sample Images/techno club surrealist.png"; sourceTree = SOURCE_ROOT; };
 		72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
 		72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
+		72CC42D32A61F01700AED6A4 /* CollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewItem.swift; sourceTree = "<group>"; };
 		72DE39852979905C007EACAF /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72DE39882979905C007EACAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72DE398A2979905C007EACAF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				72DE39882979905C007EACAF /* AppDelegate.swift */,
 				72DE398A2979905C007EACAF /* ViewController.swift */,
 				72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */,
+				72CC42D32A61F01700AED6A4 /* CollectionViewItem.swift */,
 				72F99B642A44FBC000DDDA1E /* Model */,
 				72D95F492A46ED86008B1FE6 /* Sample Images */,
 				72DE398C2979905D007EACAF /* Assets.xcassets */,
@@ -197,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				72DE398B2979905C007EACAF /* ViewController.swift in Sources */,
+				72CC42D42A61F01700AED6A4 /* CollectionViewItem.swift in Sources */,
 				72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */,
 				72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */,
 				72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */,

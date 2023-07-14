@@ -589,30 +589,7 @@ public extension NSCollectionViewItem {
             break
         }
     }
-    
-     override var view: NSView {
-         get {
-             if (self.nibName != nil) {
-                 return super.view
-             } else {
-                 if (self.isViewLoaded == false) {
-                     if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
-                         self.loadView()
-                     }
-                     if (self.isViewLoaded == false) {
-                         let newView = NSView()
-                         super.view = newView
-                     }
-                 }
-                 return super.view
-             }
-         }
-        set {
-            super.view = newValue
-            self.swizzleCollectionItemViewIfNeeded()
-        }
-    }
-    
+        
     @objc internal var swizzledView: NSView {
         get {
             if (self.nibName != nil) {
@@ -635,4 +612,29 @@ public extension NSCollectionViewItem {
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
+}
+
+extension NSCollectionViewItem {
+    override open var view: NSView {
+        get {
+            if (self.nibName != nil) {
+                return super.view
+            } else {
+                if (self.isViewLoaded == false) {
+                    if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
+                        self.loadView()
+                    }
+                    if (self.isViewLoaded == false) {
+                        let newView = NSView()
+                        super.view = newView
+                    }
+                }
+                return super.view
+            }
+        }
+       set {
+           super.view = newValue
+           self.swizzleCollectionItemViewIfNeeded()
+       }
+   }
 }
