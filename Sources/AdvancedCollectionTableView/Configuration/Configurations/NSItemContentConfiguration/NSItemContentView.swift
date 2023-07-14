@@ -31,8 +31,7 @@ internal class NSItemContentView: NSView, NSContentView {
         self._configuration = configuration
         super.init(frame: .zero)
         
-        addSubview(hostingController.view)
-        hostingController.view.frame.size = self.frame.size
+        addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
         self.maskToBounds = false
     }
@@ -47,7 +46,6 @@ internal class NSItemContentView: NSView, NSContentView {
     
     internal func updateConfiguration() {
         hostingController.rootView =  ContentView(configuration: self._configuration)
-        hostingController.view.frame.size = self.frame.size
     }
     
     internal lazy var hostingController: NSHostingController<ContentView> = {
@@ -59,14 +57,7 @@ internal class NSItemContentView: NSView, NSContentView {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }()
-    
-    override func layout() {
-        super.layout()
-
-        self.hostingController.view.frame.size = self.frame.size
         
-    }
-    
     
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         return hostingController.sizeThatFits(in: size)

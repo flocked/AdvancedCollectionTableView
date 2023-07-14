@@ -26,6 +26,8 @@ class ViewController: NSViewController {
     lazy var itemRegistration: ItemRegistration = {
         var itemRegistration = ItemRegistration(handler: { collectionViewItem, indexPath, galleryItem in
             
+            Swift.print("itemRegistration", galleryItem.title)
+            
             // A content configuration for items.
             var configuration = NSItemContentConfiguration()
             configuration.text = galleryItem.title
@@ -33,6 +35,10 @@ class ViewController: NSViewController {
             configuration.image = NSImage(named: galleryItem.imageName)
             
             collectionViewItem.contentConfiguration = configuration
+            
+
+            Swift.print(collectionViewItem.view, collectionViewItem.view.superview,  collectionViewItem.view.subviews)
+
             
             /// Gets called when an item gets selected, hovered by mouse, etc.
             collectionViewItem.configurationUpdateHandler = { [weak self] item, state in
@@ -45,6 +51,7 @@ class ViewController: NSViewController {
                 configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
                 configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
                 collectionViewItem.contentConfiguration = configuration
+                
             }
         })
         return itemRegistration
@@ -67,15 +74,62 @@ class ViewController: NSViewController {
         /// A toolbar button for inserting a new random gallery item to the beginning of the collection.
         ToolbarItem.Button("Add", image: NSImage(systemSymbolName: "plus.app")!).onAction {
             let newRandomItem = GalleryItem.sampleItems.randomElement()!
-            self.galleryItems.insert(newRandomItem, at: 0)
-            self.applySnapshot(with: self.galleryItems, .usingReloadData)
+            let previousItems = self.galleryItems
+       //     self.galleryItems.insert(newRandomItem, at: 0)
+          //  self.applySnapshot(with: self.galleryItems, .animated)
+            
+            Swift.print("newRandomItem", newRandomItem.title)
+
+            
+            var newSnapShot = self.dataSource.snapshot()
+            if let first = newSnapShot.itemIdentifiers.first {
+                newSnapShot.insertItems([newRandomItem], beforeItem: first)
+            }
+            self.dataSource.apply(newSnapShot, .animated) {
+                
+            }
+            
+            /*
+            var snapshot = Snapshot()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(previousItems, toSection: .main)
+            self.dataSource.apply(snapshot, .non) {
+                self.collectionView.collectionViewLayout?.invalidateLayout()
+                snapshot = Snapshot()
+                snapshot.appendSections([.main])
+                snapshot.appendItems(self.galleryItems, toSection: .main)
+                self.dataSource.apply(snapshot, .animated) {
+                    self.collectionView.collectionViewLayout?.invalidateLayout()
+                    self.dataSource.apply(snapshot, .non) {
+                    }
+                }
+            }
+            */
+            /*
+            snapshot.appendItems(self.galleryItems, toSection: .main)
+            
+            self.dataSource.apply(snapshot, .animated) {
+                self.collectionView.collectionViewLayout?.invalidateLayout()
+                snapshot.appendItems(self.galleryItems, toSection: .main)
+                self.dataSource.apply(snapshot, .animated) {
+                    self.collectionView.collectionViewLayout?.invalidateLayout()
+                }
+            }
+            */
+            
+           
         }
 
     }.attachedWindow(self.view.window)
     
     override func viewDidLoad() {
         
-        collectionView.collectionViewLayout = .grid(columns: 2)
+        var layout = NSCollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 150, height: 150)
+        layout.minimumInteritemSpacing = 8.0
+        layout.sectionInset = .init(16.0)
+    
+        collectionView.collectionViewLayout = layout
         collectionView.dataSource = self.dataSource
         
         // Enables deleting of selected enables via backspace
