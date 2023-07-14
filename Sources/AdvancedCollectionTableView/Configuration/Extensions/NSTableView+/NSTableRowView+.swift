@@ -56,7 +56,7 @@ public extension NSTableRowView {
         set {
             set(associatedValue: newValue, key: "NSTableRowVew_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleTableRowViewIfNeeded()
+                Self.swizzleTableRowViewIfNeeded()
             }
             self.configurateBackgroundView()
         }
@@ -344,7 +344,7 @@ public extension NSTableRowView {
         self.isConfigurationUpdatesEnabled = true
     }
     
-    internal var didSwizzleTableRowView: Bool {
+    internal static var didSwizzleTableRowView: Bool {
         get { getAssociatedValue(key: "NSTableRowView_didSwizzle", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "NSTableRowView_didSwizzle", object: self)
         }
@@ -372,7 +372,7 @@ public extension NSTableRowView {
         }
     }
         
-    @objc internal func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
+    @objc internal static func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleTableRowView == false) {
             didSwizzleTableRowView = true
             

@@ -25,6 +25,7 @@ class ViewController: NSViewController {
 
      let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
             
+         
             Swift.print("itemRegistration", galleryItem.title)
             
             // A content configuration for items.
@@ -33,8 +34,9 @@ class ViewController: NSViewController {
             configuration.secondaryText = galleryItem.detail
             configuration.image = NSImage(named: galleryItem.imageName)
             
-            collectionViewItem.contentConfiguration = configuration
+        //    collectionViewItem.contentConfiguration = configuration
             
+         collectionViewItem.view.backgroundColor = .lightGray
             
             /// Gets called when an item gets selected, hovered by mouse, etc.
             collectionViewItem.configurationUpdateHandler = { item, state in
@@ -46,8 +48,10 @@ class ViewController: NSViewController {
                 configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
                 configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
                 configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
-                collectionViewItem.contentConfiguration = configuration
+              //  collectionViewItem.contentConfiguration = configuration
                 
+                collectionViewItem.view.backgroundColor = state.isSelected ? .controlAccentColor : .lightGray
+
             }
         }
     
