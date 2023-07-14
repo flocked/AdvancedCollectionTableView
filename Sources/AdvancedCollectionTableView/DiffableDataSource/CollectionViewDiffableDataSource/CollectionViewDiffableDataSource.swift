@@ -230,6 +230,9 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
+        self.dataSource.apply(internalSnapshot, option, completion: completion)
+
+        /*
         if option.isAnimating == false {
             dataSource.apply(internalSnapshot, option, completion: completion)
         } else {
@@ -243,6 +246,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
             }
             dataSource.apply(internalSnapshot, option, completion: completion)
         }
+         */
     }
     
     /**
