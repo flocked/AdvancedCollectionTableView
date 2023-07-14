@@ -8,7 +8,7 @@
 import AppKit
 
 /// Options for applying snapshots to a diffable data source.
-public enum NSDiffableDataSourceSnapshotApplyOption {
+public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     /**
      The collection view applies the snapshot animated.
      
@@ -38,6 +38,12 @@ public enum NSDiffableDataSourceSnapshotApplyOption {
     case non
     
     internal static var noAnimationDuration: TimeInterval { 2344235 }
+    internal var isAnimating: Bool {
+        switch self {
+        case .animated(_): return true
+        default: return false
+        }
+    }
 }
 
 public extension NSCollectionViewDiffableDataSource {
