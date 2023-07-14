@@ -203,6 +203,7 @@ public extension NSCollectionViewItem {
             } else {
                 self.cachedLayoutAttributes = nil
                 self.view = contentConfiguration.makeContentView()
+                self.view.translatesAutoresizingMaskIntoConstraints = false
                 self.view.wantsLayer = true
                 self.view.maskToBounds = false
             }
