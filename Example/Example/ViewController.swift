@@ -12,7 +12,7 @@ import FZSwiftUtils
 
 class ViewController: NSViewController {
     
-    typealias ItemRegistration = NSCollectionView.ItemRegistration<CollectionViewItem, GalleryItem>
+    typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     typealias DataSource = AdvanceColllectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
@@ -24,7 +24,7 @@ class ViewController: NSViewController {
     var dataSource: DataSource!
 
      let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
-            /*
+            
             Swift.print("itemRegistration", galleryItem.title)
             
             // A content configuration for items.
@@ -49,7 +49,6 @@ class ViewController: NSViewController {
                 collectionViewItem.contentConfiguration = configuration
                 
             }
-             */
         }
     
     // The toolbar of the window.

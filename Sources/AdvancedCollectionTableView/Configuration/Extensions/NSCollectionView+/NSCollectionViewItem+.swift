@@ -35,10 +35,8 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                Swift.print("backgroundConfiguration swizzleCollectionItemIfNeeded")
-                Self.swizzleCollectionItemIfNeeded()
-                Swift.print("backgroundConfiguration swizzleCollectionItemViewIfNeeded")
                 self.swizzleCollectionItemViewIfNeeded()
+                Self.swizzleCollectionItemIfNeeded()
             }
             self.configurateBackgroundView()
         }
@@ -152,7 +150,6 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-                Swift.print("contentConfiguration swizzleCollectionItemIfNeeded")
                 Self.swizzleCollectionItemIfNeeded()
             }
             self.configurateContentView()
@@ -312,9 +309,7 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
-                Swift.print("configurationUpdateHandler swizzleCollectionItemIfNeeded")
                 Self.swizzleCollectionItemIfNeeded()
-                Swift.print("configurationUpdateHandler swizzleCollectionItemViewIfNeeded")
                 swizzleCollectionItemViewIfNeeded()
             }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
@@ -484,7 +479,6 @@ public extension NSCollectionViewItem {
         
     // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal static func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
-        Swift.print("swizzleCollectionItemIfNeeded")
         if (didSwizzleCollectionItem == false) {
             self.didSwizzleCollectionItem = true
             do {
@@ -495,8 +489,7 @@ public extension NSCollectionViewItem {
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
                     #selector(setter: highlightState) <-> #selector(setter: swizzledHighlightState)
                     #selector(setter: isSelected) <-> #selector(setter: swizzledIsSelected)
-                    #selector(setter: view) <-> #selector(setter: swizzledView)
-                    #selector(getter: view) <-> #selector(getter: swizzledView)
+
                 }
             } catch {
                 Swift.print(error)
@@ -521,7 +514,6 @@ public extension NSCollectionViewItem {
             
     // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
     @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        Swift.print("swizzleCollectionItemViewIfNeeded")
         if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
         } else {
             let observer = self.view.observeChanges(for: \.superview) { [weak self]  old, new in
@@ -597,7 +589,7 @@ public extension NSCollectionViewItem {
             break
         }
     }
-    /*
+    
      override var view: NSView {
          get {
              if (self.nibName != nil) {
@@ -620,7 +612,6 @@ public extension NSCollectionViewItem {
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
-    */
     
     @objc internal var swizzledView: NSView {
         get {
@@ -641,7 +632,6 @@ public extension NSCollectionViewItem {
         }
         set {
             self.swizzledView = newValue
-            Swift.print("swizzledView swizzleCollectionItemViewIfNeeded")
             self.swizzleCollectionItemViewIfNeeded()
         }
     }
