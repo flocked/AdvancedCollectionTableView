@@ -47,6 +47,7 @@ internal class NSItemContentView: NSView, NSContentView {
     
     internal func updateConfiguration() {
         hostingController.rootView =  ContentView(configuration: self._configuration)
+        hostingController.view.frame.size = self.frame.size
     }
     
     internal lazy var hostingController: NSHostingController<ContentView> = {
@@ -60,8 +61,9 @@ internal class NSItemContentView: NSView, NSContentView {
     }()
     
     override func layout() {
-        self.hostingController.view.frame.size = self.frame.size
         super.layout()
+
+        self.hostingController.view.frame.size = self.frame.size
         
     }
     
