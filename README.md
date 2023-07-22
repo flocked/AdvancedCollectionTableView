@@ -130,6 +130,7 @@ collectionViewItem.imageView?.image = NSImage(contentsOf: galleryItem.imageURL)
 
 return collectionViewItem
 }
+
 // …
 collectionView.quicklookSelectedItems()
 ```
