@@ -563,11 +563,7 @@ public extension NSCollectionViewItem {
         }
     }
     
-    override func loadView() {
-        Swift.print("loadView")
-        self.view = NSView()
-        self.observeCollectionItem()
-    }
+
     /*
      override var view: NSView {
          get {
@@ -616,4 +612,12 @@ public extension NSCollectionViewItem {
         }
     }
      */
+}
+
+extension NSCollectionViewItem {
+    open override func loadView() {
+            Swift.print("loadView")
+            self.view = NSView()
+            self.observeCollectionItem()
+    }
 }
