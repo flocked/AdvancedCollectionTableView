@@ -36,7 +36,12 @@ public extension NSCollectionView {
      ```
      let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
          item.textField.stringValue = string
-     }
+     
+        // Gets called whenever the state of the item changes (e.g. on selection)
+        item.configurationUpdateHandler = { item, state in
+            // Updates the text color based on selection state.
+            item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
+        }
      ```
      
      After you create a item registration, you pass it in to makeItem(using:for:element:), which you item from your data source’s item provider.

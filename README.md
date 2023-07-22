@@ -5,7 +5,7 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 Take a look at the included example project which demonstrates `itemRegistration`, `cellRegistration`, `NSItemContentConfiguration`, `AdvanceColllectionViewDiffableDataSource` and reloading of items.
 
 ## ItemRegistration & CellRegistration
-A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.     
+A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
 ```
 let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
 
@@ -14,11 +14,7 @@ let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, S
     // Gets called whenever the state of the item changes (e.g. on selection)
     item.configurationUpdateHandler = { item, state in
         // Updates the text color based on selection state.
-        if state.isSelected {
-            item.textField.textColor = .controlAccentColor
-        } else {
-            item.textField.stringValue = .labelColor
-        }
+        item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
     }
 }
 ```
