@@ -23,7 +23,7 @@ public extension NSTableCellView {
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleTableCellIfNeeded()
+                Self.swizzleTableCellIfNeeded()
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
@@ -243,7 +243,7 @@ public extension NSTableCellView {
         self.isConfigurationUpdatesEnabled = true
     }
     
-    internal var didSwizzleTableCellView: Bool {
+    internal static var didSwizzleTableCellView: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_didSwizzle", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "NSTableCellVew_didSwizzle", object: self) }
     }
@@ -257,11 +257,11 @@ public extension NSTableCellView {
             self.setNeedsUpdateConfiguration()
         }
         
-        self.rowView?.swizzleTableRowViewIfNeeded()
+        NSTableRowView.swizzleTableRowViewIfNeeded()
         self.tableView?.setupObservingView()
     }
         
-    @objc internal func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
+    @objc internal static func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
         if (didSwizzleTableCellView == false) {
             didSwizzleTableCellView = true
             
