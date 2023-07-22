@@ -12,7 +12,7 @@ import FZSwiftUtils
 
 class ViewController: NSViewController {
     
-    typealias ItemRegistration = NSCollectionView.ItemRegistration<TCollectionViewItem, GalleryItem>
+    typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     typealias DataSource = AdvanceColllectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
@@ -23,7 +23,7 @@ class ViewController: NSViewController {
     
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
-    let itemRegistration = ItemRegistration(nib: NSNib(nibNamed: "TCollectionViewItem")!) { collectionViewItem, indexPath, galleryItem in
+    let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
         
         // Content configuration for collectionview items.
         var configuration = NSItemContentConfiguration()
