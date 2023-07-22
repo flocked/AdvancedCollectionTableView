@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "FZQuicklook",
+        "repositoryURL": "https://github.com/flocked/FZQuicklook.git",
+        "state": {
+          "branch": "main",
+          "revision": "8454be2804d8f533c2c12801e5bca570719ba70b",
+          "version": null
+        }
+      },
+      {
+        "package": "FZSwiftUtils",
+        "repositoryURL": "https://github.com/flocked/FZSwiftUtils.git",
+        "state": {
+          "branch": "main",
+          "revision": "8128625e21757689012a78dbeb32a7d4da232ba5",
+          "version": null
+        }
+      },
+      {
+        "package": "FZUIKit",
+        "repositoryURL": "https://github.com/flocked/FZUIKit.git",
+        "state": {
+          "branch": "main",
+          "revision": "188ad0a1859d421626e2a3b9f5a6a9336ad5bcc4",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
