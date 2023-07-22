@@ -565,12 +565,7 @@ public extension NSCollectionViewItem {
 
 extension NSCollectionViewItem {
     open override func loadView() {
-        if (self.nibName != nil) {
             self.view = NSView()
             self.observeCollectionItem()
-        } else {
-            super.loadView()
-            self.observeCollectionItem()
-        }
     }
 }
