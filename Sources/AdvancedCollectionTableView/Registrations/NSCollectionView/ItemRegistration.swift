@@ -34,14 +34,21 @@ public extension NSCollectionView {
      The following example creates a item registration for items of type NSCollectionViewItem. Each items textfield displays its element.
      
      ```
-     let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
-         item.textField.stringValue = string
+     struct GalleryItem {
+         let title: String
+         let image: NSImage
+     }
      
-        // Gets called whenever the state of the item changes (e.g. on selection)
-        item.configurationUpdateHandler = { item, state in
-            // Updates the text color based on selection state.
-            item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
-        }
+     let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { item, indexPath, galleryItem in
+     
+     item.textField.stringValue = galleryItem.title
+     item.imageView.image = galleryItem.image
+     
+    // Gets called whenever the state of the item changes (e.g. on selection)
+    item.configurationUpdateHandler = { item, state in
+        // Updates the text color based on selection state.
+        item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
+    }
      ```
      
      After you create a item registration, you pass it in to makeItem(using:for:element:), which you item from your data source’s item provider.
