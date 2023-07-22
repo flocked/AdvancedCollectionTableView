@@ -351,7 +351,6 @@ public extension NSTableRowView {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
     
-    
     internal var rowObserver: KeyValueObserver<NSTableRowView>? {
         get { getAssociatedValue(key: "NSTableRowView_rowObserver", object: self, initialValue: nil) }
         set {  set(associatedValue: newValue, key: "NSTableRowView_rowObserver", object: self) }
@@ -369,5 +368,7 @@ public extension NSTableRowView {
         rowObserver?.add(\.superview) { old, new in
             self.tableView?.setupObservingView()
         }
+       self.setNeedsUpdateConfiguration()
+       self.setCellViewsNeedUpdateConfiguration()
     }
 }

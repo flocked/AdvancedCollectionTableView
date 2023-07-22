@@ -261,6 +261,7 @@ public extension NSTableCellView {
             
             self.rowView?.observeTableRowView()
             self.tableView?.setupObservingView()
+            self.setNeedsUpdateConfiguration()
         }
     }
 }

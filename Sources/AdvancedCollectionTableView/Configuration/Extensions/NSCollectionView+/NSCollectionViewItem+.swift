@@ -490,6 +490,7 @@ public extension NSCollectionViewItem {
             guard self._collectionView != nil else { return }
             self._collectionView?.setupObservingView()
         }
+        self.setNeedsUpdateConfiguration()
     }
 
         
