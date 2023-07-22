@@ -563,6 +563,12 @@ public extension NSCollectionViewItem {
         }
     }
     
+    override func loadView() {
+        Swift.print("loadView")
+        self.view = NSView()
+        self.observeCollectionItem()
+    }
+    /*
      override var view: NSView {
          get {
              if (self.nibName != nil) {
@@ -585,6 +591,7 @@ public extension NSCollectionViewItem {
             self.observeCollectionItem()
         }
     }
+     */
     /*
     @objc internal var swizzledView: NSView {
         get {
