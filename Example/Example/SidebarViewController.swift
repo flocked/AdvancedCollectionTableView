@@ -30,21 +30,12 @@ class SidebarViewController: NSViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-                
         tableView.dataSource = self.dataSource
-        
-        /*
-        self.dataSource.rowActionProvider = { element, edge in
-            return []
-        }
-         */
         applySnapshot()
     }
     
     override func viewDidAppear() {
         super.viewDidAppear()
-        
-        
     //    tableView.becomeFirstResponder()
     }
     

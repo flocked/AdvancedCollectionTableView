@@ -23,8 +23,7 @@ class ViewController: NSViewController {
     
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
-    var observers: [NSKeyValueObservation] = []
-    lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
+    let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
         
         // Content configuration for collectionview items.
         var configuration = NSItemContentConfiguration()
