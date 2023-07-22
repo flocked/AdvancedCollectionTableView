@@ -1,6 +1,6 @@
 //
 //  CollectionViewItem.swift
-//  Example
+//  
 //
 //  Created by Florian Zand on 14.07.23.
 //
