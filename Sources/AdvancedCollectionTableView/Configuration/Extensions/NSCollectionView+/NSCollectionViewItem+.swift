@@ -565,6 +565,7 @@ public extension NSCollectionViewItem {
 
 extension NSCollectionViewItem {
     open override func loadView() {
+        Swift.print("laodView")
             self.view = NSView()
             self.observeCollectionItem()
     }
