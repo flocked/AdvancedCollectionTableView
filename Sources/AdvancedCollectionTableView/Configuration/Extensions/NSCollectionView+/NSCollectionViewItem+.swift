@@ -547,7 +547,6 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
-        
         switch collectionView?.selfSizingInvalidation {
         case .enabled:
             if let cachedLayoutAttributes = cachedLayoutAttributes {
@@ -562,62 +561,16 @@ public extension NSCollectionViewItem {
             break
         }
     }
-    
-
-    /*
-     override var view: NSView {
-         get {
-             if (self.nibName != nil) {
-                 return super.view
-             } else {
-                 if (self.isViewLoaded == false) {
-                     if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
-                         self.loadView()
-                     }
-                     if (self.isViewLoaded == false) {
-                         let newView = NSView()
-                         super.view = newView
-                     }
-                 }
-                 return super.view
-             }
-         }
-        set {
-            super.view = newValue
-            self.observeCollectionItem()
-        }
-    }
-     */
-    /*
-    @objc internal var swizzledView: NSView {
-        get {
-            if (self.nibName != nil) {
-                return self.swizzledView
-            } else {
-                if (self.isViewLoaded == false) {
-                    if (self.overrides(#selector(NSCollectionViewItem.loadView))) {
-                        self.loadView()
-                    }
-                    if (self.isViewLoaded == false) {
-                        let newView = NSView()
-                        self.swizzledView = newView
-                    }
-                }
-                return self.swizzledView
-            }
-        }
-        set {
-            self.swizzledView = newValue
-            self.observeCollectionItem()
-        }
-    }
-     */
 }
 
 extension NSCollectionViewItem {
     open override func loadView() {
-            Swift.print("loadView")
+        if (self.nibName != nil) {
             self.view = NSView()
             self.observeCollectionItem()
+        } else {
+            super.loadView()
+            self.observeCollectionItem()
+        }
     }
 }

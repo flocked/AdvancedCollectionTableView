@@ -13,13 +13,13 @@ import AdvancedCollectionTableView
 class CollectionViewItem: NSCollectionViewItem {
     
     internal let _view = NSView()
-    /*
+    
     override func loadView() {
         self.view = NSView()
         self.view.backgroundColor = .lightGray
         self.view.cornerRadius = 6.0
     }
-     */
+     
     
     
     override var isSelected: Bool {
