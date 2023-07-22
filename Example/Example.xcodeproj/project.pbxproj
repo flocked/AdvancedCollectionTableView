@@ -423,7 +423,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/flocked/AdvancedCollectionTableView.git";
 			requirement = {
-				branch = main;
+				branch = interpose;
 				kind = branch;
 			};
 		};

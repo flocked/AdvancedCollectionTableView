@@ -23,7 +23,7 @@ public extension NSTableCellView {
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
-                Self.swizzleTableCellIfNeeded()
+                self.observeTableCellView()
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
@@ -243,56 +243,29 @@ public extension NSTableCellView {
         self.isConfigurationUpdatesEnabled = true
     }
     
-    internal static var didSwizzleTableCellView: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_didSwizzle", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "NSTableCellVew_didSwizzle", object: self) }
+    internal var tableCellObserver: KeyValueObserver<NSTableCellView>? {
+        get { getAssociatedValue(key: "NSTableCellView_tableCellObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSTableCellView_tableCellObserver", object: self) }
     }
     
-    @objc internal func swizzledViewDidMoveToSuperview() {
-        if self.contentConfiguration != nil {
-            self.tableView?.usesAutomaticRowHeights = true
-        }
-        
-        if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-            self.setNeedsUpdateConfiguration()
-        }
-        
-        NSTableRowView.swizzleTableRowViewIfNeeded()
-        self.tableView?.setupObservingView()
-    }
-        
-    @objc internal static func swizzleTableCellIfNeeded(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleTableCellView == false) {
-            didSwizzleTableCellView = true
-            
-            do {
-                let hooks = [
-                    try  self.hook(#selector(NSTableCellView.viewDidMoveToSuperview),
-                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                                       store in { (object) in
-                                           self.swizzledViewDidMoveToSuperview()
-                                           
-                                           self.rowView?.swizzleTableRowViewIfNeeded()
-                                           store.original(object, store.selector)
-                                       }
-                                   },
-                    try  self.hook(#selector(prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                ]
-               try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
-            } catch {
-                Swift.print(error)
+    internal func observeTableCellView() {
+        guard tableCellObserver == nil else { return }
+        tableCellObserver = KeyValueObserver(self)
+        tableCellObserver?.add(\.superview) { old, new in
+            if self.contentConfiguration != nil {
+                self.tableView?.usesAutomaticRowHeights = true
             }
+            
+            if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+                self.setNeedsUpdateConfiguration()
+            }
+            
+            self.rowView?.observeTableRowView()
+            self.tableView?.setupObservingView()
         }
     }
 }
+      
 
 /*
     internal var isHovered: Bool {

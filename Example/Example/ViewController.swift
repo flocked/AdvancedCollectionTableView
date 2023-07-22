@@ -21,114 +21,52 @@ class ViewController: NSViewController {
     /// Sample items.
     var galleryItems: [GalleryItem] = GalleryItem.sampleItems
     
-    var dataSource: DataSource!
-
-     let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
-            
-         
-            Swift.print("itemRegistration", galleryItem.title)
-            
-            // A content configuration for items.
-            var configuration = NSItemContentConfiguration()
-            configuration.text = galleryItem.title
-            configuration.secondaryText = galleryItem.detail
-            configuration.image = NSImage(named: galleryItem.imageName)
-            
-        //    collectionViewItem.contentConfiguration = configuration
-            
-         collectionViewItem.view.backgroundColor = .lightGray
-            
-            /// Gets called when an item gets selected, hovered by mouse, etc.
-            collectionViewItem.configurationUpdateHandler = { item, state in
-                /// Updates the configuration based on if the mouse is hovering the item.
-                configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
-                configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
-                
-                /// Updates the configuration based on if the item is selected.
-                configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
-                configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
-                configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
-              //  collectionViewItem.contentConfiguration = configuration
-                
-                collectionViewItem.view.backgroundColor = state.isSelected ? .controlAccentColor : .lightGray
-
-            }
-        }
+    lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
-    // The toolbar of the window.
+    var observers: [NSKeyValueObservation] = []
+    lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
+        
+        // Content configuration for collectionview items.
+        var configuration = NSItemContentConfiguration()
+        configuration.text = galleryItem.title
+        configuration.secondaryText = galleryItem.detail
+        configuration.image = NSImage(named: galleryItem.imageName)
+
+        collectionViewItem.contentConfiguration = configuration
+        
+        /// Gets called when the item gets selected, hovered by mouse, etc.
+        collectionViewItem.configurationUpdateHandler = { item, state in
+            
+            /// Updates the configuration based on whether the mouse is hovering the item.
+            configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
+            configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
+            
+            /// Updates the configuration based on whether the item is selected.
+            configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
+            configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
+            configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
+            
+            collectionViewItem.contentConfiguration = configuration
+        }
+    }
+    
+    // Window toolbar
     lazy var toolbar = Toolbar("WindowToolbar") {
-        /// A toolbar button for reconfigurating the first collection item which reconfigurates it without reloading it (much better performance).
+        /// Toolbar item that reconfigurates the first collectionview item without reloading it which provides much better performance.
         ToolbarItem.Button("Reconfigurate", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!).onAction {
             guard let firstItem = self.galleryItems.first, let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [firstItem]) else { return }
-            
-            // Replaces the info of the first item with the new random item info.
-            firstItem.imageName = newRandomItem.imageName
-            firstItem.title = newRandomItem.title
-            firstItem.detail = newRandomItem.detail
+                        
+            // Replaces the info of the first gallery item with the new random item values.
+            firstItem.replaceInfo(with: newRandomItem)
             
             // Reconfigurates the first item.
             self.dataSource.reconfigurateElements([firstItem])
         }
-        /// A toolbar button for inserting a new random gallery item to the beginning of the collection.
-        ToolbarItem.Button("Add", image: NSImage(systemSymbolName: "plus.app")!).onAction {
-            let newRandomItem = GalleryItem.sampleItems.randomElement()!
-            let previousItems = self.galleryItems
-            self.galleryItems.insert(newRandomItem, at: 0)
-          //  self.applySnapshot(with: self.galleryItems, .animated)
-            
-            Swift.print("newRandomItem", newRandomItem.title)
-
-            
-            var newSnapShot = self.dataSource.snapshot()
-            if let first = newSnapShot.itemIdentifiers.first {
-                newSnapShot.insertItems([newRandomItem], beforeItem: first)
-            }
-            self.dataSource.apply(newSnapShot, .animated) {
-            }
-            
-            /*
-            var snapshot = Snapshot()
-            snapshot.appendSections([.main])
-            snapshot.appendItems(previousItems, toSection: .main)
-            self.dataSource.apply(snapshot, .non) {
-                self.collectionView.collectionViewLayout?.invalidateLayout()
-                snapshot = Snapshot()
-                snapshot.appendSections([.main])
-                snapshot.appendItems(self.galleryItems, toSection: .main)
-                self.dataSource.apply(snapshot, .animated) {
-                    self.collectionView.collectionViewLayout?.invalidateLayout()
-                    self.dataSource.apply(snapshot, .non) {
-                    }
-                }
-            }
-            */
-            /*
-            snapshot.appendItems(self.galleryItems, toSection: .main)
-            
-            self.dataSource.apply(snapshot, .animated) {
-                self.collectionView.collectionViewLayout?.invalidateLayout()
-                snapshot.appendItems(self.galleryItems, toSection: .main)
-                self.dataSource.apply(snapshot, .animated) {
-                    self.collectionView.collectionViewLayout?.invalidateLayout()
-                }
-            }
-            */
-            
-           
-        }
-
     }.attachedWindow(self.view.window)
     
     override func viewDidLoad() {
         
-        var layout = NSCollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 150, height: 150)
-        layout.minimumInteritemSpacing = 8.0
-        layout.sectionInset = .init(16.0)
-    
-        collectionView.collectionViewLayout = layout
-        
-        self.dataSource = DataSource(collectionView: self.collectionView, itemRegistration: itemRegistration)
+        collectionView.collectionViewLayout = .grid(columns: 2)
         
         collectionView.dataSource = self.dataSource
         
@@ -151,7 +89,7 @@ class ViewController: NSViewController {
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
-        
+
     }
     
     func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {
@@ -159,12 +97,5 @@ class ViewController: NSViewController {
         snapshot.appendSections([.main])
         snapshot.appendItems(galleryItems, toSection: .main)
         dataSource.apply(snapshot, applyOption)
-    }
-    
-    func addRandomGalleryItem() {
-        if let randomItem = GalleryItem.sampleItems.randomElement(excluding: galleryItems.isEmpty ? [] : [galleryItems.first!]) {
-            self.galleryItems.insert(randomItem, at: 0)
-        }
-        self.applySnapshot(with: self.galleryItems)
     }
 }

@@ -50,6 +50,13 @@ public extension NSCollectionView {
                                         item: itemIdentifier)
      }
      ```
+     
+     `NSCollectionViewDiffableDataSource` provides a convenient initalizer:
+     
+     ```
+     dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView, itemRegistration: itemRegistration)
+     ```
+     
      You don’t need to call ``register(_:)``, ``register(_:nib:)`` or ``register(_:forItemWithIdentifier:)``. The collection view registers your item automatically when you pass the item registration to ``makeItem(using:for:element:)``.
      
      
@@ -88,7 +95,7 @@ public extension NSCollectionView {
                 self.register(for: collectionView)
             }
             let item: Item
-            if let existingItem = collectionView.item(at: indexPath) as? Item {
+            if collectionView.isReconfiguratingItems, let existingItem = collectionView.item(at: indexPath) as? Item {
                 item = existingItem
             } else {
                 item = collectionView.makeItem(withIdentifier: self.identifier, for: indexPath) as! Item

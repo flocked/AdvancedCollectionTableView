@@ -36,8 +36,8 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                self.swizzleCollectionItemViewIfNeeded()
-                self.swizzleCollectionItemIfNeeded()
+                self.observeCollectionItem()
+
             }
             self.configurateBackgroundView()
         }
@@ -151,7 +151,8 @@ public extension NSCollectionViewItem {
         set {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
-                swizzleCollectionItemIfNeeded()
+                self.observeCollectionItem()
+
             }
             self.configurateContentView()
         }
@@ -310,8 +311,7 @@ public extension NSCollectionViewItem {
         get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
-                swizzleCollectionItemIfNeeded()
-                swizzleCollectionItemViewIfNeeded()
+                self.observeCollectionItem()
             }
             set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
@@ -458,12 +458,6 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "_cachedLayoutAttributes", object: self)
         }
     }
-            
-     internal var didSwizzleCollectionItem: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_didSwizzle", object: self, initialValue: false) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_didSwizzle", object: self) }
-    }
-
     
     @objc internal var swizzledHighlightState: NSCollectionViewItem.HighlightState {
         get { return self.highlightState }
@@ -475,115 +469,36 @@ public extension NSCollectionViewItem {
             }
         }
     }
-
-
+    
+    internal var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
+        get { getAssociatedValue(key: "NSCollectionItem_itemObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSCollectionItem_itemObserver", object: self) }
+    }
+    
+    internal func observeCollectionItem() {
+        guard self.itemObserver == nil else { return }
+        self.itemObserver = KeyValueObserver(self)
+        self.itemObserver?.add(\.isSelected) { old, new in
+            guard old != new else { return }
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
+        self.itemObserver?.add(\.highlightState) { old, new in
+            guard old != new else { return }
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
         
-    // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
-    @objc internal func swizzleCollectionItemIfNeeded(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleCollectionItem == false) {
-            self.didSwizzleCollectionItem = true
-            do {
-                let hooks = [
-                    try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                    
-                    try  self.hook(#selector(NSCollectionViewItem.viewDidLayout),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        store.original(object, store.selector)
-                        self.swizzled_viewDidLayout()
-                    }
-                },
-                    try  self.hook(#selector(NSCollectionViewItem.prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                    try  self.hook(#selector(NSCollectionViewItem.apply(_:)),
-                                           methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewLayoutAttributes) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject, NSCollectionViewLayoutAttributes) -> ()).self) {
-                    store in { (object, layoutAttributes) in
-                        self.swizzled_apply(layoutAttributes)
-                        store.original(object, store.selector, layoutAttributes)
-                    }
-                },
-                    try  self.hook(#selector(NSCollectionViewItem.preferredLayoutAttributesFitting(_:)),
-                                           methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewLayoutAttributes) -> (NSCollectionViewLayoutAttributes)).self,
-                                           hookSignature: (@convention(block) (AnyObject, NSCollectionViewLayoutAttributes) -> (NSCollectionViewLayoutAttributes)).self) {
-                    store in { (object, layoutAttributes) in
-                               return store.original(object, store.selector, layoutAttributes)
-                            }
-                },
-                    
-                    try self.hook(#selector(setter: isSelected),
-                                   methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
-                                       store in { (object, isSelected) in
-                                           let oldValue = self.isSelected
-                                           store.original(object, store.selector, isSelected)
-                                           if isSelected != oldValue {
-                                               self.setNeedsAutomaticUpdateConfiguration()
-                                           }
-                                       }
-                                   },
-
-  
-                    try  self.hook(#selector(setter: highlightState),
-                                   methodSignature: (@convention(c) (AnyObject, Selector, NSCollectionViewItem.HighlightState) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject, NSCollectionViewItem.HighlightState) -> ()).self) {
-                    store in { (object, highlightState) in
-                        let oldHighlightState = self.highlightState
-                         store.original(object, store.selector, highlightState)
-                        if (oldHighlightState != self.highlightState) {
-                            self.setNeedsAutomaticUpdateConfiguration()
-                        }
-                    }
-                },
-   
-                    ]
-                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
-            } catch {
-                Swift.print(error)
-            }
+        self.itemObserver?.add(\.view.superview) { old, new in
+            guard self._collectionView != nil else { return }
+            self._collectionView?.setupObservingView()
         }
     }
-    
-    internal var superviewObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionItem_superviewObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_superviewObserver", object: self) }
-    }
-    
-    internal var isSelectedObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "_isSelectedObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "_isSelectedObserver", object: self) }
-    }
+
         
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     internal var _collectionView: NSCollectionView? {
         self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
     }
-            
-    // Detect when the itemView gets added to the collectionView to add an observingView to the collectionView. The observerVjew is used to observe the window state (for isEmphasized) and mouse location (for isHovered).
-    @objc internal func swizzleCollectionItemViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        if let _: NSKeyValueObservation = getAssociatedValue(key: "NSCollectionViewItem_superviewObserver", object: self.view) {
-        } else {
-            let observer = self.view.observeChanges(for: \.superview) { [weak self]  old, new in
-                guard let self = self else { return }
-                self._collectionView?.setupObservingView()
-            }
-            set(associatedValue: observer, key: "NSCollectionViewItem_superviewObserver", object: self.view)
-        }
-    }
+
     
     internal var isConfigurationUpdatesEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
@@ -633,6 +548,7 @@ public extension NSCollectionViewItem {
     }
     
     @objc internal func swizzled_viewDidLayout() {
+        
         switch collectionView?.selfSizingInvalidation {
         case .enabled:
             if let cachedLayoutAttributes = cachedLayoutAttributes {
@@ -667,10 +583,10 @@ public extension NSCollectionViewItem {
          }
         set {
             super.view = newValue
-            self.swizzleCollectionItemViewIfNeeded()
+            self.observeCollectionItem()
         }
     }
-    
+    /*
     @objc internal var swizzledView: NSView {
         get {
             if (self.nibName != nil) {
@@ -690,7 +606,8 @@ public extension NSCollectionViewItem {
         }
         set {
             self.swizzledView = newValue
-            self.swizzleCollectionItemViewIfNeeded()
+            self.observeCollectionItem()
         }
     }
+     */
 }

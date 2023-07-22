@@ -56,7 +56,7 @@ public extension NSTableRowView {
         set {
             set(associatedValue: newValue, key: "NSTableRowVew_backgroundConfiguration", object: self)
             if (newValue != nil) {
-                Self.swizzleTableRowViewIfNeeded()
+                self.observeTableRowView()
             }
             self.configurateBackgroundView()
         }
@@ -344,12 +344,6 @@ public extension NSTableRowView {
         self.isConfigurationUpdatesEnabled = true
     }
     
-    internal static var didSwizzleTableRowView: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_didSwizzle", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "NSTableRowView_didSwizzle", object: self)
-        }
-    }
-    
     internal func setCellViewsNeedUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsUpdateConfiguration() })
     }
@@ -359,64 +353,22 @@ public extension NSTableRowView {
     }
     
     
-    @objc internal var swizzledIsSelected: Bool {
-        get { return self.isSelected }
-        set {
-            let oldValue = self.isSelected
-            self.swizzledIsSelected = newValue
-            if oldValue != self.isSelected {
-                self.configurateBackgroundView()
-                self.setNeedsAutomaticUpdateConfiguration()
-                self.setCellViewsNeedAutomaticUpdateConfiguration()
-            }
-        }
+    internal var rowObserver: KeyValueObserver<NSTableRowView>? {
+        get { getAssociatedValue(key: "NSTableRowView_rowObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "NSTableRowView_rowObserver", object: self) }
     }
         
-    @objc internal static func swizzleTableRowViewIfNeeded(_ shouldSwizzle: Bool = true) {
-        if (didSwizzleTableRowView == false) {
-            didSwizzleTableRowView = true
-            
-            do {
-                let hooks = [
-                    try  self.hook(#selector(NSTableRowView.viewDidMoveToSuperview),
-                                   methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                                       store in { (object) in
-                                           self.swizzledViewDidMoveToSuperview()
-                                           store.original(object, store.selector)
-                                       }
-                                   },
-                    
-                    try self.hook(#selector(setter: isSelected),
-                                   methodSignature: (@convention(c) (AnyObject, Selector, Bool) -> ()).self,
-                                   hookSignature: (@convention(block) (AnyObject, Bool) -> ()).self) {
-                                       store in { (object, isSelected) in
-                                           let oldValue = self.isSelected
-                                           store.original(object, store.selector, isSelected)
-                                           if oldValue != isSelected {
-                                               self.configurateBackgroundView()
-                                               self.setNeedsAutomaticUpdateConfiguration()
-                                               self.setCellViewsNeedAutomaticUpdateConfiguration()
-                                           }
-                                       }
-                                   },
-                    try  self.hook(#selector(prepareForReuse),
-                                           methodSignature: (@convention(c) (AnyObject, Selector) -> ()).self,
-                                           hookSignature: (@convention(block) (AnyObject) -> ()).self) {
-                    store in { (object) in
-                        self.swizzled_PrepareForReuse()
-                        store.original(object, store.selector)
-                    }
-                },
-                ]
-                try hooks.forEach({ _ = try (shouldSwizzle) ? $0.apply() : $0.revert() })
-            } catch {
-                Swift.print(error)
-            }
+   internal func observeTableRowView() {
+        guard rowObserver == nil else { return }
+        rowObserver = KeyValueObserver(self)
+        rowObserver?.add(\.isSelected) { old, new in
+            guard old != new else { return }
+            self.configurateBackgroundView()
+            self.setNeedsAutomaticUpdateConfiguration()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
-    }
-    
-    @objc internal func swizzledViewDidMoveToSuperview() {
-        self.tableView?.setupObservingView()
+        rowObserver?.add(\.superview) { old, new in
+            self.tableView?.setupObservingView()
+        }
     }
 }

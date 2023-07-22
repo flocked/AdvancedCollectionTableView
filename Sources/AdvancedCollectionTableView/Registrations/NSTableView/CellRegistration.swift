@@ -57,6 +57,12 @@ public extension NSTableView {
      }
      ```
      
+     `NSTableViewDiffableDataSource` provides a convenient initalizer:
+     
+     ```
+     dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
+     ```
+     
      You don’t need to cell *register(_:)*, *register(_:nib:)* or *register(_:forCellWithIdentifier:)*. The table view registers your cell automatically when you pass the cell registration to makeCell(using:for:element:).
      
      - Important: Do not create your cell registration inside a *NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
