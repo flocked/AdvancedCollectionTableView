@@ -88,3 +88,46 @@ An extended `NSCollectionViewDiffableDataSource that provides:
 
 ## AdvanceTableViewDiffableDataSource
 An extended `NSTableViewDiffableDataSource. **Currently not working.**
+
+## Quicklook for NSTableView & NSCollectionView
+`isQuicklookPreviewable` enables quicklook of NSCollectionView items and NSTableView cells/rows.
+
+There are several ways to provide quicklook previews:
+- NSCollectionViewItems's & NSTableCellView's `quicklookPreview`
+```
+collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
+```
+- NSCollectionView's datasource `collectionView(_:,  quicklookPreviewForItemAt:)` & NSTableView's datasource `tableView(_:,  quicklookPreviewForRow:)`
+```
+func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
+    let galleryItem = galleryItems[indexPath.item]
+    return galleryItem.fileURL
+}
+```
+- A NSCollectionViewDiffableDataSource & NSTableViewDiffableDataSource with an ItemIdentifierType conforming to `QuicklookPreviewable`
+```
+struct GalleryItem: QuicklookPreviewable {
+    let title: String
+    let imageURL: URL
+    
+    // The file url for quicklook preview.
+    let previewItemURL: URL? {
+    return imageURL
+    }
+    
+    let previewItemTitle: String? {
+    return title
+    }
+}
+     
+collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView) { collectionView, indexPath, galleryItem in
+     
+let collectionViewItem = collectionView.makeItem(withIdentifier: "FileCollectionViewItem", for: indexPath)
+collectionViewItem.textField?.stringValue = galleryItem.title
+collectionViewItem.imageView?.image = NSImage(contentsOf: galleryItem.imageURL)
+
+return collectionViewItem
+}
+// …
+collectionView.quicklookSelectedItems()
+```
