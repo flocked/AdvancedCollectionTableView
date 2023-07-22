@@ -90,7 +90,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
 An extended `NSTableViewDiffableDataSource. **Currently not working.**
 
 ## Quicklook for NSTableView & NSCollectionView
-`isQuicklookPreviewable` enables quicklook of NSCollectionView items and NSTableView cells/rows.
+NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of items/cells.
 
 There are several ways to provide quicklook previews:
 - NSCollectionViewItems's & NSTableCellView's `quicklookPreview`
