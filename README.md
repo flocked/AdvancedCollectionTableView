@@ -99,7 +99,7 @@ There are several ways to provide quicklook previews:
 ```
 collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 ```
-- NSCollectionView's datasource `collectionView(_:,  quicklookPreviewForItemAt:)` & NSTableView's datasource `tableView(_:,  quicklookPreviewForRow:)`
+- NSCollectionView's datasource `collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath)` & NSTableView's datasource `tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int)`
 ```
 func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
     let galleryItem = galleryItems[indexPath.item]
