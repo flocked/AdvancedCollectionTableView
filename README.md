@@ -70,8 +70,7 @@ A content configuration for a collectionview item.
  ```
 
 ## NSCollectionView reconfigurateItems
-Updates the data for the items at the index paths you specify, preserving the existing cells for the items.
-To update the contents of existing (including prefetched) cells without replacing them with new cells, use this method instead of `reloadItems(at:)`.
+Updates the data for the items without reloading them.
 ```
 collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ```
