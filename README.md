@@ -7,9 +7,15 @@ Take a look at the included example project which demonstrates `itemRegistration
 ## ItemRegistration & CellRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
 ```
-let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, String> { item, indexPath, string in
+struct GalleryItem {
+    let title: String
+    let image: NSImage
+}
 
-    item.textField.stringValue = string
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { item, indexPath, galleryItem in
+
+    item.textField.stringValue = galleryItem.title
+    item.imageView.image = galleryItem.image
     
     // Gets called whenever the state of the item changes (e.g. on selection)
     item.configurationUpdateHandler = { item, state in
