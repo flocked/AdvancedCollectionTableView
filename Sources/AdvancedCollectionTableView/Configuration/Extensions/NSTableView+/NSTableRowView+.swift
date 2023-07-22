@@ -8,7 +8,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import InterposeKit
 
 public extension NSTableRowView {
     /**
