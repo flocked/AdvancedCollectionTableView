@@ -31,8 +31,6 @@ class SidebarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self.dataSource
-        self.tableView.allowsEmptySelection = false
-        self.dataSource.allowsDeleting = true
         applySnapshot()
     }
     
