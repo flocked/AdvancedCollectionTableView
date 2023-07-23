@@ -124,15 +124,10 @@ struct GalleryItem: QuicklookPreviewable {
     return title
     }
 }
-     
+  
 collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView) { 
 collectionView, indexPath, galleryItem in
-     
-let collectionViewItem = collectionView.makeItem(withIdentifier: "FileCollectionViewItem", for: indexPath)
-collectionViewItem.textField?.stringValue = galleryItem.title
-collectionViewItem.imageView?.image = NSImage(contentsOf: galleryItem.imageURL)
-
-return collectionViewItem
+// configurate data source
 }
 
 // …
