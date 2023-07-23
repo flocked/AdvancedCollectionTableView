@@ -10,7 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSCollectionViewItem {
-    
     /**
      The current background configuration of the item.
      
@@ -330,15 +329,6 @@ public extension NSCollectionViewItem {
         return _collectionView?.indexPath(for: self)
     }
     
-    internal func select() {
-        if self.isSelected == false {
-            if let collectionView = self._collectionView, let indexPath = collectionView.indexPath(for: self) {
-                collectionView.deselectAll(nil)
-                collectionView.selectItems(at: Set([indexPath]), scrollPosition: [])
-            }
-        }
-    }
-    
     internal var layoutAttributes: NSCollectionViewLayoutAttributes? {
         if let indexPath = indexPath {
             return  collectionView?.layoutAttributesForItem(at: indexPath)
@@ -467,7 +457,7 @@ public extension NSCollectionViewItem {
         }
         self.setNeedsUpdateConfiguration()
     }
-
+    
         
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     internal var _collectionView: NSCollectionView? {
