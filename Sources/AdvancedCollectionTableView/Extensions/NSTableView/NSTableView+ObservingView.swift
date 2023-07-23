@@ -128,7 +128,10 @@ public extension NSTableViewDiffableDataSource {
                             snapshot.deleteItems(elementsToDelete)
                             self.apply(snapshot, .animated)
                             if hasRows {
-                                let row = selecedRowIndexes.first ?? 0
+                                var row = 0
+                                if let first = selecedRowIndexes.first, first > 0 {
+                                    row = first - 1
+                                }
                                 tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
                             }
                             return nil
