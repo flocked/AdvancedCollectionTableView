@@ -212,15 +212,7 @@ public extension NSTableRowView {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSTableRowConfigurationState {
-        var emphasizedState = NSTableRowConfigurationState.EmphasizedState()
-        if isTableViewFirstResponder {
-            emphasizedState.insert(.isFirstResponder)
-        }
-        if isEmphasized {
-            emphasizedState.insert(.isKeyWindow)
-        }
-        
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, emphasizedState: emphasizedState, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
     

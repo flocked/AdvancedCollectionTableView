@@ -17,20 +17,6 @@ import FZUIKit
  You can create your own custom states to add to a row configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
  */
 public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
-    /// The emphasized state.
-    public struct EmphasizedState: OptionSet, Hashable {
-        public let rawValue: UInt
-        /// The window of the item is key.
-        public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-        /// The collection view of the item is first responder.
-        public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-        
-        /// Creates a units structure with the specified raw value.
-        public init(rawValue: UInt) {
-            self.rawValue = rawValue
-        }
-    }
-    
     /// A Boolean value that indicates whether the row is in a selected state.
     public var isSelected: Bool = false
     
@@ -52,14 +38,30 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the row is in a emphasized state.
     public var isEmphasized: Bool = false
     
-    /// The emphasized state.
-    public var emphasizedState: EmphasizedState = []
-    
     /// A Boolean value that indicates whether the next row is in a selected state.
     public var isNextRowSelected: Bool = false
     
     /// A Boolean value that indicates whether the previous row is in a selected state.
     public var isPreviousRowSelected: Bool = false
+    
+    /*
+     /// The emphasized state.
+     public struct EmphasizedState: OptionSet, Hashable {
+         public let rawValue: UInt
+         /// The window of the item is key.
+         public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+         /// The collection view of the item is first responder.
+         public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+         
+         /// Creates a units structure with the specified raw value.
+         public init(rawValue: UInt) {
+             self.rawValue = rawValue
+         }
+     }
+     
+     /// The emphasized state.
+     public var emphasizedState: EmphasizedState = []
+     */
 
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
@@ -76,7 +78,6 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
          isEditing: Bool = false,
          isExpanded: Bool = false,
          isEmphasized: Bool = false,
-          emphasizedState: EmphasizedState = [],
          isNextRowSelected: Bool = false,
          isPreviousRowSelected: Bool = false) {
         self.isSelected = isSelected
@@ -86,7 +87,6 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
         self.isEditing = isEditing
         self.isExpanded = isExpanded
         self.isEmphasized = isEmphasized
-        self.emphasizedState = emphasizedState
         self.isNextRowSelected = isNextRowSelected
         self.isPreviousRowSelected = isPreviousRowSelected
     }

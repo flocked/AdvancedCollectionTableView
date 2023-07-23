@@ -220,14 +220,7 @@ public extension NSCollectionViewItem {
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
     var configurationState: NSItemConfigurationState {
-        var emphasizedState = NSItemConfigurationState.EmphasizedState()
-        if self.isEmphasized {
-            emphasizedState.insert(.isKeyWindow)
-        }
-        if self.isCollectionViewFirstResponder {
-            emphasizedState.insert(.isFirstResponder)
-        }
-        let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized, emphasizedState: emphasizedState)
+        let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized)
         /*
          if let listConfiguration = self.collectionView?.listConfiguration {
          state["listSelectionAppearance"] = listConfiguration.resolvedSelectionAppearance

@@ -16,21 +16,6 @@ import FZUIKit
  You can create your own custom states to add to a item configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
  */
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
-    /// The emphasized state.
-    public struct EmphasizedState: OptionSet, Hashable {
-        public let rawValue: UInt
-        /// The window of the item is key.
-        public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-        /// The collection view of the item is first responder.
-        public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-        
-        /// Creates a units structure with the specified raw value.
-        public init(rawValue: UInt) {
-            self.rawValue = rawValue
-        }
-    }
-
-    
     /// A Boolean value that indicates whether the item is in a selected state.
     public var isSelected: Bool = false
     
@@ -39,9 +24,6 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the item is in a emphasized state.
     public var isEmphasized: Bool = false
-    
-    /// The emphasized state.
-    public var emphasizedState: EmphasizedState = []
     
     /// A Boolean value that indicates whether the item is in a hovered state (if the mouse is above the item).
     public var isHovered: Bool = false
@@ -55,6 +37,25 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the item is in a expanded state.
     internal var isExpanded: Bool = false
     
+    /*
+     /// The emphasized state.
+     public struct EmphasizedState: OptionSet, Hashable {
+         public let rawValue: UInt
+         /// The window of the item is key.
+         public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+         /// The collection view of the item is first responder.
+         public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+         
+         /// Creates a units structure with the specified raw value.
+         public init(rawValue: UInt) {
+             self.rawValue = rawValue
+         }
+     }
+     
+     /// The emphasized state.
+     public var emphasizedState: EmphasizedState = []
+     */
+    
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
@@ -67,13 +68,11 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         isSelected: Bool = false,
         highlight: NSCollectionViewItem.HighlightState = .none,
         isEmphasized: Bool = false,
-        emphasizedState: EmphasizedState = [],
         isHovered: Bool = false
     ) {
         self.isSelected = isSelected
         self.highlight = highlight
         self.isEmphasized = isEmphasized
-        self.emphasizedState = emphasizedState
         self.isHovered = isHovered
     }
     
@@ -84,8 +83,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
          isEditing: Bool,
          isExpanded: Bool,
          highlight: NSCollectionViewItem.HighlightState,
-         isEmphasized: Bool,
-        emphasizedState: EmphasizedState = []) {
+         isEmphasized: Bool) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isFocused = isFocused
@@ -94,7 +92,6 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isExpanded = isExpanded
         self.highlight = highlight
         self.isEmphasized = isEmphasized
-        self.emphasizedState = emphasizedState
     }
 }
 
