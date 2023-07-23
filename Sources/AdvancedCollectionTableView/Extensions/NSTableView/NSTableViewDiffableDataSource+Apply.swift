@@ -17,7 +17,7 @@ public extension NSTableViewDiffableDataSource {
      - Parameters option:  Option how to apply the snapshot to the table view.
      - Parameters completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
      */
-    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption = .withoutAnimation, completion: (() -> Void)? = nil) {
+    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption, completion: (() -> Void)? = nil) {
         switch option {
         case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
