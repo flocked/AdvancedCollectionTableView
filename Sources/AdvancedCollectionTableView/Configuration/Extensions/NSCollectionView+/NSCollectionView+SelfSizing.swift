@@ -5,6 +5,8 @@
 //  Created by Florian Zand on 23.07.23.
 //
 
+// Currently not implemented
+
 /*
 import AppKit
 import FZSwiftUtils
