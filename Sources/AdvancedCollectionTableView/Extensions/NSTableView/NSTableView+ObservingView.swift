@@ -102,7 +102,7 @@ public extension NSTableViewDiffableDataSource {
         get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
         set {
             guard newValue != allowsDeleting else { return }
-            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_allowsDeleting ", object: self)
+            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_allowsDeleting", object: self)
             self.setupKeyDownMonitor()
         }
     }
