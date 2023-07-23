@@ -76,7 +76,7 @@ A content configuration for a collectionview item.
  ```
 
 ## NSCollectionView reconfigurateItems
-Updates the data for the items without reloading them.
+Updates the data for the items without reloading them (`reloadItems(at: _)`
 ```
 collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ```
