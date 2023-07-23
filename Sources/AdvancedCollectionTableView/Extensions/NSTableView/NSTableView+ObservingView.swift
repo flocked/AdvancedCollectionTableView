@@ -127,7 +127,7 @@ public extension NSTableViewDiffableDataSource {
                             let hasRows = (snapshot.itemIdentifiers.count - elementsToDelete.count) > 0
                             snapshot.deleteItems(elementsToDelete)
                             self.apply(snapshot, .usingReloadData)
-                            if tableView.allowsEmptySelection == false, hasRows {
+                            if tableView.allowsEmptySelection == false {
                                 var row = 0
                                 if let first = selecedRowIndexes.first, first > 0 {
                                     row = first - 1
