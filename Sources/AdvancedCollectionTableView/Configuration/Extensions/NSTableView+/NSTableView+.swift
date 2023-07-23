@@ -11,17 +11,13 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSTableView {
-    internal func removeHoveredRow() {
-        self.hoveredRowView = nil
-    }
-    
     internal var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSTableView_isEmphasized", object: self, initialValue: false) }
         set {
             guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableView_isEmphasized", object: self)
             if newValue == false {
-                self.removeHoveredRow()
+                self.hoveredRowView = nil
             }
             self.visibleRows(makeIfNecessary: false).forEach({
                 $0.setNeedsAutomaticUpdateConfiguration()

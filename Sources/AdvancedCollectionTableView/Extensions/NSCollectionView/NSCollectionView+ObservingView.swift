@@ -22,24 +22,10 @@ internal extension NSCollectionView {
             let previousHoveredtem = hoveredItem
             set(weakAssociatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
             
-            if let previousHoveredtem = previousHoveredtem {
-                previousHoveredtem.isHovered = false
-            //    hoverHandlers?.didEndHovering?(previousHoveredtem)
-            }
-            
-            if let hoveredItem = newValue {
-                hoveredItem.isHovered = true
-           //     hoverHandlers?.isHovering?(hoveredItem)
-            }
+            previousHoveredtem?.isHovered = false
+            newValue?.isHovered = true
         }
     }
-    /*
-    var hoverHandlers: HoverHandlers? {
-        get { getAssociatedValue(key: "NSCollectionView_hoveringHandlers", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_hoveringHandlers", object: self)
-        }
-    }
-     */
         
     func updateHoveredItem(_ event: NSEvent) {
         let location = event.location(in: self)

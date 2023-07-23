@@ -9,24 +9,6 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableView {
-    /// Handlers that get called whenever the mouse is hovering a rnow.
-    struct RowHoverHandlers {
-        /// The handler that gets called whenever the mouse is hovering a row.
-        var isHovering: ((_ row: NSTableRowView) -> ())?
-        /// The handler that gets called whenever the mouse did end hovering a row.
-        var didEndHovering: ((_ row: NSTableRowView) -> ())?
-    }
-    
-    /// Handlers that get called whenever the mouse is hovering a rnow.
-    var rowHoverHandlers: RowHoverHandlers {
-        get { getAssociatedValue(key: "NSTableView_rowHoverHandlers", object: self, initialValue: RowHoverHandlers()) }
-        set { set(associatedValue: newValue, key: "NSTableView_rowHoverHandlers", object: self)
-            let shouldObserve = (newValue.isHovering != nil || newValue.didEndHovering != nil)
-            self.setupObservingView(shouldObserve: shouldObserve)
-        }
-    }
-}
 
 internal extension NSTableView {
     func updateHoveredRow(_ mouseLocation: CGPoint) {
@@ -47,7 +29,7 @@ internal extension NSTableView {
                 
                 self.observingView?.mouseHandlers.exited = { [weak self] event in
                     guard let self = self else { return true }
-                    self.removeHoveredRow()
+                    self.hoveredRowView = nil
                     return true
                 }
                 
@@ -79,17 +61,10 @@ internal extension NSTableView {
             let previousHovered = hoveredRowView
             set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
             
-            if let previousHovered = previousHovered {
-                previousHovered.setNeedsAutomaticUpdateConfiguration()
-                previousHovered.setCellViewsNeedAutomaticUpdateConfiguration()
-                rowHoverHandlers.didEndHovering?(previousHovered)
-            }
-            
-            if let hoveredRowView = newValue {
-                hoveredRowView.setNeedsAutomaticUpdateConfiguration()
-                hoveredRowView.setCellViewsNeedAutomaticUpdateConfiguration()
-                rowHoverHandlers.isHovering?(hoveredRowView)
-            }
+            previousHovered?.setNeedsAutomaticUpdateConfiguration()
+            previousHovered?.setCellViewsNeedAutomaticUpdateConfiguration()
+            newValue?.setNeedsAutomaticUpdateConfiguration()
+            newValue?.setCellViewsNeedAutomaticUpdateConfiguration()
         }
     }
 }
