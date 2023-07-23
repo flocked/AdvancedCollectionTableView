@@ -24,7 +24,6 @@ class ViewController: NSViewController {
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
     let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
-        
         // Content configuration for collectionview items.
         var configuration = NSItemContentConfiguration()
         configuration.text = galleryItem.title
@@ -32,7 +31,7 @@ class ViewController: NSViewController {
         configuration.image = NSImage(named: galleryItem.imageName)
 
         collectionViewItem.contentConfiguration = configuration
-        
+
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
             /// Updates the configuration based on whether the mouse is hovering the item.
