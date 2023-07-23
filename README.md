@@ -92,9 +92,6 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - Providing a right click menu for selected items via `menuProvider` block.
  - Handler for pinching of the collection view via `pinchHandler`.
 
-## AdvanceTableViewDiffableDataSource
-An extended `NSTableViewDiffableDataSource. **Currently not working.**
-
 ## Quicklook for NSTableView & NSCollectionView
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of items/cells.
 
