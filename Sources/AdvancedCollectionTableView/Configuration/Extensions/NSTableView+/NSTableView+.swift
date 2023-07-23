@@ -30,22 +30,21 @@ public extension NSTableView {
             })
         }
     }
+        
+    internal var firstResponderObserver: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
+    }
     
-    var _isFirstResponder: Bool {
-        get { getAssociatedValue(key: "_NSTableView__isFirstResponder", object: self, initialValue: false) }
-        set {
-            guard newValue != _isFirstResponder else { return }
-            set(associatedValue: newValue, key: "_NSTableView__isFirstResponder", object: self)
+    internal func setupTableViewFirstResponderObserver() {
+        guard firstResponderObserver == nil else { return }
+        firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
+            guard old != new else { return }
+            guard (old == self && new != self) || (old != self && new == self) else { return }
             self.visibleRows(makeIfNecessary: false).forEach({
                 $0.setNeedsAutomaticUpdateConfiguration()
                 $0.setCellViewsNeedAutomaticUpdateConfiguration()
             })
-        }
-    }
-    
-    internal func setupTableViewFirstResponderObserver() {
-        self.firstResponderHandler = { isFirstResponder in
-            self._isFirstResponder = isFirstResponder
-        }
+        })
     }
 }
