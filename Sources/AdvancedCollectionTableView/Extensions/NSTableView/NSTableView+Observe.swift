@@ -11,11 +11,6 @@ import FZUIKit
 
 
 internal extension NSTableView {
-    func updateHoveredRow(_ mouseLocation: CGPoint) {
-        let newHoveredRowView = self.rowView(at: mouseLocation)
-        self.hoveredRowView = newHoveredRowView
-    }
-    
     func setupObservingView(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observingView == nil) {
@@ -37,7 +32,8 @@ internal extension NSTableView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        self.updateHoveredRow(location)
+                        let newHoveredRowView = self.rowView(at: location)
+                        self.hoveredRowView = newHoveredRowView
                     }
                     return true
                 }

@@ -26,13 +26,7 @@ internal extension NSCollectionView {
             newValue?.isHovered = true
         }
     }
-        
-    func updateHoveredItem(_ location: CGPoint) {
-        let mouseItem = self.subviews.first(where: {
-            $0.frame.contains(location) && $0.parentController is NSCollectionViewItem})?.parentController as? NSCollectionViewItem
-        hoveredItem = mouseItem
-    }
-        
+                
     func setupObservingView(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observingView == nil) {
@@ -54,7 +48,9 @@ internal extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        self.updateHoveredItem(location)
+                        let mouseItem = self.subviews.first(where: {
+                            $0.frame.contains(location) && $0.parentController is NSCollectionViewItem})?.parentController as? NSCollectionViewItem
+                        self.hoveredItem = mouseItem
                     }
                     return true
                 }
