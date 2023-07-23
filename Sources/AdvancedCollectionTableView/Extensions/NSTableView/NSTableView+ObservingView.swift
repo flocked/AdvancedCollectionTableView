@@ -127,7 +127,7 @@ public extension NSTableViewDiffableDataSource {
                             snapshot.deleteItems(elementsToDelete)
                             self.apply(snapshot, .usingReloadData)
                             if tableView.allowsEmptySelection == false {
-                                let row = (selecedRowIndexes.first ?? 1) - 1
+                                let row = (selecedRowIndexes.first ?? 0) 
                                 tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
                                 if tableView.allowsMultipleSelection {
                                     let selectedRowIndexes = tableView.selectedRowIndexes
