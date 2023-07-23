@@ -33,18 +33,37 @@ public extension NSCollectionView {
      The mode that the table view uses for invalidating the size of self-sizing items.
      */
     var selfSizingInvalidation: SelfSizingInvalidation {
-        get {
-            let rawValue: Int = getAssociatedValue(key: "NSCollectionView_selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.disabled.rawValue)
-            return SelfSizingInvalidation(rawValue: rawValue)!
-        }
+        get { return getAssociatedValue(key: "NSCollectionView_selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.disabled) }
         set {
-            self.indexPathsForVisibleItems()
-            set(associatedValue: newValue.rawValue, key: "NSCollectionView_selfSizingInvalidation", object: self)
+            set(associatedValue: newValue, key: "NSCollectionView_selfSizingInvalidation", object: self)
+            if newValue != .disabled {
+                NSCollectionViewItem.swizzleCollectionViewItemIfNeeded()
+            }
         }
     }
 }
 
-internal extension NSCollectionViewItem {    
+internal extension NSCollectionViewItem {
+    static var didSwizzleCollectionViewItem: Bool {
+        get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzleCollectionViewItem", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzleCollectionViewItem", object: self) }
+    }
+    
+    static func swizzleCollectionViewItemIfNeeded() {
+        if didSwizzleCollectionViewItem == false {
+            didSwizzleCollectionViewItem = true
+            do {
+                _ = try Swizzle(NSCollectionViewItem.self) {
+                        #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
+                        #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
+                        #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
+                }
+            } catch {
+                Swift.print(error)
+            }
+        }
+    }
+    
     @objc func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
         self.cachedLayoutAttributes = layoutAttributes
     }
