@@ -11,27 +11,6 @@ import FZUIKit
 
 public extension NSTableRowView {
     /**
-     Retrieves a default content configuration for the row’s style.
-     
-     The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
-     
-     ```
-     var content = rowView.defaultBackgroundConfiguration()
-     
-     // Configure content.
-     content.backgroundColor = .controlAccentColor
-     content.cornerRadius = 4.0
-     
-     rowView.backgroundConfiguration = content
-     ```
-     
-     - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
-     */
-    func defaultBackgroundConfiguration() -> NSTableRowContentConfiguration {
-        return NSTableRowContentConfiguration.default()
-    }
-    
-    /**
      The current background configuration of the row.
      
      Using a background configuration, you can obtain system default background styling for a variety of different row states. Create a background configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
