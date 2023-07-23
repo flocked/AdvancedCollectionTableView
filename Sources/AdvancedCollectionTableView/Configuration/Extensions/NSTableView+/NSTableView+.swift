@@ -19,7 +19,7 @@ public extension NSTableView {
             if newValue == false {
                 self.hoveredRowView = nil
             }
-            self.visibleRows(makeIfNecessary: false).forEach({
+            self.visibleRows().forEach({
                 $0.setNeedsAutomaticUpdateConfiguration()
                 $0.setCellViewsNeedAutomaticUpdateConfiguration()
             })
@@ -36,7 +36,7 @@ public extension NSTableView {
         firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
             guard old != new else { return }
             guard (old == self && new != self) || (old != self && new == self) else { return }
-            self.visibleRows(makeIfNecessary: false).forEach({
+            self.visibleRows().forEach({
                 $0.setNeedsAutomaticUpdateConfiguration()
                 $0.setCellViewsNeedAutomaticUpdateConfiguration()
             })
