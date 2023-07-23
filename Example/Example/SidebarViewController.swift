@@ -31,6 +31,7 @@ class SidebarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self.dataSource
+        self.dataSource.allowsDeleting = true
         applySnapshot()
     }
     

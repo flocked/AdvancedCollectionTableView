@@ -112,6 +112,8 @@ public extension NSTableViewDiffableDataSource {
             if keyDownMonitor == nil {
                 keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self else { return event }
+                    guard event.keyCode ==  51 else { return event }
+                    Swift.print("keyDown", (NSApp.keyWindow?.initialFirstResponder as? NSTableView) != nil)
                     if allowsDeleting, let tableView =  (NSApp.keyWindow?.initialFirstResponder as? NSTableView), tableView.dataSource === self {
                        let elementsToDelete = self.itemIdentifiers(for: tableView.selectedRowIndexes.map({$0}))
                         if (elementsToDelete.isEmpty == false) {
