@@ -3,12 +3,12 @@
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
 
 Take a look at the included example project which demonstrates:
-- `itemRegistration`
-- `cellRegistration`
+- NSCollectionView `itemRegistration` 
+- NSTableView `cellRegistration`
 - `NSItemContentConfiguration`
 - `NSTableCellContentConfiguration`
 - `AdvanceColllectionViewDiffableDataSource`
-- Collection view `reconfiguratingItems`.
+- NSCollectionView `reconfiguratingItems(at: _)`.
 
 ## ItemRegistration & CellRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
