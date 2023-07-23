@@ -257,24 +257,3 @@ public extension NSTableCellView {
         }
     }
 }
-      
-
-/*
-    internal var isHovered: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_isHovered", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isHovered else { return }
-            set(associatedValue: newValue, key: "NSTableCellVew_isHovered", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
-    internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_isEmphasized", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "NSTableCellVew_isEmphasized", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
- */

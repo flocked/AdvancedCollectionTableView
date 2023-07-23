@@ -11,34 +11,6 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSTableView {
-    /**
-     Constants that describe modes for invalidating the size of self-sizing table view items.
-     
-     Use these constants with the ``selfSizingInvalidation`` property.
-     
-     - Parameters:
-     - disabled: A mode that disables self-sizing invalidation.
-     - enabled: A mode that enables manual self-sizing invalidation.
-     - enabledIncludingConstraints: A mode that enables automatic self-sizing invalidation after Auto Layout changes.
-     */
-    enum SelfSizingInvalidation: Int {
-        case disabled = 0
-        case enabledUsingConstraints = 1
-    }
-    
-    /**
-     The mode that the table view uses for invalidating the size of self-sizing cells..
-     */
-    var selfSizingInvalidation: SelfSizingInvalidation {
-        get {
-            let rawValue: Int = getAssociatedValue(key: "NSTableView_selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.enabledUsingConstraints.rawValue)
-            return SelfSizingInvalidation(rawValue: rawValue)!
-        }
-        set {
-            set(associatedValue: newValue.rawValue, key: "NSTableView_selfSizingInvalidation", object: self)
-        }
-    }
-        
     internal func removeHoveredRow() {
         self.hoveredRowView?.isHovered = false
         self.hoveredRowView = nil
@@ -81,6 +53,34 @@ public extension NSTableView {
 
 
 /*
+ /**
+  Constants that describe modes for invalidating the size of self-sizing table view items.
+  
+  Use these constants with the ``selfSizingInvalidation`` property.
+  
+  - Parameters:
+  - disabled: A mode that disables self-sizing invalidation.
+  - enabled: A mode that enables manual self-sizing invalidation.
+  - enabledIncludingConstraints: A mode that enables automatic self-sizing invalidation after Auto Layout changes.
+  */
+ enum SelfSizingInvalidation: Int {
+     case disabled = 0
+     case enabledUsingConstraints = 1
+ }
+ 
+ /**
+  The mode that the table view uses for invalidating the size of self-sizing cells..
+  */
+ var selfSizingInvalidation: SelfSizingInvalidation {
+     get {
+         let rawValue: Int = getAssociatedValue(key: "NSTableView_selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.enabledUsingConstraints.rawValue)
+         return SelfSizingInvalidation(rawValue: rawValue)!
+     }
+     set {
+         set(associatedValue: newValue.rawValue, key: "NSTableView_selfSizingInvalidation", object: self)
+     }
+ }
+ 
  func setupObservers(shouldObserve: Bool = true) {
      self.setupSelectionObserver(shouldObserve: shouldObserve)
      self.setupObservingView(shouldObserve: shouldObserve)
