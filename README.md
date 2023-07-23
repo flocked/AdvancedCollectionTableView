@@ -2,7 +2,7 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
 
-Take a look at the included example project which demonstrates `itemRegistration`, `cellRegistration`, `NSItemContentConfiguration`, `AdvanceColllectionViewDiffableDataSource` and reloading of items.
+Take a look at the included example project which demonstrates `itemRegistration`, `cellRegistration`, `NSItemContentConfiguration`, `AdvanceColllectionViewDiffableDataSource` and reconfigurating items.
 
 ## ItemRegistration & CellRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
