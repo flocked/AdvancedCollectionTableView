@@ -444,13 +444,6 @@ public extension NSCollectionViewItem {
         return nil
     }
     
-    internal var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
-        get { getAssociatedValue(key: "_cachedLayoutAttributes", object: self) }
-        set {
-            set(associatedValue: newValue, key: "_cachedLayoutAttributes", object: self)
-        }
-    }
-    
     internal var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
         get { getAssociatedValue(key: "NSCollectionItem_itemObserver", object: self, initialValue: nil) }
         set {  set(associatedValue: newValue, key: "NSCollectionItem_itemObserver", object: self) }
@@ -487,6 +480,14 @@ public extension NSCollectionViewItem {
         set {  set(associatedValue: newValue, key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self) }
     }
     
+    var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
+        get { getAssociatedValue(key: "_cachedLayoutAttributes", object: self) }
+        set {
+            set(associatedValue: newValue, key: "_cachedLayoutAttributes", object: self)
+        }
+    }
+    
+    /*
     @objc internal func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
         self.isHovered = false
@@ -495,40 +496,7 @@ public extension NSCollectionViewItem {
         self.isEditing = false
         self.isConfigurationUpdatesEnabled = true
     }
-    
-    @objc internal func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
-        self.cachedLayoutAttributes = layoutAttributes
-    }
-    
-    @objc internal func swizzled_preferredLayoutAttributesFitting(_ layoutAttributes: NSCollectionViewLayoutAttributes) -> NSCollectionViewLayoutAttributes {
-        if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
-            
-            let width = layoutAttributes.size.width
-            var fittingSize = self.sizeThatFits(CGSize(width: width, height: .infinity))
-            fittingSize.width = width
-            layoutAttributes.size = fittingSize
-            return layoutAttributes
-        }
-        return swizzled_preferredLayoutAttributesFitting(layoutAttributes)
-    }
-    
-    @objc internal func swizzled_viewDidLayout() {
-        /*
-        switch collectionView?.selfSizingInvalidation {
-        case .enabled:
-            if let cachedLayoutAttributes = cachedLayoutAttributes {
-                if (self.view.frame != cachedLayoutAttributes.frame) {
-                    Swift.print("Not the same. InvalidateSelfSizing")
-                    invalidateSelfSizing()
-                }
-            }
-        case .enabledIncludingConstraints:
-            break
-        default:
-            break
-        }
-         */
-    }
+     */
 }
 
 extension NSCollectionViewItem {
