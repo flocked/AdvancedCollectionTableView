@@ -123,7 +123,7 @@ public extension NSTableViewDiffableDataSource {
                             }
                             var snapshot = self.snapshot()
                             snapshot.deleteItems(elementsToDelete)
-                            self.apply(snapshot, .animated)
+                            self.apply(snapshot, .usingReloadData)
                             return nil
                         }
                     }
