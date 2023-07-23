@@ -82,7 +82,7 @@ collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ```
 
 ## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
-`allowsDeleting` enables deleting of items and rows via backspace.
+`allowsDeleting` enables deleting items and rows via backspace.
  ```
  diffableCollectionViewDataSource.allowsDeleting = true
  ```
