@@ -116,14 +116,21 @@ public extension NSTableViewDiffableDataSource {
                  //   NSApp.ini
                     Swift.print("keyDown", (NSApp.keyWindow?.firstResponder as? NSTableView) != nil)
                     if allowsDeleting, let tableView =  (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
-                       let elementsToDelete = self.itemIdentifiers(for: tableView.selectedRowIndexes.map({$0}))
+                        let selecedRowIndexes = tableView.selectedRowIndexes.map({$0})
+                       let elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
+                        
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
                             var snapshot = self.snapshot()
+                            let hasRows = (snapshot.itemIdentifiers.count - elementsToDelete.count) > 0
                             snapshot.deleteItems(elementsToDelete)
-                            self.apply(snapshot, .usingReloadData)
+                            self.apply(snapshot, .animated)
+                            if hasRows {
+                                let row = selecedRowIndexes.first ?? 0
+                                tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
+                            }
                             return nil
                         }
                     }
