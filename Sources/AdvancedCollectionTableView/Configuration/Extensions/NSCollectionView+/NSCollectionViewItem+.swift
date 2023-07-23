@@ -458,12 +458,10 @@ public extension NSCollectionViewItem {
         self.setNeedsUpdateConfiguration()
     }
     
-        
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     internal var _collectionView: NSCollectionView? {
         self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
     }
-
     
     internal var isConfigurationUpdatesEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
@@ -486,6 +484,22 @@ public extension NSCollectionViewItem {
         self.isEditing = false
         self.isConfigurationUpdatesEnabled = true
     }
+     
+     static var didSwizzlePrepareForReuse: Bool {
+         get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self, initialValue: false) }
+         set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self) }
+     }
+     static func swizzlePrepareForReuse() {
+         guard didSwizzlePrepareForReuse == false else { return }
+         didSwizzlePrepareForReuse = true
+         do {
+             _ = try Swizzle(NSCollectionViewItem.self) {
+                 #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
+             }
+         } catch {
+             Swift.print(error)
+         }
+     }
      */
 }
 

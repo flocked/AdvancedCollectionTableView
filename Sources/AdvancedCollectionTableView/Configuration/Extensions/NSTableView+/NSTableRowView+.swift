@@ -267,13 +267,7 @@ public extension NSTableRowView {
      A hovered row view has the mouse pointer on it.
      */
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isHovered", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isHovered else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isHovered", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
+        get { self.tableView?.hoveredRowView == self }
     }
     
     internal var isEnabled: Bool {
@@ -328,7 +322,6 @@ public extension NSTableRowView {
     
     @objc internal func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
-        self.isHovered = false
         self.isEnabled = true
         self.isReordering = false
         self.isEditing = false

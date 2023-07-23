@@ -31,17 +31,7 @@ public extension NSTableView {
 internal extension NSTableView {
     func updateHoveredRow(_ mouseLocation: CGPoint) {
         let newHoveredRowView = self.rowView(at: mouseLocation)
-        if newHoveredRowView != self.hoveredRowView {
-            if let hoveredRowView = self.hoveredRowView {
-                rowHoverHandlers.didEndHovering?(hoveredRowView)
-            }
-            self.removeHoveredRow()
-        }
-        newHoveredRowView?.isHovered = true
         self.hoveredRowView = newHoveredRowView
-        if let hoveredRowView = self.hoveredRowView {
-            rowHoverHandlers.isHovering?(hoveredRowView)
-        }
     }
     
     func setupObservingView(shouldObserve: Bool = true) {
@@ -84,7 +74,22 @@ internal extension NSTableView {
     
     var hoveredRowView: NSTableRowView? {
         get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
-        set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
+        set {
+            guard newValue != hoveredRowView else { return }
+            let previousHovered = hoveredRowView
+            set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
+            
+            if let previousHovered = previousHovered {
+                previousHovered.setNeedsAutomaticUpdateConfiguration()
+                previousHovered.setCellViewsNeedAutomaticUpdateConfiguration()
+                rowHoverHandlers.didEndHovering?(previousHovered)
+            }
+            
+            if let hoveredRowView = newValue {
+                hoveredRowView.setNeedsAutomaticUpdateConfiguration()
+                hoveredRowView.setCellViewsNeedAutomaticUpdateConfiguration()
+                rowHoverHandlers.isHovering?(hoveredRowView)
+            }
         }
     }
 }

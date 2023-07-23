@@ -17,40 +17,35 @@ internal extension NSCollectionView {
     
     var hoveredItem: NSCollectionViewItem? {
         get { getAssociatedValue(key: "NSCollectionView_hoveredItem", object: self, initialValue: nil) }
-        set { set(weakAssociatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
+        set {
+            guard newValue != hoveredItem else { return }
+            let previousHoveredtem = hoveredItem
+            set(weakAssociatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
+            
+            if let previousHoveredtem = previousHoveredtem {
+                previousHoveredtem.isHovered = false
+            //    hoverHandlers?.didEndHovering?(previousHoveredtem)
+            }
+            
+            if let hoveredItem = newValue {
+                hoveredItem.isHovered = true
+           //     hoverHandlers?.isHovering?(hoveredItem)
+            }
         }
     }
-    
+    /*
     var hoverHandlers: HoverHandlers? {
         get { getAssociatedValue(key: "NSCollectionView_hoveringHandlers", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionView_hoveringHandlers", object: self)
         }
     }
+     */
         
-    func updateItemHoverState(_ event: NSEvent) {
-       // let mouseItem = self.item(for: event)
+    func updateHoveredItem(_ event: NSEvent) {
         let location = event.location(in: self)
         let mouseItem = self.subviews.first(where: {
             $0.frame.contains(location) && $0.parentController is NSCollectionViewItem})?.parentController as? NSCollectionViewItem
-
-        if hoveredItem != mouseItem {
-            if let hoveredItem = self.hoveredItem {
-                hoverHandlers?.didEndHovering?(hoveredItem)
-            }
-            removeHoveredItem()
-        }
-        
-        mouseItem?.isHovered = true
         hoveredItem = mouseItem
-        
-        if let hoveredItem = self.hoveredItem {
-            hoverHandlers?.isHovering?(hoveredItem)
-        }
-    }
-        
-    func removeHoveredItem() {
-        hoveredItem?.isHovered = false
-        hoveredItem = nil
     }
         
     func setupObservingView(shouldObserve: Bool = true) {
@@ -66,7 +61,7 @@ internal extension NSCollectionView {
                 
                 self.observingView?.mouseHandlers.exited = { [weak self] event in
                     guard let self = self else { return true }
-                    self.removeHoveredItem()
+                    self.hoveredItem = nil
                     return true
                 }
                 
@@ -74,7 +69,7 @@ internal extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        self.updateItemHoverState(event)
+                        self.updateHoveredItem(event)
                     }
                     return true
                 }

@@ -12,7 +12,6 @@ import FZUIKit
 
 public extension NSTableView {
     internal func removeHoveredRow() {
-        self.hoveredRowView?.isHovered = false
         self.hoveredRowView = nil
     }
     

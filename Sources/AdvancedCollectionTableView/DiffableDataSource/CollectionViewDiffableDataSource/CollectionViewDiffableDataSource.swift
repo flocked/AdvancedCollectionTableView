@@ -315,6 +315,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.collectionView.setupObservingView()
+            /*
             if self.collectionView.hoverHandlers == nil {
                 let hoverHandlers = NSCollectionView.HoverHandlers()
                 hoverHandlers.isHovering = { [weak self] item in
@@ -327,8 +328,9 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
                 }
                 self.collectionView.hoverHandlers = hoverHandlers
             }
+            */
         } else {
-            self.collectionView.hoverHandlers = nil
+         //   self.collectionView.hoverHandlers = nil
         }
     }
     

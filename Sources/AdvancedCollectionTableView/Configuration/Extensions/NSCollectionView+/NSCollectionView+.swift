@@ -16,7 +16,7 @@ public extension NSCollectionView {
             guard newValue != isEmphasized else { return }
             set(associatedValue: newValue, key: "NSCollectionView_isEmphasized", object: self)
             if newValue == false {
-                self.removeHoveredItem()
+                self.hoveredItem = nil
             }
             self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
         }
