@@ -8,31 +8,40 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import FZQuicklook
 
-internal extension NSTableView {
-    class HoverHandlers {
+public extension NSTableView {
+    /// Handlers that get called whenever the mouse is hovering a rnow.
+    struct RowHoverHandlers {
+        /// The handler that gets called whenever the mouse is hovering a row.
         var isHovering: ((_ row: NSTableRowView) -> ())?
+        /// The handler that gets called whenever the mouse did end hovering a row.
         var didEndHovering: ((_ row: NSTableRowView) -> ())?
     }
     
-    var hoverHandlers: HoverHandlers? {
-        get { getAssociatedValue(key: "NSTableView_hoverHandlers", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSTableView_hoverHandlers", object: self)
+    /// Handlers that get called whenever the mouse is hovering a rnow.
+    var rowHoverHandlers: RowHoverHandlers {
+        get { getAssociatedValue(key: "NSTableView_rowHoverHandlers", object: self, initialValue: RowHoverHandlers()) }
+        set { set(associatedValue: newValue, key: "NSTableView_rowHoverHandlers", object: self)
+            let shouldObserve = (newValue.isHovering != nil || newValue.didEndHovering != nil)
+            self.setupObservingView(shouldObserve: shouldObserve)
         }
     }
-    
+}
+
+internal extension NSTableView {
     func updateHoveredRow(_ mouseLocation: CGPoint) {
         let newHoveredRowView = self.rowView(at: mouseLocation)
         if newHoveredRowView != self.hoveredRowView {
             if let hoveredRowView = self.hoveredRowView {
-                hoverHandlers?.didEndHovering?(hoveredRowView)
+                rowHoverHandlers.didEndHovering?(hoveredRowView)
             }
             self.removeHoveredRow()
         }
         newHoveredRowView?.isHovered = true
         self.hoveredRowView = newHoveredRowView
         if let hoveredRowView = self.hoveredRowView {
-            hoverHandlers?.isHovering?(hoveredRowView)
+            rowHoverHandlers.isHovering?(hoveredRowView)
         }
     }
     
@@ -77,6 +86,52 @@ internal extension NSTableView {
     var hoveredRowView: NSTableRowView? {
         get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
         set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
+        }
+    }
+}
+
+public extension NSTableViewDiffableDataSource {
+    var keyDownMonitor: Any? {
+        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+        set {
+            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self)
+        }
+    }
+    
+    var allowsDeleting: Bool {
+        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
+        set {
+            guard newValue != allowsDeleting else { return }
+            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_allowsDeleting ", object: self)
+            self.setupKeyDownMonitor()
+        }
+    }
+    
+    func setupKeyDownMonitor() {
+        if self.allowsDeleting {
+            if keyDownMonitor == nil {
+                keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
+                    guard let self = self else { return event }
+                    if allowsDeleting, let tableView =  (NSApp.keyWindow?.initialFirstResponder as? NSTableView), tableView.dataSource === self {
+                       let elementsToDelete = self.itemIdentifiers(for: tableView.selectedRowIndexes.map({$0}))
+                        if (elementsToDelete.isEmpty == false) {
+                            if QuicklookPanel.shared.isVisible {
+                                QuicklookPanel.shared.close()
+                            }
+                            var snapshot = self.snapshot()
+                            snapshot.deleteItems(elementsToDelete)
+                            self.apply(snapshot, .usingReloadData)
+                            return nil
+                        }
+                    }
+                    return event
+                })
+            }
+        } else {
+            if let keyDownMonitor = self.keyDownMonitor {
+                NSEvent.removeMonitor(keyDownMonitor)
+            }
+            keyDownMonitor = nil
         }
     }
 }

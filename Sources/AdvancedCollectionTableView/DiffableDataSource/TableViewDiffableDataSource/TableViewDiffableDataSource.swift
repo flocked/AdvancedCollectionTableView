@@ -176,20 +176,20 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()
-            if self.tableView.hoverHandlers == nil {
-                let hoverHandlers = NSTableView.HoverHandlers()
-                hoverHandlers.isHovering = { [weak self] item in
+            
+            if self.tableView.rowHoverHandlers.isHovering == nil {
+                tableView.rowHoverHandlers.isHovering = { [weak self] item in
                     guard let self = self else { return }
                     self.isHovering(item)
                 }
-                hoverHandlers.didEndHovering = { [weak self] item in
+                tableView.rowHoverHandlers.didEndHovering = { [weak self] item in
                     guard let self = self else { return }
                     self.didEndHovering(item)
                 }
-                self.tableView.hoverHandlers = hoverHandlers
             }
         } else {
-            self.tableView.hoverHandlers = nil
+            self.tableView.rowHoverHandlers.isHovering = nil
+            self.tableView.rowHoverHandlers.didEndHovering = nil
         }
     }
     
