@@ -69,7 +69,7 @@ public extension NSCollectionView {
         }
     }
     
-    internal func setupFirstResponderObserver() {
+    internal func setupCollectionViewFirstResponderObserver() {
         self.firstResponderHandler = { isFirstResponder in
             self._isFirstResponder = isFirstResponder
         }

@@ -71,7 +71,7 @@ public extension NSTableView {
         }
     }
     
-    internal func setupFirstResponderObserver() {
+    internal func setupTableViewFirstResponderObserver() {
         self.firstResponderHandler = { isFirstResponder in
             self._isFirstResponder = isFirstResponder
         }
