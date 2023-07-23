@@ -27,8 +27,7 @@ internal extension NSCollectionView {
         }
     }
         
-    func updateHoveredItem(_ event: NSEvent) {
-        let location = event.location(in: self)
+    func updateHoveredItem(_ location: CGPoint) {
         let mouseItem = self.subviews.first(where: {
             $0.frame.contains(location) && $0.parentController is NSCollectionViewItem})?.parentController as? NSCollectionViewItem
         hoveredItem = mouseItem
@@ -55,7 +54,7 @@ internal extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        self.updateHoveredItem(event)
+                        self.updateHoveredItem(location)
                     }
                     return true
                 }
