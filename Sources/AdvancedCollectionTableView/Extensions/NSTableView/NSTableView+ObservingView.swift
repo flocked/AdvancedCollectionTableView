@@ -8,7 +8,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import FZQuicklook
 
 public extension NSTableView {
     /// Handlers that get called whenever the mouse is hovering a rnow.
@@ -86,68 +85,6 @@ internal extension NSTableView {
     var hoveredRowView: NSTableRowView? {
         get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
         set { set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
-        }
-    }
-}
-
-public extension NSTableViewDiffableDataSource {
-    var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
-        set {
-            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self)
-        }
-    }
-    
-    var allowsDeleting: Bool {
-        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
-        set {
-            guard newValue != allowsDeleting else { return }
-            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_allowsDeleting", object: self)
-            self.setupKeyDownMonitor()
-        }
-    }
-    
-    func setupKeyDownMonitor() {
-        if self.allowsDeleting {
-            if keyDownMonitor == nil {
-                keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
-                    guard let self = self else { return event }
-                    guard event.keyCode ==  51 else { return event }
-                 //   NSApp.ini
-                    Swift.print("keyDown", (NSApp.keyWindow?.firstResponder as? NSTableView) != nil)
-                    if allowsDeleting, let tableView =  (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
-                        let selecedRowIndexes = tableView.selectedRowIndexes.map({$0})
-                       let elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
-                        
-                        if (elementsToDelete.isEmpty == false) {
-                            if QuicklookPanel.shared.isVisible {
-                                QuicklookPanel.shared.close()
-                            }
-                            var snapshot = self.snapshot()
-                            snapshot.deleteItems(elementsToDelete)
-                            self.apply(snapshot, .usingReloadData)
-                            if tableView.allowsEmptySelection == false {
-                                let row = (selecedRowIndexes.first ?? 0) 
-                                tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
-                                if tableView.allowsMultipleSelection {
-                                    let selectedRowIndexes = tableView.selectedRowIndexes
-                                    if selectedRowIndexes.count == 2, selectedRowIndexes.contains(0) {
-                                        tableView.deselectRow(0)
-                                    }
-                                }
-
-                            }
-                            return nil
-                        }
-                    }
-                    return event
-                })
-            }
-        } else {
-            if let keyDownMonitor = self.keyDownMonitor {
-                NSEvent.removeMonitor(keyDownMonitor)
-            }
-            keyDownMonitor = nil
         }
     }
 }
