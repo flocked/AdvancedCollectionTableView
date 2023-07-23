@@ -133,7 +133,7 @@ public extension NSTableViewDiffableDataSource {
                                     row = first - 1
                                 }
                                 tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
-                                if tableView.selectedRowIndexes.contains(0) {
+                                if tableView.allowsMultipleSelection, tableView.selectedRowIndexes.contains(0) {
                                     tableView.deselectRow(0)
                                 }
 
