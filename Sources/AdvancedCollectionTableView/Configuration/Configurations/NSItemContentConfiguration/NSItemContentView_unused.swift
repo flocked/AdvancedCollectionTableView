@@ -40,75 +40,85 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public override func updateConstraints() {
         super.updateConstraints()
         Swift.print("updateConstraints", self._configuration.text ?? "", self.frame)
+        guard previousSize != self.frame.size else { return }
+        previousSize = self.frame.size
+        self.updateLayout()
     }
     
     public override func display() {
         super.display()
         Swift.print("display", self._configuration.text ?? "", self.frame)
+        guard previousSize != self.frame.size else { return }
+        previousSize = self.frame.size
+        self.updateLayout()
     }
     
     var previousSize: CGSize? = nil
     public override func layout() {
         super.layout()
-        Swift.print(self._configuration.text ?? "", self.frame)
+        Swift.print("layout", self._configuration.text ?? "", self.frame)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
-                
-        let width = self.frame.size.width - _configuration.padding.width
-        var height = self.frame.size.height - _configuration.padding.height
+        self.updateLayout()
+    }
+    
+    internal func updateLayout() {
         
-        if (_configuration.hasText || _configuration.hasSecondaryText) {
-            height -= _configuration.contentToTextPadding
-        }
-        
-        if (_configuration.hasText && _configuration.hasSecondaryText) {
-            height -= _configuration.textToSecondaryTextPadding
-        }
-        var y = _configuration.padding.bottom
-        if (_configuration.hasText) {
-            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
-            textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
-            
-            height -= textField.frame.size.height
-            y += textField.frame.size.height
-            if _configuration.hasSecondaryText {
-                y += _configuration.textToSecondaryTextPadding
-            }
-        }
-        
-        if (_configuration.hasSecondaryText) {
-            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
-            secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
+let width = self.frame.size.width - _configuration.padding.width
+var height = self.frame.size.height - _configuration.padding.height
 
-            height -= secondaryTextField.frame.size.height
-            y += secondaryTextField.frame.size.height
-            if _configuration.hasContent {
-                y += _configuration.contentToTextPadding
-            }
+if (_configuration.hasText || _configuration.hasSecondaryText) {
+    height -= _configuration.contentToTextPadding
+}
+
+if (_configuration.hasText && _configuration.hasSecondaryText) {
+    height -= _configuration.textToSecondaryTextPadding
+}
+var y = _configuration.padding.bottom
+if (_configuration.hasText) {
+    textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+    textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
+    
+    height -= textField.frame.size.height
+    y += textField.frame.size.height
+    if _configuration.hasSecondaryText {
+        y += _configuration.textToSecondaryTextPadding
+    }
+}
+
+if (_configuration.hasSecondaryText) {
+    secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+    secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
+
+    height -= secondaryTextField.frame.size.height
+    y += secondaryTextField.frame.size.height
+    if _configuration.hasContent {
+        y += _configuration.contentToTextPadding
+    }
+}
+
+let remainingSize = CGSize(width: width, height: height)
+
+if _configuration.hasContent {
+    if let imageSize = contentView.imageSize {
+        let resizedImageSize: CGSize
+        if _configuration.contentProperties.imageScaling == .fit {
+            resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
+            contentView.frame.size = resizedImageSize
+            contentView.imageView.frame.size = resizedImageSize
+            contentView.imageView.frame.origin = .zero
+        } else {
+            resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
+            contentView.frame.size = remainingSize
+            contentView.imageView.frame.size = resizedImageSize
+            contentView.imageView.center = contentView.center
         }
-        
-        let remainingSize = CGSize(width: width, height: height)
-        
-        if _configuration.hasContent {
-            if let imageSize = contentView.imageSize {
-                let resizedImageSize: CGSize
-                if _configuration.contentProperties.imageScaling == .fit {
-                    resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
-                    contentView.frame.size = resizedImageSize
-                    contentView.imageView.frame.size = resizedImageSize
-                    contentView.imageView.frame.origin = .zero
-                } else {
-                    resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
-                    contentView.frame.size = remainingSize
-                    contentView.imageView.frame.size = resizedImageSize
-                    contentView.imageView.center = contentView.center
-                }
-                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
-            } else {
-                contentView.frame.size = remainingSize
-                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
-            }
-        }
+        contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
+    } else {
+        contentView.frame.size = remainingSize
+        contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
+    }
+}
     }
     
     public func update() {
