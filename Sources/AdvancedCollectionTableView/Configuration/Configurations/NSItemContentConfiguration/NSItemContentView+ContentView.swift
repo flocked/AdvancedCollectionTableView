@@ -39,7 +39,9 @@ public extension NSItemContentViewNS {
         
         public override func layout() {
             super.layout()
-            if let size = self.image?.size.scaled(toHeight: self.frame.size.height) {
+            if let imageSize = self.image?.size {
+                let size = imageSize.scaled(toHeight: self.frame.size.height)
+                Swift.print("scaled", self.frame.size, imageSize, size)
                 self.containerView.frame.size = size
                 self.containerView.center = self.center
             } else {
