@@ -147,8 +147,8 @@ extension NSView {
                 name: CAMediaTimingFunctionName.linear)
             var origin = self.frame.origin
             // Translate the frame
-            origin.x -= self.frame.size.width / factor
-            origin.y -= self.frame.size.height / factor
+            origin.x -= self.frame.size.width - (self.frame.size.width / factor)
+            origin.y -= self.frame.size.height - (self.frame.size.height / factor)
 
             // Trigger the animation
             self.animator().frame.origin = origin
