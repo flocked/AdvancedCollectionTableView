@@ -131,6 +131,12 @@ public class NSItemContentViewNS: NSView, NSContentView {
         self.updateConfiguration()
     }
     
+    public override func hitTest(_ point: NSPoint) -> NSView? {
+        let view = super.hitTest(point)
+        Swift.print("hitTest", view ?? "nil")
+        return view
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
