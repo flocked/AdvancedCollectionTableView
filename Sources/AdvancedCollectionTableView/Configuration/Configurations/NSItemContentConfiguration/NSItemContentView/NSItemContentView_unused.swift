@@ -18,7 +18,6 @@ public class NSItemContentViewNS: NSView, NSContentView {
     internal var previousSize: CGSize? = nil
     public override func layout() {
         super.layout()
-        Swift.print("layout", self.appliedConfiguration.text ?? "", self.frame)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
         
