@@ -83,17 +83,17 @@ public class NSItemContentViewNS: NSView, NSContentView {
             if let imageSize = contentView.imageSize {
                 let resizedImageSize: CGSize
                 if _configuration.contentProperties.imageScaling == .fit {
-                    Swift.print("fit")
                     resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
                     contentView.frame.size = resizedImageSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.frame.origin = .zero
+                    Swift.print("fit", contentView.frame.size, contentView.imageView.frame)
                 } else {
-                    Swift.print("fill")
                     resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
                     contentView.frame.size = remainingSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.center = contentView.center
+                    Swift.print("fill", contentView.frame.size, contentView.imageView.frame)
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             } else {
