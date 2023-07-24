@@ -40,7 +40,6 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public override func updateConstraints() {
         super.updateConstraints()
         Swift.print("updateConstraints", self._configuration.text ?? "", self.frame)
-        Swift.print(self.constraints)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
         self.updateLayout()
@@ -169,18 +168,18 @@ if _configuration.hasContent {
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
-        
-        self.translatesAutoresizingMaskIntoConstraints = false
-        
+                
         self.addSubview(textField)
         self.addSubview(secondaryTextField)
         self.addSubview(contentView)
+        self.addSubview(withConstraint: testView)
 
       //  self._constraints = self.addSubview(withConstraint: stackView)
         self.wantsLayer = true
         self.update()
     }
     
+    let testView = NSView(frame: .zero)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
