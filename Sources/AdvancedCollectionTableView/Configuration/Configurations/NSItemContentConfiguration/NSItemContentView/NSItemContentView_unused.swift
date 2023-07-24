@@ -133,7 +133,9 @@ public class NSItemContentViewNS: NSView, NSContentView {
     
     public override func hitTest(_ point: NSPoint) -> NSView? {
         let view = super.hitTest(point)
-      //  Swift.print("hitTest", view ?? "nil")
+        if NSEvent.current?.type == .leftMouseDown {
+              Swift.print("hitTest", view ?? "nil")
+        }
         return view
     }
     
