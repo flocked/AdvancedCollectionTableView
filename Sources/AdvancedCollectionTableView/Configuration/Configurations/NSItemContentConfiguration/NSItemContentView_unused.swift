@@ -169,6 +169,8 @@ if _configuration.hasContent {
         self._configuration = configuration
         super.init(frame: .zero)
         
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
         self.addSubview(textField)
         self.addSubview(secondaryTextField)
         self.addSubview(contentView)
