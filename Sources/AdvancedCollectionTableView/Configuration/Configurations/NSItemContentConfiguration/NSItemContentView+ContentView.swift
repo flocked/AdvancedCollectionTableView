@@ -119,6 +119,11 @@ extension NSView {
         // Set the scale of the view to 2
         let doubleSize = NSSize(width: factor, height: factor)
         self.scaleUnitSquare(to: doubleSize)
+        
+        let newSize = CGSize(factor * self.frame.width, factor * self.frame.height)
+        var newOrigin = self.frame.origin
+        newOrigin.x -= (newSize.width - self.frame.size.width)
+        newOrigin.y -= (newSize.height - self.frame.size.height)
                 
         // Set the frame to the scaled frame
         self.frame = CGRect(
@@ -127,6 +132,8 @@ extension NSView {
             width: factor * self.frame.width,
             height: factor * self.frame.height
         )
+        
+        self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
 
         // Create the scale animation
         let animation = CABasicAnimation()
@@ -152,7 +159,7 @@ extension NSView {
             origin.y -= self.frame.size.height - (self.frame.size.height / factor)
 
             // Trigger the animation
-            self.animator().frame.origin = origin
+            self.animator().frame.origin = newOrigin
         })
     }
 }
