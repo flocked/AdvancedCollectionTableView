@@ -35,11 +35,6 @@ public class NSItemContentViewNS: NSView, NSContentView {
         return stackView
     }()
     
-    public override func layout() {
-        super.layout()
-        Swift.print("item", self.frame.size)
-    }
-    
     public func update() {
         textField.properties = _configuration.textProperties
         textField.text(_configuration.text, attributedText: _configuration.attributedText)

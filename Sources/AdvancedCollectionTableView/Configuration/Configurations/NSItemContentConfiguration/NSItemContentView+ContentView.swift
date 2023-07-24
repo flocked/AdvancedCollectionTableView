@@ -39,6 +39,9 @@ public extension NSItemContentViewNS {
         
         public override func layout() {
             super.layout()
+            
+            self.containerView.frame.size = self.frame.size
+            
             if let imageSize = self.image?.size {
                 let size = imageSize.scaled(toHeight: self.frame.size.height)
                 let previousFrameSize = self.frame.size
