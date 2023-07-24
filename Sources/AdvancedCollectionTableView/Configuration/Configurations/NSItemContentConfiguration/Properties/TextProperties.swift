@@ -10,7 +10,7 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-
+/*
 public extension NSItemContentConfiguration {
     /// Properties for configuring the text of an item.
     struct TextProperties {
@@ -213,3 +213,4 @@ extension NSItemContentConfiguration.TextProperties: Hashable {
         hasher.combine(textColorTansform)
     }
 }
+*/

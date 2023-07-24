@@ -202,7 +202,7 @@ public extension NSItemContentViewNS {
     }
     
     class ItemTextField: NSTextField {
-        var properties: NSItemContentConfiguration.TextProperties {
+        var properties: ConfigurationProperties.Text {
             didSet {
                 if oldValue != properties {
                 update() }
@@ -219,7 +219,7 @@ public extension NSItemContentViewNS {
             }
         }
         
-        init(properties: NSItemContentConfiguration.TextProperties) {
+        init(properties: ConfigurationProperties.Text) {
             self.properties = properties
             super.init(frame: .zero)
             self.drawsBackground = false
@@ -234,8 +234,8 @@ public extension NSItemContentViewNS {
         }
         
         func update() {
-            self.maximumNumberOfLines = properties.numberOfLines ?? 0
-            self.alignment = properties.alignment.nsTextAlignment
+            self.maximumNumberOfLines = properties.maxNumberOfLines
+            self.alignment = properties.alignment
             self.font = properties.font
             self.textColor = properties._resolvedTextColor
           //  self.lineBreakMode = properties.li

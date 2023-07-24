@@ -29,7 +29,7 @@ class ViewController: NSViewController {
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
-
+        
         collectionViewItem.contentConfiguration = configuration
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
@@ -41,12 +41,12 @@ class ViewController: NSViewController {
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
             configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
-            configuration.contentProperties.shadow = state.isSelected ? .colored(.controlAccentColor) : .black()
+            configuration.contentProperties.shadow = state.isSelected ? .color(.controlAccentColor) : .black()
             
             collectionViewItem.contentConfiguration = configuration
         }
     }
-    
+        
     // Window toolbar
     lazy var toolbar = Toolbar("WindowToolbar") {
         /// Toolbar item that reconfigurates the first collectionview item without reloading it which provides much better performance.

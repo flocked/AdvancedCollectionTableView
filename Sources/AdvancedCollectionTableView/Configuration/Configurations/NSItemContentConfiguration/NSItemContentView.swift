@@ -144,9 +144,9 @@ internal extension NSItemContentView {
         let text: String?
         @State private var _text: String = ""
         let attributedText: AttributedString?
-        let properties: NSItemContentConfiguration.TextProperties
+        let properties: ConfigurationProperties.Text
         
-        init(text: String?, attributedText: AttributedString?, properties: NSItemContentConfiguration.TextProperties) {
+        init(text: String?, attributedText: AttributedString?, properties: ConfigurationProperties.Text) {
             self.text = text
             self.attributedText = attributedText
             self.properties = properties
@@ -168,10 +168,10 @@ internal extension NSItemContentView {
         
         var body: some View {
             item
-                .frame(maxWidth: .infinity, alignment: properties.alignment.swiftui)
-                .multilineTextAlignment(properties.alignment.swiftuiMultiline)
-                .font(properties.swiftuiFont ?? properties.font.swiftUI)
-                .lineLimit(properties.numberOfLines)
+                .frame(maxWidth: .infinity, alignment: properties.alignment.swiftUI)
+                .multilineTextAlignment(properties.alignment.swiftUIMultiline)
+                .font(properties.swiftUIFont ?? properties.font.swiftUI)
+                .lineLimit(properties.maxNumberOfLines == 0 ? nil : properties.maxNumberOfLines)
                 .foregroundColor(properties._resolvedTextColor.swiftUI)
                 .textSelection(properties.isSelectable)
         }
@@ -274,7 +274,8 @@ struct CollectionItemView_Previews: PreviewProvider {
     
     static var configuration: NSItemContentConfiguration {
         let contentProperties = self.contentProperties(isSelected: true)
-        let textProperties: NSItemContentConfiguration.TextProperties = .body
+        var textProperties: ConfigurationProperties.Text = .body
+        textProperties.alignment = .center
        return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
     }
     
@@ -304,12 +305,10 @@ struct CollectionItemView_Previews: PreviewProvider {
         var contentProperties = self.contentProperties(isSelected: false)
         contentProperties.sizing = .min(width: 80, height: nil)
         contentProperties.imageScaling = .fill
-        var textProperties: NSItemContentConfiguration.TextProperties = .body
-        textProperties.alignment = .leading
-        textProperties.alignment = .leading
-        var secondaryTextProperties: NSItemContentConfiguration.TextProperties = .caption1
-        secondaryTextProperties.alignment = .leading
-        textProperties.alignment = .leading
+        var textProperties: ConfigurationProperties.Text = .body
+        textProperties.alignment = .left
+        var secondaryTextProperties: ConfigurationProperties.Text = .caption1
+        secondaryTextProperties.alignment = .left
         return NSItemContentConfiguration(text: "Vertical Image Item", secondaryText: "A item that displays an image vertically", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, secondaryTextProperties: secondaryTextProperties, contentProperties: contentProperties, contentPosition: .leading)
     }
     

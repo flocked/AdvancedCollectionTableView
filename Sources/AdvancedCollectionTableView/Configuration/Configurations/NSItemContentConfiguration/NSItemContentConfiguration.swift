@@ -47,9 +47,9 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var overlayView: NSView? = nil
     
     /// Properties for configuring the primary text.
-    public var textProperties: TextProperties = .body
+    public var textProperties: ConfigurationProperties.Text = .body.alignment(.center)
     /// Properties for configuring the secondary text.
-    public var secondaryTextProperties: TextProperties = .caption1
+    public var secondaryTextProperties: ConfigurationProperties.Text = .caption1.alignment(.center)
     /**
      Properties for configuring the content).
      
@@ -171,8 +171,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
          secondaryAttributedText: AttributedString? = nil,
          image: NSImage? = nil,
          view: NSView? = nil,
-         textProperties: TextProperties = .body,
-         secondaryTextProperties: TextProperties = .caption1,
+                textProperties: ConfigurationProperties.Text = .body.alignment(.center),
+                secondaryTextProperties: ConfigurationProperties.Text = .caption1.alignment(.center),
          contentProperties: ContentProperties = ContentProperties(),
          contentPosition: ContentPosition = .top,
          contentToTextPadding: CGFloat = 6.0,
@@ -196,11 +196,11 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
     }
     
     public static func viewItem(_ view: NSView, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body, secondaryTextProperties: .callout, contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
     }
 }
 

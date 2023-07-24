@@ -15,6 +15,7 @@ public extension ConfigurationProperties {
     struct Text {
         /// The font of the text.
         public var font: NSFont = .body
+        internal var swiftUIFont: Font? = .body
         
         /// The line limit of the text, or 0 if no line limit applies.
         public var maxNumberOfLines: Int = 0
@@ -80,6 +81,7 @@ public extension ConfigurationProperties {
         public static func system(size: CGFloat, weight: NSFont.Weight = .regular, design: NSFontDescriptor.SystemDesign = .default) -> Text  {
             var properties = Text()
             properties.font = .system(size: size, weight: weight, design: design)
+            properties.swiftUIFont = .system(size: size, design: design.swiftUI).weight(weight.swiftUI)
             return properties
         }
                     
@@ -93,6 +95,7 @@ public extension ConfigurationProperties {
         public static func system(_ style: NSFont.TextStyle = .body, weight: NSFont.Weight = .regular, design: NSFontDescriptor.SystemDesign = .default) -> Text {
             var properties = Text()
             properties.font = .system(style, design: design).weight(weight)
+            properties.swiftUIFont = .system(style.swiftUI, design: design.swiftUI).weight(weight.swiftUI)
             return properties
         }
         
@@ -100,33 +103,92 @@ public extension ConfigurationProperties {
         public static var primary: Self { Text(maxNumberOfLines: 1) }
         
         /// A default configuration for a secondary text.
-        public static var secondary: Self { Text(font: .callout, textColor: .secondaryLabelColor) }
+        public static var secondary: Self {
+            var text = Text(font: .callout, textColor: .secondaryLabelColor)
+            text.swiftUIFont = .callout
+            return text
+        }
         
         /// A default configuration for a tertiary text.
-        public static var tertiary: Self { Text(font: .callout, textColor: .tertiaryLabelColor) }
+        public static var tertiary: Self {
+            var text = Text(font: .callout, textColor: .tertiaryLabelColor)
+            text.swiftUIFont = .callout
+            return text
+        }
 
         /// Text configuration with a font for bodies.
-        public static var body: Self = .system(.body)
+        public static var body: Self {
+            var text = Self.system(.body)
+            text.swiftUIFont = .body
+            return text
+        }
+        
         /// Text configuration with a font for callouts.
-        public static var callout: Self = .system(.callout)
+        public static var callout: Self {
+            var text = Self.system(.callout)
+            text.swiftUIFont = .callout
+            return text
+        }
         /// Text configuration with a font for captions.
-        public static var caption1: Self = .system(.caption1)
+        public static var caption1: Self {
+            var text = Self.system(.caption1)
+            text.swiftUIFont = .caption
+            return text
+        }
         /// Text configuration with a font for alternate captions.
-        public static var caption2: Self = .system(.caption2)
+        public static var caption2: Self {
+            var text = Self.system(.caption2)
+            text.swiftUIFont = .caption2
+            return text
+        }
         /// Text configuration with a font for footnotes.
-        public static var footnote: Self = .system(.footnote)
+        public static var footnote: Self {
+            var text = Self.system(.footnote)
+            text.swiftUIFont = .footnote
+            return text
+        }
         /// Text configuration with a font for headlines.
-        public static var headline: Self = .system(.headline)
+        public static var headline: Self {
+            var text = Self.system(.headline)
+            text.swiftUIFont = .headline
+            return text
+        }
         /// Text configuration with a font for subheadlines.
-        public static var subheadline: Self = .system(.subheadline)
+        public static var subheadline: Self {
+            var text = Self.system(.subheadline)
+            text.swiftUIFont = .subheadline
+            return text
+        }
         /// Text configuration with a font for large titles.
-        public static var largeTitle: Self = .system(.largeTitle)
+        public static var largeTitle: Self {
+            var text = Self.system(.largeTitle)
+            text.swiftUIFont = .largeTitle
+            return text
+        }
         /// Text configuration with a font for titles.
-        public static var title1: Self = .system(.title1)
+        public static var title1: Self {
+            var text = Self.system(.title1)
+            text.swiftUIFont = .title
+            return text
+        }
         /// Text configuration with a font for alternate titles.
-        public static var title2: Self = .system(.title2)
+        public static var title2: Self {
+            var text = Self.system(.title2)
+            text.swiftUIFont = .title2
+            return text
+        }
         /// Text configuration with a font for alternate titles.
-        public static var title3: Self = .system(.title3)
+        public static var title3: Self {
+            var text = Self.system(.title3)
+            text.swiftUIFont = .title3
+            return text
+        }
+        
+        public func alignment(_ alignment: NSTextAlignment) -> Self {
+            var text = self
+            text.alignment = alignment
+            return text
+        }
 
     }
 }
@@ -144,5 +206,25 @@ extension ConfigurationProperties.Text: Hashable {
         hasher.combine(isSelectable)
         hasher.combine(textColor)
         hasher.combine(textColorTansform)
+    }
+}
+
+internal extension NSTextAlignment {
+    internal var swiftUI: Alignment {
+        switch self {
+        case .left: return .leading
+        case .center: return .center
+        case .right: return .trailing
+        default: return .leading
+        }
+    }
+    
+    internal var swiftUIMultiline: SwiftUI.TextAlignment {
+        switch self {
+        case .left: return .leading
+        case .center: return .center
+        case .right: return .trailing
+        default: return .leading
+        }
     }
 }
