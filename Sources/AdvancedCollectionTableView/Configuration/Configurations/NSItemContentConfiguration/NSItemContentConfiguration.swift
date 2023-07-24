@@ -89,6 +89,12 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         return NSItemContentViewNS(configuration: self)
     }
     
+    
+    internal func needsUpdate(comparedTo compare: Self) -> Bool {
+        var keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent]
+        return self.isEqual(compare, for: keyPaths) == false
+    }
+    
     /**
      Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
      */
@@ -203,4 +209,3 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(cornerRadius: cornerRadius))
     }
 }
-
