@@ -78,8 +78,18 @@ public extension NSItemContentViewNS {
                 self.overlayView = properties.overlayView
             }
             
-            self.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
+            if contentProperties.scaleTransform > 1.0 {
+                scaledFactor = contentProperties.scaleTransform - 1.0
+                self.scale(by: contentProperties.scaleTransform, animateDuration: 0.1)
+            } else {
+                if scaledFactor > 0.0 {
+                    self.scale(by: 1.0 - scaledFactor, animateDuration: 0.1)
+                    scaledFactor = 0.0
+                }
+            }
+          //  self.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
         }
+        internal var scaledFactor: CGFloat = 0.0
         
         public init(properties: NSItemContentConfiguration, view: NSView?, image: NSImage?, overlayView: NSView?) {
             self.properties = properties
@@ -88,8 +98,6 @@ public extension NSItemContentViewNS {
             self.maskToBounds = false
           //  self.translatesAutoresizingMaskIntoConstraints = false
           //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
-
-            self.imageView.maskToBounds = false
             
             self.addSubview( imageView)
             self.update()
@@ -102,5 +110,48 @@ public extension NSItemContentViewNS {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+}
+
+extension NSView {
+    func scale(by factor: CGFloat, animateDuration: CGFloat) {
+        // Set the scale of the view to 2
+        let doubleSize = NSSize(width: factor, height: factor)
+        self.scaleUnitSquare(to: doubleSize)
+                
+        // Set the frame to the scaled frame
+        self.frame = CGRect(
+            x: self.frame.origin.x,
+            y: self.frame.origin.y,
+            width: factor * self.frame.width,
+            height: factor * self.frame.height
+        )
+
+        // Create the scale animation
+        let animation = CABasicAnimation()
+        let duration = 1
+
+        animation.duration = animateDuration
+        animation.fromValue = CATransform3DMakeScale(1.0, 1.0, 1.0)
+        animation.toValue = CATransform3DMakeScale(factor, factor, 1.0)
+
+        // Trigger the scale animation
+        self.layer?.add(animation, forKey: "transform")
+                
+        // Add a simultaneous translation animation to keep the
+        // view center static during the zoom animation
+        NSAnimationContext.runAnimationGroup({ context in
+            // Match the configuration of the scale animation
+            context.duration = animateDuration
+            context.timingFunction = CAMediaTimingFunction(
+                name: CAMediaTimingFunctionName.linear)
+            var origin = self.frame.origin
+            // Translate the frame
+            origin.x -= self.frame.size.width / factor
+            origin.y -= self.frame.size.height / factor
+
+            // Trigger the animation
+            self.animator().frame.origin = origin
+        })
     }
 }
