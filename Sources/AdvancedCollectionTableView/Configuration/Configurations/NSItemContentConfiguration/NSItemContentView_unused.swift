@@ -40,6 +40,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public override func updateConstraints() {
         super.updateConstraints()
         Swift.print("updateConstraints", self._configuration.text ?? "", self.frame)
+        Swift.print(self.constraints)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
         self.updateLayout()
