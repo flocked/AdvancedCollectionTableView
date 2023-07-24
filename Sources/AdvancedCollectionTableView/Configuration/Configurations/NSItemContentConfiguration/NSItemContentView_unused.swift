@@ -85,13 +85,15 @@ public class NSItemContentViewNS: NSView, NSContentView {
                 if _configuration.contentProperties.imageScaling == .fit {
                     resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
                     contentView.frame.size = resizedImageSize
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.frame.origin = .zero
                 } else {
                     resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
                     contentView.frame.size = remainingSize
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.center = contentView.center
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
-                contentView.imageView.frame.size = resizedImageSize
-                contentView.imageView.center = contentView.center
             } else {
                 contentView.frame.size = remainingSize
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
