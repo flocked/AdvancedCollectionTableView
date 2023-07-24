@@ -78,6 +78,7 @@ public extension NSItemContentViewNS {
                 self.overlayView = properties.overlayView
             }
             
+            self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
 
             /*
