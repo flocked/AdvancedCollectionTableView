@@ -137,6 +137,16 @@ public class NSItemContentViewNS: NSView, NSContentView {
         return view
     }
     
+    public override func mouseDragged(with event: NSEvent) {
+        Swift.print("mouseDragged")
+        super.mouseDragged(with: event)
+    }
+    
+    public override func mouseDown(with event: NSEvent) {
+        Swift.print("mouseDown")
+        super.mouseDown(with: event)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
