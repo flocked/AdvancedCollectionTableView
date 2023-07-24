@@ -196,11 +196,11 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, image: image, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(cornerRadius: cornerRadius))
     }
     
     public static func viewItem(_ view: NSView, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
-        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(shape: .roundedRect(cornerRadius)))
+        return NSItemContentConfiguration(text: text, secondaryText: secondaryText, view: view, textProperties: .body.alignment(.center), secondaryTextProperties: .callout.alignment(.center), contentProperties: ContentProperties(cornerRadius: cornerRadius))
     }
 }
 

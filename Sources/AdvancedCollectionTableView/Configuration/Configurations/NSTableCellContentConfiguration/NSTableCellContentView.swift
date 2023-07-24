@@ -124,7 +124,7 @@ public class NSTableCellContentView: NSView, NSContentView {
 }
 
 internal extension NSTableCellContentView {
-    class CellTextField: NSTextField {
+    class CellTextField: NSTextField, NSTextFieldDelegate {
         var properties: ConfigurationProperties.Text {
             didSet {
                 if oldValue != properties {
@@ -154,6 +154,7 @@ internal extension NSTableCellContentView {
             self.alignment = properties.alignment
             self.isSelectable = properties.isSelectable
             self.isEditable = properties.isEditable
+
             self.drawsBackground = false
             self.backgroundColor = nil
             self.isBordered = false
@@ -164,15 +165,21 @@ internal extension NSTableCellContentView {
             super.init(frame: .zero)
             self.drawsBackground = false
             self.backgroundColor = nil
+            self.delegate = self
             self.textLayout = .wraps
             self.update()
+        }
+        
+        public override func textDidEndEditing(_ notification: Notification) {
+            super.textDidEndEditing(notification)
+            self.properties.onEditEnd?(self.stringValue)
         }
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
     }
+    
     class CellImageView: NSImageView {
         var properties: NSTableCellContentConfiguration.ImageProperties {
             didSet {

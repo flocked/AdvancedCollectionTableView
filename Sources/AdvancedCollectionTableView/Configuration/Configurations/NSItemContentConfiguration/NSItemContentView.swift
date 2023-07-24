@@ -96,7 +96,7 @@ internal extension NSItemContentView {
         var contentStack: some View {
             ZStack() {
                 if let backgroundColor = properties._resolvedBackgroundColor {
-                    properties.shape.swiftui
+                    RoundedRectangle(cornerRadius: properties.cornerRadius)
                         .foregroundColor(backgroundColor.swiftUI)
                 }
                 
@@ -105,7 +105,7 @@ internal extension NSItemContentView {
                 }
                 
                 if let image = image {
-                    ShapedImage(image: image, shape: properties.shape.swiftui, aspectRatio: properties.imageScaling.swiftui)
+                    ShapedImage(image: image, shape: RoundedRectangle(cornerRadius: properties.cornerRadius), aspectRatio: properties.imageScaling.swiftui)
                 }
                 
                 if let overlayView = overlayView {
@@ -126,13 +126,13 @@ internal extension NSItemContentView {
         
         var body: some View {
             contentItem
-                .clipShape(properties.shape.swiftui)
+                .clipShape(RoundedRectangle(cornerRadius: properties.cornerRadius))
             .background(
-                properties.shape.swiftui
+                RoundedRectangle(cornerRadius: properties.cornerRadius)
                     .shadow(properties.shadow)
             )
             .overlay(
-                properties.shape.swiftui
+                RoundedRectangle(cornerRadius: properties.cornerRadius)
                     .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
             .scaleEffect(properties.scaleTransform)
             
@@ -156,7 +156,7 @@ internal extension NSItemContentView {
         @ViewBuilder
         var item: some View {
             if (properties.isEditable && properties.isSelectable) {
-                EditableText($_text, onEditEnd: properties.onEditEnd ?? {_ in })
+                EditableText($_text, alignment: properties.alignment.swiftUI, onEditEnd: properties.onEditEnd ?? {_ in })
             } else {
                 if let attributedText = attributedText {
                     Text(attributedText)
@@ -269,7 +269,7 @@ internal extension View {
 struct CollectionItemView_Previews: PreviewProvider {
     static func contentProperties(isSelected: Bool) -> NSItemContentConfiguration.ContentProperties {
         let shadow = ConfigurationProperties.Shadow(color: isSelected ? .controlAccentColor : nil, opacity: 0.7, radius: 6.0, offset: CGPoint(1, 1))
-        return NSItemContentConfiguration.ContentProperties(shape: .roundedRect(10.0), shadow: shadow, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
+        return NSItemContentConfiguration.ContentProperties(cornerRadius: 10.0, shadow: shadow, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
     }
     
     static var configuration: NSItemContentConfiguration {

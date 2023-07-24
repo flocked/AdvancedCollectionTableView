@@ -17,27 +17,6 @@ public extension NSItemContentConfiguration {
      The item content view is displayed if there is a item view, item image and/or background color.
      */
     struct ContentProperties: Hashable {
-        /// The shape of an item content.
-        public enum Shape: Hashable {
-            /// A circular shape.
-            case circle
-            /// A capsular shape.
-            case capsule
-            /// A shape with rounded corners.
-            case roundedRect(_ cornerRadius: CGFloat)
-            /// A rectangular shape.
-            case rect
-            
-            @ShapeBuilder internal var swiftui: some SwiftUI.Shape {
-                switch self {
-                case .circle: Circle()
-                case .capsule: Capsule()
-                case .roundedRect(let cornerRadius): RoundedRectangle(cornerRadius: cornerRadius)
-                case .rect: Rectangle()
-                }
-            }
-        }
-        
         /// The image scaling of an item image.
         public enum ImageScaling {
             /// An option that resizes the image so it’s all within the available space, both vertically and horizontally.
@@ -67,8 +46,8 @@ public extension NSItemContentConfiguration {
             case size(CGSize)
         }
                 
-        /// The shape of the content.
-        public var shape: Shape = .roundedRect(10.0)
+        /// The corner radius of the content.
+        public var cornerRadius: CGFloat = 10.0
         
         /// The maximum width of the content.
         public var maxWidth: CGFloat? = nil
@@ -142,17 +121,13 @@ public extension NSItemContentConfiguration {
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
-           // imageSymbolConfiguration?.call("updateResolvedColors", values: [])
-            _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
-            /*
             imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
-             */
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        public init(shape: Shape = .roundedRect(10.0),
+        public init(cornerRadius: CGFloat = 10.0,
                     shadow: ConfigurationProperties.Shadow = .none(),
                     maxWidth: CGFloat? = nil,
                     maxHeight: CGFloat? = nil,
@@ -167,7 +142,7 @@ public extension NSItemContentConfiguration {
                     imageScaling: ImageScaling = .fit,
                     scaleTransform: CGFloat = 1.0
         ) {
-            self.shape = shape
+            self.cornerRadius = cornerRadius
             self.shadow = shadow
             self.maxWidth = maxWidth
             self.maxHeight = maxHeight
