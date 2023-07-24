@@ -208,8 +208,6 @@ public extension NSCollectionViewItem {
                 self.view.maskToBounds = false
                 self.view.frame = previousFrame
                 self.view.setNeedsLayout()
-             //   self.view.setNeedsDisplay()
-             //   self.view.setNeedsUpdateConstraints()
             }
         } else {
             self.cachedLayoutAttributes = nil
