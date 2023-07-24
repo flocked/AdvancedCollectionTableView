@@ -23,7 +23,7 @@ public extension NSTableCellContentConfiguration {
             public var image: NSImage?
             public var view: NSView?
             
-            public var textProperties = TextProperties()
+            public var textProperties: ConfigurationProperties.Text = .body
             public var contentProperties = ContentProperties()
             
             public var contentPosition: ContentPosition = .trailing

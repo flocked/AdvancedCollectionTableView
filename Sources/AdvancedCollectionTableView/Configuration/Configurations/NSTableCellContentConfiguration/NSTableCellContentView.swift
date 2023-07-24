@@ -125,7 +125,7 @@ public class NSTableCellContentView: NSView, NSContentView {
 
 internal extension NSTableCellContentView {
     class CellTextField: NSTextField {
-        var properties: NSTableCellContentConfiguration.TextProperties {
+        var properties: ConfigurationProperties.Text {
             didSet {
                 if oldValue != properties {
                     update()
@@ -148,7 +148,7 @@ internal extension NSTableCellContentView {
         
         func update() {
             self.maximumNumberOfLines = properties.maxNumberOfLines
-            self.textColor = properties._resolvedColor
+            self.textColor = properties._resolvedTextColor
             self.lineBreakMode = properties.lineBreakMode
             self.font = properties.font
             self.alignment = properties.alignment
@@ -159,7 +159,7 @@ internal extension NSTableCellContentView {
             self.isBordered = false
         }
         
-        init(properties: NSTableCellContentConfiguration.TextProperties) {
+        init(properties: ConfigurationProperties.Text) {
             self.properties = properties
             super.init(frame: .zero)
             self.drawsBackground = false

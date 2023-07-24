@@ -22,6 +22,8 @@ public extension ConfigurationProperties {
         
         /// The alignment of the text.
         public var alignment: NSTextAlignment = .left
+        
+        public var lineBreakMode: NSLineBreakMode = .byCharWrapping
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
@@ -59,10 +61,11 @@ public extension ConfigurationProperties {
             _resolvedTextColor = resolvedTextColor()
         }
         
-        public init(font: NSFont = .body, maxNumberOfLines: Int = 0, alignment: NSTextAlignment = .left, textColor: NSColor = .labelColor, textColorTansform: ColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
+        public init(font: NSFont = .body, maxNumberOfLines: Int = 0, alignment: NSTextAlignment = .left, lineBreakMode: NSLineBreakMode = .byCharWrapping, textColor: NSColor = .labelColor, textColorTansform: ColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
             self.font = font
             self.maxNumberOfLines = maxNumberOfLines
             self.alignment = alignment
+            self.lineBreakMode = lineBreakMode
             self.isSelectable = isSelectable
             self.isEditable = isEditable
             self.onEditEnd = onEditEnd

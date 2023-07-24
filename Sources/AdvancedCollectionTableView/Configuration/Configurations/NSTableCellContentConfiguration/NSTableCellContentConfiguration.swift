@@ -41,9 +41,9 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     public var image: NSImage? = nil
     
     /// Properties for configuring the primary text.
-    public var textProperties = TextProperties.primary()
+    public var textProperties: ConfigurationProperties.Text = .primary
     /// Properties for configuring the secondary text.
-    public var secondaryTextProperties = TextProperties.secondary()
+    public var secondaryTextProperties: ConfigurationProperties.Text = .secondary
     /// Properties for configuring the image.
     public var imageProperties = ImageProperties()
 
@@ -104,8 +104,8 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     mutating internal func updateResolvedColors() {
         self.imageProperties.updateResolvedColors()
         self.imageProperties.shadowProperties.updateResolvedColor()
-        self.textProperties.updateResolvedColor()
-        self.secondaryTextProperties.updateResolvedColor()
+        self.textProperties.updateResolvedTextColor()
+        self.secondaryTextProperties.updateResolvedTextColor()
     }
     
     /// Creates a new instance of the content view using the configuration.
@@ -138,8 +138,8 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
          secondaryText: String? = nil,
          secondaryAttributedText: AttributedString? = nil,
          image: NSImage? = nil,
-         textProperties: TextProperties = TextProperties.primary(),
-         secondaryTextProperties: TextProperties = TextProperties.secondary(),
+                textProperties: ConfigurationProperties.Text = .primary,
+                secondaryTextProperties: ConfigurationProperties.Text = .secondary,
          imageProperties: ImageProperties = ImageProperties(),
          imageToTextPadding: CGFloat = 8.0,
          textToSecondaryTextPadding: CGFloat = 2.0,
@@ -203,7 +203,7 @@ public extension NSTableCellContentConfiguration {
         var configuration = NSTableCellContentConfiguration()
         configuration.type = .sidebarHeader
         configuration.textProperties.font = .subheadline.weight(.bold)
-        configuration.textProperties.color = .tertiaryLabelColor
+        configuration.textProperties.textColor = .tertiaryLabelColor
         configuration.imageProperties.tintColor = .tertiaryLabelColor
         configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), colorConfiguration: .monochrome)
         configuration.insets = .init(top: 2, left: 0.0, bottom: 2, right: 2.0)

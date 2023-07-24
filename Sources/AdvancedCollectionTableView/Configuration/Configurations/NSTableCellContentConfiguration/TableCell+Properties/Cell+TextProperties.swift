@@ -9,7 +9,7 @@ import AppKit
 import SwiftUI
 import FZSwiftUtils
 import FZUIKit
-
+/*
 public extension NSTableCellContentConfiguration {
     /// Properties that affect the cell content configuration’s text.
     struct TextProperties: Hashable {
@@ -85,3 +85,4 @@ public extension NSTableCellContentConfiguration {
         
     }
 }
+*/
