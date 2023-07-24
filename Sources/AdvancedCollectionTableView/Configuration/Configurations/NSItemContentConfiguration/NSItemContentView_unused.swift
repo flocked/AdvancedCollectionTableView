@@ -14,7 +14,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
     public lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
 
-    public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration.contentProperties, view: _configuration.view, image: _configuration.image, overlayView: _configuration.overlayView)
+    public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration, view: _configuration.view, image: _configuration.image, overlayView: _configuration.overlayView)
     
     public var _constraints: [NSLayoutConstraint] = []
     public  var imageViewConstraints: [NSLayoutConstraint] = []
@@ -42,7 +42,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         secondaryTextField.properties = _configuration.secondaryTextProperties
         secondaryTextField.text(_configuration.secondaryText, attributedText: _configuration.secondaryAttributedText)
         
-        contentView.properties = _configuration.contentProperties
+        contentView.properties = _configuration
         contentView.image = _configuration.image
         contentView.view = _configuration.view
         contentView.overlayView = _configuration.overlayView

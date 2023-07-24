@@ -11,13 +11,14 @@ import FZUIKit
 
 public extension NSItemContentViewNS {
     class ItemContentView: NSView {
+        let containerView = NSView(frame: CGRect(.zero, CGSize(1, 1)))
         let imageView: NSImageView = NSImageView()
         var view: NSView? = nil {
             didSet {
                 if oldValue != self.view {
                     oldValue?.removeFromSuperview()
                     if let newView = self.view {
-                        self.addSubview(withConstraint: newView)
+                        containerView.addSubview(withConstraint: newView)
                         self.overlayView?.sendToFront()
                         self.isHidden = (self.image == nil && self.view == nil)
                     }
@@ -30,7 +31,7 @@ public extension NSItemContentViewNS {
                 if oldValue != self.overlayView {
                     oldValue?.removeFromSuperview()
                     if let newView = self.overlayView {
-                        self.addSubview(withConstraint: newView)
+                        containerView.addSubview(withConstraint: newView)
                     }
                 }
             }
@@ -38,46 +39,60 @@ public extension NSItemContentViewNS {
         
         public override func layout() {
             super.layout()
+            if let size = self.image?.size.scaled(toHeight: self.frame.size.height) {
+                self.containerView.frame.size = size
+                self.containerView.center = self.center
+            } else {
+                self.containerView.frame.size = self.frame.size
+                self.containerView.frame.origin = .zero
+            }
             Swift.print(self.frame.size)
         }
         
         var image: NSImage? {
             get { imageView.image }
             set {
+                guard newValue != self.imageView.image else { return }
                 self.imageView.image = newValue
                 self.imageView.isHidden = newValue == nil
                 self.isHidden = (self.image == nil && self.view == nil)
             }
         }
         
-        var properties: NSItemContentConfiguration.ContentProperties {
+        var properties: NSItemContentConfiguration {
             didSet {
                 if oldValue != properties {
                 update() }
             }
         }
+        
+        var contentProperties: NSItemContentConfiguration.ContentProperties {
+            return properties.contentProperties
+        }
                 
         func update() {
-            self.backgroundColor = properties._resolvedBackgroundColor
-            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsUI()
-            
-            self.borderColor = properties._resolvedBorderColor
-            self.borderWidth = properties.borderWidth
-            self.configurate(using: properties.shadow)
+            containerView.backgroundColor = contentProperties._resolvedBackgroundColor
+            containerView.borderColor = contentProperties._resolvedBorderColor
+            containerView.borderWidth = contentProperties.borderWidth
+            containerView.cornerRadius = contentProperties.cornerRadius
+            containerView.configurate(using: contentProperties.shadow)
     
-            self.imageView.contentTintColor = properties._resolvedImageTintColor
-            self.imageView.imageScaling = properties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
-            self.layer?.scale = CGPoint(x: self.properties.scaleTransform, y: self.properties.scaleTransform)
+            imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
+            imageView.contentTintColor = contentProperties._resolvedImageTintColor
+            imageView.imageScaling = contentProperties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
             
-            self.cornerRadius = properties.cornerRadius
+            containerView.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
         }
         
-        public init(properties: NSItemContentConfiguration.ContentProperties, view: NSView?, image: NSImage?, overlayView: NSView?) {
+        public init(properties: NSItemContentConfiguration, view: NSView?, image: NSImage?, overlayView: NSView?) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
             self.maskToBounds = false
-            self.addSubview(withConstraint: imageView)
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.maskToBounds = false
+            self.addSubview(containerView)
+            containerView.addSubview(withConstraint: imageView)
             self.update()
             self.view = view
             self.image = image
