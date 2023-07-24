@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSItemContentViewNS {
+internal extension NSItemContentViewNS {
     class ItemContentView: NSView {
       //  let containerView = NSView(frame: CGRect(.zero, CGSize(1, 1)))
         let imageView: NSImageView = NSImageView()
@@ -81,10 +81,8 @@ public extension NSItemContentViewNS {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
         }
-        internal var savedFrame: CGRect = .zero
-        internal var scaledFactor: CGFloat = 0.0
-        
-        public init(properties: NSItemContentConfiguration, view: NSView?, image: NSImage?, overlayView: NSView?) {
+                
+        public init(properties: NSItemContentConfiguration) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
@@ -94,10 +92,6 @@ public extension NSItemContentViewNS {
           //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
             
             self.addSubview( imageView)
-            self.update()
-            self.view = view
-            self.image = image
-            self.overlayView = overlayView
             self.update()
         }
         

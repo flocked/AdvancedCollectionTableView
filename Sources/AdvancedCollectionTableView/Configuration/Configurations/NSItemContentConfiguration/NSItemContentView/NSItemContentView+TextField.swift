@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSItemContentViewNS {
+internal extension NSItemContentViewNS {
     class ItemTextField: NSTextField, NSTextFieldDelegate {
         var properties: ConfigurationProperties.Text {
             didSet {
