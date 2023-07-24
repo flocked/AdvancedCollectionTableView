@@ -23,7 +23,7 @@ class ViewController: NSViewController {
     
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
-    let itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
+    lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
         // Content configuration for collectionview items.
         var configuration = NSItemContentConfiguration()
         configuration.text = galleryItem.title
@@ -31,6 +31,13 @@ class ViewController: NSViewController {
         configuration.image = NSImage(named: galleryItem.imageName)
         
         collectionViewItem.contentConfiguration = configuration
+        
+        if let layoutFrame = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame {
+            if collectionViewItem.view.frame != layoutFrame {
+                collectionViewItem.view.frame = layoutFrame
+            }
+        }
+
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
@@ -86,6 +93,8 @@ class ViewController: NSViewController {
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
+        
+        Swift.print((0...6).compactMap({collectionView.layoutAttributesForItem(at: IndexPath(item: $0, section: 0))?.frame }))
 
     }
     

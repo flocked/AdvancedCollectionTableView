@@ -202,13 +202,17 @@ public extension NSCollectionViewItem {
                 contentView.configuration = contentConfiguration
             } else {
                 self.cachedLayoutAttributes = nil
+                let previousFrame = self.view.frame
                 self.view = contentConfiguration.makeContentView()
+                self.view.frame = previousFrame
                 self.view.wantsLayer = true
                 self.view.maskToBounds = false
             }
         } else {
             self.cachedLayoutAttributes = nil
+            let previousFrame = self.view.frame
             self.view = NSView()
+            self.view.frame = previousFrame
         }
         self.configurateBackgroundView()
     }
