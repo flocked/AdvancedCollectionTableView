@@ -46,7 +46,8 @@ public extension NSItemContentViewNS {
                 let size = imageSize.scaled(toHeight: self.frame.size.height)
                 let previousFrameSize = self.frame.size
             //    self.containerView.frame.size = size
-                self.containerView.center = self.center
+                self.imageView.frame.size = size
+                self.imageView.center = self.center
                 Swift.print("scaled", previousFrameSize, imageSize, size, self.imageView.frame.size)
             } else {
            //     self.containerView.frame.size = self.frame.size
@@ -97,8 +98,8 @@ public extension NSItemContentViewNS {
             self.maskToBounds = false
             containerView.translatesAutoresizingMaskIntoConstraints = false
             containerView.maskToBounds = true
-            self.addSubview(containerView)
-            containerView.addSubview(withConstraint: imageView)
+          //  self.addSubview(containerView)
+            self.addSubview( imageView)
             self.update()
             self.view = view
             self.image = image
