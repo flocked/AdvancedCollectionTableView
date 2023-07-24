@@ -32,7 +32,7 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
         public var imageTintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the image tint color.
-        public var imageTintColorTransform: NSConfigurationColorTransformer? = nil {
+        public var imageTintColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedImageTintColor() -> NSColor? {
@@ -46,7 +46,7 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
         public var backgroundColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil {
+        public var backgroundColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -60,7 +60,7 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         
-        public var borderColorTransform: NSConfigurationColorTransformer? = nil {
+        public var borderColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -71,9 +71,9 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
         }
         
         public var cornerRadius: CGFloat = 0.0
-        public var shadowProperties: NSTableCellContentConfiguration.ShadowProperties = NSTableCellContentConfiguration.ShadowProperties()
+        public var shadowProperties: ConfigurationProperties.Shadow = .none()
         
-        public var imageSymbolConfiguration: NSTableCellContentConfiguration.SymbolConfiguration? = NSTableCellContentConfiguration.SymbolConfiguration().font(.textStyle(.body, weight: nil))
+        public var imageSymbolConfiguration: ConfigurationProperties.SymbolConfiguration? = .font(.body)
         
         public var imageScaling: NSImageScaling = .scaleNone
         public var contentMaxWidth: CGFloat? = nil

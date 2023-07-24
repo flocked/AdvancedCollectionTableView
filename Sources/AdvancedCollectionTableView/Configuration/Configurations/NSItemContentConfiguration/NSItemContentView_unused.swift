@@ -143,7 +143,7 @@ public extension NSItemContentViewNS {
         
         func update() {
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsSymbolConfiguration()
+            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsUI()
             
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth

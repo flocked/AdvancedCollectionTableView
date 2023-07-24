@@ -10,6 +10,7 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
+
 public extension NSItemContentConfiguration {
     /// Properties for configuring the text of an item.
     struct TextProperties {
@@ -80,7 +81,7 @@ public extension NSItemContentConfiguration {
             didSet { updateResolvedTextColor() } }
         
         /// The color transformer of the text color.
-        public var textColorTansform: NSConfigurationColorTransformer? = nil {
+        public var textColorTansform: ColorTransformer? = nil {
             didSet { updateResolvedTextColor() } }
         
         /// Generates the resolved text color for the specified text color, using the color and color transformer.
@@ -88,7 +89,7 @@ public extension NSItemContentConfiguration {
             textColorTansform?(textColor) ?? textColor
         }
         
-        public init(font: NSFont = .body, numberOfLines: Int? = nil, alignment: Alignment = .center, textColor: NSColor = .labelColor, textColorTansform: NSConfigurationColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
+        public init(font: NSFont = .body, numberOfLines: Int? = nil, alignment: Alignment = .center, textColor: NSColor = .labelColor, textColorTansform: ColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
             self.font = font
             self.swiftuiFont = font.swiftUI
             self.numberOfLines = numberOfLines

@@ -42,7 +42,7 @@ public extension NSTableCellContentConfiguration {
         public var tintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: NSConfigurationColorTransformer? = nil {
+        public var tintColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
@@ -56,7 +56,7 @@ public extension NSTableCellContentConfiguration {
         public var backgroundColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil {
+        public var backgroundColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -72,7 +72,7 @@ public extension NSTableCellContentConfiguration {
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer of the border color.
-        public var borderColorTransform: NSConfigurationColorTransformer? = nil {
+        public var borderColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -85,10 +85,10 @@ public extension NSTableCellContentConfiguration {
         /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
         /// The shadow properties of the image.
-        public var shadowProperties: ShadowProperties = ShadowProperties()
+        public var shadowProperties: ConfigurationProperties.Shadow = .none()
         
         /// The symbol configuration of the image.
-        public var symbolConfiguration: SymbolConfiguration? = SymbolConfiguration().font(.textStyle(.body, weight: nil))
+        public var symbolConfiguration: ConfigurationProperties.SymbolConfiguration? = .font(.body)
         
         /// The image scaling.
         public var scaling: NSImageScaling = .scaleNone
@@ -106,15 +106,15 @@ public extension NSTableCellContentConfiguration {
         
         /// Creates image properties.
         public init(tintColor: NSColor? = nil,
-                    tintColorTransform: NSConfigurationColorTransformer? = nil,
+                    tintColorTransform: ColorTransformer? = nil,
                     backgroundColor: NSColor? = nil,
-                    backgroundColorTransform: NSConfigurationColorTransformer? = nil,
+                    backgroundColorTransform: ColorTransformer? = nil,
                     borderWidth: CGFloat = 0.0,
                     borderColor: NSColor? = nil,
-                    borderColorTransform: NSConfigurationColorTransformer? = nil,
+                    borderColorTransform: ColorTransformer? = nil,
                     cornerRadius: CGFloat = 0.0,
-                    shadowProperties: ShadowProperties = ShadowProperties(),
-                    symbolConfiguration: SymbolConfiguration? = nil,
+                    shadowProperties: ConfigurationProperties.Shadow = .none(),
+                    symbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil,
                     scaling: NSImageScaling = .scaleNone,
                     maxWidth: CGFloat? = nil,
                     maxHeight: CGFloat? = nil,
@@ -141,48 +141,10 @@ public extension NSTableCellContentConfiguration {
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
-            symbolConfiguration?.updateResolvedColors()
+          //  symbolConfiguration?.updateResolvedColors()
             _resolvedTintColor = symbolConfiguration?._resolvedPrimaryColor ?? resolvedTintColor()
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
     }
 }
-
-internal extension NSTableCellContentConfiguration.SymbolConfiguration {
-    func nsSymbolConfiguration() -> NSImage.SymbolConfiguration {
-        var configuration: NSImage.SymbolConfiguration
-        switch self.colorConfiguration {
-        case .hierarchical(let color):
-            configuration = .hierarchical(color)
-        case .monochrome:
-            configuration = .monochrome()
-        case .palette(let primary, let secondary, let tertiary):
-            configuration = .palette(primary, secondary, tertiary)
-        case .multicolor(let color):
-            configuration = .multicolor(color)
-        case .none:
-            configuration = .unspecified
-        }
-        
-        switch self.font {
-            case .systemFont(size: let size, weight: let weight):
-                configuration = configuration.font(size: size)
-            configuration = configuration.weight(weight?.symbolWeight())
-            case .textStyle(let style, weight: let weight):
-                configuration = configuration.font(style)
-            configuration = configuration.weight(weight?.symbolWeight())
-            case .none:
-                break
-        }
-        
-        if let symbolScale = self.imageScale?.nsSymbolScale {
-            configuration = configuration.scale(symbolScale)
-        }
-        
-        return configuration
-    }
-}
-
-/// textHeight
-/// textAndSecondaryTextHeight

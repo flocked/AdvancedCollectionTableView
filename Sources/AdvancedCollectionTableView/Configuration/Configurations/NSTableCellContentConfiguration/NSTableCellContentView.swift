@@ -197,7 +197,7 @@ internal extension NSTableCellContentView {
         
         func update() {
             self.imageScaling = properties.scaling
-            self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
+            self.symbolConfiguration = properties.symbolConfiguration?.nsUI()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor

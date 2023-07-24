@@ -172,7 +172,7 @@ public extension NSTableCellContentConfiguration {
             case .color(let color): return color
             }
         }
-        internal var symbolColorConfiguration:  NSTableCellContentConfiguration.SymbolConfiguration.ColorConfiguration {
+        internal var symbolColorConfiguration: ConfigurationProperties.SymbolConfiguration.ColorConfiguration {
             switch self {
             case .multiColor(let color): return .multicolor(color)
             case .accentColor: return .monochrome
@@ -261,9 +261,9 @@ public extension NSTableCellContentConfiguration {
         configuration.type = .sidebar
         configuration.textProperties.font = .system(style).weight(weight)
         configuration.secondaryTextProperties.font = .system(style).weight(weight)
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(style, weight: weight))
+        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight())
         configuration.imageProperties.tintColor = imageColor.tintColor
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(style), colorConfiguration: imageColor.symbolColorConfiguration)
+        configuration.imageProperties.symbolConfiguration = .font(style).colorConfiguration(imageColor.symbolColorConfiguration)
         configuration.imageToTextPadding = 8.0
         configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
         return configuration

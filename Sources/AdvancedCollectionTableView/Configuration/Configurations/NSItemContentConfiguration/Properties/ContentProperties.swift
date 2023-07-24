@@ -88,7 +88,7 @@ public extension NSItemContentConfiguration {
         public var backgroundColor: NSColor? = .lightGray {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: NSConfigurationColorTransformer? = nil {
+        public var backgroundColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -104,7 +104,7 @@ public extension NSItemContentConfiguration {
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the border color.
-        public var borderColorTransform: NSConfigurationColorTransformer? = nil {
+        public var borderColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -115,13 +115,13 @@ public extension NSItemContentConfiguration {
         }
         
         /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: SymbolConfiguration? = nil
+        public var imageSymbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
         /// The image tint color for an image that is a template or symbol image.
         public var imageTintColor: NSColor? = nil
         /// The color transformer for resolving the image tint color.
-        public var imageTintColorTransform: NSConfigurationColorTransformer? = nil
+        public var imageTintColorTransform: ColorTransformer? = nil
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedImageTintColor() -> NSColor? {
             if let imageTintColor = self.imageTintColor {
@@ -131,7 +131,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The outer shadow properties.
-        public var shadow: ShadowProperties = .black()
+        public var shadow: ConfigurationProperties.Shadow = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
         internal var needsBorderWidthReset: Bool = false
@@ -142,24 +142,28 @@ public extension NSItemContentConfiguration {
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
+           // imageSymbolConfiguration?.call("updateResolvedColors", values: [])
+            _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
+            /*
             imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
+             */
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
         public init(shape: Shape = .roundedRect(10.0),
-                    shadow: ShadowProperties = .none(),
+                    shadow: ConfigurationProperties.Shadow = .none(),
                     maxWidth: CGFloat? = nil,
                     maxHeight: CGFloat? = nil,
                     backgroundColor: NSColor? = .lightGray,
-                    backgroundColorTransform: NSConfigurationColorTransformer? = nil,
+                    backgroundColorTransform: ColorTransformer? = nil,
                     borderWidth: CGFloat = 0.0,
                     borderColor: NSColor? = nil,
-                    borderColorTransform: NSConfigurationColorTransformer? = nil,
+                    borderColorTransform: ColorTransformer? = nil,
                     imageTintColor: NSColor? = nil,
-                    imageTintColorTransform: NSConfigurationColorTransformer? = nil,
-                    imageSymbolConfiguration: SymbolConfiguration? = nil,
+                    imageTintColorTransform: ColorTransformer? = nil,
+                    imageSymbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil,
                     imageScaling: ImageScaling = .fit,
                     scaleTransform: CGFloat = 1.0
         ) {

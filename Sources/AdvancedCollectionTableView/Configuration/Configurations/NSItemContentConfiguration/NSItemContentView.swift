@@ -241,12 +241,6 @@ internal extension Shape {
 
 internal extension View {
     @ViewBuilder
-    func shadow(_ properties: NSItemContentConfiguration.ShadowProperties) -> some View {
-        self
-            .shadow(color: properties._resolvedColor?.swiftUI, radius: properties.radius, offset: properties.offset)
-    }
-    
-    @ViewBuilder
     func sizing(_ sizing: NSItemContentConfiguration.ContentProperties.SizeOption?, hasImage: Bool, isVertical: Bool) -> some View {
         switch sizing {
         case .size(let size):
@@ -274,7 +268,7 @@ internal extension View {
 
 struct CollectionItemView_Previews: PreviewProvider {
     static func contentProperties(isSelected: Bool) -> NSItemContentConfiguration.ContentProperties {
-        let shadow = NSItemContentConfiguration.ShadowProperties(radius: 6.0, opacity: 0.7, offset: CGPoint(1, 1), color: isSelected ? .controlAccentColor : nil)
+        let shadow = ConfigurationProperties.Shadow(color: isSelected ? .controlAccentColor : nil, opacity: 0.7, radius: 6.0, offset: CGPoint(1, 1))
         return NSItemContentConfiguration.ContentProperties(shape: .roundedRect(10.0), shadow: shadow, backgroundColor: .lightGray, borderWidth: 1.0, borderColor: isSelected ? .controlAccentColor : nil, imageScaling: .fit)
     }
     

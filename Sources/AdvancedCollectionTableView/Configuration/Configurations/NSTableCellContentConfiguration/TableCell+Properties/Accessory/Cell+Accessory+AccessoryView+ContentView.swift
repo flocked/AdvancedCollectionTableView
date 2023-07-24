@@ -46,7 +46,7 @@ internal extension NSTableCellContentView.AccessoriesView.AccessoryView {
         
         func update() {
             self.imageView.imageScaling = properties.imageScaling
-            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsSymbolConfiguration()
+            self.imageView.symbolConfiguration = properties.imageSymbolConfiguration?.nsUI()
             self.imageView.contentTintColor = properties._resolvedImageTintColor
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth

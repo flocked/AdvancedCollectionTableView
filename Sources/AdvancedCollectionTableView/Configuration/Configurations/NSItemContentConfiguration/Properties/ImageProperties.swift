@@ -27,13 +27,13 @@ public extension NSItemContentConfiguration {
         }
         
         /// The symbol configuration for the image.
-        public var symbolConfiguration: NSItemContentConfiguration.ContentProperties.SymbolConfiguration? = nil
+        public var symbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil
         /// The image scaling.
         public var scaling: ImageScaling = .fit
         /// The image tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? = nil
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: NSConfigurationColorTransformer? = nil
+        public var tintColorTransform: ColorTransformer? = nil
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = self.tintColor {
@@ -42,10 +42,10 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        init(symbolConfiguration: NSItemContentConfiguration.ContentProperties.SymbolConfiguration? = nil,
+        init(symbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil,
              scaling: ImageScaling = .fit,
              tintColor: NSColor? = nil,
-             tintColorTransform: NSConfigurationColorTransformer? = nil) {
+             tintColorTransform: ColorTransformer? = nil) {
             self.symbolConfiguration = symbolConfiguration
             self.scaling = scaling
             self.tintColor = tintColor

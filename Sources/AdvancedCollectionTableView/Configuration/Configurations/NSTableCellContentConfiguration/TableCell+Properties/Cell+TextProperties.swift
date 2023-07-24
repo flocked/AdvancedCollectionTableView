@@ -21,7 +21,7 @@ public extension NSTableCellContentConfiguration {
         public var color: NSColor = .labelColor {
             didSet { updateResolvedColor() } }
         /// The color transformer of the text color.
-        public var colorTansform: NSConfigurationColorTransformer? = nil {
+        public var colorTansform: ColorTransformer? = nil {
             didSet { updateResolvedColor() } }
         /// Generates the resolved text color for the specified text color, using the color and color transformer.
         public func resolvedColor() -> NSColor {
