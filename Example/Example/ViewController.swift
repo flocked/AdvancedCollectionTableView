@@ -32,11 +32,13 @@ class ViewController: NSViewController {
         
         collectionViewItem.contentConfiguration = configuration
         
+        /*
         if let layoutFrame = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame {
             if collectionViewItem.view.frame != layoutFrame {
                 collectionViewItem.view.frame = layoutFrame
             }
         }
+        */
 
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
