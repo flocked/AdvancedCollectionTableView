@@ -78,6 +78,7 @@ public extension NSItemContentViewNS {
                 self.overlayView = properties.overlayView
             }
             
+            /*
             if contentProperties.scaleTransform > 1.0 {
                 savedFrame = self.frame
                 self.scale(by: contentProperties.scaleTransform)
@@ -87,6 +88,7 @@ public extension NSItemContentViewNS {
                 self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
       
             }
+             */
           //  self.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
         }
         internal var savedFrame: CGRect = .zero
