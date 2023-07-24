@@ -46,9 +46,9 @@ public extension NSItemContentViewNS {
                 let size = imageSize.scaled(toHeight: self.frame.size.height)
                 let previousFrameSize = self.frame.size
             //    self.containerView.frame.size = size
-                self.imageView.frame.size = size
+             //   self.imageView.frame.size = size
                 self.imageView.center = self.center
-                self.widthAnchor.constraint(equalToConstant: size.height).activate()
+              //  self.widthAnchor.constraint(equalToConstant: size.height).activate()
                 Swift.print("scaled", previousFrameSize, imageSize, size, self.imageView.frame.size)
             } else {
            //     self.containerView.frame.size = self.frame.size
