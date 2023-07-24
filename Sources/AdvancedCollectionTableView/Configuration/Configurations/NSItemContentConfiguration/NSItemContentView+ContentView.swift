@@ -11,63 +11,35 @@ import FZUIKit
 
 public extension NSItemContentViewNS {
     class ItemContentView: NSView {
-        let containerView = NSView(frame: CGRect(.zero, CGSize(1, 1)))
+      //  let containerView = NSView(frame: CGRect(.zero, CGSize(1, 1)))
         let imageView: NSImageView = NSImageView()
         var view: NSView? = nil {
             didSet {
-                if oldValue != self.view {
                     oldValue?.removeFromSuperview()
                     if let newView = self.view {
-                        containerView.addSubview(withConstraint: newView)
+                        self.addSubview(withConstraint: newView)
                         self.overlayView?.sendToFront()
                         self.isHidden = (self.image == nil && self.view == nil)
                     }
-                }
             }
         }
         
         var overlayView: NSView? = nil {
             didSet {
-                if oldValue != self.overlayView {
                     oldValue?.removeFromSuperview()
                     if let newView = self.overlayView {
-                        containerView.addSubview(withConstraint: newView)
+                        self.addSubview(withConstraint: newView)
                     }
-                }
             }
         }
         
-        public override func layout() {
-            super.layout()
-            
-            self.containerView.frame.size = self.frame.size
-            
-            if let imageSize = self.image?.size {
-                let size = imageSize.scaled(toHeight: self.frame.size.height)
-                let previousFrameSize = self.frame.size
-            //    self.containerView.frame.size = size
-             //   self.imageView.frame.size = size
-                self.imageView.center = self.center
-              //  self.widthAnchor.constraint(equalToConstant: size.height).activate()
-                Swift.print("scaled", previousFrameSize, imageSize, size, self.imageView.frame.size)
-            } else {
-           //     self.containerView.frame.size = self.frame.size
-          //      self.containerView.frame.origin = .zero
-            }
-            Swift.print(self.frame.size)
-        }
-        
-        public override var intrinsicContentSize: NSSize {
-            if let imageSize = self.image?.size {
-                return imageSize.scaled(toHeight: self.frame.size.height)
-            }
-            return self.frame.size
-        }
+        var imageSize: CGSize? = nil
         
         var image: NSImage? {
             get { imageView.image }
             set {
                 guard newValue != self.imageView.image else { return }
+                self.imageSize = newValue?.size
                 self.imageView.image = newValue
                 self.imageView.isHidden = newValue == nil
                 self.isHidden = (self.image == nil && self.view == nil)
@@ -86,17 +58,27 @@ public extension NSItemContentViewNS {
         }
                 
         func update() {
-            containerView.backgroundColor = contentProperties._resolvedBackgroundColor
-            containerView.borderColor = contentProperties._resolvedBorderColor
-            containerView.borderWidth = contentProperties.borderWidth
-            containerView.cornerRadius = contentProperties.cornerRadius
-            containerView.configurate(using: contentProperties.shadow)
+            self.backgroundColor = contentProperties._resolvedBackgroundColor
+            self.borderColor = contentProperties._resolvedBorderColor
+            self.borderWidth = contentProperties.borderWidth
+            self.cornerRadius = contentProperties.cornerRadius
+            self.configurate(using: contentProperties.shadow)
     
             imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
             imageView.contentTintColor = contentProperties._resolvedImageTintColor
             imageView.imageScaling = contentProperties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
             
-            containerView.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
+            self.image = properties.image
+            
+            if properties.view != self.view {
+                self.view = properties.view
+            }
+            
+            if properties.overlayView != self.overlayView {
+                self.overlayView = properties.overlayView
+            }
+            
+            self.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
         }
         
         public init(properties: NSItemContentConfiguration, view: NSView?, image: NSImage?, overlayView: NSView?) {
@@ -104,9 +86,10 @@ public extension NSItemContentViewNS {
             super.init(frame: .zero)
             self.wantsLayer = true
             self.maskToBounds = false
-            containerView.translatesAutoresizingMaskIntoConstraints = false
-            containerView.maskToBounds = true
-          //  self.addSubview(containerView)
+          //  self.translatesAutoresizingMaskIntoConstraints = false
+            self.imageView.translatesAutoresizingMaskIntoConstraints = false
+
+            self.maskToBounds = true
             self.addSubview( imageView)
             self.update()
             self.view = view

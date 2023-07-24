@@ -13,9 +13,9 @@ import SwiftUI
 public class NSItemContentViewNS: NSView, NSContentView {
     public lazy var textField: ItemTextField = ItemTextField(properties: _configuration.textProperties)
     public lazy var secondaryTextField: ItemTextField = ItemTextField(properties: _configuration.secondaryTextProperties)
-
     public lazy var contentView: ItemContentView = ItemContentView(properties: _configuration, view: _configuration.view, image: _configuration.image, overlayView: _configuration.overlayView)
     
+    /*
     public var _constraints: [NSLayoutConstraint] = []
     public  var imageViewConstraints: [NSLayoutConstraint] = []
     
@@ -34,6 +34,70 @@ public class NSItemContentViewNS: NSView, NSContentView {
         stackView.spacing = _configuration.contentToTextPadding
         return stackView
     }()
+     */
+    
+    var previousSize: CGSize? = nil
+    var previousImageSize: CGSize? = nil
+    public override func layout() {
+        super.layout()
+        guard previousSize != self.frame.size || previousImageSize != contentView.imageSize else { return }
+        previousSize = self.frame.size
+        previousImageSize = contentView.imageSize
+        
+        let width = self.frame.size.width - _configuration.padding.width
+        var height = self.frame.size.height - _configuration.padding.height
+        
+        if (_configuration.hasText || _configuration.hasSecondaryText) {
+            height -= _configuration.contentToTextPadding
+        }
+        
+        if (_configuration.hasText && _configuration.hasSecondaryText) {
+            height -= _configuration.textToSecondaryTextPadding
+        }
+        var y = _configuration.padding.bottom
+        if (_configuration.hasText) {
+            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
+            
+            height -= textField.frame.size.height
+            y += textField.frame.size.height
+            if _configuration.hasSecondaryText {
+                y += _configuration.textToSecondaryTextPadding
+            }
+        }
+        
+        if (_configuration.hasSecondaryText) {
+            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
+
+            height -= secondaryTextField.frame.size.height
+            y += secondaryTextField.frame.size.height
+            if _configuration.hasContent {
+                y += _configuration.contentToTextPadding
+            }
+        }
+        
+        let remainingSize = CGSize(width: width, height: height)
+        
+        if _configuration.hasContent {
+            if let imageSize = contentView.imageSize {
+                let resizedImageSize: CGSize
+                if _configuration.contentProperties.imageScaling == .fit {
+                    resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
+                    contentView.frame.size = resizedImageSize
+                } else {
+                    resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
+                    contentView.frame.size = remainingSize
+                }
+                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
+                contentView.imageView.frame.size = resizedImageSize
+                contentView.imageView.center = contentView.center
+            } else {
+                contentView.frame.size = remainingSize
+                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
+            }
+        }
+    }
     
     public func update() {
         textField.properties = _configuration.textProperties
@@ -43,12 +107,10 @@ public class NSItemContentViewNS: NSView, NSContentView {
         secondaryTextField.text(_configuration.secondaryText, attributedText: _configuration.secondaryAttributedText)
         
         contentView.properties = _configuration
-        contentView.image = _configuration.image
-        contentView.view = _configuration.view
-        contentView.overlayView = _configuration.overlayView
         
         layer?.scale = CGPoint(x: _configuration.scaleTransform, y: _configuration.scaleTransform)
         
+        /*
         stackView.spacing = _configuration.contentToTextPadding
         textStackView.spacing = _configuration.textToSecondaryTextPadding
         
@@ -56,6 +118,9 @@ public class NSItemContentViewNS: NSView, NSContentView {
         _constraints[1].constant = _configuration.padding.bottom
         _constraints[2].constant = -_configuration.padding.trailing
         _constraints[3].constant = -_configuration.padding.top
+         */
+        
+        self.setNeedsLayout()
 
     }
     
@@ -86,7 +151,12 @@ public class NSItemContentViewNS: NSView, NSContentView {
     public init(configuration: NSItemContentConfiguration) {
         self._configuration = configuration
         super.init(frame: .zero)
-        self._constraints = self.addSubview(withConstraint: stackView)
+        
+        self.addSubview(textField)
+        self.addSubview(secondaryTextField)
+        self.addSubview(contentView)
+
+      //  self._constraints = self.addSubview(withConstraint: stackView)
         self.wantsLayer = true
         self.update()
     }
