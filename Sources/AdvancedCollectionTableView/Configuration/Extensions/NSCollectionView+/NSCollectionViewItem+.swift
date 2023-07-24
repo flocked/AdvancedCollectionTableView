@@ -203,6 +203,7 @@ public extension NSCollectionViewItem {
             } else {
                 self.cachedLayoutAttributes = nil
                 let previousFrame = self.view.frame
+                Swift.print("layoutAttributes", self.layoutAttributes ?? "", previousFrame)
                 self.view = contentConfiguration.makeContentView()
                 if let frame = self.layoutAttributes?.frame {
                     self.view.frame = frame
