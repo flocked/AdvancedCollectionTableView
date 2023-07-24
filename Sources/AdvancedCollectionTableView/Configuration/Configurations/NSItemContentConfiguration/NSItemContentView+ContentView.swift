@@ -80,10 +80,10 @@ public extension NSItemContentViewNS {
             
             if contentProperties.scaleTransform > 1.0 {
                 scaledFactor = contentProperties.scaleTransform - 1.0
-                self.scale(by: contentProperties.scaleTransform, animateDuration: 0.1)
+                self.scale(by: contentProperties.scaleTransform)
             } else {
                 if scaledFactor > 0.0 {
-                    self.scale(by: 1.0 - scaledFactor, animateDuration: 0.1)
+                    self.scale(by: 1.0 - scaledFactor)
                     scaledFactor = 0.0
                 }
             }
@@ -115,6 +115,18 @@ public extension NSItemContentViewNS {
 }
 
 extension NSView {
+    func scale(by factor: CGFloat) {
+        let doubleSize = NSSize(width: factor, height: factor)
+        self.scaleUnitSquare(to: doubleSize)
+        
+        let newSize = CGSize(factor * self.frame.width, factor * self.frame.height)
+        var newOrigin = self.frame.origin
+        newOrigin.x -= (newSize.width - self.frame.size.width)
+        newOrigin.y -= (newSize.height - self.frame.size.height)
+        self.frame = CGRect(newOrigin, newSize)
+        self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
+    }
+    
     func scale(by factor: CGFloat, animateDuration: CGFloat) {
         // Set the scale of the view to 2
         let doubleSize = NSSize(width: factor, height: factor)
@@ -133,8 +145,6 @@ extension NSView {
             height: factor * self.frame.height
         )
         
-        self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
-
         // Create the scale animation
         let animation = CABasicAnimation()
         let duration = 1
