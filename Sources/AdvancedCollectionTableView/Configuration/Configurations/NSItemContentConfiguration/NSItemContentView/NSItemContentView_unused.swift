@@ -133,7 +133,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     
     public override func hitTest(_ point: NSPoint) -> NSView? {
         let view = super.hitTest(point)
-        Swift.print("hitTest", view ?? "nil")
+      //  Swift.print("hitTest", view ?? "nil")
         return view
     }
     
@@ -144,7 +144,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     
     public override func mouseDown(with event: NSEvent) {
         Swift.print("mouseDown")
-        super.mouseDown(with: event)
+      //  super.mouseDown(with: event)
     }
     
     required init?(coder: NSCoder) {
