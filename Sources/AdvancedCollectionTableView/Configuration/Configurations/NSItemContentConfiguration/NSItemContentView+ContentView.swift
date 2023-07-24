@@ -57,6 +57,13 @@ public extension NSItemContentViewNS {
             Swift.print(self.frame.size)
         }
         
+        public override var intrinsicContentSize: NSSize {
+            if let imageSize = self.image?.size {
+                return imageSize.scaled(toHeight: self.frame.size.height)
+            }
+            return self.frame.size
+        }
+        
         var image: NSImage? {
             get { imageView.image }
             set {
