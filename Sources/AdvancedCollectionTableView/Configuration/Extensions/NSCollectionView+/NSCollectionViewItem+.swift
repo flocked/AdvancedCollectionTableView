@@ -203,7 +203,6 @@ public extension NSCollectionViewItem {
             } else {
                 self.cachedLayoutAttributes = nil
                 self.view = contentConfiguration.makeContentView()
-                self.view.translatesAutoresizingMaskIntoConstraints = true
                 self.view.wantsLayer = true
                 self.view.maskToBounds = false
             }
@@ -508,5 +507,10 @@ extension NSCollectionViewItem {
     open override func loadView() {
             self.view = NSView()
             self.observeCollectionItem()
+    }
+    
+    open override func viewDidLayout() {
+        super.viewDidLayout()
+        Swift.print("viewDidLayout", (self.contentConfiguration as? NSItemContentConfiguration)?.text ?? "", self.view.frame)
     }
 }
