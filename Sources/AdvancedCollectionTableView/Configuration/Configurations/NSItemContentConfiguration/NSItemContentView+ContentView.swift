@@ -41,10 +41,10 @@ public extension NSItemContentViewNS {
             super.layout()
             if let imageSize = self.image?.size {
                 let size = imageSize.scaled(toHeight: self.frame.size.height)
-                Swift.print("scaled", self.frame.size, imageSize, size)
-                self.imageView.frame.size = size
+                let previousFrameSize = self.frame.size
                 self.containerView.frame.size = size
                 self.containerView.center = self.center
+                Swift.print("scaled", previousFrameSize, imageSize, size, self.imageView.frame.size)
             } else {
                 self.containerView.frame.size = self.frame.size
                 self.containerView.frame.origin = .zero

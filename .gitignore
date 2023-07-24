@@ -2,3 +2,4 @@
 *.resolved
 Package.resolved
 *.resolved
+Example/Example.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
