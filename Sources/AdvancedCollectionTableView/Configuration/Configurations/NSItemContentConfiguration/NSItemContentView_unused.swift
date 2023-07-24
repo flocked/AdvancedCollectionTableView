@@ -39,6 +39,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
     var previousSize: CGSize? = nil
     public override func layout() {
         super.layout()
+        Swift.print(self._configuration.text ?? "", self.frame)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
         
@@ -85,13 +86,11 @@ public class NSItemContentViewNS: NSView, NSContentView {
                     contentView.frame.size = resizedImageSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.frame.origin = .zero
-                    Swift.print("fit", contentView.frame.size, contentView.imageView.frame)
                 } else {
                     resizedImageSize = imageSize.scaled(toFill: CGSize(width: width, height: height))
                     contentView.frame.size = remainingSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.center = contentView.center
-                    Swift.print("fill", contentView.frame.size, contentView.imageView.frame)
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             } else {
