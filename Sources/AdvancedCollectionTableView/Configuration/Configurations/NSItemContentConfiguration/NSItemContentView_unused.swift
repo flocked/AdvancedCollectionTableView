@@ -36,13 +36,24 @@ public class NSItemContentViewNS: NSView, NSContentView {
     }()
      */
     
+    
+    public override func updateConstraints() {
+        super.updateConstraints()
+        Swift.print("updateConstraints", self._configuration.text ?? "", self.frame)
+    }
+    
+    public override func display() {
+        super.display()
+        Swift.print("display", self._configuration.text ?? "", self.frame)
+    }
+    
     var previousSize: CGSize? = nil
     public override func layout() {
         super.layout()
         Swift.print(self._configuration.text ?? "", self.frame)
         guard previousSize != self.frame.size else { return }
         previousSize = self.frame.size
-        
+                
         let width = self.frame.size.width - _configuration.padding.width
         var height = self.frame.size.height - _configuration.padding.height
         
