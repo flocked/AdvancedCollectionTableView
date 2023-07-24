@@ -36,6 +36,11 @@ public extension NSItemContentViewNS {
             }
         }
         
+        public override func layout() {
+            super.layout()
+            Swift.print(self.frame.size)
+        }
+        
         var image: NSImage? {
             get { imageView.image }
             set {
