@@ -89,7 +89,7 @@ public extension NSItemContentViewNS {
           //  self.translatesAutoresizingMaskIntoConstraints = false
           //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
 
-            self.maskToBounds = true
+            self.maskToBounds = false
             self.addSubview( imageView)
             self.update()
             self.view = view
