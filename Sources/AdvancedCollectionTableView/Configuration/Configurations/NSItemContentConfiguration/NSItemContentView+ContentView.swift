@@ -121,8 +121,8 @@ extension NSView {
         
         let newSize = CGSize(factor * self.frame.width, factor * self.frame.height)
         var newOrigin = self.frame.origin
-        newOrigin.x -= (newSize.width - self.frame.size.width)
-        newOrigin.y -= (newSize.height - self.frame.size.height)
+        newOrigin.x -= self.frame.size.width - (self.frame.size.width / factor)
+        newOrigin.y -= self.frame.size.height - (self.frame.size.height / factor)
         self.frame = CGRect(newOrigin, newSize)
         self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
     }
