@@ -34,6 +34,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         var y = appliedConfiguration.padding.bottom
         if (appliedConfiguration.hasText) {
             textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            textField.frame.size.width = width
             textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
             
             height -= textField.frame.size.height
@@ -45,6 +46,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         
         if (appliedConfiguration.hasSecondaryText) {
             secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            secondaryTextField.frame.size.width = width
             secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
             
             height -= secondaryTextField.frame.size.height
@@ -55,7 +57,6 @@ public class NSItemContentViewNS: NSView, NSContentView {
         }
         
         let remainingSize = CGSize(width: width, height: height)
-        
         if appliedConfiguration.hasContent {
             if let imageSize = contentView.imageSize {
                 let resizedImageSize: CGSize

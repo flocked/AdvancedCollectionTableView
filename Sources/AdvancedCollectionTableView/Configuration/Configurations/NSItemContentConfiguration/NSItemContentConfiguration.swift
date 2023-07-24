@@ -89,7 +89,6 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
         return NSItemContentViewNS(configuration: self)
     }
     
-    
     internal func needsUpdate(comparedTo compare: Self) -> Bool {
         let keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent]
         return self.isEqual(compare, for: keyPaths) == false

@@ -61,10 +61,6 @@ public extension ConfigurationProperties {
             _resolvedTextColor = resolvedTextColor()
         }
         
-        internal func needsUpdate(to compare: Self) -> Bool {
-            (self.font != compare.font || self.maxNumberOfLines != compare.maxNumberOfLines)
-        }
-        
         public init(font: NSFont = .body, maxNumberOfLines: Int = 0, alignment: NSTextAlignment = .left, lineBreakMode: NSLineBreakMode = .byCharWrapping, textColor: NSColor = .labelColor, textColorTansform: ColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
             self.font = font
             self.maxNumberOfLines = maxNumberOfLines
