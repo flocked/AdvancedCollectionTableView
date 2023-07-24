@@ -513,9 +513,4 @@ extension NSCollectionViewItem {
             self.view = NSView()
             self.observeCollectionItem()
     }
-    
-    open override func viewDidLayout() {
-        super.viewDidLayout()
-        Swift.print("viewDidLayout", (self.contentConfiguration as? NSItemContentConfiguration)?.text ?? "", self.view.frame)
-    }
 }

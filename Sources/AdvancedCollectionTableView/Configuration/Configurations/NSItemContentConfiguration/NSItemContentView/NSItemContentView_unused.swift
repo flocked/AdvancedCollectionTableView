@@ -131,24 +131,6 @@ public class NSItemContentViewNS: NSView, NSContentView {
         self.updateConfiguration()
     }
     
-    public override func hitTest(_ point: NSPoint) -> NSView? {
-        let view = super.hitTest(point)
-        if NSEvent.current?.type == .leftMouseDown {
-              Swift.print("hitTest", view ?? "nil")
-        }
-        return view
-    }
-    
-    public override func mouseDragged(with event: NSEvent) {
-        Swift.print("mouseDragged")
-        super.mouseDragged(with: event)
-    }
-    
-    public override func mouseDown(with event: NSEvent) {
-        Swift.print("mouseDown")
-        super.mouseDown(with: event)
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
