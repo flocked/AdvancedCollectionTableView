@@ -79,16 +79,17 @@ public extension NSItemContentViewNS {
             }
             
             if contentProperties.scaleTransform > 1.0 {
-                scaledFactor = contentProperties.scaleTransform - 1.0
+                savedFrame = self.frame
                 self.scale(by: contentProperties.scaleTransform)
+                self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
             } else {
-                if scaledFactor > 0.0 {
-                    self.scale(by: 1.0 - scaledFactor)
-                    scaledFactor = 0.0
-                }
+                self.frame = savedFrame
+                self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
+      
             }
           //  self.layer?.scale = CGPoint(x: contentProperties.scaleTransform, y: self.properties.scaleTransform)
         }
+        internal var savedFrame: CGRect = .zero
         internal var scaledFactor: CGFloat = 0.0
         
         public init(properties: NSItemContentConfiguration, view: NSView?, image: NSImage?, overlayView: NSView?) {
@@ -127,7 +128,8 @@ extension NSView {
         newOrigin.x -= self.frame.size.width - (self.frame.size.width / factor)
         newOrigin.y -= self.frame.size.height - (self.frame.size.height / factor)
         self.frame = CGRect(newOrigin, newSize)
-        self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
+        
+       // self.layer?.transform = CATransform3DMakeScale(factor, factor, 1.0)
     }
     
     func scale(by factor: CGFloat, animateDuration: CGFloat) {
