@@ -86,12 +86,12 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
-        return NSItemContentViewNS(configuration: self)
+        return NSItemContentView(configuration: self)
     }
     
     
     internal func needsUpdate(comparedTo compare: Self) -> Bool {
-        var keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent]
+        let keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent]
         return self.isEqual(compare, for: keyPaths) == false
     }
     

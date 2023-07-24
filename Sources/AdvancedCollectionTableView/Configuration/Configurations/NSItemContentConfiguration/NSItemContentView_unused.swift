@@ -172,14 +172,12 @@ if _configuration.hasContent {
         self.addSubview(textField)
         self.addSubview(secondaryTextField)
         self.addSubview(contentView)
-        self.addSubview(withConstraint: testView)
 
       //  self._constraints = self.addSubview(withConstraint: stackView)
         self.wantsLayer = true
         self.update()
     }
     
-    let testView = NSView(frame: .zero)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
