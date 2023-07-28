@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-internal class NSItemContentView: NSView, NSContentView {
+internal class NSItemContentViewSwiftUI: NSView, NSContentView {
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
@@ -84,7 +84,7 @@ internal class NSItemContentView: NSView, NSContentView {
     }
 }
 
-internal extension NSItemContentView {
+internal extension NSItemContentViewSwiftUI {
     struct ContentItem: View {
         let view: NSView?
         let image: NSImage?
@@ -183,16 +183,16 @@ internal extension NSItemContentView {
         @ViewBuilder
         var textItems: some View {
             VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
-                NSItemContentView.TextItem(text: configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
+                NSItemContentViewSwiftUI.TextItem(text: configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
                 
-                NSItemContentView.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
+                NSItemContentViewSwiftUI.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
             }
 
         }
         
         @ViewBuilder
         var contentItem: some View {
-            NSItemContentView.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+            NSItemContentViewSwiftUI.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
         }
         
         @ViewBuilder
@@ -314,19 +314,19 @@ struct CollectionItemView_Previews: PreviewProvider {
     
     static var previews: some View {
         VStack(spacing: 10.0) {
-            NSItemContentView.ContentView(configuration: configuration)
+            NSItemContentViewSwiftUI.ContentView(configuration: configuration)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationVertical)
+            NSItemContentViewSwiftUI.ContentView(configuration: configurationVertical)
                 .frame(width: 200, height: 140)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationView)
+            NSItemContentViewSwiftUI.ContentView(configuration: configurationView)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationFill)
+            NSItemContentViewSwiftUI.ContentView(configuration: configurationFill)
                 .frame(width: 200, height: 160)
                 .padding()
-            NSItemContentView.ContentView(configuration: configurationText)
+            NSItemContentViewSwiftUI.ContentView(configuration: configurationText)
                 .frame(width: 200, height: 120)
                 .padding()
         }

@@ -35,7 +35,7 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
-
+                
             }
             self.configurateBackgroundView()
         }
@@ -50,7 +50,7 @@ public extension NSCollectionViewItem {
      background.color = .systemGray
      background.cornerRadius = 8.0
      background.shadow = .black
-          
+     
      item.backgroundConfiguration = background
      ```
      
@@ -150,7 +150,7 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
-
+                
             }
             self.configurateContentView()
         }
@@ -244,19 +244,17 @@ public extension NSCollectionViewItem {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
-        if self.isConfigurationUpdatesEnabled {
-            let state = self.configurationState
-            
-            if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
-                self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
-            }
-            
-            if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
-                self.contentConfiguration = contentConfiguration.updated(for: state)
-            }
-            
-            configurationUpdateHandler?(self, state)
+        let state = self.configurationState
+        
+        if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
+            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
         }
+        
+        if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
+            self.contentConfiguration = contentConfiguration.updated(for: state)
+        }
+        
+        configurationUpdateHandler?(self, state)
     }
     
     /**
@@ -343,7 +341,7 @@ public extension NSCollectionViewItem {
     
     var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
         guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
-                
+        
         let context = InvalidationContext(invalidateEverything: false)
         context.invalidateItems(at: [indexPath])
         return context
@@ -353,7 +351,7 @@ public extension NSCollectionViewItem {
         guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
         
         self.view.invalidateIntrinsicContentSize()
-                        
+        
         collectionViewLayout.invalidateLayout(with: invalidationContext)
         collectionView.layoutSubtreeIfNeeded()
     }
@@ -379,7 +377,7 @@ public extension NSCollectionViewItem {
         }
     }
     
-   internal var isEnabled: Bool {
+    internal var isEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isEnabled", object: self, initialValue: false) }
         set {
             guard newValue != self.isEnabled else { return }
@@ -406,7 +404,7 @@ public extension NSCollectionViewItem {
         }
     }
     
-   internal var isEditing: Bool {
+    internal var isEditing: Bool {
         get { getAssociatedValue(key: "NSCollectionItem_isEditing", object: self, initialValue: false) }
         set {
             guard newValue != self.isEditing else { return }
@@ -468,11 +466,6 @@ public extension NSCollectionViewItem {
         self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
     }
     
-    internal var isConfigurationUpdatesEnabled: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self, initialValue: true) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_isConfigurationUpdatesEnabled", object: self) }
-    }
-    
     var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
         get { getAssociatedValue(key: "_cachedLayoutAttributes", object: self) }
         set {
@@ -481,36 +474,36 @@ public extension NSCollectionViewItem {
     }
     
     /*
-    @objc internal func swizzled_PrepareForReuse() {
-        self.isConfigurationUpdatesEnabled = false
-        self.isHovered = false
-        self.isEnabled = true
-        self.isReordering = false
-        self.isEditing = false
-        self.isConfigurationUpdatesEnabled = true
-    }
+     @objc internal func swizzled_PrepareForReuse() {
+     self.isConfigurationUpdatesEnabled = false
+     self.isHovered = false
+     self.isEnabled = true
+     self.isReordering = false
+     self.isEditing = false
+     self.isConfigurationUpdatesEnabled = true
+     }
      
      static var didSwizzlePrepareForReuse: Bool {
-         get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self, initialValue: false) }
-         set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self) }
+     get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self, initialValue: false) }
+     set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self) }
      }
      static func swizzlePrepareForReuse() {
-         guard didSwizzlePrepareForReuse == false else { return }
-         didSwizzlePrepareForReuse = true
-         do {
-             _ = try Swizzle(NSCollectionViewItem.self) {
-                 #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
-             }
-         } catch {
-             Swift.print(error)
-         }
+     guard didSwizzlePrepareForReuse == false else { return }
+     didSwizzlePrepareForReuse = true
+     do {
+     _ = try Swizzle(NSCollectionViewItem.self) {
+     #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
+     }
+     } catch {
+     Swift.print(error)
+     }
      }
      */
 }
 
 extension NSCollectionViewItem {
     open override func loadView() {
-            self.view = NSView()
-            self.observeCollectionItem()
+        self.view = NSView()
+        self.observeCollectionItem()
     }
 }

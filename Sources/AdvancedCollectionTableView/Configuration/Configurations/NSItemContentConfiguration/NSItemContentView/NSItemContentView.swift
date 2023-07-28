@@ -10,16 +10,69 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-public class NSItemContentViewNS: NSView, NSContentView {
+public class NSItemContentView: NSView, NSContentView {
+    /// The current configuration of the view.
+    public var configuration: NSContentConfiguration {
+        get { appliedConfiguration }
+        set {
+            guard let newValue = newValue as? NSItemContentConfiguration else { return }
+            self.appliedConfiguration = newValue
+        }
+    }
+    
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSItemContentConfiguration
+    }
+    
+    /// Creates an item content view with the specified content configuration.
+    public init(configuration: NSItemContentConfiguration) {
+        self.appliedConfiguration = configuration
+        super.init(frame: .zero)
+        
+        self.wantsLayer = true
+        self.addSubview(textField)
+        self.addSubview(secondaryTextField)
+        self.addSubview(contentView)
+        
+        self.isOpaque = false
+        
+        self.updateConfiguration()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    internal var appliedConfiguration: NSItemContentConfiguration {
+        didSet {
+            guard oldValue != self.appliedConfiguration else { return }
+            self.updateConfiguration()
+            if self.appliedConfiguration.needsUpdate(comparedTo: oldValue) {
+                self.setNeedsLayout()
+            }
+        }
+    }
+    
     internal lazy var textField: ItemTextField = ItemTextField(properties: appliedConfiguration.textProperties)
     internal lazy var secondaryTextField: ItemTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
-    internal lazy var contentView: ItemContentView = ItemContentView(properties: appliedConfiguration)
+    internal lazy var contentView: ItemContentView = ItemContentView(configuration: appliedConfiguration)
+        
+    internal func updateConfiguration() {
+        textField.properties = appliedConfiguration.textProperties
+        textField.text(appliedConfiguration.text, attributedText: appliedConfiguration.attributedText)
+        
+        secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
+        secondaryTextField.text(appliedConfiguration.secondaryText, attributedText: appliedConfiguration.secondaryAttributedText)
+        
+        contentView.configuration = appliedConfiguration
+        
+        self.anchorPoint = CGPoint(0.5, 0.5)
+        layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
+    }
     
-    internal var previousSize: CGSize? = nil
     public override func layout() {
         super.layout()
-        guard previousSize != self.frame.size else { return }
-        previousSize = self.frame.size
         
         let width = self.frame.size.width - appliedConfiguration.padding.width
         var height = self.frame.size.height - appliedConfiguration.padding.height
@@ -58,7 +111,7 @@ public class NSItemContentViewNS: NSView, NSContentView {
         
         let remainingSize = CGSize(width: width, height: height)
         if appliedConfiguration.hasContent {
-            if let imageSize = contentView.imageSize {
+            if let imageSize = contentView.imageView.image?.size {
                 let resizedImageSize: CGSize
                 if appliedConfiguration.contentProperties.imageScaling == .fit {
                     resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
@@ -77,61 +130,5 @@ public class NSItemContentViewNS: NSView, NSContentView {
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             }
         }
-    }
-    
-    internal func updateConfiguration() {
-        
-        textField.properties = appliedConfiguration.textProperties
-        textField.text(appliedConfiguration.text, attributedText: appliedConfiguration.attributedText)
-        
-        secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
-        secondaryTextField.text(appliedConfiguration.secondaryText, attributedText: appliedConfiguration.secondaryAttributedText)
-        
-        contentView.properties = appliedConfiguration
-        
-        self.anchorPoint = CGPoint(0.5, 0.5)
-        layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
-    }
-        
-    internal var appliedConfiguration: NSItemContentConfiguration {
-        didSet {
-            guard oldValue != self.appliedConfiguration else { return }
-            self.updateConfiguration()
-            if self.appliedConfiguration.needsUpdate(comparedTo: oldValue) {
-                self.setNeedsLayout()
-            }
-        }
-    }
-    
-    /// The current configuration of the view.
-    public var configuration: NSContentConfiguration {
-        get { appliedConfiguration }
-        set {
-            guard let newValue = newValue as? NSItemContentConfiguration else { return }
-            self.appliedConfiguration = newValue
-        }
-    }
-    
-    /// Determines whether the view is compatible with the provided configuration.
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
-        configuration is NSItemContentConfiguration
-    }
-    
-    public init(configuration: NSItemContentConfiguration) {
-        self.appliedConfiguration = configuration
-        super.init(frame: .zero)
-        
-        self.wantsLayer = true
-        self.addSubview(textField)
-        self.addSubview(secondaryTextField)
-        self.addSubview(contentView)
-        
-        self.isOpaque = false
-        
-        self.updateConfiguration()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

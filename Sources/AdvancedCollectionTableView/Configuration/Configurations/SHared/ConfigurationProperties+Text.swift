@@ -213,7 +213,7 @@ extension ConfigurationProperties.Text: Hashable {
 }
 
 internal extension NSTextAlignment {
-    internal var swiftUI: Alignment {
+     var swiftUI: Alignment {
         switch self {
         case .left: return .leading
         case .center: return .center
@@ -222,7 +222,7 @@ internal extension NSTextAlignment {
         }
     }
     
-    internal var swiftUIMultiline: SwiftUI.TextAlignment {
+    var swiftUIMultiline: SwiftUI.TextAlignment {
         switch self {
         case .left: return .leading
         case .center: return .center

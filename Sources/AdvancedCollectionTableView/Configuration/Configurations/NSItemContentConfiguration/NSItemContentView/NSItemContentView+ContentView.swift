@@ -9,11 +9,10 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSItemContentViewNS {
+internal extension NSItemContentView {
     class ItemContentView: NSView {
-      //  let containerView = NSView(frame: CGRect(.zero, CGSize(1, 1)))
-        let imageView: NSImageView = NSImageView()
-        var view: NSView? = nil {
+      internal let imageView: NSImageView = NSImageView()
+        internal var view: NSView? = nil {
             didSet {
                     oldValue?.removeFromSuperview()
                     if let newView = self.view {
@@ -24,7 +23,7 @@ internal extension NSItemContentViewNS {
             }
         }
         
-        var overlayView: NSView? = nil {
+        internal var overlayView: NSView? = nil {
             didSet {
                     oldValue?.removeFromSuperview()
                     if let newView = self.overlayView {
@@ -32,32 +31,30 @@ internal extension NSItemContentViewNS {
                     }
             }
         }
-        
-        var imageSize: CGSize? = nil
-        
-        var image: NSImage? {
+                
+       internal var image: NSImage? {
             get { imageView.image }
             set {
                 guard newValue != self.imageView.image else { return }
-                self.imageSize = newValue?.size
                 self.imageView.image = newValue
                 self.imageView.isHidden = newValue == nil
                 self.isHidden = (self.image == nil && self.view == nil)
             }
         }
         
-        var properties: NSItemContentConfiguration {
+       public var configuration: NSItemContentConfiguration {
             didSet {
-                if oldValue != properties {
-                update() }
+                if oldValue != configuration {
+                    updateConfiguration()
+                }
             }
         }
         
-        var contentProperties: NSItemContentConfiguration.ContentProperties {
-            return properties.contentProperties
+       internal var contentProperties: NSItemContentConfiguration.ContentProperties {
+            return configuration.contentProperties
         }
                 
-        func update() {
+        internal func updateConfiguration() {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
             self.borderColor = contentProperties._resolvedBorderColor
             self.borderWidth = contentProperties.borderWidth
@@ -68,22 +65,22 @@ internal extension NSItemContentViewNS {
             imageView.contentTintColor = contentProperties._resolvedImageTintColor
             imageView.imageScaling = contentProperties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
             
-            self.image = properties.image
+            self.image = configuration.image
             
-            if properties.view != self.view {
-                self.view = properties.view
+            if configuration.view != self.view {
+                self.view = configuration.view
             }
             
-            if properties.overlayView != self.overlayView {
-                self.overlayView = properties.overlayView
+            if configuration.overlayView != self.overlayView {
+                self.overlayView = configuration.overlayView
             }
             
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
         }
                 
-        public init(properties: NSItemContentConfiguration) {
-            self.properties = properties
+        public init(configuration: NSItemContentConfiguration) {
+            self.configuration = configuration
             super.init(frame: .zero)
             self.wantsLayer = true
             self.maskToBounds = true
@@ -92,7 +89,7 @@ internal extension NSItemContentViewNS {
           //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
             
             self.addSubview( imageView)
-            self.update()
+            self.updateConfiguration()
         }
         
         required init?(coder: NSCoder) {

@@ -86,7 +86,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
-        return NSItemContentViewNS(configuration: self)
+        return NSItemContentView(configuration: self)
     }
     
     internal func needsUpdate(comparedTo compare: Self) -> Bool {
