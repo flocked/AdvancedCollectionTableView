@@ -89,7 +89,7 @@ collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
  ```
  
 ## NSCollectionView & NSTableViewDiffableDataSource Apply Options
-When using NSCollectionView & NSTableViewDiffableDataSource `apply(_ snapshot:, animatingDifferences: Bool)` `animatingDifferences` is `true` The diffable data source computes the difference between the current state and the new state in the snapshot and the differences in the UI between the current state and new state are animated. If `false` the system resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
+When using NSCollectionView & NSTableViewDiffableDataSource `apply(_ snapshot:, animatingDifferences: Bool)` and `animatingDifferences` is `true` the data source computes the difference between the current state and the new state in the snapshot and the differences in the UI between the current state and new state are animated. If `false` the system resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
 
 The new `apply(_ snapshot:, _ option: ApplyOption)` provides an option to apply the new snapshot without animation and reloading.
 
