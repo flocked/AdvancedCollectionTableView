@@ -31,21 +31,14 @@ class ViewController: NSViewController {
         configuration.image = NSImage(named: galleryItem.imageName)
         
         collectionViewItem.contentConfiguration = configuration
-        
-        /*
-        if let layoutFrame = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame {
-            if collectionViewItem.view.frame != layoutFrame {
-                collectionViewItem.view.frame = layoutFrame
-            }
-        }
-        */
-
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
             /// Updates the configuration based on whether the mouse is hovering the item.
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
+            
+            Swift.print("highlightState", galleryItem.title, collectionViewItem.highlightState.rawValue)
             
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil

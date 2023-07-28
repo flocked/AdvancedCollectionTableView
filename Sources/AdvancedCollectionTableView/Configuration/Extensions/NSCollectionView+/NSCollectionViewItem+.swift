@@ -30,9 +30,9 @@ public extension NSCollectionViewItem {
      - ``selectedBackgroundView``
      */
     var backgroundConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "NSCollectionItem_backgroundConfiguration", object: self) }
+        get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSCollectionItem_backgroundConfiguration", object: self)
+            set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
                 
@@ -67,8 +67,8 @@ public extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_automaticallyUpdatesBackgroundConfiguration", object: self)
+        get { getAssociatedValue(key: "_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "_automaticallyUpdatesBackgroundConfiguration", object: self)
         }
     }
     
@@ -79,8 +79,8 @@ public extension NSCollectionViewItem {
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var backgroundView: NSView?   {
-        get { getAssociatedValue(key: "NSCollectionItem_backgroundView", object: self) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_backgroundView", object: self)
+        get { getAssociatedValue(key: "_backgroundView", object: self) }
+        set { set(associatedValue: newValue, key: "_backgroundView", object: self)
             self.configurateBackgroundView()
         }
     }
@@ -92,8 +92,8 @@ public extension NSCollectionViewItem {
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var selectedBackgroundView: NSView? {
-        get { getAssociatedValue(key: "NSCollectionItem_selectedBackgroundView", object: self) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_selectedBackgroundView", object: self)
+        get { getAssociatedValue(key: "_selectedBackgroundView", object: self) }
+        set { set(associatedValue: newValue, key: "_selectedBackgroundView", object: self)
             self.configurateBackgroundView()
         }
     }
@@ -145,9 +145,9 @@ public extension NSCollectionViewItem {
      The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
      */
     var contentConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "NSCollectionItem_contentConfiguration", object: self) }
+        get { getAssociatedValue(key: "_contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSCollectionItem_contentConfiguration", object: self)
+            set(associatedValue: newValue, key: "_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
                 
@@ -187,8 +187,8 @@ public extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_automaticallyUpdatesContentConfiguration", object: self)
+        get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "_automaticallyUpdatesContentConfiguration", object: self)
         }
     }
     
@@ -302,30 +302,14 @@ public extension NSCollectionViewItem {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling ``updateConfiguration(using:)``.
      */
     var configurationUpdateHandler: ConfigurationUpdateHandler?  {
-        get { getAssociatedValue(key: "NSCollectionItem_configurationUpdateHandler", object: self) }
+        get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
                 self.observeCollectionItem()
             }
-            set(associatedValue: newValue, key: "NSCollectionItem_configurationUpdateHandler", object: self)
+            set(associatedValue: newValue, key: "_configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
         }
-    }
-    
-    func sizeThatFits(_ size: CGSize) -> CGSize {
-        return self.view.sizeThatFits(size)  
-    }
-    
-    var fittingSize: CGSize {
-        return self.view.fittingSize
-    }
-    
-    func sizeToFit() {
-        self.view.frame.size = fittingSize
-    }
-    
-    func sizeToFit(_ size: CGSize) {
-        self.view.frame.size = sizeThatFits(size)
     }
     
     internal var indexPath: IndexPath? {
@@ -339,7 +323,7 @@ public extension NSCollectionViewItem {
         return nil
     }
     
-    var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
+    internal var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
         guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
         
         let context = InvalidationContext(invalidateEverything: false)
@@ -347,7 +331,7 @@ public extension NSCollectionViewItem {
         return context
     }
     
-    func invalidateSelfSizing() {
+    internal func invalidateSelfSizing() {
         guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
         
         self.view.invalidateIntrinsicContentSize()
@@ -369,46 +353,46 @@ public extension NSCollectionViewItem {
     }
     
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isHovered", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
         set {
             guard newValue != self.isHovered else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isHovered", object: self)
+            set(associatedValue: newValue, key: "_isHovered", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isEnabled: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isEnabled", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "_isEnabled", object: self, initialValue: false) }
         set {
             guard newValue != self.isEnabled else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isEnabled", object: self)
+            set(associatedValue: newValue, key: "_isEnabled", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isFocused: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isFocused", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "_isFocused", object: self, initialValue: false) }
         set {
             guard newValue != self.isFocused else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isFocused", object: self)
+            set(associatedValue: newValue, key: "_isFocused", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isReordering: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isReordering", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "_isReordering", object: self, initialValue: false) }
         set {
             guard newValue != self.isReordering else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isReordering", object: self)
+            set(associatedValue: newValue, key: "_isReordering", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     internal var isEditing: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isEditing", object: self, initialValue: false) }
+        get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
         set {
             guard newValue != self.isEditing else { return }
-            set(associatedValue: newValue, key: "NSCollectionItem_isEditing", object: self)
+            set(associatedValue: newValue, key: "_isEditing", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -417,10 +401,7 @@ public extension NSCollectionViewItem {
         get { self._collectionView?.isEmphasized ?? false }
     }
     
-    internal var isCollectionViewFirstResponder: Bool {
-        get { self._collectionView?.isFirstResponder ?? false }
-    }
-    
+    /// The previous item in the collection view.
     var previousItem: NSCollectionViewItem? {
         if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item - 1 >= 0 {
             let previousIndexPath = IndexPath(item: indexPath.item - 1, section: indexPath.section)
@@ -429,6 +410,7 @@ public extension NSCollectionViewItem {
         return nil
     }
     
+    /// The next item in the collection view.
     var nextItem: NSCollectionViewItem? {
         if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item + 1 < (self.collectionView?.numberOfItems(inSection: indexPath.section) ?? -10) {
             let nextIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
@@ -438,8 +420,8 @@ public extension NSCollectionViewItem {
     }
     
     internal var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
-        get { getAssociatedValue(key: "NSCollectionItem_itemObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "NSCollectionItem_itemObserver", object: self) }
+        get { getAssociatedValue(key: "_itemObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "_itemObserver", object: self) }
     }
     
     internal func observeCollectionItem() {
@@ -456,6 +438,7 @@ public extension NSCollectionViewItem {
         
         self.itemObserver?.add(\.view.superview) { old, new in
             guard self._collectionView != nil else { return }
+            // The collection view is observered to get the hovered (mouse over) collection item. It's much more performant instead of observing/installing a track area on each collection item view.
             self._collectionView?.setupObservingView()
         }
         self.setNeedsUpdateConfiguration()
@@ -466,7 +449,7 @@ public extension NSCollectionViewItem {
         self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
     }
     
-    var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
+    internal var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
         get { getAssociatedValue(key: "_cachedLayoutAttributes", object: self) }
         set {
             set(associatedValue: newValue, key: "_cachedLayoutAttributes", object: self)
@@ -504,6 +487,5 @@ public extension NSCollectionViewItem {
 extension NSCollectionViewItem {
     open override func loadView() {
         self.view = NSView()
-        self.observeCollectionItem()
     }
 }
