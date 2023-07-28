@@ -59,7 +59,7 @@ class ViewController: NSViewController {
             // Reconfigurates the first item.
             self.dataSource.reconfigurateElements([firstItem])
         }
-    }.attachedWindow(self.view.window)
+    }
     
     override func viewDidLoad() {
         
@@ -79,16 +79,12 @@ class ViewController: NSViewController {
     }
     
     override func viewDidAppear() {
-        // Loads the window toolbar.
-        _ = toolbar
+        toolbar.attachedWindow(self.view.window)
         
         // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
-        
-        Swift.print((0...6).compactMap({collectionView.layoutAttributesForItem(at: IndexPath(item: $0, section: 0))?.frame }))
-
     }
     
     func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {
