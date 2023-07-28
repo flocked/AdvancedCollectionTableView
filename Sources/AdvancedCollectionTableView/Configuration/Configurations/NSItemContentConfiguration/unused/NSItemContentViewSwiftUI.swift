@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
+// Unused SwiftUI based version of NSItemContentView
 internal class NSItemContentViewSwiftUI: NSView, NSContentView {
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {

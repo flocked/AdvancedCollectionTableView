@@ -11,20 +11,6 @@ import FZUIKit
 import SwiftUI
 
 public class NSItemContentView: NSView, NSContentView {
-    /// The current configuration of the view.
-    public var configuration: NSContentConfiguration {
-        get { appliedConfiguration }
-        set {
-            guard let newValue = newValue as? NSItemContentConfiguration else { return }
-            self.appliedConfiguration = newValue
-        }
-    }
-    
-    /// Determines whether the view is compatible with the provided configuration.
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
-        configuration is NSItemContentConfiguration
-    }
-    
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         self.appliedConfiguration = configuration
@@ -38,6 +24,20 @@ public class NSItemContentView: NSView, NSContentView {
         self.isOpaque = false
         
         self.updateConfiguration()
+    }
+    
+    /// The current configuration of the view.
+    public var configuration: NSContentConfiguration {
+        get { appliedConfiguration }
+        set {
+            guard let newValue = newValue as? NSItemContentConfiguration else { return }
+            self.appliedConfiguration = newValue
+        }
+    }
+    
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSItemContentConfiguration
     }
     
     @available(*, unavailable)

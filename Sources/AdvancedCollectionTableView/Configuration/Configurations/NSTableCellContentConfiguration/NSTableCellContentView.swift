@@ -10,9 +10,12 @@ import FZSwiftUtils
 import FZUIKit
 
 public class NSTableCellContentView: NSView, NSContentView {
-    /// Determines whether the view is compatible with the provided configuration.
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
-        configuration is NSTableCellContentConfiguration
+    /// Creates a table cell content view with the specified content configuration.
+    public init(configuration: NSTableCellContentConfiguration) {
+        self.appliedConfiguration = configuration
+        super.init(frame: .zero)
+        self.initialSetup()
+        self.updateConfiguration()
     }
     
     /// The current configuration of the view.
@@ -25,12 +28,9 @@ public class NSTableCellContentView: NSView, NSContentView {
         }
     }
     
-    /// Creates a table cell content view with the specified content configuration.
-    public init(configuration: NSTableCellContentConfiguration) {
-        self.appliedConfiguration = configuration
-        super.init(frame: .zero)
-        self.initialSetup()
-        self.updateConfiguration()
+    /// Determines whether the view is compatible with the provided configuration.
+    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+        configuration is NSTableCellContentConfiguration
     }
     
     internal lazy var textField = CellTextField(properties: self.appliedConfiguration.textProperties)
