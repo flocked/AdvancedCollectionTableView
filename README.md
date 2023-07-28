@@ -18,7 +18,8 @@ struct GalleryItem {
     let image: NSImage
 }
 
-let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { item, indexPath, galleryItem in
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { 
+    item, indexPath, galleryItem in
 
     item.textField.stringValue = galleryItem.title
     item.imageView.image = galleryItem.image
