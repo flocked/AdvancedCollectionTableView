@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSTableViewDiffableDataSource+Apply.swift
 //  
 //
 //  Created by Florian Zand on 16.12.22.

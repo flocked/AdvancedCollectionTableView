@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSItemContentConfiguration+ContentProperties.swift
 //  
 //
 //  Created by Florian Zand on 02.06.23.

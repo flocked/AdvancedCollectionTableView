@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSTableViewDiffableDataSource+Registration.swift
 //  
 //
 //  Created by Florian Zand on 10.12.22.

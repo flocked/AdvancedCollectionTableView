@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSItemContentViewSwiftUI.swift
 //  
 //
 //  Created by Florian Zand on 02.06.23.

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSTableCellContentView+AccessoriesView.swift
 //  
 //
 //  Created by Florian Zand on 22.06.23.
