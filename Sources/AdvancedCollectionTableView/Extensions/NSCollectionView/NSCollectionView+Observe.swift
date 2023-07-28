@@ -9,21 +9,15 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSCollectionView {
-    class HoverHandlers {
-        var isHovering: ((_ item: NSCollectionViewItem) -> ())?
-        var didEndHovering: ((_ item: NSCollectionViewItem) -> ())?
-    }
-    
+internal extension NSCollectionView {    
     var hoveredItem: NSCollectionViewItem? {
-        get { getAssociatedValue(key: "NSCollectionView_hoveredItem", object: self, initialValue: nil) }
+        get { getAssociatedValue(key: "_hoveredItem", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredItem else { return }
-            let previousHoveredtem = hoveredItem
-            set(weakAssociatedValue: newValue, key: "NSCollectionView_hoveredItem", object: self)
-            
-            previousHoveredtem?.isHovered = false
-            newValue?.isHovered = true
+            let previousHoveredItem = hoveredItem
+            set(weakAssociatedValue: newValue, key: "_hoveredItem", object: self)
+            previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
+            newValue?.setNeedsAutomaticUpdateConfiguration()
         }
     }
                 

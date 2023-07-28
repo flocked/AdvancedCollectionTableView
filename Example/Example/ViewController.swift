@@ -38,7 +38,7 @@ class ViewController: NSViewController {
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
             
-            Swift.print("highlightState", galleryItem.title, collectionViewItem.highlightState.rawValue)
+            Swift.print("highlightState", galleryItem.title, collectionViewItem.collectionView ?? "nil")
             
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil

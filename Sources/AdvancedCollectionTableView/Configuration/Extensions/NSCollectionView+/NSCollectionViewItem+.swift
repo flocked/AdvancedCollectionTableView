@@ -353,12 +353,7 @@ public extension NSCollectionViewItem {
     }
     
     internal var isHovered: Bool {
-        get { getAssociatedValue(key: "_isHovered", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isHovered else { return }
-            set(associatedValue: newValue, key: "_isHovered", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+        get { collectionView?.hoveredItem == self }
     }
     
     internal var isEnabled: Bool {
