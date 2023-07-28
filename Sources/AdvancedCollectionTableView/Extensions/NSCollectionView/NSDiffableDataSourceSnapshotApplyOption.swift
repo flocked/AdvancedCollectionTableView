@@ -27,7 +27,7 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     /**
      The snapshot gets applied using `reloadData()`.
      
-     The system interrupts any ongoing animations and immediately reloads the content.
+     The system resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes.
      */
     case usingReloadData
     /**
