@@ -20,6 +20,9 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a selected state.
     public var isSelected: Bool = false
     
+    /// A Boolean value that indicates whether the cell is in a editing state.
+    public var isEditing: Bool = false
+    
     /// A Boolean value that indicates whether the cell is in a hovered state (if the mouse is above the cell).
     public var isHovered: Bool = false
     
@@ -31,9 +34,6 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the cell is in a focused state.
     internal var isFocused: Bool = false
-    
-    /// A Boolean value that indicates whether the cell is in a editing state.
-    internal var isEditing: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a expanded state.
     internal var isExpanded: Bool = false
@@ -58,14 +58,15 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
      */
     
     public init(isSelected: Bool = false,
+                isEditing: Bool = false,
                 isEmphasized: Bool = false,
                 isHovered: Bool = false) {
         self.isSelected = isSelected
+        self.isEditing = isEditing
         self.isEmphasized = isEmphasized
         self.isHovered = isHovered
         self.isEnabled = true
         self.isFocused = false
-        self.isEditing = false
         self.isExpanded = false
     }
     

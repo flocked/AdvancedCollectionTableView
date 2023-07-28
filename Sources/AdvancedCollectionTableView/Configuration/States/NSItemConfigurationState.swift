@@ -23,6 +23,9 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A value that indicates  the items highlight state.
     public var highlight: NSCollectionViewItem.HighlightState = .none
     
+    /// A Boolean value that indicates whether the item is in a editing state.
+    public var isEditing: Bool = false
+    
     /// A Boolean value that indicates whether the item is in a emphasized state.
     public var isEmphasized: Bool = false
     
@@ -33,8 +36,6 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     internal var isEnabled: Bool = true
     /// A Boolean value that indicates whether the item is in a focused state.
     internal var isFocused: Bool = false
-    /// A Boolean value that indicates whether the item is in a editing state.
-    internal var isEditing: Bool = false
     /// A Boolean value that indicates whether the item is in a expanded state.
     internal var isExpanded: Bool = false
     
@@ -68,11 +69,13 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     public init(
         isSelected: Bool = false,
         highlight: NSCollectionViewItem.HighlightState = .none,
+        isEditing: Bool = false,
         isEmphasized: Bool = false,
         isHovered: Bool = false
     ) {
         self.isSelected = isSelected
         self.highlight = highlight
+        self.isEditing = isEditing
         self.isEmphasized = isEmphasized
         self.isHovered = isHovered
     }

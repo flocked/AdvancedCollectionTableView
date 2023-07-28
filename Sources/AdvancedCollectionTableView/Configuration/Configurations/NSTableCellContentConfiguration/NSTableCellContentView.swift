@@ -170,8 +170,14 @@ internal extension NSTableCellContentView {
             self.update()
         }
         
+        public override func textDidBeginEditing(_ notification: Notification) {
+            super.textDidBeginEditing(notification)
+            self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
+        }
+        
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
+            self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
             self.properties.onEditEnd?(self.stringValue)
         }
         

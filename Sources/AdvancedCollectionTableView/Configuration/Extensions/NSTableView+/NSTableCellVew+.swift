@@ -226,16 +226,6 @@ public extension NSTableCellView {
         set {  set(associatedValue: newValue, key: "NSTableCellView_isConfigurationUpdatesEnabled", object: self) }
     }
     
-    @objc internal func swizzled_PrepareForReuse() {
-        self.isConfigurationUpdatesEnabled = false
-        self.isEnabled = true
-        self.isReordering = false
-        self.isEditing = false
-       // self.isHovered = false
-       // self.isEmphasized = self.tableView?.isEmphasized ?? false
-        self.isConfigurationUpdatesEnabled = true
-    }
-    
     internal var tableCellObserver: KeyValueObserver<NSTableCellView>? {
         get { getAssociatedValue(key: "NSTableCellView_tableCellObserver", object: self, initialValue: nil) }
         set {  set(associatedValue: newValue, key: "NSTableCellView_tableCellObserver", object: self) }
@@ -258,4 +248,16 @@ public extension NSTableCellView {
             self.setNeedsUpdateConfiguration()
         }
     }
+    
+    /*
+    @objc internal func swizzled_PrepareForReuse() {
+        self.isConfigurationUpdatesEnabled = false
+        self.isEnabled = true
+        self.isReordering = false
+        self.isEditing = false
+       // self.isHovered = false
+       // self.isEmphasized = self.tableView?.isEmphasized ?? false
+        self.isConfigurationUpdatesEnabled = true
+    }
+     */
 }

@@ -40,7 +40,7 @@ internal extension NSItemContentView {
             self.alignment = properties.alignment
             self.isSelectable = properties.isSelectable
             self.isEditable = properties.isEditable
-
+            
             self.drawsBackground = false
             self.backgroundColor = nil
             self.isBordered = false
@@ -56,8 +56,18 @@ internal extension NSItemContentView {
             self.update()
         }
         
+        internal var collectionViewItem: NSCollectionViewItem? {
+            (self.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
+        }
+        
+        public override func textDidBeginEditing(_ notification: Notification) {
+            super.textDidBeginEditing(notification)
+            collectionViewItem?.isEditing = true
+        }
+        
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
+            collectionViewItem?.isEditing = false
             self.properties.onEditEnd?(self.stringValue)
         }
         
