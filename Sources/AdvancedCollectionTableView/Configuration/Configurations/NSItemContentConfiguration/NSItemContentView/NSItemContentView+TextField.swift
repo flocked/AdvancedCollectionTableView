@@ -60,11 +60,18 @@ internal extension NSItemContentView {
             (self.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
         }
         
+        override public func becomeFirstResponder() -> Bool {
+            let canBecome = super.becomeFirstResponder()
+            if isEditable && canBecome {
+                collectionViewItem?.isEditing = true
+            }
+            return canBecome
+        }
+        
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
             collectionViewItem?.isEditing = true
         }
-        
         
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
@@ -76,7 +83,12 @@ internal extension NSItemContentView {
         internal var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                self.window?.makeFirstResponder(nil)
+                if self.properties.stringValidator?(self.stringValue) ?? true {
+                    self.window?.makeFirstResponder(nil)
+                    return true
+                } else {
+                    NSSound.beep()
+                }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                     self.stringValue = self.previousStringValue
                     self.window?.makeFirstResponder(nil)

@@ -170,6 +170,14 @@ internal extension NSTableCellContentView {
             self.update()
         }
         
+        override public func becomeFirstResponder() -> Bool {
+            let canBecome = super.becomeFirstResponder()
+            if isEditable && canBecome {
+                self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
+            }
+            return canBecome
+        }
+        
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
             self.previousStringValue = self.stringValue
@@ -185,7 +193,12 @@ internal extension NSTableCellContentView {
         internal var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                self.window?.makeFirstResponder(nil)
+                if self.properties.stringValidator?(self.stringValue) ?? true {
+                    self.window?.makeFirstResponder(nil)
+                    return true
+                } else {
+                    NSSound.beep()
+                }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                     self.stringValue = self.previousStringValue
                     self.window?.makeFirstResponder(nil)

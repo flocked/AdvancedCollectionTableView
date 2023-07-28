@@ -39,9 +39,16 @@ public extension ConfigurationProperties {
         /**
          The edit handler that gets called when editing of the text ended.
          
-         It only gets called, if ``isEditable`` and ``isSelectable`` is true.
+         It only gets called, if ``isEditable`` is true.
          */
         public var onEditEnd: ((String)->())? = nil
+        
+        /**
+         Handler that determines whether the edited string is valid.
+         
+         It only gets called, if ``isEditable`` is true.
+         */
+        public var stringValidator: ((String)->(Bool))? = nil
         
         /// The color of the text.
         public var textColor: NSColor = .labelColor {
