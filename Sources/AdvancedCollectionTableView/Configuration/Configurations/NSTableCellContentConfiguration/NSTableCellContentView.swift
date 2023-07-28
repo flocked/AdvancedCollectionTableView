@@ -172,6 +172,7 @@ internal extension NSTableCellContentView {
         
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
+            self.previousStringValue = self.stringValue
             self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
         }
         
@@ -179,6 +180,18 @@ internal extension NSTableCellContentView {
             super.textDidEndEditing(notification)
             self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
             self.properties.onEditEnd?(self.stringValue)
+        }
+        
+        internal var previousStringValue: String = ""
+        public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            if commandSelector == #selector(NSResponder.insertNewline(_:)) {
+                self.window?.makeFirstResponder(nil)
+            } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+                    self.stringValue = self.previousStringValue
+                    self.window?.makeFirstResponder(nil)
+                    return true
+            }
+            return false
         }
         
         required init?(coder: NSCoder) {

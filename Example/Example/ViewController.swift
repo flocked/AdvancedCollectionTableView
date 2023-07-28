@@ -30,6 +30,9 @@ class ViewController: NSViewController {
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
         
+        configuration.textProperties.isEditable = true
+        configuration.secondaryTextProperties.isEditable = true
+        
         collectionViewItem.contentConfiguration = configuration
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
@@ -37,6 +40,8 @@ class ViewController: NSViewController {
             /// Updates the configuration based on whether the mouse is hovering the item.
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
+            
+            Swift.print(galleryItem.title, state.isEditing)
                         
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
