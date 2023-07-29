@@ -32,7 +32,7 @@ public extension ConfigurationProperties {
         public var isSelectable: Bool = false
         /**
          A Boolean value that controls whether the user can edit the value in the text field.
-
+         
          If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of ``´isSelectable``.
          */
         public var isEditable: Bool = false
@@ -80,7 +80,7 @@ public extension ConfigurationProperties {
             self.textColorTansform = textColorTansform
             self.updateResolvedTextColor()
         }
-
+        
         /**
          Specifies a system font to use, along with the size, weight, and any design parameters you want applied to the text.
          
@@ -94,7 +94,7 @@ public extension ConfigurationProperties {
             properties.swiftUIFont = .system(size: size, design: design.swiftUI).weight(weight.swiftUI)
             return properties
         }
-                    
+        
         /**
          Specifies a system font to use, along with the size, weight, and any design parameters you want applied to the text.
          
@@ -125,7 +125,7 @@ public extension ConfigurationProperties {
             text.swiftUIFont = .callout
             return text
         }
-
+        
         /// Text configuration with a font for bodies.
         public static var body: Self {
             var text = Self.system(.body)
@@ -199,7 +199,7 @@ public extension ConfigurationProperties {
             text.alignment = alignment
             return text
         }
-
+        
     }
 }
 
@@ -220,7 +220,7 @@ extension ConfigurationProperties.Text: Hashable {
 }
 
 internal extension NSTextAlignment {
-     var swiftUI: Alignment {
+    var swiftUI: Alignment {
         switch self {
         case .left: return .leading
         case .center: return .center

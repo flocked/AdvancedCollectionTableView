@@ -29,7 +29,7 @@ public extension NSCollectionView {
             self.visibleItems().forEach({$0.isEnabled = newValue })
         }
     }
-
+    
     internal var firstResponderObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
@@ -54,7 +54,7 @@ public extension NSCollectionView {
             newValue?.setNeedsAutomaticUpdateConfiguration()
         }
     }
-                
+    
     func setupObservingView(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observingView == nil) {
@@ -88,7 +88,7 @@ public extension NSCollectionView {
             observingView = nil
         }
     }
-        
+    
     var observingView: ObservingView? {
         get { getAssociatedValue(key: "NSCollectionView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSCollectionView_observingView", object: self)

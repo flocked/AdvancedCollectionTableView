@@ -152,7 +152,7 @@ public extension NSTableRowView {
     internal var isMultipleSelected: Bool {
         self.isSelected && self.isPreviousRowSelected && self.isNextRowSelected
     }
-                
+    
     /**
      The type of block for handling updates to the row’s configuration using the current state.
      
@@ -219,17 +219,17 @@ public extension NSTableRowView {
             if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
                 self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
             }
-
+            
             configurationUpdateHandler?(self, state)
         }
     }
     
     /*
-    // Updates cell views content configuration.
-    internal func setNeedsCellViewsUpdateConfiguration() {
-        self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
-    }
-    */
+     // Updates cell views content configuration.
+     internal func setNeedsCellViewsUpdateConfiguration() {
+     self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
+     }
+     */
     
     /**
      Updates the row’s configuration using the current state.
@@ -324,8 +324,8 @@ public extension NSTableRowView {
         get { getAssociatedValue(key: "NSTableRowView_rowObserver", object: self, initialValue: nil) }
         set {  set(associatedValue: newValue, key: "NSTableRowView_rowObserver", object: self) }
     }
-        
-   internal func observeTableRowView() {
+    
+    internal func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { old, new in
@@ -337,7 +337,7 @@ public extension NSTableRowView {
         rowObserver?.add(\.superview) { old, new in
             self.tableView?.setupObservingView()
         }
-       self.setNeedsUpdateConfiguration()
-       self.setCellViewsNeedUpdateConfiguration()
+        self.setNeedsUpdateConfiguration()
+        self.setCellViewsNeedUpdateConfiguration()
     }
 }

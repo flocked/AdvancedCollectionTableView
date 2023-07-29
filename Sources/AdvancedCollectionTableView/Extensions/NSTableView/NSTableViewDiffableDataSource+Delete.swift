@@ -13,7 +13,7 @@ import FZQuicklook
 public extension NSTableViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete rows either via backsapace keyboard shortcut.
-
+     
      If the value of this property is `true` (the default is `false), users can delete rows.     
      */
     var allowsDeleting: Bool {
@@ -40,7 +40,7 @@ public extension NSTableViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let tableView =  (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
                         let selecedRowIndexes = tableView.selectedRowIndexes.map({$0})
-                       let elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
+                        let elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
                         
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
@@ -58,7 +58,7 @@ public extension NSTableViewDiffableDataSource {
                                         tableView.deselectRow(0)
                                     }
                                 }
-
+                                
                             }
                             return nil
                         }

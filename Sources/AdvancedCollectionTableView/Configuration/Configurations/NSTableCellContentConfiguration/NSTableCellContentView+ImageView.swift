@@ -30,7 +30,7 @@ internal extension NSTableCellContentView {
                 }
             }
         }
-    
+        
         
         func update() {
             self.imageScaling = properties.scaling
@@ -53,9 +53,9 @@ internal extension NSTableCellContentView {
             }
             
             /*
-            if let pointSize = self.properties.symbolConfiguration?.font?.pointSize {
-              //  width = pointSize * 2
-            }
+             if let pointSize = self.properties.symbolConfiguration?.font?.pointSize {
+             //  width = pointSize * 2
+             }
              */
             
             if let width = width {
@@ -64,7 +64,7 @@ internal extension NSTableCellContentView {
             } else {
                 widthA?.isActive = false
             }
-
+            
             if let height = height {
                 heightA = self.heightAnchor.constraint(equalToConstant: height)
                 heightA?.isActive = true
@@ -76,7 +76,7 @@ internal extension NSTableCellContentView {
         
         var widthA: NSLayoutConstraint? = nil
         var heightA: NSLayoutConstraint? = nil
-
+        
         init(properties: NSTableCellContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)

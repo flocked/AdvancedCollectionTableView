@@ -12,13 +12,13 @@ import FZUIKit
 public extension NSCollectionView {
     // MARK: Creating items
     /**
-    Dequeues a configured reusable item object.
+     Dequeues a configured reusable item object.
      
      - Parameters:
-        - registration: The item registration for configuring the cell object. See NSCollectionView.ItemRegistration.
-        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
-        - element: The element that provides data for the item.
-
+     - registration: The item registration for configuring the cell object. See NSCollectionView.ItemRegistration.
+     - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
+     - element: The element that provides data for the item.
+     
      - returns:A configured reusable item object.
      */
     func makeItem<Item, Value>(using registration: ItemRegistration<Item, Value>, for indexPath: IndexPath, element: Value) -> Item where Item: NSCollectionViewItem {
@@ -36,8 +36,8 @@ public extension NSCollectionView {
      
      ```
      struct GalleryItem {
-         let title: String
-         let image: NSImage
+     let title: String
+     let image: NSImage
      }
      
      let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { item, indexPath, galleryItem in
@@ -45,22 +45,22 @@ public extension NSCollectionView {
      item.textField.stringValue = galleryItem.title
      item.imageView.image = galleryItem.image
      
-    // Gets called whenever the state of the item changes (e.g. on selection)
-    item.configurationUpdateHandler = { item, state in
-        // Updates the text color based on selection state.
-        item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
-    }
+     // Gets called whenever the state of the item changes (e.g. on selection)
+     item.configurationUpdateHandler = { item, state in
+     // Updates the text color based on selection state.
+     item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
+     }
      ```
      
      After you create a item registration, you pass it in to makeItem(using:for:element:), which you item from your data source’s item provider.
      
      ```
      dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) {
-         (collectionView: NSCollectionView, indexPath: IndexPath, itemIdentifier: String) -> NSCollectionViewItem? in
-         
-         return collectionView.makeItem(using: itemRegistration,
-                                        for: indexPath,
-                                        item: itemIdentifier)
+     (collectionView: NSCollectionView, indexPath: IndexPath, itemIdentifier: String) -> NSCollectionViewItem? in
+     
+     return collectionView.makeItem(using: itemRegistration,
+     for: indexPath,
+     item: itemIdentifier)
      }
      ```
      
@@ -74,7 +74,7 @@ public extension NSCollectionView {
      
      
      - Important: Do not create your item registration inside a ``NSCollectionViewDiffableDataSource.ItemProvider`` closure; doing so prevents item reuse.
-    */
+     */
     class ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
         
         private let identifier: NSUserInterfaceItemIdentifier
@@ -141,16 +141,16 @@ public extension NSCollectionView {
 
 internal extension NSCollectionView {
     var registeredItemRegistrations: [NSUserInterfaceItemIdentifier] {
-         get { getAssociatedValue(key: "_registeredItemRegistrations", object: self, initialValue: []) }
-         set { set(associatedValue: newValue, key: "_registeredItemRegistrations", object: self)
-         }
-     }
+        get { getAssociatedValue(key: "_registeredItemRegistrations", object: self, initialValue: []) }
+        set { set(associatedValue: newValue, key: "_registeredItemRegistrations", object: self)
+        }
+    }
 }
 
 /*
  private weak var registeredCollectionView: NSCollectionView? = nil
-
+ 
  if (registeredCollectionView != collectionView) {
-     self.register(for: collectionView)
+ self.register(for: collectionView)
  }
  */

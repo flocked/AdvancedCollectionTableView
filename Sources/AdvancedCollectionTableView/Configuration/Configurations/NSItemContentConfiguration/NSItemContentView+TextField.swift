@@ -90,9 +90,9 @@ internal extension NSItemContentView {
                     NSSound.beep()
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
-                    self.stringValue = self.previousStringValue
-                    self.window?.makeFirstResponder(nil)
-                    return true
+                self.stringValue = self.previousStringValue
+                self.window?.makeFirstResponder(nil)
+                return true
             }
             return false
         }

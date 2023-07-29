@@ -35,7 +35,7 @@ public extension ConfigurationProperties {
         public var radius: CGFloat = 2.0
         /// The offset of the shadow.
         public var offset: CGPoint = .init(x: 1.0, y: -1.5)
-
+        
         internal var isInvisible: Bool {
             return (color == nil || opacity == 0.0)
         }
@@ -44,7 +44,7 @@ public extension ConfigurationProperties {
         internal mutating func updateResolvedColor() {
             _resolvedColor = resolvedColor()
         }
-
+        
         public init(color: NSUIColor? = .shadowColor,
                     opacity: CGFloat = 0.3,
                     radius: CGFloat = 2.0,
@@ -56,7 +56,7 @@ public extension ConfigurationProperties {
             self.offset = offset
             self.updateResolvedColor()
         }
-
+        
         public static func none() -> Self { return Self(color: nil, opacity: 0.0) }
         public static func black() -> Self { return Self(color: .black) }
         public static func accentColor() -> Self { return Self(color: .controlAccentColor) }
@@ -99,9 +99,9 @@ public extension AttributedString {
 public extension NSUIView {
     /**
      Configurates the shadow of the view.
-
+     
      - Parameters:
-        - configuration:The configuration for configurating the shadow.
+     - configuration:The configuration for configurating the shadow.
      */
     func configurate(using configuration: ConfigurationProperties.Shadow) {
         wantsLayer = true
@@ -112,15 +112,15 @@ public extension NSUIView {
 public extension CALayer {
     /**
      Configurates the shadow of the layer.
-
+     
      - Parameters:
-        - configuration:The configuration for configurating the shadow.
+     - configuration:The configuration for configurating the shadow.
      */
     func configurate(using configuration: ConfigurationProperties.Shadow) {
-            shadowColor = configuration._resolvedColor?.cgColor
-            shadowOffset = CGSize(width: configuration.offset.x, height: configuration.offset.y)
-            shadowRadius = configuration.radius
-            shadowOpacity = Float(configuration.opacity)
+        shadowColor = configuration._resolvedColor?.cgColor
+        shadowOffset = CGSize(width: configuration.offset.x, height: configuration.offset.y)
+        shadowRadius = configuration.radius
+        shadowOpacity = Float(configuration.opacity)
     }
 }
 

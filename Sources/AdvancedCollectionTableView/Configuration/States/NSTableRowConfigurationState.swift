@@ -11,7 +11,7 @@ import FZUIKit
 
 /**
  A structure that encapsulates a row’s state.
-
+ 
  A row configuration state encompasses a trait collection along with all of the common states that affect a row’s appearance — view states like selected, focused, or disabled, and row states like editing or swiped. A row configuration state encapsulates the inputs that configure a row for any possible state or combination of states. You use a row configuration state with background and content configurations to obtain the default appearance for a specific state.
  Typically, you don’t create a configuration state yourself. To obtain a configuration state, override the ``updateConfiguration(using:)`` method in your row subclass and use the state parameter. Outside of this method, you can get a row’s configuration state by using its ``configurationState`` property.
  You can create your own custom states to add to a row configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
@@ -47,22 +47,22 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /*
      /// The emphasized state.
      public struct EmphasizedState: OptionSet, Hashable {
-         public let rawValue: UInt
-         /// The window of the item is key.
-         public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-         /// The collection view of the item is first responder.
-         public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-         
-         /// Creates a units structure with the specified raw value.
-         public init(rawValue: UInt) {
-             self.rawValue = rawValue
-         }
+     public let rawValue: UInt
+     /// The window of the item is key.
+     public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+     /// The collection view of the item is first responder.
+     public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+     
+     /// Creates a units structure with the specified raw value.
+     public init(rawValue: UInt) {
+     self.rawValue = rawValue
+     }
      }
      
      /// The emphasized state.
      public var emphasizedState: EmphasizedState = []
      */
-
+    
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
@@ -72,14 +72,14 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
     public init(isSelected: Bool = false,
-        isEnabled: Bool = true,
-         isFocused: Bool = false,
-         isHovered: Bool = false,
-         isEditing: Bool = false,
-         isExpanded: Bool = false,
-         isEmphasized: Bool = false,
-         isNextRowSelected: Bool = false,
-         isPreviousRowSelected: Bool = false) {
+                isEnabled: Bool = true,
+                isFocused: Bool = false,
+                isHovered: Bool = false,
+                isEditing: Bool = false,
+                isExpanded: Bool = false,
+                isEmphasized: Bool = false,
+                isNextRowSelected: Bool = false,
+                isPreviousRowSelected: Bool = false) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isFocused = isFocused

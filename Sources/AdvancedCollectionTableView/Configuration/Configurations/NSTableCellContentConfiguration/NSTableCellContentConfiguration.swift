@@ -13,18 +13,18 @@ import FZUIKit
  
  A table cell content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to a NSTableCellView, or any other view accepting a content configuration.
  
-Use  NSTableCellView.defaultContentConfiguration() to get a content configuration that has preconfigured default styling based on the table view it is presented.
+ Use  NSTableCellView.defaultContentConfiguration() to get a content configuration that has preconfigured default styling based on the table view it is presented.
  
  ```
  var content = tableCell.defaultContentConfiguration()
-
+ 
  // Configure content.
  content.image = NSImage(systemSymbolName: "star")
  content.text = "Favorites"
-
+ 
  // Customize appearance.
  content.imageProperties.tintColor = .purple
-
+ 
  tableCell.contentConfiguration = content
  ```
  */
@@ -46,7 +46,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     public var secondaryTextProperties: ConfigurationProperties.Text = .secondary
     /// Properties for configuring the image.
     public var imageProperties = ImageProperties()
-
+    
     /// The padding between the image and text.
     public var imageToTextPadding: CGFloat = 8.0
     /// The padding between primary and secndary text.
@@ -117,33 +117,33 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     public func updated(for state: NSConfigurationState) -> NSTableCellContentConfiguration {
         return self
         /*
-        guard let state = state as? NSTableCellConfigurationState else { return self }
-        var configuration = self
-        /*
-        if state.isSelected, let isSelectedTextColor = self.cellType?.isSelectedTextColor {
-            configuration.textProperties.textColorTansform = .color(isSelectedTextColor)
-            configuration.secondaryTextProperties.textColorTansform = .color(isSelectedTextColor)
-        } else {
-            configuration.textProperties.textColorTansform = nil
-            configuration.secondaryTextProperties.textColorTansform = nil
-        }
-         */
-        return configuration
+         guard let state = state as? NSTableCellConfigurationState else { return self }
+         var configuration = self
+         /*
+          if state.isSelected, let isSelectedTextColor = self.cellType?.isSelectedTextColor {
+          configuration.textProperties.textColorTansform = .color(isSelectedTextColor)
+          configuration.secondaryTextProperties.textColorTansform = .color(isSelectedTextColor)
+          } else {
+          configuration.textProperties.textColorTansform = nil
+          configuration.secondaryTextProperties.textColorTansform = nil
+          }
+          */
+         return configuration
          */
     }
     
     /// Creates a cell content configuration.
     public init(text: String? = nil,
-         attributedText: AttributedString? = nil,
-         secondaryText: String? = nil,
-         secondaryAttributedText: AttributedString? = nil,
-         image: NSImage? = nil,
+                attributedText: AttributedString? = nil,
+                secondaryText: String? = nil,
+                secondaryAttributedText: AttributedString? = nil,
+                image: NSImage? = nil,
                 textProperties: ConfigurationProperties.Text = .primary,
                 secondaryTextProperties: ConfigurationProperties.Text = .secondary,
-         imageProperties: ImageProperties = ImageProperties(),
-         imageToTextPadding: CGFloat = 8.0,
-         textToSecondaryTextPadding: CGFloat = 2.0,
-         insets: NSEdgeInsets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)) {
+                imageProperties: ImageProperties = ImageProperties(),
+                imageToTextPadding: CGFloat = 8.0,
+                textToSecondaryTextPadding: CGFloat = 2.0,
+                insets: NSEdgeInsets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText

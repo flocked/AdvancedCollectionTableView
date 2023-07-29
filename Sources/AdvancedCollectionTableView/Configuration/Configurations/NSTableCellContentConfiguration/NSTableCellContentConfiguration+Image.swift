@@ -141,7 +141,7 @@ public extension NSTableCellContentConfiguration {
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
-          //  symbolConfiguration?.updateResolvedColors()
+            //  symbolConfiguration?.updateResolvedColors()
             _resolvedTintColor = symbolConfiguration?._resolvedPrimaryColor ?? resolvedTintColor()
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()

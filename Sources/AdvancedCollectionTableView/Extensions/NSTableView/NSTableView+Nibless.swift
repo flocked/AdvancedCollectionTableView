@@ -19,8 +19,8 @@ public extension NSTableView {
      Because a NIB can contain multiple views, you can associate the same NIB with multiple identifiers. To remove a previously associated NIB for identifier, pass in nil for the nib value.
      
      - Parameters:
-        - cellClass: A class to use for creating cell. Specify nil to unregister a previously registered class.
-        - identifier: The string that identifies the type of cell. You use this string later when requesting a cell and it must be unique among the other registered cell classes of this table view. This parameter must not be an empty string or nil.
+     - cellClass: A class to use for creating cell. Specify nil to unregister a previously registered class.
+     - identifier: The string that identifies the type of cell. You use this string later when requesting a cell and it must be unique among the other registered cell classes of this table view. This parameter must not be an empty string or nil.
      */
     func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
         Self.swizzleTableViewCellRegister()
@@ -47,7 +47,7 @@ public extension NSTableView {
             self.swizzled_register(nib, forIdentifier: identifier)
         }
     }
-        
+    
     @objc internal func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
         if let registeredCellClass = self.registeredCellsByIdentifier?[identifier] {
             if let tableCellView = self.swizzled_makeView(withIdentifier: identifier, owner: owner) {

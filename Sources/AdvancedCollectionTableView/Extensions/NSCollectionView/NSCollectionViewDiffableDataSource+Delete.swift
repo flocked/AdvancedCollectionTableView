@@ -13,7 +13,7 @@ import FZQuicklook
 public extension NSCollectionViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete items either via backspace keyboard shortcut.
-
+     
      If the value of this property is `true` (the default is `false`), users can delete items.
      */
     var allowsDeleting: Bool {
@@ -40,7 +40,7 @@ public extension NSCollectionViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
                         let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
-                       let elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
+                        let elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
                         
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
@@ -58,7 +58,7 @@ public extension NSCollectionViewDiffableDataSource {
                                         collectionView.deselectItems(at: Set([IndexPath(item: 0, section: 0)]))
                                     }
                                 }
-
+                                
                             }
                             return nil
                         }

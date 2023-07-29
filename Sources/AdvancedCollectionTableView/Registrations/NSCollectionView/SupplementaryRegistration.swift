@@ -8,15 +8,15 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-           
+
 public extension NSCollectionView {
     /**
-    Dequeues a configured reusable supplementary view object.
+     Dequeues a configured reusable supplementary view object.
      
      - Parameters:
-        - registration: The supplementary registration for configuring the supplementary view object. See NSCollectionView.SupplementaryRegistration.
-        - indexPath: The index path that specifies the location of the supplementary view in the collection view.
-
+     - registration: The supplementary registration for configuring the supplementary view object. See NSCollectionView.SupplementaryRegistration.
+     - indexPath: The index path that specifies the location of the supplementary view in the collection view.
+     
      - returns: A configured reusable supplementary view object.
      */
     func makeSupplementaryView<V>(using registration: SupplementaryRegistration<V>, for indexPath: IndexPath) -> V {
@@ -42,10 +42,10 @@ public extension NSCollectionView {
      
      ```
      let headerRegistration = NSCollectionView.SupplementaryRegistration
-         <HeaderView>(elementKind: "Header") {
-         supplementaryView, string, indexPath in
-         supplementaryView.label.text = "\(string) for section \(indexPath.section)"
-         supplementaryView.backgroundColor = .lightGray
+     <HeaderView>(elementKind: "Header") {
+     supplementaryView, string, indexPath in
+     supplementaryView.label.text = "\(string) for section \(indexPath.section)"
+     supplementaryView.backgroundColor = .lightGray
      }
      ```
      
@@ -53,15 +53,15 @@ public extension NSCollectionView {
      
      ```
      dataSource.supplementaryViewProvider = { supplementaryView, elementKind, indexPath in
-         return collectionView.makeSupplementaryView(using: headerRegistration,
-                                                                      for: indexPath)
+     return collectionView.makeSupplementaryView(using: headerRegistration,
+     for: indexPath)
      }
      ```
      
      You don’t need to item call *register(_:forSupplementaryViewOfKind:withIdentifier)*, *register(_:nib:)* or *register(_:forItemWithIdentifier:)*.  The registration occurs automatically when you pass the supplementary view registration to makeSupplementaryView(using:for:).
      
      - Important: Do not create your item registration inside a *NSCollectionViewDiffableDataSource.SupplementaryViewProvider* closure; doing so prevents item reuse.
-    */
+     */
     class SupplementaryRegistration<SupplementaryView>: NSCollectionViewSupplementaryProvider, _NSCollectionViewSupplementaryProvider where SupplementaryView: (NSView & NSCollectionViewElement)  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
@@ -70,7 +70,7 @@ public extension NSCollectionView {
         public let elementKind: SupplementaryElementKind
         
         // MARK: Creating a supplementary registration
-                
+        
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
             self.elementKind = elementKind
@@ -121,8 +121,8 @@ public extension NSCollectionView {
 
 internal extension NSCollectionView {
     var registeredSupplementaryRegistrations: [NSUserInterfaceItemIdentifier] {
-         get { getAssociatedValue(key: "_registeredSupplementaryRegistrations", object: self, initialValue: []) }
-         set { set(associatedValue: newValue, key: "_registeredSupplementaryRegistrations", object: self)
-         }
-     }
+        get { getAssociatedValue(key: "_registeredSupplementaryRegistrations", object: self, initialValue: []) }
+        set { set(associatedValue: newValue, key: "_registeredSupplementaryRegistrations", object: self)
+        }
+    }
 }

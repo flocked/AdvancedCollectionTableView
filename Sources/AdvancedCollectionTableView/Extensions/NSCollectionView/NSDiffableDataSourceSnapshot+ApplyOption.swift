@@ -21,7 +21,7 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
      
      The diffable data source computes the difference between the current state and the new state in the snapshot, which is an O(n) operation, where n is the number of items in the snapshot. The differences in the UI between the current state and new state are animated.
      */
-
+    
     case animated(duration: TimeInterval)
     
     /**
@@ -32,7 +32,7 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     case usingReloadData
     /**
      The snapshot gets applied without any animation.
-
+     
      The UI is set to the new state without any animations, with no additional overhead for computing a diff of the previous and new state. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     case withoutAnimation

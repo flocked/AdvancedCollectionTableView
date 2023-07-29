@@ -81,10 +81,10 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
         /// Handler that gets called whenever the mouse is right-clicking an element.
         public var rightMouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
-   //     public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
-    //   var mouseEntered: ((CGPoint) -> ())? = nil
-//        public var mouseMoved: ((CGPoint) -> ())? = nil
-     //   var mouseExited: ((CGPoint) -> ())? = nil
+        //     public var mouseDragged: ((_ point: CGPoint, _ element: E?) -> ())? = nil
+        //   var mouseEntered: ((CGPoint) -> ())? = nil
+        //        public var mouseMoved: ((CGPoint) -> ())? = nil
+        //   var mouseExited: ((CGPoint) -> ())? = nil
     }
     
     /// Handlers that get called whenever the mouse is hovering an item.
@@ -96,19 +96,19 @@ extension AdvanceColllectionViewDiffableDataSource {
     }
     
     /*
-    /// Handlers for expanding and collapsing items.
-    public struct SectionHandlers<Section> {
-        /// The handler that determines whether a particular section is collapsable.
-        public var shouldCollapse: ((_ section: Section) -> Bool)?
-        /// The handler that determines whether a particular section is expandable.
-        public var shouldExpand: ((_ section: Section) -> Bool)?
-        /// The handler that prepares the diffable data source for collapsing an section.
-        public var willCollapse: ((_ section: Section) -> ())?
-        /// The handler that prepares the diffable data source for expanding an section.
-        public var willExpand: ((_ section: Section) -> ())?
-        /// The handler that determines whether a particular section can be reordered.
-        public var canReorder: ((_ section: Section) -> Bool)?
-        public var didReorder: ((_ section: Section) -> ())?
-    }
+     /// Handlers for expanding and collapsing items.
+     public struct SectionHandlers<Section> {
+     /// The handler that determines whether a particular section is collapsable.
+     public var shouldCollapse: ((_ section: Section) -> Bool)?
+     /// The handler that determines whether a particular section is expandable.
+     public var shouldExpand: ((_ section: Section) -> Bool)?
+     /// The handler that prepares the diffable data source for collapsing an section.
+     public var willCollapse: ((_ section: Section) -> ())?
+     /// The handler that prepares the diffable data source for expanding an section.
+     public var willExpand: ((_ section: Section) -> ())?
+     /// The handler that determines whether a particular section can be reordered.
+     public var canReorder: ((_ section: Section) -> Bool)?
+     public var didReorder: ((_ section: Section) -> ())?
+     }
      */
 }

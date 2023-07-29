@@ -18,14 +18,14 @@ import FZUIKit
  
  ```
  public var content = collectionViewItem.defaultContentConfiguration()
-
+ 
  // Configure content.
  content.text = "Favorites"
  content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
-
+ 
  // Customize appearance.
  content.imageProperties.tintColor = .purple
-
+ 
  collectionViewItem.contentConfiguration = content
  ```
  */
@@ -56,7 +56,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
      The content displays the ``view``, ``image`` and/or ``contentProperties.backgroundColor``.
      */
     public var contentProperties: ContentProperties = ContentProperties()
-
+    
     /**
      The padding between the content view and text.
      
@@ -66,7 +66,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     /**
      The padding between the primary and secondary text.
-
+     
      This value only applies when there’s both a text and secondary text.
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
@@ -78,9 +78,9 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var padding: NSDirectionalEdgeInsets = .init(4.0)
     
     /**
-    The scaling of the item.
+     The scaling of the item.
      
-    The default is 1.0, which displays the item at it's original scale.
+     The default is 1.0, which displays the item at it's original scale.
      */
     public var scaleTransform: CGFloat = 1.0
     
@@ -169,21 +169,21 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
             self == .top || self == .bottom
         }
     }
-
+    
     public init(text: String? = nil,
-         attributedText: AttributedString? = nil,
-         secondaryText: String? = nil,
-         secondaryAttributedText: AttributedString? = nil,
-         image: NSImage? = nil,
-         view: NSView? = nil,
+                attributedText: AttributedString? = nil,
+                secondaryText: String? = nil,
+                secondaryAttributedText: AttributedString? = nil,
+                image: NSImage? = nil,
+                view: NSView? = nil,
                 textProperties: ConfigurationProperties.Text = .body.alignment(.center),
                 secondaryTextProperties: ConfigurationProperties.Text = .caption1.alignment(.center),
-         contentProperties: ContentProperties = ContentProperties(),
-         contentPosition: ContentPosition = .top,
-         contentToTextPadding: CGFloat = 6.0,
-         textToSecondaryTextPadding: CGFloat = 2.0,
-         padding: NSDirectionalEdgeInsets = .init(4.0),
-         scaleTransform: CGFloat = 1.0) {
+                contentProperties: ContentProperties = ContentProperties(),
+                contentPosition: ContentPosition = .top,
+                contentToTextPadding: CGFloat = 6.0,
+                textToSecondaryTextPadding: CGFloat = 2.0,
+                padding: NSDirectionalEdgeInsets = .init(4.0),
+                scaleTransform: CGFloat = 1.0) {
         self.text = text
         self.attributedText = attributedText
         self.secondaryText = secondaryText

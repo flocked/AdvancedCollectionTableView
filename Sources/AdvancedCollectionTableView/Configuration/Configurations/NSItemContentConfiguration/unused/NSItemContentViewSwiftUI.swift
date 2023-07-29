@@ -58,7 +58,7 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }()
-        
+    
     
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         return hostingController.sizeThatFits(in: size)
@@ -67,8 +67,8 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
     override var fittingSize: NSSize {
         return hostingController.fittingSize
     }
-     
-     
+    
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -92,7 +92,7 @@ internal extension NSItemContentViewSwiftUI {
         let overlayView: NSView?
         let contentPosition: NSItemContentConfiguration.ContentPosition
         let properties: NSItemContentConfiguration.ContentProperties
-                
+        
         @ViewBuilder
         var contentStack: some View {
             ZStack() {
@@ -128,16 +128,16 @@ internal extension NSItemContentViewSwiftUI {
         var body: some View {
             contentItem
                 .clipShape(RoundedRectangle(cornerRadius: properties.cornerRadius))
-            .background(
-                RoundedRectangle(cornerRadius: properties.cornerRadius)
-                    .shadow(properties.shadow)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: properties.cornerRadius)
-                    .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
-            .scaleEffect(properties.scaleTransform)
+                .background(
+                    RoundedRectangle(cornerRadius: properties.cornerRadius)
+                        .shadow(properties.shadow)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: properties.cornerRadius)
+                        .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
+                .scaleEffect(properties.scaleTransform)
             
-   
+            
         }
     }
     
@@ -152,7 +152,7 @@ internal extension NSItemContentViewSwiftUI {
             self.attributedText = attributedText
             self.properties = properties
             self._text = self.text ?? ""
-
+            
         }
         @ViewBuilder
         var item: some View {
@@ -180,7 +180,7 @@ internal extension NSItemContentViewSwiftUI {
     
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
-
+        
         @ViewBuilder
         var textItems: some View {
             VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
@@ -188,7 +188,7 @@ internal extension NSItemContentViewSwiftUI {
                 
                 NSItemContentViewSwiftUI.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
             }
-
+            
         }
         
         @ViewBuilder
@@ -222,7 +222,7 @@ internal extension NSItemContentViewSwiftUI {
                 }
             }
         }
-
+        
         
         var body: some View {
             stackItem
@@ -255,11 +255,11 @@ internal extension View {
                 .frame(minWidth: minWidth, minHeight: minHeight)
         case .textAndSecondaryTextHeight:
             self
-             //   .frame(maxWidth: .infinite, maxHeight: .infinite)
+            //   .frame(maxWidth: .infinite, maxHeight: .infinite)
         case .none:
             if hasImage {
                 self
-                .fixedSize(horizontal: isVertical ? true : false, vertical: isVertical ? false : true)
+                    .fixedSize(horizontal: isVertical ? true : false, vertical: isVertical ? false : true)
             } else {
                 self
             }
@@ -277,13 +277,13 @@ struct CollectionItemView_Previews: PreviewProvider {
         let contentProperties = self.contentProperties(isSelected: true)
         var textProperties: ConfigurationProperties.Text = .body
         textProperties.alignment = .center
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
+        return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, textProperties: textProperties, contentProperties: contentProperties)
     }
     
     static var configurationFill: NSItemContentConfiguration {
         var contentProperties = self.contentProperties(isSelected: true)
         contentProperties.imageScaling = .fill
-       return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, contentProperties: contentProperties)
+        return NSItemContentConfiguration(text: "Image Item", secondaryText: "A item that displays an image", image: NSImage(contentsOf: URL(fileURLWithPath: "/Users/florianzand/Pictures/1.jpg")), view: nil, contentProperties: contentProperties)
     }
     
     
@@ -292,14 +292,14 @@ struct CollectionItemView_Previews: PreviewProvider {
         view.backgroundColor = .lightGray
         view.maskToBounds = true
         let contentProperties = self.contentProperties(isSelected: false)
-
-       return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", view: view, contentProperties: contentProperties)
+        
+        return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", view: view, contentProperties: contentProperties)
     }
     
     static var configurationText: NSItemContentConfiguration {
         var contentProperties = self.contentProperties(isSelected: false)
         contentProperties.backgroundColor = nil
-       return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", contentProperties: contentProperties)
+        return NSItemContentConfiguration(text: "View item", secondaryText: "A item that displays a view", contentProperties: contentProperties)
     }
     
     static var configurationVertical: NSItemContentConfiguration {
@@ -347,21 +347,21 @@ struct ShapedImage: View {
     var body: some View {
         if aspectRatio == .fill {
             Image(image)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(
-                minWidth: 0,
-                maxWidth: .infinity,
-                minHeight: 0,
-                maxHeight: .infinity
-            )
-            .clipShape(shape)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(
+                    minWidth: 0,
+                    maxWidth: .infinity,
+                    minHeight: 0,
+                    maxHeight: .infinity
+                )
+                .clipShape(shape)
         } else {
             Image(image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-             //   .clipShape(shape)
-           //     .fixedSize(horizontal: true, vertical: false)
+            //   .clipShape(shape)
+            //     .fixedSize(horizontal: true, vertical: false)
         }
     }
 }

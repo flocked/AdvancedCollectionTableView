@@ -11,7 +11,7 @@ import FZUIKit
 
 /**
  A structure that encapsulates a cell’s state.
-
+ 
  A cell configuration state encompasses a trait collection along with all of the common states that affect a cell’s appearance — view states like selected, focused, or disabled, and cell states like editing or swiped. A cell configuration state encapsulates the inputs that configure a cell for any possible state or combination of states. You use a cell configuration state with background and content configurations to obtain the default appearance for a specific state.
  Typically, you don’t create a configuration state yourself. To obtain a configuration state, use NSTableCellView ``configurationUpdateHandler(cell:_, state:_)`` or  override the ``updateConfiguration(using:)`` method in your cell subclass and use the state parameter. Outside of this method, you can get a cell’s configuration state by using its ``configurationState`` property.
  You can create your own custom states to add to a cell configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
@@ -39,22 +39,22 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     internal var isExpanded: Bool = false
     
     /*
-    /// The emphasized state.
-    public struct EmphasizedState: OptionSet, Hashable {
-        public let rawValue: UInt
-        /// The window of the item is key.
-        public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-        /// The collection view of the item is first responder.
-        public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-        
-        /// Creates a units structure with the specified raw value.
-        public init(rawValue: UInt) {
-            self.rawValue = rawValue
-        }
-    }
-    
-    /// The emphasized state.
-    public var emphasizedState: EmphasizedState = []
+     /// The emphasized state.
+     public struct EmphasizedState: OptionSet, Hashable {
+     public let rawValue: UInt
+     /// The window of the item is key.
+     public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+     /// The collection view of the item is first responder.
+     public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+     
+     /// Creates a units structure with the specified raw value.
+     public init(rawValue: UInt) {
+     self.rawValue = rawValue
+     }
+     }
+     
+     /// The emphasized state.
+     public var emphasizedState: EmphasizedState = []
      */
     
     public init(isSelected: Bool = false,
@@ -78,15 +78,15 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
         isHovered: Bool,
         isEditing: Bool,
         isExpanded: Bool) {
-        self.isSelected = isSelected
-        self.isEnabled = isEnabled
-        self.isFocused = isFocused
-        self.isHovered = isHovered
-        self.isEditing = isEditing
-        self.isExpanded = isExpanded
-        self.isEmphasized = isEmphasized
-    }
-
+            self.isSelected = isSelected
+            self.isEnabled = isEnabled
+            self.isFocused = isFocused
+            self.isHovered = isHovered
+            self.isEditing = isEditing
+            self.isExpanded = isExpanded
+            self.isEmphasized = isEmphasized
+        }
+    
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }

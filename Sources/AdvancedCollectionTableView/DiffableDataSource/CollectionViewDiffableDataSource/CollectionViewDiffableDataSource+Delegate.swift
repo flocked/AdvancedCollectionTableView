@@ -19,7 +19,7 @@ extension AdvanceColllectionViewDiffableDataSource {
             self.dataSource.collectionView.delegate = self
             self.dataSource.collectionView.prefetchDataSource = self
         }
-                
+        
         func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
             self.dataSource.prefetchHandlers.willPrefetch?(elements)

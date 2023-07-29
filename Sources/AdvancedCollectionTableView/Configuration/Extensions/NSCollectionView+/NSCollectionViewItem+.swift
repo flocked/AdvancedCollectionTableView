@@ -12,7 +12,7 @@ import FZUIKit
 public extension NSCollectionViewItem {
     
     // MARK: Configuring the background
-
+    
     /**
      The current background configuration of the item.
      

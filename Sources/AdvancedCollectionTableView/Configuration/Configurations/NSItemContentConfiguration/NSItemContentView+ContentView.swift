@@ -11,28 +11,28 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class ItemContentView: NSView {
-      internal let imageView: NSImageView = NSImageView()
+        internal let imageView: NSImageView = NSImageView()
         internal var view: NSView? = nil {
             didSet {
-                    oldValue?.removeFromSuperview()
-                    if let newView = self.view {
-                        self.addSubview(withConstraint: newView)
-                        self.overlayView?.sendToFront()
-                        self.isHidden = (self.image == nil && self.view == nil)
-                    }
+                oldValue?.removeFromSuperview()
+                if let newView = self.view {
+                    self.addSubview(withConstraint: newView)
+                    self.overlayView?.sendToFront()
+                    self.isHidden = (self.image == nil && self.view == nil)
+                }
             }
         }
         
         internal var overlayView: NSView? = nil {
             didSet {
-                    oldValue?.removeFromSuperview()
-                    if let newView = self.overlayView {
-                        self.addSubview(withConstraint: newView)
-                    }
+                oldValue?.removeFromSuperview()
+                if let newView = self.overlayView {
+                    self.addSubview(withConstraint: newView)
+                }
             }
         }
-                
-       internal var image: NSImage? {
+        
+        internal var image: NSImage? {
             get { imageView.image }
             set {
                 guard newValue != self.imageView.image else { return }
@@ -42,7 +42,7 @@ internal extension NSItemContentView {
             }
         }
         
-       public var configuration: NSItemContentConfiguration {
+        public var configuration: NSItemContentConfiguration {
             didSet {
                 if oldValue != configuration {
                     updateConfiguration()
@@ -50,17 +50,17 @@ internal extension NSItemContentView {
             }
         }
         
-       internal var contentProperties: NSItemContentConfiguration.ContentProperties {
+        internal var contentProperties: NSItemContentConfiguration.ContentProperties {
             return configuration.contentProperties
         }
-                
+        
         internal func updateConfiguration() {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
             self.borderColor = contentProperties._resolvedBorderColor
             self.borderWidth = contentProperties.borderWidth
             self.cornerRadius = contentProperties.cornerRadius
             self.configurate(using: contentProperties.shadow)
-    
+            
             imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
             imageView.contentTintColor = contentProperties._resolvedImageTintColor
             imageView.imageScaling = contentProperties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
@@ -78,15 +78,15 @@ internal extension NSItemContentView {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
         }
-                
+        
         public init(configuration: NSItemContentConfiguration) {
             self.configuration = configuration
             super.init(frame: .zero)
             self.wantsLayer = true
             self.maskToBounds = true
             self.imageView.maskToBounds = true
-          //  self.translatesAutoresizingMaskIntoConstraints = false
-          //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
+            //  self.translatesAutoresizingMaskIntoConstraints = false
+            //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
             
             self.addSubview( imageView)
             self.updateConfiguration()

@@ -298,13 +298,13 @@ internal extension ConfigurationProperties.SymbolConfiguration {
         
         switch self.font {
         case .system(size: let size, weight: let weight, design: _):
-                configuration = configuration.font(size: size)
-                configuration = configuration.weight(weight)
+            configuration = configuration.font(size: size)
+            configuration = configuration.weight(weight)
         case .textStyle(let style, weight: let weight, design: _):
-                configuration = configuration.font(style)
-                configuration = configuration.weight(weight)
-            case .none:
-                break
+            configuration = configuration.font(style)
+            configuration = configuration.weight(weight)
+        case .none:
+            break
         }
         
         if let symbolScale = self.imageScale?.nsSymbolScale {

@@ -28,7 +28,7 @@ extension AdvanceColllectionViewDiffableDataSource {
     public func visibleElements() -> [Element] {
         return self.collectionView.indexPathsForVisibleItems().compactMap({element(for: $0)})
     }
-        
+    
     /**
      Returns the element at the specified index path.
      
@@ -86,7 +86,7 @@ extension AdvanceColllectionViewDiffableDataSource {
     
     public func indexPaths(for section: Section) -> [IndexPath] {
         let elements = self.currentSnapshot.itemIdentifiers(inSection: section)
-       return self.indexPaths(for: elements)
+        return self.indexPaths(for: elements)
     }
     
     public func indexPaths(for sections: [Section]) -> [IndexPath] {
@@ -105,20 +105,20 @@ extension AdvanceColllectionViewDiffableDataSource {
     }
     
     /*
-    public func expandSection(_ section: Section) {
-        section.isCollapsed = false
-        self.updateCollection(.animated)
-    }
-    
-    public func collapseSection(_ section: Section) {
-        section.isCollapsed = true
-        self.updateCollection(.animated)
-    }
-    */
+     public func expandSection(_ section: Section) {
+     section.isCollapsed = false
+     self.updateCollection(.animated)
+     }
+     
+     public func collapseSection(_ section: Section) {
+     section.isCollapsed = true
+     self.updateCollection(.animated)
+     }
+     */
     
     internal func supplementaryView(for section: Section, kind: String) -> (NSView & NSCollectionViewElement)? {
         if let indexPath = self.indexPaths(for: [section]).first {
-           return collectionView.supplementaryView(forElementKind: kind, at: indexPath)
+            return collectionView.supplementaryView(forElementKind: kind, at: indexPath)
         }
         return nil
     }

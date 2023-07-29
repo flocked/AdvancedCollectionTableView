@@ -45,7 +45,7 @@ public extension NSItemContentConfiguration {
             case textAndSecondaryTextHeight
             case size(CGSize)
         }
-                
+        
         /// The corner radius of the content.
         public var cornerRadius: CGFloat = 10.0
         
@@ -57,12 +57,12 @@ public extension NSItemContentConfiguration {
         /// The size of the content.
         public var sizing: SizeOption? = nil
         /**
-        The scaling of the content.
+         The scaling of the content.
          
-        The default is 1.0, which displays the content at it's original scale.
+         The default is 1.0, which displays the content at it's original scale.
          */
         public var scaleTransform: CGFloat = 1.0
-                
+        
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
             didSet { updateResolvedColors() } }
@@ -76,7 +76,7 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
-                
+        
         /// The border width.
         public var borderWidth: CGFloat = 0.0
         /// The border color.

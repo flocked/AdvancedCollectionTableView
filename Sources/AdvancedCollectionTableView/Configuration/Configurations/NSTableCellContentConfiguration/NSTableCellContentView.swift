@@ -36,13 +36,13 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal lazy var textField = CellTextField(properties: self.appliedConfiguration.textProperties)
     internal lazy var secondaryTextField = CellTextField(properties: self.appliedConfiguration.secondaryTextProperties)
     internal lazy var imageView = CellImageView(properties: self.appliedConfiguration.imageProperties)
-
+    
     internal lazy var textStackView: NSStackView = {
         var stackView = NSStackView(views: [textField, secondaryTextField])
         stackView.orientation = .vertical
         stackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.alignment = .leading
-    //    textStack.setDistribution(.center)
+        //    textStack.setDistribution(.center)
         return stackView
     }()
     
@@ -52,10 +52,10 @@ public class NSTableCellContentView: NSView, NSContentView {
         stackView.spacing = appliedConfiguration.imageToTextPadding
         stackView.alignment = .firstBaseline
         stackView.distribution = .fill
-     //   stackView.setDistribution(.firstBaseline)
+        //   stackView.setDistribution(.firstBaseline)
         return stackView
     }()
-        
+    
     internal var stackViewConstraints: [NSLayoutConstraint] = []
     internal func initialSetup() {
         self.maskToBounds = false
@@ -73,7 +73,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         textField.text(appliedConfiguration.text, attributedString: appliedConfiguration.attributedText)
         secondaryTextField.text(appliedConfiguration.secondaryText, attributedString: appliedConfiguration.secondaryAttributedText)
         imageView.image = appliedConfiguration.image
-                
+        
         imageView.properties = appliedConfiguration.imageProperties
         textField.properties = appliedConfiguration.textProperties
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
@@ -114,7 +114,7 @@ public class NSTableCellContentView: NSView, NSContentView {
             }
         }
     }
- 
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -25,7 +25,7 @@ public extension NSTableView {
             })
         }
     }
-        
+    
     internal var firstResponderObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
@@ -75,7 +75,7 @@ public extension NSTableView {
             self.observingView = nil
         }
     }
-        
+    
     var observingView: ObservingView? {
         get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
