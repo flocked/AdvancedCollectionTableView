@@ -77,14 +77,11 @@ public extension NSTableView {
             return nil
         }
         
-        /**
-         A closure that handles the cell registration and configuration.
-         */
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
-        
-        public let identifier: NSUserInterfaceItemIdentifier
+        internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
         private let handler: Handler
+        
+        // MARK: Creating a cell registration
         
         /**
          Creates a cell registration with the specified registration handler.
@@ -103,6 +100,9 @@ public extension NSTableView {
             self.handler = handler
             self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
         }
+        
+        /// A closure that handles the cell registration and configuration.
+        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
         
         internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)

@@ -10,6 +10,9 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSTableRowView {
+    
+    // MARK: Configuring the background
+    
     /**
      The current background configuration of the row.
      
@@ -184,6 +187,8 @@ public extension NSTableRowView {
             self.setNeedsUpdateConfiguration()
         }
     }
+    
+    // MARK: Managing the state
     
     /**
      The current configuration state of the row.

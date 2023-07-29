@@ -10,6 +10,9 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSCollectionViewItem {
+    
+    // MARK: Configuring the background
+
     /**
      The current background configuration of the item.
      
@@ -137,6 +140,8 @@ public extension NSCollectionViewItem {
         backgroundView?.sendToBack()
     }
     
+    // MARK: Managing the content
+    
     /**
      The current content configuration of the item.
      
@@ -217,6 +222,8 @@ public extension NSCollectionViewItem {
         }
         self.configurateBackgroundView()
     }
+    
+    // MARK: Managing the state
     
     /**
      The current configuration state of the item.

@@ -57,14 +57,12 @@ public extension NSTableView {
      - Important: Do not create your cell registration inside a *NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
     */
     class RowViewRegistration<RowView, Element> where RowView: NSTableRowView  {
-        /**
-         A closure that handles the cell registration and configuration.
-         */
-        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
         
-        public let identifier: NSUserInterfaceItemIdentifier
+        private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
         private let handler: Handler
+        
+        // MARK: Creating a row registration
         
         /**
          Creates a item registration with the specified registration handler.
@@ -83,6 +81,9 @@ public extension NSTableView {
             self.handler = handler
             self.identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
+        
+        /// A closure that handles the cell registration and configuration.
+        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
         
         internal func makeView(_ tableView: NSTableView, _ row: Int, _ element: Element) -> RowView {
            let rowView = (tableView.rowView(atRow: row, makeIfNecessary: false) as? RowView) ?? RowView(frame: .zero)

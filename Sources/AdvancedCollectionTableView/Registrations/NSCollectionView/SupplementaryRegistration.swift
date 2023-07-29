@@ -61,12 +61,12 @@ public extension NSCollectionView {
     */
     class SupplementaryRegistration<SupplementaryView>: NSCollectionViewSupplementaryProvider where SupplementaryView: (NSView & NSCollectionViewElement)  {
         
-        public typealias Handler = ((SupplementaryView, SupplementaryElementKind, IndexPath)->(Void))
-        
         internal let identifier: NSUserInterfaceItemIdentifier
         internal let nib: NSNib?
         internal let handler: Handler
         public let elementKind: SupplementaryElementKind
+        
+        // MARK: Creating a supplementary registration
                 
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
@@ -81,6 +81,9 @@ public extension NSCollectionView {
             self.handler = handler
             self.identifier = .init(String(describing: SupplementaryView.self) + String(describing: nib.self) + elementKind)
         }
+        
+        /// A closure that handles the supplementary registration and configuration.
+        public typealias Handler = ((SupplementaryView, SupplementaryElementKind, IndexPath)->(Void))
         
         public func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)   {
             if isRegistered(collectionView) == false {
@@ -115,8 +118,8 @@ public extension NSCollectionView {
 
 internal extension NSCollectionView {
     var registeredSupplementaryRegistrations: [NSUserInterfaceItemIdentifier] {
-         get { getAssociatedValue(key: "NSCollectionView_registeredSupplementaryRegistrations", object: self, initialValue: []) }
-         set { set(associatedValue: newValue, key: "NSCollectionView_registeredSupplementaryRegistrations", object: self)
+         get { getAssociatedValue(key: "_registeredSupplementaryRegistrations", object: self, initialValue: []) }
+         set { set(associatedValue: newValue, key: "_registeredSupplementaryRegistrations", object: self)
          }
      }
 }

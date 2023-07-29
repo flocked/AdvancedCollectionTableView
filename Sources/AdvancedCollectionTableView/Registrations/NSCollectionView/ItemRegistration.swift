@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSCollectionView {
+    // MARK: Creating items
     /**
     Dequeues a configured reusable item object.
      
@@ -75,14 +76,12 @@ public extension NSCollectionView {
      - Important: Do not create your item registration inside a ``NSCollectionViewDiffableDataSource.ItemProvider`` closure; doing so prevents item reuse.
     */
     class ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
-        /**
-         A closure that handles the item registration and configuration.
-         */
-        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ itemIdentifier: Element)->(Void))
         
         private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
-        private let handler: Handler        
+        private let handler: Handler
+        
+        // MARK: Creating a item registration
         
         /**
          Creates a item registration with the specified registration handler.
@@ -101,6 +100,9 @@ public extension NSCollectionView {
             self.identifier = .init(String(describing: Item.self) + String(describing: nib.self))
             self.handler = handler
         }
+        
+        /// A closure that handles the item registration and configuration.
+        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ itemIdentifier: Element)->(Void))
         
         internal func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
             if isRegistered(collectionView) == false {
@@ -139,8 +141,8 @@ public extension NSCollectionView {
 
 internal extension NSCollectionView {
     var registeredItemRegistrations: [NSUserInterfaceItemIdentifier] {
-         get { getAssociatedValue(key: "NSCollectionView_registeredItemRegistrations", object: self, initialValue: []) }
-         set { set(associatedValue: newValue, key: "NSCollectionView_registeredItemRegistrations", object: self)
+         get { getAssociatedValue(key: "_registeredItemRegistrations", object: self, initialValue: []) }
+         set { set(associatedValue: newValue, key: "_registeredItemRegistrations", object: self)
          }
      }
 }

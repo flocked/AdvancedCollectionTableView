@@ -10,6 +10,9 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSTableCellView {
+    
+    // MARK: Managing the content
+
     /**
      The current content configuration of the cell.
 
@@ -90,6 +93,8 @@ public extension NSTableCellView {
             self.contentView?.removeFromSuperview()
         }
     }
+    
+    // MARK: Managing the state
 
     /**
      The current configuration state of the cell.
