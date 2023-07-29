@@ -12,9 +12,9 @@ import FZQuicklook
 
 public extension NSCollectionViewDiffableDataSource {
     /**
-     A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
+     A Boolean value that indicates whether users can delete items either via backspace keyboard shortcut.
 
-     If the value of this property is true (the default is false), users can delete items.
+     If the value of this property is `true` (the default is `false`), users can delete items.
      */
     var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
