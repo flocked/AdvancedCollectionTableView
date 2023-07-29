@@ -18,25 +18,25 @@ import FZUIKit
  */
 public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a selected state.
-    public let isSelected: Bool
+    public var isSelected: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a editing state.
-    public let isEditing: Bool
+    public var isEditing: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a hovered state (if the mouse is above the cell).
-    public let isHovered: Bool
+    public var isHovered: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a emphasized state.
-    public let isEmphasized: Bool
+    public var isEmphasized: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a enabled state.
-    internal let isEnabled: Bool
+    internal var isEnabled: Bool = true
     
     /// A Boolean value that indicates whether the cell is in a focused state.
-    internal let isFocused: Bool
+    internal var isFocused: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a expanded state.
-    internal let isExpanded: Bool
+    internal var isExpanded: Bool = false
     
     /*
     /// The emphasized state.
