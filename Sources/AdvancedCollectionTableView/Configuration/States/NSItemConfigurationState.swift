@@ -18,26 +18,28 @@ import FZUIKit
  */
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the item is in a selected state.
-    public var isSelected: Bool = false
+    public let isSelected: Bool
     
     /// A value that indicates  the items highlight state.
-    public var highlight: NSCollectionViewItem.HighlightState = .none
+    public let highlight: NSCollectionViewItem.HighlightState
     
     /// A Boolean value that indicates whether the item is in a editing state.
-    public var isEditing: Bool = false
+    public let isEditing: Bool
     
     /// A Boolean value that indicates whether the item is in a emphasized state.
-    public var isEmphasized: Bool = false
+    public let isEmphasized: Bool
     
     /// A Boolean value that indicates whether the item is in a hovered state (if the mouse is above the item).
-    public var isHovered: Bool = false
+    public let isHovered: Bool
 
     /// A Boolean value that indicates whether the item is in a enabled state.
-    internal var isEnabled: Bool = true
+    internal let isEnabled: Bool
+    
     /// A Boolean value that indicates whether the item is in a focused state.
-    internal var isFocused: Bool = false
+    internal let isFocused: Bool
+    
     /// A Boolean value that indicates whether the item is in a expanded state.
-    internal var isExpanded: Bool = false
+    internal let isExpanded: Bool
     
     /*
      /// The emphasized state.
@@ -78,6 +80,9 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isEditing = isEditing
         self.isEmphasized = isEmphasized
         self.isHovered = isHovered
+        self.isEnabled = true
+        self.isFocused = false
+        self.isExpanded = false
     }
     
     public init(isSelected: Bool,

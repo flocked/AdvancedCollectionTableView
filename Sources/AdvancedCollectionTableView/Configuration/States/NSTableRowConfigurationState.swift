@@ -18,31 +18,31 @@ import FZUIKit
  */
 public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the row is in a selected state.
-    public var isSelected: Bool = false
+    public let isSelected: Bool
     
     /// A Boolean value that indicates whether the row is in a enabled state.
-    public var isEnabled: Bool = true
+    public let isEnabled: Bool
     
     /// A Boolean value that indicates whether the row is in a focused state.
-    public var isFocused: Bool = false
+    public let isFocused: Bool
     
     /// A Boolean value that indicates whether the row is in a hovered state (if the mouse is above the row).
-    public var isHovered: Bool = false
+    public let isHovered: Bool
     
     /// A Boolean value that indicates whether the row is in a editing state.
-    public var isEditing: Bool = false
+    public let isEditing: Bool
     
     /// A Boolean value that indicates whether the row is in a expanded state.
-    public var isExpanded: Bool = false
+    public let isExpanded: Bool
     
     /// A Boolean value that indicates whether the row is in a emphasized state.
-    public var isEmphasized: Bool = false
+    public let isEmphasized: Bool
     
     /// A Boolean value that indicates whether the next row is in a selected state.
-    public var isNextRowSelected: Bool = false
+    public var isNextRowSelected: Bool
     
     /// A Boolean value that indicates whether the previous row is in a selected state.
-    public var isPreviousRowSelected: Bool = false
+    public let isPreviousRowSelected: Bool
     
     /*
      /// The emphasized state.
