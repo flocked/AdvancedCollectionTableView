@@ -63,8 +63,8 @@ public extension NSCollectionViewDiffableDataSource {
     
     func supplementaryViewProvider(using providers: [NSCollectionViewSupplementaryProvider]) {
         self.supplementaryViewProvider = { tCollectionView, kind, indexPath in
-            if let provider =  providers.first(where: {$0.elementKind == kind}) {
-                return provider.makeSupplementaryView(tCollectionView, indexPath)
+            if let provider = providers.first(where: {$0.elementKind == kind}) {
+                return (provider as! _NSCollectionViewSupplementaryProvider).makeSupplementaryView(tCollectionView, indexPath)
             }
             return nil
         }
