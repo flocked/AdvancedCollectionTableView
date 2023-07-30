@@ -68,7 +68,7 @@ A content configuration for a collectionview item.
 
  // Configure content.
  content.text = "Favorites"
- content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
+ content.image = NSImage(systemSymbolName: "star")
 
  // Customize appearance.
  content.imageProperties.tintColor = .purple
@@ -77,7 +77,7 @@ A content configuration for a collectionview item.
  ```
 
 ## NSCollectionView reconfigurateItems
-Updates the data for the items without reloading them (`reloadItems(at: _)`
+Updates the data for the items without reloading them (`reloadItems(at: _)`.
 ```
 collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
 ```
@@ -141,6 +141,7 @@ struct GalleryItem: QuicklookPreviewable {
     return imageURL
     }
     
+    // The quicklook preview title displayed on the top of the Quicklook panel.
     let previewItemTitle: String? {
     return title
     }
