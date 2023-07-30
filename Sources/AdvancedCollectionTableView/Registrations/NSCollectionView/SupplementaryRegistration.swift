@@ -58,7 +58,7 @@ public extension NSCollectionView {
      }
      ```
      
-     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`, `register(_:nib:)` or `register(_:forItemWithIdentifier:)`.  The registration occurs automatically when you pass the supplementary view registration to `makeSupplementaryView(using:for:)`.
+     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`.  The registration occurs automatically when you pass the supplementary view registration to `makeSupplementaryView(using:for:)`.
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
@@ -126,7 +126,7 @@ public extension NSCollectionView {
         
         internal func unregister(for collectionView: NSCollectionView) {
             let any: AnyClass? = nil
-            collectionView.register(any, forItemWithIdentifier: self.identifier)
+            collectionView.register(any, forSupplementaryViewOfKind: self.elementKind, withIdentifier: self.identifier)
             collectionView.registeredSupplementaryRegistrations.remove(self.identifier)
         }
     }
