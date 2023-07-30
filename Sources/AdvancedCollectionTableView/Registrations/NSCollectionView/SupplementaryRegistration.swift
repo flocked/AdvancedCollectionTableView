@@ -49,7 +49,7 @@ public extension NSCollectionView {
      }
      ```
      
-     After you create a supplementary registration, you pass it in to makeSupplementaryView(using:for:), which you call from your data source’s supplementaryViewProvider.
+     After you create a supplementary registration, you pass it in to `makeSupplementaryView(using:for:)`, which you call from your data source’s `supplementaryViewProvider`.
      
      ```
      dataSource.supplementaryViewProvider = { supplementaryView, elementKind, indexPath in
@@ -58,9 +58,9 @@ public extension NSCollectionView {
      }
      ```
      
-     You don’t need to item call *register(_:forSupplementaryViewOfKind:withIdentifier)*, *register(_:nib:)* or *register(_:forItemWithIdentifier:)*.  The registration occurs automatically when you pass the supplementary view registration to makeSupplementaryView(using:for:).
+     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`, `register(_:nib:)` or `register(_:forItemWithIdentifier:)`.  The registration occurs automatically when you pass the supplementary view registration to `makeSupplementaryView(using:for:)`.
      
-     - Important: Do not create your item registration inside a *NSCollectionViewDiffableDataSource.SupplementaryViewProvider* closure; doing so prevents item reuse.
+     - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
     class SupplementaryRegistration<SupplementaryView>: NSCollectionViewSupplementaryProvider, _NSCollectionViewSupplementaryProvider where SupplementaryView: (NSView & NSCollectionViewElement)  {
         
@@ -71,6 +71,12 @@ public extension NSCollectionView {
         
         // MARK: Creating a supplementary registration
         
+        /**
+         Creates a supplementary registration with the specified registration handler
+         
+         - Parameters identifier: The identifier of the supplementary registration.
+         - Parameters handler: The handler to configurate the supplementary view.
+         */
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
             self.elementKind = elementKind
@@ -78,6 +84,13 @@ public extension NSCollectionView {
             self.identifier = .init(String(describing: SupplementaryView.self) + elementKind)
         }
         
+        /**
+         Creates a supplementary registration with the specified registration handler and nib file.
+         
+         - Parameters nib: The nib of the supplementary view.
+         - Parameters identifier: The identifier of the supplementary registration.
+         - Parameters handler: The handler to configurate the supplementary view.
+         */
         public init(nib: NSNib, elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.nib = nib
             self.elementKind = elementKind

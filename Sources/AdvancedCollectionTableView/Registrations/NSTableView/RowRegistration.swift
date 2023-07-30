@@ -11,15 +11,14 @@ import FZUIKit
 
 public extension NSTableView {
     /**
-     Dequeues a configured reusable rowview object.
+     Dequeues a configured reusable row view object.
      
      - Parameters:
-     - registration: The rowview registration for configuring the rowview object. See NSTableView.RowViewRegistration.
-     - column: The table column in which the cell gets displayed in the table view.
-     - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-     - element: The element that provides data for the cell.
+     - registration: The row view registration for configuring the rowview object. See `NSTableView.RowRegistration`.
+     - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
+     - element: The element that provides data for the row.
      
-     - returns:A configured reusable cell object.
+     - returns:A configured reusable row view object.
      */
     func makeRowView<I: NSTableRowView, E: Any>(using registration: RowViewRegistration<I, E>, forRow row: Int, element: E) -> I {
         return registration.makeView(self, row, element)
@@ -28,33 +27,29 @@ public extension NSTableView {
 
 public extension NSTableView {
     /**
-     A registration for the table view’s cells.
+     A registration for the table view’s row views.
      
-     Use a cell registration to register cells with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
+     Use a row registration to register row views with your table view and configure each row for display. You create a row registration with your row type and data row type as the registration’s generic parameters, passing in a registration handler to configure the row. In the registration handler, you specify how to configure the content and appearance of that type of row.
      
-     The following example creates a cell registration for cells of type NSTableViewCell. Each cells textfield displays its element.
+     The following example creates a row registration for row views of type `NSTableRowView`.
      
      ```
-     let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, indexPath, string in
-     cell.textField.stringValue = string
+     let rowRegistration = NSTableView.RowRegistration<NSTableRowView, String> { row, indexPath, string in
+    
      }
      ```
      
-     After you create a cell registration, you pass it in to makeCell(using:for:element:), which you cell from your data source’s cell provider.
+     After you create a row registration, you pass it in to `makeCell(using:for:element:), which you row from your data source’s row provider.
      
      ```
      dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
-     (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableViewCell? in
+     (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableRowView? in
      
      return tableView.makeCell(using: cellRegistration,
      for: indexPath,
      cell: cellIdentifier)
      }
      ```
-     
-     You don’t need to call *register(_:)*, *register(_:nib:)* or *register(_:forCellWithIdentifier:)*. The table view registers your cell automatically when you pass the cell registration to makeCell(using:for:element:).
-     
-     - Important: Do not create your cell registration inside a *NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
      */
     class RowViewRegistration<RowView, Element> where RowView: NSTableRowView  {
         
@@ -65,7 +60,10 @@ public extension NSTableView {
         // MARK: Creating a row registration
         
         /**
-         Creates a item registration with the specified registration handler.
+         Creates a row registration with the specified registration handler.
+         
+         - Parameters identifier: The identifier of the row registration.
+         - Parameters handler: The handler to configurate the row view.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
@@ -74,7 +72,11 @@ public extension NSTableView {
         }
         
         /**
-         Creates a cell registration with the specified registration handler and nib file.
+         Creates a row registration with the specified registration handler and nib file.
+         
+         - Parameters nib: The nib of the row view.
+         - Parameters identifier: The identifier of the row registration.
+         - Parameters handler: The handler to configurate the row view.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib
@@ -82,7 +84,7 @@ public extension NSTableView {
             self.identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
         
-        /// A closure that handles the cell registration and configuration.
+        /// A closure that handles the row registration and configuration.
         public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
         
         internal func makeView(_ tableView: NSTableView, _ row: Int, _ element: Element) -> RowView {
