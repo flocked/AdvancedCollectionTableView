@@ -242,8 +242,7 @@ public extension NSTextField {
     /**
      Configurates the shadow of the view.
      
-     - Parameters:
-     - configuration:The configuration for configurating the shadow.
+     - Parameters configuration: The configuration for configurating the shadow.
      */
     func configurate(using configuration: ConfigurationProperties.Text) {
         self.maximumNumberOfLines = configuration.maxNumberOfLines
