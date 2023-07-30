@@ -127,38 +127,8 @@ public extension NSItemContentConfiguration {
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        public init(cornerRadius: CGFloat = 10.0,
-                    shadow: ConfigurationProperties.Shadow = .none(),
-                    maxWidth: CGFloat? = nil,
-                    maxHeight: CGFloat? = nil,
-                    backgroundColor: NSColor? = .lightGray,
-                    backgroundColorTransform: ColorTransformer? = nil,
-                    borderWidth: CGFloat = 0.0,
-                    borderColor: NSColor? = nil,
-                    borderColorTransform: ColorTransformer? = nil,
-                    imageTintColor: NSColor? = nil,
-                    imageTintColorTransform: ColorTransformer? = nil,
-                    imageSymbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil,
-                    imageScaling: ImageScaling = .fit,
-                    scaleTransform: CGFloat = 1.0
-        ) {
-            self.cornerRadius = cornerRadius
-            self.shadow = shadow
-            self.maxWidth = maxWidth
-            self.maxHeight = maxHeight
-            self.backgroundColor = backgroundColor
-            self.backgroundColorTransform = backgroundColorTransform
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
-            self.borderColorTransform = borderColorTransform
-            self.imageTintColor = imageTintColor
-            self.imageTintColorTransform = imageTintColorTransform
-            self.imageSymbolConfiguration = imageSymbolConfiguration
-            self.imageScaling = imageScaling
-            self.needsBorderWidthReset = (borderWidth != 0.0)
-            self.needsBorderColorReset = (borderColor != nil)
-            self.scaleTransform = scaleTransform
-            self.updateResolvedColors()
+        internal init() {
+            
         }
     }
 }

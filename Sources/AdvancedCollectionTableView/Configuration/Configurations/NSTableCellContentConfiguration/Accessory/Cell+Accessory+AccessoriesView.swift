@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-
+/*
 internal extension NSTableCellContentView {
     class AccessoriesView: NSView {
         var accessoryViews: [AccessoriesView] = []
@@ -47,3 +47,4 @@ internal extension NSTableCellContentView {
         }
     }
 }
+*/

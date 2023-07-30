@@ -29,6 +29,49 @@ import FZUIKit
  ```
  */
 public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable {
+    // MARK: Creating item configurations
+
+    /// Creates a cell content configuration for a table view with plain style.
+    public static func plain(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
+        var configuration = sidebar(.body, imageColor: imageColor)
+        configuration.imageToTextPadding = 6.0
+        configuration.type = .plain
+        configuration.insets = NSEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+        return configuration
+    }
+    
+    /// Creates a cell content configuration for a sidebar table view (source style).
+    public static func sidebar(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
+        return sidebar(.body, imageColor: imageColor)
+    }
+    
+    /// Creates a header cell content configuration for a sidebar table view (source style).
+    public static func sidebarHeader() -> NSTableCellContentConfiguration {
+        var configuration = NSTableCellContentConfiguration()
+        configuration.type = .sidebarHeader
+        configuration.textProperties.font = .subheadline.weight(.bold)
+        configuration.textProperties.textColor = .tertiaryLabelColor
+        configuration.imageProperties.tintColor = .tertiaryLabelColor
+        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), colorConfiguration: .monochrome)
+        configuration.insets = .init(top: 2, left: 0.0, bottom: 2, right: 2.0)
+        return configuration
+    }
+    
+    /// Creates a large cell content configuration for a sidebar table view (source style).
+    public static func large(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
+        var configuration = sidebar(.title3, imageColor: imageColor)
+        configuration.type = .large
+        configuration.insets = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 8.0, right: 4.0)
+        return configuration
+    }
+    
+    /// Creates a cell content configuration.
+    public init() {
+        
+    }
+    
+    // MARK: Customizing content
+    
     /// The primary text.
     public var text: String? = nil
     /// An attributed variant of the primary text.
@@ -40,12 +83,16 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
     /// The image.
     public var image: NSImage? = nil
     
+    // MARK: Customizing appearance
+    
     /// Properties for configuring the primary text.
     public var textProperties: ConfigurationProperties.Text = .primary
     /// Properties for configuring the secondary text.
     public var secondaryTextProperties: ConfigurationProperties.Text = .secondary
     /// Properties for configuring the image.
     public var imageProperties = ImageProperties()
+    
+    // MARK: Customizing layout
     
     /// The padding between the image and text.
     public var imageToTextPadding: CGFloat = 8.0
@@ -108,10 +155,14 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
         self.secondaryTextProperties.updateResolvedTextColor()
     }
     
+    // MARK: Creating a content view
+    
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         return NSTableCellContentView(configuration: self)
     }
+    
+    // MARK: Updating the configuration
     
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSTableCellContentConfiguration {
@@ -130,33 +181,6 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable 
           */
          return configuration
          */
-    }
-    
-    /// Creates a cell content configuration.
-    public init(text: String? = nil,
-                attributedText: AttributedString? = nil,
-                secondaryText: String? = nil,
-                secondaryAttributedText: AttributedString? = nil,
-                image: NSImage? = nil,
-                textProperties: ConfigurationProperties.Text = .primary,
-                secondaryTextProperties: ConfigurationProperties.Text = .secondary,
-                imageProperties: ImageProperties = ImageProperties(),
-                imageToTextPadding: CGFloat = 8.0,
-                textToSecondaryTextPadding: CGFloat = 2.0,
-                insets: NSEdgeInsets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)) {
-        self.text = text
-        self.attributedText = attributedText
-        self.secondaryText = secondaryText
-        self.secondaryAttributedText = secondaryAttributedText
-        self.image = image
-        self.textProperties = textProperties
-        self.secondaryTextProperties = secondaryTextProperties
-        self.imageProperties = imageProperties
-        self.imageToTextPadding = imageToTextPadding
-        self.textToSecondaryTextPadding = textToSecondaryTextPadding
-        self.insets = insets
-        self.type = nil
-        self.tableViewStyle = nil
     }
 }
 
@@ -181,39 +205,9 @@ public extension NSTableCellContentConfiguration {
         }
     }
     
-    static func plain(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
-        var configuration = sidebar(.body, imageColor: imageColor)
-        configuration.imageToTextPadding = 6.0
-        configuration.type = .plain
-        configuration.insets = NSEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
-        return configuration
-    }
-    
     internal static func automatic() -> NSTableCellContentConfiguration {
         var configuration = sidebar(.body, imageColor: .accentColor)
         configuration.type = .automatic
-        return configuration 
-    }
-    
-    static func sidebar(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
-        return sidebar(.body, imageColor: imageColor)
-    }
-    
-    static func sidebarHeader() -> NSTableCellContentConfiguration {
-        var configuration = NSTableCellContentConfiguration()
-        configuration.type = .sidebarHeader
-        configuration.textProperties.font = .subheadline.weight(.bold)
-        configuration.textProperties.textColor = .tertiaryLabelColor
-        configuration.imageProperties.tintColor = .tertiaryLabelColor
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), colorConfiguration: .monochrome)
-        configuration.insets = .init(top: 2, left: 0.0, bottom: 2, right: 2.0)
-        return configuration
-    }
-    
-    static func large(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
-        var configuration = sidebar(.title3, imageColor: imageColor)
-        configuration.type = .large
-        configuration.insets = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 8.0, right: 4.0)
         return configuration
     }
     

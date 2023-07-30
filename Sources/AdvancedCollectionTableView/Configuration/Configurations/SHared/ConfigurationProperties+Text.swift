@@ -27,28 +27,28 @@ public extension ConfigurationProperties {
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
-         If true, the text field becomes selectable but not editable. Use ``isEditable`` to make the text field selectable and editable. If false, the text is neither editable nor selectable.
+         If true, the text field becomes selectable but not editable. Use `isEditable` to make the text field selectable and editable. If false, the text is neither editable nor selectable.
          */
         public var isSelectable: Bool = false
         /**
          A Boolean value that controls whether the user can edit the value in the text field.
          
-         If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of ``´isSelectable``.
+         If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of `isSelectable`.
          */
         public var isEditable: Bool = false
         /**
          The edit handler that gets called when editing of the text ended.
          
-         It only gets called, if ``isEditable`` is true.
+         It only gets called, if `isEditable` is true.
          */
         public var onEditEnd: ((String)->())? = nil
         
         /**
          Handler that determines whether the edited string is valid.
          
-         It only gets called, if ``isEditable`` is true.
+         It only gets called, if `isEditable` is true.
          */
-        public var stringValidator: ((String)->(Bool))? = nil
+        public var stringValidation: ((String)->(Bool))? = nil
         
         /// The color of the text.
         public var textColor: NSColor = .labelColor {
@@ -68,17 +68,8 @@ public extension ConfigurationProperties {
             _resolvedTextColor = resolvedTextColor()
         }
         
-        public init(font: NSFont = .body, maxNumberOfLines: Int = 0, alignment: NSTextAlignment = .left, lineBreakMode: NSLineBreakMode = .byCharWrapping, textColor: NSColor = .labelColor, textColorTansform: ColorTransformer? = nil, isSelectable: Bool = false, isEditable: Bool = false, onEditEnd: ((String) -> ())? = nil) {
-            self.font = font
-            self.maxNumberOfLines = maxNumberOfLines
-            self.alignment = alignment
-            self.lineBreakMode = lineBreakMode
-            self.isSelectable = isSelectable
-            self.isEditable = isEditable
-            self.onEditEnd = onEditEnd
-            self.textColor = textColor
-            self.textColorTansform = textColorTansform
-            self.updateResolvedTextColor()
+        internal init() {
+            
         }
         
         /**
@@ -110,18 +101,26 @@ public extension ConfigurationProperties {
         }
         
         /// A default configuration for a primary text.
-        public static var primary: Self { Text(maxNumberOfLines: 1) }
+        public static var primary: Self {
+            var text = Text()
+            text.maxNumberOfLines = 1
+            return text
+        }
         
         /// A default configuration for a secondary text.
         public static var secondary: Self {
-            var text = Text(font: .callout, textColor: .secondaryLabelColor)
+            var text = Text()
+            text.font = .callout
+            text.textColor = .secondaryLabelColor
             text.swiftUIFont = .callout
             return text
         }
         
         /// A default configuration for a tertiary text.
         public static var tertiary: Self {
-            var text = Text(font: .callout, textColor: .tertiaryLabelColor)
+            var text = Text()
+            text.font = .callout
+            text.textColor = .tertiaryLabelColor
             text.swiftUIFont = .callout
             return text
         }

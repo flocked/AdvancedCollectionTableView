@@ -45,6 +45,7 @@ public extension ConfigurationProperties {
             _resolvedColor = resolvedColor()
         }
         
+        /// Creates shadow properties.
         public init(color: NSUIColor? = .shadowColor,
                     opacity: CGFloat = 0.3,
                     radius: CGFloat = 2.0,
@@ -57,9 +58,16 @@ public extension ConfigurationProperties {
             self.updateResolvedColor()
         }
         
+        /// Creates shadow properties without shadow.
         public static func none() -> Self { return Self(color: nil, opacity: 0.0) }
+        
+        /// Creates black shadow properties.
         public static func black() -> Self { return Self(color: .black) }
+        
+        /// Creates accent color shadow properties.
         public static func accentColor() -> Self { return Self(color: .controlAccentColor) }
+        
+        /// Creates shadow properties with the specific color.
         public static func color(_ color: NSUIColor) -> Self {
             var value = Self()
             value.color = color

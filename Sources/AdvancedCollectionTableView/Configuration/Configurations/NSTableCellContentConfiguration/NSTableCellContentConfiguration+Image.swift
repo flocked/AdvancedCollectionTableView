@@ -104,37 +104,8 @@ public extension NSTableCellContentConfiguration {
         /// The position of the image.
         public var position: ImagePosition = .leading
         
-        /// Creates image properties.
-        public init(tintColor: NSColor? = nil,
-                    tintColorTransform: ColorTransformer? = nil,
-                    backgroundColor: NSColor? = nil,
-                    backgroundColorTransform: ColorTransformer? = nil,
-                    borderWidth: CGFloat = 0.0,
-                    borderColor: NSColor? = nil,
-                    borderColorTransform: ColorTransformer? = nil,
-                    cornerRadius: CGFloat = 0.0,
-                    shadowProperties: ConfigurationProperties.Shadow = .none(),
-                    symbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil,
-                    scaling: NSImageScaling = .scaleNone,
-                    maxWidth: CGFloat? = nil,
-                    maxHeight: CGFloat? = nil,
-                    sizing: ImageSizing = .firstTextHeight,
-                    position: ImagePosition = .leading) {
-            self.tintColor = tintColor
-            self.tintColorTransform = tintColorTransform
-            self.backgroundColor = backgroundColor
-            self.backgroundColorTransform = backgroundColorTransform
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
-            self.borderColorTransform = borderColorTransform
-            self.cornerRadius = cornerRadius
-            self.shadowProperties = shadowProperties
-            self.symbolConfiguration = symbolConfiguration
-            self.scaling = scaling
-            self.maxWidth = maxWidth
-            self.maxHeight = maxHeight
-            self.sizing = sizing
-            self.position = position
+        internal init() {
+            
         }
         
         internal var _resolvedTintColor: NSColor? = nil

@@ -13,8 +13,8 @@ import FZUIKit
  A structure that encapsulates a cell’s state.
  
  A cell configuration state encompasses a trait collection along with all of the common states that affect a cell’s appearance — view states like selected, focused, or disabled, and cell states like editing or swiped. A cell configuration state encapsulates the inputs that configure a cell for any possible state or combination of states. You use a cell configuration state with background and content configurations to obtain the default appearance for a specific state.
- Typically, you don’t create a configuration state yourself. To obtain a configuration state, use NSTableCellView ``configurationUpdateHandler(cell:_, state:_)`` or  override the ``updateConfiguration(using:)`` method in your cell subclass and use the state parameter. Outside of this method, you can get a cell’s configuration state by using its ``configurationState`` property.
- You can create your own custom states to add to a cell configuration state by defining a custom state key using ``NSConfigurationStateCustomKey``.
+ Typically, you don’t create a configuration state yourself. To obtain a configuration state, use NSTableCellView `configurationUpdateHandler(cell:_, state:_)` or  override the `updateConfiguration(using:)` method in your cell subclass and use the state parameter. Outside of this method, you can get a cell’s configuration state by using its `configurationState` property.
+ You can create your own custom states to add to a cell configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a selected state.

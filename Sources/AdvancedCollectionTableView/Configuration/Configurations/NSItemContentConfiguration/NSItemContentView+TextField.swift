@@ -83,7 +83,7 @@ internal extension NSItemContentView {
         internal var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                if self.properties.stringValidator?(self.stringValue) ?? true {
+                if self.properties.stringValidation?(self.stringValue) ?? true {
                     self.window?.makeFirstResponder(nil)
                     return true
                 } else {

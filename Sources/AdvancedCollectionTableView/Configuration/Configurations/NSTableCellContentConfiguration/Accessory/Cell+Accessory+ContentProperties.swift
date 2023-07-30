@@ -10,10 +10,11 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
+/*
 /// The content properties of an item configuraton.
 public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
-    struct ContentProperties: Hashable {
-        public enum ContentPosition: Hashable {
+   struct ContentProperties: Hashable {
+        public enum ContentPosition: Int, Hashable {
             case leading
             case trailing
             case bottom
@@ -27,7 +28,7 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
                 }
             }
         }
-        
+               
         /// The image tint color for an image that is a template or symbol image.
         public var imageTintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
@@ -91,3 +92,4 @@ public extension NSTableCellContentConfiguration.Accessory.AccessoryContent {
         }
     }
 }
+*/

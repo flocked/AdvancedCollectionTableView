@@ -8,8 +8,8 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-
-public extension NSTableCellContentConfiguration {
+/*
+internal extension NSTableCellContentConfiguration {
     struct Accessory: Hashable {
         public struct AccessoryContent: Hashable {
             public enum ContentPosition {
@@ -48,3 +48,4 @@ public extension NSTableCellContentConfiguration {
         public var insets = NSEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0, right: 8.0)
     }
 }
+*/

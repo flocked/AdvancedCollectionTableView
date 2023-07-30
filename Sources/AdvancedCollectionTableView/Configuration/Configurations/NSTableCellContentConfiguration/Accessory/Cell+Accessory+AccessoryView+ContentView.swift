@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-
+/*
 internal extension NSTableCellContentView.AccessoriesView.AccessoryView {
     class ContentView: NSView {
         lazy var imageView: NSImageView = {
@@ -102,3 +102,4 @@ internal extension NSTableCellContentView.AccessoriesView.AccessoryView {
         }
     }
 }
+*/

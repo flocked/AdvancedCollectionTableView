@@ -67,7 +67,7 @@ public extension ConfigurationProperties {
          
          - Returns: a symbol configuration object.
          */
-        public init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, colorTransform: NSUIConfigurationColorTransformer? = nil, imageScale: ImageScale? = nil) {
+        internal init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, colorTransform: NSUIConfigurationColorTransformer? = nil, imageScale: ImageScale? = nil) {
             self.font = font
             self.colorConfiguration = colorConfiguration
             self.colorTransform = colorTransform
