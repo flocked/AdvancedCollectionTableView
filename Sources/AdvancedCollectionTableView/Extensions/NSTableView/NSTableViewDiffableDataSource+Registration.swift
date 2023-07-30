@@ -33,19 +33,19 @@ public extension NSTableViewDiffableDataSource {
         }
     }
     
-    convenience init<I: NSTableView.CellRegistration<NSTableCellView, ItemIdentifierType>>(tableView: NSTableView, cellRegistrations: [I]) {
+    convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
-            let cellRegistration = cellRegistrations.first(where: {$0.identifier == column.identifier})!
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!
+            return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
         })
     }
     
-    convenience init<I: NSTableView.CellRegistration<NSTableCellView, ItemIdentifierType>, R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [I], rowRegistration: NSTableView.RowViewRegistration<R, ItemIdentifierType>) {
+    convenience init<I: NSTableView.CellRegistration<NSTableCellView, ItemIdentifierType>, R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], rowRegistration: NSTableView.RowViewRegistration<R, ItemIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
-            let cellRegistration = cellRegistrations.first(where: {$0.identifier == column.identifier})!
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!
+            return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
         })
         self.rowViewProvider = { _tableView, row, element in
             let element = element as! ItemIdentifierType

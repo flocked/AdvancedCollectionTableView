@@ -9,9 +9,12 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public protocol TableCellViewRegistration {
-    associatedtype Element
-    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> NSView?
+public protocol NSTableViewCellRegistration {
+    var columnIdentifier: NSUserInterfaceItemIdentifier? { get }
+}
+
+internal protocol _NSTableViewCellRegistration {
+    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
 }
 
 public extension NSTableView {
@@ -67,8 +70,39 @@ public extension NSTableView {
      
      - Important: Do not create your cell registration inside a *NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider* closure; doing so prevents cell reuse.
      */
-    class CellRegistration<Cell, Element>: TableCellViewRegistration where Cell: NSTableCellView  {
-        public func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> NSView? {
+    class CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
+        
+        internal let identifier: NSUserInterfaceItemIdentifier
+        private let nib: NSNib?
+        private let handler: Handler
+        public let columnIdentifier: NSUserInterfaceItemIdentifier?
+        
+        // MARK: Creating a cell registration
+        
+        /**
+         Creates a cell registration with the specified registration handler.
+         */
+        public init(identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+            self.handler = handler
+            self.nib = nil
+            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.columnIdentifier = columnIdentifier
+        }
+        
+        /**
+         Creates a cell registration with the specified registration handler and nib file.
+         */
+        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+            self.nib = nib
+            self.handler = handler
+            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.columnIdentifier = columnIdentifier
+        }
+        
+        /// A closure that handles the cell registration and configuration.
+        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
+        
+        internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, element)
@@ -77,35 +111,9 @@ public extension NSTableView {
             return nil
         }
         
-        internal let identifier: NSUserInterfaceItemIdentifier
-        private let nib: NSNib?
-        private let handler: Handler
-        
-        // MARK: Creating a cell registration
-        
-        /**
-         Creates a cell registration with the specified registration handler.
-         */
-        public init(identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
-            self.handler = handler
-            self.nib = nil
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
-        }
-        
-        /**
-         Creates a cell registration with the specified registration handler and nib file.
-         */
-        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
-            self.nib = nib
-            self.handler = handler
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
-        }
-        
-        /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
-        
-        internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
+        internal func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
             self.registerIfNeeded(for: tableView)
+            let element = element as! Element
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, element)
                 return cell
