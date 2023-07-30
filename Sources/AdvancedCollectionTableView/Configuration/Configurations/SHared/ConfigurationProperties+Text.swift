@@ -237,3 +237,23 @@ internal extension NSTextAlignment {
         }
     }
 }
+
+public extension NSTextField {
+    /**
+     Configurates the shadow of the view.
+     
+     - Parameters:
+     - configuration:The configuration for configurating the shadow.
+     */
+    func configurate(using configuration: ConfigurationProperties.Text) {
+        self.maximumNumberOfLines = configuration.maxNumberOfLines
+        self.textColor = configuration._resolvedTextColor
+        self.font = configuration.font
+        self.alignment = configuration.alignment
+        self.lineBreakMode = configuration.lineBreakMode
+        self.isEditable = configuration.isEditable
+        self.isSelectable = configuration.isSelectable
+    }
+}
+
+

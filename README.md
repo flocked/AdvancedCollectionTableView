@@ -10,7 +10,7 @@ Take a look at the included example project which demonstrates:
 - `AdvanceColllectionViewDiffableDataSource`
 - NSCollectionView `reconfiguratingItems(at: _)`.
 
-## ItemRegistration & CellRegistration
+## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
 ```
 struct GalleryItem {
