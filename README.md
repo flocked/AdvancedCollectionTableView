@@ -116,9 +116,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
 ## Quicklook for NSTableView & NSCollectionView
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of items/cells.
 
-See [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide quicklook previews.
-
-There are several ways to provide quicklook previews:
+There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
 - NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`
 ```
 collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
