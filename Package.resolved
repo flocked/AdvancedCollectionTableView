@@ -1,34 +1,32 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "FZQuicklook",
-        "repositoryURL": "https://github.com/flocked/FZQuicklook.git",
-        "state": {
-          "branch": "main",
-          "revision": "8454be2804d8f533c2c12801e5bca570719ba70b",
-          "version": null
-        }
-      },
-      {
-        "package": "FZSwiftUtils",
-        "repositoryURL": "https://github.com/flocked/FZSwiftUtils.git",
-        "state": {
-          "branch": "main",
-          "revision": "1cf3a61939714c79f1118dd2b28a31534c41d86b",
-          "version": null
-        }
-      },
-      {
-        "package": "FZUIKit",
-        "repositoryURL": "https://github.com/flocked/FZUIKit.git",
-        "state": {
-          "branch": "main",
-          "revision": "84153ee5586f786c7738185028ac6230c393fe58",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "fzquicklook",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/flocked/FZQuicklook.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8454be2804d8f533c2c12801e5bca570719ba70b"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "fzswiftutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/flocked/FZSwiftUtils.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1cf3a61939714c79f1118dd2b28a31534c41d86b"
+      }
+    },
+    {
+      "identity" : "fzuikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/flocked/FZUIKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0c193a872845b74d4b0549e4f5a0f61f4385a14a"
+      }
+    }
+  ],
+  "version" : 2
 }
