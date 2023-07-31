@@ -146,12 +146,13 @@ struct GalleryItem: QuicklookPreviewable {
     return title
     }
 }
-  
-collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView) { 
-collectionView, indexPath, galleryItem in
-// configurate data source
-}
 
-// …
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>() {
+    collectionViewItem, indexPath, galleryItem in 
+    // configurate collectionViewItem …
+}
+  
+collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView, itemRegistration: ItemRegistration)
+
 collectionView.quicklookSelectedItems()
 ```
