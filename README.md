@@ -2,6 +2,8 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
 
+*For a full documentation take a look at the included documentation accessible via Xcodes documentation browser.*
+
 Take a look at the included example project which demonstrates:
 - NSCollectionView `itemRegistration`
 - NSTableView `cellRegistration`
