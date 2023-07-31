@@ -136,11 +136,11 @@ extension AdvanceColllectionViewDiffableDataSource {
     
     public func reconfigurateElements(_ elements: [Element]) {
         let indexPaths = elements.compactMap({self.indexPath(for:$0)})
-        self.reconfigurateItems(at: indexPaths)
+        self.reconfigureItems(at: indexPaths)
     }
     
-    public func reconfigurateItems(at indexPaths: [IndexPath]) {
-        self.collectionView.reconfigurateItems(at: indexPaths)
+    public func reconfigureItems(at indexPaths: [IndexPath]) {
+        self.collectionView.reconfigureItems(at: indexPaths)
     }
     
     public func reloadItems(at indexPaths: [IndexPath], animated: Bool = false) {

@@ -78,10 +78,10 @@ A content configuration for a collectionview item.
  collectionViewItem.contentConfiguration = content
  ```
 
-## NSCollectionView reconfigurateItems
+## NSCollectionView reconfigureItems
 Updates the data for the items without reloading them (`reloadItems(at: _)`.
 ```
-collectionView.reconfigurateItems(at: [IndexPath(item: 1, section: 1)])
+collectionView.reconfigureItems(at: [IndexPath(item: 1, section: 1)])
 ```
 
 ## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting

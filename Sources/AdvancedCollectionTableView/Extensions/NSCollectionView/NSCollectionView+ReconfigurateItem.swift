@@ -21,7 +21,7 @@ public extension NSCollectionView {
      - Parameters:
      - indexPaths: An array of IndexPath objects identifying the items you want to update.
      */
-    func reconfigurateItems(at indexPaths: [IndexPath]) {
+    func reconfigureItems(at indexPaths: [IndexPath]) {
         self.isReconfiguratingItems = true
         let visibleIndexPaths = self.indexPathsForVisibleItems()
         for indexPath in indexPaths {
