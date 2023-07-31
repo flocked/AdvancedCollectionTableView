@@ -480,7 +480,7 @@ public extension NSCollectionViewItem {
      #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
      }
      } catch {
-     Swift.print(error)
+     Swift.debugPrint(error)
      }
      }
      */

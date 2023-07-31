@@ -125,7 +125,7 @@ extension AdvanceColllectionViewDiffableDataSource.Responder: CollectionViewResp
  case 49, 51:
  responder.keyDown(with: event)
  default:
- Swift.print("swizzledKeyDown", event.keyCode )
+ Swift.debugPrint("swizzledKeyDown", event.keyCode )
  self.swizzledKeyDown(with: event)
  }
  }
@@ -135,7 +135,7 @@ extension AdvanceColllectionViewDiffableDataSource.Responder: CollectionViewResp
  }
  
  @objc static func swizzleCollectionViewResponderEvents() {
- Swift.print("swizzleCollectionViewResponderEvents")
+ Swift.debugPrint("swizzleCollectionViewResponderEvents")
  if (didSwizzleResponderEvents == false) {
  self.didSwizzleResponderEvents = true
  do {
@@ -143,7 +143,7 @@ extension AdvanceColllectionViewDiffableDataSource.Responder: CollectionViewResp
  #selector(keyDown(with: )) <-> #selector(swizzledKeyDown(with:))
  }
  } catch {
- Swift.print(error)
+ Swift.debugPrint(error)
  }
  }
  }

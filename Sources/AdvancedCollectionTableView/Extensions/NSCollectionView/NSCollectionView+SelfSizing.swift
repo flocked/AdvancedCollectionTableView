@@ -59,7 +59,7 @@
  #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
  }
  } catch {
- Swift.print(error)
+ Swift.debugPrint(error)
  }
  }
  }
@@ -85,7 +85,7 @@
  case .enabled:
  if let cachedLayoutAttributes = cachedLayoutAttributes {
  if (self.view.frame != cachedLayoutAttributes.frame) {
- Swift.print("Not the same. InvalidateSelfSizing")
+ Swift.debugPrint("Not the same. InvalidateSelfSizing")
  invalidateSelfSizing()
  }
  }

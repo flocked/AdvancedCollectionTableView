@@ -75,7 +75,7 @@ public extension NSTableView {
                 #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(self.swizzled_register(_:forIdentifier:))
             }
         } catch {
-            Swift.print(error)
+            Swift.debugPrint(error)
         }
     }
 }

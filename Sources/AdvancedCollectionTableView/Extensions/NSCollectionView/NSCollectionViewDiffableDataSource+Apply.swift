@@ -39,7 +39,7 @@ public extension NSCollectionViewDiffableDataSource {
         animationDuration: TimeInterval? = nil,
         completion: (() -> Void)? = nil) {
             if let animationDuration = animationDuration {
-                Swift.print("animationDuration", animationDuration == NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration)
+                Swift.debugPrint("animationDuration", animationDuration == NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration)
             }
             if animated && animationDuration == nil {
                 self.apply(snapshot, animatingDifferences: true, completion: completion)
