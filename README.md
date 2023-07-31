@@ -116,7 +116,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - Handler for pinching of the collection view via `pinchHandler`.
 
 ## Quicklook for NSTableView & NSCollectionView
-NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of items/cells.
+NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.
 
 There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
 - NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`

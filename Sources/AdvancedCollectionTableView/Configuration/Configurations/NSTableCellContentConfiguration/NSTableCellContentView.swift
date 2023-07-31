@@ -107,6 +107,42 @@ public class NSTableCellContentView: NSView, NSContentView {
         self.stackViewConstraints[3].constant = appliedConfiguration.insets.right
     }
     
+    internal func updateLayout() {
+        
+        let width = self.frame.size.width - appliedConfiguration.insets.width
+        var height =  appliedConfiguration.insets.height
+        
+        if (appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText) {
+            height += appliedConfiguration.textToSecondaryTextPadding
+            if (appliedConfiguration.hasContent && (appliedConfiguration.contentPosition == .top || appliedConfiguration.contentPosition == .bottom) ) {
+                height += appliedConfiguration.imageToTextPadding
+            }
+        }
+        var y = appliedConfiguration.insets.bottom
+        if (appliedConfiguration.hasText) {
+            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            textField.frame.size.width = width
+            textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
+            
+            height += textField.frame.size.height
+            y += textField.frame.size.height
+            if appliedConfiguration.hasSecondaryText {
+                y += appliedConfiguration.textToSecondaryTextPadding
+            }
+        }
+        
+        if (appliedConfiguration.hasSecondaryText) {
+            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            secondaryTextField.frame.size.width = width
+            secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
+            
+            height -= secondaryTextField.frame.size.height
+            y += secondaryTextField.frame.size.height
+        }
+        
+        let remainingSize = CGSize(width: width, height: height)
+    }
+    
     internal var appliedConfiguration: NSTableCellContentConfiguration {
         didSet {
             if oldValue != appliedConfiguration {
