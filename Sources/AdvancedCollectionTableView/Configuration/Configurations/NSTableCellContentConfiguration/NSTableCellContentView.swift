@@ -140,7 +140,7 @@ public class NSTableCellContentView: NSView, NSContentView {
             y += secondaryTextField.frame.size.height
         }
         
-        let remainingSize = CGSize(width: width, height: height)
+       // let remainingSize = CGSize(width: width, height: height)
     }
     
     internal var appliedConfiguration: NSTableCellContentConfiguration {

@@ -18,7 +18,7 @@ public extension ConfigurationProperties {
             didSet { updateResolvedColor() } }
         
         /// The color transformer for resolving the shadow color.
-        public var colorTransform: NSUIConfigurationColorTransformer? = nil {
+        public var colorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColor() } }
         
         /// Generates the resolved shadow color for the specified shadow color, using the shadow color and color transformer.

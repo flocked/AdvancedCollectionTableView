@@ -23,7 +23,7 @@ public extension ConfigurationProperties {
             didSet { updateResolvedColors() } }
         
         /// The color transformer for resolving the color style.
-        public var colorTransform: NSUIConfigurationColorTransformer? = nil {
+        public var colorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
         
         /// The image scaling of the symbol configuration.
@@ -44,7 +44,7 @@ public extension ConfigurationProperties {
         }
         
         /// Sets the color transformer of the symbol configuration.
-        public func colorTransformer(_ transformer: NSUIConfigurationColorTransformer?) -> Self {
+        public func colorTransformer(_ transformer: ColorTransformer?) -> Self {
             var newConfiguration = self
             newConfiguration.colorTransform = transformer
             return newConfiguration
@@ -67,7 +67,7 @@ public extension ConfigurationProperties {
          
          - Returns: a symbol configuration object.
          */
-        internal init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, colorTransform: NSUIConfigurationColorTransformer? = nil, imageScale: ImageScale? = nil) {
+        internal init(font: FontConfiguration? = nil, colorConfiguration: ColorConfiguration? = nil, colorTransform: ColorTransformer? = nil, imageScale: ImageScale? = nil) {
             self.font = font
             self.colorConfiguration = colorConfiguration
             self.colorTransform = colorTransform
