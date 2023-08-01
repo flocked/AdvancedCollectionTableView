@@ -25,6 +25,7 @@ class SidebarViewController: NSViewController {
         var configuration = NSTableCellContentConfiguration.sidebar()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
+        
         cell.contentConfiguration = configuration
     }
         
