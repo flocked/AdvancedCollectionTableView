@@ -29,10 +29,7 @@ class ViewController: NSViewController {
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
-        
-        configuration.textProperties.isEditable = true
-        configuration.secondaryTextProperties.isEditable = true
-        
+                
         collectionViewItem.contentConfiguration = configuration
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
@@ -71,7 +68,7 @@ class ViewController: NSViewController {
         collectionView.dataSource = self.dataSource
         
         // Enables deleting of selected enables via backspace.
-        dataSource.isDeletable = true
+        dataSource.allowsDeleting = true
         // Enables reordering of elements via drag and drop.
         dataSource.allowsReordering = true
         

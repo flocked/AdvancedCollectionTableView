@@ -90,10 +90,10 @@ Updates the data for the items without reloading them (`reloadItems(at: _)`.
 collectionView.reconfigureItems(at: [IndexPath(item: 1, section: 1)])
 ```
 
-## NSCollectionView & NSTableViewDiffableDataSource isDeletable
-`isDeletable` enables deleting of items and rows via backspace.
+## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
+`allowsDeleting` enables deleting of items and rows via backspace.
  ```
- diffableCollectionViewDataSource.isDeletable = true
+ diffableCollectionViewDataSource.allowsDeleting = true
  ```
  
 ## NSCollectionView & NSTableViewDiffableDataSource Apply Options

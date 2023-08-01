@@ -83,10 +83,10 @@ extension AdvanceTableViewDiffableDataSource {
             }
             if (shouldKeyDown) {
                 let commandPressed = event.modifierFlags.contains(.command)
-            if (event.keyCode == 51 && self.dataSource.isDeletable) {
+            if (event.keyCode == 51 && self.dataSource.allowsDeleting) {
                     let selectedElements = self.dataSource.selectedElements
                     if (selectedElements.isEmpty == false) {
-                        if (self.dataSource.isDeletable) {
+                        if (self.dataSource.allowsDeleting) {
                             self.dataSource.removeElements(selectedElements)
                         }
                     }

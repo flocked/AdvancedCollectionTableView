@@ -14,7 +14,7 @@ import FZQuicklook
  This object is an advanced version or NSTableViewDiffableDataSource. It provides:
  
  - Reordering of rows by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
- - Deleting of rows by enabling `isDeletable`and optionally providing blocks to `DeletionHandlers`.
+ - Deleting of rows by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
  - Quicklooking of rows via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Handlers for selection of rows `selectionHandlers`.
  - Handlers for rows that get hovered by mouse `hoverHandlers`.
@@ -106,7 +106,7 @@ public class AdvanceTableViewDiffableDataSource<Section: Identifiable & Hashable
 
      If the value of this property is true (the default is false), users can delete items.
      */
-    public var isDeletable: Bool = false {
+    public var allowsDeleting: Bool = false {
         didSet { self.setupKeyDownMonitor() }
     }
     /**
