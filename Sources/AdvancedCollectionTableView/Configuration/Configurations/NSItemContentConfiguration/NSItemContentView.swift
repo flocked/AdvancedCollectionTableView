@@ -74,9 +74,7 @@ public class NSItemContentView: NSView, NSContentView {
     
     public override func layout() {
         super.layout()
-        
-        Swift.print("layout", appliedConfiguration.text ?? "", self.frame.size)
-        
+
         let width = self.frame.size.width - appliedConfiguration.padding.width
         var height = self.frame.size.height - appliedConfiguration.padding.height
         
@@ -119,7 +117,6 @@ public class NSItemContentView: NSView, NSContentView {
                 let resizedImageSize: CGSize
                 if appliedConfiguration.contentProperties.imageScaling == .fit {
                     resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
-                    Swift.print("imageSize", appliedConfiguration.text ?? "", CGSize(width, height), imageSize, resizedImageSize)
                     contentView.frame.size = resizedImageSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.frame.origin = .zero
@@ -135,6 +132,5 @@ public class NSItemContentView: NSView, NSContentView {
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             }
         }
-        Swift.print("contentView.size", appliedConfiguration.text ?? "", contentView.frame.size)
     }
 }
