@@ -57,11 +57,12 @@ A content configuration for a table cell.
  var content = tableCell.defaultContentConfiguration()
 
  // Configure content.
- content.image = NSImage(systemSymbolName: "star")
- content.text = "Favorites"
+ content.text = "Text"
+ content.secondaryText = #"SecondaryText\\nImage displays a system image named "photo""#
+ content.image = NSImage(systemSymbolName: "photo")
 
  // Customize appearance.
- content.imageProperties.tintColor = .purple
+ content.imageProperties.tintColor = .controlAccentColor
 
  tableCell.contentConfiguration = content
  ```
@@ -75,11 +76,12 @@ A content configuration for a collectionview item.
  public var content = collectionViewItem.defaultContentConfiguration()
 
  // Configure content.
- content.text = "Favorites"
- content.image = NSImage(systemSymbolName: "star")
+ content.text = "Text"
+ content.secondaryText = "SecondaryText"
+ content.image = NSImage(systemSymbolName: "Astronaut Cat")
 
  // Customize appearance.
- content.imageProperties.tintColor = .purple
+ content.secondaryTextProperties.font = .callout
 
  collectionViewItem.contentConfiguration = content
  ```
