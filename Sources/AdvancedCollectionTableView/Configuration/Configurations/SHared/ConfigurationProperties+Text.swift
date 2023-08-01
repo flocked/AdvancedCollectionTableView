@@ -23,7 +23,7 @@ public extension ConfigurationProperties {
         /// The alignment of the text.
         public var alignment: NSTextAlignment = .left
         
-        public var lineBreakMode: NSLineBreakMode = .byCharWrapping
+        public var lineBreakMode: NSLineBreakMode = .byWordWrapping
         /**
          A Boolean value that determines whether the user can select the content of the text field.
          
