@@ -113,7 +113,7 @@ The new `apply(_ snapshot:, _ option: ApplyOption)` provides an option to apply 
 ## AdvanceColllectionViewDiffableDataSource
 An extended `NSCollectionViewDiffableDataSource that provides:
 
- - Reordering of items by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
+ - Reordering of items via drag and drop by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
  - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Handlers for selection of items `selectionHandlers`.
  - Handlers for deletion of items `deletionHandlers`.
