@@ -139,3 +139,4 @@ internal extension View {
             .shadow(color: properties._resolvedColor?.swiftUI, radius: properties.radius, offset: properties.offset)
     }
 }
+
