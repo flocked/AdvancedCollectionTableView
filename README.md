@@ -50,6 +50,8 @@ collectionViewItem.contentConfiguration = NSHostingConfiguration {
 ```
 ### NSTableCellContentConfiguration
 A content configuration for a table cell.
+![NSTableCellContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSTableCellContentConfiguration.png)
+
  ```
  var content = tableCell.defaultContentConfiguration()
 
@@ -65,6 +67,7 @@ A content configuration for a table cell.
  
  ### NSItemContentconfiguration
 A content configuration for a collectionview item.
+![NSItemContentconfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSItemContentConfiguration.png)
  ```
  public var content = collectionViewItem.defaultContentConfiguration()
 
