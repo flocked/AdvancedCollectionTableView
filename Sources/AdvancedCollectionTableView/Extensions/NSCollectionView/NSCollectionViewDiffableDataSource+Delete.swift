@@ -16,11 +16,11 @@ public extension NSCollectionViewDiffableDataSource {
      
      If the value of this property is `true` (the default is `false`), users can delete items.
      */
-    var allowsDeleting: Bool {
-        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
+    var isDeletable: Bool {
+        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_isDeletable", object: self, initialValue: false) }
         set {
-            guard newValue != allowsDeleting else { return }
-            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self)
+            guard newValue != isDeletable else { return }
+            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_isDeletable", object: self)
             self.setupKeyDownMonitor()
         }
     }
@@ -33,12 +33,12 @@ public extension NSCollectionViewDiffableDataSource {
     }
     
     internal func setupKeyDownMonitor() {
-        if self.allowsDeleting {
+        if self.isDeletable {
             if keyDownMonitor == nil {
                 keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self else { return event }
                     guard event.keyCode ==  51 else { return event }
-                    if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
+                    if isDeletable, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
                         let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
                         let elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
                         

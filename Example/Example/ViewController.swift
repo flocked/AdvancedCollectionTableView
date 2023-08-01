@@ -71,7 +71,7 @@ class ViewController: NSViewController {
         collectionView.dataSource = self.dataSource
         
         // Enables deleting of selected enables via backspace.
-        dataSource.allowsDeleting = true
+        dataSource.isDeletable = true
         // Enables reordering of elements via drag and drop.
         dataSource.allowsReordering = true
         

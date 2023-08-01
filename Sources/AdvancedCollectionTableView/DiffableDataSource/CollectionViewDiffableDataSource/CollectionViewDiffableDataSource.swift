@@ -15,7 +15,7 @@ import QuickLookUI
  This object is an advanced version or NSCollectionViewDiffableDataSource. It provides:
  
  - Reordering of items by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
- - Deleting of items by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
+ - Deleting of items by enabling `isDeletable`and optionally providing blocks to `DeletionHandlers`.
  - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Handlers for selection of items `selectionHandlers`.
  - Handlers for items that get hovered by mouse `hoverHandlers`.
@@ -102,7 +102,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      
      If the value of this property is true (the default is false), users can delete items.
      */
-    public var allowsDeleting: Bool = false {
+    public var isDeletable: Bool = false {
         didSet { self.setupKeyDownMonitor() }
     }
     /**
@@ -431,7 +431,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         }
         
         self.allowsReordering = false
-        self.allowsDeleting = false
+        self.isDeletable = false
         self.collectionView.registerForDraggedTypes([pasteboardType])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
