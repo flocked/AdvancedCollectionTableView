@@ -34,6 +34,8 @@ class ViewController: NSViewController {
         configuration.secondaryTextProperties.isEditable = true
         
         collectionViewItem.contentConfiguration = configuration
+        
+        Swift.print(collectionViewItem.view.frame.size)
 
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
@@ -88,6 +90,11 @@ class ViewController: NSViewController {
         collectionView.becomeFirstResponder()
         
         super.viewDidAppear()
+        
+        Swift.print("self.view", self.view.frame.size)
+        for size in collectionView.subviews.compactMap({$0.frame.size}) {
+            Swift.print(size)
+        }
     }
     
     func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {
