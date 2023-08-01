@@ -119,7 +119,7 @@ public class NSItemContentView: NSView, NSContentView {
                 let resizedImageSize: CGSize
                 if appliedConfiguration.contentProperties.imageScaling == .fit {
                     resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
-                    Swift.print("imageSize", appliedConfiguration.text ?? "", imageSize, resizedImageSize)
+                    Swift.print("imageSize", appliedConfiguration.text ?? "", CGSize(width, height), imageSize, resizedImageSize)
                     contentView.frame.size = resizedImageSize
                     contentView.imageView.frame.size = resizedImageSize
                     contentView.imageView.frame.origin = .zero
