@@ -90,8 +90,6 @@ public extension NSTableCellView {
                 contentView.invalidateIntrinsicContentSize()
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
-                self.invalidateIntrinsicContentSize()
-                contentView.invalidateIntrinsicContentSize()
             }
         } else {
             self.contentView?.removeFromSuperview()

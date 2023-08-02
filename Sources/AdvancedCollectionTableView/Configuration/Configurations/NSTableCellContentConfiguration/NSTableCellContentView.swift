@@ -69,6 +69,11 @@ public class NSTableCellContentView: NSView, NSContentView {
         NSLayoutConstraint.activate(self.stackViewConstraints)
     }
     
+    public override func layout() {
+        super.layout()
+        Swift.print("layout", self.frame.size, stackView.frame.size)
+    }
+    
     internal func updateConfiguration() {
         textField.text(appliedConfiguration.text, attributedString: appliedConfiguration.attributedText)
         secondaryTextField.text(appliedConfiguration.secondaryText, attributedString: appliedConfiguration.secondaryAttributedText)
@@ -108,10 +113,9 @@ public class NSTableCellContentView: NSView, NSContentView {
     }
     
     internal func updateLayout() {
-        
         let width = self.frame.size.width - appliedConfiguration.insets.width
         var height =  appliedConfiguration.insets.height
-        
+                
         if (appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText) {
             height += appliedConfiguration.textToSecondaryTextPadding
             if (appliedConfiguration.hasContent && (appliedConfiguration.contentPosition == .top || appliedConfiguration.contentPosition == .bottom) ) {
