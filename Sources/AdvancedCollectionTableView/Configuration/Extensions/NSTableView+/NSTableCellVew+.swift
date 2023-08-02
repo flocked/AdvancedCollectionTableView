@@ -86,12 +86,12 @@ public extension NSTableCellView {
                 self.contentView = contentView
                 self.translatesAutoresizingMaskIntoConstraints = false
                 self.addSubview(withConstraint: contentView)
+                self.invalidateIntrinsicContentSize()
+                contentView.invalidateIntrinsicContentSize()
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
-                self.setNeedsLayout()
-                contentView.setNeedsDisplay()
-                self.setNeedsUpdateConstraints()
-                contentView.setNeedsUpdateConstraints()
+                self.invalidateIntrinsicContentSize()
+                contentView.invalidateIntrinsicContentSize()
             }
         } else {
             self.contentView?.removeFromSuperview()
