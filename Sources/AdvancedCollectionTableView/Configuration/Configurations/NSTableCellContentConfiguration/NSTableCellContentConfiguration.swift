@@ -28,7 +28,7 @@ import FZUIKit
  tableCell.contentConfiguration = content
  ```
  */
-public struct NSTableCellContentConfiguration: NSContentConfiguration, Hashable {
+public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizeable, Hashable {
     // MARK: Creating item configurations
 
     /// Creates a cell content configuration for a table view with plain style.

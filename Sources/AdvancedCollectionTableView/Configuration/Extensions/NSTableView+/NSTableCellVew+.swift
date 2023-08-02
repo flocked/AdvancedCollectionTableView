@@ -239,7 +239,8 @@ public extension NSTableCellView {
     internal func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
-            if self.contentConfiguration != nil {
+            if self.contentConfiguration is AutoSizeable {
+                Swift.print("isAutoSizeable")
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
             }
