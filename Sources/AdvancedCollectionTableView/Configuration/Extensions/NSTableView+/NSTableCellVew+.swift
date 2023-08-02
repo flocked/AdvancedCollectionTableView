@@ -26,6 +26,7 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableCellView()
+                self.rowView?.translatesAutoresizingMaskIntoConstraints = false
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
