@@ -85,6 +85,30 @@ public class NSTableCellContentView: NSView, NSContentView {
         Swift.print("------------")
     }
     
+    public override func updateConstraints() {
+        Swift.print("updateConstraints")
+        super.updateConstraints()
+    }
+    
+    public override func updateConstraintsForSubtreeIfNeeded() {
+        Swift.print("updateConstraintsForSubtreeIfNeeded")
+        super.updateConstraintsForSubtreeIfNeeded()
+    }
+    
+    public override func display() {
+        Swift.print("display")
+        super.display()
+    }
+    
+    public override func addConstraint(_ constraint: NSLayoutConstraint) {
+        Swift.print("addConstraint", constraint)
+        super.addConstraint(constraint)
+    }
+    public override func addConstraints(_ constraints: [NSLayoutConstraint]) {
+        Swift.print("addConstraints", constraints)
+        super.addConstraints(constraints)
+    }
+    
     internal func updateConfiguration() {
         textField.text(appliedConfiguration.text, attributedString: appliedConfiguration.attributedText)
         secondaryTextField.text(appliedConfiguration.secondaryText, attributedString: appliedConfiguration.secondaryAttributedText)
