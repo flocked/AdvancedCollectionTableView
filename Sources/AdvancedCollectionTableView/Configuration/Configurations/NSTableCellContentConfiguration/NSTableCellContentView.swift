@@ -119,14 +119,14 @@ public class NSTableCellContentView: NSView, NSContentView {
     
     public override func layout() {
         super.layout()
-        Swift.print("layout", tableView != nil)
-        tableView?.usesAutomaticRowHeights = true
+      //  Swift.print("layout", tableView != nil)
+     //   tableView?.usesAutomaticRowHeights = true
     }
     
     public override func updateConstraints() {
         super.updateConstraints()
-        Swift.print("updateConstraints", tableView != nil)
-        tableView?.usesAutomaticRowHeights = true
+    //    Swift.print("updateConstraints", tableView != nil)
+     //   tableView?.usesAutomaticRowHeights = true
     }
     
     internal func updateLayout() {
