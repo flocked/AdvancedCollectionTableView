@@ -60,6 +60,7 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal func initialSetup() {
         self.maskToBounds = false
         self.textStackView.setHuggingPriority(.defaultHigh, for: .vertical)
+        self.stackView.setHuggingPriority(.defaultHigh, for: .vertical)
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(stackView)
         self.stackViewConstraints = [
@@ -68,6 +69,19 @@ public class NSTableCellContentView: NSView, NSContentView {
             self.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -self.appliedConfiguration.insets.left),
             self.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: self.appliedConfiguration.insets.right)]
         NSLayoutConstraint.activate(self.stackViewConstraints)
+    }
+    
+    public override func layout() {
+        super.layout()
+        textStackView.invalidateIntrinsicContentSize()
+        textStackView.updateConstraints()
+    }
+    
+    public override func updateConstraints() {
+        super.updateConstraints()
+        Swift.print(self.appliedConfiguration.text ?? "")
+        Swift.print(self.constraints)
+        Swift.print("\n")
     }
     
     internal func updateConfiguration() {
