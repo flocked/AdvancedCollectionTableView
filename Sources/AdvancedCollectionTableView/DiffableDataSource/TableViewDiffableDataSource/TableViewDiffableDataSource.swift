@@ -141,12 +141,16 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     */
     
+    internal var rowAnimation: NSTableView.AnimationOptions = .effectFade
+    
     @objc internal dynamic var _defaultRowAnimation: Int {
-        return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
+        return Int(rowAnimation.rawValue)
+       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
     }
     
     @objc internal dynamic var defaultRowAnimation: Int {
-        return self.dataSource.value(forKeyPath: "defaultRowAnimation") as! Int
+        return Int(rowAnimation.rawValue)
+      //  return self.dataSource.value(forKeyPath: "defaultRowAnimation") as! Int
     }
     
     public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
@@ -231,15 +235,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
-        if let meth = class_getInstanceMethod(object_getClass(self.dataSource), selector) {
-            let imp = method_getImplementation(meth)
-            typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, NSTableColumn?, Int) -> NSView?
-            let method: ClosureType = unsafeBitCast(imp, to: ClosureType.self)
-            let view = method(self.dataSource, selector, tableView, tableColumn, row)
-            return view
-        }
-        return nil
+        return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {

@@ -27,4 +27,25 @@ public extension NSTableViewDiffableDataSource {
     func rows(for identifiers: [ItemIdentifierType]) -> [Int] {
         return identifiers.compactMap({self.row(forItemIdentifier: $0)})
     }
+    
+    /**
+     Asks the datasource for a view to display the specified row and column.
+     
+     - Parameters tableView: The table view that sent the message.
+     - Parameters tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
+     - Parameters row: The row index.
+
+     - Returns: The view to display the specified column and row.
+     */
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
+        if let meth = class_getInstanceMethod(object_getClass(self), selector) {
+            let imp = method_getImplementation(meth)
+            typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, NSTableColumn?, Int) -> NSView?
+            let method: ClosureType = unsafeBitCast(imp, to: ClosureType.self)
+            let view = method(self, selector, tableView, tableColumn, row)
+            return view
+        }
+        return nil
+    }
 }

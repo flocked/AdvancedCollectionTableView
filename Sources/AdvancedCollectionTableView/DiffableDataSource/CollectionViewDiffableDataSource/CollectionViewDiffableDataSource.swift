@@ -11,6 +11,18 @@ import FZUIKit
 import FZQuicklook
 import QuickLookUI
 
+public class CollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> : NSCollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
+    public override func responds(to aSelector: Selector!) -> Bool {
+        let responds = super.responds(to: aSelector)
+        if let aSelector = aSelector {
+            Swift.print("responds(to", aSelector, responds)
+        } else {
+            Swift.print("responds(to", "nil", responds)
+        }
+        return responds
+    }
+}
+
 /**
  This object is an advanced version or NSCollectionViewDiffableDataSource. It provides:
  
@@ -53,7 +65,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
     
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
+    internal typealias DataSoure = CollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
