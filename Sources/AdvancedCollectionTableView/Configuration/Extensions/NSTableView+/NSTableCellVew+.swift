@@ -26,6 +26,8 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableCellView()
+                Swift.print("contentConfiguration", rowView != nil)
+                self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
