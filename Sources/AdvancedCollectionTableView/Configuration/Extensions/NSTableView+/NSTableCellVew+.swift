@@ -232,14 +232,13 @@ public extension NSTableCellView {
     }
     
     internal var tableCellObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "tableCellObserverAlt", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "tableCellObserverAlt", object: self) }
+        get { getAssociatedValue(key: "tableCellObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "tableCellObserver", object: self) }
     }
     
     internal func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
-            Swift.print("tableCellObserve", new ?? "nil")
             if self.contentConfiguration != nil {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
