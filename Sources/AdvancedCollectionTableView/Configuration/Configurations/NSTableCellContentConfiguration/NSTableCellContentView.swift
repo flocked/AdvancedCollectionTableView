@@ -59,10 +59,6 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal var stackViewConstraints: [NSLayoutConstraint] = []
     internal func initialSetup() {
         self.maskToBounds = false
-        textField.setContentHuggingPriority(.required, for: .horizontal)
-        textField.setContentCompressionResistancePriority(.required, for: .horizontal)
-        secondaryTextField.setContentHuggingPriority(.required, for: .horizontal)
-        secondaryTextField.setContentCompressionResistancePriority(.required, for: .horizontal)
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(stackView)
         self.stackViewConstraints = [
