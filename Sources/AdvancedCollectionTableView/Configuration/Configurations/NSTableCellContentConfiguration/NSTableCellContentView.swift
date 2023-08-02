@@ -28,12 +28,6 @@ public class NSTableCellContentView: NSView, NSContentView {
         }
     }
     
-    public override var fittingSize: NSSize {
-        let fitting = super.fittingSize
-        Swift.print("fittingSize", fitting)
-        return fitting
-    }
-    
     /// Determines whether the view is compatible with the provided configuration.
     public func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSTableCellContentConfiguration
