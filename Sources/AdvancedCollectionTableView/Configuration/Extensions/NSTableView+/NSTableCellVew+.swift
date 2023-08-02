@@ -237,9 +237,29 @@ public extension NSTableCellView {
         set {  set(associatedValue: newValue, key: "NSTableCellView_tableCellObserver", object: self) }
     }
     
+    internal var tableCellObserverAlt: NSKeyValueObservation? {
+        get { getAssociatedValue(key: "tableCellObserverAlt", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "tableCellObserverAlt", object: self) }
+    }
+    
     internal func observeTableCellView() {
-        guard tableCellObserver == nil else { return }
-        tableCellObserver = KeyValueObserver(self)
+        guard tableCellObserverAlt == nil else { return }
+        tableCellObserverAlt = self.observeChanges(for: \.superview, handler: {old, new in
+            Swift.print("superviewChanged", self.tableView != nil, self.rowView != nil)
+            if self.contentConfiguration != nil {
+                self.rowView?.needsAutomaticRowHeights = true
+                self.tableView?.usesAutomaticRowHeights = true
+            }
+            
+            if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+                self.setNeedsUpdateConfiguration()
+            }
+            
+            self.rowView?.observeTableRowView()
+            self.tableView?.setupObservingView()
+            self.setNeedsUpdateConfiguration()
+        })
+        /*
         tableCellObserver?.add(\.superview) { old, new in
             if self.contentConfiguration != nil {
                 self.tableView?.usesAutomaticRowHeights = true
@@ -253,6 +273,7 @@ public extension NSTableCellView {
             self.tableView?.setupObservingView()
             self.setNeedsUpdateConfiguration()
         }
+         */
     }
     
     /*
