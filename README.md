@@ -115,11 +115,11 @@ An extended `NSCollectionViewDiffableDataSource that provides:
 
  - Reordering of items via drag and drop by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
  - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
- - Handlers for selection of items `selectionHandlers`.
- - Handlers for deletion of items `deletionHandlers`.
- - Handlers for items that get hovered by mouse `hoverHandlers`.
- - Providing a right click menu for selected items via `menuProvider` block.
- - Handler for pinching of the collection view via `pinchHandler`.
+ - `selectionHandlers`: Handlers for selection of items.
+ - `deletionHandlers`: Handlers for deletion of items.
+ - `hoverHandlers`: Handlers for items that get hovered by mouse.
+ - `menuProvider`: Right click menu provider for selected items.
+ - `pinchHandler`: Handler for pinching of the collection view.
 
 ## Quicklook for NSTableView & NSCollectionView
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.

@@ -1,6 +1,6 @@
 //
 //  AdvanceTableViewDiffableDataSource+KeyDown.swift
-//  
+//
 //
 //  Created by Florian Zand on 24.06.23.
 //
@@ -9,14 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZQuicklook
 
-internal extension AdvanceTableViewDiffableDataSource {
-    var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
-        set {
-            set(associatedValue: newValue, key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self)
-        }
-    }
-    
+internal extension AdvanceTableViewDiffableDataSource {    
     func setupKeyDownMonitor() {
         if self.allowsDeleting {
             if keyDownMonitor == nil {
@@ -24,16 +17,14 @@ internal extension AdvanceTableViewDiffableDataSource {
                     guard let self = self else { return event }
                     guard self.tableView.window?.firstResponder == self.tableView else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        var selectedElements = self.selectedElements
-                        if let shouldDelete = deletionHandlers.shouldDelete {
-                            selectedElements = shouldDelete(selectedElements)
-                        }
-                        if (selectedElements.isEmpty == false) {
+                        let elementsToDelete =   deletionHandlers.shouldDelete?(self.selectedItems) ?? self.selectedItems
+                        if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
-                            self.removeElements(selectedElements)
-                            deletionHandlers.didDelete?(selectedElements)
+                            self.removeItems(elementsToDelete)
+                            deletionHandlers.didDelete?(elementsToDelete)
+                            return nil
                         }
                     }
                     return event
@@ -47,4 +38,3 @@ internal extension AdvanceTableViewDiffableDataSource {
         }
     }
 }
-

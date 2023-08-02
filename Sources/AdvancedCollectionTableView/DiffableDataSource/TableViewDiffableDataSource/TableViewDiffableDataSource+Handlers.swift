@@ -1,33 +1,32 @@
 //
-//  AdvanceTableViewDiffableDataSource+Selection.swift
+//  File.swift
 //  
 //
-//  Created by Florian Zand on 21.12.22.
+//  Created by Florian Zand on 02.08.23.
 //
 
 import AppKit
 import FZUIKit
 
-
 extension AdvanceTableViewDiffableDataSource {
-    public struct SelectionHandlers<Element> {
-        public var shouldSelect: (([Element]) -> [Element])? = nil
-        public var shouldDeselect: (([Element]) -> [Element])? = nil
-        public var didSelect: (([Element]) -> Void)? = nil
-        public var didDeselect: (([Element]) -> Void)? = nil
+    public struct SelectionHandlers<Item> {
+        public var shouldSelect: (([Item]) -> [Item])? = nil
+        public var shouldDeselect: (([Item]) -> [Item])? = nil
+        public var didSelect: (([Item]) -> Void)? = nil
+        public var didDeselect: (([Item]) -> Void)? = nil
     }
     
     /// Handlers for deletion.
-    public struct DeletionHandlers<Element> {
-        /// Handler that determines whether Elementlements should get deleted.
-        public var shouldDelete: ((_ element: [Element]) -> [Element])? = nil
-        /// Handler that gets called whenever Elementlements get deleted.
-        public var didDelete: ((_ element: [Element]) -> ())? = nil
+    public struct DeletionHandlers<Item> {
+        /// Handler that determines whether Itemlements should get deleted.
+        public var shouldDelete: ((_ item: [Item]) -> [Item])? = nil
+        /// Handler that gets called whenever Itemlements get deleted.
+        public var didDelete: ((_ item: [Item]) -> ())? = nil
     }
     
-    public struct DragdropHandlers<Element> {
-        public var canDropOutside: ((Element) -> PasteboardWriting)? = nil
-        public var didDropOutside: ((Element) -> ())? = nil
+    public struct DragdropHandlers<Item> {
+        public var canDropOutside: ((Item) -> PasteboardWriting)? = nil
+        public var didDropOutside: ((Item) -> ())? = nil
         public var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
         public var didDragInside:  (([PasteboardWriting]) -> ())? = nil
         internal var acceptsDropInside: Bool {
@@ -39,31 +38,26 @@ extension AdvanceTableViewDiffableDataSource {
         }
     }
     
-    public struct ReorderHandlers<Element> {
-        public var canReorder: (([Element]) -> Bool)? = nil
-        public var willReorder: (([Element]) -> Void)? = nil
-        public var didReorder: (([Element]) -> Void)? = nil
+    public struct ReorderHandlers<Item> {
+        public var canReorder: (([Item]) -> Bool)? = nil
+        public var willReorder: (([Item]) -> Void)? = nil
+        public var didReorder: (([Item]) -> Void)? = nil
+    }
+        
+    public struct DisplayHandlers<Item> {
+        public var isDisplaying: (([Item]) -> Void)?
+        public var didEndDisplaying: (([Item]) -> Void)?
     }
     
-    public struct PrefetchHandlers<Element> {
-        public var willPrefetch: (([Element]) -> Void)? = nil
-        public var didCancelPrefetching: (([Element]) -> Void)? = nil
+    public struct MouseHandlers<Item> {
+        public var mouseClick: ((CGPoint, Int, Item?) -> Void)? = nil
+        public var rightMouseClick: ((CGPoint, Int, Item?) -> Void)? = nil
+        public var mouseDragged: ((CGPoint, Item?) -> Void)? = nil
     }
     
-    public struct DisplayHandlers<Element> {
-        public var isDisplaying: (([Element]) -> Void)?
-        public var didEndDisplaying: (([Element]) -> Void)?
-    }
-    
-    public struct MouseHandlers<Element> {
-        public var mouseClick: ((CGPoint, Int, Element?) -> Void)? = nil
-        public var rightMouseClick: ((CGPoint, Int, Element?) -> Void)? = nil
-        public var mouseDragged: ((CGPoint, Element?) -> Void)? = nil
-    }
-    
-    public struct HoverHandlers<Element> {
-        public var isHovering: ((Element) -> Void)?
-        public var didEndHovering: ((Element) -> Void)?
+    public struct HoverHandlers<Item> {
+        public var isHovering: ((Item) -> Void)?
+        public var didEndHovering: ((Item) -> Void)?
     }
     
     public struct ColumnHandlers<Section> {

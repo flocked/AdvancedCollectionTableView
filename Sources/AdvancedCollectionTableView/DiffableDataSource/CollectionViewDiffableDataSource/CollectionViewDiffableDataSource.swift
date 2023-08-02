@@ -173,7 +173,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     /// Handlers for reordering of items.
     public var reorderingHandlers = ReorderingHandlers<Element>()
     
-    ///Handlers for displaying of items. The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview gets scrolled to new items).
+    ///Handlers for the displayed items. The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview scrolls to new items).
     public var displayHandlers = DisplayHandlers<Element>() {
         didSet {  self.ensureTrackingDisplayingItems() } }
     

@@ -133,7 +133,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, shouldChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) -> Set<IndexPath> {
-            if let shouldChangeItems = self.dataSource.highlightHandlers.shouldChangeItems {
+            if let shouldChangeItems = self.dataSource.highlightHandlers.shouldChange {
                 let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
                 let returnElements = shouldChangeItems(shouldElements, highlightState)
                 return Set(returnElements.compactMap({self.dataSource.indexPath(for: $0)}))
@@ -144,7 +144,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, didChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) {
             let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            self.dataSource.highlightHandlers.didChangeItems?(elements, highlightState)
+            self.dataSource.highlightHandlers.didChange?(elements, highlightState)
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingImageForItemsAt indexPaths: Set<IndexPath>, with event: NSEvent, offset dragImageOffset: NSPointPointer) -> NSImage {

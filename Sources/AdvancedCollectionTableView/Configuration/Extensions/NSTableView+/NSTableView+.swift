@@ -82,7 +82,7 @@ public extension NSTableView {
         }
     }
     
-    var hoveredRowView: NSTableRowView? {
+   @objc dynamic var hoveredRowView: NSTableRowView? {
         get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredRowView else { return }
