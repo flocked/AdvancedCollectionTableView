@@ -28,6 +28,9 @@ public extension NSTableCellContentConfiguration {
             case bottom
             /// The image is positioned above the text.
             case top
+            internal var imageIsLeading: Bool {
+                self == .leading || self == .top
+            }
             internal var orientation: NSUserInterfaceLayoutOrientation {
                 switch self {
                 case .leading, .trailing:

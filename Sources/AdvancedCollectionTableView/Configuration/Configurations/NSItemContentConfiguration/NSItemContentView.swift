@@ -72,6 +72,35 @@ public class NSItemContentView: NSView, NSContentView {
         layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
     }
     
+    internal func layoutContentView(width: CGFloat, y: inout CGFloat) {
+        if appliedConfiguration.hasContent {
+            contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
+            if appliedConfiguration.contentPosition == .bottom, (appliedConfiguration.hasText || appliedConfiguration.hasSecondaryText) {
+                y += appliedConfiguration.contentToTextPadding
+            }
+        }
+    }
+    
+    internal func layoutSecondaryTextField(width: CGFloat, y: inout CGFloat) {
+        if (appliedConfiguration.hasSecondaryText) {
+            secondaryTextField.frame.origin = CGPoint((width - secondaryTextField.frame.size.width) * 0.5, y)
+            y += secondaryTextField.frame.size.height
+            if appliedConfiguration.hasText {
+                y += appliedConfiguration.textToSecondaryTextPadding
+            }
+        }
+    }
+    
+    internal func layoutTextField(width: CGFloat, y: inout CGFloat) {
+        if (appliedConfiguration.hasText) {
+            textField.frame.origin = CGPoint((width - textField.frame.size.width) * 0.5, y)
+            y += textField.frame.size.height
+            if appliedConfiguration.contentPosition == .top, appliedConfiguration.hasContent {
+                y += appliedConfiguration.contentToTextPadding
+            }
+        }
+    }
+    
     public override func layout() {
         super.layout()
 
@@ -85,8 +114,52 @@ public class NSItemContentView: NSView, NSContentView {
         if (appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText) {
             height -= appliedConfiguration.textToSecondaryTextPadding
         }
-        var y = appliedConfiguration.padding.bottom
         
+        if appliedConfiguration.hasText {
+            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            textField.frame.size.width = width
+            height -= textField.frame.size.height
+        }
+        if appliedConfiguration.hasSecondaryText {
+            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            secondaryTextField.frame.size.width = width
+            height -= secondaryTextField.frame.size.height
+        }
+        let remaining = CGSize(width, height)
+        
+        if appliedConfiguration.hasContent {
+            if let imageSize = contentView.imageView.image?.size {
+                let resizedImageSize: CGSize
+                if appliedConfiguration.contentProperties.imageScaling == .fit {
+                    resizedImageSize = imageSize.scaled(toFit: remaining)
+                    contentView.frame.size = resizedImageSize
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.frame.origin = .zero
+                } else {
+                    resizedImageSize = imageSize.scaled(toFill: remaining)
+                    contentView.frame.size = remaining
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.center = contentView.center
+                }
+            } else {
+                contentView.frame.size = remaining
+            }
+        }
+        
+        var y = appliedConfiguration.padding.bottom
+
+        if appliedConfiguration.contentPosition == .top {
+            layoutSecondaryTextField(width: width, y: &y)
+            layoutTextField(width: width, y: &y)
+            layoutContentView(width: width, y: &y)
+        } else if appliedConfiguration.contentPosition == .bottom {
+            layoutContentView(width: width, y: &y)
+            layoutSecondaryTextField(width: width, y: &y)
+            layoutTextField(width: width, y: &y)
+        }
+        
+        
+                
         if (appliedConfiguration.hasSecondaryText) {
             secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
             secondaryTextField.frame.size.width = width

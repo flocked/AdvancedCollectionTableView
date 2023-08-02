@@ -81,16 +81,22 @@ public class NSTableCellContentView: NSView, NSContentView {
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.imageToTextPadding
         stackView.orientation = appliedConfiguration.imageProperties.position.orientation
+    
+        if appliedConfiguration.imageProperties.position.imageIsLeading,  stackView.arrangedSubviews.first != imageView {
+            
+        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false,  stackView.arrangedSubviews.last != imageView {
+          //  stackView.arra
+        }
         
         switch appliedConfiguration.imageProperties.position {
         case .leading, .top:
             if stackView.arrangedSubviews.first != imageView {
-                stackView.addArrangedSubview(imageView)
+                stackView.removeArrangedSubview(textStackView)
                 stackView.addArrangedSubview(textStackView)
             }
         case .trailing, .bottom:
             if stackView.arrangedSubviews.last != imageView {
-                stackView.addArrangedSubview(textStackView)
+                stackView.removeArrangedSubview(imageView)
                 stackView.addArrangedSubview(imageView)
             }
         }
