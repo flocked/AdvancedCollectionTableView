@@ -26,7 +26,6 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableCellView()
-                self.rowView?.translatesAutoresizingMaskIntoConstraints = false
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
@@ -89,7 +88,6 @@ public extension NSTableCellView {
                 self.addSubview(withConstraint: contentView)
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
-
             }
         } else {
             self.contentView?.removeFromSuperview()

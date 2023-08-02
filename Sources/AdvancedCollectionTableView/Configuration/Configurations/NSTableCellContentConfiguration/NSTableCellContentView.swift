@@ -75,6 +75,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         layoutUpdateConstraints = true
         self.updateConstraints()
         layoutUpdateConstraints = false
+        self.invalidateIntrinsicContentSize()
         Swift.print("layout", self.appliedConfiguration.text ?? "")
         Swift.print("\n self: ", self.frame.size)
         Swift.print("\n stack: ", self.stackView.frame.size)
@@ -82,6 +83,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         Swift.print("\n text: ", self.textField.frame.size)
         Swift.print("\n secondary: ", self.secondaryTextField.frame.size)
         Swift.print("\n image: ", self.imageView.frame.size)
+        Swift.print("\n intrinsic: ", self.intrinsicContentSize)
         Swift.print("------------")
     }
     
@@ -90,6 +92,12 @@ public class NSTableCellContentView: NSView, NSContentView {
             Swift.print("updateConstraints")
         }
         super.updateConstraints()
+    }
+    
+    public override var intrinsicContentSize: NSSize {
+        let intrinsicContentSize = super.intrinsicContentSize
+        Swift.print("intrinsicContentSize")
+        return intrinsicContentSize
     }
     
     public override func updateConstraintsForSubtreeIfNeeded() {
