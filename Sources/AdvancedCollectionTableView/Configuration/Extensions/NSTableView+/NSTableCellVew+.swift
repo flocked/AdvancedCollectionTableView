@@ -76,9 +76,6 @@ public extension NSTableCellView {
         }
     }
     
-    internal var tableView: NSTableView? {
-        self.firstSuperview(for: NSTableView.self)
-    }
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
@@ -92,13 +89,6 @@ public extension NSTableCellView {
                 self.addSubview(withConstraint: contentView)
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
-                if let tableView = tableView {
-                   let row = tableView.row(for: self)
-                    Swift.print("tableView found", row)
-                    if row != -1 {
-                        tableView.noteHeightOfRows(withIndexesChanged: IndexSet([row]))
-                    }
-                }
             }
         } else {
             self.contentView?.removeFromSuperview()
@@ -128,7 +118,9 @@ public extension NSTableCellView {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
+        Swift.print("setNeedsAutomaticUpdateConfiguration")
         if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+            Swift.print("update tableViewStyle")
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
         }
         
