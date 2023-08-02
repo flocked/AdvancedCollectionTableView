@@ -88,6 +88,10 @@ public extension NSTableCellView {
                 self.addSubview(withConstraint: contentView)
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
+                self.setNeedsLayout()
+                contentView.setNeedsDisplay()
+                self.setNeedsUpdateConstraints()
+                contentView.setNeedsUpdateConstraints()
             }
         } else {
             self.contentView?.removeFromSuperview()
