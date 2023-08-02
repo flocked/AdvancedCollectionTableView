@@ -69,12 +69,12 @@ public class NSTableCellContentView: NSView, NSContentView {
         NSLayoutConstraint.activate(self.stackViewConstraints)
     }
     
+    internal var layoutUpdateConstraints = false
     public override func layout() {
         super.layout()
-        self.textStackView.updateConstraintsForSubtreeIfNeeded()
-        self.textStackView.setNeedsUpdateConstraints()
-        self.stackView.updateConstraintsForSubtreeIfNeeded()
-        self.stackView.setNeedsUpdateConstraints()
+        layoutUpdateConstraints = true
+        self.updateConstraints()
+        layoutUpdateConstraints = false
         Swift.print("layout", self.appliedConfiguration.text ?? "")
         Swift.print("\n self: ", self.frame.size)
         Swift.print("\n stack: ", self.stackView.frame.size)
@@ -86,7 +86,9 @@ public class NSTableCellContentView: NSView, NSContentView {
     }
     
     public override func updateConstraints() {
-        Swift.print("updateConstraints")
+        if layoutUpdateConstraints == false {
+            Swift.print("updateConstraints")
+        }
         super.updateConstraints()
     }
     
