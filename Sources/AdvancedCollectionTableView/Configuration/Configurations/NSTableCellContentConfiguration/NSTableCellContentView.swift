@@ -72,6 +72,11 @@ public class NSTableCellContentView: NSView, NSContentView {
     public override func layout() {
         super.layout()
         Swift.print("layout", self.appliedConfiguration.text ?? "", self.frame.size, stackView.frame.size)
+        self.textField.invalidateIntrinsicContentSize()
+        self.secondaryTextField.invalidateIntrinsicContentSize()
+        self.imageView.invalidateIntrinsicContentSize()
+        self.textStackView.invalidateIntrinsicContentSize()
+        self.stackView.invalidateIntrinsicContentSize()
     }
     
     internal func updateConfiguration() {
