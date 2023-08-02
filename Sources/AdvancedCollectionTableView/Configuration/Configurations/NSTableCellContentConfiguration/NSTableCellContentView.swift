@@ -71,6 +71,10 @@ public class NSTableCellContentView: NSView, NSContentView {
     
     public override func layout() {
         super.layout()
+        self.textStackView.updateConstraintsForSubtreeIfNeeded()
+        self.textStackView.setNeedsUpdateConstraints()
+        self.stackView.updateConstraintsForSubtreeIfNeeded()
+        self.stackView.setNeedsUpdateConstraints()
         Swift.print("layout", self.appliedConfiguration.text ?? "")
         Swift.print("\n self: ", self.frame.size)
         Swift.print("\n stack: ", self.stackView.frame.size)
