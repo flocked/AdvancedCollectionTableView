@@ -85,6 +85,8 @@ public extension NSTableCellView {
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
                 self.translatesAutoresizingMaskIntoConstraints = false
+                self.setContentHuggingPriority(.fittingSizeCompression, for: .vertical)
+                contentView.setContentHuggingPriority(.fittingSizeCompression, for: .vertical)
                 self.addSubview(withConstraint: contentView)
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
