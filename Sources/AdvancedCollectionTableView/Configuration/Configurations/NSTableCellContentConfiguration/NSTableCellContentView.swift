@@ -71,7 +71,7 @@ public class NSTableCellContentView: NSView, NSContentView {
     
     public override func layout() {
         super.layout()
-        Swift.print("layout", self.frame.size, stackView.frame.size)
+        Swift.print("layout", self.appliedConfiguration.text ?? "", self.frame.size, stackView.frame.size)
     }
     
     internal func updateConfiguration() {

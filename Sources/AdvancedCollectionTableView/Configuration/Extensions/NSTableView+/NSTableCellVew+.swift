@@ -81,15 +81,16 @@ public extension NSTableCellView {
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
+                Swift.print("configurateContentView", (contentConfiguration as! NSTableCellContentConfiguration).text ?? "", self.frame.size, self.rowView?.frame.size ?? "")
                 self.contentView?.removeFromSuperview()
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
                 self.translatesAutoresizingMaskIntoConstraints = false
                 self.addSubview(withConstraint: contentView)
-                self.invalidateIntrinsicContentSize()
-                contentView.invalidateIntrinsicContentSize()
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
+                Swift.print("configurateContentView end", (contentConfiguration as! NSTableCellContentConfiguration).text ?? "", self.frame.size, contentView.frame.size, self.rowView?.frame.size ?? "")
+
             }
         } else {
             self.contentView?.removeFromSuperview()
