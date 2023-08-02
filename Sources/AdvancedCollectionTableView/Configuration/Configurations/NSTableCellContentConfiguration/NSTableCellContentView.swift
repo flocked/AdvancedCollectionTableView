@@ -112,23 +112,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         self.stackViewConstraints[2].constant = -appliedConfiguration.insets.left
         self.stackViewConstraints[3].constant = appliedConfiguration.insets.right
     }
-    
-    internal var tableView: NSTableView? {
-        self.firstSuperview(for: NSTableView.self)
-    }
-    
-    public override func layout() {
-        super.layout()
-      //  Swift.print("layout", tableView != nil)
-     //   tableView?.usesAutomaticRowHeights = true
-    }
-    
-    public override func updateConstraints() {
-        super.updateConstraints()
-    //    Swift.print("updateConstraints", tableView != nil)
-     //   tableView?.usesAutomaticRowHeights = true
-    }
-    
+        
     internal func updateLayout() {
         let width = self.frame.size.width - appliedConfiguration.insets.width
         var height =  appliedConfiguration.insets.height

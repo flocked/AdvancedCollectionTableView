@@ -340,7 +340,6 @@ public extension NSTableRowView {
             self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
         rowObserver?.add(\.superview) { old, new in
-            Swift.print("row superview changed", self.tableView != nil, self.needsAutomaticRowHeights)
             if self.needsAutomaticRowHeights {
                 self.tableView?.usesAutomaticRowHeights = true
             }

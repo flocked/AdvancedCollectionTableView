@@ -26,9 +26,6 @@ public extension NSTableCellView {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableCellView()
-                Swift.print("contentConfiguration", rowView != nil)
-                self.rowView?.needsAutomaticRowHeights = true
-                self.tableView?.usesAutomaticRowHeights = true
             }
             self.configurateContentView()
         }
@@ -247,7 +244,6 @@ public extension NSTableCellView {
     internal func observeTableCellView() {
         guard tableCellObserverAlt == nil else { return }
         tableCellObserverAlt = self.observeChanges(for: \.superview, handler: {old, new in
-            Swift.print("superviewChanged", self.tableView != nil, self.rowView != nil)
             if self.contentConfiguration != nil {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
@@ -258,7 +254,6 @@ public extension NSTableCellView {
             }
             
             self.rowView?.observeTableRowView()
-            self.tableView?.setupObservingView()
             self.setNeedsUpdateConfiguration()
         })
         /*
