@@ -59,13 +59,17 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal var stackViewConstraints: [NSLayoutConstraint] = []
     internal func initialSetup() {
         self.maskToBounds = false
-        self.textStackView.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(textStackView)
+        textField.setContentHuggingPriority(.required, for: .horizontal)
+        textField.setContentCompressionResistancePriority(.required, for: .horizontal)
+        secondaryTextField.setContentHuggingPriority(.required, for: .horizontal)
+        secondaryTextField.setContentCompressionResistancePriority(.required, for: .horizontal)
+        self.stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(stackView)
         self.stackViewConstraints = [
-            self.topAnchor.constraint(equalTo: textStackView.topAnchor, constant: -self.appliedConfiguration.insets.top),
-            self.bottomAnchor.constraint(equalTo: textStackView.bottomAnchor, constant: self.appliedConfiguration.insets.bottom),
-            self.leadingAnchor.constraint(equalTo: textStackView.leadingAnchor, constant: -self.appliedConfiguration.insets.left),
-            self.trailingAnchor.constraint(equalTo: textStackView.trailingAnchor, constant: self.appliedConfiguration.insets.right)]
+            self.topAnchor.constraint(equalTo: stackView.topAnchor, constant: -self.appliedConfiguration.insets.top),
+            self.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: self.appliedConfiguration.insets.bottom),
+            self.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -self.appliedConfiguration.insets.left),
+            self.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: self.appliedConfiguration.insets.right)]
         NSLayoutConstraint.activate(self.stackViewConstraints)
     }
     
@@ -79,7 +83,6 @@ public class NSTableCellContentView: NSView, NSContentView {
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
-        /*
         stackView.spacing = appliedConfiguration.imageToTextPadding
         stackView.orientation = appliedConfiguration.imageProperties.position.orientation
         
@@ -101,7 +104,7 @@ public class NSTableCellContentView: NSView, NSContentView {
             stackView.addArrangedSubview(textStackView)
             stackView.addArrangedSubview(imageView)
         }
-        */
+        
         self.stackViewConstraints[0].constant = -appliedConfiguration.insets.top
         self.stackViewConstraints[1].constant = appliedConfiguration.insets.bottom
         self.stackViewConstraints[2].constant = -appliedConfiguration.insets.left
