@@ -31,7 +31,7 @@ class SidebarViewController: NSViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.usesAutomaticRowHeights = true
+       // tableView.usesAutomaticRowHeights = true
         tableView.dataSource = self.dataSource
         applySnapshot()
     }
