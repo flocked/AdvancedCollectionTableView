@@ -72,10 +72,7 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal var layoutUpdateConstraints = false
     public override func layout() {
         super.layout()
-        layoutUpdateConstraints = true
         self.updateConstraints()
-        layoutUpdateConstraints = false
-        self.invalidateIntrinsicContentSize()
         Swift.print("layout", self.appliedConfiguration.text ?? "")
         Swift.print("\n self: ", self.frame.size)
         Swift.print("\n stack: ", self.stackView.frame.size)
@@ -88,10 +85,12 @@ public class NSTableCellContentView: NSView, NSContentView {
     }
     
     public override func updateConstraints() {
-        if layoutUpdateConstraints == false {
+        super.updateConstraints()
+        if let heightConstraint = self.constraints.first(where: {$0.firstAttribute == .height || $0.secondAttribute == .height}) {
+            Swift.print("updateConstraints", heightConstraint)
+        } else {
             Swift.print("updateConstraints")
         }
-        super.updateConstraints()
     }
     
     public override var intrinsicContentSize: NSSize {
