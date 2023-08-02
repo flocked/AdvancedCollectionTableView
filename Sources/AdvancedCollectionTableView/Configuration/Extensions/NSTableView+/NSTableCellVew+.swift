@@ -118,9 +118,7 @@ public extension NSTableCellView {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
-        Swift.print("setNeedsAutomaticUpdateConfiguration")
         if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-            Swift.print("update tableViewStyle")
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
         }
         
