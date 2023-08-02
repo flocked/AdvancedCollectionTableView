@@ -115,51 +115,8 @@ public class NSItemContentView: NSView, NSContentView {
             height -= appliedConfiguration.textToSecondaryTextPadding
         }
         
-        if appliedConfiguration.hasText {
-            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
-            textField.frame.size.width = width
-            height -= textField.frame.size.height
-        }
-        if appliedConfiguration.hasSecondaryText {
-            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
-            secondaryTextField.frame.size.width = width
-            height -= secondaryTextField.frame.size.height
-        }
-        let remaining = CGSize(width, height)
-        
-        if appliedConfiguration.hasContent {
-            if let imageSize = contentView.imageView.image?.size {
-                let resizedImageSize: CGSize
-                if appliedConfiguration.contentProperties.imageScaling == .fit {
-                    resizedImageSize = imageSize.scaled(toFit: remaining)
-                    contentView.frame.size = resizedImageSize
-                    contentView.imageView.frame.size = resizedImageSize
-                    contentView.imageView.frame.origin = .zero
-                } else {
-                    resizedImageSize = imageSize.scaled(toFill: remaining)
-                    contentView.frame.size = remaining
-                    contentView.imageView.frame.size = resizedImageSize
-                    contentView.imageView.center = contentView.center
-                }
-            } else {
-                contentView.frame.size = remaining
-            }
-        }
-        
         var y = appliedConfiguration.padding.bottom
 
-        if appliedConfiguration.contentPosition == .top {
-            layoutSecondaryTextField(width: width, y: &y)
-            layoutTextField(width: width, y: &y)
-            layoutContentView(width: width, y: &y)
-        } else if appliedConfiguration.contentPosition == .bottom {
-            layoutContentView(width: width, y: &y)
-            layoutSecondaryTextField(width: width, y: &y)
-            layoutTextField(width: width, y: &y)
-        }
-        
-        
-                
         if (appliedConfiguration.hasSecondaryText) {
             secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
             secondaryTextField.frame.size.width = width
@@ -206,4 +163,63 @@ public class NSItemContentView: NSView, NSContentView {
             }
         }
     }
+    
+    
+    func newLayout() {
+        let width = self.frame.size.width - appliedConfiguration.padding.width
+        var height = self.frame.size.height - appliedConfiguration.padding.height
+        
+        if (appliedConfiguration.hasText || appliedConfiguration.hasSecondaryText) {
+            height -= appliedConfiguration.contentToTextPadding
+        }
+        
+        if (appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText) {
+            height -= appliedConfiguration.textToSecondaryTextPadding
+        }
+        
+        if appliedConfiguration.hasText {
+            textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            textField.frame.size.width = width
+            height -= textField.frame.size.height
+        }
+        if appliedConfiguration.hasSecondaryText {
+            secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
+            secondaryTextField.frame.size.width = width
+            height -= secondaryTextField.frame.size.height
+        }
+        let remaining = CGSize(width, height)
+        
+        if appliedConfiguration.hasContent {
+            if let imageSize = contentView.imageView.image?.size {
+                let resizedImageSize: CGSize
+                if appliedConfiguration.contentProperties.imageScaling == .fit {
+                    resizedImageSize = imageSize.scaled(toFit: remaining)
+                    contentView.frame.size = resizedImageSize
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.frame.origin = .zero
+                } else {
+                    resizedImageSize = imageSize.scaled(toFill: remaining)
+                    contentView.frame.size = remaining
+                    contentView.imageView.frame.size = resizedImageSize
+                    contentView.imageView.center = contentView.center
+                }
+            } else {
+                contentView.frame.size = remaining
+            }
+        }
+        
+        var y = appliedConfiguration.padding.bottom
+
+        if appliedConfiguration.contentPosition == .top {
+            layoutSecondaryTextField(width: width, y: &y)
+            layoutTextField(width: width, y: &y)
+            layoutContentView(width: width, y: &y)
+        } else if appliedConfiguration.contentPosition == .bottom {
+            layoutContentView(width: width, y: &y)
+            layoutSecondaryTextField(width: width, y: &y)
+            layoutTextField(width: width, y: &y)
+        }
+        
+    }
+    
 }
