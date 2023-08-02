@@ -116,9 +116,16 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal var tableView: NSTableView? {
         self.firstSuperview(for: NSTableView.self)
     }
-    public override func display() {
-        super.display()
-        Swift.print("display", tableView != nil)
+    
+    public override func layout() {
+        super.layout()
+        Swift.print("layout", tableView != nil)
+        tableView?.usesAutomaticRowHeights = true
+    }
+    
+    public override func updateConstraints() {
+        super.updateConstraints()
+        Swift.print("updateConstraints", tableView != nil)
         tableView?.usesAutomaticRowHeights = true
     }
     
