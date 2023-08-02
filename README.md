@@ -120,6 +120,9 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - `hoverHandlers`: Handlers for items that get hovered by mouse.
  - `menuProvider`: Right click menu provider for selected items.
  - `pinchHandler`: Handler for pinching of the collection view.
+ 
+ ## AdvanceTableViewDiffableDataSource
+ Simliar to AdvanceColllectionViewDiffableDataSource. *Work in progress.*
 
 ## Quicklook for NSTableView & NSCollectionView
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.
