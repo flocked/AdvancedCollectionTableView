@@ -69,55 +69,6 @@ public class NSTableCellContentView: NSView, NSContentView {
         NSLayoutConstraint.activate(self.stackViewConstraints)
     }
     
-    internal var layoutUpdateConstraints = false
-    public override func layout() {
-        super.layout()
-        self.updateConstraints()
-        Swift.print("layout", self.appliedConfiguration.text ?? "")
-        Swift.print("\n self: ", self.frame.size)
-        Swift.print("\n stack: ", self.stackView.frame.size)
-        Swift.print("\n textstack: ", self.textStackView.frame.size)
-        Swift.print("\n text: ", self.textField.frame.size)
-        Swift.print("\n secondary: ", self.secondaryTextField.frame.size)
-        Swift.print("\n image: ", self.imageView.frame.size)
-        Swift.print("\n intrinsic: ", self.intrinsicContentSize)
-        Swift.print("------------")
-    }
-    
-    public override func updateConstraints() {
-        super.updateConstraints()
-        if let heightConstraint = self.constraints.first(where: {$0.firstAttribute == .height || $0.secondAttribute == .height}) {
-            Swift.print("updateConstraints", heightConstraint)
-        } else {
-            Swift.print("updateConstraints")
-        }
-    }
-    
-    public override var intrinsicContentSize: NSSize {
-        let intrinsicContentSize = super.intrinsicContentSize
-        Swift.print("intrinsicContentSize", intrinsicContentSize)
-        return intrinsicContentSize
-    }
-    
-    public override func updateConstraintsForSubtreeIfNeeded() {
-        Swift.print("updateConstraintsForSubtreeIfNeeded")
-        super.updateConstraintsForSubtreeIfNeeded()
-    }
-    
-    public override func display() {
-        Swift.print("display")
-        super.display()
-    }
-    
-    public override func addConstraint(_ constraint: NSLayoutConstraint) {
-        Swift.print("addConstraint", constraint)
-        super.addConstraint(constraint)
-    }
-    public override func addConstraints(_ constraints: [NSLayoutConstraint]) {
-        Swift.print("addConstraints", constraints)
-        super.addConstraints(constraints)
-    }
-    
     internal func updateConfiguration() {
         textField.text(appliedConfiguration.text, attributedString: appliedConfiguration.attributedText)
         secondaryTextField.text(appliedConfiguration.secondaryText, attributedString: appliedConfiguration.secondaryAttributedText)
