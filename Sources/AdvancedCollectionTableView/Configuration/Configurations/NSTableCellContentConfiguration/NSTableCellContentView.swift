@@ -96,7 +96,7 @@ public class NSTableCellContentView: NSView, NSContentView {
     
     public override var intrinsicContentSize: NSSize {
         let intrinsicContentSize = super.intrinsicContentSize
-        Swift.print("intrinsicContentSize")
+        Swift.print("intrinsicContentSize", intrinsicContentSize)
         return intrinsicContentSize
     }
     
