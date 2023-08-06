@@ -31,9 +31,10 @@ public extension NSTableViewDiffableDataSource {
     /**
      Asks the datasource for a view to display the specified row and column.
      
-     - Parameters tableView: The table view that sent the message.
-     - Parameters tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
-     - Parameters row: The row index.
+     - Parameters:
+     - tableView: The table view that sent the message.
+     - tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
+     - row: The row index.
 
      - Returns: The view to display the specified column and row.
      */

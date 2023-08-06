@@ -64,16 +64,37 @@ internal extension NSTableCellContentView {
             return canBecome
         }
         
+        internal var isEditing: Bool = false
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
+            self.isEditing = true
             self.previousStringValue = self.stringValue
             self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
         }
         
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
+            self.isEditing = false
             self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
             self.properties.onEditEnd?(self.stringValue)
+        }
+        
+        public override func textDidChange(_ notification: Notification) {
+            invalidateIntrinsicContentSize()
+        }
+        
+        override var intrinsicContentSize: NSSize {
+            let intrinsicContentSize = super.intrinsicContentSize
+            let width = self.frame.size.width
+            if let cellSize = cell?.cellSize(forBounds: NSRect(x: 0, y: 0, width: width, height: 1000)) {
+                var newSize: CGSize = .zero
+                newSize.height = cellSize.height + 8.0
+                newSize.width = width
+            }
+            if let width = self.constraints.width {
+                
+            }
+            return intrinsicContentSize
         }
         
         internal var previousStringValue: String = ""

@@ -12,24 +12,21 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- This object is an advanced version or NSCollectionViewDiffableDataSource. It provides:
+ This object is an advanced version of `NSCollectionViewDiffableDataSource. It provides:
+
+ - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
+ - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
+ - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
+ - Handlers for selection of items ``selectionHandlers``.
+ - Handlers for items that get hovered by mouse ``hoverHandlers``.
+ - Providing a right click menu for selected items via ``menuProvider`` block.
+ - Handler for pinching of the collection view via ``pinchHandler``.
  
- - Reordering of items by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
- - Deleting of items by enabling `allowsDeleting`and optionally providing blocks to `DeletionHandlers`.
- - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
- - Handlers for selection of items `selectionHandlers`.
- - Handlers for items that get hovered by mouse `hoverHandlers`.
- - Providing a right click menu for selected items via `menuProvider` block.
- - Handler for pinching of the collection view via `pinchHandler`.
- 
- ```
- dataSource = AdvanceColllectionViewDiffableDataSource<Int, UUID>(collectionView: collectionView) {
- (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
- // configure and return item
- }
+ ```swift
+ dataSource = AdvanceColllectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
  ```
  
- Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see NSDiffableDataSourceSnapshot.
+ Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
@@ -145,12 +142,9 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     /**
      The layout object used to organize the collection view’s content.
      
-     Typically, you specify the layout object at design time in Interface Builder. The layout object works with your data source object to generate the needed items and views to display. The collection view uses the NSCollectionViewGridLayout object by default.
+     Typically, you specify the layout object at design time in Interface Builder. The layout object works with your data source object to generate the needed items and views to display. The collection view uses the `NSCollectionViewGridLayout` object by default.
      Assigning a new value to this property changes the layout object and causes the collection view to update its contents immediately and without animations. If you want to animate a layout change, use an animator object to set the layout object as follows:
      
-     ```
-     // Insert example
-     ```
      You can use the completion handler of the associated NSAnimationContext object to perform additional tasks when the animations finish.
      */
     public var collectionViewLayout: NSCollectionViewLayout? {
@@ -198,6 +192,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
+    
     //   public var sectionHandlers = SectionHandlers<Section>() {
     //      didSet { self.ensureTrackingArea()} }
     
@@ -377,11 +372,11 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
      
-     ```
-     dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
-     (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
-     // configure and return cell
-     }
+     ```swift
+     dataSource = DiffableDataSource<Section, Element>(collectionView: collectionView, itemProvider: {
+     (collectionView, indexPath, element) in
+     // configure and return item
+     })
      ```
      
      - Parameters:
@@ -395,15 +390,12 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         sharedInit()
     }
     /**
-     Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
+     Creates a diffable data source with the specified item registration, and connects it to the specified collection view.
      
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item registration, where each of your items gets determine how to display your data in the UI.
      
-     ```
-     dataSource = DiffableDataSource<Int, UUID>(collectionView: collectionView) {
-     (collectionView: NSCollectionView, indexPath: IndexPath, element: UUID) -> NSCollectionViewItem? in
-     // configure and return cell
-     }
+     ```swift
+     dataSource = AdvanceColllectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
      
      - Parameters:
@@ -443,26 +435,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         self.delegateBridge = DelegateBridge(self)
     }
 }
-
-/*
- private struct ItemIdentifierType: Hashable, Identifiable {
- let value: any Identifiable
- let id: AnyHashable
- 
- init<V: Identifiable>(_ value: V) {
- self.value = value
- self.id = value.id
- }
- 
- static func == (_ a: ItemIdentifierType, _ b: ItemIdentifierType) -> Bool {
- return a.id == b.id
- }
- 
- func hash(into hasher: inout Hasher) {
- hasher.combine(id)
- }
- }
- */
 
 extension AdvanceColllectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {

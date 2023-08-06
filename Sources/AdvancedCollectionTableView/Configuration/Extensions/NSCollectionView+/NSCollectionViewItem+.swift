@@ -66,7 +66,7 @@ public extension NSCollectionViewItem {
     /**
      A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
      
-     When this value is true, the item automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is true, the item automatically calls  ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
@@ -485,6 +485,7 @@ public extension NSCollectionViewItem {
      }
      */
 }
+
 
 extension NSCollectionViewItem {
     open override func loadView() {

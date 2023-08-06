@@ -40,7 +40,7 @@ public extension NSCollectionView {
      
      The following example creates a supplementary registration for a custom header view subclass.
      
-     ```
+     ```swift
      let headerRegistration = NSCollectionView.SupplementaryRegistration
      <HeaderView>(elementKind: "Header") {
      supplementaryView, string, indexPath in
@@ -51,7 +51,7 @@ public extension NSCollectionView {
      
      After you create a supplementary registration, you pass it in to `makeSupplementaryView(using:for:)`, which you call from your data source’s `supplementaryViewProvider`.
      
-     ```
+     ```swift
      dataSource.supplementaryViewProvider = { supplementaryView, elementKind, indexPath in
      return collectionView.makeSupplementaryView(using: headerRegistration,
      for: indexPath)

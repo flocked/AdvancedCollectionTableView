@@ -8,6 +8,24 @@
 import AppKit
 import FZUIKit
 
+/**
+ This object is an advanced version or `NSTableViewDiffableDataSource`. It provides:
+
+ - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
+ - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
+ - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
+ - Handlers for selection of items ``selectionHandlers``.
+ - Handlers for items that get hovered by mouse ``hoverHandlers``.
+ - Providing a right click menu for selected items via ``menuProvider`` block.
+ 
+ ```swift
+ dataSource = AdvanceTableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration)
+ ```
+ 
+ Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
+ 
+ - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
+ */
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
     public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
@@ -40,7 +58,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public var deletionHandlers = DeletionHandlers<Item>()
     
     /// Handlers for reordering of rows.
-    public var reorderHandlers = ReorderHandlers<Item>()
+    public var reorderingHandlers = ReorderHandlers<Item>()
     
     ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
     public var displayHandlers = DisplayHandlers<Item>() {
@@ -73,23 +91,39 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      */
     public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
+    /**
+     Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = AdvanceTableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration)
+     ```
+     
+     - Parameters:
+     - tableView: The initialized table view object to connect to the diffable data source.
+     - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+     */
     public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
             return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
         })
     }
-    
-    public convenience init<I: NSTableCellView, R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, rowRegistration: NSTableView.RowViewRegistration<R, Item>) {
-        self.init(tableView: tableView, cellProvider:  {
-            _tableView, column, row, element in
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
-        })
-        self.rowViewProvider = { _tableView, row, element in
-            return _tableView.makeRowView(using: rowRegistration, forRow: row, element: element)
-        }
-    }
-    
+
+    /**
+     Creates a diffable data source with the specified cell registrations, and connects it to the specified collection view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = AdvanceTableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistrations: cellRegistrations)
+     ```
+     
+     - Parameters:
+     - tableView: The initialized table view object to connect to the diffable data source.
+     - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+     */
     convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
@@ -98,18 +132,22 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         })
     }
     
-    convenience init<R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], rowRegistration: NSTableView.RowViewRegistration<R, Item>) {
-        self.init(tableView: tableView, cellProvider:  {
-            _tableView, column, row, element in
-            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!
-            return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
-        })
-        
-        self.rowViewProvider = { _tableView, row, element in
-            return _tableView.makeRowView(using: rowRegistration, forRow: row, element: element)
-        }
-    }
-    
+    /**
+     Creates a diffable data source with the specified cell provider, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a item provider, where you configure each of your cells to determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = DiffableDataSource<Section, Element>(tableView: tableView, itemProvider: {
+     (tableView, tableColumn, row, element) in
+     // configure and return cell
+     })
+     ```
+     
+     - Parameters:
+     - tableView: The initialized collection view object to connect to the diffable data source.
+     - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+     */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
         self.cellProvider = cellProvider
@@ -253,10 +291,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
         let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-        guard self.reorderHandlers.canReorder?(dragingItems) ?? true else {
+        guard self.reorderingHandlers.canReorder?(dragingItems) ?? true else {
             return false
         }
-            if let willReorder = self.reorderHandlers.willReorder {
+            if let willReorder = self.reorderingHandlers.willReorder {
                 willReorder(dragingItems)
             }
             var snapshot = self.snapshot()
@@ -282,7 +320,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
-        if self.dragingRowIndexes.isEmpty == false, let didReorder = self.reorderHandlers.didReorder {
+        if self.dragingRowIndexes.isEmpty == false, let didReorder = self.reorderingHandlers.didReorder {
             let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
             didReorder(dragingItems)
         }

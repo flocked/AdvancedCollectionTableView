@@ -11,11 +11,11 @@ import FZUIKit
 /**
  A content configuration for a table cell based content view.
  
- A table cell content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to a NSTableCellView, or any other view accepting a content configuration.
+ A table cell content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via ``makeContentView()``.
  
- Use  NSTableCellView.defaultContentConfiguration() to get a content configuration that has preconfigured default styling based on the table view it is presented.
+ Use  ``AppKit/NSTableCellView/defaultContentConfiguration()`` to get a content configuration that has preconfigured default styling based on the table view it is presented.
  
- ```
+ ```swift
  var content = tableCell.defaultContentConfiguration()
  
  // Configure content.

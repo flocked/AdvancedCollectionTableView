@@ -33,15 +33,15 @@ public extension NSTableView {
      
      The following example creates a row registration for row views of type `NSTableRowView`.
      
-     ```
+     ```swift
      let rowRegistration = NSTableView.RowRegistration<NSTableRowView, String> { row, indexPath, string in
     
      }
      ```
+          
+     After you create a row registration, you pass it in to ``AppKit/NSTableView/makeRowView(using:forRow:element:)``, which you call from your data source’s row provider.
      
-     After you create a row registration, you pass it in to `makeCell(using:for:element:), which you row from your data source’s row provider.
-     
-     ```
+     ```swift
      dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
      (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableRowView? in
      

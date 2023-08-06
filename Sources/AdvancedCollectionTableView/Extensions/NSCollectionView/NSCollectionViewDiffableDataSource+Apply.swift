@@ -13,16 +13,17 @@ public extension NSCollectionViewDiffableDataSource {
      
      It’s safe to call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
      
-     - Parameters snapshot: The snapshot reflecting the new state of the data in the collection view.
-     - Parameters option:  Option how to apply the snapshot to the collection view.
-     - Parameters completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
+     - Parameters:
+     - snapshot: The snapshot reflecting the new state of the data in the collection view.
+     - option:  Option how to apply the snapshot to the collection view.
+     - completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
      */
     func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption, completion: (() -> Void)? = nil) {
         switch option {
         case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
-        case .animated(let duration):
-            self.apply(snapshot, animated: true, animationDuration: duration != NSDiffableDataSourceSnapshotApplyOption.noAnimationDuration ? duration : nil, completion: completion)
+        case .animated(_):
+            self.apply(snapshot, animated: true, animationDuration: option.animationDuration, completion: completion)
         case .withoutAnimation:
             self.apply(snapshot, animated: false, completion: completion)
         }

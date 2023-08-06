@@ -32,9 +32,9 @@ public extension NSTableCellView {
     }
     
     /**
-     Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view and it’s style.
+     Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view it is presented.
      
-     The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
+     The default content configuration has preconfigured default styling depending on the table view ``AppKit/NSTableView/style`` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
      
      ```
      var content = cell.defaultContentConfiguration()
@@ -58,8 +58,9 @@ public extension NSTableCellView {
     /**
      A Boolean value that determines whether the cell automatically updates its content configuration when its state changes.
      
-     When this value is true, the cell automatically calls updated(for:) on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is true.
-     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     When this value is true, the cell automatically calls ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
+
+     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }

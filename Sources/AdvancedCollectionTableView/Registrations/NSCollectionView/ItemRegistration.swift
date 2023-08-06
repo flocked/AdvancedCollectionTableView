@@ -34,7 +34,7 @@ public extension NSCollectionView {
      
      The following example creates a item registration for items of type `NSCollectionViewItem`. Each items textfield displays its element.
      
-     ```
+     ```swift
      struct GalleryItem {
      let title: String
      let image: NSImage
@@ -52,9 +52,9 @@ public extension NSCollectionView {
      }
      ```
      
-     After you create a item registration, you pass it in to `makeItem(using:for:element:)`, which you item from your data source’s item provider.
+     After you create a item registration, you pass it in to ``AppKit/NSCollectionView/makeItem(using:for:element:)``, which you call from your data source’s item provider.
      
-     ```
+     ```swift
      dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) {
      (collectionView: NSCollectionView, indexPath: IndexPath, itemIdentifier: String) -> NSCollectionViewItem? in
      
@@ -66,12 +66,11 @@ public extension NSCollectionView {
      
      `NSCollectionViewDiffableDataSource` provides a convenient initalizer:
      
-     ```
+     ```swift
      dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
      
-     You don’t need to call `register(_:)`, `register(_:nib:)` or `register(_:forItemWithIdentifier:)`. The collection view registers your item automatically when you pass the item registration to `makeItem(using:for:element:)`.
-     
+     You don’t need to call ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)``. The collection view registers your item automatically when you pass the item registration to ``AppKit/NSCollectionView/makeItem(using:for:element:)``.
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
      */

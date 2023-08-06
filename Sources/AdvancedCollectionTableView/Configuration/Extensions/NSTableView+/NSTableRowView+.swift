@@ -19,12 +19,12 @@ public extension NSTableRowView {
      Using a background configuration, you can obtain system default background styling for a variety of different row states. Create a background configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
      
      ```
-     var backgroundConfiguration = NSBackgroundConfiguration.listPlainItem()
+     var backgroundConfiguration = NSBackgroundConfiguration()
      
      // Set a nil background color to use the view's tint color.
      backgroundConfiguration.backgroundColor = nil
      
-     row.backgroundConfiguration = backgroundConfiguration
+     rowView.backgroundConfiguration = backgroundConfiguration
      ```
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets the following APIs to nil:
@@ -46,7 +46,7 @@ public extension NSTableRowView {
     /**
      A Boolean value that determines whether the row automatically updates its background configuration when its state changes.
      
-     When this value is true, the row automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
+     When this value is true, the row automatically calls  ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
@@ -71,7 +71,7 @@ public extension NSTableRowView {
     /**
      The view that displays just above the background view for a selected row.
      
-     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
+     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView``.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
      */
     var selectedBackgroundView: NSView? {

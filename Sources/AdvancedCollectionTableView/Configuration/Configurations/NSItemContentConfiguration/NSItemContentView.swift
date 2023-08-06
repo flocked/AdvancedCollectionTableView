@@ -1,6 +1,6 @@
 //
 //  TableCellContentVierw.swift
-//  NSTableViewRegister
+//  
 //
 //  Created by Florian Zand on 14.12.22.
 //

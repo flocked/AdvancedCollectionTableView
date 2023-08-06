@@ -38,6 +38,12 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     case withoutAnimation
     
     internal static var noAnimationDuration: TimeInterval { 2344235 }
+    internal var animationDuration: TimeInterval? {
+        switch self {
+        case .animated(let duration): return (duration != Self.noAnimationDuration) ? duration : nil
+        default: return nil
+        }
+    }
     internal var isAnimating: Bool {
         switch self {
         case .animated(_): return true

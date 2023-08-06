@@ -60,13 +60,8 @@ public class NSTableCellContentView: NSView, NSContentView {
     internal func initialSetup() {
         self.maskToBounds = false
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(stackView)
-        self.stackViewConstraints = [
-            self.topAnchor.constraint(equalTo: stackView.topAnchor, constant: -self.appliedConfiguration.insets.top),
-            self.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: self.appliedConfiguration.insets.bottom),
-            self.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: -self.appliedConfiguration.insets.left),
-            self.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: self.appliedConfiguration.insets.right)]
-        NSLayoutConstraint.activate(self.stackViewConstraints)
+        self.stackViewConstraints = self.addSubview(withConstraint: stackView)
+        self.stackViewConstraints.constant(appliedConfiguration.insets)
     }
     
     internal func updateConfiguration() {
@@ -81,36 +76,16 @@ public class NSTableCellContentView: NSView, NSContentView {
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.imageToTextPadding
         stackView.orientation = appliedConfiguration.imageProperties.position.orientation
-    
+        
         if appliedConfiguration.imageProperties.position.imageIsLeading,  stackView.arrangedSubviews.first != imageView {
-            
-        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false,  stackView.arrangedSubviews.last != imageView {
-          //  stackView.arra
-        }
-        
-        switch appliedConfiguration.imageProperties.position {
-        case .leading, .top:
-            if stackView.arrangedSubviews.first != imageView {
-                stackView.removeArrangedSubview(textStackView)
-                stackView.addArrangedSubview(textStackView)
-            }
-        case .trailing, .bottom:
-            if stackView.arrangedSubviews.last != imageView {
-                stackView.removeArrangedSubview(imageView)
-                stackView.addArrangedSubview(imageView)
-            }
-        }
-        if appliedConfiguration.imageProperties.position == .leading && stackView.arrangedSubviews.first != imageView {
-            stackView.addArrangedSubview(imageView)
-        } else if appliedConfiguration.imageProperties.position == .trailing && stackView.arrangedSubviews.first != textStackView {
+            stackView.removeArrangedSubview(textStackView)
             stackView.addArrangedSubview(textStackView)
+        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false,  stackView.arrangedSubviews.last != imageView {
+            stackView.removeArrangedSubview(imageView)
             stackView.addArrangedSubview(imageView)
         }
         
-        self.stackViewConstraints[0].constant = -appliedConfiguration.insets.top
-        self.stackViewConstraints[1].constant = appliedConfiguration.insets.bottom
-        self.stackViewConstraints[2].constant = -appliedConfiguration.insets.left
-        self.stackViewConstraints[3].constant = appliedConfiguration.insets.right
+        self.stackViewConstraints.constant(appliedConfiguration.insets)
     }
         
     internal func updateLayout() {

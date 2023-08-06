@@ -42,15 +42,15 @@ public extension NSTableView {
      
      The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
      
-     ```
+     ```swift
      let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, indexPath, string in
      cell.textField.stringValue = string
      }
      ```
      
-     After you create a cell registration, you pass it in to `makeCell(using:for:element:)`, which you cell from your data source’s cell provider.
+     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``, which you call from your data source’s cell provider.
      
-     ```
+     ```swift
      dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
      (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableViewCell? in
      
@@ -62,12 +62,13 @@ public extension NSTableView {
      
      `NSTableViewDiffableDataSource` provides a convenient initalizer:
      
-     ```
+     ```swift
      dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
      
-     You don’t need to cell `register(_:)`, `register(_:nib:)` or `register(_:forCellWithIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to `makeCell(using:for:element:)`.
-     
+     You don’t need to call  ``AppKit/NSTableView/register(_:forIdentifier:)``, `register(_:nib:)` or `register(_:forCellWithIdentifier:)`. The table view registers yo
+     ur cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
+          
      - Important: Do not create your cell registration inside a `NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     class CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {

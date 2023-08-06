@@ -13,9 +13,9 @@ public extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
      
-     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(withIdentifier:owner:)`` method, the table view recycles an existing cell with the same identifier or creates a new one by instantiating your class.
+     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``AppKit/NSTableView/makeView(withIdentifier:owner:)`` method, the table view recycles an existing cell with the same identifier or creates a new one by instantiating your class.
      
-     Use this method to associate one of the NIB's cell views with identifier so that the table can instantiate this view when requested. This method is used when ``makeView(withIdentifier:owner:)`` is called, and there was no NIB created at design time for the specified identifier. This allows dynamic loading of NIBs that can be associated with the table.
+     Use this method to associate one of the NIB's cell views with identifier so that the table can instantiate this view when requested. This method is used when ``AppKit/NSTableView/makeView(withIdentifier:owner:)`` is called, and there was no NIB created at design time for the specified identifier. This allows dynamic loading of NIBs that can be associated with the table.
      Because a NIB can contain multiple views, you can associate the same NIB with multiple identifiers. To remove a previously associated NIB for identifier, pass in nil for the nib value.
      
      - Parameters:
@@ -32,7 +32,7 @@ public extension NSTableView {
     /**
      The dictionary of all registered cells for view-based table view identifiers.
      
-     Each key in the dictionary is the identifier string (given by ``NSUserInterfaceItemIdentifier``) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding ``NSTableCellView`` class.
+     Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the `register(_:forIdentifier:)` method. The value of each key is the corresponding `NSTableCellView` class.
      */
     internal (set) var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type]?   {
         get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self) }

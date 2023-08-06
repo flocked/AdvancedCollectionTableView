@@ -1,6 +1,6 @@
 //
 //  CollectionItemContentConfiguration.swift
-//  NSCollectionViewRegister
+//  
 //
 //  Created by Florian Zand on 14.12.22.
 //
@@ -14,9 +14,11 @@ import FZUIKit
 /**
  A content configuration for a collection item-based content view.
  
- An item content configuration describes the styling and content for an individual element that might appear in a collection view. Using a item content configuration, you can obtain system default styling for a variety of different item states. You fill the configuration with your content, and then assign it directly to collection view items via `NSCollectionViewItem.contentConfiguration`, or to your own view via `NSItemContentConfiguration.makeContentView()`.
+ An item content configuration describes the styling and content for an individual element that might appear in a collection view.
  
- ```
+ You fill the configuration with your content, and then assign it directly to collection view items via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own view via ``makeContentView()``.
+ 
+ ```swift
  public var content = collectionViewItem.defaultContentConfiguration()
  
  // Configure content.
@@ -34,7 +36,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     /// Creates a item content configuration.
     public init() {
-        
+
     }
     
     /// Creates a image item content configuration.

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSItemTransition.swift
 //  
 //
 //  Created by Florian Zand on 29.07.23.
@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-
+// Currently not used
 internal extension NSItemContentConfiguration {
     func animate(with configuration: TransitionConfiguration) {
         guard let view = (self.collectionViewItem?.contentView as? NSItemContentView), let collectionView = self.collectionViewItem?._collectionView else { return }
