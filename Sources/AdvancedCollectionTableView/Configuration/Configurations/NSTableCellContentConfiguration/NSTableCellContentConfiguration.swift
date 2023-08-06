@@ -58,7 +58,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
     }
     
     /// Creates a large cell content configuration for a sidebar table view (source style).
-    public static func large(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
+    public static func sidebarLarge(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
         var configuration = sidebar(.title3, imageColor: imageColor)
         configuration.type = .large
         configuration.insets = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 8.0, right: 4.0)
