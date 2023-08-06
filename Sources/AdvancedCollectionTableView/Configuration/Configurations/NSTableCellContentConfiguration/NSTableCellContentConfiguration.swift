@@ -192,12 +192,14 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
 public extension NSTableCellContentConfiguration {
     /// The image color of a sidebar content configuration.
     enum SidebarImageColor {
-        /// A multicolor colored image.
-        case multiColor(NSColor)
-        /// A colored image.
+        /// Image with a tint color.
         case color(NSColor)
-        /// A hierarchical colored image.
+        /// Image with a multicolor symbol configuration.
+        case multicolor(NSColor)
+        /// Image with a hierarchical symbol configuration.
         case hierarchical(NSColor)
+        /// Image with a palette color symbol configuration.
+        case palette(NSColor, NSColor, NSColor? = nil)
         public static var accentColor: Self {
             return .color(.controlAccentColor)
         }
@@ -209,9 +211,14 @@ public extension NSTableCellContentConfiguration {
         }
         internal var symbolColorConfiguration: ConfigurationProperties.SymbolConfiguration.ColorConfiguration {
             switch self {
-            case .multiColor(let color): return .multicolor(color)
-            case .hierarchical(let color): return .hierarchical(color)
-            case .color(_): return .monochrome
+            case .palette(let primary, let secondary, let terr):
+                return .palette(primary, secondary, terr)
+            case .multicolor(let color):
+                return .multicolor(color)
+            case .hierarchical(let color):
+                return .hierarchical(color)
+            case .color(_):
+                return .monochrome
             }
         }
     }
