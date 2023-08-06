@@ -45,6 +45,11 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
         return sidebar(.body, imageColor: imageColor)
     }
     
+    /// Creates a cell content configuration for a sidebar table view (source style).
+    public static func image(systemName: String, imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
+        return sidebar(.body, imageColor: imageColor)
+    }
+    
     /// Creates a header cell content configuration for a sidebar table view (source style).
     public static func sidebarHeader() -> NSTableCellContentConfiguration {
         var configuration = NSTableCellContentConfiguration()
@@ -185,21 +190,27 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
 }
 
 public extension NSTableCellContentConfiguration {
+    /// The image color of a sidebar content configuration.
     enum SidebarImageColor {
+        /// A multicolor colored image.
         case multiColor(NSColor)
-        case accentColor
+        /// A colored image.
         case color(NSColor)
+        /// A hierarchical colored image.
+        case hierarchical(NSColor)
+        public static var accentColor: Self {
+            return .color(.controlAccentColor)
+        }
         internal var tintColor: NSColor? {
             switch self {
-            case .multiColor(_): return nil
-            case .accentColor: return .controlAccentColor
             case .color(let color): return color
+            default: return nil
             }
         }
         internal var symbolColorConfiguration: ConfigurationProperties.SymbolConfiguration.ColorConfiguration {
             switch self {
             case .multiColor(let color): return .multicolor(color)
-            case .accentColor: return .monochrome
+            case .hierarchical(let color): return .hierarchical(color)
             case .color(_): return .monochrome
             }
         }
