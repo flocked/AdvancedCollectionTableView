@@ -34,12 +34,12 @@ import FZUIKit
 public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     // MARK: Creating item configurations
     
-    /// Creates a item content configuration.
+    /// Creates an item content configuration.
     public init() {
 
     }
     
-    /// Creates a image item content configuration.
+    /// Creates an image item content configuration.
     public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
         var configuration = NSItemContentConfiguration()
         configuration.text = text
@@ -77,8 +77,10 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var image: NSImage? = nil
     /// The view to display.
     public var view: NSView? = nil
-    /// The overlay view for the image and view.
+    /// An overlay view the system places above the view and image and automatically resizes to fill the frame.
     public var overlayView: NSView? = nil
+    /// The badge.
+    internal var badge: Badge? = nil
     
     // MARK: Customizing appearance
     
@@ -132,7 +134,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     // MARK: Updating the configuration
     
     internal func needsUpdate(comparedTo compare: Self) -> Bool {
-        let keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent]
+        let keyPaths: [PartialKeyPath<Self>] = [\.text, \.attributedText, \.secondaryText, \.secondaryAttributedText, \.image, \.textProperties.maxNumberOfLines, \.secondaryTextProperties.maxNumberOfLines, \.textProperties.font, \.secondaryTextProperties.font, \.hasContent, \.hasBadge]
         return self.isEqual(compare, for: keyPaths) == false
     }
         
@@ -189,6 +191,10 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     
     internal var hasContent: Bool {
         self.image != nil || self.contentProperties.backgroundColor != nil || self.view != nil
+    }
+    
+    internal var hasBadge: Bool {
+        self.badge?.hasBadge == true
     }
     
     internal weak var collectionViewItem: NSCollectionViewItem? = nil

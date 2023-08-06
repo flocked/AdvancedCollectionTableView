@@ -69,6 +69,7 @@ extension AdvanceTableViewDiffableDataSource {
     }
     */
     
+    
     public func rowView(for item: Item) -> NSTableRowView? {
         if let row = row(for: item) {
             return self.tableView.rowView(atRow: row, makeIfNecessary: false)

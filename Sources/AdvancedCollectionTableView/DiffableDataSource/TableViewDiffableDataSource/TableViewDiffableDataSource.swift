@@ -7,7 +7,7 @@
 
 import AppKit
 import FZUIKit
-
+import FZQuicklook
 /**
  This object is an advanced version or `NSTableViewDiffableDataSource`. It provides:
 
@@ -441,5 +441,18 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         }
         previousDisplayingElements = displayingElements
          */
+    }
+}
+
+extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
+    public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {
+        if let item = self.item(forRow: row), let rowView = self.rowView(for: item) {
+            if let previewable = item as? QuicklookPreviewable {
+                return QuicklookPreviewItem(previewable, view: rowView)
+            } else if let previewable = rowView.cellViews.compactMap({$0.quicklookPreview}).first {
+                return QuicklookPreviewItem(previewable, view: rowView)
+            }
+        }
+        return nil
     }
 }

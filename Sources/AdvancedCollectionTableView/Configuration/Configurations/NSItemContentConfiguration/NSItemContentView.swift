@@ -58,6 +58,8 @@ public class NSItemContentView: NSView, NSContentView {
     internal lazy var textField: ItemTextField = ItemTextField(properties: appliedConfiguration.textProperties)
     internal lazy var secondaryTextField: ItemTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
     internal lazy var contentView: ItemContentView = ItemContentView(configuration: appliedConfiguration)
+    internal var badgeView: ItemBadgeView? = nil
+
         
     internal func updateConfiguration() {
         textField.properties = appliedConfiguration.textProperties
@@ -70,6 +72,16 @@ public class NSItemContentView: NSView, NSContentView {
         
         self.anchorPoint = CGPoint(0.5, 0.5)
         layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
+        
+        if appliedConfiguration.hasBadge, let badge = appliedConfiguration.badge {
+            if self.badgeView == nil {
+                self.badgeView = ItemBadgeView(properties: badge)
+                self.addSubview(self.badgeView!)
+            }
+            self.badgeView?.properties = badge
+        } else {
+            badgeView?.removeFromSuperview()
+        }
     }
     
     internal func layoutContentView(width: CGFloat, y: inout CGFloat) {
