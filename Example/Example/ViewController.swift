@@ -32,8 +32,7 @@ class ViewController: NSViewController {
         
         if let badgeText = galleryItem.badge {
             configuration.badge = .text(badgeText)
-            configuration.badge?.textProperties.font = .callout
-            configuration.badge?.padding = .init(top: 3, leading: 5, bottom: 3, trailing: 5)
+            configuration.badge?.position = .topRight
         }
                 
         collectionViewItem.contentConfiguration = configuration
