@@ -74,11 +74,15 @@ public class NSItemContentView: NSView, NSContentView {
         layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
         
         if appliedConfiguration.hasBadge, let badge = appliedConfiguration.badge {
+            let oldPosition = self.badgeView?.properties.position
             if self.badgeView == nil {
                 self.badgeView = ItemBadgeView(properties: badge)
                 self.addSubview(self.badgeView!)
             }
             self.badgeView?.properties = badge
+            if oldPosition != badge.position {
+                self.layoutBadge()
+            }
         } else {
             badgeView?.removeFromSuperview()
             badgeView = nil
@@ -114,9 +118,7 @@ public class NSItemContentView: NSView, NSContentView {
         }
     }
     
-    public override func layout() {
-        super.layout()
-        
+    internal func layoutBadge() {
         if let badge = self.appliedConfiguration.badge, let badgeView = self.badgeView {
             switch badge.position {
             case .bottomLeft, .topLeft:
@@ -131,7 +133,11 @@ public class NSItemContentView: NSView, NSContentView {
                 badgeView.frame.origin.x = self.frame.size.height - (badgeView.frame.size.height/2.0)
             }
         }
-
+    }
+    
+    public override func layout() {
+        super.layout()
+        
         let width = self.frame.size.width - appliedConfiguration.padding.width
         var height = self.frame.size.height - appliedConfiguration.padding.height
         
@@ -190,6 +196,7 @@ public class NSItemContentView: NSView, NSContentView {
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             }
         }
+        self.layoutBadge()
     }
     
     

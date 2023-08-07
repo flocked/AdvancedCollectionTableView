@@ -26,7 +26,6 @@ internal extension NSItemContentView {
                 if oldValue != properties {
                     update()
                 }
-                let textField = NSTextField()
             }
         }
         
