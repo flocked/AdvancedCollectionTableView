@@ -29,6 +29,9 @@ class ViewController: NSViewController {
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
+        
+        configuration.badge = .text("100")
+        configuration.badge?.textProperties.font = .callout
                 
         collectionViewItem.contentConfiguration = configuration
 

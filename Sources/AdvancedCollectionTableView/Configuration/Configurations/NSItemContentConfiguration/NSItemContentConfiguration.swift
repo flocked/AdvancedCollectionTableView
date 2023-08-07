@@ -79,8 +79,8 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var view: NSView? = nil
     /// An overlay view the system places above the view and image and automatically resizes to fill the frame.
     public var overlayView: NSView? = nil
-    /// The badge.
-    public var badge: Badge? = .text("Fun Fun")
+    /// The badge displayed next to the image/view.
+    public var badge: Badge? = nil
     
     // MARK: Customizing appearance
     
