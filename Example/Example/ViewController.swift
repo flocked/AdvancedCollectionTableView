@@ -30,12 +30,12 @@ class ViewController: NSViewController {
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
         
-        /*
+        
         if let badgeText = galleryItem.badge {
             configuration.badge = .text(badgeText)
             configuration.badge?.position = .topRight
         }
-         */
+         
                 
         collectionViewItem.contentConfiguration = configuration
 

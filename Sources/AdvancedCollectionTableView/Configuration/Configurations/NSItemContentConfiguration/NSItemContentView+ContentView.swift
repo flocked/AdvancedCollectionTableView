@@ -127,7 +127,7 @@ internal extension NSItemContentView {
             self.configuration = configuration
             super.init(frame: .zero)
             self.wantsLayer = true
-            self.maskToBounds = true
+            self.maskToBounds = false
             self.imageView.maskToBounds = true
             //  self.translatesAutoresizingMaskIntoConstraints = false
             //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
