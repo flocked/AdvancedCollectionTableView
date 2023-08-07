@@ -101,16 +101,17 @@ internal extension NSItemContentView {
         
         internal func layoutBadge() {
             if let badge = self.badge, let badgeView = self.badgeView {
+                badgeView.sendToFront()
                 switch badge.position {
                 case .bottomLeft, .topLeft:
-                    badgeView.frame.origin.x = self.frame.origin.x - (badgeView.frame.size.width*0.33)
+                    badgeView.frame.origin.x = -(badgeView.frame.size.width*0.33)
                 case .bottomRight, .topRight:
                     badgeView.frame.origin.x =
                    self.frame.size.width - (badgeView.frame.size.width*0.66)
                 }
                 switch badge.position {
                 case .bottomLeft, .bottomRight:
-                    badgeView.frame.origin.y = self.frame.origin.y - (badgeView.frame.size.height*0.33)
+                    badgeView.frame.origin.y =  -(badgeView.frame.size.height*0.33)
                 case .topLeft, .topRight:
                     badgeView.frame.origin.y = self.frame.size.height - (badgeView.frame.size.height*0.66)
                 }
