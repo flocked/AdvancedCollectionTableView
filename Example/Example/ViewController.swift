@@ -70,7 +70,7 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         
-        collectionView.collectionViewLayout = .grid(columns: 2)
+        collectionView.collectionViewLayout = .grid(columns: 2, itemAspectRatio: CGSize(2, 1))
         
         collectionView.dataSource = self.dataSource
         
