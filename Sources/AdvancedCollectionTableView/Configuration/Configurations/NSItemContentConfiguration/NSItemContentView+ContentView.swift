@@ -11,6 +11,7 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class ItemContentView: NSView {
+        internal var badgeView: ItemBadgeView? = nil
         internal let imageView: NSImageView = NSImageView()
         internal var view: NSView? = nil {
             didSet {
@@ -54,6 +55,10 @@ internal extension NSItemContentView {
             return configuration.contentProperties
         }
         
+        internal var badge: NSItemContentConfiguration.Badge? {
+            return configuration.badge
+        }
+        
         internal func updateConfiguration() {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
             self.borderColor = contentProperties._resolvedBorderColor
@@ -75,8 +80,46 @@ internal extension NSItemContentView {
                 self.overlayView = configuration.overlayView
             }
             
+            if configuration.hasBadge, configuration.hasContent, let badge = badge {
+                let oldPosition = self.badgeView?.properties.position
+                if self.badgeView == nil {
+                    self.badgeView = ItemBadgeView(properties: badge)
+                    self.addSubview(self.badgeView!)
+                }
+                self.badgeView?.properties = badge
+                if oldPosition != badge.position {
+                    self.layoutBadge()
+                }
+            } else {
+                badgeView?.removeFromSuperview()
+                badgeView = nil
+            }
+            
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
+        }
+        
+        internal func layoutBadge() {
+            if let badge = self.badge, let badgeView = self.badgeView {
+                switch badge.position {
+                case .bottomLeft, .topLeft:
+                    badgeView.frame.origin.x = self.frame.origin.x - (badgeView.frame.size.width*0.33)
+                case .bottomRight, .topRight:
+                    badgeView.frame.origin.x =
+                   self.frame.size.width - (badgeView.frame.size.width*0.66)
+                }
+                switch badge.position {
+                case .bottomLeft, .bottomRight:
+                    badgeView.frame.origin.y = self.frame.origin.y - (badgeView.frame.size.height*0.33)
+                case .topLeft, .topRight:
+                    badgeView.frame.origin.y = self.frame.size.height - (badgeView.frame.size.height*0.66)
+                }
+            }
+        }
+        
+        override func layout() {
+            super.layout()
+            layoutBadge()
         }
         
         public init(configuration: NSItemContentConfiguration) {

@@ -73,6 +73,7 @@ public class NSItemContentView: NSView, NSContentView {
         self.anchorPoint = CGPoint(0.5, 0.5)
         layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
         
+        /*
         if appliedConfiguration.hasBadge, appliedConfiguration.hasContent, let badge = appliedConfiguration.badge {
             let oldPosition = self.badgeView?.properties.position
             if self.badgeView == nil {
@@ -87,6 +88,7 @@ public class NSItemContentView: NSView, NSContentView {
             badgeView?.removeFromSuperview()
             badgeView = nil
         }
+        */
     }
     
     internal func layoutContentView(width: CGFloat, y: inout CGFloat) {
