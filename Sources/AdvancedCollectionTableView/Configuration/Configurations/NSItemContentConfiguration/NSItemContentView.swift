@@ -187,14 +187,6 @@ public class NSItemContentView: NSView, NSContentView {
                     let resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
                     contentView.frame.size = resizedImageSize
                 } else {
-                    if appliedConfiguration.contentProperties.imageScaling == .none {
-                        if remainingSize.width > imageSize.width {
-                            remainingSize.width = imageSize.width
-                        }
-                        if remainingSize.height > imageSize.height {
-                            remainingSize.height = imageSize.height
-                        }
-                    }
                     contentView.frame.size = remainingSize
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
