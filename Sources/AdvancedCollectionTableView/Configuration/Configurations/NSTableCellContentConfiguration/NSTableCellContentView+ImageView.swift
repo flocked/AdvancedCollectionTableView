@@ -41,7 +41,7 @@ internal extension NSTableCellContentView {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
-            
+            /*
             if let imageSize = image?.size {
                 var size = imageSize
                 if image?.isSymbolImage == true {
@@ -67,6 +67,7 @@ internal extension NSTableCellContentView {
                 widthA?.isActive = false
                 heightA?.isActive = false
             }
+            */
             /*
             var width: CGFloat? =  image?.size.width
             var height: CGFloat? =  image?.size.height
