@@ -54,6 +54,7 @@ internal extension NSItemContentView {
         init(properties: NSItemContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
+            self.translatesAutoresizingMaskIntoConstraints = false
             self.maskToBounds = false
             self.stackViewConstraints = self.addSubview(withConstraint: stackView)
             self.update()
