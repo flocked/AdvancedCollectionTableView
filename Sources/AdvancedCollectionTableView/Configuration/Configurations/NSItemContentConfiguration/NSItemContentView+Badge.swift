@@ -46,6 +46,7 @@ internal extension NSItemContentView {
             
             self.imageView.image = properties.image
             self.backgroundColor = properties._resolvedBadgeColor
+            self.cornerRadius = properties.cornerRadius
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.configurate(using: properties.shadowProperties)
