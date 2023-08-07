@@ -75,13 +75,11 @@ public class NSItemContentView: NSView, NSContentView {
         
         if appliedConfiguration.hasBadge, let badge = appliedConfiguration.badge {
             if self.badgeView == nil {
-                Swift.print("Badge added")
                 self.badgeView = ItemBadgeView(properties: badge)
                 self.addSubview(self.badgeView!)
             }
             self.badgeView?.properties = badge
         } else {
-            Swift.print("Badge removed")
             badgeView?.removeFromSuperview()
             badgeView = nil
         }
@@ -124,13 +122,13 @@ public class NSItemContentView: NSView, NSContentView {
             case .bottomLeft, .topLeft:
                 badgeView.frame.origin.x = -(badgeView.frame.size.width/2.0)
             case .bottomRight, .topRight:
-                badgeView.frame.origin.x = self.frame.size.width + (badgeView.frame.size.width/2.0)
+                badgeView.frame.origin.x = self.frame.size.width - (badgeView.frame.size.width/2.0)
             }
             switch badge.position {
             case .bottomLeft, .bottomRight:
                 badgeView.frame.origin.y = -(badgeView.frame.size.height/2.0)
             case .topLeft, .topRight:
-                badgeView.frame.origin.x = self.frame.size.height + (badgeView.frame.size.height/2.0)
+                badgeView.frame.origin.x = self.frame.size.height - (badgeView.frame.size.height/2.0)
             }
         }
 
