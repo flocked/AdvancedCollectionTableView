@@ -77,6 +77,8 @@ public class NSItemContentView: NSView, NSContentView {
             if self.badgeView == nil {
                 self.badgeView = ItemBadgeView(properties: badge)
                 self.addSubview(self.badgeView!)
+                self.badgeView?.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4).activate()
+                self.badgeView?.topAnchor.constraint(equalTo: self.topAnchor, constant: -4).activate()                
             }
             self.badgeView?.properties = badge
         } else {
