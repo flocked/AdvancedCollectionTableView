@@ -19,17 +19,20 @@ public extension NSItemContentConfiguration {
     struct ContentProperties: Hashable {
         /// The image scaling of an item image.
         public enum ImageScaling {
-            /// An option that resizes the image so it’s all within the available space, both vertically and horizontally.
+            /// The image is resized to fit.
             case fit
-            /// An option that resizes the image so it occupies all available space, both vertically and horizontally.
+            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect of the image. The image is centered in the axis it exceeds.
             case fill
             /// The image is resized to fit the entire bounds rectangle.
             case resize
+            /// The image isn't resized.
+            case none
             internal var gravity: CALayerContentsGravity {
                 switch self {
                 case .fit: return .resizeAspect
                 case .fill: return .resizeAspectFill
                 case .resize: return .resize
+                case .none: return .center
                 }
             }
             internal var shouldResize: Bool {
@@ -37,6 +40,7 @@ public extension NSItemContentConfiguration {
             }
             internal var swiftui: ContentMode {
                 switch self {
+                case .none: return .fit
                 case .fit: return .fit
                 case .fill: return .fill
                 case .resize: return .fit

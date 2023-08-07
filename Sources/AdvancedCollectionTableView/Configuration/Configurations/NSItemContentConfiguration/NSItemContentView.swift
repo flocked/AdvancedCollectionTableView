@@ -180,13 +180,21 @@ public class NSItemContentView: NSView, NSContentView {
             }
         }
         
-        let remainingSize = CGSize(width: width, height: height)
+        var remainingSize = CGSize(width: width, height: height)
         if appliedConfiguration.hasContent {
             if let imageSize = contentView.imageView.image?.size {
                 if appliedConfiguration.contentProperties.imageScaling.shouldResize {
                     let resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
                     contentView.frame.size = resizedImageSize
                 } else {
+                    if appliedConfiguration.contentProperties.imageScaling == .none {
+                        if remainingSize.width > imageSize.width {
+                            remainingSize.width = imageSize.width
+                        }
+                        if remainingSize.height > imageSize.height {
+                            remainingSize.height = imageSize.height
+                        }
+                    }
                     contentView.frame.size = remainingSize
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
