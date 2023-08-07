@@ -64,6 +64,10 @@ internal extension NSItemContentView {
             self.borderColor = contentProperties._resolvedBorderColor
             self.borderWidth = contentProperties.borderWidth
             self.cornerRadius = contentProperties.cornerRadius
+            self.imageView.cornerRadius = contentProperties.cornerRadius
+            self.view?.cornerRadius = contentProperties.cornerRadius
+            self.overlayView?.cornerRadius = contentProperties.cornerRadius
+            
             self.configurate(using: contentProperties.shadow)
             
             imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
