@@ -184,9 +184,11 @@ public class NSItemContentView: NSView, NSContentView {
         if appliedConfiguration.hasContent {
             if let imageSize = contentView.imageView.image?.size {
                 if appliedConfiguration.contentProperties.imageScaling.shouldResize {
-                    let resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
+                    var resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
+                    resizedImageSize = scaleSize(resizedImageSize, maxWidth: appliedConfiguration.contentProperties.maxWidth, maxHeight: appliedConfiguration.contentProperties.maxHeight)
                     contentView.frame.size = resizedImageSize
                 } else {
+                    remainingSize = scaleSize(remainingSize, maxWidth: appliedConfiguration.contentProperties.maxWidth, maxHeight: appliedConfiguration.contentProperties.maxHeight)
                     contentView.frame.size = remainingSize
                 }
                 contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
@@ -196,6 +198,18 @@ public class NSItemContentView: NSView, NSContentView {
             }
         }
         self.layoutBadge()
+    }
+    
+    internal func scaleSize(_ size: CGSize, maxWidth: CGFloat?, maxHeight: CGFloat?) -> CGSize {
+        var size = size
+        if let maxWidth = maxWidth, let maxHeight =  maxHeight, (size.width > maxWidth || size.height > maxHeight) {
+            size = size.scaled(toFit: CGSize(maxWidth, maxHeight))
+        } else if let maxWidth = maxWidth, size.width > maxWidth {
+            size = size.scaled(toWidth: maxWidth)
+        } else if let maxHeight = maxHeight, size.height > maxHeight {
+            size = size.scaled(toHeight: maxHeight)
+        }
+        return size
     }
     
     
