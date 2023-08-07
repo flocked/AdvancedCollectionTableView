@@ -67,7 +67,6 @@ class ViewController: NSViewController {
     }
     
     override func viewDidLoad() {
-        
         collectionView.collectionViewLayout = .grid(columns: 2)
         
         collectionView.dataSource = self.dataSource

@@ -102,6 +102,18 @@ public extension NSItemContentConfiguration {
         /// The position of the badge.
         public var position: Position  = .topRight
         
+        /// The offset of the value.
+        public var offset: CGSize = CGSize(width: 0.66, height: 0.66) {
+            didSet {
+                var clampedOffset = self.offset
+                clampedOffset.width = clampedOffset.width.clamped(max: 1.0)
+                clampedOffset.height = clampedOffset.height.clamped(max: 1.0)
+                if clampedOffset != self.offset {
+                    self.offset = clampedOffset
+                }
+            }
+        }
+        
         public var textToImageSpacing: CGFloat = 4.0
 
         /// The margins between the badge content and the edges of the badge view.

@@ -123,18 +123,18 @@ public class NSItemContentView: NSView, NSContentView {
         if let badge = self.appliedConfiguration.badge, let badgeView = self.badgeView {
             switch badge.position {
             case .bottomLeft, .topLeft:
-                badgeView.frame.origin.x = contentView.frame.origin.x - (badgeView.frame.size.width*0.33)
+                badgeView.frame.origin.x = contentView.frame.origin.x - (badgeView.frame.size.width*(1-badge.offset.width))
             case .bottomRight, .topRight:
                 badgeView.frame.origin.x =
                 (contentView.frame.origin.x +
-                 contentView.frame.size.width) - (badgeView.frame.size.width*0.66)
+                 contentView.frame.size.width) - (badgeView.frame.size.width*badge.offset.width)
             }
             switch badge.position {
             case .bottomLeft, .bottomRight:
-                badgeView.frame.origin.y = contentView.frame.origin.y - (badgeView.frame.size.height*0.33)
+                badgeView.frame.origin.y = contentView.frame.origin.y - (badgeView.frame.size.height*(1-badge.offset.height))
             case .topLeft, .topRight:
                 badgeView.frame.origin.y = (contentView.frame.origin.y +
-                                            contentView.frame.size.height) - (badgeView.frame.size.height*0.66)
+                                            contentView.frame.size.height) - (badgeView.frame.size.height*(1-badge.offset.height))
             }
         }
     }
