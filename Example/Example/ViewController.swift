@@ -32,6 +32,7 @@ class ViewController: NSViewController {
         
         configuration.badge = .text("100")
         configuration.badge?.textProperties.font = .callout
+        configuration.badge?.padding = .init(top: 2, leading: 4, bottom: 2, trailing: 4)
                 
         collectionViewItem.contentConfiguration = configuration
 
