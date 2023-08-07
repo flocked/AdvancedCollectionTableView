@@ -14,23 +14,26 @@ class GalleryItem: NSObject, Identifiable {
     var title: String
     var detail: String
     var imageName: String
+    var badge: String?
     
-    init(title: String, detail: String, imageName: String) {
+    init(title: String, detail: String, imageName: String, badge: String? = nil) {
         self.title = title
         self.detail = detail
         self.imageName = imageName
+        self.badge = badge
     }
     
     func replaceInfo(with item: GalleryItem) {
         self.title = item.title
         self.detail = item.detail
         self.imageName = item.imageName
+        self.badge = item.badge
     }
     
     static var sampleItems: [GalleryItem] {
         return [GalleryItem(title: "Astronaut Cat", detail: "Liquid ink", imageName: "astronaut cat"),
                 GalleryItem(title: "Cat", detail: "Painted by Vermeer", imageName: "cat vermeer"),
-                GalleryItem(title: "Cat", detail: "Vaporwave", imageName: "cat vaporwave"),
+                GalleryItem(title: "Cat", detail: "Vaporwave", imageName: "cat vaporwave", badge: "new"),
                 GalleryItem(title: "Sea Creature", detail: "Oil on canvas", imageName: "sea creature oil"),
                 GalleryItem(title: "Sea Creature", detail: "Science fiction", imageName: "sea creature science fiction"),
                 GalleryItem(title: "Techno Club", detail: "Surrealist painting", imageName: "techno club surrealist"),

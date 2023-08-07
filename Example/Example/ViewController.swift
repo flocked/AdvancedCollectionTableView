@@ -30,9 +30,11 @@ class ViewController: NSViewController {
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
         
-        configuration.badge = .text("100")
-        configuration.badge?.textProperties.font = .callout
-        configuration.badge?.padding = .init(top: 2, leading: 4, bottom: 2, trailing: 4)
+        if let badgeText = galleryItem.badge {
+            configuration.badge = .text(badgeText)
+            configuration.badge?.textProperties.font = .callout
+            configuration.badge?.padding = .init(top: 3, leading: 5, bottom: 3, trailing: 5)
+        }
                 
         collectionViewItem.contentConfiguration = configuration
 

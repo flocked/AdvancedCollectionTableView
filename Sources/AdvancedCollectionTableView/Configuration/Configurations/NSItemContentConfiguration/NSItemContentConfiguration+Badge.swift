@@ -91,6 +91,7 @@ public extension NSItemContentConfiguration {
         /// Properties for configuring the primary text.
         public var textProperties: ConfigurationProperties.Text = {
             var properties: ConfigurationProperties.Text = .body
+            properties.font = .callout
             properties.textColor = .white
             return properties
         }()
@@ -104,7 +105,7 @@ public extension NSItemContentConfiguration {
         var textToImageSpacing: CGFloat = 4.0
 
         /// The margins between the badge content and the edges of the badge view.
-        public var padding: NSDirectionalEdgeInsets = .init(top: 4, leading: 6, bottom: 4, trailing: 6)
+        public var padding: NSDirectionalEdgeInsets = .init(top: 3, leading: 5, bottom: 3, trailing: 5)
         
         internal var hasBadge: Bool {
             self.text != nil || self.attributedText != nil || self.image != nil
