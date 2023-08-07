@@ -1,5 +1,5 @@
 //
-//  NSItemContentView+ContentView.swift
+//  NSItemContentView+Content.swift
 //  
 //
 //  Created by Florian Zand on 24.07.23.
@@ -11,7 +11,7 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class ItemContentView: NSView {
-        internal var badgeView: ItemBadgeView? = nil
+        internal var badgeView: BadgeView? = nil
         internal let imageView: ImageView = ImageView()
         internal var view: NSView? = nil {
             didSet {
@@ -89,7 +89,7 @@ internal extension NSItemContentView {
             if configuration.hasBadge, configuration.hasContent, let badge = badge {
                 let oldPosition = self.badgeView?.properties.position
                 if self.badgeView == nil {
-                    self.badgeView = ItemBadgeView(properties: badge)
+                    self.badgeView = BadgeView(properties: badge)
                     self.addSubview(self.badgeView!)
                 }
                 self.badgeView?.properties = badge
@@ -104,7 +104,7 @@ internal extension NSItemContentView {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
         }
-                
+        
         internal func layoutBadge() {
             if let badge = self.badge, let badgeView = self.badgeView {
                 badgeView.sendToFront()
@@ -135,10 +135,7 @@ internal extension NSItemContentView {
             super.init(frame: .zero)
             self.wantsLayer = true
             self.maskToBounds = false
-            self.imageView.maskToBounds = true
-            //  self.translatesAutoresizingMaskIntoConstraints = false
-            //  self.imageView.translatesAutoresizingMaskIntoConstraints = false
-            
+            self.imageView.maskToBounds = true            
             self.addSubview( imageView)
             self.updateConfiguration()
         }

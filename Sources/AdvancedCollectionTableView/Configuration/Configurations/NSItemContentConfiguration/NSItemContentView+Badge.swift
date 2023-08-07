@@ -8,10 +8,9 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import SwiftUI
 
 internal extension NSItemContentView {
-    class ItemBadgeView: NSView {
+    class BadgeView: NSView {
         lazy var textField = ItemTextField(properties: properties.textProperties)
         lazy var imageView = ItemBadgeImageView(properties: properties.imageProperties)
         lazy var stackView: NSStackView = {
@@ -65,76 +64,6 @@ internal extension NSItemContentView {
         }
     }
     
-    struct BadgeView: View {
-        let configuration: NSItemContentConfiguration.Badge
-        
-        @ViewBuilder
-        var textItem: some View {
-            if let attributedText = configuration.attributedText {
-                Text(attributedText)
-            } else if  let text = configuration.text {
-                Text(text)
-            }
-        }
-        
-        @ViewBuilder
-        var imageItem: some View {
-            if let image = configuration.image {
-                BadgeImage(properties: configuration.imageProperties, image: image)
-            }
-        }
-        
-        @ViewBuilder
-        var items: some View {
-            if configuration.imageProperties.position.imageIsLeading {
-                imageItem
-                textItem
-            } else {
-                textItem
-                imageItem
-            }
-        }
-        
-        @ViewBuilder
-        var stackItem: some View {
-            if configuration.imageProperties.position.orientation == .vertical {
-                VStack(spacing: configuration.textToImageSpacing) {
-                    items
-                }
-            } else {
-                HStack(spacing: configuration.textToImageSpacing) {
-                    items
-                }
-            }
-        }
-        
-        var body: some View {
-            stackItem
-                .font(Font(configuration.textProperties.font))
-                .padding(configuration.padding.edgeInsets)
-        }
-    }
-    
-    struct BadgeImage: View {
-        let properties: NSItemContentConfiguration.Badge.ImageProperties
-        let image: NSImage
-        let foregroundColor: Color?
-        init(properties: NSItemContentConfiguration.Badge.ImageProperties, image: NSImage) {
-            self.properties = properties
-            if let tintColor = self.properties._resolvedTintColor {
-                self.foregroundColor = Color(tintColor)
-            } else {
-                self.foregroundColor = nil
-            }
-            self.image = image
-        }
-        var body: some View {
-            Image(image)
-                .foregroundStyle(foregroundColor, nil, nil)
-                .symbolConfiguration(properties.symbolConfiguration)
-        }
-    }
-    
     class ItemBadgeImageView: NSImageView {
         var properties: NSItemContentConfiguration.Badge.ImageProperties {
             didSet {
@@ -156,7 +85,6 @@ internal extension NSItemContentView {
             }
         }
         
-        
         func update() {
             self.imageScaling = properties.scaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsUI()
@@ -175,12 +103,6 @@ internal extension NSItemContentView {
             if let maxHeight = properties.maxHeight, let _height = height {
                 height = max(_height, maxHeight)
             }
-            
-            /*
-             if let pointSize = self.properties.symbolConfiguration?.font?.pointSize {
-             //  width = pointSize * 2
-             }
-             */
             
             if let width = width {
                 widthA = self.widthAnchor.constraint(equalToConstant: width)

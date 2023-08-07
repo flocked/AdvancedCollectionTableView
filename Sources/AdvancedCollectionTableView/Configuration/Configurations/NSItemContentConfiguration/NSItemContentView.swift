@@ -8,7 +8,6 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import SwiftUI
 
 public class NSItemContentView: NSView, NSContentView {
     /// Creates an item content view with the specified content configuration.
@@ -58,7 +57,7 @@ public class NSItemContentView: NSView, NSContentView {
     internal lazy var textField: ItemTextField = ItemTextField(properties: appliedConfiguration.textProperties)
     internal lazy var secondaryTextField: ItemTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
     internal lazy var contentView: ItemContentView = ItemContentView(configuration: appliedConfiguration)
-    internal var badgeView: ItemBadgeView? = nil
+    internal var badgeView: BadgeView? = nil
 
         
     internal func updateConfiguration() {
@@ -77,7 +76,7 @@ public class NSItemContentView: NSView, NSContentView {
         if appliedConfiguration.hasBadge, appliedConfiguration.hasContent, let badge = appliedConfiguration.badge {
             let oldPosition = self.badgeView?.properties.position
             if self.badgeView == nil {
-                self.badgeView = ItemBadgeView(properties: badge)
+                self.badgeView = BadgeView(properties: badge)
                 self.addSubview(self.badgeView!)
             }
             self.badgeView?.properties = badge
