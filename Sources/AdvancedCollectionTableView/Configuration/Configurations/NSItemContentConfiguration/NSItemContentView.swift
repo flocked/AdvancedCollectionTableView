@@ -73,7 +73,7 @@ public class NSItemContentView: NSView, NSContentView {
         self.anchorPoint = CGPoint(0.5, 0.5)
         layer?.scale = CGPoint(x: appliedConfiguration.scaleTransform, y: appliedConfiguration.scaleTransform)
         
-        if appliedConfiguration.hasBadge, let badge = appliedConfiguration.badge {
+        if appliedConfiguration.hasBadge, appliedConfiguration.hasContent, let badge = appliedConfiguration.badge {
             let oldPosition = self.badgeView?.properties.position
             if self.badgeView == nil {
                 self.badgeView = ItemBadgeView(properties: badge)
@@ -122,15 +122,18 @@ public class NSItemContentView: NSView, NSContentView {
         if let badge = self.appliedConfiguration.badge, let badgeView = self.badgeView {
             switch badge.position {
             case .bottomLeft, .topLeft:
-                badgeView.frame.origin.x = -(badgeView.frame.size.width/2.0)
+                badgeView.frame.origin.x = contentView.frame.origin.x - (badgeView.frame.size.width/2.0)
             case .bottomRight, .topRight:
-                badgeView.frame.origin.x = self.frame.size.width - (badgeView.frame.size.width/2.0)
+                badgeView.frame.origin.x =
+                (contentView.frame.origin.x +
+                contentView.frame.size.width) - (badgeView.frame.size.width/2.0)
             }
             switch badge.position {
             case .bottomLeft, .bottomRight:
-                badgeView.frame.origin.y = -(badgeView.frame.size.height/2.0)
+                badgeView.frame.origin.y = contentView.frame.origin.y - (badgeView.frame.size.height/2.0)
             case .topLeft, .topRight:
-                badgeView.frame.origin.y = self.frame.size.height - (badgeView.frame.size.height/2.0)
+                badgeView.frame.origin.y = (contentView.frame.origin.y +
+                contentView.frame.size.height) - (badgeView.frame.size.height/2.0)
             }
         }
     }
