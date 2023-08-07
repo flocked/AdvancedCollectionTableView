@@ -78,7 +78,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The corner radius of the image.
-        public var cornerRadius: CGFloat = 0.0
+        public var cornerRadius: CGFloat = 4.0
         /// The shadow properties of the image.
         public var shadowProperties: ConfigurationProperties.Shadow = .none()
         
@@ -89,7 +89,11 @@ public extension NSItemContentConfiguration {
         }
         
         /// Properties for configuring the primary text.
-        public var textProperties: ConfigurationProperties.Text = .body
+        public var textProperties: ConfigurationProperties.Text = {
+            var properties: ConfigurationProperties.Text = .body
+            properties.textColor = .white
+            return properties
+        }()
         
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = ImageProperties()

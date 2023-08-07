@@ -78,6 +78,7 @@ public class NSItemContentView: NSView, NSContentView {
                 Swift.print("Badge added")
                 self.badgeView = ItemBadgeView(properties: badge)
                 self.addSubview(self.badgeView!)
+                self.badgeView?.frame.origin.y = -5
                 /*
                 self.badgeView?.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4).activate()
                 self.badgeView?.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).activate()
