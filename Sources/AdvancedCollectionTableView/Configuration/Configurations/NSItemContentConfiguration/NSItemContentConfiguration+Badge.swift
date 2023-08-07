@@ -102,7 +102,12 @@ public extension NSItemContentConfiguration {
         /// The position of the badge.
         public var position: Position  = .topRight
         
-        /// The offset of the value.
+        /// The offset of the value. A width value of 0.5 centers the badge mid x to the item image/view width border.
+        /**
+         The offset of the badge.
+         
+         `width` and `height` should be a value between 0.0 and 1.0. A `width` value of 0.5 centers the badge's mid x to the item image/view width border. A `height` value of 0.5 centers the badge's mid y to the item image/view height border.
+         */
         public var offset: CGSize = CGSize(width: 0.66, height: 0.66) {
             didSet {
                 var clampedOffset = self.offset
