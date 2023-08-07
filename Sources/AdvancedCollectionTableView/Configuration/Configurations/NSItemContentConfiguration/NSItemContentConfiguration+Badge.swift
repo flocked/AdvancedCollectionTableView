@@ -101,10 +101,10 @@ public extension NSItemContentConfiguration {
         /// The position of the badge.
         var position: Position  = .topRight
         
-        var textToImageSpacing: CGFloat = 4.0
+        var textToImageSpacing: CGFloat = 6.0
 
         /// The margins between the badge content and the edges of the badge view.
-        public var padding: NSDirectionalEdgeInsets = .init(4.0)
+        public var padding: NSDirectionalEdgeInsets = .init(top: 2, leading: 6, bottom: 2, trailing: 6)
         
         internal var hasBadge: Bool {
             self.text != nil || self.attributedText != nil || self.image != nil
