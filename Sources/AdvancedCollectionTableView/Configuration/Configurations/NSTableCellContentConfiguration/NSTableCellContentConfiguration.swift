@@ -36,7 +36,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
         var configuration = sidebar(.body, imageColor: imageColor)
         configuration.imageToTextPadding = 6.0
         configuration.type = .plain
-        configuration.insets = NSEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+        configuration.margins = NSDirectionalEdgeInsets(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
     
@@ -58,7 +58,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
         configuration.textProperties.textColor = .tertiaryLabelColor
         configuration.imageProperties.tintColor = .tertiaryLabelColor
         configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), colorConfiguration: .monochrome)
-        configuration.insets = .init(top: 2, left: 0.0, bottom: 2, right: 2.0)
+        configuration.margins = .init(top: 2, leading: 0.0, bottom: 2, trailing: 2.0)
         return configuration
     }
     
@@ -66,7 +66,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
     public static func sidebarLarge(imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
         var configuration = sidebar(.title3, imageColor: imageColor)
         configuration.type = .large
-        configuration.insets = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 8.0, right: 4.0)
+        configuration.margins = .init(top: 8.0, leading: 4.0, bottom: 8.0, trailing: 4.0)
         return configuration
     }
     
@@ -104,7 +104,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
     /// The padding between primary and secndary text.
     public var textToSecondaryTextPadding: CGFloat = 2.0
     /// The margins between the content and the edges of the content view.
-    public var insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+    public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
     
     internal var type: TableCellType? = nil
     internal var tableViewStyle: NSTableView.Style? = nil
@@ -150,7 +150,7 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
     
     // When an updated configuration gets applied the content view, the values get compared to the previos configuration. If any value changed, an update to the layout constraints is needed.
     internal var constraintProperties: [any Equatable] {
-        [self.hasText, self.hasSecondaryText, self.hasContent, self.imageToTextPadding, self.textToSecondaryTextPadding, self.insets, self.imageProperties.sizing]
+        [self.hasText, self.hasSecondaryText, self.hasContent, self.imageToTextPadding, self.textToSecondaryTextPadding, self.margins, self.imageProperties.sizing]
     }
     
     mutating internal func updateResolvedColors() {
@@ -238,21 +238,21 @@ public extension NSTableCellContentConfiguration {
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageToTextPadding = 6.0
-            configuration.insets = NSEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+            configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         case .sourceList:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
             configuration.imageToTextPadding = 8.0
-            configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+            configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         @unknown default:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
             configuration.imageToTextPadding = 8.0
-            configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+            configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         }
         return configuration
     }
@@ -277,7 +277,7 @@ public extension NSTableCellContentConfiguration {
         configuration.imageProperties.tintColor = imageColor.tintColor
         configuration.imageProperties.symbolConfiguration = .font(style).colorConfiguration(imageColor.symbolColorConfiguration)
         configuration.imageToTextPadding = 8.0
-        configuration.insets = NSEdgeInsets(top: 6.0, left: 4.0, bottom: 6.0, right: 4.0)
+        configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         return configuration
     }
     

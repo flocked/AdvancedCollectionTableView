@@ -115,7 +115,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     public var contentPosition: ContentPosition = .top
     
     /// The margins between the content and the edges of the content view.
-    public var padding: NSDirectionalEdgeInsets = .init(4.0)
+    public var margins: NSDirectionalEdgeInsets = .init(4.0)
     
     /**
      The scaling of the item.

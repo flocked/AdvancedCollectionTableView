@@ -61,7 +61,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         self.maskToBounds = false
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.stackViewConstraints = self.addSubview(withConstraint: stackView)
-        self.stackViewConstraints.constant(appliedConfiguration.insets)
+        self.stackViewConstraints.constant(appliedConfiguration.margins)
     }
     
     internal func updateConfiguration() {
@@ -85,12 +85,12 @@ public class NSTableCellContentView: NSView, NSContentView {
             stackView.addArrangedSubview(imageView)
         }
         
-        self.stackViewConstraints.constant(appliedConfiguration.insets)
+        self.stackViewConstraints.constant(appliedConfiguration.margins)
     }
         
     internal func updateLayout() {
-        let width = self.frame.size.width - appliedConfiguration.insets.width
-        var height =  appliedConfiguration.insets.height
+        let width = self.frame.size.width - appliedConfiguration.margins.width
+        var height =  appliedConfiguration.margins.height
                 
         if (appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText) {
             height += appliedConfiguration.textToSecondaryTextPadding
@@ -98,7 +98,7 @@ public class NSTableCellContentView: NSView, NSContentView {
                 height += appliedConfiguration.imageToTextPadding
             }
         }
-        var y = appliedConfiguration.insets.bottom
+        var y = appliedConfiguration.margins.bottom
         if (appliedConfiguration.hasText) {
             textField.frame.size = textField.sizeThatFits(CGSize(width, CGFloat.infinity))
             textField.frame.size.width = width

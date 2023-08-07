@@ -226,7 +226,7 @@ internal extension NSItemContentViewSwiftUI {
         
         var body: some View {
             stackItem
-                .padding(configuration.padding.edgeInsets)
+                .padding(configuration.margins.edgeInsets)
                 .scaleEffect(configuration.scaleTransform)
         }
     }

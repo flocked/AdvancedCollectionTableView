@@ -142,8 +142,8 @@ public class NSItemContentView: NSView, NSContentView {
     public override func layout() {
         super.layout()
         
-        let width = self.frame.size.width - appliedConfiguration.padding.width
-        var height = self.frame.size.height - appliedConfiguration.padding.height
+        let width = self.frame.size.width - appliedConfiguration.margins.width
+        var height = self.frame.size.height - appliedConfiguration.margins.height
         
         if (appliedConfiguration.hasText || appliedConfiguration.hasSecondaryText) {
             height -= appliedConfiguration.contentToTextPadding
@@ -153,7 +153,7 @@ public class NSItemContentView: NSView, NSContentView {
             height -= appliedConfiguration.textToSecondaryTextPadding
         }
         
-        var y = appliedConfiguration.padding.bottom
+        var y = appliedConfiguration.margins.bottom
 
         if (appliedConfiguration.hasSecondaryText) {
             secondaryTextField.frame.size = secondaryTextField.sizeThatFits(CGSize(width, CGFloat.infinity))
@@ -213,8 +213,8 @@ public class NSItemContentView: NSView, NSContentView {
     
     
     func newLayout() {
-        let width = self.frame.size.width - appliedConfiguration.padding.width
-        var height = self.frame.size.height - appliedConfiguration.padding.height
+        let width = self.frame.size.width - appliedConfiguration.margins.width
+        var height = self.frame.size.height - appliedConfiguration.margins.height
         
         if (appliedConfiguration.hasText || appliedConfiguration.hasSecondaryText) {
             height -= appliedConfiguration.contentToTextPadding
@@ -255,7 +255,7 @@ public class NSItemContentView: NSView, NSContentView {
             }
         }
         
-        var y = appliedConfiguration.padding.bottom
+        var y = appliedConfiguration.margins.bottom
 
         if appliedConfiguration.contentPosition == .top {
             layoutSecondaryTextField(width: width, y: &y)

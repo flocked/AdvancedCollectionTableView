@@ -11,6 +11,7 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSItemContentConfiguration {
+    /// The badge displayed next to an item image/view.
     struct Badge: Hashable {
         
         /// Creates a badge configuration.
