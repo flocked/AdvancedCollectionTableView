@@ -27,6 +27,7 @@ internal extension NSTableCellContentView {
                     var origin = self.frame.origin
                     origin.x = width - image.alignmentRect.size.width
                     self.frame.origin = origin
+                    update()
                 }
             }
         }
