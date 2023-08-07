@@ -84,13 +84,11 @@ class ViewController: NSViewController {
     }
     
     override func viewDidAppear() {
+        super.viewDidAppear()
         toolbar.attachedWindow(self.view.window)
         
         // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
-        Swift.print(self.view.window?.firstResponder ?? "nil")
-        
-        super.viewDidAppear()
     }
     
     func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {

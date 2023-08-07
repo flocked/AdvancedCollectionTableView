@@ -122,7 +122,7 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        /// The outer shadow properties.
+        /// The shadow properties.
         public var shadow: ConfigurationProperties.Shadow = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
