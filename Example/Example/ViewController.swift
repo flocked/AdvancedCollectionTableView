@@ -83,6 +83,7 @@ class ViewController: NSViewController {
         
         // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
+        Swift.print(self.view.window?.firstResponder ?? "nil")
         
         super.viewDidAppear()
     }

@@ -9,7 +9,8 @@ import AppKit
 import SwiftUI
 import FZSwiftUtils
 import FZUIKit
-internal extension NSItemContentConfiguration {
+
+public extension NSItemContentConfiguration {
     struct Badge: Hashable {
         
         /// Creates a badge configuration.
@@ -107,7 +108,7 @@ internal extension NSItemContentConfiguration {
     }
 }
 
-internal extension NSItemContentConfiguration.Badge {
+public extension NSItemContentConfiguration.Badge {
     /// Properties that affect the image of the badge.
     struct ImageProperties: Hashable {
         

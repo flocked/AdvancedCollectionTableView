@@ -80,7 +80,7 @@ public struct NSItemContentConfiguration: NSContentConfiguration, Hashable {
     /// An overlay view the system places above the view and image and automatically resizes to fill the frame.
     public var overlayView: NSView? = nil
     /// The badge.
-    internal var badge: Badge? = .text("Fun Fun")
+    public var badge: Badge? = .text("Fun Fun")
     
     // MARK: Customizing appearance
     
