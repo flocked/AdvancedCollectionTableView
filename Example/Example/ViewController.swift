@@ -29,13 +29,11 @@ class ViewController: NSViewController {
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
-        configuration.contentProperties.imageScaling = .resize
         
         if let badgeText = galleryItem.badge {
             configuration.badge = .text(badgeText)
             configuration.badge?.position = .topRight
         }
-         
                 
         collectionViewItem.contentConfiguration = configuration
 
@@ -70,7 +68,7 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         
-        collectionView.collectionViewLayout = .grid(columns: 2, itemAspectRatio: CGSize(2, 1))
+        collectionView.collectionViewLayout = .grid(columns: 2)
         
         collectionView.dataSource = self.dataSource
         
