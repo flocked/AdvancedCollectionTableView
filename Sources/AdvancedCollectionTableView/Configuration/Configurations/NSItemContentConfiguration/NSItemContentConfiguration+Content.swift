@@ -33,7 +33,7 @@ public extension NSItemContentConfiguration {
                 }
             }
             internal var shouldResize: Bool {
-                self != .fit
+                self == .fit
             }
             internal var swiftui: ContentMode {
                 switch self {

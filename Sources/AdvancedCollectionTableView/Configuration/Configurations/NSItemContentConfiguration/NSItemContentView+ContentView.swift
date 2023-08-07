@@ -19,6 +19,7 @@ internal extension NSItemContentView {
                 if let newView = self.view {
                     self.addSubview(withConstraint: newView)
                     self.overlayView?.sendToFront()
+                    self.badgeView?.sendToFront()
                     self.isHidden = (self.image == nil && self.view == nil)
                 }
             }
@@ -29,6 +30,7 @@ internal extension NSItemContentView {
                 oldValue?.removeFromSuperview()
                 if let newView = self.overlayView {
                     self.addSubview(withConstraint: newView)
+                    self.badgeView?.sendToFront()
                 }
             }
         }
@@ -102,7 +104,7 @@ internal extension NSItemContentView {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
         }
-        
+                
         internal func layoutBadge() {
             if let badge = self.badge, let badgeView = self.badgeView {
                 badgeView.sendToFront()
@@ -124,6 +126,7 @@ internal extension NSItemContentView {
         
         override func layout() {
             super.layout()
+            self.imageView.frame.size = self.frame.size
             layoutBadge()
         }
         
