@@ -23,10 +23,23 @@ public extension NSItemContentConfiguration {
             case fit
             /// An option that resizes the image so it occupies all available space, both vertically and horizontally.
             case fill
+            /// The image is resized to fit the entire bounds rectangle.
+            case resize
+            internal var gravity: CALayerContentsGravity {
+                switch self {
+                case .fit: return .resizeAspect
+                case .fill: return .resizeAspectFill
+                case .resize: return .resize
+                }
+            }
+            internal var shouldResize: Bool {
+                self != .fit
+            }
             internal var swiftui: ContentMode {
                 switch self {
                 case .fit: return .fit
                 case .fill: return .fill
+                case .resize: return .fit
                 }
             }
         }

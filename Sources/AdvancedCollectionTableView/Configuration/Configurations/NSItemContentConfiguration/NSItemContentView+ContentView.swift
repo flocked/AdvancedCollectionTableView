@@ -12,7 +12,7 @@ import FZUIKit
 internal extension NSItemContentView {
     class ItemContentView: NSView {
         internal var badgeView: ItemBadgeView? = nil
-        internal let imageView: NSImageView = NSImageView()
+        internal let imageView: ImageView = ImageView()
         internal var view: NSView? = nil {
             didSet {
                 oldValue?.removeFromSuperview()
@@ -72,7 +72,7 @@ internal extension NSItemContentView {
             
             imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
             imageView.contentTintColor = contentProperties._resolvedImageTintColor
-            imageView.imageScaling = contentProperties.imageScaling == .fit ? .scaleProportionallyUpOrDown : .scaleProportionallyDown
+            imageView.imageScaling = contentProperties.imageScaling.gravity
             
             self.image = configuration.image
             
