@@ -41,7 +41,32 @@ internal extension NSTableCellContentView {
             self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
             
-            
+            if let imageSize = image?.size {
+                var size = imageSize
+                if image?.isSymbolImage == true {
+                    size.width = size.height * 2.0
+                }
+                if let maxWidth = properties.maxWidth {
+                    size.width = min(maxWidth, size.width)
+                }
+                if let maxHeight = properties.maxHeight {
+                    size.height = min(maxHeight, size.height)
+                }
+                if widthA == nil {
+                    widthA = self.widthAnchor.constraint(equalToConstant: size.width)
+                }
+                if heightA == nil {
+                    heightA = self.heightAnchor.constraint(equalToConstant: size.height)
+                }
+                widthA?.constant = size.width
+                heightA?.constant = size.height
+                widthA?.isActive = true
+                heightA?.isActive = true
+            } else {
+                widthA?.isActive = false
+                heightA?.isActive = false
+            }
+            /*
             var width: CGFloat? =  image?.size.width
             var height: CGFloat? =  image?.size.height
             if let maxWidth = properties.maxWidth, let _width = width {
@@ -71,6 +96,7 @@ internal extension NSTableCellContentView {
             } else {
                 heightA?.isActive = false
             }
+            */
             
         }
         

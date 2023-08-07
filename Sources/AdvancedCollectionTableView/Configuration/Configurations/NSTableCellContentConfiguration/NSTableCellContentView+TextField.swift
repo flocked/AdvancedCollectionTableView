@@ -53,6 +53,7 @@ internal extension NSTableCellContentView {
             self.backgroundColor = nil
             self.delegate = self
             self.textLayout = .wraps
+            self.truncatesLastVisibleLine = true
             self.update()
         }
         
