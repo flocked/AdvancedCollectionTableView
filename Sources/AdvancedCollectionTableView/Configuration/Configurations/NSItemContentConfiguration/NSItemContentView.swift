@@ -184,18 +184,18 @@ public class NSItemContentView: NSView, NSContentView {
         if appliedConfiguration.hasContent {
             if let imageSize = contentView.imageView.image?.size {
                 if appliedConfiguration.contentProperties.imageScaling.shouldResize {
-                    var resizedImageSize = imageSize.scaled(toFit: CGSize(width: width, height: height))
+                    var resizedImageSize = imageSize.scaled(toFit: remainingSize)
                     resizedImageSize = scaleSize(resizedImageSize, maxWidth: appliedConfiguration.contentProperties.maxWidth, maxHeight: appliedConfiguration.contentProperties.maxHeight)
                     contentView.frame.size = resizedImageSize
                 } else {
                     remainingSize = scaleSize(remainingSize, maxWidth: appliedConfiguration.contentProperties.maxWidth, maxHeight: appliedConfiguration.contentProperties.maxHeight)
                     contentView.frame.size = remainingSize
                 }
-                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             } else {
+                remainingSize = scaleSize(remainingSize, maxWidth: appliedConfiguration.contentProperties.maxWidth, maxHeight: appliedConfiguration.contentProperties.maxHeight)
                 contentView.frame.size = remainingSize
-                contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
             }
+            contentView.frame.origin = CGPoint((width - contentView.frame.size.width) * 0.5, y)
         }
         self.layoutBadge()
     }
