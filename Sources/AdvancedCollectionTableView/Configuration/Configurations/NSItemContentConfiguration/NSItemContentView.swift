@@ -130,7 +130,7 @@ public class NSItemContentView: NSView, NSContentView {
             case .bottomLeft, .bottomRight:
                 badgeView.frame.origin.y = -(badgeView.frame.size.height/2.0)
             case .topLeft, .topRight:
-                badgeView.frame.origin.x = self.frame.size.height - (badgeView.frame.size.height/2.0)
+                badgeView.frame.origin.y = self.frame.size.height - (badgeView.frame.size.height/2.0)
             }
         }
     }
