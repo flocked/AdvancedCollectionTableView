@@ -29,7 +29,7 @@ class ViewController: NSViewController {
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
-        configuration.contentProperties.imageScaling = .fill
+        configuration.contentProperties.imageScaling = .resize
         
         if let badgeText = galleryItem.badge {
             configuration.badge = .text(badgeText)
