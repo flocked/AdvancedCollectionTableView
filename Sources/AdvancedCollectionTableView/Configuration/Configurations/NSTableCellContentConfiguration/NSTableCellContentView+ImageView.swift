@@ -38,10 +38,10 @@ internal extension NSTableCellContentView {
             if let symbolHeight = symbolHeight {
                 intrinsicContentSize.width = Self.symbolWidths[symbolHeight]?.max() ??  intrinsicContentSize.width
             } else {
-                if let maxWidth = properties.maximumWidth {
+                if let maxWidth = properties.maximumWidth, intrinsicContentSize.width > maxWidth {
                     intrinsicContentSize.width = maxWidth
                 }
-                if let maxHeight = properties.maximumHeight {
+                if let maxHeight = properties.maximumHeight, intrinsicContentSize.height > maxHeight {
                     intrinsicContentSize.height = maxHeight
                 }
             }
