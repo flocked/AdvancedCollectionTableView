@@ -11,11 +11,12 @@ import FZUIKit
 
 internal extension NSTableCellContentView {
     class CellImageView: NSImageView {
+        /// The widths of the symbol
+        static var symbolWidths: [CGFloat: [CGFloat]] = [:]
         var properties: NSTableCellContentConfiguration.ImageProperties {
             didSet {
-                if oldValue != properties {
+                guard oldValue != properties else { return }
                     update()
-                }
             }
         }
         
@@ -32,8 +33,36 @@ internal extension NSTableCellContentView {
             }
         }
         
+        override var intrinsicContentSize: NSSize {
+            var intrinsicContentSize = super.intrinsicContentSize
+            if let symbolHeight = symbolHeight {
+                intrinsicContentSize.width = Self.symbolWidths[symbolHeight]?.max() ??  intrinsicContentSize.width
+            } else {
+                if let maxWidth = properties.maximumWidth {
+                    intrinsicContentSize.width = maxWidth
+                }
+                if let maxHeight = properties.maximumHeight {
+                    intrinsicContentSize.height = maxHeight
+                }
+            }
+            return intrinsicContentSize
+        }
+        
+        internal var symbolHeight: CGFloat?
         
         func update() {
+            if let image = image, image.isSymbolImage == true {
+                let imageSize = image.size
+                self.symbolHeight = imageSize.height
+                if var symbolWidths = Self.symbolWidths[imageSize.height] {
+                    symbolWidths.append(imageSize.width)
+                    Self.symbolWidths[imageSize.height] = symbolWidths.uniqued()
+                } else {
+                    Self.symbolWidths[imageSize.height] = [imageSize.width]
+                }
+            } else {
+                self.symbolHeight = nil
+            }
             self.imageScaling = properties.scaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsUI()
             self.borderColor = properties._resolvedBorderColor
@@ -41,70 +70,10 @@ internal extension NSTableCellContentView {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
-            /*
-            if let imageSize = image?.size {
-                var size = imageSize
-                if image?.isSymbolImage == true {
-                    size.width = size.height * 2.0
-                }
-                if let maxWidth = properties.maxWidth {
-                    size.width = min(maxWidth, size.width)
-                }
-                if let maxHeight = properties.maxHeight {
-                    size.height = min(maxHeight, size.height)
-                }
-                if widthA == nil {
-                    widthA = self.widthAnchor.constraint(equalToConstant: size.width)
-                }
-                if heightA == nil {
-                    heightA = self.heightAnchor.constraint(equalToConstant: size.height)
-                }
-                widthA?.constant = size.width
-                heightA?.constant = size.height
-                widthA?.isActive = true
-                heightA?.isActive = true
-            } else {
-                widthA?.isActive = false
-                heightA?.isActive = false
-            }
-            */
-            /*
-            var width: CGFloat? =  image?.size.width
-            var height: CGFloat? =  image?.size.height
-            if let maxWidth = properties.maxWidth, let _width = width {
-                width = max(_width, maxWidth)
-            }
-            
-            if let maxHeight = properties.maxHeight, let _height = height {
-                height = max(_height, maxHeight)
-            }
-            
-            /*
-             if let pointSize = self.properties.symbolConfiguration?.font?.pointSize {
-             //  width = pointSize * 2
-             }
-             */
-            
-            if let width = width {
-                widthA = self.widthAnchor.constraint(equalToConstant: width)
-                widthA?.isActive = true
-            } else {
-                widthA?.isActive = false
-            }
-            
-            if let height = height {
-                heightA = self.heightAnchor.constraint(equalToConstant: height)
-                heightA?.isActive = true
-            } else {
-                heightA?.isActive = false
-            }
-            */
-            
+   
+            self.invalidateIntrinsicContentSize()
         }
-        
-        var widthA: NSLayoutConstraint? = nil
-        var heightA: NSLayoutConstraint? = nil
-        
+                
         init(properties: NSTableCellContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)

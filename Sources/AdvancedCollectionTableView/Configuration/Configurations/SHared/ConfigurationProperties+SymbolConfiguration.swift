@@ -338,6 +338,23 @@ public extension NSUIImageView {
     }
 }
 
+internal extension NSImage.SymbolWeight {
+    var fontWeight: NSFont.Weight {
+        switch self {
+        case .black: return .black
+        case .unspecified: return .regular
+        case .ultraLight: return .ultraLight
+        case .thin: return .thin
+        case .light: return .light
+        case .regular: return .regular
+        case .medium: return .medium
+        case .semibold: return .semibold
+        case .bold: return .bold
+        case .heavy: return .heavy
+        }
+    }
+}
+
 @available(macOS 12.0, *)
 public extension NSImage {
     func withSymbolConfiguration(_ configuration: ConfigurationProperties.SymbolConfiguration) -> NSImage? {

@@ -97,9 +97,9 @@ public extension NSTableCellContentConfiguration {
         public var scaling: NSImageScaling = .scaleNone
         
         /// The maximum width of the image.
-        public var maxWidth: CGFloat? = nil
+        public var maximumWidth: CGFloat? = nil
         /// The maximum height of the image.
-        public var maxHeight: CGFloat? = nil
+        public var maximumHeight: CGFloat? = nil
         
         /// The sizing option for the image.
         public var sizing: ImageSizing = .firstTextHeight

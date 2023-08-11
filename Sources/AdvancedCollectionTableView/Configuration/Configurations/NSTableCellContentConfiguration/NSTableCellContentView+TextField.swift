@@ -92,9 +92,6 @@ internal extension NSTableCellContentView {
                 newSize.height = cellSize.height + 8.0
                 newSize.width = width
             }
-            if let width = self.constraints.width {
-                
-            }
             return intrinsicContentSize
         }
         
