@@ -14,7 +14,7 @@ internal extension NSItemContentConfiguration {
         guard let view = (self.collectionViewItem?.contentView as? NSItemContentView), let collectionView = self.collectionViewItem?._collectionView else { return }
         var backgroundView: NSView? = nil
         if let backgroundColor = configuration.backgroundColor {
-            if let _backgroundView = collectionView.superview?.firstSubview(type: TransitionBackgroundView.self) {
+            if let _backgroundView = collectionView.superview?.subviews(type: TransitionBackgroundView.self).first {
                 backgroundView = _backgroundView
                 _backgroundView.frame = collectionView.frame
                 collectionView.superview?.addSubview(backgroundView!)

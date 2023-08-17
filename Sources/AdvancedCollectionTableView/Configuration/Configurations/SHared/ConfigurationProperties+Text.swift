@@ -75,13 +75,14 @@ public extension ConfigurationProperties {
         /**
          Specifies a system font to use, along with the size, weight, and any design parameters you want applied to the text.
          
-         - Parameters size: The size of the font.
-         - Parameters weight: The weight of the font.
-         - Parameters design: The design of the font.
+         - Parameters:
+            - size: The size of the font.
+            - weight: The weight of the font.
+            - design: The design of the font.
          */
         public static func system(size: CGFloat, weight: NSFont.Weight = .regular, design: NSFontDescriptor.SystemDesign = .default) -> Text  {
             var properties = Text()
-            properties.font = .system(size: size, weight: weight, design: design)
+            properties.font = .systemFont(ofSize: size, weight: weight, design: design)
             properties.swiftUIFont = .system(size: size, design: design.swiftUI).weight(weight.swiftUI)
             return properties
         }
@@ -89,13 +90,14 @@ public extension ConfigurationProperties {
         /**
          Specifies a system font to use, along with the size, weight, and any design parameters you want applied to the text.
          
-         - Parameters style: The style of the font.
-         - Parameters weight: The weight of the font.
-         - Parameters design: The design of the font.
+         - Parameters:
+            - style: The style of the font.
+            - weight: The weight of the font.
+            - design: The design of the font.
          */
         public static func system(_ style: NSFont.TextStyle = .body, weight: NSFont.Weight = .regular, design: NSFontDescriptor.SystemDesign = .default) -> Text {
             var properties = Text()
-            properties.font = .system(style, design: design).weight(weight)
+            properties.font = .systemFont(style, design: design).weight(weight)
             properties.swiftUIFont = .system(style.swiftUI, design: design.swiftUI).weight(weight.swiftUI)
             return properties
         }

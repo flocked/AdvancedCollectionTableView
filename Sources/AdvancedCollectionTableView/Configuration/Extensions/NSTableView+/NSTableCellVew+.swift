@@ -148,8 +148,8 @@ public extension NSTableCellView {
      The type of block for handling updates to the cell’s configuration using the current state.
      
      - Parameters:
-     - cell: The table view cell to configure.
-     - state: The new state to use for updating the cell’s configuration.
+        - cell: The table view cell to configure.
+        - state: The new state to use for updating the cell’s configuration.
      */
     typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSTableCellConfigurationState) -> Void
     

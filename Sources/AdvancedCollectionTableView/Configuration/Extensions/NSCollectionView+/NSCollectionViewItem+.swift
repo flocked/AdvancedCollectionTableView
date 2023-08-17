@@ -284,9 +284,9 @@ public extension NSCollectionViewItem {
      The type of block for handling updates to the item’s configuration using the current state.
      
      - Parameters:
-     - item: The collection view item to configure.
+        - item: The collection view item to configure.
      - state: The new state to use for updating the item’s configuration.
-     */
+        */
     typealias ConfigurationUpdateHandler = (_ item: NSCollectionViewItem, _ state: NSItemConfigurationState) -> Void
     
     

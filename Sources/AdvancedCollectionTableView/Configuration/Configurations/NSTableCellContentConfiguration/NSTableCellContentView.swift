@@ -42,7 +42,6 @@ public class NSTableCellContentView: NSView, NSContentView {
         stackView.orientation = .vertical
         stackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.alignment = .leading
-        //    textStack.setDistribution(.center)
         return stackView
     }()
     
@@ -50,16 +49,15 @@ public class NSTableCellContentView: NSView, NSContentView {
         var stackView = NSStackView(views: [imageView, textStackView])
         stackView.orientation = .horizontal
         stackView.spacing = appliedConfiguration.imageToTextPadding
-        stackView.alignment = .firstBaseline
+        stackView.alignment = appliedConfiguration.contentAlignment
         stackView.distribution = .fill
-        //   stackView.setDistribution(.firstBaseline)
         return stackView
     }()
     
     internal var stackViewConstraints: [NSLayoutConstraint] = []
+    
     internal func initialSetup() {
         self.maskToBounds = false
-        self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.stackViewConstraints = self.addSubview(withConstraint: stackView)
         self.stackViewConstraints.constant(appliedConfiguration.margins)
     }
@@ -76,6 +74,7 @@ public class NSTableCellContentView: NSView, NSContentView {
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.imageToTextPadding
         stackView.orientation = appliedConfiguration.imageProperties.position.orientation
+        stackView.alignment = appliedConfiguration.contentAlignment
         
         if appliedConfiguration.imageProperties.position.imageIsLeading,  stackView.arrangedSubviews.first != imageView {
             stackView.removeArrangedSubview(textStackView)
@@ -84,8 +83,7 @@ public class NSTableCellContentView: NSView, NSContentView {
             stackView.removeArrangedSubview(imageView)
             stackView.addArrangedSubview(imageView)
         }
-        
-        self.stackViewConstraints.constant(appliedConfiguration.margins)
+        stackViewConstraints.constant(appliedConfiguration.margins)
     }
         
     internal func updateLayout() {

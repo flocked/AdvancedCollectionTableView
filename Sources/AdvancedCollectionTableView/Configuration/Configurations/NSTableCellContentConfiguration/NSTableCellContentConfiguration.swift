@@ -143,6 +143,14 @@ public struct NSTableCellContentConfiguration: NSContentConfiguration, AutoSizea
         return imageProperties.position
     }
     
+    internal var contentAlignment: NSLayoutConstraint.Attribute  {
+        switch self.imageProperties.position {
+        case .bottom, .top: return .centerX
+        case .leading, .trailing: return .centerY
+        case .leadingFirstBaseline, .trailingFirstBaseline: return .firstBaseline
+        }
+    }
+    
     internal var contentSizing: ImageProperties.ImageSizing? {
         guard hasContent else { return nil }
         return imageProperties.sizing
@@ -271,8 +279,8 @@ public extension NSTableCellContentConfiguration {
     internal static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, imageColor: SidebarImageColor = .accentColor) -> NSTableCellContentConfiguration {
         var configuration = NSTableCellContentConfiguration()
         configuration.type = .sidebar
-        configuration.textProperties.font = .system(style).weight(weight)
-        configuration.secondaryTextProperties.font = .system(style).weight(weight)
+        configuration.textProperties.font = .systemFont(style).weight(weight)
+        configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight())
         configuration.imageProperties.tintColor = imageColor.tintColor
         configuration.imageProperties.symbolConfiguration = .font(style).colorConfiguration(imageColor.symbolColorConfiguration)

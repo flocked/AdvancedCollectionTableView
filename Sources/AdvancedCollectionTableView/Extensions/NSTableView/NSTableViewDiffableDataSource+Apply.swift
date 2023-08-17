@@ -14,9 +14,9 @@ public extension NSTableViewDiffableDataSource {
      It’s safe to call this method from a background queue, but you must do so consistently in your app. Always call this method exclusively from the main queue or from a background queue.
      
      - Parameters:
-     - snapshot: The snapshot reflecting the new state of the data in the table view.
-     - option:  Option how to apply the snapshot to the table view.
-     - completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
+        - snapshot: The snapshot reflecting the new state of the data in the table view.
+        - option:  Option how to apply the snapshot to the table view.
+        - completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
      */
     func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption, completion: (() -> Void)? = nil) {
         switch option {

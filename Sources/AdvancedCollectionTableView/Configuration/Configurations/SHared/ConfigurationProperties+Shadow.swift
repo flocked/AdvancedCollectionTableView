@@ -109,7 +109,7 @@ public extension NSUIView {
      Configurates the shadow of the view.
      
      - Parameters:
-     - configuration:The configuration for configurating the shadow.
+        - configuration:The configuration for configurating the shadow.
      */
     func configurate(using configuration: ConfigurationProperties.Shadow) {
         wantsLayer = true
@@ -122,7 +122,7 @@ public extension CALayer {
      Configurates the shadow of the layer.
      
      - Parameters:
-     - configuration:The configuration for configurating the shadow.
+        - configuration:The configuration for configurating the shadow.
      */
     func configurate(using configuration: ConfigurationProperties.Shadow) {
         shadowColor = configuration._resolvedColor?.cgColor

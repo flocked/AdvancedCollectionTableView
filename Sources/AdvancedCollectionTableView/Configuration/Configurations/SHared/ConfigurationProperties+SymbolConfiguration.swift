@@ -60,10 +60,11 @@ public extension ConfigurationProperties {
         /**
          Creates a symbol configuration.
          
-         - Parameters font: The font.
-         - Parameters colorConfiguration: The color configuration.
-         - Parameters colorTransform: The color transformer.
-         - Parameters imageScale: The image scaling.
+         - Parameters:
+            - font: The font.
+            - colorConfiguration: The color configuration.
+            - colorTransform: The color transformer.
+            - imageScale: The image scaling.
          
          - Returns: a symbol configuration object.
          */
@@ -293,7 +294,7 @@ internal extension ConfigurationProperties.SymbolConfiguration {
         case .multicolor(let color):
             configuration = .multicolor(color)
         case .none:
-            configuration = .unspecified
+            configuration = NSUIImage.SymbolConfiguration()
         }
         
         switch self.font {

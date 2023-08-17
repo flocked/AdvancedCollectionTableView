@@ -14,9 +14,9 @@ public extension NSTableView {
      Dequeues a configured reusable row view object.
      
      - Parameters:
-     - registration: The row view registration for configuring the rowview object. See `NSTableView.RowRegistration`.
-     - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
-     - element: The element that provides data for the row.
+        - registration: The row view registration for configuring the rowview object. See `NSTableView.RowRegistration`.
+        - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
+        - element: The element that provides data for the row.
      
      - returns:A configured reusable row view object.
      */
@@ -62,8 +62,9 @@ public extension NSTableView {
         /**
          Creates a row registration with the specified registration handler.
          
-         - Parameters identifier: The identifier of the row registration.
-         - Parameters handler: The handler to configurate the row view.
+         - Parameters:
+            - identifier: The identifier of the row registration.
+            - handler: The handler to configurate the row view.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
@@ -74,9 +75,10 @@ public extension NSTableView {
         /**
          Creates a row registration with the specified registration handler and nib file.
          
-         - Parameters nib: The nib of the row view.
-         - Parameters identifier: The identifier of the row registration.
-         - Parameters handler: The handler to configurate the row view.
+         - Parameters:
+            - nib: The nib of the row view.
+            - identifier: The identifier of the row registration.
+            - handler: The handler to configurate the row view.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib

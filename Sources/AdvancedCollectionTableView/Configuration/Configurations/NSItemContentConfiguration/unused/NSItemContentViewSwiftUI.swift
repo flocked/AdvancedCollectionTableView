@@ -11,6 +11,7 @@ import FZUIKit
 import SwiftUI
 
 // Unused SwiftUI based version of NSItemContentView
+@available(macOS 13.0, *)
 internal class NSItemContentViewSwiftUI: NSView, NSContentView {
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
@@ -85,7 +86,9 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
     }
 }
 
+@available(macOS 13.0, *)
 internal extension NSItemContentViewSwiftUI {
+    @available(macOS 13.0, *)
     struct ContentItem: View {
         let view: NSView?
         let image: NSImage?
@@ -178,6 +181,7 @@ internal extension NSItemContentViewSwiftUI {
         }
     }
     
+    @available(macOS 13.0, *)
     struct ContentView: View {
         let configuration: NSItemContentConfiguration
         
@@ -267,9 +271,10 @@ internal extension View {
     }
 }
 
+@available(macOS 13.0, *)
 struct ShapedImage: View {
     let image: NSImage
-    let shape: FZUIKit.AnyShape
+    let shape: AnyShape
     let aspectRatio: ContentMode
     
     init<S: Shape>(image: NSImage, shape: S, aspectRatio: ContentMode) {

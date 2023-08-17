@@ -19,9 +19,9 @@
   Use these constants with the selfSizingInvalidation property.
   
   - Parameters:
-  - disabled: A mode that disables self-sizing invalidation.
-  - enabled: A mode that enables manual self-sizing invalidation.
-  - enabledIncludingConstraints: A mode that enables automatic self-sizing invalidation after Auto Layout changes.
+    - disabled: A mode that disables self-sizing invalidation.
+    - enabled: A mode that enables manual self-sizing invalidation.
+    - enabledIncludingConstraints: A mode that enables automatic self-sizing invalidation after Auto Layout changes.
   */
  enum SelfSizingInvalidation: Int {
  case disabled = 0

@@ -20,6 +20,14 @@ internal extension NSTableCellContentView {
             }
         }
         
+        internal var tableView: NSTableView? {
+            firstSuperview(for: NSTableView.self)
+        }
+        
+        internal var cellImageViews:  [CellImageView] {
+            tableView?.subviews(type: CellImageView.self) ?? []
+        }
+        
         override var image: NSImage? {
             didSet {
                 self.isHidden = (self.image == nil)

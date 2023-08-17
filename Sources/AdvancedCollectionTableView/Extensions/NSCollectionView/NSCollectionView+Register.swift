@@ -14,7 +14,7 @@ public extension NSCollectionView {
      To dequeues the registered item use  ``AppKit/NSCollectionView/makeItem(_:for:)``.
      
      - Parameters:
-     - itemClass: The class of a item that you want to use in the collection view.
+        - itemClass: The class of a item that you want to use in the collection view.
      */
     func register<Item: NSCollectionViewItem>(_ item: Item.Type) {
         let identifier = NSUserInterfaceItemIdentifier(String(describing: item.self))
@@ -27,8 +27,8 @@ public extension NSCollectionView {
      To dequeues the registered item use ``AppKit/NSCollectionView/makeItem(_:for:)``.
      
      - Parameters:
-     - itemClass: The class of a item that you want to use in the collection view.
-     - nib: The nib object containing the item object. The nib file must contain only one top-level object and that object must be of the type NSCollectionViewItem.
+        - itemClass: The class of a item that you want to use in the collection view.
+        - nib: The nib object containing the item object. The nib file must contain only one top-level object and that object must be of the type NSCollectionViewItem.
      */
     func register<Item: NSCollectionViewItem>(_ item: Item.Type, nib: NSNib) {
         let identifier = NSUserInterfaceItemIdentifier(String(describing: Item.self))
@@ -43,8 +43,8 @@ public extension NSCollectionView {
      - Important: You must register a class or nib file using ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)`` before calling this method.
      
      - Parameters:
-     - itemClass: The class of a item that you want to use in the collection view.
-     - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
+        - itemClass: The class of a item that you want to use in the collection view.
+        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
      
      - Returns: A valid item object.
      */
@@ -60,8 +60,8 @@ public extension NSCollectionView {
      - Important: You must register a class or nib file using ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)`` before calling this method.
 
      - Parameters:
-     - itemClass: The class of a item that you want to use in the collection view.
-     - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
+        - itemClass: The class of a item that you want to use in the collection view.
+        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
      
      - Returns: A valid item object.
      */
@@ -89,8 +89,8 @@ public extension NSCollectionView {
      Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the makeSupplementaryView(ofKind:withIdentifier:for:) method until after you register the corresponding view.
      
      - Parameters:
-     - viewClass: The view class to use for the supplementary view. This class must be descended from NSView and must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
-     - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
+        - viewClass: The view class to use for the supplementary view. This class must be descended from NSView and must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
+        - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
     func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
         self.register(SupplementaryView.self, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
@@ -106,9 +106,9 @@ public extension NSCollectionView {
      Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the makeSupplementaryView(ofKind:withIdentifier:for:) method until after you register the corresponding view.
      
      - Parameters:
-     - viewClass: The view class to use for the supplementary view. This class must be descended from NSView and must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
-     - nib: The nib object containing the supplementary view’s definition. The nib file must contain exactly one NSView object at the top level and that view must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
-     - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
+        - viewClass: The view class to use for the supplementary view. This class must be descended from NSView and must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
+        - nib: The nib object containing the supplementary view’s definition. The nib file must contain exactly one NSView object at the top level and that view must conform to the NSCollectionViewElement protocol. Specify nil to unregister a previously registered class or nib file.
+        - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
     func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
         self.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
@@ -122,8 +122,8 @@ public extension NSCollectionView {
      If you used the register(_:forSupplementaryViewOfKind:withIdentifier:) method to register a nib file for the identifier, this method loads the view from the nib file and returns it.
      
      - Parameters:
-     - elementKind: The kind of supplementary view to create. This value is defined by the layout object. This parameter must not be an empty string or nil.
-     - indexPath: The index path specifying the location of the supplementary view. The data source object receives this information in its collectionView(_:viewForSupplementaryElementOfKind:at:) method and you should just pass it along.
+        - elementKind: The kind of supplementary view to create. This value is defined by the layout object. This parameter must not be an empty string or nil.
+        - indexPath: The index path specifying the location of the supplementary view. The data source object receives this information in its collectionView(_:viewForSupplementaryElementOfKind:at:) method and you should just pass it along.
      
      - Returns: A view that adopts the NSCollectionViewElement protocol.
      */
@@ -139,9 +139,9 @@ public extension NSCollectionView {
      If you used the register(_:forSupplementaryViewOfKind:withIdentifier:) method to register a nib file for the identifier, this method loads the view from the nib file and returns it.
      
      - Parameters:
-     - viewClass: The view class to use for the supplementary view.
-     - elementKind: The kind of supplementary view to create. This value is defined by the layout object. This parameter must not be an empty string or nil.
-     - indexPath: The index path specifying the location of the supplementary view. The data source object receives this information in its collectionView(_:viewForSupplementaryElementOfKind:at:) method and you should just pass it along.
+        - viewClass: The view class to use for the supplementary view.
+        - elementKind: The kind of supplementary view to create. This value is defined by the layout object. This parameter must not be an empty string or nil.
+        - indexPath: The index path specifying the location of the supplementary view. The data source object receives this information in its collectionView(_:viewForSupplementaryElementOfKind:at:) method and you should just pass it along.
      
      - Returns: A view that adopts the NSCollectionViewElement protocol.
      */

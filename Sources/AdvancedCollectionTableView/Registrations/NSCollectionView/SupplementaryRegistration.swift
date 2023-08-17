@@ -14,8 +14,8 @@ public extension NSCollectionView {
      Dequeues a configured reusable supplementary view object.
      
      - Parameters:
-     - registration: The supplementary registration for configuring the supplementary view object. See NSCollectionView.SupplementaryRegistration.
-     - indexPath: The index path that specifies the location of the supplementary view in the collection view.
+        - registration: The supplementary registration for configuring the supplementary view object. See NSCollectionView.SupplementaryRegistration.
+        - indexPath: The index path that specifies the location of the supplementary view in the collection view.
      
      - returns: A configured reusable supplementary view object.
      */
@@ -74,8 +74,9 @@ public extension NSCollectionView {
         /**
          Creates a supplementary registration with the specified registration handler
          
-         - Parameters identifier: The identifier of the supplementary registration.
-         - Parameters handler: The handler to configurate the supplementary view.
+         - Parameters:
+            - identifier: The identifier of the supplementary registration.
+            - handler: The handler to configurate the supplementary view.
          */
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
@@ -87,9 +88,10 @@ public extension NSCollectionView {
         /**
          Creates a supplementary registration with the specified registration handler and nib file.
          
-         - Parameters nib: The nib of the supplementary view.
-         - Parameters identifier: The identifier of the supplementary registration.
-         - Parameters handler: The handler to configurate the supplementary view.
+         - Parameters:
+            - nib: The nib of the supplementary view.
+            - identifier: The identifier of the supplementary registration.
+            - handler: The handler to configurate the supplementary view.
          */
         public init(nib: NSNib, elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.nib = nib

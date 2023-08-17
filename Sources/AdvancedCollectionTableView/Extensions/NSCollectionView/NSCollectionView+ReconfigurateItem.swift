@@ -19,7 +19,7 @@ public extension NSCollectionView {
      - Important: You can only reconfigurate items that have been previously registered via  `NSCollectionView.ItemRegistration`, `register(_ itemClass: Item.Type)` or register(_ item: Item.Type, nib: NSNib)`.
      
      - Parameters:
-     - indexPaths: An array of IndexPath objects identifying the items you want to update.
+        - indexPaths: An array of IndexPath objects identifying the items you want to update.
      */
     func reconfigureItems(at indexPaths: [IndexPath]) {
         self.isReconfiguratingItems = true

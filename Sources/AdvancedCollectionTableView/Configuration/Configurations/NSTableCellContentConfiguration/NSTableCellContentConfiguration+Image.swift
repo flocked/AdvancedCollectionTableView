@@ -22,18 +22,22 @@ public extension NSTableCellContentConfiguration {
         public enum ImagePosition: Hashable {
             /// The image is positioned leading the text.
             case leading
+            /// The image is positioned leading the text.
+            case leadingFirstBaseline
             /// The image is positioned trailing the text.
             case trailing
+            /// The image is positioned trailing the text.
+            case trailingFirstBaseline
             /// The image is positioned below the text.
             case bottom
             /// The image is positioned above the text.
             case top
             internal var imageIsLeading: Bool {
-                self == .leading || self == .top
+                self == .leading || self == .leadingFirstBaseline || self == .top
             }
             internal var orientation: NSUserInterfaceLayoutOrientation {
                 switch self {
-                case .leading, .trailing:
+                case .leading, .trailing, .leadingFirstBaseline, .trailingFirstBaseline:
                     return .horizontal
                 case .top, .bottom:
                     return .vertical

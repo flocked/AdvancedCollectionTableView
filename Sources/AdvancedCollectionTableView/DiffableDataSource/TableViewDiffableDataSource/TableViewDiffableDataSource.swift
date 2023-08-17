@@ -101,8 +101,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
         self.init(tableView: tableView, cellProvider:  {
@@ -121,8 +121,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
     convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
@@ -145,8 +145,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-     - tableView: The initialized collection view object to connect to the diffable data source.
-     - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized collection view object to connect to the diffable data source.
+        - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
