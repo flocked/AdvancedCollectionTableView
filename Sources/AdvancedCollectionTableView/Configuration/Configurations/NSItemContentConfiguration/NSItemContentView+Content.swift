@@ -73,7 +73,7 @@ internal extension NSItemContentView {
             self.configurate(using: contentProperties.shadow)
             
             imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsUI()
-            imageView.contentTintColor = contentProperties._resolvedImageTintColor
+            imageView.tintColor = contentProperties._resolvedImageTintColor
             imageView.imageScaling = contentProperties.imageScaling.gravity
             
             self.image = configuration.image
