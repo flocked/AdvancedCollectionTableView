@@ -7,5 +7,5 @@
 
 import Foundation
 
-// ContentConfiguration Properties used for both NSTableCellContentConfiguration & NSItemContentConfiguration.
+// ContentConfiguration Properties used for both NSListContentConfiguration & NSItemContentConfiguration.
 public struct ConfigurationProperties { }

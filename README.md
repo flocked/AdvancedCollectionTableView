@@ -8,7 +8,7 @@ Take a look at the included example project which demonstrates:
 - NSCollectionView `itemRegistration`
 - NSTableView `cellRegistration`
 - `NSItemContentConfiguration`
-- `NSTableCellContentConfiguration`
+- `NSListContentConfiguration`
 - `AdvanceColllectionViewDiffableDataSource`
 - NSCollectionView `reconfiguratingItems(at: _)`.
 
@@ -48,10 +48,10 @@ collectionViewItem.contentConfiguration = NSHostingConfiguration {
     }
 }
 ```
-### NSTableCellContentConfiguration
+### NSListContentConfiguration
 A content configuration for a table cell.
 
-![NSTableCellContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSTableCellContentConfiguration.png)
+![NSListContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSListContentConfiguration.png)
  ```
  var content = tableCell.defaultContentConfiguration()
 

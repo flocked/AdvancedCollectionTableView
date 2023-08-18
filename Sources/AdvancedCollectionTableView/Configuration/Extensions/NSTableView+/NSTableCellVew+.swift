@@ -51,8 +51,8 @@ public extension NSTableCellView {
      
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
-    func defaultContentConfiguration() -> NSTableCellContentConfiguration {
-        return NSTableCellContentConfiguration.automatic()
+    func defaultContentConfiguration() -> NSListContentConfiguration {
+        return NSListContentConfiguration.automatic()
     }
     
     /**
@@ -118,7 +118,7 @@ public extension NSTableCellView {
     }
     
     internal func setNeedsAutomaticUpdateConfiguration() {
-        if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
         }
         
@@ -160,7 +160,7 @@ public extension NSTableCellView {
      
      ```
      cell.configurationUpdateHandler = { cell, state in
-     var content = NSTableCellContentConfiguration.sidebar().updated(for: state)
+     var content = NSListContentConfiguration.sidebar().updated(for: state)
      content.text = "Hello world!"
      if state.isDisabled {
      content.textProperties.color = .systemGray
@@ -245,7 +245,7 @@ public extension NSTableCellView {
                 self.tableView?.usesAutomaticRowHeights = true
             }
             
-            if let contentConfiguration = self.contentConfiguration as? NSTableCellContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+            if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
                 self.setNeedsUpdateConfiguration()
             }
             

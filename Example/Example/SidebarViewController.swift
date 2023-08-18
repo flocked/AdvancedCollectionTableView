@@ -22,12 +22,9 @@ class SidebarViewController: NSViewController {
     var items: [SidebarItem] = SidebarItem.sampleItems
     
     let cellRegistration: CellRegistration = CellRegistration(identifier: "SidebarCell") { cell, column, row, sidebarItem in
-        var configuration = NSTableCellContentConfiguration.sidebar()
+        var configuration = NSListContentConfiguration.sidebar()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
-        configuration.textProperties.isEditable = true
-        configuration.textProperties.isSelectable = true
-        configuration.textProperties.maxNumberOfLines = 0
         cell.contentConfiguration = configuration
     }
         
