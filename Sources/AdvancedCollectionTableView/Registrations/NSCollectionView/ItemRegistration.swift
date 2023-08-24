@@ -117,8 +117,10 @@ public extension NSCollectionView {
                 self.register(for: collectionView)
             }
             let item: Item
+            if collectionView.isReconfiguratingItems {
+                Swift.print("reconf.item", indexPath, ((collectionView.item(at: indexPath) as? Item) != nil) ? "Found" : "nil")
+            }
             if collectionView.isReconfiguratingItems, let existingItem = collectionView.item(at: indexPath) as? Item {
-                Swift.print("reconf.item", indexPath)
                 item = existingItem
             } else {
                 item = collectionView.makeItem(withIdentifier: self.identifier, for: indexPath) as! Item
