@@ -34,7 +34,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     /**
      Representation of a state for the data in the collection view.
      */
-    public typealias CollectionSnapshot = NSDiffableDataSourceSnapshot<Section,  Element>
+    public typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
     /**
      A closure that configures and returns a item for a collection view from its diffable data source.
      
@@ -49,6 +49,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
     
+    // A snapshot of the section and element id's.
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
@@ -75,7 +76,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return collectionView.enclosingScrollView }
     internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
-    internal var currentSnapshot: CollectionSnapshot = CollectionSnapshot()
+    internal var currentSnapshot: Snapshot = Snapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var draggingElements: [Element] {
@@ -222,7 +223,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         - option: Option how to apply the snapshot to the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: CollectionSnapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: Snapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         self.dataSource.apply(internalSnapshot, option, completion: completion)
@@ -233,8 +234,8 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
-    public func snapshot() -> CollectionSnapshot {
-        var snapshot = CollectionSnapshot()
+    public func snapshot() -> Snapshot {
+        var snapshot = Snapshot()
         snapshot.appendSections(currentSnapshot.sectionIdentifiers)
         for section in currentSnapshot.sectionIdentifiers {
             snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
@@ -242,7 +243,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         return snapshot
     }
     
-    internal func convertSnapshot(_ snapshot: CollectionSnapshot) -> InternalSnapshot {
+    internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
         var internalSnapshot = InternalSnapshot()
         let sections = snapshot.sectionIdentifiers
         internalSnapshot.appendSections(sections.ids)

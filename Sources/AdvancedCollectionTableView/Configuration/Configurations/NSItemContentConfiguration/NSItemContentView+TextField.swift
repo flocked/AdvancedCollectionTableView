@@ -61,6 +61,11 @@ internal extension NSItemContentView {
             (self.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
         }
         
+        
+        internal var collectionView: NSCollectionView? {
+            firstSuperview(for: NSCollectionView.self)
+        }
+        
         override public func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
@@ -85,14 +90,14 @@ internal extension NSItemContentView {
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 if self.properties.stringValidation?(self.stringValue) ?? true {
-                    self.window?.makeFirstResponder(nil)
+                    self.window?.makeFirstResponder(collectionView)
                     return true
                 } else {
                     NSSound.beep()
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                 self.stringValue = self.previousStringValue
-                self.window?.makeFirstResponder(nil)
+                self.window?.makeFirstResponder(collectionView)
                 return true
             }
             return false

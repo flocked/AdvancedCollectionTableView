@@ -11,7 +11,7 @@ import FZUIKit
 /**
  A content configuration for a table cell based content view.
  
- A table cell content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via ``makeContentView()``.
+ A list content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via ``makeContentView()``.
  
  Use  ``AppKit/NSTableCellView/defaultContentConfiguration()`` to get a content configuration that has preconfigured default styling based on the table view it is presented.
  
@@ -29,6 +29,41 @@ import FZUIKit
  ```
  */
 public struct NSListContentConfiguration: NSContentConfiguration, AutoSizeable, Hashable {
+    // MARK: Customizing content
+    
+    /// The primary text.
+    public var text: String? = nil
+    /// An attributed variant of the primary text.
+    public var attributedText: AttributedString? = nil
+    /// The secondary text.
+    public var secondaryText: String? = nil
+    /// An attributed variant of the secondary text.
+    public var secondaryAttributedText: AttributedString? = nil
+    /// The image.
+    public var image: NSImage? = nil
+    
+    public var badge: Badge? = nil
+    
+    // MARK: Customizing appearance
+    
+    /// Properties for configuring the primary text.
+    public var textProperties: ContentConfiguration.Text = .primary
+    /// Properties for configuring the secondary text.
+    public var secondaryTextProperties: ContentConfiguration.Text = .secondary
+    /// Properties for configuring the image.
+    public var imageProperties = ImageProperties()
+    
+    // MARK: Customizing layout
+    
+    /// The padding between the image and text.
+    public var imageToTextPadding: CGFloat = 8.0
+    /// The padding between primary and secndary text.
+    public var textToSecondaryTextPadding: CGFloat = 2.0
+    /// The padding between the text and badge.
+    public var textToBadgePadding: CGFloat = 6.0
+    /// The margins between the content and the edges of the list view.
+    public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+    
     // MARK: Creating item configurations
 
     /// Creates a cell content configuration for a table view with plain style.
@@ -78,41 +113,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, AutoSizeable, 
     public init() {
         
     }
-    
-    // MARK: Customizing content
-    
-    /// The primary text.
-    public var text: String? = nil
-    /// An attributed variant of the primary text.
-    public var attributedText: AttributedString? = nil
-    /// The secondary text.
-    public var secondaryText: String? = nil
-    /// An attributed variant of the secondary text.
-    public var secondaryAttributedText: AttributedString? = nil
-    /// The image.
-    public var image: NSImage? = nil
-    
-    public var badge: Badge? = nil
-    
-    // MARK: Customizing appearance
-    
-    /// Properties for configuring the primary text.
-    public var textProperties: ContentConfiguration.Text = .primary
-    /// Properties for configuring the secondary text.
-    public var secondaryTextProperties: ContentConfiguration.Text = .secondary
-    /// Properties for configuring the image.
-    public var imageProperties = ImageProperties()
-    
-    // MARK: Customizing layout
-    
-    /// The padding between the image and text.
-    public var imageToTextPadding: CGFloat = 8.0
-    /// The padding between primary and secndary text.
-    public var textToSecondaryTextPadding: CGFloat = 2.0
-    /// The padding between the text and badge.
-    public var textToBadgePadding: CGFloat = 6.0
-    /// The margins between the content and the edges of the cell view.
-    public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
     
     internal var type: TableCellType? = nil
     internal var tableViewStyle: NSTableView.Style? = nil
@@ -221,7 +221,8 @@ public extension NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
-        case .automatic: return .sidebar()
+        case .automatic:
+            return configuration
         case .fullWidth, .plain, .inset:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
@@ -290,16 +291,3 @@ internal extension NSFont.Weight {
         }
     }
 }
-
-/*
- 
-case .ultraLight: return .ultraLight
-case .thin: return .thin
-case .light: return .light
-case .regular: return .regular
-case .medium: return .medium
-case .semibold: return .semibold
-case .bold: return .bold
-case .heavy: return .heavy
-case .black: return .black
- */

@@ -28,6 +28,22 @@ public extension NSListContentConfiguration {
         public var image: NSImage? = nil
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = ImageProperties()
+                
+        /// The font of the text.
+        public var font: NSFont = .systemFont(ofSize: 7)
+        
+        /// The color of the badge text and symbol/template image.
+        public var color: NSColor = .white {
+            didSet { updateResolvedColors() } }
+        
+        /// The color transformer of the border color.
+        public var colorTransform: ColorTransformer? = nil {
+            didSet { updateResolvedColors() } }
+        
+        /// Generates the resolved border color,, using the border color and border color transformer.
+        public func resolvedColor() -> NSColor {
+            colorTransform?(color) ?? color
+        }
         
         /// The background color of the badge.
         public var backgroundColor: NSColor? = .controlAccentColor {
@@ -43,22 +59,6 @@ public extension NSListContentConfiguration {
                 return backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
-        }
-        
-        /// The font of the text.
-        public var font: NSFont = .systemFont(ofSize: 7)
-        
-        /// The border color of the badge..
-        public var textColor: NSColor = .white {
-            didSet { updateResolvedColors() } }
-        
-        /// The color transformer of the border color.
-        public var textColorTransform: ColorTransformer? = nil {
-            didSet { updateResolvedColors() } }
-        
-        /// Generates the resolved border color,, using the border color and border color transformer.
-        public func resolvedTextColor() -> NSColor {
-             textColorTransform?(textColor) ?? textColor
         }
         
         /// The border width of the badge.
@@ -131,13 +131,17 @@ public extension NSListContentConfiguration {
             self.text != nil || self.attributedText != nil || self.image != nil
         }
         
+        internal var resolvedImageTintColor: NSColor {
+            imageProperties._resolvedTintColor ?? color
+        }
+        
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = .controlAccentColor
-        internal var _resolvedTextColor: NSColor = .white
+        internal var _resolvedColor: NSColor = .white
         internal mutating func updateResolvedColors() {
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
-            _resolvedTextColor = resolvedTextColor()
+            _resolvedColor = resolvedColor()
         }
     }
 }

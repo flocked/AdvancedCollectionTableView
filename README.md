@@ -121,6 +121,8 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - `menuProvider`: Right click menu provider for selected items.
  - `pinchHandler`: Handler for pinching of the collection view.
  
+ Sections and items need to conform both to `Hashable` and `Identifiable`. Internally the datasource uses the identifiers to 
+ 
  ## AdvanceTableViewDiffableDataSource
  Simliar to AdvanceColllectionViewDiffableDataSource. *Work in progress.*
 

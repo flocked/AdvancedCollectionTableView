@@ -28,15 +28,15 @@ internal extension NSListContentView {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.configurate(using: properties.shadowProperties)
             self.textField.font = properties.font
-            self.textField.textColor = properties._resolvedTextColor
+            self.textField.textColor = properties._resolvedColor
             self.imageView.image = properties.image
             self.imageView.properties = properties.imageProperties
+            self.imageView.contentTintColor = properties.resolvedImageTintColor
             if let attributedText = properties.attributedText {
                 textField.attributedStringValue = NSAttributedString(attributedText)
             } else {
                 textField.stringValue = properties.text ?? ""
             }
-            
             textField.isHidden = (properties.text == nil && properties.attributedText == nil)
             
             stackViewConstraints.constant(properties.margins)
@@ -88,6 +88,7 @@ internal extension NSListContentView {
             self.translatesAutoresizingMaskIntoConstraints = false
             textField.textLayout = .wraps
             textField.maximumNumberOfLines = 1
+            textField.isSelectable = false
             stackViewConstraints = self.addSubview(withConstraint: stackView)
         }
     }
