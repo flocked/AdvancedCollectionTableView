@@ -8,6 +8,7 @@
 import AppKit
 import FZUIKit
 import FZQuicklook
+import FZSwiftUtils
 /**
  This object is an advanced version or `NSTableViewDiffableDataSource`. It provides:
 
@@ -124,6 +125,19 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        if currentSnapshot.itemIdentifiers.count > 100 {
+            Swift.print("Start")
+            MeasureTime.printTimeElapsed(title: "isGroupRow dataSource", running: {
+                for i in  (0...100) {
+                  _ = self.dataSource.tableView(self.tableView, isGroupRow: i)
+                }
+            })
+            MeasureTime.printTimeElapsed(title: "isGroupRow dataSource", running: {
+                for i in  (0...100) {
+                    _ = self.sectionRows.contains(i)
+                }
+            })
+        }
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         self.updateSectionRows()
@@ -317,8 +331,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-       // Swift.print("isGroupRow", self.dataSource.tableView(tableView, isGroupRow: row))
-        return self.dataSource.tableView(tableView, isGroupRow: row)
+        // self.dataSource.tableView(tableView, isGroupRow: row)
+        return self.sectionRows.contains(row)
     }
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
