@@ -145,19 +145,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      
      If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
      */
-    @objc dynamic public var rowAnimation: NSTableView.AnimationOptions {
+    @objc dynamic public var defaultRowAnimation: NSTableView.AnimationOptions {
         get { self.dataSource.defaultRowAnimation }
         set { self.dataSource.defaultRowAnimation = newValue }
-    }
-    
-    @objc internal dynamic var _defaultRowAnimation: Int {
-        return Int(rowAnimation.rawValue)
-       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
-    }
-    
-    @objc internal dynamic var defaultRowAnimation: Int {
-        return Int(rowAnimation.rawValue)
-       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
     }
     
     /**
@@ -460,11 +450,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
         guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
         return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
-    }
-    
-    public override func responds(to aSelector: Selector!) -> Bool {
-        Swift.print(aSelector)
-        return super.responds(to: aSelector)
     }
 }
 
