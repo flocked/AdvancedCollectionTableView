@@ -125,19 +125,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        if currentSnapshot.itemIdentifiers.count > 100 {
-            Swift.print("Start")
-            MeasureTime.printTimeElapsed(title: "isGroupRow dataSource", running: {
-                for i in  (0...100) {
-                  _ = self.dataSource.tableView(self.tableView, isGroupRow: i)
-                }
-            })
-            MeasureTime.printTimeElapsed(title: "isGroupRow dataSource", running: {
-                for i in  (0...100) {
-                    _ = self.sectionRows.contains(i)
-                }
-            })
-        }
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         self.updateSectionRows()
@@ -250,10 +237,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
+        /*
         self.dataSource.rowViewProvider = { tableView, row, an in
             Swift.print("rowViewProvider", an)
             return tableView.rowView(atRow: row, makeIfNecessary: true) ?? NSTableRowView()
         }
+         */
     }
             
     public func numberOfRows(in tableView: NSTableView) -> Int {
@@ -331,8 +320,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-        // self.dataSource.tableView(tableView, isGroupRow: row)
-        return self.sectionRows.contains(row)
+        return self.dataSource.tableView(tableView, isGroupRow: row)
     }
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {

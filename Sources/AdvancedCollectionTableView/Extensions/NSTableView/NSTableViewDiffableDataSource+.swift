@@ -74,12 +74,3 @@ public extension NSTableViewDiffableDataSource {
         return false
     }
 }
-
-/*
- public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-
- */
-
-/*
- public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
- */
