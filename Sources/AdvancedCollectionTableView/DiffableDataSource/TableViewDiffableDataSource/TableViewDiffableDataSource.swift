@@ -46,7 +46,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var keyDownMonitor: Any? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowProvider? = nil
+    public var rowViewProvider: RowProvider? = nil {
+        didSet {
+            self.dataSource.rowViewProvider = self.rowViewProvider
+        }
+    }
     
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
@@ -62,7 +66,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     /// A closure that configures and returns a row view for a table view from its diffable data source.
-    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
+    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: AnyHashable) -> NSTableRowView
     
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
@@ -273,18 +277,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         previousSelectedIDs = selectedIDs
     }
     
-    internal func diff(old: [Item.ID], new: [Item.ID]) -> (deselected: [Item.ID], selected: [Item.ID]) {
-        let deselected = old.filter({ new.contains($0) == false })
-        let selected = new.filter({ old.contains($0) == false })
-        return (deselected, selected)
-    }
-    
-    internal func diff(old: [Int], new: [Int]) -> (deselected: [Int], selected: [Int]) {
-        let deselected = old.filter({ new.contains($0) == false })
-        let selected = new.filter({ old.contains($0) == false })
-        return (deselected, selected)
-    }
-    
     public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
         var proposedSelectionIndexes = proposedSelectionIndexes
         sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
@@ -324,13 +316,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        return self.dataSource.tableView(tableView, rowViewForRow: row)
         var rowView: NSTableRowView? = nil
         DispatchQueue.main.async {
             Swift.print("rowView", self.dataSource.tableView(tableView, rowViewForRow: row) ?? "nil")
             if let item = self.item(forRow: row), let rowViewProvider = self.rowViewProvider {
                 rowView = rowViewProvider(tableView, row, item)
-            } else {
-                rowView = self.tableView.rowView(atRow: row, makeIfNecessary: true)
             }
         }
         return rowView
