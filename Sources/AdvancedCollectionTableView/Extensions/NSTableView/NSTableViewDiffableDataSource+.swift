@@ -61,9 +61,25 @@ public extension NSTableViewDiffableDataSource {
         }
         return nil
     }
+    
+    func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+        let selector = NSSelectorFromString("_tableView:isGroupRow:")
+        if let meth = class_getInstanceMethod(object_getClass(self), selector) {
+            let imp = method_getImplementation(meth)
+            typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, Int) -> Bool
+            let method: ClosureType = unsafeBitCast(imp, to: ClosureType.self)
+            let value = method(self, selector, tableView, row)
+            return value
+        }
+        return false
+    }
 }
 
 /*
  public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
+ */
+
+/*
+ public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
  */
