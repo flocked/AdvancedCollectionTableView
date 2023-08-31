@@ -44,9 +44,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var keyDownMonitor: Any? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowProvider? = nil { didSet {
-        
-    } }
+    public var rowViewProvider: RowProvider? = nil
     
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
@@ -58,7 +56,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             } else {
                 dataSource.sectionHeaderViewProvider = nil
             }
-             
         }
     }
     
@@ -150,13 +147,18 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      
      If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
      */
-    @objc dynamic public var defaultRowAnimation: NSTableView.AnimationOptions {
+    @objc dynamic public var rowAnimation: NSTableView.AnimationOptions {
         get { self.dataSource.defaultRowAnimation }
         set { self.dataSource.defaultRowAnimation = newValue }
     }
     
     @objc internal dynamic var _defaultRowAnimation: Int {
-        return Int(defaultRowAnimation.rawValue)
+        return Int(rowAnimation.rawValue)
+       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
+    }
+    
+    @objc internal dynamic var defaultRowAnimation: Int {
+        return Int(rowAnimation.rawValue)
        // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
     }
     
@@ -230,21 +232,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
     }
-    
-    /*
-    internal func setupRowViewProvider() {
-        if let rowViewProvider = self.rowViewProvider {
-            self.dataSource.rowViewProvider = { [weak self] tableview, row, itemID in
-                guard let self = self, let itemID = itemID as? Item.ID, let item = self.allItems[id: itemID] else {
-                    return tableview.rowView(atRow: row, makeIfNecessary: true)!
-                }
-                return rowViewProvider(tableview, row, item)
-            }
-        } else {
-            self.dataSource.rowViewProvider = nil
-        }
-    }
-    */
             
     public func numberOfRows(in tableView: NSTableView) -> Int {
        return dataSource.numberOfRows(in: tableView)
@@ -327,7 +314,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView: NSTableRowView? = nil
-        Swift.print("rowView")
         DispatchQueue.main.async {
             if let item = self.item(forRow: row), let rowViewProvider = self.rowViewProvider {
                 rowView = rowViewProvider(tableView, row, item)
