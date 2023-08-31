@@ -51,7 +51,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         didSet {
             if let sectionHeaderViewProvider = self.sectionHeaderViewProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
-                    Swift.print("sectionHeaderViewProvider")
                     return sectionHeaderViewProvider(tableView, row, self.sections[id: sectionID]!)
                 }
             } else {
@@ -312,9 +311,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        /*
         if tableColumn == nil, let sectionHeaderViewProvider = self.sectionHeaderViewProvider, let section = section(forRow: row) {
             return sectionHeaderViewProvider(tableView, row, section)
         }
+        */
         return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     
