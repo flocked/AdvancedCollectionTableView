@@ -298,7 +298,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        Swift.print("viewFor", tableColumn ?? "nil")
+        if tableColumn == nil {
+            Swift.print("YESS!!")
+        }
         if tableColumn == nil, let sectionHeaderViewProvider = self.sectionHeaderViewProvider, let section = section(forRow: row) {
             return sectionHeaderViewProvider(tableView, row, section)
         }
