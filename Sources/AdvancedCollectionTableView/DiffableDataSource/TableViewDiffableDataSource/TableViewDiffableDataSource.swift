@@ -238,23 +238,34 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     internal var previousSelectedRows: [Int] = []
+    internal var previousSelectedIDs: [Item.ID] = []
     public func tableViewSelectionDidChange(_ notification: Notification) {
         guard selectionHandlers.didSelect != nil || selectionHandlers.didDeselect != nil else {
-            previousSelectedRows = Array(self.tableView.selectedRowIndexes)
+            previousSelectedIDs = selectedItems.ids
             return
         }
-        let selectedRows = Array(self.tableView.selectedRowIndexes)
-        let diff = diff(old: previousSelectedRows, new: selectedRows)
-        if diff.selected.isEmpty == false, let didSelect = selectionHandlers.didSelect {
-            let selectedItems = diff.selected.compactMap({item(forRow: $0)})
+        let selectedIDs = selectedItems.ids
+        let deselected = previousSelectedIDs.filter({ selectedIDs.contains($0) == false })
+        let selected = selectedIDs.filter({ previousSelectedIDs.contains($0) == false })
+        
+        if selected.isEmpty == false, let didSelect = selectionHandlers.didSelect {
+            let selectedItems = self.allItems[ids: selected]
             didSelect(selectedItems)
         }
         
-        if diff.deselected.isEmpty == false, let didDeselect = selectionHandlers.didDeselect {
-            let deselectedItems = diff.deselected.compactMap({item(forRow: $0)})
-            didDeselect(deselectedItems)
+        if deselected.isEmpty == false, let didDeselect = selectionHandlers.didDeselect {
+            let deselectedItems = self.allItems[ids: deselected]
+            if deselectedItems.isEmpty == false {
+                didDeselect(deselectedItems)
+            }
         }
-        previousSelectedRows = selectedRows
+        previousSelectedIDs = selectedIDs
+    }
+    
+    internal func diff(old: [Item.ID], new: [Item.ID]) -> (deselected: [Item.ID], selected: [Item.ID]) {
+        let deselected = old.filter({ new.contains($0) == false })
+        let selected = new.filter({ old.contains($0) == false })
+        return (deselected, selected)
     }
     
     internal func diff(old: [Int], new: [Int]) -> (deselected: [Int], selected: [Int]) {
