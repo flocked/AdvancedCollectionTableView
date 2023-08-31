@@ -20,7 +20,7 @@ public extension NSTableView {
      
      - returns:A configured reusable row view object.
      */
-    func makeRowView<I: NSTableRowView, E: Any>(using registration: RowViewRegistration<I, E>, forRow row: Int, element: E) -> I {
+    func makeRowView<RowView, Element>(using registration: RowViewRegistration<RowView, Element>, forRow row: Int, element: Element) -> RowView where RowView: NSTableRowView {
         return registration.makeView(self, row, element)
     }
 }

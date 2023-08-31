@@ -1,5 +1,5 @@
 //
-//  CellRegistration.swift
+//  SectionViewRegistration.swift
 //
 //
 //  Created by Florian Zand on 27.04.22.
@@ -9,28 +9,20 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public protocol NSTableViewCellRegistration {
-    var columnIdentifier: NSUserInterfaceItemIdentifier? { get }
-}
-
-internal protocol _NSTableViewCellRegistration {
-    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
-}
-
 public extension NSTableView {
     /**
      Dequeues a configured reusable cell object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See `NSTableView.CellRegistration.
+        - registration: The cell registration for configuring the cell object. See `NSTableView.SectionViewRegistration.
         - column: The table column in which the cell gets displayed in the table view.
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
         - element: The element that provides data for the cell.
      
      - returns:A configured reusable cell object.
      */
-    func makeCell<Cell, Element>(using registration: CellRegistration<Cell, Element>, forColumn column: NSTableColumn, row: Int, element: Element) -> Cell? where Cell: NSTableCellView {
-        return registration.makeCell(self, column, row, element)
+    func makeSectionView<View, Section>(using registration: SectionViewRegistration<View, Section>, row: Int, section: Section) -> View? where View: NSView {
+        return registration.makeView(self, row, section)
     }
 }
 
@@ -43,7 +35,7 @@ public extension NSTableView {
      The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
      
      ```swift
-     let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, indexPath, string in
+     let cellRegistration = NSTableView.SectionViewRegistration<NSTableViewCell, String> { cell, indexPath, string in
      cell.textField.stringValue = string
      }
      ```
@@ -71,12 +63,11 @@ public extension NSTableView {
           
      - Important: Do not create your cell registration inside a `NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
-    class CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
+    class SectionViewRegistration<View, Section> where View: NSView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
         private let handler: Handler
-        public let columnIdentifier: NSUserInterfaceItemIdentifier?
         
         // MARK: Creating a cell registration
         
@@ -88,11 +79,10 @@ public extension NSTableView {
             - columnIdentifier: The identifier of the table column.
             - handler: The handler to configurate the cell.
          */
-        public init(identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
             self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
-            self.columnIdentifier = columnIdentifier
         }
         
         /**
@@ -104,43 +94,47 @@ public extension NSTableView {
             - columnIdentifier: The identifier of the table column.
             - handler: The handler to configurate the cell.
          */
-        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
             self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
-            self.columnIdentifier = columnIdentifier
         }
         
         /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
+        public typealias Handler = ((_ view: View, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
-        internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
+        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> View? {
             self.registerIfNeeded(for: tableView)
-            if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
-                self.handler(cell, tableColumn, row, element)
-                return cell
+            if viewIsTableCellView {
+                if let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? View {
+                    self.handler(sectionView, row, section)
+                    return sectionView
+                }
+            } else {
+                let sectionView = View()
+                self.handler(sectionView, row, section)
+                return sectionView
             }
             return nil
         }
         
-        internal func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
-            self.registerIfNeeded(for: tableView)
-            let element = element as! Element
-            if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
-                self.handler(cell, tableColumn, row, element)
-                return cell
-            }
-            return nil
+        internal var viewIsTableCellView: Bool {
+            View.self is NSTableCellView.Type
+        }
+        
+        internal var sectionViewTableCellType: NSTableCellView.Type? {
+            (View.self as? NSTableCellView.Type)
         }
         
         internal func registerIfNeeded(for tableView: NSTableView) {
+            guard let sectionViewTableCellType = sectionViewTableCellType else { return }
             if let nib = nib {
                 if (tableView.registeredNibsByIdentifier?[self.identifier] != self.nib) {
                     tableView.register(nib, forIdentifier: self.identifier)
                 }
             } else {
-                if (tableView.registeredCellsByIdentifier?[self.identifier] != Cell.self) {
-                    tableView.register(Cell.self, forIdentifier: self.identifier)
+                if (tableView.registeredCellsByIdentifier?[self.identifier] != View.self) {
+                    tableView.register(sectionViewTableCellType, forIdentifier: self.identifier)
                 }
             }
         }
