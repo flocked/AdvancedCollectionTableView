@@ -49,4 +49,21 @@ public extension NSTableViewDiffableDataSource {
         }
         return nil
     }
+    
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        let selector = NSSelectorFromString("_tableView:rowViewForRow:")
+        if let meth = class_getInstanceMethod(object_getClass(self), selector) {
+            let imp = method_getImplementation(meth)
+            typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, Int) -> NSTableRowView?
+            let method: ClosureType = unsafeBitCast(imp, to: ClosureType.self)
+            let view = method(self, selector, tableView, row)
+            return view
+        }
+        return nil
+    }
 }
+
+/*
+ public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+
+ */

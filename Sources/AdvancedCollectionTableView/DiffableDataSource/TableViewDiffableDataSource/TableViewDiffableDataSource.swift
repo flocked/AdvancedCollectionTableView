@@ -319,6 +319,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView: NSTableRowView? = nil
         DispatchQueue.main.async {
+            Swift.print("rowView", self.dataSource.tableView(tableView, rowViewForRow: row) ?? "nil")
             if let item = self.item(forRow: row), let rowViewProvider = self.rowViewProvider {
                 rowView = rowViewProvider(tableView, row, item)
             } else {
