@@ -28,9 +28,6 @@ import FZQuicklook
  */
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
-    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
-    public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
-
     
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
@@ -45,6 +42,19 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var scrollView: NSScrollView? { return tableView.enclosingScrollView }
     internal var keyDownMonitor: Any? = nil
+    
+    /// The closure that configures and returns the table view’s row views from the diffable data source.
+    public var rowViewProvider: RowProvider? = nil
+    
+    /// The closure that configures and returns the table view’s section header views from the diffable data source.
+    public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil
+    
+    /// A closure that configures and returns a row view for a table view from its diffable data source.
+    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
+    
+    /// A closure that configures and returns a section header view for a table view from its diffable data source.
+    public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
+
 
     /// Handlers that get called whenever the table view receives mouse click events of rows.
     public var mouseHandlers = MouseHandlers<Item>()
@@ -78,6 +88,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
      */
     public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil
+        
+    /**
+    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
+     */
+    public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -88,10 +103,37 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         didSet { self.setupKeyDownMonitor() }
     }
     
+    public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
+        var snapshot = Snapshot()
+        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
+        for section in currentSnapshot.sectionIdentifiers {
+            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
+        }
+        return snapshot
+    }
+    
+    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        let internalSnapshot = convertSnapshot(snapshot)
+        self.currentSnapshot = snapshot
+        dataSource.apply(internalSnapshot, option, completion: completion)
+    }
+    
     /**
-    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
+     The default animation the UI uses to show differences between rows.
+     
+     The default value of this property is `effectFade`.
+     
+     If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
      */
-    public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
+    @objc dynamic public var defaultRowAnimation: NSTableView.AnimationOptions {
+        get { self.dataSource.defaultRowAnimation }
+        set { self.dataSource.defaultRowAnimation = newValue }
+    }
+    
+    @objc internal dynamic var _defaultRowAnimation: Int {
+        return Int(defaultRowAnimation.rawValue)
+       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
+    }
     
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
@@ -164,12 +206,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.delegate = self
     }
     
-    /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowProvider? = nil
-    
-    /// The closure that configures and returns the table view’s section header views from the diffable data source.
-    public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil
-    
     /*
     internal func setupRowViewProvider() {
         if let rowViewProvider = self.rowViewProvider {
@@ -184,39 +220,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         }
     }
     */
-    
-    internal var rowAnimation: NSTableView.AnimationOptions = .effectFade
-    
-    @objc internal dynamic var _defaultRowAnimation: Int {
-        return Int(rowAnimation.rawValue)
-       // return self.dataSource.value(forKeyPath: "_defaultRowAnimation") as! Int
-    }
-    
-    @objc internal dynamic var defaultRowAnimation: Int {
-        return Int(rowAnimation.rawValue)
-      //  return self.dataSource.value(forKeyPath: "defaultRowAnimation") as! Int
-    }
-    
-    public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
-        var snapshot = Snapshot()
-        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
-        for section in currentSnapshot.sectionIdentifiers {
-            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
-        }
-        return snapshot
-    }
-    
-    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        let internalSnapshot = convertSnapshot(snapshot)
-        self.currentSnapshot = snapshot
-        dataSource.apply(internalSnapshot, option, completion: completion)
-    }
-    
+            
     public func numberOfRows(in tableView: NSTableView) -> Int {
        return dataSource.numberOfRows(in: tableView)
     }
     
-    var previousSelectedRows: [Int] = []
+    internal var previousSelectedRows: [Int] = []
     public func tableViewSelectionDidChange(_ notification: Notification) {
         guard selectionHandlers.didSelect != nil || selectionHandlers.didDeselect != nil else {
             previousSelectedRows = Array(self.tableView.selectedRowIndexes)
