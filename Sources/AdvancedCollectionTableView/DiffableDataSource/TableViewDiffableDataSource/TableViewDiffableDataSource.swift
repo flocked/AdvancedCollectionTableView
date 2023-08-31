@@ -27,6 +27,7 @@ import FZQuicklook
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
+    /// A closure that configures and returns a cell for a table view from its diffable data source.
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
     
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
@@ -58,7 +59,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             }
         }
     }
-    
     
     /// A closure that configures and returns a row view for a table view from its diffable data source.
     public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
@@ -132,8 +132,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     internal var sectionRows: [Int] = []
     internal func updateSectionRows() {
-        var row = 0
         sectionRows.removeAll()
+        guard sectionHeaderViewProvider != nil else { return }
+        var row = 0
         for section in sections {
             sectionRows.append(row)
             row = row + 1 + currentSnapshot.numberOfItems(inSection: section)
@@ -227,7 +228,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     internal func sharedInit() {
-        self.configurateDataSource()
+        self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
+            [weak self] tableview, tablecolumn, row, itemID in
+            guard let self = self, let item = self.allItems[id: itemID] else { return NSTableCellView() }
+            return self.cellProvider(tableview, tablecolumn, row, item)
+        })
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
@@ -237,7 +242,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
        return dataSource.numberOfRows(in: tableView)
     }
     
-    internal var previousSelectedRows: [Int] = []
     internal var previousSelectedIDs: [Item.ID] = []
     public func tableViewSelectionDidChange(_ notification: Notification) {
         guard selectionHandlers.didSelect != nil || selectionHandlers.didDeselect != nil else {
@@ -269,36 +273,26 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     internal func diff(old: [Int], new: [Int]) -> (deselected: [Int], selected: [Int]) {
-        let selectedRows = new
-        let previousSelectedRows = old
-        var selected: [Int] = []
-        var deselected: [Int] = []
-        for selectedRow in selectedRows {
-            if previousSelectedRows.contains(selectedRow) == false {
-                selected.append(selectedRow)
-            }
-        }
-        for previousSelectedRow in previousSelectedRows {
-            if selectedRows.contains(previousSelectedRow) == false {
-                deselected.append(previousSelectedRow)
-            }
-        }
+        let deselected = old.filter({ new.contains($0) == false })
+        let selected = new.filter({ old.contains($0) == false })
         return (deselected, selected)
     }
     
     public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
         var proposedSelectionIndexes = proposedSelectionIndexes
-        if sectionHeaderViewProvider != nil {
-            sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
-        }
+        sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
         guard self.selectionHandlers.shouldSelect != nil || self.selectionHandlers.shouldDeselect != nil  else {
             return proposedSelectionIndexes
         }
         let selectedRows = Array(self.tableView.selectedRowIndexes)
-        let diff = diff(old: selectedRows, new: Array(proposedSelectionIndexes))
+        let proposedRows = Array(proposedSelectionIndexes)
+        
+        let deselected = selectedRows.filter({ proposedRows.contains($0) == false })
+        let selected = proposedRows.filter({ selectedRows.contains($0) == false })
+        
         var selections: [Item] = []
-        let selectedItems = diff.selected.compactMap({item(forRow: $0)})
-        let deselectedItems = diff.deselected.compactMap({item(forRow: $0)})
+        let selectedItems = selected.compactMap({item(forRow: $0)})
+        let deselectedItems = deselected.compactMap({item(forRow: $0)})
         if selectedItems.isEmpty == false, let shouldSelect = selectionHandlers.shouldSelect {
             selections.append(contentsOf: shouldSelect(selectedItems))
         } else {
@@ -315,11 +309,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        /*
-        if tableColumn == nil, let sectionHeaderViewProvider = self.sectionHeaderViewProvider, let section = section(forRow: row) {
-            return sectionHeaderViewProvider(tableView, row, section)
-        }
-        */
         return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     
@@ -393,14 +382,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             return rowActionProvider(item, edge)
         }
         return []
-    }
-    
-    internal func configurateDataSource() {
-        self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
-            [weak self] tableview, tablecolumn, row, itemID in
-            guard let self = self, let item = self.allItems[id: itemID] else { return NSTableCellView() }
-            return self.cellProvider(tableview, tablecolumn, row, item)
-        })
     }
     
     internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {

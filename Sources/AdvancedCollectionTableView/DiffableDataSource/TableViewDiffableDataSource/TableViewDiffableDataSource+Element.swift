@@ -150,11 +150,9 @@ extension AdvanceTableViewDiffableDataSource {
         self.apply(snapshot, animated ? .animated : .usingReloadData)
     }
     
-    
     public func selectAll() {
         self.tableView.selectAll(nil)
     }
-    
     
     public func deselectAll() {
         self.tableView.deselectAll(nil)
