@@ -29,6 +29,8 @@ import FZQuicklook
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
     public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
+    public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
+
     
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
@@ -162,7 +164,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.delegate = self
     }
     
+    /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowProvider? = nil
+    
+    /// The closure that configures and returns the table view’s section header views from the diffable data source.
+    public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil
     
     /*
     internal func setupRowViewProvider() {
@@ -273,6 +279,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        if tableColumn == nil, let sectionHeaderViewProvider = self.sectionHeaderViewProvider, let section = section(forRow: row) {
+            return sectionHeaderViewProvider(tableView, row, section)
+        }
         return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     

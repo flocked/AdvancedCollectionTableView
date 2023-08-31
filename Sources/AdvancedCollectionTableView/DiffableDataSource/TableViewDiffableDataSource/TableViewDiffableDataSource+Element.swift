@@ -32,14 +32,27 @@ extension AdvanceTableViewDiffableDataSource {
     }
     
     /**
-     Returns the item at the specified index path.
+     Returns the item at the specified row in the table view.
      
-     - Parameters indexPath: The indexPath
-     - Returns: The item at the index path or nil if there isn't any item at the index path.
+     - Parameters row: The row of the item in the table view.
+     - Returns: The item, or `nil` if the method doesn’t find an item at the provided row.
      */
     public func item(forRow row: Int) -> Item? {
         if let itemID = dataSource.itemIdentifier(forRow: row) {
             return allItems[id: itemID]
+        }
+        return nil
+    }
+    
+    /**
+     Returns the section at the specified row in the table view.
+     
+     - Parameters row: The row of the section in the table view.
+     - Returns: The section, or `nil if the method doesn’t find an item with the provided item identifier.
+     */
+    public func section(forRow row: Int) -> Section? {
+        if let sectionID = dataSource.sectionIdentifier(forRow: row) {
+            return sections[id: sectionID]
         }
         return nil
     }
@@ -96,13 +109,6 @@ extension AdvanceTableViewDiffableDataSource {
     
     public func section(for item: Item) -> Section? {
         return self.currentSnapshot.sectionIdentifier(containingItem: item)
-    }
-    
-    public func section(at indexPath: IndexPath) -> Section? {
-        if (indexPath.section <= self.sections.count-1) {
-            return sections[indexPath.section]
-        }
-        return nil
     }
     
     public func isSelected(at row: Int) -> Bool {

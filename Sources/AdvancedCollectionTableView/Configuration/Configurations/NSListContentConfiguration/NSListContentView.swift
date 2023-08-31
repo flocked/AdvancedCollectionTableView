@@ -140,6 +140,26 @@ public class NSListContentView: NSView, NSContentView {
         }
     }
     
+    internal func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
+        var textFieldsSize: CGSize = .zero
+        textFieldsSize.width = self.frame.size.width-_configuration.margins.width
+        if _configuration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
+            textFieldsSize.width = textFieldsSize.width - imageSize.width - _configuration.imageToTextPadding
+        }
+        textField.frame.size.width = textFieldsSize.width
+        secondaryTextField.frame.size.width = textFieldsSize.width
+        if _configuration.hasSecondaryText {
+            textFieldsSize.height = secondaryTextField.intrinsicContentSize.height
+            if _configuration.hasText {
+                textFieldsSize.height += _configuration.textToSecondaryTextPadding
+            }
+        }
+        if _configuration.hasText {
+            textFieldsSize.height += textField.intrinsicContentSize.height
+        }
+        return textFieldsSize
+    }
+    
     internal func calculateImageViewSize() -> CGSize? {
         if let image = _configuration.image {
             var imageSize = image.size
