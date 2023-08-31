@@ -49,7 +49,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
         didSet {
-            /*
             if let sectionHeaderViewProvider = self.sectionHeaderViewProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
                     Swift.print("sectionHeaderViewProvider")
@@ -58,7 +57,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             } else {
                 dataSource.sectionHeaderViewProvider = nil
             }
-             */
+             
         }
     }
     
