@@ -37,7 +37,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     internal let tableView: NSTableView
     internal var dataSource: DataSoure!
-    internal var cellProvider: CellProvider
     internal var dragingRowIndexes = IndexSet()
     internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
     internal var currentSnapshot: Snapshot = Snapshot()
@@ -70,7 +69,19 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
-
+    
+    /**
+    Right click menu provider for selected rows.
+     
+    When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
+     */
+    public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil
+        
+    /**
+    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
+     */
+    public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
+    
 
     /// Handlers that get called whenever the table view receives mouse click events of rows.
     public var mouseHandlers = MouseHandlers<Item>()
@@ -97,18 +108,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     /// Handlers for table columns.
     public var columnHandlers = ColumnHandlers<Item>()
-    
-    /**
-    Right click menu provider for selected rows.
-     
-    When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
-     */
-    public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil
-        
-    /**
-    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
-     */
-    public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -227,26 +226,17 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
-        self.cellProvider = cellProvider
         super.init()
-        self.sharedInit()
-    }
-    
-    internal func sharedInit() {
+        
         self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.allItems[id: itemID] else { return NSTableCellView() }
-            return self.cellProvider(tableview, tablecolumn, row, item)
+            return cellProvider(tableview, tablecolumn, row, item)
         })
+        
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
-        /*
-        self.dataSource.rowViewProvider = { tableView, row, an in
-            Swift.print("rowViewProvider", an)
-            return tableView.rowView(atRow: row, makeIfNecessary: true) ?? NSTableRowView()
-        }
-         */
     }
             
     public func numberOfRows(in tableView: NSTableView) -> Int {
@@ -317,14 +307,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         return self.dataSource.tableView(tableView, rowViewForRow: row)
-        var rowView: NSTableRowView? = nil
-        DispatchQueue.main.async {
-            Swift.print("rowView", self.dataSource.tableView(tableView, rowViewForRow: row) ?? "nil")
-            if let item = self.item(forRow: row), let rowViewProvider = self.rowViewProvider {
-                rowView = rowViewProvider(tableView, row, item)
-            }
-        }
-        return rowView
     }
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
