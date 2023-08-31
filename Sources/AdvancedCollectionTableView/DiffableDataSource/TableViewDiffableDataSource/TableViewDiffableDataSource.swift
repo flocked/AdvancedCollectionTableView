@@ -311,7 +311,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-        Swift.print("isGroupRow", row)
+     //   Swift.print("isGroupRow", row)
+        if row == 0 {
+            return true
+        }
         return false
     }
     
