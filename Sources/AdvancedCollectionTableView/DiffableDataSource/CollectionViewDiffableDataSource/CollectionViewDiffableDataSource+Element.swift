@@ -225,4 +225,16 @@ extension AdvanceColllectionViewDiffableDataSource {
         snapshot.deleteItems(elements)
         self.apply(snapshot, .animated)
     }
+    
+    internal func transactionForMovingElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction? {
+        let elements = indexPaths.compactMap({self.element(for: $0)})
+        if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
+            var snapshot = self.snapshot()
+            elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
+            let initalSnapshot = self.currentSnapshot
+            let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+            return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        }
+        return nil
+    }
 }

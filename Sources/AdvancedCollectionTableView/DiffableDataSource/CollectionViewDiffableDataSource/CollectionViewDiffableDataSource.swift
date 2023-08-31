@@ -72,7 +72,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
     internal var itemProvider: ItemProvider
-    internal var delegateBridge: DelegateBridge<Section, Element>!
+    internal var delegateBridge: DelegateBridge!
     internal var responder: Responder<Section, Element>!
     internal var scrollView: NSScrollView? { return collectionView.enclosingScrollView }
     internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?

@@ -42,9 +42,9 @@ extension AdvanceColllectionViewDiffableDataSource {
         /// Handler that determines whether you can reorder a particular item.
         public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
         /// Handler that prepares the diffable data source for reordering its items.
-        public var willReorder: ((_ elements: [Element]) -> ())? = nil
+        public var willReorder: ((DiffableDataSourceTransaction) -> ())? = nil
         /// Handler that processes a reordering transaction.
-        public var didReorder: ((_ elements: [Element]) -> ())? = nil
+        public var didReorder: ((DiffableDataSourceTransaction) -> ())? = nil
     }
     
     /// Handlers for prefetching items.

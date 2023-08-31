@@ -9,11 +9,11 @@ import AppKit
 import FZUIKit
 
 extension AdvanceColllectionViewDiffableDataSource {
-    internal class DelegateBridge<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
+    internal class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
-        weak var dataSource: AdvanceColllectionViewDiffableDataSource<S,E>!
+        weak var dataSource: AdvanceColllectionViewDiffableDataSource!
         
-        init(_ dataSource: AdvanceColllectionViewDiffableDataSource<S,E>) {
+        init(_ dataSource: AdvanceColllectionViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.collectionView.delegate = self
@@ -31,9 +31,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
-            if (self.dataSource.draggingElements.isEmpty == false) {
-                self.dataSource.reorderingHandlers.didReorder?(self.dataSource.draggingElements)
-            }
             self.dataSource.draggingIndexPaths = []
         }
         
@@ -72,8 +69,22 @@ extension AdvanceColllectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
-                self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
+                if let transaction = self.dataSource.transactionForMovingElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath) {
+                    self.dataSource.reorderingHandlers.willReorder?(transaction)
+                    self.dataSource.apply(transaction.finalSnapshot)
+                    self.dataSource.reorderingHandlers.didReorder?(transaction)
+                }
+                /*
+              //  self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
+                let previousSnapshot = self.dataSource.currentSnapshot
                 self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
+                if let didReorder = self.dataSource.reorderingHandlers.didReorder {
+                    let newSnapshot = self.dataSource.currentSnapshot
+                    let difference = previousSnapshot.itemIdentifiers.difference(from: newSnapshot.itemIdentifiers)
+                    let transaction = DiffableDataSourceTransaction(initialSnapshot: previousSnapshot, finalSnapshot: newSnapshot, difference: difference)
+                    didReorder(transaction)
+                }
+                 */
             }
             return true
         }
