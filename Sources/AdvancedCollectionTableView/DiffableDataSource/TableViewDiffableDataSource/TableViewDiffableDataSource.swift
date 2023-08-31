@@ -44,7 +44,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var keyDownMonitor: Any? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowProvider? = nil
+    public var rowViewProvider: RowProvider? = nil { didSet {
+        
+    } }
     
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
@@ -227,6 +229,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
+        
+        self.dataSource.rowViewProvider = { tableView, row, element in
+            Swift.print("rowViewProvider", element)
+            return tableView.rowView(atRow: row, makeIfNecessary: true)!
+        }
     }
     
     /*
