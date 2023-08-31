@@ -49,6 +49,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
         didSet {
+            /*
             if let sectionHeaderViewProvider = self.sectionHeaderViewProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
                     Swift.print("sectionHeaderViewProvider")
@@ -57,9 +58,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             } else {
                 dataSource.sectionHeaderViewProvider = nil
             }
-             
+             */
         }
     }
+    
     
     /// A closure that configures and returns a row view for a table view from its diffable data source.
     public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
@@ -127,7 +129,18 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
+        self.updateSectionRows()
         dataSource.apply(internalSnapshot, option, completion: completion)
+    }
+    
+    internal var sectionRows: [Int] = []
+    internal func updateSectionRows() {
+        var row = 0
+        sectionRows.removeAll()
+        for section in sections {
+            sectionRows.append(row)
+            row = row + 1 + currentSnapshot.numberOfItems(inSection: section)
+        }
     }
     
     /**
@@ -300,24 +313,15 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        if tableColumn == nil {
-            Swift.print("YESS!!")
-        }
         if tableColumn == nil, let sectionHeaderViewProvider = self.sectionHeaderViewProvider, let section = section(forRow: row) {
             return sectionHeaderViewProvider(tableView, row, section)
         }
         return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     
-    
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-     //   Swift.print("isGroupRow", row)
-        if row == 0 {
-            return true
-        }
-        return false
+        return self.sectionRows.contains(row)
     }
-    
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView: NSTableRowView? = nil
