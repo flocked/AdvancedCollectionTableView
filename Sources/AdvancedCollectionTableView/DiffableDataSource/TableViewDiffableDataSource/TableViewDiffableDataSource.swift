@@ -309,11 +309,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
     }
     
-    /*
+    
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+        Swift.print("isGroupRow", row)
         return false
     }
-    */
+    
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView: NSTableRowView? = nil
