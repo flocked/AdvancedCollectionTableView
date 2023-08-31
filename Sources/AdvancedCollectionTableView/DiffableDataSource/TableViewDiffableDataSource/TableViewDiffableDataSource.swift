@@ -79,14 +79,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      */
     public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
-
-    /// Handlers that get called whenever the table view receives mouse click events of rows.
-    public var mouseHandlers = MouseHandlers()
-    
-    /// Handlers that get called whenever the mouse is hovering a row.
-    public var hoverHandlers = HoverHandlers() {
-        didSet { self.setupHoverObserving()} }
-    
     /// Handlers for selection of rows.
     public var selectionHandlers = SelectionHandlers()
     
@@ -95,6 +87,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     /// Handlers for reordering of rows.
     public var reorderingHandlers = ReorderHandlers()
+    
+    /// Handlers that get called whenever the mouse is hovering a row.
+    public var hoverHandlers = HoverHandlers() {
+        didSet { self.setupHoverObserving()} }
     
     ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
     public var displayHandlers = DisplayHandlers() {
@@ -105,7 +101,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     /// Handlers for table columns.
     public var columnHandlers = ColumnHandlers()
-
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -235,6 +230,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
+        
+        if Item.self is QuicklookPreviewable.Type {
+            self.tableView.isQuicklookPreviewable = true
+        }
     }
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.
@@ -461,7 +460,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
         guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
         return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
-    }    
+    }
+    
+    public override func responds(to aSelector: Selector!) -> Bool {
+        Swift.print(aSelector)
+        return super.responds(to: aSelector)
+    }
 }
 
 extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {

@@ -67,7 +67,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var didEndDisplaying: ((_ elements: [Element]) -> ())?
     }
     
-    
     /// Handlers for mouse click events of elements.
     public struct MouseHandlers {
         /// Handler that gets called whenever the mouse is clicking an element.
@@ -92,21 +91,4 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var dragOutside: ((_ elements: [Element]) -> [AnyObject])? = nil
         public var draggingImage: ((_ elements: [Element], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
-    
-    /*
-     /// Handlers for expanding and collapsing items.
-     public struct SectionHandlers<Section> {
-     /// The handler that determines whether a particular section is collapsable.
-     public var shouldCollapse: ((_ section: Section) -> Bool)?
-     /// The handler that determines whether a particular section is expandable.
-     public var shouldExpand: ((_ section: Section) -> Bool)?
-     /// The handler that prepares the diffable data source for collapsing an section.
-     public var willCollapse: ((_ section: Section) -> ())?
-     /// The handler that prepares the diffable data source for expanding an section.
-     public var willExpand: ((_ section: Section) -> ())?
-     /// The handler that determines whether a particular section can be reordered.
-     public var canReorder: ((_ section: Section) -> Bool)?
-     public var didReorder: ((_ section: Section) -> ())?
-     }
-     */
 }

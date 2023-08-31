@@ -69,7 +69,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         return nil
     }
     
-    public func itemView(for element: Element) -> NSCollectionViewItem? {
+    public func collectionViewItem(for element: Element) -> NSCollectionViewItem? {
         if let elementIndexPath = indexPath(for: element) {
             return self.collectionView.item(at: elementIndexPath)
         }
@@ -104,17 +104,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         return nil
     }
     
-    /*
-     public func expandSection(_ section: Section) {
-     section.isCollapsed = false
-     self.updateCollection(.animated)
-     }
-     
-     public func collapseSection(_ section: Section) {
-     section.isCollapsed = true
-     self.updateCollection(.animated)
-     }
-     */
     
     internal func supplementaryView(for section: Section, kind: String) -> (NSView & NSCollectionViewElement)? {
         if let indexPath = self.indexPaths(for: [section]).first {
@@ -224,6 +213,14 @@ extension AdvanceColllectionViewDiffableDataSource {
         var snapshot = self.snapshot()
         snapshot.deleteItems(elements)
         self.apply(snapshot, .animated)
+    }
+    
+    internal func transactionForRemovingElements(_ elements: [Element]) -> DiffableDataSourceTransaction {
+        var snapshot = self.snapshot()
+        snapshot.deleteItems(elements)
+        let initalSnapshot = self.currentSnapshot
+        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     internal func transactionForMovingElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction? {

@@ -16,6 +16,12 @@ extension AdvanceTableViewDiffableDataSource {
         public var didDeselect: (([Item]) -> Void)? = nil
     }
     
+    public struct ReorderHandlers {
+        public var canReorder: (([Item]) -> Bool)? = nil
+        public var willReorder: (([Item]) -> Void)? = nil
+        public var didReorder: (([Item]) -> Void)? = nil
+    }
+    
     /// Handlers for deletion.
     public struct DeletionHandlers {
         /// Handler that determines whether Itemlements should get deleted.
@@ -37,29 +43,16 @@ extension AdvanceTableViewDiffableDataSource {
             self.canDropOutside != nil
         }
     }
-    
-    public struct ReorderHandlers {
-        public var canReorder: (([Item]) -> Bool)? = nil
-        public var willReorder: (([Item]) -> Void)? = nil
-        public var didReorder: (([Item]) -> Void)? = nil
-    }
         
     public struct DisplayHandlers {
         public var isDisplaying: (([Item]) -> Void)?
         public var didEndDisplaying: (([Item]) -> Void)?
     }
     
-    public struct MouseHandlers {
-        public var mouseClick: ((CGPoint, Int, Item?) -> Void)? = nil
-        public var rightMouseClick: ((CGPoint, Int, Item?) -> Void)? = nil
-        public var mouseDragged: ((CGPoint, Item?) -> Void)? = nil
-    }
-    
     public struct HoverHandlers {
         public var isHovering: ((Item) -> Void)?
         public var didEndHovering: ((Item) -> Void)?
     }
-    
     
     public struct ColumnHandlers {
         public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> ())?
