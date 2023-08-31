@@ -81,32 +81,31 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
 
     /// Handlers that get called whenever the table view receives mouse click events of rows.
-    public var mouseHandlers = MouseHandlers<Item>()
+    public var mouseHandlers = MouseHandlers()
     
     /// Handlers that get called whenever the mouse is hovering a row.
-    public var hoverHandlers = HoverHandlers<Item>() {
+    public var hoverHandlers = HoverHandlers() {
         didSet { self.setupHoverObserving()} }
     
     /// Handlers for selection of rows.
-    public var selectionHandlers = SelectionHandlers<Item>()
+    public var selectionHandlers = SelectionHandlers()
     
     /// Handlers for deletion of rows.
-    public var deletionHandlers = DeletionHandlers<Item>()
+    public var deletionHandlers = DeletionHandlers()
     
     /// Handlers for reordering of rows.
-    public var reorderingHandlers = ReorderHandlers<Item>()
+    public var reorderingHandlers = ReorderHandlers()
     
     ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
-    public var displayHandlers = DisplayHandlers<Item>() {
+    public var displayHandlers = DisplayHandlers() {
         didSet {  self.ensureTrackingDisplayingRows() } }
         
     /// Handlers for drag and drop of files from and to the table view.
-    public var dragDropHandlers = DragdropHandlers<Item>()
+    public var dragDropHandlers = DragdropHandlers()
     
-    /*
     /// Handlers for table columns.
-    public var columnHandlers = ColumnHandlers<Item>()
-    */
+    public var columnHandlers = ColumnHandlers()
+
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -115,11 +114,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      */
     public var allowsDeleting: Bool = false {
         didSet { self.setupKeyDownMonitor() }
-    }
-    
-    public override func responds(to aSelector: Selector!) -> Bool {
-        Swift.print("respondsTo", aSelector)
-        return super.responds(to: aSelector)
     }
     
     public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
@@ -451,6 +445,23 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         }
         previousVisibleItems = visibleItems
     }
+    
+    public func tableViewColumnDidMove(_ notification: Notification) {
+        guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
+                let newPos = notification.userInfo?["NSNewColumn"] as? Int,
+                let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
+        self.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
+    }
+    
+    public func tableViewColumnDidResize(_ notification: Notification) {
+        guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
+        self.columnHandlers.didResize?(tableColumn, oldWidth)
+    }
+    
+    public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
+        guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
+        return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
+    }    
 }
 
 extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {

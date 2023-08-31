@@ -153,33 +153,33 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         set { self.collectionView.collectionViewLayout = newValue } }
     
     /// Handlers that get called whenever the collection view receives mouse click events of items.
-    public var mouseHandlers = MouseHandlers<Element>()
+    public var mouseHandlers = MouseHandlers()
     
     /// Handlers that get called whenever the mouse is hovering an item.
-    public var hoverHandlers = HoverHandlers<Element>() {
+    public var hoverHandlers = HoverHandlers() {
         didSet { self.setupHoverObserving()} }
     
     /// Handlers for selection of items.
-    public var selectionHandlers = SelectionHandlers<Element>()
+    public var selectionHandlers = SelectionHandlers()
     
     /// Handlers for deletion of items.
-    public var deletionHandlers = DeletionHandlers<Element>()
+    public var deletionHandlers = DeletionHandlers()
     
     /// Handlers for reordering of items.
-    public var reorderingHandlers = ReorderingHandlers<Element>()
+    public var reorderingHandlers = ReorderingHandlers()
     
     ///Handlers for the displayed items. The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview scrolls to new items).
-    public var displayHandlers = DisplayHandlers<Element>() {
+    public var displayHandlers = DisplayHandlers() {
         didSet {  self.ensureTrackingDisplayingItems() } }
     
     /// Handlers for prefetching elements.
-    public var prefetchHandlers = PrefetchHandlers<Element>()
+    public var prefetchHandlers = PrefetchHandlers()
     
     /// Handlers for drag and drop of files from and to the collection view.
-    public var dragDropHandlers = DragdropHandlers<Element>()
+    public var dragDropHandlers = DragdropHandlers()
     
     /// Handlers for highlight of elements.
-    public var highlightHandlers = HighlightHandlers<Element>()
+    public var highlightHandlers = HighlightHandlers()
     
     /**
      Right click menu provider for selected items.

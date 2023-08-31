@@ -10,49 +10,49 @@ import FZUIKit
 
 extension AdvanceColllectionViewDiffableDataSource {
     /// Handlers for selection of items.
-    public struct SelectionHandlers<E> {
+    public struct SelectionHandlers {
         /// Handler that determines whether elements should get selected.
-        public var shouldSelect: ((_ elements: [E]) -> [E])? = nil
+        public var shouldSelect: ((_ elements: [Element]) -> [Element])? = nil
         /// Handler that determines whether elements should get deselected.
-        public var shouldDeselect: ((_ elements: [E]) -> [E])? = nil
+        public var shouldDeselect: ((_ elements: [Element]) -> [Element])? = nil
         /// Handler that gets called whenever elements get selected.
-        public var didSelect: ((_ elements: [E]) -> ())? = nil
+        public var didSelect: ((_ elements: [Element]) -> ())? = nil
         /// Handler that gets called whenever elements get deselected.
-        public var didDeselect: ((_ elements: [E]) -> ())? = nil
+        public var didDeselect: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for deletion of items.
-    public struct DeletionHandlers<E> {
+    public struct DeletionHandlers {
         /// Handler that determines whether elements should get deleted.
-        public var shouldDelete: ((_ elements: [E]) -> [E])? = nil
+        public var shouldDelete: ((_ elements: [Element]) -> [Element])? = nil
         /// Handler that gets called whenever elements get deleted.
-        public var didDelete: ((_ elements: [E]) -> ())? = nil
+        public var didDelete: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for highlight.
-    public struct HighlightHandlers<E> {
+    public struct HighlightHandlers {
         /// Handler that determines which elements should change to a highlight state.
-        public var shouldChange: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> [E])? = nil
+        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
         /// Handler that gets called whenever elements changed their highlight state.
-        public var didChange: ((_ elements: [E], NSCollectionViewItem.HighlightState) -> ())? = nil
+        public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
     
     /// Handlers for reordering items.
-    public struct ReorderingHandlers<E> {
+    public struct ReorderingHandlers {
         /// Handler that determines whether you can reorder a particular item.
-        public var canReorder: ((_ elements: [E]) -> Bool)? = nil
+        public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
         /// Handler that prepares the diffable data source for reordering its items.
-        public var willReorder: ((_ elements: [E]) -> ())? = nil
+        public var willReorder: ((_ elements: [Element]) -> ())? = nil
         /// Handler that processes a reordering transaction.
-        public var didReorder: ((_ elements: [E]) -> ())? = nil
+        public var didReorder: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for prefetching items.
-    public struct PrefetchHandlers<E> {
+    public struct PrefetchHandlers {
         /// Handler that tells you to begin preparing data for the elements.
-        public var willPrefetch: ((_ elements: [E]) -> ())? = nil
+        public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
         /// Cancels a previously triggered data prefetch request.
-        public var didCancelPrefetching: ((_ elements: [E]) -> ())? = nil
+        public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
     }
     
     /**
@@ -60,37 +60,37 @@ extension AdvanceColllectionViewDiffableDataSource {
      
      The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview scrolls to new items).
      */
-    public struct DisplayHandlers<E> {
+    public struct DisplayHandlers {
         /// Handler that gets called whenever elements start getting displayed.
-        public var isDisplaying: ((_ elements: [E]) -> ())?
+        public var isDisplaying: ((_ elements: [Element]) -> ())?
         /// Handler that gets called whenever elements end getting displayed.
-        public var didEndDisplaying: ((_ elements: [E]) -> ())?
+        public var didEndDisplaying: ((_ elements: [Element]) -> ())?
     }
     
     
     /// Handlers for mouse click events of elements.
-    public struct MouseHandlers<E> {
+    public struct MouseHandlers {
         /// Handler that gets called whenever the mouse is clicking an element.
-        public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
+        public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: Element) -> ())? = nil
         /// Handler that gets called whenever the mouse is right-clicking an element.
-        public var rightMouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: E) -> ())? = nil
+        public var rightMouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: Element) -> ())? = nil
     }
     
     /// Handlers that get called whenever the mouse is hovering an item.
-    public struct HoverHandlers<E> {
+    public struct HoverHandlers {
         /// The handler that gets called whenever the mouse is hovering an item.
-        public var isHovering: ((_ element: E) -> ())?
+        public var isHovering: ((_ element: Element) -> ())?
         /// The handler that gets called whenever the mouse did end hovering an item.
-        public var didEndHovering: ((_ element: E) -> ())?
+        public var didEndHovering: ((_ element: Element) -> ())?
     }
     
     /// Handlers for drag and drop of files from and to the collection view.
-    public struct DragdropHandlers<E> {
-        public var canDropOutside: ((_ elements: [E]) -> [E])? = nil
-        public var dropOutside: ((_ element: E) -> PasteboardWriting)? = nil
+    public struct DragdropHandlers {
+        public var canDropOutside: ((_ elements: [Element]) -> [Element])? = nil
+        public var dropOutside: ((_ element: Element) -> PasteboardWriting)? = nil
         public var canDrag: (([AnyObject]) -> Bool)? = nil
-        public var dragOutside: ((_ elements: [E]) -> [AnyObject])? = nil
-        public var draggingImage: ((_ elements: [E], NSEvent, NSPointPointer) -> NSImage?)? = nil
+        public var dragOutside: ((_ elements: [Element]) -> [AnyObject])? = nil
+        public var draggingImage: ((_ elements: [Element], NSEvent, NSPointPointer) -> NSImage?)? = nil
     }
     
     /*
