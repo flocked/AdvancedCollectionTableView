@@ -236,6 +236,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
+        self.dataSource.rowViewProvider = { tableView, row, an in
+            Swift.print("rowViewProvider", an)
+            return tableView.rowView(atRow: row, makeIfNecessary: true) ?? NSTableRowView()
+        }
     }
             
     public func numberOfRows(in tableView: NSTableView) -> Int {
