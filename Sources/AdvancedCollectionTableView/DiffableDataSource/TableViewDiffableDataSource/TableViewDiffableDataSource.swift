@@ -28,9 +28,6 @@ import FZSwiftUtils
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
-    /// A closure that configures and returns a cell for a table view from its diffable data source.
-    public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
-    
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
     internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>
@@ -106,8 +103,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     /// Handlers for drag and drop of files from and to the table view.
     public var dragDropHandlers = DragdropHandlers<Item>()
     
+    /*
     /// Handlers for table columns.
     public var columnHandlers = ColumnHandlers<Item>()
+    */
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -116,6 +115,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      */
     public var allowsDeleting: Bool = false {
         didSet { self.setupKeyDownMonitor() }
+    }
+    
+    public override func responds(to aSelector: Selector!) -> Bool {
+        Swift.print("respondsTo", aSelector)
+        return super.responds(to: aSelector)
     }
     
     public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
@@ -238,6 +242,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
     }
+    
+    /// A closure that configures and returns a cell for a table view from its diffable data source.
+    public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
             
     public func numberOfRows(in tableView: NSTableView) -> Int {
        return dataSource.numberOfRows(in: tableView)
@@ -389,20 +396,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             self.hoverHandlers.didEndHovering?(item)
         }
     }
-    
-    internal func ensureTrackingDisplayingRows() {
-        if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
-            scrollView?.contentView.postsBoundsChangedNotifications = true
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(scrollViewContentBoundsDidChange(_:)),
-                                                   name: NSView.boundsDidChangeNotification,
-                                                   object: scrollView?.contentView)
-        } else {
-            scrollView?.contentView.postsBoundsChangedNotifications = false
-            NotificationCenter.default.removeObserver(self)
-        }
-    }
-    
+
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
@@ -429,31 +423,33 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         }
     }
     
-    internal var previousDisplayingElements = [Item]()
+    internal func ensureTrackingDisplayingRows() {
+        if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
+            scrollView?.contentView.postsBoundsChangedNotifications = true
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(scrollViewContentBoundsDidChange(_:)),
+                                                   name: NSView.boundsDidChangeNotification,
+                                                   object: scrollView?.contentView)
+        } else {
+            scrollView?.contentView.postsBoundsChangedNotifications = false
+            NotificationCenter.default.removeObserver(self)
+        }
+    }
+    
+    internal var previousVisibleItems = [Item.ID]()
     @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
-        /*
-        guard (notification.object as? NSClipView) != nil else { return }
-        let displayingElements = self.displayingElements
-        var added = [Element]()
-        var removed = [Element]()
-        for displayingElement in displayingElements {
-            if (previousDisplayingElements.contains(displayingElement) == false) {
-                added.append(displayingElement)
-            }
+        let visibleItems = self.tableView.visibleRowIndexes().compactMap({item(forRow: $0)?.id})
+        let added = visibleItems.filter({previousVisibleItems.contains($0) == false })
+        let removed = previousVisibleItems.filter({visibleItems.contains($0) == false})
+        let addedItems = allItems[ids: added]
+        let removedItems = allItems[ids: removed]
+        if (addedItems.isEmpty == false) {
+            self.displayHandlers.isDisplaying?(addedItems)
         }
-        for previousDisplayingElement in previousDisplayingElements {
-            if (displayingElements.contains(previousDisplayingElement) == false) {
-                removed.append(previousDisplayingElement)
-            }
+        if (removedItems.isEmpty == false) {
+            self.displayHandlers.didEndDisplaying?(removedItems)
         }
-        if (added.isEmpty == false) {
-            self.displayHandlers.isDisplaying?(added)
-        }
-        if (removed.isEmpty == false) {
-            self.displayHandlers.didEndDisplaying?(removed)
-        }
-        previousDisplayingElements = displayingElements
-         */
+        previousVisibleItems = visibleItems
     }
 }
 

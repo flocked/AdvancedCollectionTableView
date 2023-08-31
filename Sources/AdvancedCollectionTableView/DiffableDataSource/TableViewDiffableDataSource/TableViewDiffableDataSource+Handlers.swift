@@ -60,6 +60,7 @@ extension AdvanceTableViewDiffableDataSource {
         public var didEndHovering: ((Item) -> Void)?
     }
     
+    /*
     public struct ColumnHandlers<Section> {
         public var allowsRenaming: ((NSTableColumn) -> Bool)?
         public var didRename: (([NSTableColumn]) -> ())?
@@ -68,4 +69,5 @@ extension AdvanceTableViewDiffableDataSource {
         public var didSelect: ((NSTableColumn) -> ())?
         public var shouldSelect:((NSTableColumn?) -> Bool)?
     }
+    */
 }
