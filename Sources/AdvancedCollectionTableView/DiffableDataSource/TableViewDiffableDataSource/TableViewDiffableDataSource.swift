@@ -317,8 +317,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-        Swift.print("isGroupRow", self.dataSource.tableView(tableView, isGroupRow: row))
-        return self.sectionRows.contains(row)
+       // Swift.print("isGroupRow", self.dataSource.tableView(tableView, isGroupRow: row))
+        return self.dataSource.tableView(tableView, isGroupRow: row)
     }
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
