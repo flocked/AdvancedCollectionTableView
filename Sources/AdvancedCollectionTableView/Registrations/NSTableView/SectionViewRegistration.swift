@@ -21,7 +21,7 @@ public extension NSTableView {
      
      - returns:A configured reusable cell object.
      */
-    func makeSectionView<View, Section>(using registration: SectionViewRegistration<View, Section>, row: Int, section: Section) -> View? where View: NSView {
+    func makeSectionView<View, Section>(using registration: SectionViewRegistration<View, Section>, row: Int, section: Section) -> View where View: NSView {
         return registration.makeView(self, row, section)
     }
 }
@@ -103,19 +103,16 @@ public extension NSTableView {
         /// A closure that handles the cell registration and configuration.
         public typealias Handler = ((_ view: View, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
-        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> View? {
+        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> View {
             self.registerIfNeeded(for: tableView)
-            if viewIsTableCellView {
-                if let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? View {
-                    self.handler(sectionView, row, section)
-                    return sectionView
-                }
+            if viewIsTableCellView, let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? View {
+                self.handler(sectionView, row, section)
+                return sectionView
             } else {
                 let sectionView = View()
                 self.handler(sectionView, row, section)
                 return sectionView
             }
-            return nil
         }
         
         internal var viewIsTableCellView: Bool {
