@@ -288,7 +288,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
         var proposedSelectionIndexes = proposedSelectionIndexes
-        sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
+        if sectionHeaderViewProvider != nil {
+            sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
+        }
         guard self.selectionHandlers.shouldSelect != nil || self.selectionHandlers.shouldDeselect != nil  else {
             return proposedSelectionIndexes
         }
