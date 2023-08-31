@@ -229,11 +229,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.registerForDraggedTypes([pasteboardType])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
-        
-        self.dataSource.rowViewProvider = { tableView, row, element in
-            Swift.print("rowViewProvider", element)
-            return tableView.rowView(atRow: row, makeIfNecessary: true)!
-        }
     }
     
     /*
@@ -332,6 +327,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView: NSTableRowView? = nil
+        Swift.print("rowView")
         DispatchQueue.main.async {
             if let item = self.item(forRow: row), let rowViewProvider = self.rowViewProvider {
                 rowView = rowViewProvider(tableView, row, item)
