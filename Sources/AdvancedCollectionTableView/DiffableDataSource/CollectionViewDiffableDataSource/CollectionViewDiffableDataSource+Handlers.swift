@@ -9,6 +9,14 @@ import AppKit
 import FZUIKit
 
 extension AdvanceColllectionViewDiffableDataSource {
+    /// Handlers for prefetching items.
+    public struct PrefetchHandlers {
+        /// Handler that tells you to begin preparing data for the elements.
+        public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
+        /// Cancels a previously triggered data prefetch request.
+        public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
+    }
+    
     /// Handlers for selection of items.
     public struct SelectionHandlers {
         /// Handler that determines whether elements should get selected.
@@ -29,14 +37,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var didDelete: ((_ elements: [Element]) -> ())? = nil
     }
     
-    /// Handlers for highlight.
-    public struct HighlightHandlers {
-        /// Handler that determines which elements should change to a highlight state.
-        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
-        /// Handler that gets called whenever elements changed their highlight state.
-        public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
-    }
-    
     /// Handlers for reordering items.
     public struct ReorderingHandlers {
         /// Handler that determines whether you can reorder a particular item.
@@ -47,12 +47,12 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var didReorder: ((DiffableDataSourceTransaction) -> ())? = nil
     }
     
-    /// Handlers for prefetching items.
-    public struct PrefetchHandlers {
-        /// Handler that tells you to begin preparing data for the elements.
-        public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
-        /// Cancels a previously triggered data prefetch request.
-        public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
+    /// Handlers for highlight.
+    public struct HighlightHandlers {
+        /// Handler that determines which elements should change to a highlight state.
+        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
+        /// Handler that gets called whenever elements changed their highlight state.
+        public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
     
     /**
@@ -65,14 +65,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         public var isDisplaying: ((_ elements: [Element]) -> ())?
         /// Handler that gets called whenever elements end getting displayed.
         public var didEndDisplaying: ((_ elements: [Element]) -> ())?
-    }
-    
-    /// Handlers for mouse click events of elements.
-    public struct MouseHandlers {
-        /// Handler that gets called whenever the mouse is clicking an element.
-        public var mouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: Element) -> ())? = nil
-        /// Handler that gets called whenever the mouse is right-clicking an element.
-        public var rightMouseClick: ((_ point: CGPoint, _ clickCount: Int, _ element: Element) -> ())? = nil
     }
     
     /// Handlers that get called whenever the mouse is hovering an item.

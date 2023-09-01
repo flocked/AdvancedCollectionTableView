@@ -10,6 +10,31 @@ import FZSwiftUtils
 import FZUIKit
 
 extension AdvanceColllectionViewDiffableDataSource {
+    /**
+     Returns the element at the specified index path.
+     
+     - Parameters indexPath: The indexPath
+     - Returns: The element at the index path or nil if there isn't any element at the index path.
+     */
+    public func element(for indexPath: IndexPath) ->  Element? {
+        if let itemId = self.dataSource.itemIdentifier(for: indexPath) {
+            return self.currentSnapshot.itemIdentifiers[id: itemId]
+        }
+        return nil
+    }
+    
+    public func indexPath(for element: Element) -> IndexPath? {
+        return dataSource.indexPath(for: element.id)
+    }
+    
+    func index(for section: Section) -> Int? {
+       return sections.firstIndex(of: section)
+    }
+    
+    func section(for index: Int) -> Section? {
+        return sections[safe: index]
+    }
+    
     /// An array of all elements of the last applied snapshot.
     public var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
@@ -27,19 +52,6 @@ extension AdvanceColllectionViewDiffableDataSource {
     /// An array of elements that are visible.
     public func visibleElements() -> [Element] {
         return self.collectionView.indexPathsForVisibleItems().compactMap({element(for: $0)})
-    }
-    
-    /**
-     Returns the element at the specified index path.
-     
-     - Parameters indexPath: The indexPath
-     - Returns: The element at the index path or nil if there isn't any element at the index path.
-     */
-    public func element(for indexPath: IndexPath) ->  Element? {
-        if let itemId = self.dataSource.itemIdentifier(for: indexPath) {
-            return self.currentSnapshot.itemIdentifiers[id: itemId]
-        }
-        return nil
     }
     
     /**
@@ -74,10 +86,6 @@ extension AdvanceColllectionViewDiffableDataSource {
             return self.collectionView.item(at: elementIndexPath)
         }
         return nil
-    }
-    
-    public func indexPath(for element: Element) -> IndexPath? {
-        return dataSource.indexPath(for: element.id)
     }
     
     public func indexPaths(for elements: [Element]) -> [IndexPath] {
@@ -149,16 +157,6 @@ extension AdvanceColllectionViewDiffableDataSource {
         self.apply(snapshot, animated ? .animated : .usingReloadData)
     }
     
-    
-    public func selectAll() {
-        self.collectionView.selectAll(nil)
-    }
-    
-    
-    public func deselectAll() {
-        self.collectionView.deselectAll(nil)
-    }
-    
     public func selectItems(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let indexPaths = sections.flatMap({self.indexPaths(for: $0)})
         self.selectItems(at: indexPaths,  scrollPosition: scrollPosition)
@@ -190,6 +188,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         self.collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
+    
     public func moveElements( _ elements: [Element], before beforeElement: Element) {
         var snapshot = self.snapshot()
         elements.forEach({snapshot.moveItem($0, beforeItem: beforeElement)})
@@ -214,6 +213,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         snapshot.deleteItems(elements)
         self.apply(snapshot, .animated)
     }
+    
     
     internal func transactionForRemovingElements(_ elements: [Element]) -> DiffableDataSourceTransaction {
         var snapshot = self.snapshot()

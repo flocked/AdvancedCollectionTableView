@@ -145,7 +145,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      
      If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
      */
-    @objc dynamic public var defaultRowAnimation: NSTableView.AnimationOptions {
+    public var defaultRowAnimation: NSTableView.AnimationOptions {
         get { self.dataSource.defaultRowAnimation }
         set { self.dataSource.defaultRowAnimation = newValue }
     }
@@ -183,7 +183,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         - tableView: The initialized table view object to connect to the diffable data source.
         - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
-    convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
+    public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
             let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!

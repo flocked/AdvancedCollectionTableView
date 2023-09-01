@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-extension AdvanceTableViewDiffableDataSource {
+extension AdvanceTableViewDiffableDataSource {    
     public var allItems: [Item] {
         return self.currentSnapshot.itemIdentifiers
     }
@@ -44,6 +44,11 @@ extension AdvanceTableViewDiffableDataSource {
         return nil
     }
     
+    /// Returns the row for the specified item.
+    public func row(for item: Item) -> Int? {
+        return self.dataSource.row(forItemIdentifier: item.id)
+    }
+    
     /**
      Returns the section at the specified row in the table view.
      
@@ -55,6 +60,11 @@ extension AdvanceTableViewDiffableDataSource {
             return sections[id: sectionID]
         }
         return nil
+    }
+    
+    /// Returns the row for the specified section.
+    public func row(for section: Section) -> Int? {
+        return self.dataSource.row(forSectionIdentifier: section.id)
     }
     
     /**
@@ -88,10 +98,6 @@ extension AdvanceTableViewDiffableDataSource {
             return self.tableView.rowView(atRow: row, makeIfNecessary: false)
         }
         return nil
-    }
-    
-    public func row(for item: Item) -> Int? {
-        return self.dataSource.row(forItemIdentifier: item.id)
     }
     
     public func rows(for items: [Item]) -> [Int] {

@@ -31,10 +31,12 @@ import QuickLookUI
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
-    /**
-     Representation of a state for the data in the collection view.
-     */
-    public typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
+    /// A snapshot of the section and element ids.
+    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
+    /// A snapshot of the sections and elements.
+    internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
+    internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
+    
     /**
      A closure that configures and returns a item for a collection view from its diffable data source.
      
@@ -48,10 +50,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      - Returns: A non-nil configured item object. The item provider must return a valid cell object to the collection view.
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
-    
-    // A snapshot of the section and element id's.
-    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
@@ -109,55 +107,10 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      If the value of this property is true (the default is false), users can reorder items in the collection view.
      */
     public var allowsReordering: Bool = false
-    /**
-     A Boolean value that indicates whether users can select items while an section is collapsed in the collection view.
-     
-     If the value of this property is true (the default), users can select items while an section is collapsed.
-     */
-    public var allowsSectionCollapsing: Bool = true
-    /**
-     A Boolean value that indicates whether users can select items in the collection view.
-     
-     If the value of this property is true (the default), users can select items.
-     */
-    public var allowsSelectable: Bool {
-        get { self.collectionView.isSelectable }
-        set { self.collectionView.isSelectable = newValue } }
-    /**
-     A Boolean value that determines whether users can select more than one item in the collection view.
-     
-     This property controls whether multiple items can be selected simultaneously. The default value of this property is false.
-     When the value of this property is true, tapping a cell adds it to the current selection (assuming the delegate permits the cell to be selected). Tapping the item again removes it from the selection.
-     */
-    public var allowsMultipleSelection: Bool {
-        get { self.collectionView.allowsMultipleSelection }
-        set { self.collectionView.allowsMultipleSelection = newValue } }
-    /**
-     A Boolean value indicating whether the collection view may have no selected items.
-     
-     The default value of this property is true, which allows the collection view to have no selected items. Setting this property to false causes the collection view to always leave at least one item selected.
-     */
-    public var allowsEmptySelection: Bool {
-        get { self.collectionView.allowsEmptySelection }
-        set { self.collectionView.allowsEmptySelection = newValue } }
-    /**
-     The layout object used to organize the collection view’s content.
-     
-     Typically, you specify the layout object at design time in Interface Builder. The layout object works with your data source object to generate the needed items and views to display. The collection view uses the `NSCollectionViewGridLayout` object by default.
-     Assigning a new value to this property changes the layout object and causes the collection view to update its contents immediately and without animations. If you want to animate a layout change, use an animator object to set the layout object as follows:
-     
-     You can use the completion handler of the associated NSAnimationContext object to perform additional tasks when the animations finish.
-     */
-    public var collectionViewLayout: NSCollectionViewLayout? {
-        get { self.collectionView.collectionViewLayout }
-        set { self.collectionView.collectionViewLayout = newValue } }
-    
-    /// Handlers that get called whenever the collection view receives mouse click events of items.
-    public var mouseHandlers = MouseHandlers()
     
     /// Handlers that get called whenever the mouse is hovering an item.
     public var hoverHandlers = HoverHandlers() {
-        didSet { self.setupHoverObserving()} }
+        didSet { self.setupHoverObserving() } }
     
     /// Handlers for selection of items.
     public var selectionHandlers = SelectionHandlers()
@@ -188,14 +141,8 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
     
-    /// A handler that gets called whenever collection view receives a keydown event.
-    public var keydownHandler: ((_ event: NSEvent) -> Bool)? = nil
-    
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
-    
-    //   public var sectionHandlers = SectionHandlers<Section>() {
-    //      didSet { self.ensureTrackingArea()} }
     
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
@@ -223,7 +170,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         - option: Option how to apply the snapshot to the collection view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: Snapshot, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         self.dataSource.apply(internalSnapshot, option, completion: completion)
@@ -234,7 +181,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
-    public func snapshot() -> Snapshot {
+    public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
         var snapshot = Snapshot()
         snapshot.appendSections(currentSnapshot.sectionIdentifiers)
         for section in currentSnapshot.sectionIdentifiers {
@@ -311,22 +258,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.collectionView.setupObservingView()
-            /*
-             if self.collectionView.hoverHandlers == nil {
-             let hoverHandlers = NSCollectionView.HoverHandlers()
-             hoverHandlers.isHovering = { [weak self] item in
-             guard let self = self else { return }
-             self.isHovering(item)
-             }
-             hoverHandlers.didEndHovering = { [weak self] item in
-             guard let self = self else { return }
-             self.didEndHovering(item)
-             }
-             self.collectionView.hoverHandlers = hoverHandlers
-             }
-             */
-        } else {
-            //   self.collectionView.hoverHandlers = nil
         }
     }
     
@@ -334,18 +265,9 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
         let displayingElements = self.displayingElements
-        var added = [Element]()
-        var removed = [Element]()
-        for displayingElement in displayingElements {
-            if (previousDisplayingElements.contains(displayingElement) == false) {
-                added.append(displayingElement)
-            }
-        }
-        for previousDisplayingElement in previousDisplayingElements {
-            if (displayingElements.contains(previousDisplayingElement) == false) {
-                removed.append(previousDisplayingElement)
-            }
-        }
+        let added = displayingElements.filter({previousDisplayingElements.contains($0) == false})
+        let removed = previousDisplayingElements.filter({displayingElements.contains($0) == false})
+
         if (added.isEmpty == false) {
             self.displayHandlers.isDisplaying?(added)
         }
@@ -403,12 +325,9 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         - collectionView: The initialized collection view object to connect to the diffable data source.
         - itemRegistration: A item registration which returns each of the items for the collection view from the data the diffable data source provides.
      */
-    public init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
-        self.collectionView = collectionView
-        self.itemProvider = { collectionView,indePath,element in
-            return collectionView.makeItem(using: itemRegistration, for: indePath, element: element) }
-        super.init()
-        sharedInit()
+    public convenience init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
+        self.init(collectionView: collectionView, itemProvider: { collectionView,indePath,element in
+            return collectionView.makeItem(using: itemRegistration, for: indePath, element: element) })
     }
     
     internal func sharedInit() {

@@ -59,5 +59,4 @@ extension AdvanceTableViewDiffableDataSource {
         public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
     }
-    
 }
