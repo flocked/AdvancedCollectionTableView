@@ -1,6 +1,6 @@
 //
 //  NSItemContentView+TextField.swift
-//  
+//
 //
 //  Created by Florian Zand on 24.07.23.
 //
@@ -11,7 +11,7 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class ItemTextField: NSTextField, NSTextFieldDelegate {
-        var properties: ConfigurationProperties.Text {
+        var properties: ContentConfiguration.Text {
             didSet {
                 if oldValue != properties {
                     update()
@@ -19,7 +19,7 @@ internal extension NSItemContentView {
             }
         }
         
-        func text(_ text: String?, attributedText: AttributedString?) {
+        func updateText(_ text: String?, _ attributedText: AttributedString?) {
             if let attributedText = attributedText {
                 self.isHidden = false
                 self.attributedStringValue = NSAttributedString(attributedText)
@@ -33,37 +33,38 @@ internal extension NSItemContentView {
         }
         
         func update() {
-            self.maximumNumberOfLines = properties.maxNumberOfLines
-            self.textColor = properties._resolvedTextColor
+            self.maximumNumberOfLines = properties.numberOfLines
+            self.textColor = properties.resolvedColor()
             self.lineBreakMode = properties.lineBreakMode
             self.font = properties.font
             self.alignment = properties.alignment
             self.isSelectable = properties.isSelectable
             self.isEditable = properties.isEditable
-            
+        }
+        
+        init(properties: ContentConfiguration.Text) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.delegate = self
+            self.textLayout = .wraps
             self.drawsBackground = false
             self.backgroundColor = nil
             self.isBordered = false
-        }
-        
-        init(properties: ConfigurationProperties.Text) {
-            self.properties = properties
-            super.init(frame: .zero)
-            self.drawsBackground = false
-            self.backgroundColor = nil
-            self.delegate = self
-            self.textLayout = .wraps
             self.truncatesLastVisibleLine = true
             self.update()
         }
         
-        internal var collectionViewItem: NSCollectionViewItem? {
-            (self.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
+        var nointrinsicWidth = true
+        override var intrinsicContentSize: NSSize {
+            var intrinsicContentSize = super.intrinsicContentSize
+            if nointrinsicWidth {
+                intrinsicContentSize.width = NSView.noIntrinsicMetric
+            }
+            return intrinsicContentSize
         }
         
-        
-        internal var collectionView: NSCollectionView? {
-            firstSuperview(for: NSCollectionView.self)
+        internal var collectionViewItem: NSCollectionViewItem? {
+            (self.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
         }
         
         override public func becomeFirstResponder() -> Bool {
@@ -90,14 +91,14 @@ internal extension NSItemContentView {
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 if self.properties.stringValidation?(self.stringValue) ?? true {
-                    self.window?.makeFirstResponder(collectionView)
+                    self.window?.makeFirstResponder(nil)
                     return true
                 } else {
                     NSSound.beep()
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                 self.stringValue = self.previousStringValue
-                self.window?.makeFirstResponder(collectionView)
+                self.window?.makeFirstResponder(nil)
                 return true
             }
             return false

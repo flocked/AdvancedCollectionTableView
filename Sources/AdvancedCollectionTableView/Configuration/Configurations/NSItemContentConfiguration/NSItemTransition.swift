@@ -8,6 +8,7 @@
 import AppKit
 import FZUIKit
 
+/*
 // Currently not used
 internal extension NSItemContentConfiguration {
     func animate(with configuration: TransitionConfiguration) {
@@ -86,3 +87,4 @@ internal extension NSItemContentConfiguration {
 }
 
 
+*/

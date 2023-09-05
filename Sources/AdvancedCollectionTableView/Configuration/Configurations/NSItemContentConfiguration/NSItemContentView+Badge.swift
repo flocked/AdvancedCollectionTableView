@@ -1,8 +1,8 @@
 //
-//  NSItemContentView+Badge.swift
-//  
+//  TableCellContentView+Badge.swift
+//  ItemConfiguration
 //
-//  Created by Florian Zand on 06.08.23.
+//  Created by Florian Zand on 18.08.23.
 //
 
 import AppKit
@@ -11,52 +11,132 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class BadgeView: NSView {
-        lazy var textField = ItemTextField(properties: properties.textProperties)
-        lazy var imageView = ItemBadgeImageView(properties: properties.imageProperties)
-        lazy var stackView: NSStackView = {
-            let stackView = NSStackView(views: [self.imageView, self.textField])
-            stackView.orientation = .horizontal
-            return stackView
-        }()
-        
-        var stackViewConstraints: [NSLayoutConstraint] = []
         var properties: NSItemContentConfiguration.Badge {
             didSet {
-                if oldValue != properties {
-                    update()
-                }
+                guard oldValue != properties else { return }
+                self.updateBadge()
             }
         }
         
-        func update() {
-            self.stackViewConstraints.constant(properties.padding)
-            self.textField.text(properties.text, attributedText: properties.attributedText)
-            self.textField.properties = properties.textProperties
-            self.imageView.properties = properties.imageProperties
-            self.stackView.orientation = properties.imageProperties.position.orientation
-            if self.properties.imageProperties.position.imageIsLeading, self.stackView.arrangedSubviews.first != imageView {
-                self.stackView.removeArrangedSubview(textField)
-                self.stackView.addArrangedSubview(textField)
-            } else if self.properties.imageProperties.position.imageIsLeading == false, self.stackView.arrangedSubviews.last != imageView {
-                self.stackView.removeArrangedSubview(imageView)
-                self.stackView.addArrangedSubview(imageView)
-            }
-            
-            self.imageView.image = properties.image
-            self.backgroundColor = properties._resolvedBadgeColor
-            self.cornerRadius = properties.cornerRadius
+        var verticalConstraint: NSLayoutConstraint? = nil
+        var horizontalConstraint: NSLayoutConstraint? = nil
+        var widthConstraint: NSLayoutConstraint? = nil
+        
+        func updateBadge() {
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
+            self.cornerRadius = properties.cornerRadius
+            self.backgroundColor = properties._resolvedBackgroundColor
             self.configurate(using: properties.shadowProperties)
+            
+            self.textField.properties = properties.textProperties
+            self.textField.text(properties.text, attributedText: properties.attributedText)
+            
+            if let view = properties.view {
+                if self.view != view {
+                    self.view?.removeFromSuperview()
+                    self.view = view
+                    stackView.addArrangedSubview(view)
+                }
+            } else {
+                self.view?.removeFromSuperview()
+                self.view = nil
+            }
+
+            self.imageView.image = properties.image
+            self.imageView.properties = properties.imageProperties
+            
+            var visualEffect = properties.visualEffect
+            visualEffect?.blendingMode = .withinWindow
+            visualEffect?.material = .hudWindow
+            visualEffect?.material = .popover
+            visualEffect?.state = .active
+            self.visualEffect = visualEffect
+                        
+            stackViewConstraints.constant(properties.margins)
+            self.stackView.spacing = properties.imageToTextPadding
+            if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
+                stackView.removeArrangedSubview(textField)
+                stackView.addArrangedSubview(textField)
+            } else if properties.imageProperties.position == .trailing, stackView.arrangedSubviews.last != imageView {
+                stackView.removeArrangedSubview(imageView)
+                stackView.addArrangedSubview(imageView)
+            }
+            
+            textField.invalidateIntrinsicContentSize()
+            
+            if let maxWidth = properties.maxWidth {
+                if widthConstraint == nil {
+                    widthConstraint = self.widthAnchor.constraint(equalToConstant: maxWidth)
+                }
+                widthConstraint?.constant = maxWidth
+                widthConstraint?.activate()
+            } else {
+                widthConstraint?.activate(false)
+                widthConstraint = nil
+            }
         }
         
         init(properties: NSItemContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
+            self.initalSetup()
+            self.updateBadge()
+        }
+        
+        lazy var textField = BadgeTextField(properties: properties.textProperties)
+        lazy var imageView = BadgeImageView(properties: properties.imageProperties)
+        var view: NSView? = nil
+        lazy var stackView: NSStackView = {
+            let stackView = NSStackView(views: [imageView, textField])
+            stackView.orientation = .horizontal
+            stackView.alignment = .firstBaseline
+            return stackView
+        }()
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        var stackViewConstraints: [NSLayoutConstraint] = []
+        func initalSetup() {
             self.translatesAutoresizingMaskIntoConstraints = false
-            self.maskToBounds = false
-            self.stackViewConstraints = self.addSubview(withConstraint: stackView)
-            self.update()
+            stackViewConstraints = self.addSubview(withConstraint: stackView)
+        }
+    }
+    
+    class BadgeTextField: NSTextField {
+        var properties: NSItemContentConfiguration.Badge.TextProperties {
+            didSet {
+                guard oldValue != properties else { return }
+                updateProperties()
+            }
+        }
+        
+        func text(_ text: String?, attributedText: AttributedString?) {
+            if let attributedText = attributedText {
+                self.attributedStringValue = NSAttributedString(attributedText)
+            } else {
+                self.stringValue = text ?? ""
+            }
+            self.isHidden = text == nil && attributedText == nil
+        }
+        
+        func updateProperties() {
+            self.font = properties.font
+            self.textColor = properties._resolvedTextColor
+        }
+        
+        init(properties: NSItemContentConfiguration.Badge.TextProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.textLayout = .wraps
+            self.isSelectable = false
+            self.drawsBackground = false
+            self.isBezeled = false
+            self.isBordered = false
+            self.maximumNumberOfLines = 1
+            self.updateProperties()
         }
         
         required init?(coder: NSCoder) {
@@ -64,70 +144,45 @@ internal extension NSItemContentView {
         }
     }
     
-    class ItemBadgeImageView: NSImageView {
+    class BadgeImageView: NSImageView {
         var properties: NSItemContentConfiguration.Badge.ImageProperties {
             didSet {
-                if oldValue != properties {
-                    update()
-                }
+                guard oldValue != properties else { return }
+                updateProperties()
             }
+        }
+        init(properties: NSItemContentConfiguration.Badge.ImageProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.updateProperties()
         }
         
         override var image: NSImage? {
             didSet {
-                self.isHidden = (self.image == nil)
-                if let image = image {
-                    let width = image.alignmentRect.size.height*2.0
-                    var origin = self.frame.origin
-                    origin.x = width - image.alignmentRect.size.width
-                    self.frame.origin = origin
-                }
+                self.isHidden = self.image == nil
             }
         }
         
-        func update() {
-            self.imageScaling = properties.scaling
-            self.symbolConfiguration = properties.symbolConfiguration?.nsUI()
-            self.borderColor = properties._resolvedBorderColor
-            self.borderWidth = properties.borderWidth
-            self.backgroundColor = properties._resolvedBackgroundColor
+        override var intrinsicContentSize: NSSize {
+            var intrinsicContentSize = super.intrinsicContentSize
+            if image?.isSymbolImage == true {
+                return intrinsicContentSize
+            }
+            
+            if let maxWidth = properties.maxWidth, intrinsicContentSize.width > maxWidth {
+                intrinsicContentSize.width = maxWidth
+            }
+            if let maxHeight = properties.maxHeight, intrinsicContentSize.height > maxHeight {
+                intrinsicContentSize.height = maxHeight
+            }
+            return intrinsicContentSize
+        }
+        
+        func updateProperties() {
             self.contentTintColor = properties._resolvedTintColor
-            self.cornerRadius = properties.cornerRadius
-            
-            var width: CGFloat? =  image?.size.width
-            var height: CGFloat? =  image?.size.height
-            if let maxWidth = properties.maxWidth, let _width = width {
-                width = max(_width, maxWidth)
-            }
-            
-            if let maxHeight = properties.maxHeight, let _height = height {
-                height = max(_height, maxHeight)
-            }
-            
-            if let width = width {
-                widthA = self.widthAnchor.constraint(equalToConstant: width)
-                widthA?.isActive = true
-            } else {
-                widthA?.isActive = false
-            }
-            
-            if let height = height {
-                heightA = self.heightAnchor.constraint(equalToConstant: height)
-                heightA?.isActive = true
-            } else {
-                heightA?.isActive = false
-            }
-            
-        }
-        
-        var widthA: NSLayoutConstraint? = nil
-        var heightA: NSLayoutConstraint? = nil
-        
-        init(properties: NSItemContentConfiguration.Badge.ImageProperties) {
-            self.properties = properties
-            super.init(frame: .zero)
-            self.imageAlignment = .alignCenter
-            self.update()
+            self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
+            self.imageScaling = properties.scaling
+            self.invalidateIntrinsicContentSize()
         }
         
         required init?(coder: NSCoder) {

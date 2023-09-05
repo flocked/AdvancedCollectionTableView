@@ -1,29 +1,24 @@
 //
-//  NSItemContentConfiguration+ContentProperties.swift
-//  
+//  ItemConfiguration+Content.swift
+//  ItemConfiguration
 //
-//  Created by Florian Zand on 02.06.23.
+//  Created by Florian Zand on 07.08.23.
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
 public extension NSItemContentConfiguration {
-    /**
-     Properties for configuring the content of an item.
-     
-     The item content view is displayed if there is a item view, item image and/or background color.
-     */
+    /// Properties of the content that displays the image and view.
     struct ContentProperties: Hashable {
-        /// The image scaling of an item image.
         public enum ImageScaling {
-            /// The image is resized to fit.
+            /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
             case fit
-            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect of the image. The image is centered in the axis it exceeds.
+            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect ratio of the image. The image is centered in the axis it exceeds.
             case fill
-            /// The image is resized to fit the entire bounds rectangle.
+            /// The image is resized to the entire bounds rectangle.
             case resize
             /// The image isn't resized.
             case none
@@ -35,9 +30,7 @@ public extension NSItemContentConfiguration {
                 case .none: return .center
                 }
             }
-            internal var shouldResize: Bool {
-                self == .fit
-            }
+            
             internal var swiftui: ContentMode {
                 switch self {
                 case .none: return .fit
@@ -46,37 +39,23 @@ public extension NSItemContentConfiguration {
                 case .resize: return .fit
                 }
             }
-        }
-        
-        public enum SizeOption: Hashable {
-            case max(width: CGFloat?, height: CGFloat?)
-            case textAndSecondaryTextHeight
-            case size(CGSize)
-            case min(width: CGFloat?, height: CGFloat?)
-        }
-        
-        public enum ContentSizing: Hashable {
-            case contentHeight(max: CGSize? = nil)
-            case textHeight
-            case secondaryTextHeight
-            case textAndSecondaryTextHeight
-            case size(CGSize)
+            internal var shouldResize: Bool {
+                self == .fit
+            }
         }
         
         /// The corner radius of the content.
         public var cornerRadius: CGFloat = 10.0
         
         /// The maximum width of the content.
-        public var maxWidth: CGFloat? = nil
+        public var maximumWidth: CGFloat? = nil
         /// The maximum height of the content.
-        public var maxHeight: CGFloat? = nil
+        public var maximumHeight: CGFloat? = nil
         
-        /// The size of the content.
-        public var sizing: SizeOption? = nil
         /**
-         The scaling of the content.
+         The scaling of the content view.
          
-         The default is 1.0, which displays the content at it's original scale.
+         The default is 1.0, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
          */
         public var scaleTransform: CGFloat = 1.0
         
@@ -111,7 +90,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: ConfigurationProperties.SymbolConfiguration? = nil
+        public var imageSymbolConfiguration: ContentConfiguration.SymbolConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
         /// The image tint color for an image that is a template or symbol image.
@@ -127,7 +106,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The shadow properties.
-        public var shadow: ConfigurationProperties.Shadow = .black()
+        public var shadow: ContentConfiguration.Shadow = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
         internal var needsBorderWidthReset: Bool = false
@@ -138,8 +117,8 @@ public extension NSItemContentConfiguration {
         internal var _resolvedBorderColor: NSColor? = nil
         internal var _resolvedBackgroundColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
-            imageSymbolConfiguration?.updateResolvedColors()
-            _resolvedImageTintColor = imageSymbolConfiguration?._resolvedPrimaryColor ?? resolvedImageTintColor()
+            //  imageSymbolConfiguration?.updateResolvedColors()
+            _resolvedImageTintColor = imageSymbolConfiguration?.resolvedPrimaryColor() ?? resolvedImageTintColor()
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
@@ -147,5 +126,6 @@ public extension NSItemContentConfiguration {
         internal init() {
             
         }
+        
     }
 }

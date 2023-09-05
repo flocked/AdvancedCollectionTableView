@@ -5,6 +5,7 @@
 //  Created by Florian Zand on 02.06.23.
 //
 
+/*
 import AppKit
 import FZSwiftUtils
 import FZUIKit
@@ -303,3 +304,4 @@ struct ShapedImage: View {
         }
     }
 }
+*/
