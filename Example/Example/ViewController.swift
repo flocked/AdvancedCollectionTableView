@@ -30,12 +30,8 @@ class ViewController: NSViewController {
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
         
-        if let badgeText = galleryItem.badge {
-            var badge: NSItemContentConfiguration.Badge = .text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)
-            badge.margins = NSDirectionalEdgeInsets(width: 12, height: 4)
-            
-            configuration.badges = [badge]
-          //  configuration.badge?.position = .topRight
+        if let badgeText = galleryItem.badge {            
+            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
         }
                 
         collectionViewItem.contentConfiguration = configuration
