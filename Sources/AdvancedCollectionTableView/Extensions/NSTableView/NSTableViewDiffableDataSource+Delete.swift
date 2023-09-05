@@ -53,7 +53,7 @@ public extension NSTableViewDiffableDataSource {
                                 let row = (selecedRowIndexes.first ?? 0)
                                 tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
                                 if tableView.allowsMultipleSelection {
-                                    let selectedRowIndexes = tableView.selectedRowIndexes
+                                    let selectedRowIndexes = tableView.selectedRowIndexes  
                                     if selectedRowIndexes.count == 2, selectedRowIndexes.contains(0) {
                                         tableView.deselectRow(0)
                                     }

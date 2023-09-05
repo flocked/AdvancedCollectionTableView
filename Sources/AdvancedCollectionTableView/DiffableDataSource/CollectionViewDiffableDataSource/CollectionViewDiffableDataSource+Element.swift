@@ -188,7 +188,7 @@ extension AdvanceColllectionViewDiffableDataSource {
         self.collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
-    
+   /*
     public func moveElements( _ elements: [Element], before beforeElement: Element) {
         var snapshot = self.snapshot()
         elements.forEach({snapshot.moveItem($0, beforeItem: beforeElement)})
@@ -207,6 +207,7 @@ extension AdvanceColllectionViewDiffableDataSource {
             self.moveElements(elements, before: toElement)
         }
     }
+    */
     
     public func removeElements( _ elements: [Element]) {
         var snapshot = self.snapshot()
