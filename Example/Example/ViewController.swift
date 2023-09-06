@@ -62,7 +62,7 @@ class ViewController: NSViewController {
             firstItem.replaceInfo(with: newRandomItem)
             
             // Reconfigurates the first item.
-            self.dataSource.reconfigurateElements([firstItem])
+            self.dataSource.reconfigureElements([firstItem])
         }
     }
     
