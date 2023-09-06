@@ -11,7 +11,7 @@ import FZQuicklook
 import FZSwiftUtils
 /**
  This object is an advanced version or `NSTableViewDiffableDataSource`. It provides:
-
+ 
  - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
  - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
  - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
@@ -68,14 +68,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
     
     /**
-    Right click menu provider for selected rows.
+     Right click menu provider for selected rows.
      
-    When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
+     When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
      */
     public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil
-        
+    
     /**
-    Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
+     Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
      */
     public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
@@ -95,7 +95,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
     public var displayHandlers = DisplayHandlers() {
         didSet {  self.ensureTrackingDisplayingRows() } }
-        
+    
     /// Handlers for drag and drop of files from and to the table view.
     public var dragDropHandlers = DragdropHandlers()
     
@@ -167,8 +167,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-        - tableView: The initialized table view object to connect to the diffable data source.
-        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+     - tableView: The initialized table view object to connect to the diffable data source.
+     - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
         self.init(tableView: tableView, cellProvider:  {
@@ -176,7 +176,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
         })
     }
-
+    
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified collection view.
      
@@ -187,8 +187,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-        - tableView: The initialized table view object to connect to the diffable data source.
-        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+     - tableView: The initialized table view object to connect to the diffable data source.
+     - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
@@ -211,8 +211,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      ```
      
      - Parameters:
-        - tableView: The initialized collection view object to connect to the diffable data source.
-        - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+     - tableView: The initialized collection view object to connect to the diffable data source.
+     - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
@@ -235,9 +235,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
-            
+    
     public func numberOfRows(in tableView: NSTableView) -> Int {
-       return dataSource.numberOfRows(in: tableView)
+        return dataSource.numberOfRows(in: tableView)
     }
     
     internal var previousSelectedIDs: [Item.ID] = []
@@ -307,36 +307,24 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
-        Swift.print("dragging acceptDrop")
-
-        /*
-        guard let items = info.draggingPasteboard.pasteboardItems
-            else { return false }
-        let ids = items.compactMap{ $0.string(forType: pasteboardType) }
-        self.allItems[ids: ids]
-        */
-        
         if self.dragingRowIndexes.isEmpty == false {
-        let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering else {
-            return false
-        }
-            Swift.print("dragging acceptDrop will")
+            let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
+            guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+                return false
+            }
             self.reorderingHandlers.willReorder?(dragingItems)
             var snapshot = self.snapshot()
-            if let toItem = self.item(forRow: row) {
-                for item in dragingItems {
-                    snapshot.moveItem(item, beforeItem: toItem)
-                }
-                self.apply(snapshot, .usingReloadData)
+            for item in dragingItems {
+                snapshot.moveItem(item, beforeItem: toItem)
             }
+            self.apply(snapshot, .withoutAnimation)
+            self.reorderingHandlers.didReorder?(dragingItems)
         }
         
         return true
     }
     
     public func tableView( _ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        Swift.print("dragging validateDrop")
         if dropOperation == .above {
             return .move
         }
@@ -344,21 +332,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView( _ tableView: NSTableView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forRowIndexes rowIndexes: IndexSet) {
-        Swift.print("dragging willBeginAt")
         self.dragingRowIndexes = rowIndexes
     }
     
     public func tableView(_ tableView: NSTableView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
-        Swift.print("dragging endedAt")
-        if self.dragingRowIndexes.isEmpty == false, let didReorder = self.reorderingHandlers.didReorder {
-            let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-            didReorder(dragingItems)
-        }
         self.dragingRowIndexes.removeAll()
     }
     
     public func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
-        Swift.print("dragging pasteboardWriterForRow")
         if let element = self.item(forRow: row) {
             let item = NSPasteboardItem()
             item.setString(String(element.hashValue), forType: self.pasteboardType)
@@ -398,7 +379,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             self.hoverHandlers.didEndHovering?(item)
         }
     }
-
+    
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
@@ -407,13 +388,13 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
                 hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRowView, handler: { old, new in
                     guard old != new else { return }
                     if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old {
-                      let oldRow = self.tableView.row(for: old)
+                        let oldRow = self.tableView.row(for: old)
                         if oldRow != -1, let item = self.item(forRow: oldRow) {
                             didEndHovering(item)
                         }
                     }
                     if let isHovering = self.hoverHandlers.isHovering,  let new = new {
-                      let newRow = self.tableView.row(for: new)
+                        let newRow = self.tableView.row(for: new)
                         if newRow != -1, let item = self.item(forRow: newRow) {
                             isHovering(item)
                         }
@@ -456,8 +437,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableViewColumnDidMove(_ notification: Notification) {
         guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
-                let newPos = notification.userInfo?["NSNewColumn"] as? Int,
-                let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
+              let newPos = notification.userInfo?["NSNewColumn"] as? Int,
+              let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
         self.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
     }
     
