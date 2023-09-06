@@ -164,17 +164,17 @@ extension AdvanceTableViewDiffableDataSource {
         self.tableView.deselectAll(nil)
     }
     
-    public func selectItems(in sections: [Section]) {
+    public func selectItems(in sections: [Section], byExtendingSelection: Bool = false) {
         let rows = sections.flatMap({self.rows(for: $0)})
-        self.selectItems(at: rows)
+        self.selectItems(at: rows, byExtendingSelection: byExtendingSelection)
     }
     
-    public func selectItems(at rows: [Int]) {
-        self.tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: true)
+    public func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
+        self.tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: byExtendingSelection)
     }
     
-    public func selectItems(_ items: [Item]) {
-        self.selectItems(at: rows(for: items))
+    public func selectItems(_ items: [Item], byExtendingSelection: Bool = false) {
+        self.selectItems(at: rows(for: items), byExtendingSelection: byExtendingSelection)
     }
     
     public func deselectItems(in sections: [Section]) {
