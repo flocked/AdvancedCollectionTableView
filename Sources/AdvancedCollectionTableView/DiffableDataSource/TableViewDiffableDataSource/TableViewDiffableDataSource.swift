@@ -131,8 +131,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
         self.updateSectionRows()
-        dataSource.apply(internalSnapshot, animatingDifferences: true)
-      //  dataSource.apply(internalSnapshot, option, completion: completion)
+        dataSource.apply(internalSnapshot, option, completion: completion)
     }
     
     internal var sectionRows: [Int] = []
