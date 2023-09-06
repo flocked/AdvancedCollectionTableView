@@ -161,8 +161,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return self.dataSource.defaultRowAnimation.rawValue
     }
     
-    @objc dynamic internal var _isDiffableDataSource: Bool {
-        Swift.print("_isDiffableDataSource")
+    @objc dynamic internal var _hasSectionHeaderProvider: Bool {
+        Swift.print("_hasSectionHeaderProvider")
         return true
     }
     
