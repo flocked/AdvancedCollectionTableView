@@ -161,11 +161,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return self.dataSource.defaultRowAnimation.rawValue
     }
     
-    @objc dynamic internal var _hasSectionHeaderProvider: Bool {
-        Swift.print("_hasSectionHeaderProvider")
-        return true
-    }
-    
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
      
