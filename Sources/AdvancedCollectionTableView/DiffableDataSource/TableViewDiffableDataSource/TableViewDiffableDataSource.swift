@@ -318,8 +318,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             for item in dragingItems {
                 snapshot.moveItem(item, beforeItem: toItem)
             }
-            self.apply(snapshot, .usingReloadData)
-            self.selectItems(selected)
+            self.apply(snapshot, .animated)
+          //  self.selectItems(selected)
             self.reorderingHandlers.didReorder?(dragingItems)
         }
         
