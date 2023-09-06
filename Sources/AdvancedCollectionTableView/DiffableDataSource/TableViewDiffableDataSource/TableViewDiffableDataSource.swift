@@ -311,7 +311,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
-        Swift.print("accept drop", self.dragingRowIndexes.count)
+        Swift.print("accept drop", self.dragingRowIndexes.count, row, self.item(forRow: row) ?? "")
         if self.dragingRowIndexes.isEmpty == false {
             let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
             guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
