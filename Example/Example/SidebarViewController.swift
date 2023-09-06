@@ -32,6 +32,7 @@ class SidebarViewController: NSViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self.dataSource
+        dataSource.allowsReordering = true
         applySnapshot()
     }
     
