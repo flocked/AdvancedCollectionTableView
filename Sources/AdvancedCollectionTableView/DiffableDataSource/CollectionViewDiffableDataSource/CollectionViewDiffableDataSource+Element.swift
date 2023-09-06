@@ -1,5 +1,5 @@
 //
-//  AdvanceColllectionViewDiffableDataSource+Element.swift
+//  AdvanceCollectionViewDiffableDataSource+Element.swift
 //  NSHostingViewSizeInTableView
 //
 //  Created by Florian Zand on 02.11.22.
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension AdvanceColllectionViewDiffableDataSource {
+extension AdvanceCollectionViewDiffableDataSource {
     /// An array of the selected elements.
     public var selectedElements: [Element] {
         return self.collectionView.selectionIndexPaths.compactMap({element(for: $0)})

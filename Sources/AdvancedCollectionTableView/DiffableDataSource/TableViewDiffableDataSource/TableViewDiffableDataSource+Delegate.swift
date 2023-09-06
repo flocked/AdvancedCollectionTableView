@@ -30,12 +30,12 @@ extension AdvanceTableViewDiffableDataSource {
             let selected = selectedIDs.filter({ previousSelectedIDs.contains($0) == false })
             
             if selected.isEmpty == false, let didSelect = dataSource.selectionHandlers.didSelect {
-                let selectedItems = dataSource.allItems[ids: selected]
+                let selectedItems = dataSource.items[ids: selected]
                 didSelect(selectedItems)
             }
             
             if deselected.isEmpty == false, let didDeselect = dataSource.selectionHandlers.didDeselect {
-                let deselectedItems = dataSource.allItems[ids: deselected]
+                let deselectedItems = dataSource.items[ids: deselected]
                 if deselectedItems.isEmpty == false {
                     didDeselect(deselectedItems)
                 }
@@ -45,7 +45,7 @@ extension AdvanceTableViewDiffableDataSource {
         
         public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
             var proposedSelectionIndexes = proposedSelectionIndexes
-            dataSource.sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
+            dataSource.sectionRowIndexes.forEach({ proposedSelectionIndexes.remove($0) })
             guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil  else {
                 return proposedSelectionIndexes
             }
@@ -74,15 +74,15 @@ extension AdvanceTableViewDiffableDataSource {
         }
         
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-            return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
+            return self.dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
         }
         
         public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-            return self.dataSource.tableView(tableView, isGroupRow: row)
+            return self.dataSource.dataSource.tableView(tableView, isGroupRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-            return self.dataSource.tableView(tableView, rowViewForRow: row)
+            return self.dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {

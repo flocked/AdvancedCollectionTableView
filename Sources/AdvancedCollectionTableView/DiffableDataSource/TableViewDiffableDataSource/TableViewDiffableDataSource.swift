@@ -34,11 +34,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     internal let tableView: NSTableView
     internal var dataSource: DataSoure!
-    internal var dragingRowIndexes = IndexSet()
-    internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
     internal var currentSnapshot: Snapshot = Snapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
-    internal var scrollView: NSScrollView? { return tableView.enclosingScrollView }
+    internal var items: [Item] { currentSnapshot.itemIdentifiers }
+    internal var dragingRowIndexes = IndexSet()
+    internal var sectionRowIndexes: [Int] = []
+    internal var previousSelectedIDs: [Item.ID] = []
     internal var keyDownMonitor: Any? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
@@ -92,10 +93,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public var hoverHandlers = HoverHandlers() {
         didSet { self.setupHoverObserving()} }
     
-    ///Handlers for displaying of rows. The handlers get called whenever the table view is displaying new rows (e.g. when the enclosing scrollview gets scrolled to new rows).
-    public var displayHandlers = DisplayHandlers() {
-        didSet {  self.ensureTrackingDisplayingRows() } }
-    
     /// Handlers for drag and drop of files from and to the table view.
     public var dragDropHandlers = DragdropHandlers()
     
@@ -118,29 +115,49 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         didSet { self.setupKeyDownMonitor() }
     }
     
+    /**
+     Returns a representation of the current state of the data in the collection view.
+     
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
     public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
-        var snapshot = Snapshot()
-        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
-        for section in currentSnapshot.sectionIdentifiers {
-            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
-        }
-        return snapshot
+        return currentSnapshot
     }
     
+    /**
+     Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
+     
+     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the collection view.
+        - option: Option how to apply the snapshot to the collection view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
+     */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
         self.currentSnapshot = snapshot
-        self.updateSectionRows()
+        self.updateSectionHeaderRows()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
     
-    internal var sectionRows: [Int] = []
-    internal func updateSectionRows() {
-        sectionRows.removeAll()
+    internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
+        var internalSnapshot = InternalSnapshot()
+        let sections = snapshot.sectionIdentifiers
+        internalSnapshot.appendSections(sections.ids)
+        for section in sections {
+            let elements = snapshot.itemIdentifiers(inSection: section)
+            internalSnapshot.appendItems(elements.ids, toSection: section.id)
+        }
+        return internalSnapshot
+    }
+
+    internal func updateSectionHeaderRows() {
+        sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
         var row = 0
         for section in sections {
-            sectionRows.append(row)
+            sectionRowIndexes.append(row)
             row = row + 1 + currentSnapshot.numberOfItems(inSection: section)
         }
     }
@@ -224,17 +241,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         
         self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
-            guard let self = self, let item = self.allItems[id: itemID] else { return NSTableCellView() }
+            guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
             return cellProvider(tableview, tablecolumn, row, item)
         })
         
-        self.tableView.registerForDraggedTypes([pasteboardType])
+        self.tableView.registerForDraggedTypes([.itemID])
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
-        
-        if Item.self is QuicklookPreviewable.Type {
-            self.tableView.isQuicklookPreviewable = true
-        }
+        self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
     }
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.
@@ -244,7 +258,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return dataSource.numberOfRows(in: tableView)
     }
     
-    internal var previousSelectedIDs: [Item.ID] = []
     public func tableViewSelectionDidChange(_ notification: Notification) {
         guard selectionHandlers.didSelect != nil || selectionHandlers.didDeselect != nil else {
             previousSelectedIDs = selectedItems.ids
@@ -255,12 +268,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         let selected = selectedIDs.filter({ previousSelectedIDs.contains($0) == false })
         
         if selected.isEmpty == false, let didSelect = selectionHandlers.didSelect {
-            let selectedItems = self.allItems[ids: selected]
+            let selectedItems = self.items[ids: selected]
             didSelect(selectedItems)
         }
         
         if deselected.isEmpty == false, let didDeselect = selectionHandlers.didDeselect {
-            let deselectedItems = self.allItems[ids: deselected]
+            let deselectedItems = self.items[ids: deselected]
             if deselectedItems.isEmpty == false {
                 didDeselect(deselectedItems)
             }
@@ -270,7 +283,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
         var proposedSelectionIndexes = proposedSelectionIndexes
-        sectionRows.forEach({ proposedSelectionIndexes.remove($0) })
+        sectionRowIndexes.forEach({ proposedSelectionIndexes.remove($0) })
         guard self.selectionHandlers.shouldSelect != nil || self.selectionHandlers.shouldDeselect != nil  else {
             return proposedSelectionIndexes
         }
@@ -311,7 +324,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
-        Swift.print("accept drop", self.dragingRowIndexes.count, row, self.numberOfRows(in: tableView), self.allItems.count)
         if self.dragingRowIndexes.isEmpty == false {
             var row = row
             var isLast: Bool = false
@@ -361,7 +373,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
         if let element = self.item(forRow: row) {
             let item = NSPasteboardItem()
-            item.setString(String(element.hashValue), forType: self.pasteboardType)
+            item.setString(String(element.id.hashValue), forType: .itemID)
             return item
         }
         return nil
@@ -374,32 +386,28 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return []
     }
     
-    internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
-        var internalSnapshot = InternalSnapshot()
-        let sections = snapshot.sectionIdentifiers
-        internalSnapshot.appendSections(sections.ids)
-        for section in sections {
-            let elements = snapshot.itemIdentifiers(inSection: section)
-            internalSnapshot.appendItems(elements.ids, toSection: section.id)
-        }
-        return internalSnapshot
+    public func tableViewColumnDidMove(_ notification: Notification) {
+        guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
+              let newPos = notification.userInfo?["NSNewColumn"] as? Int,
+              let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
+        self.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
     }
     
-    internal func isHovering(_ rowView: NSTableRowView) {
-        let row = self.tableView.row(for: rowView)
-        if row != -1, let item = item(forRow: row) {
-            self.hoverHandlers.isHovering?(item)
-        }
+    public func tableViewColumnDidResize(_ notification: Notification) {
+        guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
+        self.columnHandlers.didResize?(tableColumn, oldWidth)
     }
     
-    internal func didEndHovering(_ rowView: NSTableRowView) {
-        let row = self.tableView.row(for: rowView)
-        if row != -1, let item = item(forRow: row) {
-            self.hoverHandlers.didEndHovering?(item)
-        }
+    public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
+        guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
+        return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
     }
-    
+        
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
+    internal var previousHovered: Item.ID? = nil
+    internal func hoveredItemChanged() {
+        
+    }
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()
@@ -424,52 +432,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             hoveredRowObserver = nil
         }
     }
-    
-    internal func ensureTrackingDisplayingRows() {
-        if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
-            scrollView?.contentView.postsBoundsChangedNotifications = true
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(scrollViewContentBoundsDidChange(_:)),
-                                                   name: NSView.boundsDidChangeNotification,
-                                                   object: scrollView?.contentView)
-        } else {
-            scrollView?.contentView.postsBoundsChangedNotifications = false
-            NotificationCenter.default.removeObserver(self)
-        }
-    }
-    
-    internal var previousVisibleItems = [Item.ID]()
-    @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
-        let visibleItems = self.tableView.visibleRowIndexes().compactMap({item(forRow: $0)?.id})
-        let added = visibleItems.filter({previousVisibleItems.contains($0) == false })
-        let removed = previousVisibleItems.filter({visibleItems.contains($0) == false})
-        let addedItems = allItems[ids: added]
-        let removedItems = allItems[ids: removed]
-        if (addedItems.isEmpty == false) {
-            self.displayHandlers.isDisplaying?(addedItems)
-        }
-        if (removedItems.isEmpty == false) {
-            self.displayHandlers.didEndDisplaying?(removedItems)
-        }
-        previousVisibleItems = visibleItems
-    }
-    
-    public func tableViewColumnDidMove(_ notification: Notification) {
-        guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
-              let newPos = notification.userInfo?["NSNewColumn"] as? Int,
-              let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
-        self.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
-    }
-    
-    public func tableViewColumnDidResize(_ notification: Notification) {
-        guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
-        self.columnHandlers.didResize?(tableColumn, oldWidth)
-    }
-    
-    public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
-        guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
-        return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
-    }
 }
 
 extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
@@ -484,3 +446,14 @@ extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
         return nil
     }
 }
+
+internal extension NSPasteboard.PasteboardType {
+  static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
+}
+
+internal protocol AdvanceDiffableDataSource {
+    func hoveredItemChanged()
+}
+
+extension AdvanceTableViewDiffableDataSource: AdvanceDiffableDataSource { }
+extension AdvanceCollectionViewDiffableDataSource: AdvanceDiffableDataSource { }

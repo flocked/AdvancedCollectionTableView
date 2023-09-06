@@ -1,5 +1,5 @@
 //
-//  AdvanceColllectionViewDiffableDataSource+Delegate.swift
+//  AdvanceCollectionViewDiffableDataSource+Delegate.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -8,12 +8,12 @@
 import AppKit
 import FZUIKit
 
-extension AdvanceColllectionViewDiffableDataSource {
+extension AdvanceCollectionViewDiffableDataSource {
     internal class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
-        weak var dataSource: AdvanceColllectionViewDiffableDataSource!
+        weak var dataSource: AdvanceCollectionViewDiffableDataSource!
         
-        init(_ dataSource: AdvanceColllectionViewDiffableDataSource) {
+        init(_ dataSource: AdvanceCollectionViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.collectionView.delegate = self
@@ -50,7 +50,7 @@ extension AdvanceColllectionViewDiffableDataSource {
                 }
                 
                 let item = NSPasteboardItem()
-                item.setString(String(element.id.hashValue), forType: self.dataSource.pasteboardType)
+                item.setString(String(element.id.hashValue), forType: .itemID)
                 return item
             }
             return nil
@@ -167,9 +167,6 @@ extension AdvanceColllectionViewDiffableDataSource {
             }
             return collectionView.draggingImageForItems(at: indexPaths, with: event, offset: dragImageOffset)
         }
-        
-        
-        
     }
 }
 

@@ -9,7 +9,7 @@ Take a look at the included example project which demonstrates:
 - NSTableView `cellRegistration`
 - `NSItemContentConfiguration`
 - `NSListContentConfiguration`
-- `AdvanceColllectionViewDiffableDataSource`
+- `AdvanceCollectionViewDiffableDataSource`
 - NSCollectionView `reconfiguratingItems(at: _)`.
 
 ## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
@@ -110,7 +110,7 @@ The new `apply(_ snapshot:, _ option: ApplyOption)` provides an option to apply 
  diffableDataSource.apply(mySnapshot, .animated(3.0))
  ```
  
-## AdvanceColllectionViewDiffableDataSource
+## AdvanceCollectionViewDiffableDataSource
 An extended `NSCollectionViewDiffableDataSource that provides:
 
  - Reordering of items via drag and drop by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
@@ -124,7 +124,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  Sections and items need to conform both to `Hashable` and `Identifiable`. Internally the datasource uses the identifiers to 
  
  ## AdvanceTableViewDiffableDataSource
- Simliar to AdvanceColllectionViewDiffableDataSource. *Work in progress.*
+ Simliar to AdvanceCollectionViewDiffableDataSource. *Work in progress.*
 
 ## Quicklook for NSTableView & NSCollectionView
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.

@@ -1,5 +1,5 @@
 //
-//  AdvanceColllectionViewDiffableDataSource.swift
+//  AdvanceCollectionViewDiffableDataSource.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -23,18 +23,16 @@ import QuickLookUI
  - Handler for pinching of the collection view via ``pinchHandler``.
  
  ```swift
- dataSource = AdvanceColllectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
+ dataSource = AdvanceCollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
  ```
  
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
  - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
-    /// A snapshot of the section and element ids.
-    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    /// A snapshot of the sections and elements.
+public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
+    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
     /**
@@ -69,20 +67,17 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
-    internal var itemProvider: ItemProvider
     internal var delegateBridge: DelegateBridge!
-    internal var responder: Responder<Section, Element>!
-    internal var scrollView: NSScrollView? { return collectionView.enclosingScrollView }
+    internal var responder: Responder!
     internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     internal var currentSnapshot: Snapshot = Snapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
-    internal var draggingElements: [Element] {
-        self.draggingIndexPaths.compactMap({self.element(for: $0)})
-    }
-    internal let pasteboardType = NSPasteboard.PasteboardType("DiffableCollection.Pasteboard")
+    internal var previousDisplayingElements = [Element]()
+
     internal var hoverElement: Element? = nil {
         didSet {
+            Swift.print("hoverElement", hoverElement ?? "nil")
             guard oldValue != self.hoverElement else { return }
             if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
                 hoverHandlers.isHovering?(hoverElement)
@@ -144,22 +139,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
     
-    public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
-    }
-    
-    public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        return dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
-    }
-    
-    public func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return dataSource.numberOfSections(in: collectionView)
-    }
-    
-    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
-    }
-    
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
@@ -215,18 +194,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         }
     }
     
-    internal func isHovering(_ item: NSCollectionViewItem) {
-        if let indexPath = self.collectionView.indexPath(for: item), let element = element(for: indexPath) {
-            self.hoverHandlers.isHovering?(element)
-        }
-    }
-    
-    internal func didEndHovering(_ item: NSCollectionViewItem) {
-        if let indexPath = self.collectionView.indexPath(for: item), let element = element(for: indexPath) {
-            self.hoverHandlers.didEndHovering?(element)
-        }
-    }
-    
     internal var pinchElement: Element? = nil
     @objc internal func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
         let pinchLocation = gesture.location(in: self.collectionView)
@@ -244,13 +211,13 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     
     internal func ensureTrackingDisplayingItems() {
         if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
-            scrollView?.contentView.postsBoundsChangedNotifications = true
+            collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(scrollViewContentBoundsDidChange(_:)),
                                                    name: NSView.boundsDidChangeNotification,
-                                                   object: scrollView?.contentView)
+                                                   object: collectionView.enclosingScrollView?.contentView)
         } else {
-            scrollView?.contentView.postsBoundsChangedNotifications = false
+            collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = false
             NotificationCenter.default.removeObserver(self)
         }
     }
@@ -261,7 +228,10 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
         }
     }
     
-    internal var previousDisplayingElements = [Element]()
+    internal func hoveredItemChanged() {
+        
+    }
+    
     @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
         let displayingElements = self.displayingElements
@@ -275,19 +245,6 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
             self.displayHandlers.didEndDisplaying?(removed)
         }
         previousDisplayingElements = displayingElements
-    }
-    
-    internal func configurateDataSource() {
-        self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
-            [weak self] collectionView, indePath, elementID in
-            
-            guard let self = self, let element = self.allElements[id: elementID] else { return nil }
-            return self.itemProvider(collectionView, indePath, element)
-        })
-        self.dataSource.supplementaryViewProvider = { [weak self] collectionView, elementKind, indePath in
-            guard let self = self else { return nil }
-            return self.supplementaryViewProvider?(collectionView, elementKind, indePath)
-        }
     }
     
     /**
@@ -308,8 +265,20 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      */
     public init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider) {
         self.collectionView = collectionView
-        self.itemProvider = itemProvider
         super.init()
+        
+        self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
+            [weak self] collectionView, indePath, elementID in
+            
+            guard let self = self, let element = self.allElements[id: elementID] else { return nil }
+            return itemProvider(collectionView, indePath, element)
+        })
+        
+        self.dataSource.supplementaryViewProvider = { [weak self] collectionView, elementKind, indePath in
+            guard let self = self else { return nil }
+            return self.supplementaryViewProvider?(collectionView, elementKind, indePath)
+        }
+        
         sharedInit()
     }
     /**
@@ -318,7 +287,7 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item registration, where each of your items gets determine how to display your data in the UI.
      
      ```swift
-     dataSource = AdvanceColllectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
+     dataSource = AdvanceCollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
      
      - Parameters:
@@ -331,32 +300,39 @@ public class AdvanceColllectionViewDiffableDataSource<Section: Identifiable & Ha
     }
     
     internal func sharedInit() {
-        self.configurateDataSource()
-        
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
         self.collectionView.setupCollectionViewFirstResponderObserver()
-        
-        if Element.self is QuicklookPreviewable.Type {
-            self.collectionView.isQuicklookPreviewable = true
-        }
-        
-        self.allowsReordering = false
-        self.allowsDeleting = false
-        self.collectionView.registerForDraggedTypes([pasteboardType])
+        self.collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
+        self.collectionView.registerForDraggedTypes([.itemID])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
         self.responder = Responder(self)
         let collectionViewNextResponder = self.collectionView.nextResponder
         self.collectionView.nextResponder = self.responder
         self.responder.nextResponder = collectionViewNextResponder
-        
         self.delegateBridge = DelegateBridge(self)
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+        return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        return dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
+    }
+    
+    public func numberOfSections(in collectionView: NSCollectionView) -> Int {
+        return dataSource.numberOfSections(in: collectionView)
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+        return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
 }
 
-extension AdvanceColllectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
+extension AdvanceCollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
         if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
             return QuicklookPreviewItem(previewable, view: item.view)

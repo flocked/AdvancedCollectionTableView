@@ -7,7 +7,7 @@
 
 import AppKit
 
-extension AdvanceColllectionViewDiffableDataSource {
+extension AdvanceCollectionViewDiffableDataSource {
     /// A transaction that describes the changes after reordering the items in the view.
     public struct DiffableDataSourceTransaction {
         /// The snapshot before the transaction occured.

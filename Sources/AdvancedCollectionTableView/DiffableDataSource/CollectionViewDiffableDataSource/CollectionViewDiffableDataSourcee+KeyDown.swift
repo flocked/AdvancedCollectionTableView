@@ -1,5 +1,5 @@
 //
-//  AdvanceColllectionViewDiffableDataSource+KeyDown.swift
+//  AdvanceCollectionViewDiffableDataSource+KeyDown.swift
 //  
 //
 //  Created by Florian Zand on 24.06.23.
@@ -9,11 +9,11 @@ import AppKit
 import FZSwiftUtils
 import FZQuicklook
 
-internal extension AdvanceColllectionViewDiffableDataSource {
+internal extension AdvanceCollectionViewDiffableDataSource {
     var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+        get { getAssociatedValue(key: "AdvanceCollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
         set {
-            set(associatedValue: newValue, key: "AdvanceColllectionViewDiffableDataSource_keyDownMonitor", object: self)
+            set(associatedValue: newValue, key: "AdvanceCollectionViewDiffableDataSource_keyDownMonitor", object: self)
         }
     }
     

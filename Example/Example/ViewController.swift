@@ -13,7 +13,7 @@ import FZSwiftUtils
 class ViewController: NSViewController {
     
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
-    typealias DataSource = AdvanceColllectionViewDiffableDataSource<Section, GalleryItem>
+    typealias DataSource = AdvanceCollectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
     @IBOutlet weak var collectionView: NSCollectionView!

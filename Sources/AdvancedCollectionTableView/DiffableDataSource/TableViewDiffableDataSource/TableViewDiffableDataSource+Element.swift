@@ -22,7 +22,7 @@ extension AdvanceTableViewDiffableDataSource {
      */
     public func item(forRow row: Int) -> Item? {
         if let itemID = dataSource.itemIdentifier(forRow: row) {
-            return allItems[id: itemID]
+            return items[id: itemID]
         }
         return nil
     }
@@ -99,10 +99,6 @@ extension AdvanceTableViewDiffableDataSource {
         if let row = self.row(for: section) {
             self.tableView.scrollRowToVisible(row)
         }
-    }
-    
-    internal var allItems: [Item] {
-        return self.currentSnapshot.itemIdentifiers
     }
     
     /// An array of items that are visible.

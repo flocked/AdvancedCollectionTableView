@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-extension AdvanceColllectionViewDiffableDataSource {
+extension AdvanceCollectionViewDiffableDataSource {
     /// Handlers for prefetching items.
     public struct PrefetchHandlers {
         /// Handler that tells you to begin preparing data for the elements.

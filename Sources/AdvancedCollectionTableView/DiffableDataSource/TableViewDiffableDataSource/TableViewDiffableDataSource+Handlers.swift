@@ -43,11 +43,6 @@ extension AdvanceTableViewDiffableDataSource {
             self.canDropOutside != nil
         }
     }
-        
-    public struct DisplayHandlers {
-        public var isDisplaying: (([Item]) -> Void)?
-        public var didEndDisplaying: (([Item]) -> Void)?
-    }
     
     public struct HoverHandlers {
         public var isHovering: ((Item) -> Void)?

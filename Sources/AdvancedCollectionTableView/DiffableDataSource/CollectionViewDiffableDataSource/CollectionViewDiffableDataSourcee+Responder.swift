@@ -11,11 +11,11 @@ import FZUIKit
 import FZQuicklook
 
 
-extension AdvanceColllectionViewDiffableDataSource {
-    internal class Responder<S: Identifiable & Hashable,  E: Identifiable & Hashable>: NSResponder {
-        weak var dataSource: AdvanceColllectionViewDiffableDataSource<S,E>!
+extension AdvanceCollectionViewDiffableDataSource {
+    internal class Responder: NSResponder {
+        weak var dataSource: AdvanceCollectionViewDiffableDataSource!
         
-        init (_ dataSource: AdvanceColllectionViewDiffableDataSource<S,E>) {
+        init (_ dataSource: AdvanceCollectionViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
         }
