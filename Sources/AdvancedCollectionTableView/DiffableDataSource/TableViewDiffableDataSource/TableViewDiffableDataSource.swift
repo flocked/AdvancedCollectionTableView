@@ -326,10 +326,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             self.reorderingHandlers.willReorder?(dragingItems)
             let selected = self.selectedItems
             var snapshot = self.snapshot()
-            for item in dragingItems {
-                if isLast {
+            if isLast {
+                for item in dragingItems.reversed() {
                     snapshot.moveItem(item, afterItem: toItem)
-                } else {
+                }
+            } else {
+                for item in dragingItems {
                     snapshot.moveItem(item, beforeItem: toItem)
                 }
             }
