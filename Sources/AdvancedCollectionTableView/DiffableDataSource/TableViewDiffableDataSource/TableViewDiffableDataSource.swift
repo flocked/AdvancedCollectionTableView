@@ -103,6 +103,13 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public var columnHandlers = ColumnHandlers()
     
     /**
+     A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
+     
+     If the value of this property is true (the default is false), users can reorder items in the collection view.
+     */
+    public var allowsReordering: Bool = false
+    
+    /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
      
      If the value of this property is true (the default is false), users can delete items.
@@ -300,20 +307,26 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        Swift.print("dragging acceptDrop")
+
+        /*
+        guard let items = info.draggingPasteboard.pasteboardItems
+            else { return false }
+        let ids = items.compactMap{ $0.string(forType: pasteboardType) }
+        self.allItems[ids: ids]
+        */
+        
         if self.dragingRowIndexes.isEmpty == false {
         let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-        guard self.reorderingHandlers.canReorder?(dragingItems) ?? true else {
+        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering else {
             return false
         }
-            if let willReorder = self.reorderingHandlers.willReorder {
-                willReorder(dragingItems)
-            }
+            Swift.print("dragging acceptDrop will")
+            self.reorderingHandlers.willReorder?(dragingItems)
             var snapshot = self.snapshot()
             if let toItem = self.item(forRow: row) {
-                for index in dragingRowIndexes {
-                    if let item = self.item(forRow: index) {
-                        snapshot.moveItem(item, beforeItem: toItem)
-                    }
+                for item in dragingItems {
+                    snapshot.moveItem(item, beforeItem: toItem)
                 }
                 self.apply(snapshot, .usingReloadData)
             }
@@ -323,23 +336,29 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     public func tableView( _ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        return NSDragOperation.move
+        Swift.print("dragging validateDrop")
+        if dropOperation == .above {
+            return .move
+        }
+        return []
     }
     
     public func tableView( _ tableView: NSTableView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+        Swift.print("dragging willBeginAt")
         self.dragingRowIndexes = rowIndexes
     }
     
     public func tableView(_ tableView: NSTableView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
+        Swift.print("dragging endedAt")
         if self.dragingRowIndexes.isEmpty == false, let didReorder = self.reorderingHandlers.didReorder {
             let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
             didReorder(dragingItems)
         }
         self.dragingRowIndexes.removeAll()
     }
-        
     
     public func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+        Swift.print("dragging pasteboardWriterForRow")
         if let element = self.item(forRow: row) {
             let item = NSPasteboardItem()
             item.setString(String(element.hashValue), forType: self.pasteboardType)
