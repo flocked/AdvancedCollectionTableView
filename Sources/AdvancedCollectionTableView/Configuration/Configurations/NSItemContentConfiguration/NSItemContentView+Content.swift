@@ -187,9 +187,6 @@ internal extension NSItemContentView {
             let badgeSize = badgeView.fittingSize
             switch badge.position {
                 case .topLeft, .top, .topRight:
-                if badge.type.spacing == nil {
-                    Swift.print("spac", badgeView.fittingSize)
-                }
                     badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: self.topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
                 case .centerLeft, .center, .centerRight:
                     badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: self.centerYAnchor).activate()
