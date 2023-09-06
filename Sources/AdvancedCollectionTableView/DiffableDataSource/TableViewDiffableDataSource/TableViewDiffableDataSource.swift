@@ -327,7 +327,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             let selected = self.selectedItems
             var snapshot = self.snapshot()
             for item in dragingItems {
-                snapshot.moveItem(item, beforeItem: toItem)
+                if isLast {
+                    snapshot.moveItem(item, afterItem: toItem)
+                } else {
+                    snapshot.moveItem(item, beforeItem: toItem)
+                }
             }
             self.apply(snapshot, .withoutAnimation)
             self.selectItems(selected)
