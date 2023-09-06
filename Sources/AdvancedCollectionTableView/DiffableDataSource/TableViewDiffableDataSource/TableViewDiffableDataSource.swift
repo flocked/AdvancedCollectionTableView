@@ -157,6 +157,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         set { self.dataSource.defaultRowAnimation = newValue }
     }
     
+    @objc dynamic internal var _defaultRowAnimation: UInt {
+        return self.dataSource.defaultRowAnimation.rawValue
+    }
+    
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
      
