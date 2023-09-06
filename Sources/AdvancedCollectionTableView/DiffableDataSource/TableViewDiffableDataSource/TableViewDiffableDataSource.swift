@@ -313,11 +313,13 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
                 return false
             }
             self.reorderingHandlers.willReorder?(dragingItems)
+            let selected = self.selectedItems
             var snapshot = self.snapshot()
             for item in dragingItems {
                 snapshot.moveItem(item, beforeItem: toItem)
             }
             self.apply(snapshot, .withoutAnimation)
+            self.selectItems(selected)
             self.reorderingHandlers.didReorder?(dragingItems)
         }
         
