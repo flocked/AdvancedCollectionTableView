@@ -161,6 +161,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         return self.dataSource.defaultRowAnimation.rawValue
     }
     
+    @objc dynamic internal var _isDiffableDataSource: Bool {
+        Swift.print("_isDiffableDataSource")
+        return true
+    }
+    
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
      
