@@ -43,12 +43,14 @@ extension AdvanceColllectionViewDiffableDataSource {
         
         override func rightMouseUp(with event: NSEvent) {
             if let menuProvider = self.dataSource.menuProvider {
-                var elements = self.dataSource.selectedElements
                 let point = event.location(in: self.dataSource.collectionView)
-                if let element = self.dataSource.element(at: point), self.dataSource.isSelected(for: element) == false {
-                    elements.append(element)
+                if let element = self.dataSource.element(at: point) {
+                    var elements = self.dataSource.selectedElements
+                    if elements.contains(element) == false {
+                        elements.append(element)
+                    }
+                    menuProvider(elements)?.popUp(positioning: nil, at: point, in: self.dataSource.collectionView)
                 }
-                menuProvider(elements)?.popUp(positioning: nil, at: point, in: self.dataSource.collectionView)
             }
             super.rightMouseUp(with: event)
         }
