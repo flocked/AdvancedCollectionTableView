@@ -43,7 +43,7 @@ public extension NSTableView {
      The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
      
      ```swift
-     let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, indexPath, string in
+     let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, column, row, string in
      cell.textField.stringValue = string
      }
      ```
@@ -51,12 +51,9 @@ public extension NSTableView {
      After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``, which you call from your data source’s cell provider.
      
      ```swift
-     dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
-     (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableViewCell? in
-     
-     return tableView.makeCell(using: cellRegistration,
-     for: indexPath,
-     cell: cellIdentifier)
+     dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
+     tableView, column, row, element in
+     return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)
      }
      ```
      
@@ -66,12 +63,11 @@ public extension NSTableView {
      dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
      
-     You don’t need to call  ``AppKit/NSTableView/register(_:forIdentifier:)``, `register(_:nib:)` or `register(_:forCellWithIdentifier:)`. The table view registers yo
-     ur cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
+     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
           
-     - Important: Do not create your cell registration inside a `NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
+     - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
-    class CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
+    struct CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
@@ -112,10 +108,13 @@ public extension NSTableView {
         }
         
         /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ cellIdentifier: Element)->(Void))
+        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element)->(Void))
         
         internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)
+            if let columnIdentifier = self.columnIdentifier, tableColumn.identifier != columnIdentifier {
+                return nil
+            }
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, element)
                 return cell
@@ -125,6 +124,9 @@ public extension NSTableView {
         
         internal func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
             self.registerIfNeeded(for: tableView)
+            if let columnIdentifier = self.columnIdentifier, tableColumn.identifier != columnIdentifier {
+                return nil
+            }
             let element = element as! Element
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, element)

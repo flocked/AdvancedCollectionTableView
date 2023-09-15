@@ -41,6 +41,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var sectionRowIndexes: [Int] = []
     internal var previousSelectedIDs: [Item.ID] = []
     internal var keyDownMonitor: Any? = nil
+    internal var responder: Responder!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowProvider? = nil {
@@ -249,6 +250,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
         self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
+        
+        self.responder = Responder(self)
+        let tableViewNextResponder = self.tableView.nextResponder
+        self.tableView.nextResponder = self.responder
+        self.responder.nextResponder = tableViewNextResponder
     }
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.

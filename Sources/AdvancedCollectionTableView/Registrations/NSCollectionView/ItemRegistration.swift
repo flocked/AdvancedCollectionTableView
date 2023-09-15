@@ -74,7 +74,7 @@ public extension NSCollectionView {
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
      */
-    class ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
+    struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
         
         private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

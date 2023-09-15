@@ -63,7 +63,7 @@ public extension NSTableView {
           
      - Important: Do not create your cell registration inside a `NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
-    class SectionViewRegistration<View, Section> where View: NSView  {
+    struct SectionViewRegistration<View, Section> where View: NSView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

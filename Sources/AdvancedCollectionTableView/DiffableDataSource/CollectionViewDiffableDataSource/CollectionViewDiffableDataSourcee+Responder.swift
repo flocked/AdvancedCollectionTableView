@@ -45,11 +45,12 @@ extension AdvanceCollectionViewDiffableDataSource {
             if let menuProvider = self.dataSource.menuProvider {
                 let point = event.location(in: self.dataSource.collectionView)
                 if let element = self.dataSource.element(at: point) {
-                    var elements = self.dataSource.selectedElements
-                    if elements.contains(element) == false {
-                        elements.append(element)
+                    var menuItems: [Element] = [element]
+                    let selectedElements = self.dataSource.selectedElements
+                    if selectedElements.contains(element) {
+                        menuItems = selectedElements
                     }
-                    menuProvider(elements)?.popUp(positioning: nil, at: point, in: self.dataSource.collectionView)
+                    menuProvider(menuItems)?.popUp(positioning: nil, at: point, in: self.dataSource.collectionView)
                 }
             }
             super.rightMouseUp(with: event)

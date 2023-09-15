@@ -62,7 +62,7 @@ public extension NSCollectionView {
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
-    class SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryProvider, _NSCollectionViewSupplementaryProvider where Supplementary: (NSView & NSCollectionViewElement)  {
+    struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryProvider, _NSCollectionViewSupplementaryProvider where Supplementary: (NSView & NSCollectionViewElement)  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         internal let nib: NSNib?

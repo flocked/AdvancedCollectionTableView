@@ -68,7 +68,7 @@ public extension NSTableViewDiffableDataSource {
      
      - Important: Each of the cell registrations need to have column identifier.
      */
-    convenience init<I: NSTableView.CellRegistration<NSTableCellView, ItemIdentifierType>, R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], rowRegistration: NSTableView.RowViewRegistration<R, ItemIdentifierType>) {
+    convenience init<R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], rowRegistration: NSTableView.RowViewRegistration<R, ItemIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
             let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!

@@ -51,7 +51,7 @@ public extension NSTableView {
      }
      ```
      */
-    class RowViewRegistration<RowView, Element> where RowView: NSTableRowView  {
+    struct RowViewRegistration<RowView, Element> where RowView: NSTableRowView  {
         
         private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
