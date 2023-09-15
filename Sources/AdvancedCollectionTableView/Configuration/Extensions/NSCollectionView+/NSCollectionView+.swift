@@ -16,7 +16,7 @@ public extension NSCollectionView {
             guard newValue != isEmphasized else { return }
             set(associatedValue: newValue, key: "NSCollectionView_isEmphasized", object: self)
             if newValue == false {
-                self.hoveredItem = nil
+                self.hoveredIndexPath = nil
             }
             self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
         }
@@ -44,15 +44,26 @@ public extension NSCollectionView {
         })
     }
     
-    @objc dynamic internal var hoveredItem: NSCollectionViewItem? {
-        get { getAssociatedValue(key: "_hoveredItem", object: self, initialValue: nil) }
+    @objc dynamic internal var hoveredIndexPath: IndexPath? {
+        get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
         set {
-            guard newValue != hoveredItem else { return }
-            let previousHoveredItem = hoveredItem
-            set(weakAssociatedValue: newValue, key: "_hoveredItem", object: self)
-            previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
-            newValue?.setNeedsAutomaticUpdateConfiguration()
+            guard newValue != hoveredIndexPath else { return }
+            let previousIndexPath = hoveredIndexPath
+            set(associatedValue: newValue, key: "hoveredIndexPath", object: self)
+            if let indexPath = previousIndexPath, let item = self.item(at: indexPath) {
+                item.setNeedsAutomaticUpdateConfiguration()
+            }
+            if let indexPath = hoveredIndexPath, let item = self.item(at: indexPath) {
+                item.setNeedsAutomaticUpdateConfiguration()
+            }
+          //  previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
+         //   newValue?.setNeedsAutomaticUpdateConfiguration()
         }
+    }
+    
+    internal var hoveredItem: NSCollectionViewItem? {
+        guard let indexPath = hoveredIndexPath else { return nil }
+        return self.item(at: indexPath)
     }
     
     func setupObservingView(shouldObserve: Bool = true) {
@@ -68,7 +79,7 @@ public extension NSCollectionView {
                 
                 self.observingView?.mouseHandlers.exited = { [weak self] event in
                     guard let self = self else { return true }
-                    self.hoveredItem = nil
+                    self.hoveredIndexPath = nil
                     return true
                 }
                 
@@ -76,8 +87,7 @@ public extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        let mouseItem = self.item(at: location)
-                        self.hoveredItem = mouseItem
+                        self.hoveredIndexPath = self.indexPathForItem(at: location)
                     }
                     return true
                 }

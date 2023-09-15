@@ -17,7 +17,7 @@ public extension NSTableView {
             guard newValue != self.isEmphasized else { return }
             set(associatedValue: newValue, key: "NSTableView_isEmphasized", object: self)
             if newValue == false {
-                self.hoveredRowView = nil
+                self.hoveredRow = nil
             }
             self.visibleRows().forEach({
                 $0.setNeedsAutomaticUpdateConfiguration()
@@ -56,7 +56,7 @@ public extension NSTableView {
                 
                 self.observingView?.mouseHandlers.exited = { [weak self] event in
                     guard let self = self else { return true }
-                    self.hoveredRowView = nil
+                    self.hoveredRow = nil
                     return true
                 }
                 
@@ -64,8 +64,12 @@ public extension NSTableView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        let newHoveredRowView = self.rowView(at: location)
-                        self.hoveredRowView = newHoveredRowView
+                        let row = self.row(at: location)
+                        if row != -1 {
+                            self.hoveredRow = IndexPath(item: row, section: 0)
+                        } else {
+                            self.hoveredRow = nil
+                        }
                     }
                     return true
                 }
@@ -82,16 +86,27 @@ public extension NSTableView {
         }
     }
     
-   @objc dynamic var hoveredRowView: NSTableRowView? {
-        get { getAssociatedValue(key: "NSTableView_hoveredRowView", object: self, initialValue: nil) }
-        set {
-            guard newValue != hoveredRowView else { return }
-            let previousHovered = hoveredRowView
-            set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
-            previousHovered?.setNeedsAutomaticUpdateConfiguration()
-            previousHovered?.setCellViewsNeedAutomaticUpdateConfiguration()
-            newValue?.setNeedsAutomaticUpdateConfiguration()
-            newValue?.setCellViewsNeedAutomaticUpdateConfiguration()
+    internal var hoveredRowView: NSTableRowView? {
+        if let hoveredRow = hoveredRow, let rowView = self.rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
+            return rowView
         }
+        return nil
     }
+    
+    @objc dynamic var hoveredRow: IndexPath? {
+         get { getAssociatedValue(key: "NSTableView_hoveredRow", object: self, initialValue: nil) }
+         set {
+             guard newValue != hoveredRow else { return }
+             let previousRow = hoveredRow
+             set(associatedValue: newValue, key: "NSTableView_hoveredRow", object: self)
+             if let previousRow = previousRow, let rowView = self.rowView(atRow: previousRow.item, makeIfNecessary: false) {
+                 rowView.setNeedsAutomaticUpdateConfiguration()
+                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
+             }
+             if let rowView = self.hoveredRowView {
+                 rowView.setNeedsAutomaticUpdateConfiguration()
+                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
+             }
+         }
+     }
 }

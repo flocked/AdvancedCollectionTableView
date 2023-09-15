@@ -25,7 +25,7 @@ import FZSwiftUtils
  
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
- - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
+ - Important: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDelegate, NSTableViewDataSource  where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
@@ -42,6 +42,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var previousSelectedIDs: [Item.ID] = []
     internal var keyDownMonitor: Any? = nil
     internal var rightDownMonitor: NSEvent.Monitor? = nil
+    internal var hoveredRowObserver: NSKeyValueObservation? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowProvider? = nil {
@@ -102,9 +103,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public var columnHandlers = ColumnHandlers()
     
     /**
-     A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
+     A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
      
-     If the value of this property is true (the default is false), users can reorder items in the collection view.
+     If the value of this property is true (the default is false), users can reorder items in the table view.
      */
     public var allowsReordering: Bool = false
     
@@ -118,7 +119,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     /**
-     Returns a representation of the current state of the data in the collection view.
+     Returns a representation of the current state of the data in the table view.
      
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
@@ -129,11 +130,11 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
-     The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
+     The system interrupts any ongoing item animations and immediately reloads the table view’s content.
      
      - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the collection view.
-        - option: Option how to apply the snapshot to the collection view.
+        - snapshot: The snapshot that reflects the new state of the data in the table view.
+        - option: Option how to apply the snapshot to the table view.
         - completion: A optional completion handlers which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
@@ -181,7 +182,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     /**
-     Creates a diffable data source with the specified cell registration, and connects it to the specified collection view.
+     Creates a diffable data source with the specified cell registration, and connects it to the specified table view.
      
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
      
@@ -201,7 +202,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     /**
-     Creates a diffable data source with the specified cell registrations, and connects it to the specified collection view.
+     Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
      
@@ -227,14 +228,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a item provider, where you configure each of your cells to determine how to display your data in the UI.
      
      ```swift
-     dataSource = DiffableDataSource<Section, Element>(tableView: tableView, itemProvider: {
+     dataSource = AdvanceTableViewDiffableDataSource<Section, Element>(tableView: tableView, itemProvider: {
      (tableView, tableColumn, row, element) in
      // configure and return cell
      })
      ```
      
      - Parameters:
-     - tableView: The initialized collection view object to connect to the diffable data source.
+     - tableView: The initialized table view object to connect to the diffable data source.
      - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
@@ -433,24 +434,19 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             }
         }
     }
-        
-    internal var hoveredRowObserver: NSKeyValueObservation? = nil
-    internal var previousHovered: Item.ID? = nil
-    
+            
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()
             if hoveredRowObserver == nil {
-                hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRowView, handler: { old, new in
+                hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
                     guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old {
-                        let oldRow = self.tableView.row(for: old)
+                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let oldRow = old?.item {
                         if oldRow != -1, let item = self.item(forRow: oldRow) {
                             didEndHovering(item)
                         }
                     }
-                    if let isHovering = self.hoverHandlers.isHovering,  let new = new {
-                        let newRow = self.tableView.row(for: new)
+                    if let isHovering = self.hoverHandlers.isHovering,  let newRow = new?.item {
                         if newRow != -1, let item = self.item(forRow: newRow) {
                             isHovering(item)
                         }
@@ -474,8 +470,4 @@ extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
         }
         return nil
     }
-}
-
-internal extension NSPasteboard.PasteboardType {
-  static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
 }

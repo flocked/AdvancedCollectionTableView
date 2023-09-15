@@ -74,7 +74,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var previousDisplayingElements = [Element]()
     internal var rightDownMonitor: NSEvent.Monitor? = nil
-    
+    internal var hoveredItemObserver: NSKeyValueObservation? = nil
+
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
      
@@ -221,8 +222,26 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
                     menuItems = selectedElements
                 }
                 self.collectionView.menu = menuProvider(menuItems)
-              //  menuProvider(menuItems)?.popUp(positioning: nil, at: point, in: self.dataSource.tableView)
             }
+        }
+    }
+    
+    internal func setupHoverObserving() {
+        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
+            self.collectionView.setupObservingView()
+            if hoveredItemObserver == nil {
+                hoveredItemObserver = self.collectionView.observeChanges(for: \.hoveredIndexPath, handler: { old, new in
+                    guard old != new else { return }
+                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old, let element = self.element(for: old) {
+                        didEndHovering(element)
+                    }
+                    if let isHovering = self.hoverHandlers.isHovering,  let new = new, let element = self.element(for: new) {
+                        isHovering(element)
+                    }
+                })
+            }
+        } else {
+            hoveredItemObserver = nil
         }
     }
     
@@ -236,27 +255,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         } else {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = false
             NotificationCenter.default.removeObserver(self)
-        }
-    }
-    
-    internal var hoveredItemObserver: NSKeyValueObservation? = nil
-
-    internal func setupHoverObserving() {
-        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
-            self.collectionView.setupObservingView()
-            if hoveredItemObserver == nil {
-                hoveredItemObserver = self.collectionView.observeChanges(for: \.hoveredItem, handler: { old, new in
-                    guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old, let indexPath = self.collectionView.indexPath(for: old), let element = self.element(for: indexPath) {
-                        didEndHovering(element)
-                    }
-                    if let isHovering = self.hoverHandlers.isHovering,  let new = new, let indexPath = self.collectionView.indexPath(for: new), let element = self.element(for: indexPath) {
-                        isHovering(element)
-                    }
-                })
-            }
-        } else {
-            hoveredItemObserver = nil
         }
     }
     
@@ -281,7 +279,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
      
      ```swift
-     dataSource = DiffableDataSource<Section, Element>(collectionView: collectionView, itemProvider: {
+     dataSource = AdvanceCollectionViewDiffableDataSource<Section, Element>(collectionView: collectionView, itemProvider: {
      (collectionView, indexPath, element) in
      // configure and return item
      })
@@ -364,28 +362,5 @@ extension AdvanceCollectionViewDiffableDataSource: NSCollectionViewQuicklookProv
             return QuicklookPreviewItem(preview, view: item.view)
         }
         return nil
-    }
-}
-
-internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
-    let preview: QuicklookPreviewable
-    var view: NSView?
-    
-    public var previewItemURL: URL? {
-        preview.previewItemURL
-    }
-    public var previewItemFrame: CGRect? {
-        view?.frameOnScreen ?? preview.previewItemFrame
-    }
-    public var previewItemTitle: String? {
-        preview.previewItemTitle
-    }
-    public var previewItemTransitionImage: NSImage? {
-        view?.renderedImage ?? preview.previewItemTransitionImage
-    }
-    
-    internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
-        self.preview = preview
-        self.view = view
     }
 }
