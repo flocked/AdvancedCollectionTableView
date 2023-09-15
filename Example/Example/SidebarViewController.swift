@@ -1,6 +1,6 @@
 //
 //  SidebarViewController.swift
-//  
+//
 //
 //  Created by Florian Zand on 19.01.23.
 //
@@ -13,7 +13,7 @@ class SidebarViewController: NSViewController {
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = AdvanceTableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
-
+    
     @IBOutlet weak var tableView: NSTableView!
     
     lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
@@ -27,7 +27,7 @@ class SidebarViewController: NSViewController {
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         cell.contentConfiguration = configuration
     }
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,9 +35,10 @@ class SidebarViewController: NSViewController {
         
         // Enables reordering of rows via drag and drop.
         dataSource.allowsReordering = true
-
+        
         // Right click menu that displays the title of each selected sidebar item.
         self.dataSource.menuProvider = { sidebarItems in
+            guard sidebarItems.isEmpty == false else { return nil }
             let menu = NSMenu()
             for sidebarItem in sidebarItems {
                 menu.addItem(NSMenuItem(sidebarItem.title))
@@ -50,7 +51,7 @@ class SidebarViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
-    //    tableView.becomeFirstResponder()
+        //    tableView.becomeFirstResponder()
     }
     
     func applySnapshot() {
