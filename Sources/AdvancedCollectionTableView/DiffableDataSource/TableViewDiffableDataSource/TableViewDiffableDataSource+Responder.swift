@@ -25,6 +25,7 @@ extension AdvanceTableViewDiffableDataSource {
         }
         
         override func rightMouseUp(with event: NSEvent) {
+            Swift.print("rightMouseUp")
             if let menuProvider = self.dataSource.menuProvider {
                 self.dataSource.tableView.menu = nil
                 let point = event.location(in: self.dataSource.tableView)
