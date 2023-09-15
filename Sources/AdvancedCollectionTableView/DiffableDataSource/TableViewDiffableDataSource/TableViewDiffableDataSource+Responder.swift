@@ -28,6 +28,12 @@ extension AdvanceTableViewDiffableDataSource {
             if let menuProvider = self.dataSource.menuProvider {
                 self.dataSource.tableView.menu = nil
                 let point = event.location(in: self.dataSource.tableView)
+                Swift.print("")
+                Swift.print("menuProvider", point, self.dataSource.tableView.row(at: point))
+                for row in self.dataSource.tableView.visibleRows() {
+                    Swift.print(row.frame)
+                }
+                
                 if let item = self.dataSource.item(at: point) {
                     var menuItems: [Item] = [item]
                     let selectedItems = self.dataSource.selectedItems

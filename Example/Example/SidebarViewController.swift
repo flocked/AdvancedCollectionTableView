@@ -32,6 +32,13 @@ class SidebarViewController: NSViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self.dataSource
+        self.dataSource.menuProvider = { items in
+            let menu = NSMenu()
+            for item in items {
+                menu.addItem(NSMenuItem(item.title))
+            }
+            return menu
+        }
         dataSource.allowsReordering = true
         applySnapshot()
     }
