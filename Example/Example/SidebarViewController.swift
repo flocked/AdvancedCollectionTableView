@@ -21,7 +21,7 @@ class SidebarViewController: NSViewController {
     /// Sample items.
     var items: [SidebarItem] = SidebarItem.sampleItems
     
-    let cellRegistration: CellRegistration = CellRegistration(identifier: "SidebarCell") { cell, column, row, sidebarItem in
+    let cellRegistration: CellRegistration = CellRegistration() { cell, column, row, sidebarItem in
         var configuration = NSListContentConfiguration.sidebar()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)

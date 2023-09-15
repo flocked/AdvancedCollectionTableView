@@ -118,9 +118,11 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     public var highlightHandlers = HighlightHandlers()
     
     /**
-     Right click menu provider for selected items.
+     Right click menu provider.
      
-     When returning a menu to the `menuProvider`, the collection view will display a menu on right click of selected items.
+     `elements` is an array of selected elements. If no element is selected, it will be empty.
+     
+     When returning a menu to the `menuProvider`, the collection view will display a menu on right click.
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil {
         didSet { setupRightDownMonitor() } }
@@ -222,6 +224,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
                     menuItems = selectedElements
                 }
                 self.collectionView.menu = menuProvider(menuItems)
+            } else {
+                self.collectionView.menu = menuProvider([])
             }
         }
     }

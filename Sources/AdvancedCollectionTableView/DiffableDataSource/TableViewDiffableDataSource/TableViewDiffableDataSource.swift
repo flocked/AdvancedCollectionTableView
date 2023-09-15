@@ -71,11 +71,13 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
     
     /**
-     Right click menu provider for selected rows.
+     Right click menu provider.
      
-     When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
+     `items` is an array of selected items. If no item is selected, it will be empty.
+     
+     When returning a menu to the `menuProvider`, the table view will display a menu on right click.
      */
-    public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil {
+    public var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
         didSet { setupRightDownMonitor() } }
     
     /**
@@ -431,6 +433,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
                     menuItems = selectedItems
                 }
                 self.tableView.menu = menuProvider(menuItems)
+            } else {
+                self.tableView.menu = menuProvider([])
             }
         }
     }
