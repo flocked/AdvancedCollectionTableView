@@ -246,7 +246,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
             self.collectionView.setupObservingView()
             if hoveredItemObserver == nil {
                 hoveredItemObserver = self.collectionView.observeChanges(for: \.hoveredItem, handler: { old, new in
-                    Swift.print("hoveredItemObserver collectionView")
                     guard old != new else { return }
                     if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old, let indexPath = self.collectionView.indexPath(for: old), let element = self.element(for: indexPath) {
                         didEndHovering(element)

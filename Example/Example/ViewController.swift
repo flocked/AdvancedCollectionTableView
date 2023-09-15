@@ -77,6 +77,7 @@ class ViewController: NSViewController {
         dataSource.allowsReordering = true
         
         self.dataSource.hoverHandlers.isHovering = { item in
+            Swift.print(item.title)
         }
         
         applySnapshot(with: galleryItems, .usingReloadData)
