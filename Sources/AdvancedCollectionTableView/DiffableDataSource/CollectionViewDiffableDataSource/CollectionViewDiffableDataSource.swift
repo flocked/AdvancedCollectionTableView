@@ -216,12 +216,19 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
                  */
                 if let contentView = self.collectionView.window?.contentView {
                     let location = event.location(in: contentView)
-                    Swift.print("right hitTest", contentView.hitTest(location) ?? "nil")
+                    if let view = contentView.hitTest(location), view.isDescendant(of: self.collectionView) {
+                        let location = event.location(in: self.collectionView)
+                        if self.collectionView.bounds.contains(location) {
+                            self.setupMenu(for: location)
+                        }
+                    }
                 }
+                /*
                 let location = event.location(in: self.collectionView)
                 if self.collectionView.bounds.contains(location) {
                     self.setupMenu(for: location)
                 }
+                 */
                 return event
             }
         } else if menuProvider == nil, rightDownMonitor != nil {
