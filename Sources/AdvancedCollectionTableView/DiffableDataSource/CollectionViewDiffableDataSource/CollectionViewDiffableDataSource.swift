@@ -253,9 +253,25 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         }
     }
     
+    internal var hoveredItemObserver: NSKeyValueObservation? = nil
+
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.collectionView.setupObservingView()
+            if hoveredItemObserver == nil {
+                hoveredItemObserver = self.collectionView.observeChanges(for: \.hoveredItem, handler: { old, new in
+                    Swift.print("hoveredItemObserver collectionView")
+                    guard old != new else { return }
+                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old, let indexPath = self.collectionView.indexPath(for: old), let element = self.element(for: indexPath) {
+                        didEndHovering(element)
+                    }
+                    if let isHovering = self.hoverHandlers.isHovering,  let new = new, let indexPath = self.collectionView.indexPath(for: new), let element = self.element(for: indexPath) {
+                        isHovering(element)
+                    }
+                })
+            }
+        } else {
+            hoveredItemObserver = nil
         }
     }
     
@@ -362,11 +378,13 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
 
 extension AdvanceCollectionViewDiffableDataSource: HoverItemDataSource {
     internal func hoveredItemChanged() {
+        /*
         if let item = self.collectionView.hoveredItem, let indexPath = self.collectionView.indexPath(for: item) {
             self.hoveredIndexPath = indexPath
         } else {
             self.hoveredIndexPath = nil
         }
+         */
     }
 }
 

@@ -44,7 +44,7 @@ public extension NSCollectionView {
         })
     }
     
-    internal var hoveredItem: NSCollectionViewItem? {
+    @objc dynamic internal var hoveredItem: NSCollectionViewItem? {
         get { getAssociatedValue(key: "_hoveredItem", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredItem else { return }

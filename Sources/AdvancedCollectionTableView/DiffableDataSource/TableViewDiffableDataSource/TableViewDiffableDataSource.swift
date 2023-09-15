@@ -477,12 +477,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
 
 extension AdvanceTableViewDiffableDataSource: HoverItemDataSource {
     internal func hoveredItemChanged() {
+        /*
         if let rowView = self.tableView.hoveredRowView {
             let row = self.tableView.row(for: rowView)
             hoveredRow = (row != -1) ? row : nil
         } else {
             hoveredRow = nil
         }
+         */
     }
 }
 
