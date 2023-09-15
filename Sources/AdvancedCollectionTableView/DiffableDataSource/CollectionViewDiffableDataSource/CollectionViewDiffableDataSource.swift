@@ -206,6 +206,18 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+                /*
+                if self.collectionView.isHidden == false, self.collectionView.alphaValue != 0, let superview = self.collectionView.superview {
+                    let location = event.location(in: superview)
+                    if self.collectionView.visibleRect.contains(location) {
+                        self.setupMenu(for: location)
+                    }
+                }
+                 */
+                if let contentView = self.collectionView.window?.contentView {
+                    let location = event.location(in: contentView)
+                    Swift.print("right hitTest", contentView.hitTest(location) ?? "nil")
+                }
                 let location = event.location(in: self.collectionView)
                 if self.collectionView.bounds.contains(location) {
                     self.setupMenu(for: location)
