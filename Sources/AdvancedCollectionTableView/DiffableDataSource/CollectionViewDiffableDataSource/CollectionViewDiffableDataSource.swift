@@ -68,26 +68,12 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal weak var collectionView: NSCollectionView!
     internal var dataSource: DataSoure!
     internal var delegateBridge: DelegateBridge!
-    internal var responder: Responder!
     internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     internal var currentSnapshot: Snapshot = Snapshot()
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var previousDisplayingElements = [Element]()
     internal var rightDownMonitor: NSEvent.Monitor? = nil
-
-    internal var hoveredIndexPath: IndexPath? = nil {
-        didSet {
-            guard oldValue != self.hoveredIndexPath else { return }
-            if let indexPath = hoveredIndexPath, let element = element(for: indexPath) {
-                hoverHandlers.isHovering?(element)
-            }
-            
-            if let oldIndexPath = oldValue, let element = element(for: oldIndexPath) {
-                hoverHandlers.didEndHovering?(element)
-            }
-        }
-    }
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
@@ -351,10 +337,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         self.collectionView.registerForDraggedTypes([.itemID])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
-        self.responder = Responder(self)
-        let collectionViewNextResponder = self.collectionView.nextResponder
-        self.collectionView.nextResponder = self.responder
-        self.responder.nextResponder = collectionViewNextResponder
         self.delegateBridge = DelegateBridge(self)
     }
     
@@ -374,24 +356,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
 }
-
-
-extension AdvanceCollectionViewDiffableDataSource: HoverItemDataSource {
-    internal func hoveredItemChanged() {
-        /*
-        if let item = self.collectionView.hoveredItem, let indexPath = self.collectionView.indexPath(for: item) {
-            self.hoveredIndexPath = indexPath
-        } else {
-            self.hoveredIndexPath = nil
-        }
-         */
-    }
-}
-
-internal protocol HoverItemDataSource {
-    func hoveredItemChanged()
-}
-
 
 extension AdvanceCollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {

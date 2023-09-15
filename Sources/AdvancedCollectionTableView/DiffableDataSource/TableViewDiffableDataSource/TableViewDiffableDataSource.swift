@@ -436,17 +436,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     internal var previousHovered: Item.ID? = nil
-    internal var hoveredRow: Int? = nil {
-        didSet {
-            guard oldValue != self.hoveredRow else { return }
-            if let hoveredRow = hoveredRow, let item = item(forRow: hoveredRow) {
-                hoverHandlers.isHovering?(item)
-            }
-            if let oldHoveredRow = oldValue, let item = item(forRow: oldHoveredRow) {
-                hoverHandlers.didEndHovering?(item)
-            }
-        }
-    }
     
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
@@ -454,7 +443,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             if hoveredRowObserver == nil {
                 hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRowView, handler: { old, new in
                     guard old != new else { return }
-                    Swift.print("hoveredRowObserver")
                     if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old {
                         let oldRow = self.tableView.row(for: old)
                         if oldRow != -1, let item = self.item(forRow: oldRow) {
@@ -475,19 +463,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
 }
 
-extension AdvanceTableViewDiffableDataSource: HoverItemDataSource {
-    internal func hoveredItemChanged() {
-        /*
-        if let rowView = self.tableView.hoveredRowView {
-            let row = self.tableView.row(for: rowView)
-            hoveredRow = (row != -1) ? row : nil
-        } else {
-            hoveredRow = nil
-        }
-         */
-    }
-}
-
 extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
     public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {
         if let item = self.item(forRow: row), let rowView = self.rowView(for: item) {
@@ -504,10 +479,3 @@ extension AdvanceTableViewDiffableDataSource: NSTableViewQuicklookProvider {
 internal extension NSPasteboard.PasteboardType {
   static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
 }
-
-internal protocol AdvanceDiffableDataSource {
-    func hoveredItemChanged()
-}
-
-extension AdvanceTableViewDiffableDataSource: AdvanceDiffableDataSource { }
-extension AdvanceCollectionViewDiffableDataSource: AdvanceDiffableDataSource { }

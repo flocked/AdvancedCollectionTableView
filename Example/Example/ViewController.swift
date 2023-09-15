@@ -76,6 +76,9 @@ class ViewController: NSViewController {
         // Enables reordering of elements via drag and drop.
         dataSource.allowsReordering = true
         
+        self.dataSource.hoverHandlers.isHovering = { item in
+        }
+        
         applySnapshot(with: galleryItems, .usingReloadData)
         collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
                 

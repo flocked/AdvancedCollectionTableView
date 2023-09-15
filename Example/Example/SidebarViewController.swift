@@ -41,8 +41,6 @@ class SidebarViewController: NSViewController {
             }
             return menu
         }
-        self.dataSource.hoverHandlers.isHovering = { item in
-        }
         
         dataSource.allowsReordering = true
         applySnapshot()
