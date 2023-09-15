@@ -415,9 +415,14 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
-                let location = event.location(in: self.tableView)
-                if self.tableView.bounds.contains(location) {
-                    self.setupMenu(for: location)
+                if let contentView = self.tableView.window?.contentView {
+                    let location = event.location(in: contentView)
+                    if let view = contentView.hitTest(location), view.isDescendant(of: self.tableView) {
+                        let location = event.location(in: self.tableView)
+                        if self.tableView.bounds.contains(location) {
+                            self.setupMenu(for: location)
+                        }
+                    }
                 }
                 return event
             }
