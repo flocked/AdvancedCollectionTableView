@@ -75,15 +75,15 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var previousDisplayingElements = [Element]()
 
-    internal var hoverElement: Element? = nil {
+    internal var hoveredIndexPath: IndexPath? = nil {
         didSet {
-            Swift.print("hoverElement", hoverElement ?? "nil")
-            guard oldValue != self.hoverElement else { return }
-            if let hoverElement = hoverElement, hoverElement.id != oldValue?.id {
-                hoverHandlers.isHovering?(hoverElement)
+            guard oldValue != self.hoveredIndexPath else { return }
+            if let indexPath = hoveredIndexPath, let element = element(for: indexPath) {
+                hoverHandlers.isHovering?(element)
             }
-            if let oldValue = oldValue, oldValue.id != hoverElement?.id {
-                hoverHandlers.didEndHovering?(oldValue)
+            
+            if let oldIndexPath = oldValue, let element = element(for: oldIndexPath) {
+                hoverHandlers.didEndHovering?(element)
             }
         }
     }

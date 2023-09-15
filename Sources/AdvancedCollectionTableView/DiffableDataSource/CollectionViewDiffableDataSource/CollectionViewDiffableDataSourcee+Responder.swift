@@ -27,18 +27,18 @@ extension AdvanceCollectionViewDiffableDataSource {
         override func mouseEntered(with event: NSEvent) {
             super.mouseEntered(with: event)
             let point = event.location(in: self.dataSource.collectionView)
-            self.dataSource.hoverElement = self.dataSource.element(at: point)
+            self.dataSource.hoveredIndexPath = self.dataSource.collectionView.indexPathForItem(at: point)
         }
         
         override func mouseMoved(with event: NSEvent) {
             super.mouseMoved(with: event)
             let point = event.location(in: self.dataSource.collectionView)
-            self.dataSource.hoverElement = self.dataSource.element(at: point)
+            self.dataSource.hoveredIndexPath = self.dataSource.collectionView.indexPathForItem(at: point)
         }
         
         override func mouseExited(with event: NSEvent) {
             super.mouseExited(with: event)
-            self.dataSource.hoverElement = nil
+            self.dataSource.hoveredIndexPath = nil
         }
         
         override func rightMouseUp(with event: NSEvent) {

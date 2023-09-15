@@ -44,7 +44,7 @@ public extension NSCollectionView {
         })
     }
     
-    var hoveredItem: NSCollectionViewItem? {
+    internal var hoveredItem: NSCollectionViewItem? {
         get { getAssociatedValue(key: "_hoveredItem", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredItem else { return }
@@ -76,8 +76,7 @@ public extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
-                        let mouseItem = self.subviews.first(where: {
-                            $0.frame.contains(location) && $0.parentController is NSCollectionViewItem})?.parentController as? NSCollectionViewItem
+                        let mouseItem = self.item(at: location)
                         self.hoveredItem = mouseItem
                     }
                     return true
