@@ -41,8 +41,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var sectionRowIndexes: [Int] = []
     internal var previousSelectedIDs: [Item.ID] = []
     internal var keyDownMonitor: Any? = nil
-    internal var responder: Responder!
-    internal var rightDownMonitor: NSEvent.Monitor!
+    internal var rightDownMonitor: NSEvent.Monitor? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowProvider? = nil {
@@ -75,7 +74,8 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      
      When returning a menu to the `menuProvider`, the table view will display a menu on right click of selected rows.
      */
-    public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil
+    public var menuProvider: ((_ elements: [Item]) -> NSMenu?)? = nil {
+        didSet { setupRightDownMonitor() } }
     
     /**
      Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
@@ -251,35 +251,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
         self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-        self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
-            let location = event.location(in: self.tableView)
-            if self.tableView.bounds.contains(location) {
-                self.setupMenu(for: location)
-            }
-            return event
-        }
-        /*
-        self.responder = Responder(self)
-        let tableViewNextResponder = self.tableView.nextResponder
-        self.tableView.nextResponder = self.responder
-        self.responder.nextResponder = tableViewNextResponder
-         */
-    }
-    
-    internal func setupMenu(for location: CGPoint) {
-        if let menuProvider = self.menuProvider {
-            self.tableView.menu = nil
-            Swift.print("menuProvider", location, self.tableView.row(at: location))
-            if let item = self.item(at: location) {
-                var menuItems: [Item] = [item]
-                let selectedItems = self.selectedItems
-                if selectedItems.contains(item) {
-                    menuItems = selectedItems
-                }
-                self.tableView.menu = menuProvider(menuItems)
-              //  menuProvider(menuItems)?.popUp(positioning: nil, at: point, in: self.dataSource.tableView)
-            }
-        }
+
     }
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.
@@ -433,12 +405,41 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
         return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
     }
+    
+    internal func setupRightDownMonitor() {
+        if menuProvider != nil, rightDownMonitor == nil {
+            self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+                let location = event.location(in: self.tableView)
+                if self.tableView.bounds.contains(location) {
+                    self.setupMenu(for: location)
+                }
+                return event
+            }
+        } else if menuProvider == nil, rightDownMonitor != nil {
+            rightDownMonitor = nil
+        }
+    }
+    
+    internal func setupMenu(for location: CGPoint) {
+        if let menuProvider = self.menuProvider {
+            self.tableView.menu = nil
+            if let item = self.item(at: location) {
+                var menuItems: [Item] = [item]
+                let selectedItems = self.selectedItems
+                if selectedItems.contains(item) {
+                    menuItems = selectedItems
+                }
+                self.tableView.menu = menuProvider(menuItems)
+            }
+        }
+    }
         
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     internal var previousHovered: Item.ID? = nil
     internal func hoveredItemChanged() {
         
     }
+    
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()

@@ -74,6 +74,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var previousDisplayingElements = [Element]()
+    internal var rightDownMonitor: NSEvent.Monitor? = nil
 
     internal var hoveredIndexPath: IndexPath? = nil {
         didSet {
@@ -134,7 +135,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      
      When returning a menu to the `menuProvider`, the collection view will display a menu on right click of selected items.
      */
-    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil
+    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil {
+        didSet { setupRightDownMonitor() } }
     
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
@@ -207,6 +209,35 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
             break
         }
         self.pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
+    }
+    
+    internal func setupRightDownMonitor() {
+        if menuProvider != nil, rightDownMonitor == nil {
+            self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+                let location = event.location(in: self.collectionView)
+                if self.collectionView.bounds.contains(location) {
+                    self.setupMenu(for: location)
+                }
+                return event
+            }
+        } else if menuProvider == nil, rightDownMonitor != nil {
+            rightDownMonitor = nil
+        }
+    }
+    
+    internal func setupMenu(for location: CGPoint) {
+        if let menuProvider = self.menuProvider {
+            self.collectionView.menu = nil
+            if let element = self.element(at: location) {
+                var menuItems: [Element] = [element]
+                let selectedElements = self.selectedElements
+                if selectedElements.contains(element) {
+                    menuItems = selectedElements
+                }
+                self.collectionView.menu = menuProvider(menuItems)
+              //  menuProvider(menuItems)?.popUp(positioning: nil, at: point, in: self.dataSource.tableView)
+            }
+        }
     }
     
     internal func ensureTrackingDisplayingItems() {
