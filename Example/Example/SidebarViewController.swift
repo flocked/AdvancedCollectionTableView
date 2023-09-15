@@ -32,13 +32,16 @@ class SidebarViewController: NSViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self.dataSource
-        self.dataSource.menuProvider = { items in
+        
+        // The right click menu displays the title of each selected sidebar item.
+        self.dataSource.menuProvider = { sidebarItems in
             let menu = NSMenu()
-            for item in items {
-                menu.addItem(NSMenuItem(item.title))
+            for sidebarItem in sidebarItems {
+                menu.addItem(NSMenuItem(sidebarItem.title))
             }
             return menu
         }
+        
         dataSource.allowsReordering = true
         applySnapshot()
     }

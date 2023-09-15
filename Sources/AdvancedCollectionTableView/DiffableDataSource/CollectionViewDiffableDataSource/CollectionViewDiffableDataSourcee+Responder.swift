@@ -42,14 +42,3 @@ extension AdvanceCollectionViewDiffableDataSource {
         }
     }
 }
-
-/*
-override func mouseUp(with event: NSEvent) {
-    if let mouseClick = self.dataSource.mouseHandlers.mouseClick {
-        let point = event.location(in: self.dataSource.collectionView)
-        guard let element = self.dataSource.element(at: point) else { return }
-        mouseClick(point, event.clickCount, element)
-    }
-    super.mouseUp(with: event)
-}
- */

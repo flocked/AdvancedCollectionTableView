@@ -50,6 +50,7 @@ public extension NSCollectionView {
             guard newValue != hoveredItem else { return }
             let previousHoveredItem = hoveredItem
             set(weakAssociatedValue: newValue, key: "_hoveredItem", object: self)
+            (self.dataSource as? HoverItemDataSource)?.hoveredItemChanged()
             previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
             newValue?.setNeedsAutomaticUpdateConfiguration()
         }

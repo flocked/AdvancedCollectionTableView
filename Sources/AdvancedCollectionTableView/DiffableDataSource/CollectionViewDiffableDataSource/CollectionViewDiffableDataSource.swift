@@ -259,10 +259,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         }
     }
     
-    internal func hoveredItemChanged() {
-        
-    }
-    
     @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
         let displayingElements = self.displayingElements
@@ -362,6 +358,22 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
 }
+
+
+extension AdvanceCollectionViewDiffableDataSource: HoverItemDataSource {
+    internal func hoveredItemChanged() {
+        if let item = self.collectionView.hoveredItem, let indexPath = self.collectionView.indexPath(for: item) {
+            self.hoveredIndexPath = indexPath
+        } else {
+            self.hoveredIndexPath = nil
+        }
+    }
+}
+
+internal protocol HoverItemDataSource {
+    func hoveredItemChanged()
+}
+
 
 extension AdvanceCollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {

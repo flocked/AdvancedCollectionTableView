@@ -436,8 +436,16 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     internal var previousHovered: Item.ID? = nil
-    internal func hoveredItemChanged() {
-        
+    internal var hoveredRow: Int? = nil {
+        didSet {
+            guard oldValue != self.hoveredRow else { return }
+            if let hoveredRow = hoveredRow, let item = item(forRow: hoveredRow) {
+                hoverHandlers.isHovering?(item)
+            }
+            if let oldHoveredRow = oldValue, let item = item(forRow: oldHoveredRow) {
+                hoverHandlers.didEndHovering?(item)
+            }
+        }
     }
     
     internal func setupHoverObserving() {
@@ -446,6 +454,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             if hoveredRowObserver == nil {
                 hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRowView, handler: { old, new in
                     guard old != new else { return }
+                    Swift.print("hoveredRowObserver")
                     if let didEndHovering = self.hoverHandlers.didEndHovering,  let old = old {
                         let oldRow = self.tableView.row(for: old)
                         if oldRow != -1, let item = self.item(forRow: oldRow) {
@@ -462,6 +471,17 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             }
         } else {
             hoveredRowObserver = nil
+        }
+    }
+}
+
+extension AdvanceTableViewDiffableDataSource: HoverItemDataSource {
+    internal func hoveredItemChanged() {
+        if let rowView = self.tableView.hoveredRowView {
+            let row = self.tableView.row(for: rowView)
+            hoveredRow = (row != -1) ? row : nil
+        } else {
+            hoveredRow = nil
         }
     }
 }

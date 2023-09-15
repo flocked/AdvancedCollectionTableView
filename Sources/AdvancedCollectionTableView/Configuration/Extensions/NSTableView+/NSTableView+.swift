@@ -88,7 +88,7 @@ public extension NSTableView {
             guard newValue != hoveredRowView else { return }
             let previousHovered = hoveredRowView
             set(weakAssociatedValue: newValue, key: "NSTableView_hoveredRowView", object: self)
-            
+            (self.dataSource as? HoverItemDataSource)?.hoveredItemChanged()
             previousHovered?.setNeedsAutomaticUpdateConfiguration()
             previousHovered?.setCellViewsNeedAutomaticUpdateConfiguration()
             newValue?.setNeedsAutomaticUpdateConfiguration()
