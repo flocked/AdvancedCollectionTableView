@@ -120,7 +120,10 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     /**
      Right click menu provider.
      
-     `elements` is an array of selected elements. If no element is selected, it will be empty.
+     `elements` provides:
+     - if right-click on a selected element, all selected elements,
+     - or else if right-click on a non selected element, that element,
+     - or else an empty array.
      
      When returning a menu to the `menuProvider`, the collection view will display a menu on right click.
      */

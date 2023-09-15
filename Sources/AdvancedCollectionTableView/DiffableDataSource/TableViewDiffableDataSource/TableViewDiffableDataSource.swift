@@ -73,7 +73,10 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     /**
      Right click menu provider.
      
-     `items` is an array of selected items. If no item is selected, it will be empty.
+     `items` provides:
+     - if right-click on a selected item, all selected items,
+     - or else if right-click on a non selected item, that item,
+     - or else an empty array.
      
      When returning a menu to the `menuProvider`, the table view will display a menu on right click.
      */
