@@ -33,7 +33,10 @@ class SidebarViewController: NSViewController {
         
         tableView.dataSource = self.dataSource
         
-        // The right click menu displays the title of each selected sidebar item.
+        // Enables reordering of rows via drag and drop.
+        dataSource.allowsReordering = true
+
+        // Right click menu that displays the title of each selected sidebar item.
         self.dataSource.menuProvider = { sidebarItems in
             let menu = NSMenu()
             for sidebarItem in sidebarItems {
@@ -42,7 +45,6 @@ class SidebarViewController: NSViewController {
             return menu
         }
         
-        dataSource.allowsReordering = true
         applySnapshot()
     }
     

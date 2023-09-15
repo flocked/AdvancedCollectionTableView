@@ -80,14 +80,13 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-            - identifier: The identifier of the cell registration.
             - columnIdentifier: The identifier of the table column.
             - handler: The handler to configurate the cell.
          */
-        public init(identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
             self.columnIdentifier = columnIdentifier
         }
         
@@ -96,14 +95,13 @@ public extension NSTableView {
          
          - Parameters:
             - nib: The nib of the cell.
-            - identifier: The identifier of the cell registration.
             - columnIdentifier: The identifier of the table column.
             - handler: The handler to configurate the cell.
          */
-        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(nib: NSNib, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
             self.columnIdentifier = columnIdentifier
         }
         

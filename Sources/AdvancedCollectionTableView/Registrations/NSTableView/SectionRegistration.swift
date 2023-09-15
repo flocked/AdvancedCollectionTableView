@@ -35,7 +35,7 @@ public extension NSTableView {
      The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
      
      ```swift
-     let cellRegistration = NSTableView.SectionViewRegistration<NSTableViewCell, String> { cell, indexPath, string in
+     let sectionViewRegistration = NSTableView.SectionViewRegistration<NSTableViewCell, String> { cell, indexPath, string in
      cell.textField.stringValue = string
      }
      ```
@@ -43,25 +43,10 @@ public extension NSTableView {
      After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``, which you call from your data source’s cell provider.
      
      ```swift
-     dataSource = NSAdvancedAdvanceTableViewDiffableDataSource<Section, String>(tableView: tableView) {
-     (tableView: NSTableView, indexPath: IndexPath, cellIdentifier: String) -> NSTableViewCell? in
-     
-     return tableView.makeCell(using: cellRegistration,
-     for: indexPath,
-     cell: cellIdentifier)
+     dataSource.sectionHeaderViewProvider = { tableView, row, section in
+     return tableView.makeSectionView(using: sectionViewRegistration, row: row, section: section)
      }
      ```
-     
-     `NSTableViewDiffableDataSource` provides a convenient initalizer:
-     
-     ```swift
-     dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
-     ```
-     
-     You don’t need to call  ``AppKit/NSTableView/register(_:forIdentifier:)``, `register(_:nib:)` or `register(_:forCellWithIdentifier:)`. The table view registers yo
-     ur cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
-          
-     - Important: Do not create your cell registration inside a `NSAdvancedAdvanceTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     struct SectionViewRegistration<View, Section> where View: NSView  {
         
