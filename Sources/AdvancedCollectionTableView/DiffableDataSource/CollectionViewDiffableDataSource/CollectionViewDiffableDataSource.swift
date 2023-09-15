@@ -206,14 +206,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
-                /*
-                if self.collectionView.isHidden == false, self.collectionView.alphaValue != 0, let superview = self.collectionView.superview {
-                    let location = event.location(in: superview)
-                    if self.collectionView.visibleRect.contains(location) {
-                        self.setupMenu(for: location)
-                    }
-                }
-                 */
+                self.collectionView.menu = nil
                 if let contentView = self.collectionView.window?.contentView {
                     let location = event.location(in: contentView)
                     let hitTest = contentView.hitTest(location)
@@ -225,12 +218,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
                         }
                     }
                 }
-                /*
-                let location = event.location(in: self.collectionView)
-                if self.collectionView.bounds.contains(location) {
-                    self.setupMenu(for: location)
-                }
-                 */
                 return event
             }
         } else if menuProvider == nil, rightDownMonitor != nil {
@@ -240,7 +227,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     
     internal func setupMenu(for location: CGPoint) {
         if let menuProvider = self.menuProvider {
-            self.collectionView.menu = nil
             if let element = self.element(at: location) {
                 var menuItems: [Element] = [element]
                 let selectedElements = self.selectedElements

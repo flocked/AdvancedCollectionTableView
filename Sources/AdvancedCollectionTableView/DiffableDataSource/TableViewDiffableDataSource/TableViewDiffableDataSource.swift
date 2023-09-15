@@ -415,6 +415,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+                self.tableView.menu = nil
                 if let contentView = self.tableView.window?.contentView {
                     let location = event.location(in: contentView)
                     if let view = contentView.hitTest(location), view.isDescendant(of: self.tableView) {
@@ -433,7 +434,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     internal func setupMenu(for location: CGPoint) {
         if let menuProvider = self.menuProvider {
-            self.tableView.menu = nil
             if let item = self.item(at: location) {
                 var menuItems: [Item] = [item]
                 let selectedItems = self.selectedItems
