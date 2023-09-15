@@ -209,7 +209,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
                 self.collectionView.menu = nil
                 if let contentView = self.collectionView.window?.contentView {
                     let location = event.location(in: contentView)
-                    let hitTest = contentView.hitTest(location)
                     if let view = contentView.hitTest(location), view.isDescendant(of: self.collectionView) {
                         let location = event.location(in: self.collectionView)
                         if self.collectionView.bounds.contains(location) {
