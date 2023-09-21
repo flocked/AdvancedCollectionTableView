@@ -9,6 +9,12 @@ import AppKit
 import FZUIKit
 
 extension AdvanceTableViewDiffableDataSource {
+    /// All current sections in the collection view.
+    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    
+    /// All current items in the collection view.
+    internal var items: [Item] { currentSnapshot.itemIdentifiers }
+    
     /// An array of the selected items.
     public var selectedItems: [Item] {
         return self.tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
@@ -149,6 +155,32 @@ extension AdvanceTableViewDiffableDataSource {
         var snapshot = self.snapshot()
         snapshot.deleteItems(items)
         self.apply(snapshot, .animated)
+    }
+    
+    internal func transactionForMovingItems(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+        var row = row
+        var isLast: Bool = false
+        if row >= self.numberOfRows(in: tableView) {
+            row = row - 1
+            isLast = true
+        }
+        let dragingItems = rowIndexes.compactMap({item(forRow: $0)})
+        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+            return nil
+        }
+        var snapshot = self.snapshot()
+        if isLast {
+            for item in dragingItems.reversed() {
+                snapshot.moveItem(item, afterItem: toItem)
+            }
+        } else {
+            for item in dragingItems {
+                snapshot.moveItem(item, beforeItem: toItem)
+            }
+        }
+        let initalSnapshot = self.currentSnapshot
+        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     /*

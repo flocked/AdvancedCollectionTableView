@@ -35,8 +35,6 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal let tableView: NSTableView
     internal var dataSource: DataSoure!
     internal var currentSnapshot: Snapshot = Snapshot()
-    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
-    internal var items: [Item] { currentSnapshot.itemIdentifiers }
     internal var dragingRowIndexes = IndexSet()
     internal var sectionRowIndexes: [Int] = []
     internal var previousSelectedIDs: [Item.ID] = []
@@ -95,7 +93,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     public var deletionHandlers = DeletionHandlers()
     
     /// Handlers for reordering of rows.
-    public var reorderingHandlers = ReorderHandlers()
+    public var reorderingHandlers = ReorderingHandlers()
     
     /// Handlers that get called whenever the mouse is hovering a row.
     public var hoverHandlers = HoverHandlers() {
@@ -334,33 +332,18 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
-            var row = row
-            var isLast: Bool = false
-            if row >= self.numberOfRows(in: tableView) {
-                row = row - 1
-                isLast = true
-            }
             let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-            guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+            guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering else {
                 return false
             }
-            self.reorderingHandlers.willReorder?(dragingItems)
-            let selected = self.selectedItems
-            var snapshot = self.snapshot()
-            if isLast {
-                for item in dragingItems.reversed() {
-                    snapshot.moveItem(item, afterItem: toItem)
-                }
-            } else {
-                for item in dragingItems {
-                    snapshot.moveItem(item, beforeItem: toItem)
-                }
+            if let transaction = self.transactionForMovingItems(at: dragingRowIndexes, to: row) {
+                let selectedItems = self.selectedItems
+                self.reorderingHandlers.willReorder?(transaction)
+                self.apply(transaction.finalSnapshot, .withoutAnimation)
+                self.selectItems(selectedItems)
+                self.reorderingHandlers.didReorder?(transaction)
             }
-            self.apply(snapshot, .withoutAnimation)
-            self.selectItems(selected)
-            self.reorderingHandlers.didReorder?(dragingItems)
         }
-        
         return true
     }
     

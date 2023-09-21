@@ -23,6 +23,24 @@ public extension NSTableViewDiffableDataSource {
     }
     
     /**
+     Creates a diffable data source with the specified cell and section view registration, and connects it to the specified table view.
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A cell registration that creates, configurates and returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionViewRegistration: A section view registration that creates, configurates and returns each of the section header views for the table view from the data the diffable data source provides.
+     */
+    convenience init<I: NSTableCellView, S: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, ItemIdentifierType>, sectionViewRegistration: NSTableView.SectionViewRegistration<S, SectionIdentifierType>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        })
+        self.sectionHeaderViewProvider = { tableView, row, section in
+            tableView.makeSectionView(using: sectionViewRegistration, row: row, section: section)
+        }
+    }
+    
+    /**
      Creates a diffable data source with the specified cell and row registration, and connects it to the specified table view.
      
      - Parameters:

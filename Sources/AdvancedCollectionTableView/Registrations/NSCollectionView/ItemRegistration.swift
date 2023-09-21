@@ -15,7 +15,7 @@ public extension NSCollectionView {
      Dequeues a configured reusable item object.
      
      - Parameters:
-        - registration: The item registration for configuring the cell object. See `NSCollectionView.ItemRegistration`.
+        - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
         - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
         - element: The element that provides data for the item.
      

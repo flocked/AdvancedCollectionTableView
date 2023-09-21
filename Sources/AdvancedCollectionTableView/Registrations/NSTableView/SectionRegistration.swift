@@ -11,15 +11,14 @@ import FZUIKit
 
 public extension NSTableView {
     /**
-     Dequeues a configured reusable cell object.
+     Dequeues a configured reusable section view object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See `NSTableView.SectionViewRegistration.
-        - column: The table column in which the cell gets displayed in the table view.
-        - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - element: The element that provides data for the cell.
+        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionViewRegistration``.
+        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+        - section: The section element that provides data for the cell.
      
-     - returns:A configured reusable cell object.
+     - returns:A configured reusable section view object.
      */
     func makeSectionView<View, Section>(using registration: SectionViewRegistration<View, Section>, row: Int, section: Section) -> View where View: NSView {
         return registration.makeView(self, row, section)
@@ -28,11 +27,11 @@ public extension NSTableView {
 
 public extension NSTableView {
     /**
-     A registration for the table view’s cells.
+     A registration for the table view’s section header views.
      
-     Use a cell registration to register cells with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
+     Use a section view registration to register views with your table view and configure each view for display. You create a section view registration with your view type and section type as the registration’s generic parameters, passing in a registration handler to configure the view. In the registration handler, you specify how to configure the content and appearance of that type of view.
      
-     The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
+     The following example creates a section view registration for views of type `NSTableViewCell`. Each cells textfield displays its element.
      
      ```swift
      let sectionViewRegistration = NSTableView.SectionViewRegistration<NSTableViewCell, String> { cell, indexPath, string in
@@ -40,7 +39,7 @@ public extension NSTableView {
      }
      ```
      
-     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``, which you call from your data source’s cell provider.
+     After you create a section view registration, you pass it in to ``AppKit/NSTableView/makeSectionView(using:row:section:)``, which you call from your data source’s section header view provider.
      
      ```swift
      dataSource.sectionHeaderViewProvider = { tableView, row, section in
@@ -54,38 +53,36 @@ public extension NSTableView {
         private let nib: NSNib?
         private let handler: Handler
         
-        // MARK: Creating a cell registration
+        // MARK: Creating a section view registration
         
         /**
-         Creates a cell registration with the specified registration handler.
+         Creates a section view registration with the specified registration handler.
          
          - Parameters:
-            - identifier: The identifier of the cell registration.
+            - identifier: The identifier of the section view registration.
             - columnIdentifier: The identifier of the table column.
-            - handler: The handler to configurate the cell.
+            - handler: The handler to configurate the view.
          */
-        public init(identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
         }
         
         /**
-         Creates a cell registration with the specified registration handler and nib file.
+         Creates a section view registration with the specified registration handler and nib file.
          
          - Parameters:
-            - nib: The nib of the cell.
-            - identifier: The identifier of the cell registration.
-            - columnIdentifier: The identifier of the table column.
-            - handler: The handler to configurate the cell.
+            - nib: The nib of the view.
+            - handler: The handler to configurate the view.
          */
-        public init(nib: NSNib, identifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
-            self.identifier = identifier ?? NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
         }
         
-        /// A closure that handles the cell registration and configuration.
+        /// A closure that handles the section view registration and configuration.
         public typealias Handler = ((_ view: View, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
         internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> View {

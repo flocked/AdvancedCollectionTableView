@@ -10,24 +10,32 @@ import FZUIKit
 
 extension AdvanceTableViewDiffableDataSource {
     public struct SelectionHandlers {
+        /// Handler that determines whether items should get selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
+        /// Handler that determines whether items should get deselected.
         public var shouldDeselect: (([Item]) -> [Item])? = nil
+        /// Handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)? = nil
+        /// Handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)? = nil
     }
     
-    public struct ReorderHandlers {
+    /// Handlers for reordering items.
+    public struct ReorderingHandlers {
+        /// The handler that determines whether you can reorder a particular item.
         public var canReorder: (([Item]) -> Bool)? = nil
-        public var willReorder: (([Item]) -> Void)? = nil
-        public var didReorder: (([Item]) -> Void)? = nil
+        /// Handler that prepares the diffable data source for reordering its items.
+        public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        /// Handler that processes a reordering transaction.
+        public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for deletion.
     public struct DeletionHandlers {
         /// Handler that determines whether Itemlements should get deleted.
-        public var shouldDelete: ((_ item: [Item]) -> [Item])? = nil
+        public var shouldDelete: ((_ items: [Item]) -> [Item])? = nil
         /// Handler that gets called whenever Itemlements get deleted.
-        public var didDelete: ((_ item: [Item]) -> ())? = nil
+        public var didDelete: ((_ items: [Item]) -> ())? = nil
     }
     
     public struct DragdropHandlers {
@@ -44,8 +52,11 @@ extension AdvanceTableViewDiffableDataSource {
         }
     }
     
+    /// Handlers that get called whenever the mouse is hovering an item.
     public struct HoverHandlers {
+        /// The handler that gets called whenever the mouse is hovering an item.
         public var isHovering: ((Item) -> Void)?
+        /// The handler that gets called whenever the mouse did end hovering an item.
         public var didEndHovering: ((Item) -> Void)?
     }
     

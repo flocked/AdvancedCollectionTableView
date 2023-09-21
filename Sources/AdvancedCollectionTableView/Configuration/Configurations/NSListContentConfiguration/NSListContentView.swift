@@ -126,15 +126,24 @@ public class NSListContentView: NSView, NSContentView {
             case .top:
                 imageView.verticalConstraint = imageView.topAnchor.constraint(equalTo: textStackView.topAnchor).activate()
             case .firstBaseline:
-                if _configuration.hasText {
-                    // var offset = textField.font!.capHeight / 2.0
-                    let offset = (textField.font!.ascender + textField.font!.descender) / 2.0
-                    imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: textField.firstBaselineAnchor, constant: -offset).activate()
-                } else if _configuration.hasSecondaryText {
-                    // var offset = secondaryTextField.font!.capHeight / 2.0
-                    let offset = (secondaryTextField.font!.ascender + secondaryTextField.font!.descender) / 2.0
-                    imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor, constant: -offset).activate()
-                } 
+                Swift.print("fff")
+                if _configuration.image?.isSymbolImage == true {
+                    if _configuration.hasText {
+                        imageView.verticalConstraint = imageView.firstBaselineAnchor.constraint(equalTo: textField.firstBaselineAnchor)
+                    } else if _configuration.hasSecondaryText {
+                        imageView.verticalConstraint = imageView.firstBaselineAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor)
+                    }
+                } else {
+                    if _configuration.hasText {
+                       //  var offset = textField.font!.capHeight / 2.0
+                        let offset = (textField.font!.ascender + textField.font!.descender) / 2.0
+                        imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: textField.firstBaselineAnchor, constant: -offset).activate()
+                    } else if _configuration.hasSecondaryText {
+                        // var offset = secondaryTextField.font!.capHeight / 2.0
+                        let offset = (secondaryTextField.font!.ascender + secondaryTextField.font!.descender) / 2.0
+                        imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor, constant: -offset).activate()
+                    }
+                }
             }
         default: break
         }

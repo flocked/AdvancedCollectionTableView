@@ -14,7 +14,7 @@ public extension NSCollectionView {
      Dequeues a configured reusable supplementary view object.
      
      - Parameters:
-        - registration: The supplementary registration for configuring the supplementary view object. See NSCollectionView.SupplementaryRegistration.
+        - registration: The supplementary registration for configuring the supplementary view object. See ``AppKit/NSCollectionView/SupplementaryRegistration``.
         - indexPath: The index path that specifies the location of the supplementary view in the collection view.
      
      - returns: A configured reusable supplementary view object.
@@ -49,7 +49,7 @@ public extension NSCollectionView {
      }
      ```
      
-     After you create a supplementary registration, you pass it in to `makeSupplementaryView(using:for:)`, which you call from your data source’s `supplementaryViewProvider`.
+     After you create a supplementary registration, you pass it in to ``AppKit/NSCollectionView/makeSupplementaryView(using:for:)``.
      
      ```swift
      dataSource.supplementaryViewProvider = { supplementaryView, elementKind, indexPath in
@@ -58,7 +58,7 @@ public extension NSCollectionView {
      }
      ```
      
-     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`.  The registration occurs automatically when you pass the supplementary view registration to `makeSupplementaryView(using:for:)`.
+     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`.  The registration occurs automatically when you pass the supplementary view registration to ``AppKit/NSCollectionView/makeSupplementaryView(using:for:)``.
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */

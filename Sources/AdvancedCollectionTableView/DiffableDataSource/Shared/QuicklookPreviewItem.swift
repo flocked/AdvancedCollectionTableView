@@ -9,11 +9,6 @@ import AppKit
 import FZQuicklook
 import QuickLookUI
 
-internal extension NSPasteboard.PasteboardType {
-    // Used for drag & drop
-    static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
-}
-
 // Used for Quicklook of selected collection items & table cells.
 internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
@@ -36,4 +31,9 @@ internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewab
         self.preview = preview
         self.view = view
     }
+}
+
+internal extension NSPasteboard.PasteboardType {
+    // Used for drag & drop
+    static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
 }

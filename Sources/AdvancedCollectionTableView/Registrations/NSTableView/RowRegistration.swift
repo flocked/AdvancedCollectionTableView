@@ -14,7 +14,7 @@ public extension NSTableView {
      Dequeues a configured reusable row view object.
      
      - Parameters:
-        - registration: The row view registration for configuring the rowview object. See `NSTableView.RowRegistration`.
+        - registration: The row view registration for configuring the rowview object. See ``AppKit/NSTableView/RowViewRegistration``.
         - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
         - element: The element that provides data for the row.
      

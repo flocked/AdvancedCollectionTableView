@@ -70,7 +70,6 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal var delegateBridge: DelegateBridge!
     internal var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     internal var currentSnapshot: Snapshot = Snapshot()
-    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     internal var draggingIndexPaths = Set<IndexPath>()
     internal var previousDisplayingElements = [Element]()
     internal var rightDownMonitor: NSEvent.Monitor? = nil

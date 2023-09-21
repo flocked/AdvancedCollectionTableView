@@ -10,6 +10,14 @@ import FZSwiftUtils
 import FZUIKit
 
 extension AdvanceCollectionViewDiffableDataSource {
+    /// All current sections in the collection view.
+    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    
+    /// All current elements in the collection view.
+    internal var allElements: [Element] {
+        return self.currentSnapshot.itemIdentifiers
+    }
+
     /// An array of the selected elements.
     public var selectedElements: [Element] {
         return self.collectionView.selectionIndexPaths.compactMap({element(for: $0)})
@@ -63,25 +71,26 @@ extension AdvanceCollectionViewDiffableDataSource {
     }
     
     /// Selects all collection view items of the specified elements.
-    public func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
+    internal func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         self.collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
+    
     /// Deselects all collection view items of the specified elements.
-    public func deselectElements(_ elements: [Element]) {
+    internal func deselectElements(_ elements: [Element]) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         self.collectionView.deselectItems(at: indexPaths)
     }
     
     /// Selects all collection view items of the elements in the specified sections.
-    public func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
+    internal func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let elements = self.elements(for: sections)
         self.selectElements(elements, scrollPosition: scrollPosition)
     }
     
     /// Deselects all collection view items of the elements in the specified sections.
-    public func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
+    internal func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let indexPaths = sections.flatMap({self.indexPaths(for: $0)})
         self.collectionView.deselectItems(at: Set(indexPaths))
     }
@@ -97,11 +106,6 @@ extension AdvanceCollectionViewDiffableDataSource {
         guard let index = index(for: section) else { return }
         let indexPaths = Set([IndexPath(item: 0, section: index)])
         self.collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
-    }
-    
-    /// An array of all elements of the last applied snapshot.
-    internal var allElements: [Element] {
-        return self.currentSnapshot.itemIdentifiers
     }
     
     /// An array of elements that are displaying (currently visible).
@@ -162,7 +166,7 @@ extension AdvanceCollectionViewDiffableDataSource {
         self.apply(snapshot, .animated)
     }
     
-    internal func transactionForRemovingElements(_ elements: [Element]) -> DiffableDataSourceTransaction {
+    internal func transactionForRemovingElements(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
         var snapshot = self.snapshot()
         snapshot.deleteItems(elements)
         let initalSnapshot = self.currentSnapshot
@@ -170,7 +174,7 @@ extension AdvanceCollectionViewDiffableDataSource {
         return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
-    internal func transactionForMovingElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction? {
+    internal func transactionForMovingElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         let elements = indexPaths.compactMap({self.element(for: $0)})
         if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
             var snapshot = self.snapshot()
