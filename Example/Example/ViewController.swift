@@ -71,6 +71,12 @@ class ViewController: NSViewController {
         
         collectionView.dataSource = self.dataSource
         
+        Swift.print("constant", self.collectionView.widthAnchor.constraint(equalToConstant: 10).animation(forKey: "constant") ?? "nil")
+        Swift.print("priority", self.collectionView.widthAnchor.constraint(equalToConstant: 10).animation(forKey: "priority") ?? "nil")
+        Swift.print("isActive", self.collectionView.widthAnchor.constraint(equalToConstant: 10).animation(forKey: "isActive") ?? "nil")
+
+
+        
         // Enables deleting of selected enables via backspace.
         dataSource.allowsDeleting = true
         // Enables reordering of elements via drag and drop.
