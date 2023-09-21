@@ -126,7 +126,6 @@ public class NSListContentView: NSView, NSContentView {
             case .top:
                 imageView.verticalConstraint = imageView.topAnchor.constraint(equalTo: textStackView.topAnchor).activate()
             case .firstBaseline:
-                Swift.print("fff")
                 if _configuration.image?.isSymbolImage == true {
                     if _configuration.hasText {
                         imageView.verticalConstraint = imageView.firstBaselineAnchor.constraint(equalTo: textField.firstBaselineAnchor)
