@@ -45,10 +45,12 @@ class ViewController: NSViewController {
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
                                     
+            /*
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
             configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
             configuration.contentProperties.shadow = state.isSelected ? .color(.controlAccentColor) : .black()
+             */
             
             collectionViewItem.contentConfiguration = configuration
         }

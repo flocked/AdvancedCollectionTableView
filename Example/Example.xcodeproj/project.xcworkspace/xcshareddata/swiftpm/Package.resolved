@@ -6,7 +6,7 @@
       "location" : "https://github.com/flocked/AdvancedCollectionTableView.git",
       "state" : {
         "branch" : "main",
-        "revision" : "4287916f168446de4e643184d379d99f487d140a"
+        "revision" : "aa012eb072d147b933c9af9f581f313607e35ddc"
       }
     },
     {
@@ -24,7 +24,7 @@
       "location" : "https://github.com/flocked/FZSwiftUtils.git",
       "state" : {
         "branch" : "main",
-        "revision" : "9343f3413efcfb42d0ff979aae43ddbe931d12c8"
+        "revision" : "45680d36eab17ac88919d3fd82a1aa434b2b2365"
       }
     },
     {
@@ -33,7 +33,7 @@
       "location" : "https://github.com/flocked/FZUIKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "9b25c09a22a4af7b06855f3c46ef39b8fd38e964"
+        "revision" : "aa68d4ab2cc12a8a6de0619db3e64e7e173fcdd1"
       }
     }
   ],
