@@ -41,16 +41,21 @@ class ViewController: NSViewController {
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
             
+            configuration = configuration.updated(for: state)
+            
             /// Updates the configuration based on whether the mouse is hovering the item.
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
                                     
-            /*
+            
+          /*
             /// Updates the configuration based on whether the item is selected.
             configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
             configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
             configuration.contentProperties.shadow = state.isSelected ? .color(.controlAccentColor) : .black()
              */
+            
+            configuration = configuration.updated(for: state)
             
             collectionViewItem.contentConfiguration = configuration
         }
