@@ -41,6 +41,7 @@ class ViewController: NSViewController {
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
             
+            /// If state.isSelected, it adds a selection border with controlAccentColor
             configuration = configuration.updated(for: state)
             
             /// Updates the configuration based on whether the mouse is hovering the item.
