@@ -118,15 +118,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      
      The properties only applies when there’s a `view` and/or `image`.
      */
-    public var contentProperties: ContentProperties = ContentProperties() {
-        didSet {
-            if isRestoringContentProperties == false {
-                _borderColor = contentProperties._resolvedBorderColor
-                _borderWidth = contentProperties.borderWidth
-                _shadowColor = contentProperties.shadow.resolvedColor()
-            }
-        }
-    }
+    public var contentProperties: ContentProperties = ContentProperties()
     
     /**
      The padding between the content view that displays  the`image` and/or `view`  and text.
@@ -175,33 +167,16 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
             if state.isSelected {
                 configuration.contentProperties.stateBorderColor = .controlAccentColor
                 configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
-                
-                let shadow = configuration.contentProperties.shadow
-                if shadow.resolvedColor() != nil, shadow.resolvedColor() != .clear, shadow.opacity != 0.0 {
-                    configuration.contentProperties.stateShadowColor = .controlAccentColor
-                }
+                configuration.contentProperties.stateShadowColor = configuration.contentProperties.shadow.isInvisible ? nil : .controlAccentColor
             } else {
                 configuration.contentProperties.stateBorderColor = nil
                 configuration.contentProperties.stateShadowColor = nil
                 configuration.contentProperties.stateBorderWidth = nil
             }
         }
-        Swift.print(configuration.contentProperties._resolvedBorderColor == .controlAccentColor)
         return configuration
     }
-    
-   // var savedContentProperties: SavedContentProperties? = nil
-    internal struct SavedContentProperties {
-        internal var borderWidth: CGFloat = 0.0
-        internal var borderColor: NSUIColor? = nil
-        internal var shadowColor: NSUIColor? = nil
-    }
-    
-    internal var _borderWidth: CGFloat = 0.0
-    internal var _borderColor: NSUIColor? = nil
-    internal var _shadowColor: NSUIColor? = nil
-    internal var isRestoringContentProperties: Bool = false
-    
+        
     internal var contentAlignment: NSLayoutConstraint.Attribute  {
         switch self.contentPosition {
         case .bottom, .top: return .centerX
