@@ -82,7 +82,10 @@ public extension NSItemContentConfiguration {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the border color.
         public var borderColorTransform: ColorTransformer? = nil {
-            didSet { updateResolvedColors() } }
+            didSet {
+                Swift.print("updateResolvedColors", self.resolvedBorderColor() ?? "nil")
+
+                updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
             if let borderColor = self.borderColor {
