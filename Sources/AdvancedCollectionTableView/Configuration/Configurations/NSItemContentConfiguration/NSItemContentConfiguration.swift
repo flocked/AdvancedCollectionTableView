@@ -188,13 +188,13 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                      configuration.contentProperties.shadow.color = .controlAccentColor
                 }
             } else {
-                /*
+                
                 configuration.isRestoringContentProperties = true
                 configuration.contentProperties.borderWidth = configuration._borderWidth
                 configuration.contentProperties.borderColor = configuration._borderColor
                 configuration.contentProperties.shadow.color = configuration._shadowColor
                 configuration.isRestoringContentProperties = false
-                 */
+                 
                 /*
                 if let savedContentProperties = configuration.savedContentProperties {
                     configuration.contentProperties.borderWidth = savedContentProperties.borderWidth

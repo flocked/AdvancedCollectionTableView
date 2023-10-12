@@ -54,9 +54,7 @@ class ViewController: NSViewController {
             configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
             configuration.contentProperties.shadow = state.isSelected ? .color(.controlAccentColor) : .black()
              */
-            
-            configuration = configuration.updated(for: state)
-            
+                        
             collectionViewItem.contentConfiguration = configuration
         }
     }
