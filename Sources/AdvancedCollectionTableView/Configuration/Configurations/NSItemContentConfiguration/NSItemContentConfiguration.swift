@@ -118,7 +118,15 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      
      The properties only applies when there’s a `view` and/or `image`.
      */
-    public var contentProperties: ContentProperties = ContentProperties()
+    public var contentProperties: ContentProperties = ContentProperties() {
+        didSet {
+            if isRestoringContentProperties == false {
+                _borderColor = contentProperties._resolvedBorderColor
+                _borderWidth = contentProperties.borderWidth
+                _shadowColor = contentProperties.shadow.resolvedColor()
+            }
+        }
+    }
     
     /**
      The padding between the content view that displays  the`image` and/or `view`  and text.
@@ -165,17 +173,52 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? CollectionConfigurationState {
             if state.isSelected {
-                let borderWidth = configuration.contentProperties.borderWidth
-                configuration.contentProperties.borderWidth = borderWidth != 0.0 ? borderWidth : 2.0
+                configuration._borderWidth = configuration.contentProperties.borderWidth
+                configuration._borderColor = configuration.contentProperties._resolvedBorderColor
+                configuration._shadowColor = configuration.contentProperties.shadow.resolvedColor()
+                
+                var savedContentProperties = SavedContentProperties()
+                savedContentProperties.borderWidth = configuration.contentProperties.borderWidth
+                savedContentProperties.borderColor = configuration.contentProperties._resolvedBorderColor
+                savedContentProperties.shadowColor = configuration.contentProperties.shadow.resolvedColor()
+           //     configuration.savedContentProperties = savedContentProperties
+                
+                configuration.contentProperties.borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 configuration.contentProperties.borderColor = .controlAccentColor
                 let shadow = configuration.contentProperties.shadow
-                if shadow.color != nil, shadow.color != .clear, shadow.opacity != 0.0 {
+                if shadow.resolvedColor() != nil, shadow.resolvedColor() != .clear, shadow.opacity != 0.0 {
                      configuration.contentProperties.shadow.color = .controlAccentColor
                 }
+            } else {
+                configuration.isRestoringContentProperties = true
+                configuration.contentProperties.borderWidth = configuration._borderWidth
+                configuration.contentProperties.borderColor = configuration._borderColor
+                configuration.contentProperties.shadow.color = configuration._shadowColor
+                configuration.isRestoringContentProperties = false
+                /*
+                if let savedContentProperties = configuration.savedContentProperties {
+                    configuration.contentProperties.borderWidth = savedContentProperties.borderWidth
+                    configuration.contentProperties.borderColor = savedContentProperties.borderColor
+                    configuration.contentProperties.shadow.color = savedContentProperties.shadowColor
+                }
+                 */
+                
             }
         }
         return configuration
     }
+    
+   // var savedContentProperties: SavedContentProperties? = nil
+    internal struct SavedContentProperties {
+        internal var borderWidth: CGFloat = 0.0
+        internal var borderColor: NSUIColor? = nil
+        internal var shadowColor: NSUIColor? = nil
+    }
+    
+    internal var _borderWidth: CGFloat = 0.0
+    internal var _borderColor: NSUIColor? = nil
+    internal var _shadowColor: NSUIColor? = nil
+    internal var isRestoringContentProperties: Bool = false
     
     internal var contentAlignment: NSLayoutConstraint.Attribute  {
         switch self.contentPosition {
