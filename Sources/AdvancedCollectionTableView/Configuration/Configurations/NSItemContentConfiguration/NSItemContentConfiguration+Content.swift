@@ -75,7 +75,7 @@ public extension NSItemContentConfiguration {
         
         /// The border width.
         public var borderWidth: CGFloat = 0.0 {
-            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth }
+            didSet { resolvedBorderWidth = stateBorderWidth ?? borderWidth }
         }
         /// The border color.
         public var borderColor: NSColor? = nil {
@@ -91,14 +91,20 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        internal var _borderWidth: CGFloat? {
-            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth } }
+        internal var stateBorderWidth: CGFloat? {
+            didSet { resolvedBorderWidth = stateBorderWidth ?? borderWidth } }
         
-        internal var _borderColor: NSColor? {
+        internal var stateBorderColor: NSColor? {
             didSet { updateResolvedColors() } }
         
-        internal var _shadowColor: NSColor? {
-            didSet { updateResolvedColors() } }
+        internal var stateShadowColor: NSColor? = nil
+        
+        internal var stateShadow: ContentConfiguration.Shadow {
+            guard let stateShadowColor else { return shadow }
+            var shadow = self.shadow
+            shadow.color = stateShadowColor
+            return shadow
+        }
         
         internal var resolvedBorderWidth: CGFloat = 0.0
         
@@ -132,7 +138,7 @@ public extension NSItemContentConfiguration {
         internal mutating func updateResolvedColors() {
             //  imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?.resolvedPrimaryColor() ?? resolvedImageTintColor()
-            _resolvedBorderColor = _borderColor ?? resolvedBorderColor()
+            _resolvedBorderColor = stateBorderColor ?? resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         

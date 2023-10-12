@@ -173,46 +173,17 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? CollectionConfigurationState {
             if state.isSelected {
-        
-                
-                var savedContentProperties = SavedContentProperties()
-                savedContentProperties.borderWidth = configuration.contentProperties.borderWidth
-                savedContentProperties.borderColor = configuration.contentProperties._resolvedBorderColor
-                savedContentProperties.shadowColor = configuration.contentProperties.shadow.resolvedColor()
-           //     configuration.savedContentProperties = savedContentProperties
-                
-                /*
-                configuration.contentProperties.borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
-                configuration.contentProperties.borderColor = .controlAccentColor
-                */
-                
-                configuration.contentProperties._borderColor = .controlAccentColor
-                configuration.contentProperties._borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
+                configuration.contentProperties.stateBorderColor = .controlAccentColor
+                configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 
                 let shadow = configuration.contentProperties.shadow
                 if shadow.resolvedColor() != nil, shadow.resolvedColor() != .clear, shadow.opacity != 0.0 {
-                    configuration.contentProperties._shadowColor = .controlAccentColor
-                   //  configuration.contentProperties.shadow.color = .controlAccentColor
+                    configuration.contentProperties.stateShadowColor = .controlAccentColor
                 }
             } else {
-                configuration.contentProperties._borderColor = nil
-                configuration.contentProperties._shadowColor = nil
-                configuration.contentProperties._borderWidth = nil
-                /*
-                configuration.isRestoringContentProperties = true
-                configuration.contentProperties.borderWidth = configuration._borderWidth
-                configuration.contentProperties.borderColor = configuration._borderColor
-                configuration.contentProperties.shadow.color = configuration._shadowColor
-                configuration.isRestoringContentProperties = false
-                 */
-                /*
-                if let savedContentProperties = configuration.savedContentProperties {
-                    configuration.contentProperties.borderWidth = savedContentProperties.borderWidth
-                    configuration.contentProperties.borderColor = savedContentProperties.borderColor
-                    configuration.contentProperties.shadow.color = savedContentProperties.shadowColor
-                }
-                 */
-                
+                configuration.contentProperties.stateBorderColor = nil
+                configuration.contentProperties.stateShadowColor = nil
+                configuration.contentProperties.stateBorderWidth = nil
             }
         }
         Swift.print(configuration.contentProperties._resolvedBorderColor == .controlAccentColor)

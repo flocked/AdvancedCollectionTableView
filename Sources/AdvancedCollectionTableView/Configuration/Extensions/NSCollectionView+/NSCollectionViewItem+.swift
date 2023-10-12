@@ -339,7 +339,7 @@ public extension NSCollectionViewItem {
                 self.observeCollectionItem()
             }
             set(associatedValue: newValue, key: "_configurationUpdateHandler", object: self)
-        //    self.setNeedsUpdateConfiguration()
+            self.setNeedsUpdateConfiguration()
         }
     }
     
