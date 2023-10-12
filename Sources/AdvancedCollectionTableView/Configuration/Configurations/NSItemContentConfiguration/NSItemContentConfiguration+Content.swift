@@ -74,7 +74,9 @@ public extension NSItemContentConfiguration {
         }
         
         /// The border width.
-        public var borderWidth: CGFloat = 0.0
+        public var borderWidth: CGFloat = 0.0 {
+            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth }
+        }
         /// The border color.
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
@@ -88,6 +90,12 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
+        
+        internal var _borderWidth: CGFloat? {
+            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth }
+        }
+        
+        internal var resolvedBorderWidth: CGFloat = 0.0
         
         /// The symbol configuration for the image.
         public var imageSymbolConfiguration: ContentConfiguration.SymbolConfiguration? = nil

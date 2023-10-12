@@ -268,11 +268,13 @@ public extension NSCollectionViewItem {
         let state = self.configurationState
         
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
-            self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
+            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+          //  self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
         }
         
         if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
-            self.configurateContentView(configuration: contentConfiguration.updated(for: state))
+            self.contentConfiguration = contentConfiguration.updated(for: state)
+          //  self.configurateContentView(configuration: contentConfiguration.updated(for: state))
         }
         
         configurationUpdateHandler?(self, state)
@@ -286,11 +288,13 @@ public extension NSCollectionViewItem {
      */
     func updateConfiguration(using state: NSItemConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
-            self.configurateContentView(configuration: contentConfiguration.updated(for: state))
+            self.contentConfiguration = contentConfiguration.updated(for: state)
+           // self.configurateContentView(configuration: contentConfiguration.updated(for: state))
         }
         
         if let backgroundConfiguration = self.backgroundConfiguration {
-            self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
+            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+          //  self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
         }
         configurationUpdateHandler?(self, state)
     }

@@ -282,7 +282,7 @@ internal extension NSItemContentView {
         func updateConfiguration() {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
             self.borderColor = contentProperties._resolvedBorderColor
-            self.borderWidth = contentProperties.borderWidth
+            self.borderWidth = contentProperties.resolvedBorderWidth
             self.cornerRadius = contentProperties.cornerRadius
             self.imageView.cornerRadius = contentProperties.cornerRadius
             self.overlayView?.cornerRadius = contentProperties.cornerRadius
