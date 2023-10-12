@@ -165,9 +165,6 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? CollectionConfigurationState {
             if state.isSelected {
-                Swift.print("updatedState" )
-            }
-            if state.isSelected {
                 let borderWidth = configuration.contentProperties.borderWidth
                 configuration.contentProperties.borderWidth = borderWidth != 0.0 ? borderWidth : 2.0
                 configuration.contentProperties.borderColor = .controlAccentColor
@@ -176,9 +173,6 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                      configuration.contentProperties.shadow.color = .controlAccentColor
                 }
             }
-        }
-        if configuration.contentProperties.borderColor == .controlAccentColor {
-            Swift.print("updatedState yes")
         }
         return configuration
     }

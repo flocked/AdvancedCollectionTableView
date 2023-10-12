@@ -216,6 +216,7 @@ public extension NSCollectionViewItem {
     }
     
     internal func configurateContentView(configuration: NSContentConfiguration? = nil) {
+        Swift.print("configurateContentView", configuration != nil)
         if let contentConfiguration = configuration ?? contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
