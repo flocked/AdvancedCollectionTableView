@@ -82,10 +82,7 @@ public extension NSItemContentConfiguration {
             didSet { updateResolvedColors() } }
         /// The color transformer for resolving the border color.
         public var borderColorTransform: ColorTransformer? = nil {
-            didSet {
-                Swift.print("updateResolvedColors", borderColorTransform != nil, self.resolvedBorderColor() ?? "nil")
-
-                updateResolvedColors() } }
+            didSet { updateResolvedColors() } }
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
             if let borderColor = self.borderColor {
@@ -95,8 +92,13 @@ public extension NSItemContentConfiguration {
         }
         
         internal var _borderWidth: CGFloat? {
-            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth }
-        }
+            didSet { resolvedBorderWidth = _borderWidth ?? borderWidth } }
+        
+        internal var _borderColor: NSColor? {
+            didSet { updateResolvedColors() } }
+        
+        internal var _shadowColor: NSColor? {
+            didSet { updateResolvedColors() } }
         
         internal var resolvedBorderWidth: CGFloat = 0.0
         
@@ -130,7 +132,7 @@ public extension NSItemContentConfiguration {
         internal mutating func updateResolvedColors() {
             //  imageSymbolConfiguration?.updateResolvedColors()
             _resolvedImageTintColor = imageSymbolConfiguration?.resolvedPrimaryColor() ?? resolvedImageTintColor()
-            _resolvedBorderColor = resolvedBorderColor()
+            _resolvedBorderColor = _borderColor ?? resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         

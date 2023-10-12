@@ -186,17 +186,17 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                 configuration.contentProperties.borderColor = .controlAccentColor
                 */
                 
-                configuration.contentProperties.borderColorTransform = .color(.controlAccentColor)
+                configuration.contentProperties._borderColor = .controlAccentColor
                 configuration.contentProperties._borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 
                 let shadow = configuration.contentProperties.shadow
                 if shadow.resolvedColor() != nil, shadow.resolvedColor() != .clear, shadow.opacity != 0.0 {
-                    configuration.contentProperties.shadow.colorTransform = .color(.controlAccentColor)
+                    configuration.contentProperties._shadowColor = .controlAccentColor
                    //  configuration.contentProperties.shadow.color = .controlAccentColor
                 }
             } else {
-                configuration.contentProperties.borderColorTransform = nil
-                configuration.contentProperties.shadow.colorTransform = nil
+                configuration.contentProperties._borderColor = nil
+                configuration.contentProperties._shadowColor = nil
                 configuration.contentProperties._borderWidth = nil
                 /*
                 configuration.isRestoringContentProperties = true

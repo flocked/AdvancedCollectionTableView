@@ -292,7 +292,9 @@ internal extension NSItemContentView {
             self.view?.cornerRadius = contentProperties.cornerRadius
             self.overlayView?.cornerRadius = contentProperties.cornerRadius
             
-            self.configurate(using: contentProperties.shadow)
+            var shadow = contentProperties.shadow
+            shadow.color = contentProperties._shadowColor ?? shadow.resolvedColor()
+            self.configurate(using: shadow)
             
             self.imageView.tintColor = contentProperties._resolvedImageTintColor
             self.imageView.imageScaling = contentProperties.imageScaling.gravity
