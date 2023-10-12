@@ -173,9 +173,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? CollectionConfigurationState {
             if state.isSelected {
-                configuration._borderWidth = configuration.contentProperties.borderWidth
-                configuration._borderColor = configuration.contentProperties._resolvedBorderColor
-                configuration._shadowColor = configuration.contentProperties.shadow.resolvedColor()
+        
                 
                 var savedContentProperties = SavedContentProperties()
                 savedContentProperties.borderWidth = configuration.contentProperties.borderWidth
