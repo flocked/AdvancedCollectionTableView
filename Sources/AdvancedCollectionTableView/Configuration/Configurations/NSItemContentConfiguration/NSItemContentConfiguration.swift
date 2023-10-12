@@ -215,6 +215,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                 
             }
         }
+        Swift.print(configuration.contentProperties._resolvedBorderColor == .controlAccentColor)
         return configuration
     }
     
