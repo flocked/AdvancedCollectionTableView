@@ -10,8 +10,9 @@ import FZUIKit
 import FZQuicklook
 import FZSwiftUtils
 /**
- This object is an advanced version or `NSTableViewDiffableDataSource`. It provides:
+An advanced version or `NSTableViewDiffableDataSource`.
  
+ It provides:
  - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
  - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
  - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
@@ -43,7 +44,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     internal var hoveredRowObserver: NSKeyValueObservation? = nil
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowProvider? = nil {
+    public var rowViewProvider: RowViewProvider? = nil {
         didSet {
             self.dataSource.rowViewProvider = self.rowViewProvider
         }
@@ -63,12 +64,12 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
     }
     
     /// A closure that configures and returns a row view for a table view from its diffable data source.
-    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: AnyHashable) -> NSTableRowView
+    public typealias RowViewProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: AnyHashable) -> NSTableRowView
     
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
     
-    /**
+    /**     
      Right click menu provider.
      
      `items` provides:

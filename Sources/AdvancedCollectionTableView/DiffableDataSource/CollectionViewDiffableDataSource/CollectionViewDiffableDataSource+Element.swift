@@ -70,6 +70,13 @@ extension AdvanceCollectionViewDiffableDataSource {
         self.collectionView.reconfigureItems(at: indexPaths)
     }
     
+    /// Reloads the specified elements.
+    public func reloadElements(_ elements: [Element], animated: Bool = false) {
+        var snapshot = dataSource.snapshot()
+        snapshot.reloadItems(elements.ids)
+        dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
+    }
+    
     /// Selects all collection view items of the specified elements.
     internal func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
@@ -113,9 +120,18 @@ extension AdvanceCollectionViewDiffableDataSource {
         self.collectionView.displayingIndexPaths().compactMap({self.element(for: $0)})
     }
     
-    internal func collectionViewItem(for element: Element) -> NSCollectionViewItem? {
-        if let elementIndexPath = indexPath(for: element) {
-            return self.collectionView.item(at: elementIndexPath)
+    /// The collection view item for the specified element.
+    internal func item(for element: Element) -> NSCollectionViewItem? {
+        if let indexPath = indexPath(for: element) {
+            return self.collectionView.item(at: indexPath)
+        }
+        return nil
+    }
+    
+    /// The frame of the collection view item for the specified element.
+    internal func itemFrame(for element: Element) -> CGRect? {
+        if let indexPath = indexPath(for: element) {
+            return self.collectionView.frameForItem(at: indexPath)
         }
         return nil
     }
@@ -185,88 +201,4 @@ extension AdvanceCollectionViewDiffableDataSource {
         }
         return nil
     }
-    
-    /*
-     internal func supplementaryView(for section: Section, kind: String) -> (NSView & NSCollectionViewElement)? {
-     if let indexPath = self.indexPaths(for: [section]).first {
-     return collectionView.supplementaryView(forElementKind: kind, at: indexPath)
-     }
-     return nil
-     }
-     */
-    
-    /*
-     /// An array of elements that are visible.
-     public func visibleElements() -> [Element] {
-     return self.collectionView.indexPathsForVisibleItems().compactMap({element(for: $0)})
-     }
-     
-     
-     internal func frame(for element: Element) -> CGRect? {
-     if let index = indexPath(for: element)?.item {
-     return self.collectionView.frameForItem(at: index)
-     }
-     return nil
-     }
-     
-     public func layoutAttributes(for element: Element) -> NSCollectionViewLayoutAttributes?  {
-     if let indexPath = self.indexPath(for: element) {
-     return self.collectionView.layoutAttributesForItem(at: indexPath)
-     }
-     return nil
-     }
-     */
-    
-    
-    /*
-     public func reloadItems(at indexPaths: [IndexPath], animated: Bool = false) {
-     let elements = indexPaths.compactMap({self.element(for: $0)})
-     self.reloadItems(elements, animated: animated)
-     }
-     
-     public func reloadItems(_ elements: [Element], animated: Bool = false) {
-     var snapshot = dataSource.snapshot()
-     snapshot.reloadItems(elements.ids)
-     dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
-     }
-     
-     public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
-     var snapshot = snapshot()
-     snapshot.reloadItems(snapshot.itemIdentifiers)
-     self.apply(snapshot, animated ? .animated : .usingReloadData)
-     }
-     */
-    
-    /*
-     public func selectItems(at indexPaths: [IndexPath], scrollPosition: NSCollectionView.ScrollPosition) {
-     self.collectionView.selectItems(at: Set(indexPaths), scrollPosition: scrollPosition)
-     }
-     */
-    
-    /*
-     public func deselectItems(at indexPaths: [IndexPath]) {
-     self.collectionView.deselectItems(at: Set(indexPaths))
-     }
-     */
-    
-    /*
-     public func moveElements( _ elements: [Element], before beforeElement: Element) {
-     var snapshot = self.snapshot()
-     elements.forEach({snapshot.moveItem($0, beforeItem: beforeElement)})
-     self.apply(snapshot)
-     }
-     
-     public func moveElements( _ elements: [Element], after afterElement: Element) {
-     var snapshot = self.snapshot()
-     elements.forEach({snapshot.moveItem($0, afterItem: afterElement)})
-     self.apply(snapshot)
-     }
-     
-     public func moveElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) {
-     let elements = indexPaths.compactMap({self.element(for: $0)})
-     if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
-     self.moveElements(elements, before: toElement)
-     }
-     }
-     */
 }

@@ -33,7 +33,8 @@ public extension NSCollectionViewItem {
      - ``selectedBackgroundView``
      */
     var backgroundConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
+        get { 
+            getAssociatedValue(key: "_backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
             if (newValue != nil) {
@@ -69,6 +70,7 @@ public extension NSCollectionViewItem {
      A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
      
      When this value is true, the item automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
@@ -121,8 +123,8 @@ public extension NSCollectionViewItem {
         self.backgroundView as? (NSView & NSContentView)
     }
     
-    internal func configurateBackgroundView() {
-        if let backgroundConfiguration = backgroundConfiguration {
+    internal func configurateBackgroundView(configuration: NSContentConfiguration? = nil) {
+        if let backgroundConfiguration = configuration ?? backgroundConfiguration {
             self.selectedBackgroundView?.removeFromSuperview()
             self.selectedBackgroundView = nil
             if var backgroundView = backgroundConfigurationView,  backgroundView.supports(backgroundConfiguration) {
@@ -213,8 +215,8 @@ public extension NSCollectionViewItem {
         self.view as? NSContentView
     }
     
-    internal func configurateContentView() {
-        if let contentConfiguration = contentConfiguration {
+    internal func configurateContentView(configuration: NSContentConfiguration? = nil) {
+        if let contentConfiguration = configuration ?? contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -266,11 +268,11 @@ public extension NSCollectionViewItem {
         let state = self.configurationState
         
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
-            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+            self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
         }
         
         if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+            self.configurateContentView(configuration: contentConfiguration.updated(for: state))
         }
         
         configurationUpdateHandler?(self, state)
@@ -284,10 +286,11 @@ public extension NSCollectionViewItem {
      */
     func updateConfiguration(using state: NSItemConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+            self.configurateContentView(configuration: contentConfiguration.updated(for: state))
         }
+        
         if let backgroundConfiguration = self.backgroundConfiguration {
-            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+            self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
         }
         configurationUpdateHandler?(self, state)
     }
@@ -307,14 +310,19 @@ public extension NSCollectionViewItem {
      
      A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the item’s configuration using the new state in response to a configuration state change:
      
-     ```
+     ```swift
      item.configurationUpdateHandler = { item, state in
-     var content = UIListContentConfiguration.item().updated(for: state)
-     content.text = "Hello world!"
-     if state.isDisabled {
-     content.textProperties.color = .systemGray
-     }
-     item.contentConfiguration = content
+        var content = NSItemContentConfiguration()
+        content.text = "Mozart"
+        content.image = NSImage(named: "Mozart"")
+        if state.isSelected {
+            content.contentProperties.borderWidth = 1.0
+            content.contentProperties.borderColor = .controlAccentColor
+        } else {
+            content.contentProperties.borderWidth = 0.0
+            content.contentProperties.borderColor = nil
+        }
+        item.contentConfiguration = content
      }
      ```
      

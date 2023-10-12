@@ -20,7 +20,7 @@ extension AdvanceTableViewDiffableDataSource {
         return self.tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
     }
     
-    /**
+    /**     
      Returns the item at the specified row in the table view.
      
      - Parameters row: The row of the item in the table view.

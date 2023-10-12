@@ -9,6 +9,6 @@ import Foundation
 import FZUIKit
 
 /// A protocol that indicates that the conforming object can auto size itself.
-public protocol AutoSizeable {
+internal protocol AutoSizeable {
     
 }

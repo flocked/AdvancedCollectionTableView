@@ -24,21 +24,23 @@ class ViewController: NSViewController {
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
     lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
-        
+
         // Content configuration for collectionview items.
         var configuration = NSItemContentConfiguration()
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
+        configuration.contentProperties.shadow = .black()
         
         if let badgeText = galleryItem.badge {
             configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
         }
                 
         collectionViewItem.contentConfiguration = configuration
-
+        
         /// Gets called when the item gets selected, hovered by mouse, etc.
         collectionViewItem.configurationUpdateHandler = { item, state in
+            
             /// Updates the configuration based on whether the mouse is hovering the item.
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil

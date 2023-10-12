@@ -9,8 +9,8 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSCollectionView {
-    internal var isEmphasized: Bool {
+internal extension NSCollectionView {
+    var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEmphasized", object: self, initialValue: false) }
         set {
             guard newValue != isEmphasized else { return }
@@ -22,7 +22,7 @@ public extension NSCollectionView {
         }
     }
     
-    internal var isEnabled: Bool {
+    var isEnabled: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
         set {
             set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
@@ -30,12 +30,12 @@ public extension NSCollectionView {
         }
     }
     
-    internal var firstResponderObserver: NSKeyValueObservation? {
+    var firstResponderObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
     }
     
-    internal func setupCollectionViewFirstResponderObserver() {
+    func setupCollectionViewFirstResponderObserver() {
         guard firstResponderObserver == nil else { return }
         firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
             guard old != new else { return }
@@ -44,7 +44,7 @@ public extension NSCollectionView {
         })
     }
     
-    @objc dynamic internal var hoveredIndexPath: IndexPath? {
+    @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredIndexPath else { return }
@@ -61,7 +61,7 @@ public extension NSCollectionView {
         }
     }
     
-    internal var hoveredItem: NSCollectionViewItem? {
+    var hoveredItem: NSCollectionViewItem? {
         guard let indexPath = hoveredIndexPath else { return nil }
         return self.item(at: indexPath)
     }

@@ -9,6 +9,25 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
+/**
+ A content configuration for a collection view item based content view.
+ 
+ An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view items via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own view via ``makeContentView()``.
+  
+ ```swift
+ var content = NSItemContentConfiguration()
+ 
+ // Configure content.
+ content.image = NSImage(named: "Mozart")
+ content.text = "Mozart"
+ content.secondaryText = "A genius composer"
+ 
+ // Customize appearance.
+ content.textProperties.font = .body
+ 
+ collectionViewItem.contentConfiguration = content
+ ```
+ */
 public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     // MARK: Creating item configurations
     
@@ -143,7 +162,19 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
-        return self
+        var configuration = self
+        if let state = state as? CollectionConfigurationState {
+            if state.isSelected {
+                let borderWidth = configuration.contentProperties.borderWidth
+                configuration.contentProperties.borderWidth = borderWidth != 0.0 ? borderWidth : 2.0
+                configuration.contentProperties.borderColor = .controlAccentColor
+                var shadow = configuration.contentProperties.shadow
+                if shadow.color != nil, shadow.color != .clear, shadow.opacity != 0.0 {
+                     configuration.contentProperties.shadow.color = .controlAccentColor
+                }
+            }
+        }
+        return configuration
     }
     
     internal var contentAlignment: NSLayoutConstraint.Attribute  {

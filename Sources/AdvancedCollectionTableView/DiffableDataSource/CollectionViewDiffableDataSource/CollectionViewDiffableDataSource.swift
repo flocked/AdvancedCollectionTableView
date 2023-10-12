@@ -12,8 +12,9 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- This object is an advanced version of `NSCollectionViewDiffableDataSource. It provides:
+ An advanced version of `NSCollectionViewDiffableDataSource.
 
+ It provides:
  - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
  - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
  - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
@@ -35,7 +36,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
     
-    /**
+    /**     
      A closure that configures and returns a item for a collection view from its diffable data source.
      
      A non-nil configured item object. The item provider must return a valid item object to the collection view.

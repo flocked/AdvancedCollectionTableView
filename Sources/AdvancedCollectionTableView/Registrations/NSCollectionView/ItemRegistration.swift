@@ -80,7 +80,7 @@ public extension NSCollectionView {
         private let nib: NSNib?
         private let handler: Handler
         
-        // MARK: Creating a item registration
+        // MARK: Creating an item registration
         
         /**
          Creates a item registration with the specified registration handler.

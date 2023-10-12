@@ -8,13 +8,14 @@
 import AppKit
 import FZUIKit
 
-///
+/// A content view for displaying collection item-based content.
 public class NSItemContentView: NSView, NSContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         self.appliedConfiguration = configuration
         super.init(frame: .zero)
         self.isOpaque = false
+        self.clipsToBounds = false
         self.maskToBounds = false
         self.stackviewConstraints = self.addSubview(withConstraint: stackView)
         self.updateConfiguration()

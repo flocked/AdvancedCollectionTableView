@@ -313,6 +313,14 @@ internal extension NSItemContentView {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
             
+            self.clipsToBounds = false
+            self.imageView.clipsToBounds = false
+            self.imageView.maskToBounds = true
+            self.overlayView?.clipsToBounds = false
+            self.overlayView?.maskToBounds = true
+            self.view?.clipsToBounds = false
+            self.view?.maskToBounds = true
+            
             self.invalidateIntrinsicContentSize()
         }
         
