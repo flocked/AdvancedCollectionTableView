@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import FZUIKit
 
-internal protocol CollectionConfigurationState {
+internal protocol CollectionConfigurationState: NSConfigurationState {
     var isSelected: Bool { get }
     var isEmphasized: Bool { get }
     var isHovered: Bool { get }

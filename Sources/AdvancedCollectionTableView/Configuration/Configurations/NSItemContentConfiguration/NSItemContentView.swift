@@ -15,7 +15,6 @@ public class NSItemContentView: NSView, NSContentView {
         self.appliedConfiguration = configuration
         super.init(frame: .zero)
         self.isOpaque = false
-        self.clipsToBounds = false
         self.maskToBounds = false
         self.stackviewConstraints = self.addSubview(withConstraint: stackView)
         self.updateConfiguration()

@@ -28,6 +28,7 @@ internal extension NSItemContentView {
                 oldValue?.removeFromSuperview()
                 if let newView = self.view {
                     self.addSubview(withConstraint: newView)
+                    newView.maskToBounds = true
                     self.overlayView?.sendToFront()
                     self.badgeViews.forEach({$0.sendToFront()})
                 }
@@ -39,6 +40,7 @@ internal extension NSItemContentView {
                 oldValue?.removeFromSuperview()
                 if let newView = self.overlayView {
                     self.addSubview(withConstraint: newView)
+                    newView.maskToBounds = true
                     self.badgeViews.forEach({$0.sendToFront()})
                 }
             }
@@ -313,14 +315,6 @@ internal extension NSItemContentView {
             self.anchorPoint = CGPoint(0.5, 0.5)
             self.layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
             
-            self.clipsToBounds = false
-            self.imageView.clipsToBounds = false
-            self.imageView.maskToBounds = true
-            self.overlayView?.clipsToBounds = false
-            self.overlayView?.maskToBounds = true
-            self.view?.clipsToBounds = false
-            self.view?.maskToBounds = true
-            
             self.invalidateIntrinsicContentSize()
         }
         
@@ -328,6 +322,7 @@ internal extension NSItemContentView {
             self.configuration = configuration
             super.init(frame: .zero)
             self.maskToBounds = false
+            self.imageView.maskToBounds = true
             self.addSubview(imageView)
             self.updateConfiguration()
         }

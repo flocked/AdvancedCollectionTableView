@@ -123,8 +123,8 @@ public extension NSCollectionViewItem {
         self.backgroundView as? (NSView & NSContentView)
     }
     
-    internal func configurateBackgroundView(configuration: NSContentConfiguration? = nil) {
-        if let backgroundConfiguration = configuration ?? backgroundConfiguration {
+    internal func configurateBackgroundView() {
+        if let backgroundConfiguration = backgroundConfiguration {
             self.selectedBackgroundView?.removeFromSuperview()
             self.selectedBackgroundView = nil
             if var backgroundView = backgroundConfigurationView,  backgroundView.supports(backgroundConfiguration) {
@@ -212,11 +212,11 @@ public extension NSCollectionViewItem {
     }
     
     internal var contentView: NSContentView? {
-        self.view as? NSContentView
+        get { self.view as? NSContentView }
     }
     
-    internal func configurateContentView(configuration: NSContentConfiguration? = nil) {
-        if let contentConfiguration = configuration ?? contentConfiguration {
+    internal func configurateContentView() {
+        if let contentConfiguration = contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -224,6 +224,7 @@ public extension NSCollectionViewItem {
                 let previousFrame = self.view.frame
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
+                self.view.clipsToBounds = false
                 self.view.maskToBounds = false
                 self.view.frame = previousFrame
                 self.view.setNeedsLayout()
