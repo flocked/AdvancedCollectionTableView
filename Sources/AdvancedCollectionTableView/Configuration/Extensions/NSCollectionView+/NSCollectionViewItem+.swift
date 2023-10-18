@@ -224,7 +224,9 @@ public extension NSCollectionViewItem {
                 let previousFrame = self.view.frame
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
-                self.view.clipsToBounds = false
+                if #available(macOS 14.0, *) {
+                    self.view.clipsToBounds = false
+                }
                 self.view.maskToBounds = false
                 self.view.frame = previousFrame
                 self.view.setNeedsLayout()
