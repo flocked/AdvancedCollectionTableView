@@ -20,6 +20,8 @@
 		72DE398B2979905C007EACAF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE398A2979905C007EACAF /* ViewController.swift */; };
 		72DE398D2979905D007EACAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398C2979905D007EACAF /* Assets.xcassets */; };
 		72DE39902979905D007EACAF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398E2979905D007EACAF /* Main.storyboard */; };
+		72F02E0E2AE117BC00D8D3D7 /* dystopian city science fiction.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0C2AE117BC00D8D3D7 /* dystopian city science fiction.png */; };
+		72F02E0F2AE117BC00D8D3D7 /* monkey fireworkers manga.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0D2AE117BC00D8D3D7 /* monkey fireworkers manga.png */; };
 		72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B652A44FBCB00DDDA1E /* Section.swift */; };
 		72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */; };
 		72F99B6E2A45196A00DDDA1E /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72F99B6D2A45196A00DDDA1E /* AdvancedCollectionTableView */; };
@@ -41,6 +43,8 @@
 		72DE398C2979905D007EACAF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72DE398F2979905D007EACAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		72DE39912979905D007EACAF /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
+		72F02E0C2AE117BC00D8D3D7 /* dystopian city science fiction.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dystopian city science fiction.png"; sourceTree = "<group>"; };
+		72F02E0D2AE117BC00D8D3D7 /* monkey fireworkers manga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "monkey fireworkers manga.png"; sourceTree = "<group>"; };
 		72F99B652A44FBCB00DDDA1E /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,6 +68,8 @@
 				727665F12A55E61600F1FD9F /* cat vaporwave.png */,
 				727665F22A55E61600F1FD9F /* cat vermeer.png */,
 				727665F52A55E61700F1FD9F /* sea creature oil.png */,
+				72F02E0D2AE117BC00D8D3D7 /* monkey fireworkers manga.png */,
+				72F02E0C2AE117BC00D8D3D7 /* dystopian city science fiction.png */,
 				727665F42A55E61700F1FD9F /* sea creature science fiction.png */,
 				727665F32A55E61700F1FD9F /* techno club oil.png */,
 				727665F62A55E61700F1FD9F /* techno club surrealist.png */,
@@ -182,8 +188,10 @@
 				727665FA2A55E61700F1FD9F /* techno club oil.png in Resources */,
 				727665F92A55E61700F1FD9F /* cat vermeer.png in Resources */,
 				72DE398D2979905D007EACAF /* Assets.xcassets in Resources */,
+				72F02E0F2AE117BC00D8D3D7 /* monkey fireworkers manga.png in Resources */,
 				72DE39902979905D007EACAF /* Main.storyboard in Resources */,
 				727665F82A55E61700F1FD9F /* cat vaporwave.png in Resources */,
+				72F02E0E2AE117BC00D8D3D7 /* dystopian city science fiction.png in Resources */,
 				727665FC2A55E61700F1FD9F /* sea creature oil.png in Resources */,
 				727665FD2A55E61700F1FD9F /* techno club surrealist.png in Resources */,
 			);

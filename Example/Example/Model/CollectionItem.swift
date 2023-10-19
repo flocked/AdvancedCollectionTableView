@@ -38,6 +38,9 @@ class GalleryItem: NSObject, Identifiable {
                 GalleryItem(title: "Sea Creature", detail: "Science fiction", imageName: "sea creature science fiction"),
                 GalleryItem(title: "Techno Club", detail: "Surrealist painting", imageName: "techno club surrealist"),
                 GalleryItem(title: "Techno Club", detail: "Oil painting", imageName: "techno club oil"),
+                GalleryItem(title: "Fireworker Monkey", detail: "Japanese manga", imageName: "monkey fireworkers manga"),
+                GalleryItem(title: "Dystopian City", detail: "Oil painting", imageName: "dystopian city science fiction"),
+
         ]
     }
 }
