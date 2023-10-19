@@ -150,3 +150,22 @@ internal extension Text {
     }
 }
 
+internal extension NSTextAlignment {
+    var swiftUI: Alignment {
+        switch self {
+        case .left: return .leading
+        case .center: return .center
+        case .right: return .trailing
+        default: return .leading
+        }
+    }
+    
+    var swiftUIMultiline: SwiftUI.TextAlignment {
+        switch self {
+        case .left: return .leading
+        case .center: return .center
+        case .right: return .trailing
+        default: return .leading
+        }
+    }
+}
