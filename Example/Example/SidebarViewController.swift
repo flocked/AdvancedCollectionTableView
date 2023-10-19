@@ -22,7 +22,8 @@ class SidebarViewController: NSViewController {
     var items: [SidebarItem] = SidebarItem.sampleItems
     
     let cellRegistration: CellRegistration = CellRegistration() { cell, column, row, sidebarItem in
-        var configuration = NSListContentConfiguration.sidebar()
+        // defaultContentConfiguration returns a list content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
+        var configuration = cell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         cell.contentConfiguration = configuration
@@ -35,9 +36,11 @@ class SidebarViewController: NSViewController {
         
         // Enables reordering of rows via drag and drop.
         dataSource.allowsReordering = true
+        // Enables deleting of selected rows via backspace.
+        dataSource.allowsDeleting = true
         
         // Right click menu that displays the title of each selected sidebar item.
-        self.dataSource.menuProvider = { sidebarItems in
+        dataSource.menuProvider = { sidebarItems in
             guard sidebarItems.isEmpty == false else { return nil }
             let menu = NSMenu()
             for sidebarItem in sidebarItems {
@@ -47,11 +50,6 @@ class SidebarViewController: NSViewController {
         }
         
         applySnapshot()
-    }
-    
-    override func viewDidAppear() {
-        super.viewDidAppear()
-        //    tableView.becomeFirstResponder()
     }
     
     func applySnapshot() {

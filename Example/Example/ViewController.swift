@@ -25,53 +25,47 @@ class ViewController: NSViewController {
     
     lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
 
-        // Content configuration for collectionview items.
+        // Configurate the item
         var configuration = NSItemContentConfiguration()
         configuration.text = galleryItem.title
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.imageName)
-        configuration.contentProperties.shadow = .black()
+        configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
         
         if let badgeText = galleryItem.badge {
             configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
         }
-                
+        
+        // Apply the configuration
         collectionViewItem.contentConfiguration = configuration
         
-        /// Gets called when the item gets selected, hovered by mouse, etc.
+        // Gets called when the item state changes (on selection, mouse hover, etc.)
         collectionViewItem.configurationUpdateHandler = { item, state in
-            
-            /// If state.isSelected, it adds a selection border with controlAccentColor
+            // Adds a selection border for state.isSelected
             configuration = configuration.updated(for: state)
             
-            /// Updates the configuration based on whether the mouse is hovering the item.
+            // Updates the configuration based on whether the mouse is hovering the item.
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
-                                    
-            
-          /*
-            /// Updates the configuration based on whether the item is selected.
-            configuration.contentProperties.borderColor =  state.isSelected ? .controlAccentColor : nil
-            configuration.contentProperties.borderWidth = state.isSelected ? 2.0 : 0.0
-            configuration.contentProperties.shadow = state.isSelected ? .color(.controlAccentColor) : .black()
-             */
-                        
-            collectionViewItem.contentConfiguration = configuration
+ 
+            // Apply the updated configuration
+            item.contentConfiguration = configuration
         }
     }
         
     // Window toolbar
-    lazy var toolbar = Toolbar("WindowToolbar") {
-        /// Toolbar item that reconfigurates the first collectionview item without reloading it which provides much better performance.
-        ToolbarItem.Button("Reconfigurate", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!).onAction {
-            guard let firstItem = self.galleryItems.first, let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [firstItem]) else { return }
-                        
-            // Replaces the info of the first gallery item with the new random item values.
-            firstItem.replaceInfo(with: newRandomItem)
-            
-            // Reconfigurates the first item.
-            self.dataSource.reconfigureElements([firstItem])
-        }
+    lazy var toolbar = Toolbar("Toolbar") {
+        // Toolbar item that reconfigurates the collectionview items without reloading them which provides much better performance compared to `reloadItems(at: )`.
+        ToolbarItem.Button("Item", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
+            .label("Reconfigurate")
+            .onAction {
+                var galleryItems = self.dataSource.snapshot().itemIdentifiers
+                for galleryItem in galleryItems {
+                    let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [galleryItem])!
+                    galleryItem.replaceInfo(with: newRandomItem)
+                }
+                self.dataSource.reconfigureElements(galleryItems)
+            }
     }
     
     override func viewDidLoad() {
@@ -79,13 +73,14 @@ class ViewController: NSViewController {
         
         collectionView.dataSource = self.dataSource
         
-        // Enables deleting of selected enables via backspace.
+        // Enables deleting of selected items via backspace.
         dataSource.allowsDeleting = true
-        // Enables reordering of elements via drag and drop.
+        // Enables reordering of items via drag and drop.
         dataSource.allowsReordering = true
         
         applySnapshot(with: galleryItems, .usingReloadData)
-        collectionView.selectItems(at: .init([IndexPath(item: 0, section: 0)]), scrollPosition: .top)
+        
+        collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
                 
         super.viewDidLoad()
     }
