@@ -100,3 +100,10 @@ class ViewController: NSViewController {
         dataSource.apply(snapshot, applyOption)
     }
 }
+
+fileprivate extension NSView {
+    convenience init(color: NSUIColor) {
+        self.init(frame: .zero)
+        self.backgroundColor = color
+    }
+}

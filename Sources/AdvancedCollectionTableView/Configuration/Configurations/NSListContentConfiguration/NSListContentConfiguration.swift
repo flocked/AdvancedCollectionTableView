@@ -96,7 +96,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, AutoSizeable, 
         configuration.imageProperties.tintColor = .tertiaryLabelColor
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), colorConfiguration: .monochrome)
+        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
         configuration.margins = .init(top: 2, leading: 0.0, bottom: 2, trailing: 2.0)
         return configuration
     }
@@ -232,14 +232,14 @@ public extension NSListContentConfiguration {
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
             configuration.imageToTextPadding = 3.0
             configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         @unknown default:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), colorConfiguration: .monochrome)
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
             configuration.imageToTextPadding = 8.0
             configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         }
@@ -267,7 +267,7 @@ public extension NSListContentConfiguration {
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
         configuration.imageProperties.tintColor = imageColor.tintColor
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .font(style).colorConfiguration(imageColor.symbolColorConfiguration)
+        configuration.imageProperties.symbolConfiguration = .font(style).color(imageColor.symbolColorConfiguration)
         configuration.imageToTextPadding = 3.0
         configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         return configuration

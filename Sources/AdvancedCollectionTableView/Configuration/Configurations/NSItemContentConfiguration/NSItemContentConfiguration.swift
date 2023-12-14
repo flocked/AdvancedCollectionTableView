@@ -167,7 +167,8 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
             if state.isSelected {
                 configuration.contentProperties.stateBorderColor = .controlAccentColor
                 configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
-                configuration.contentProperties.stateShadowColor = configuration.contentProperties.shadow.isInvisible ? nil : .controlAccentColor
+                let isInvisible = configuration.contentProperties.shadow.color == nil || configuration.contentProperties.shadow.color?.alphaComponent == 0.0 || configuration.contentProperties.shadow.opacity == 0.0
+                configuration.contentProperties.stateShadowColor = isInvisible ? nil : .controlAccentColor
             } else {
                 configuration.contentProperties.stateBorderColor = nil
                 configuration.contentProperties.stateShadowColor = nil

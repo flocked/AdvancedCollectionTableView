@@ -26,7 +26,7 @@ extension AdvanceCollectionViewDiffableDataSource {
     /**
      Returns the element at the specified index path in the collection view.
      
-     - Parameters indexPath: The indexPath
+     - Parameter indexPath: The indexPath
      - Returns: The element at the index path or nil if there isn't any element at the index path.
      */
     public func element(for indexPath: IndexPath) ->  Element? {
@@ -54,7 +54,7 @@ extension AdvanceCollectionViewDiffableDataSource {
     /**
      Returns the element at the specified point.
      
-     - Parameters point: The point in the collection view’s bounds that you want to test.
+     - Parameter point: The point in the collection view’s bounds that you want to test.
      - Returns: The element at the specified point or `nil` if no element was found at that point.
      */
     public func element(at point: CGPoint) -> Element? {

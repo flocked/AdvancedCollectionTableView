@@ -23,7 +23,7 @@ extension AdvanceTableViewDiffableDataSource {
     /**     
      Returns the item at the specified row in the table view.
      
-     - Parameters row: The row of the item in the table view.
+     - Parameter row: The row of the item in the table view.
      - Returns: The item, or `nil` if the method doesn’t find an item at the provided row.
      */
     public func item(forRow row: Int) -> Item? {
@@ -41,7 +41,7 @@ extension AdvanceTableViewDiffableDataSource {
     /**
      Returns the section for the specified row in the table view.
      
-     - Parameters row: The row of the section in the table view.
+     - Parameter row: The row of the section in the table view.
      - Returns: The section, or `nil if the method doesn’t find the section for the row.
      */
     public func section(forRow row: Int) -> Section? {
@@ -59,7 +59,7 @@ extension AdvanceTableViewDiffableDataSource {
     /**
      Returns the item of the specified index path.
      
-     - Parameters indexPath: The indexPath
+     - Parameter indexPath: The indexPath
      - Returns: The item at the index path or nil if there isn't any item at the index path.
      */
     public func item(at point: CGPoint) -> Item? {

@@ -11,7 +11,7 @@ public extension NSTableViewDiffableDataSource {
     /**
      Returns the item identifiers for the specified row indexes.
      
-     - Parameters rows: The row indexes.
+     - Parameter rows: The row indexes.
      - Returns: An array of item identifiers for row indexes.
      */
     func itemIdentifiers(for rows: [Int]) -> [ItemIdentifierType] {
@@ -21,7 +21,7 @@ public extension NSTableViewDiffableDataSource {
     /**
      Returns the row indexes for the specified item identifiers.
      
-     - Parameters identifiers: The item identifiers.
+     - Parameter identifiers: The item identifiers.
      - Returns: An array of row index for the item identifiers.
      */
     func rows(for identifiers: [ItemIdentifierType]) -> [Int] {

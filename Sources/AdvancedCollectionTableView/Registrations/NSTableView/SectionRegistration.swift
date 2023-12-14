@@ -112,7 +112,7 @@ public extension NSTableView {
                     tableView.register(nib, forIdentifier: self.identifier)
                 }
             } else {
-                if (tableView.registeredCellsByIdentifier?[self.identifier] != View.self) {
+                if (tableView.registeredCellsByIdentifier[self.identifier] != View.self) {
                     tableView.register(sectionViewTableCellType, forIdentifier: self.identifier)
                 }
             }
