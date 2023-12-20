@@ -11,7 +11,7 @@ import FZUIKit
 
 internal extension NSItemContentView {
     class ItemTextField: NSTextField, NSTextFieldDelegate {
-        var properties: ContentConfiguration.Text {
+        var properties: TextConfiguration {
             didSet {
                 if oldValue != properties {
                     update()
@@ -42,7 +42,7 @@ internal extension NSItemContentView {
             self.isEditable = properties.isEditable
         }
         
-        init(properties: ContentConfiguration.Text) {
+        init(properties: TextConfiguration) {
             self.properties = properties
             super.init(frame: .zero)
             self.delegate = self

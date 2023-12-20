@@ -76,7 +76,7 @@ public extension NSItemContentConfiguration {
          
          If the badge has a visual effect, it's background color will be ignored.
          */
-        public var visualEffect: ContentConfiguration.VisualEffect? = nil {
+        public var visualEffect: VisualEffectConfiguration? = nil {
             didSet { updateResolvedColors() } }
                 
         /// The border width of the badge.
@@ -101,7 +101,7 @@ public extension NSItemContentConfiguration {
         /// The corner radius of the badge.
         public var cornerRadius: CGFloat = 6.0
         /// The shadow properties of the badge.
-        public var shadowProperties: ContentConfiguration.Shadow = .none()
+        public var shadowProperties: ShadowConfiguration = .none()
         
         /// The margins between the text and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(width: 12, height: 4)
@@ -225,7 +225,7 @@ public extension NSItemContentConfiguration.Badge {
         }
                 
         /// The symbol configuration of the image.
-        var symbolConfiguration: ContentConfiguration.SymbolConfiguration? = nil
+        var symbolConfiguration: ImageSymbolContentConfiguration? = nil
         
         /// The maximum width of the image.
         var maxWidth: CGFloat? = nil

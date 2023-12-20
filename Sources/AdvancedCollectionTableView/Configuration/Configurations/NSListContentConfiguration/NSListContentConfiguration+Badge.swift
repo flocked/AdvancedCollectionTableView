@@ -83,7 +83,7 @@ public extension NSListContentConfiguration {
         /// The corner radius of the badge.
         public var cornerRadius: CGFloat = 6.0
         /// The shadow properties of the badge.
-        public var shadowProperties: ContentConfiguration.Shadow = .none()
+        public var shadowProperties: ShadowConfiguration = .none()
         
         /// The margins between the text and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(width: 4, height: 2)
@@ -154,7 +154,7 @@ public extension NSListContentConfiguration.Badge {
         }
                 
         /// The symbol configuration of the image.
-        var symbolConfiguration: ContentConfiguration.SymbolConfiguration? = nil
+        var symbolConfiguration: ImageSymbolContentConfiguration? = nil
         
         /// The maximum width of the image.
         var maxWidth: CGFloat? = nil

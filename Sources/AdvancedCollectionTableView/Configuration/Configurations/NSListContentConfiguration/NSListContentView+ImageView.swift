@@ -51,7 +51,7 @@ internal extension NSListContentView {
             self.backgroundColor = properties._resolvedBackgroundColor
             self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
-            self.configurate(using: properties.shadowProperties)
+            self.configurate(using: properties.shadowProperties, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
                 

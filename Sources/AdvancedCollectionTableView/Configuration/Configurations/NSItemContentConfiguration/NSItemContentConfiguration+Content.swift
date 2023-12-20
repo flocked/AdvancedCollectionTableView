@@ -99,7 +99,7 @@ public extension NSItemContentConfiguration {
         
         internal var stateShadowColor: NSColor? = nil
         
-        internal var stateShadow: ContentConfiguration.Shadow {
+        internal var stateShadow: ShadowConfiguration {
             guard let stateShadowColor else { return shadow }
             var shadow = self.shadow
             shadow.color = stateShadowColor
@@ -109,7 +109,7 @@ public extension NSItemContentConfiguration {
         internal var resolvedBorderWidth: CGFloat = 0.0
         
         /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: ContentConfiguration.SymbolConfiguration? = nil
+        public var imageSymbolConfiguration: ImageSymbolContentConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
         /// The image tint color for an image that is a template or symbol image.
@@ -125,7 +125,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// The shadow properties.
-        public var shadow: ContentConfiguration.Shadow = .black()
+        public var shadow: ShadowConfiguration = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
         internal var needsBorderWidthReset: Bool = false

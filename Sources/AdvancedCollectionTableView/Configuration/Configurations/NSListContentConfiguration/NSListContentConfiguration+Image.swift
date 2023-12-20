@@ -163,10 +163,10 @@ public extension NSListContentConfiguration {
         /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
         /// The shadow properties of the image.
-        public var shadowProperties: ContentConfiguration.Shadow = .none()
+        public var shadowProperties: ShadowConfiguration = .none()
         
         /// The symbol configuration of the image.
-        public var symbolConfiguration: ContentConfiguration.SymbolConfiguration? = .font(.body)
+        public var symbolConfiguration: ImageSymbolContentConfiguration? = .font(.body)
         
         /// The image scaling.
         public var scaling: NSImageScaling = .scaleProportionallyUpOrDown

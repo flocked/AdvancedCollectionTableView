@@ -27,7 +27,7 @@ internal extension NSItemContentView {
             self.borderWidth = properties.borderWidth
             self.cornerRadius = properties.cornerRadius
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.configurate(using: properties.shadowProperties)
+            self.configurate(using: properties.shadowProperties, type: .outer)
             
             self.textField.properties = properties.textProperties
             self.textField.text(properties.text, attributedText: properties.attributedText)
