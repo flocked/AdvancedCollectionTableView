@@ -109,7 +109,7 @@ public extension NSItemContentConfiguration {
         internal var resolvedBorderWidth: CGFloat = 0.0
         
         /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: ImageSymbolContentConfiguration? = nil
+        public var imageSymbolConfiguration: ImageSymbolConfiguration? = nil
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
         /// The image tint color for an image that is a template or symbol image.

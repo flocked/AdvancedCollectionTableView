@@ -225,7 +225,7 @@ public extension NSItemContentConfiguration.Badge {
         }
                 
         /// The symbol configuration of the image.
-        var symbolConfiguration: ImageSymbolContentConfiguration? = nil
+        var symbolConfiguration: ImageSymbolConfiguration? = nil
         
         /// The maximum width of the image.
         var maxWidth: CGFloat? = nil

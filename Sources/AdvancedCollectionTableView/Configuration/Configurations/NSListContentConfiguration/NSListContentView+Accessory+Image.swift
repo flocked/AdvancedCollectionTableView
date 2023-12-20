@@ -32,7 +32,7 @@ public extension NSListContentConfiguration.AccessoryProperties {
         }
         var scaling: ImageScaling = .scaleToFit
         var tintColor: NSColor? = nil
-        var symbolConfiguration: ImageSymbolContentConfiguration? = nil
+        var symbolConfiguration: ImageSymbolConfiguration? = nil
         var maxWidth: CGFloat? = nil
         var maxHeight: CGFloat? = nil
     }

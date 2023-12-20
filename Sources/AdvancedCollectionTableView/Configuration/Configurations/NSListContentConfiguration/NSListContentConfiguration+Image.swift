@@ -166,7 +166,7 @@ public extension NSListContentConfiguration {
         public var shadowProperties: ShadowConfiguration = .none()
         
         /// The symbol configuration of the image.
-        public var symbolConfiguration: ImageSymbolContentConfiguration? = .font(.body)
+        public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
         
         /// The image scaling.
         public var scaling: NSImageScaling = .scaleProportionallyUpOrDown

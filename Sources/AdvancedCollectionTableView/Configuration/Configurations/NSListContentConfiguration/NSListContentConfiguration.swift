@@ -195,7 +195,7 @@ public extension NSListContentConfiguration {
             default: return nil
             }
         }
-        internal var symbolColorConfiguration: ImageSymbolContentConfiguration.ColorConfiguration {
+        internal var symbolColorConfiguration: ImageSymbolConfiguration.ColorConfiguration {
             switch self {
             case .palette(let primary, let secondary, let terr):
                 return .palette(primary, secondary, terr)
