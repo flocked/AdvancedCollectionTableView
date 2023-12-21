@@ -36,7 +36,7 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
         
         addSubview(withConstraint: hostingController.view)
         self.updateConfiguration()
-        self.maskToBounds = false
+        self.clipsToBounds = false
     }
     
     internal var _configuration: NSItemContentConfiguration {
@@ -55,7 +55,7 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
         let hostingView = ContentView(configuration: self._configuration)
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
-        hostingController.view.maskToBounds = false
+        hostingController.view.clipsToBounds = false
         hostingController.view.isOpaque = false
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController

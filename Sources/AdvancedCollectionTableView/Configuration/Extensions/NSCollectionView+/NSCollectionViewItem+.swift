@@ -229,7 +229,7 @@ public extension NSCollectionViewItem {
                     self.view.clipsToBounds = false
                 }
                  */
-                self.view.maskToBounds = false
+                self.view.clipsToBounds = false
                 self.view.frame = previousFrame
                 self.view.setNeedsLayout()
             }

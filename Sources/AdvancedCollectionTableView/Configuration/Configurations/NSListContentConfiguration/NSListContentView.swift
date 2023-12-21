@@ -34,7 +34,7 @@ public class NSListContentView: NSView, NSContentView {
     }
     
     internal func initialSetup() {
-        self.maskToBounds = false
+        self.clipsToBounds = false
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.stackViewConstraints = self.addSubview(withConstraint: stackView)
         self.addSubview(stackView)
