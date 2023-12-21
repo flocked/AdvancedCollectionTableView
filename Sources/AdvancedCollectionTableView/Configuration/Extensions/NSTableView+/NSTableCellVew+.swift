@@ -79,6 +79,7 @@ public extension NSTableCellView {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            Swift.print("cell", self._textField.cell != nil)
             textFieldBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.backgroundStyle, handler: { old, new in
                 guard old != new else { return }
                 Swift.print("backgroundStyle changed", new.rawValue)
