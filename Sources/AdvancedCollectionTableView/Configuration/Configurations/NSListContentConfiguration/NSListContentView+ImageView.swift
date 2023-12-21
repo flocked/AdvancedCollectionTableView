@@ -57,18 +57,15 @@ internal extension NSListContentView {
         
         var imageObserver: NSKeyValueObservation? = nil
         var cellObserver: KeyValueObserver<NSCell>? = nil
-
-        init(properties: NSListContentConfiguration.ImageProperties) {
-            self.properties = properties
-            super.init(frame: .zero)
-            self.wantsLayer = true
+        
+        override var cell: NSCell? {
+            didSet {
+                updateCellObserver()
+            }
+        }
+        
+        func updateCellObserver() {
             if let cell = cell {
-                var keyPath: PartialKeyPath<NSCell> = \.backgroundStyle
-                Swift.print("keyPath backgroundStyle", keyPath._kvcKeyPathString ?? "nil")
-                keyPath = \.interiorBackgroundStyle
-                Swift.print("keyPath interiorBackgroundStyle", keyPath._kvcKeyPathString ?? "nil")
-                keyPath = \.image
-                Swift.print("keyPath image", keyPath._kvcKeyPathString ?? "nil")
                 cellObserver = KeyValueObserver(cell)
                 cellObserver?.add(\.image) { old, new in
                     guard old != new else { return }
@@ -83,6 +80,13 @@ internal extension NSListContentView {
                     Swift.print("interiorBackgroundStyle", new.rawValue)
                 }
             }
+        }
+
+        init(properties: NSListContentConfiguration.ImageProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            self.wantsLayer = true
+            self.updateCellObserver()
             self.imageAlignment = .alignCenter
             self.update()
         }
