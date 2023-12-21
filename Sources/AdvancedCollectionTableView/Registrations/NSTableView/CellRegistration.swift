@@ -27,7 +27,7 @@ public extension NSTableView {
         - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
         - column: The table column in which the cell gets displayed in the table view.
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-     - element: The element that provides data for the cell.
+        - element: The element that provides data for the cell.
      
      - returns:A configured reusable cell object.
      */
