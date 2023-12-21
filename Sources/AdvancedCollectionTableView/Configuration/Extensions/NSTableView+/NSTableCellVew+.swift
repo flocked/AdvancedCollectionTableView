@@ -242,7 +242,6 @@ public extension NSTableCellView {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
             if self.contentConfiguration is NSListContentConfiguration {
-                Swift.print("is list conf")
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
             }

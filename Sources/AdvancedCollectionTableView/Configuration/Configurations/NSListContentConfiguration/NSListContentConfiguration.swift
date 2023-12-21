@@ -28,7 +28,7 @@ import FZUIKit
  tableCell.contentConfiguration = content
  ```
  */
-public struct NSListContentConfiguration: NSContentConfiguration, AutoSizeable, Hashable {
+public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     // MARK: Customizing content
     
     /// The primary text.
