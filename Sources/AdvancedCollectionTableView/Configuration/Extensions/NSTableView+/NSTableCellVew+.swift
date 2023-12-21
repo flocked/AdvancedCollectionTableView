@@ -316,6 +316,7 @@ public extension NSTableCellView {
             
             lazy var previousBackgroundStyle: NSView.BackgroundStyle = .normal
             
+            /*
             override var backgroundStyle: NSView.BackgroundStyle {
                 didSet {
                     Swift.print("didSet")
@@ -323,6 +324,7 @@ public extension NSTableCellView {
                   //  backgroundStyleHandler?()
                 }
             }
+            */
         }
     }
 }
