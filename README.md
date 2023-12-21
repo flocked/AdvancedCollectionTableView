@@ -13,8 +13,10 @@ Take a look at the included example project which demonstrates:
 - NSCollectionView `reconfiguratingItems(at: _)`.
 
 ## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
+
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
-```
+
+```swift
 struct GalleryItem {
     let title: String
     let image: NSImage
@@ -35,11 +37,14 @@ let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, G
 ```
 
 ## ContentConfiguration
+
 A port of UIContentConfiguration that allows configurating NSCollectionView items and NSTableView cells via content configurations.
 
 ### NSHostingConfiguration
+
 A content configuration suitable for hosting a hierarchy of SwiftUI views.
-```
+
+```swift
 collectionViewItem.contentConfiguration = NSHostingConfiguration {
     HStack {
         Image(systemName: "star").foregroundStyle(.purple)
@@ -49,87 +54,109 @@ collectionViewItem.contentConfiguration = NSHostingConfiguration {
 }
 ```
 ### NSListContentConfiguration
+
 A content configuration for a table cell.
 
-![NSListContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSListContentConfiguration.png)
- ```
+![NSListContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/Resources/NSListContentConfiguration.png)
+
+ ```swift
  var content = tableCell.defaultContentConfiguration()
 
- // Configure content.
+ // Configure content
  content.text = "Text"
  content.secondaryText = #"SecondaryText\\nImage displays a system image named "photo""#
  content.image = NSImage(systemSymbolName: "photo")
 
- // Customize appearance.
+ // Customize appearance
  content.imageProperties.tintColor = .controlAccentColor
 
  tableCell.contentConfiguration = content
  ```
  
  ### NSItemContentconfiguration
+ 
 A content configuration for a collectionview item.
 
-![NSItemContentconfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/NSItemContentConfiguration.png)
- ```
+![NSItemContentconfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/Resources/NSItemContentConfiguration.png)
+
+ ```swift
  public var content = collectionViewItem.defaultContentConfiguration()
 
- // Configure content.
+ // Configure content
  content.text = "Text"
  content.secondaryText = "SecondaryText"
  content.image = NSImage(systemSymbolName: "Astronaut Cat")
 
- // Customize appearance.
+ // Customize appearance
  content.secondaryTextProperties.font = .callout
 
  collectionViewItem.contentConfiguration = content
  ```
 
 ## NSCollectionView reconfigureItems
-Updates the data for the items without reloading them (`reloadItems(at: _)`.
-```
+
+Updates the data for the items without reloading and replacing them (`reloadItems(at: _)`. For optimal performance, choose to reconfigure items instead of reloading items unless you have an explicit need to replace the existing item with a new item.
+
+Any item that has been registered via  `ItemRegistration`, or by class using `register(_ itemClass: NSCollectionViewItem.Type)`, can be recofigurated.
+
+```swift
 collectionView.reconfigureItems(at: [IndexPath(item: 1, section: 1)])
 ```
 
 ## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
+
 `allowsDeleting` enables deleting of items and rows via backspace.
- ```
+
+ ```swift
  diffableCollectionViewDataSource.allowsDeleting = true
  ```
  
-## NSCollectionView & NSTableViewDiffableDataSource Apply Options
-When using NSCollectionView & NSTableViewDiffableDataSource `apply(_ snapshot:, animatingDifferences: Bool)` and `animatingDifferences` is `true` the data source computes the difference between the current state and the new state in the snapshot and the differences in the UI between the current state and new state are animated. If `false` the system resets the UI to reflect the state of the data in the snapshot without computing a diff or animating the changes. Reloading the whole data source can cause huge performance looses.
+## NSDiffableDataSourceSnapshot Apply Options
 
-The new `apply(_ snapshot:, _ option: ApplyOption)` provides an option to apply the new snapshot without animation and reloading.
+When using Apple's  `apply(_ snapshot:, animatingDifferences: Bool)` to apply a snapshot to a diffable datasource, it either animates changes (animatingDifferences = true) or uses `reloadedData` (animatingDifferences = false), which reloads every items and leads to bad performance.
 
- ```
+`NSDiffableDataSourceSnapshotApplyOptions`provides additional options:
+- **usingReloadData**: All items get reloaded.
+- **animated(withDuration: CGFloat)**: Changes get applied animated.
+- **nonAnimated**: Changes get applied immediatly.
+
+ ```swift
  diffableDataSource.apply(mySnapshot, .withoutAnimation)
- ```
  
- It also provides an option to configurate the animation duration.
- ```
- diffableDataSource.apply(mySnapshot, .animated(3.0))
+  diffableDataSource.apply(mySnapshot, .animated(3.0))
  ```
  
 ## CollectionViewDiffableDataSource
+
 An extended `NSCollectionViewDiffableDataSource that provides:
 
- - Reordering of items via drag and drop by enabling `allowsReording`and optionally providing blocks to `reorderingHandlers`.
- - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
- - `selectionHandlers`: Handlers for selection of items.
- - `deletionHandlers`: Handlers for deletion of items.
- - `hoverHandlers`: Handlers for items that get hovered by mouse.
- - `menuProvider`: Right click menu provider for selected items.
- - `pinchHandler`: Handler for pinching of the collection view.
+ - Reordering of items by enabling `allowsReordering`.
+ - Deleting of items by enabling  `allowsDeleting`.
+ - Quicklook of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - A right click menu provider for selected items via `menuProvider`.
+
+ ### Handlers
  
- Sections and items need to conform both to `Hashable` and `Identifiable`. Internally the datasource uses the identifiers to 
- 
+ - Prefetching of items via `prefetchHandlers`.
+ - Reordering of items via `reorderingHandlers`.
+ - Deleting of items via `deletionHandlers`.
+ - Selecting of items via `selectionHandlers`.
+ - Highlight state of items via `highlightHandlers`.
+ - Displayed items via `displayHandlers`.
+ - Items that are hovered by mouse via `hoverHandlers`.
+ - Drag and drop of files from and to the collection view via `dragDropHandlers`.
+ - Pinching of the collection view via `pinchHandler`.
+  
  ## TableViewDiffableDataSource
+ 
  Simliar to CollectionViewDiffableDataSource. *Work in progress.*
 
 ## Quicklook for NSTableView & NSCollectionView
+
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.
 
 There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
+
 - NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`
 ```
 collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
@@ -142,7 +169,7 @@ func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemA
 }
 ```
 - A NSCollectionViewDiffableDataSource & NSTableViewDiffableDataSource with an ItemIdentifierType conforming to `QuicklookPreviewable`
-```
+```swift
 struct GalleryItem: QuicklookPreviewable {
     let title: String
     let imageURL: URL
