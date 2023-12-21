@@ -79,17 +79,6 @@ public extension NSTableCellView {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if textFieldBackgroundStyleObserver == nil {
-                textFieldBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.backgroundStyle, handler: { old, new in
-                    guard old != new else { return }
-                    Swift.print("backgroundStyle changed", new.rawValue)
-                })
-                textFieldInteriorBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.interiorBackgroundStyle, handler: { old, new in
-                    guard old != new else { return }
-                    Swift.print("interiorBackgroundStyle changed", new.rawValue)
-                })
-                self.textField = self._textField
-            }
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -249,16 +238,6 @@ public extension NSTableCellView {
         set {  set(associatedValue: newValue, key: "tableCellObserver", object: self) }
     }
     
-    internal var textFieldBackgroundStyleObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "textFieldBackgroundStyleObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "textFieldBackgroundStyleObserver", object: self) }
-    }
-    
-    internal var textFieldInteriorBackgroundStyleObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "textFieldInteriorBackgroundStyleObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "textFieldInteriorBackgroundStyleObserver", object: self) }
-    }
-    
     internal func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
@@ -311,37 +290,4 @@ public extension NSTableCellView {
      }
      }
      */
-    
-    var _textField: NSTextField {
-        get { getAssociatedValue(key: "CellTextField", object: self, initialValue: .init(wrappingLabelWithString: "a")) }
-    }
-    class TextField: NSTextField {
-        
-        lazy var textCell = TextCell(textCell: "")
-        public override var cell: NSCell? {
-            get { textCell }
-            set { }
-        }
-        
-        class TextCell: NSTextFieldCell {
-            var backgroundStyleHandler: (()->())? = nil
-            override var interiorBackgroundStyle: NSView.BackgroundStyle {
-                    backgroundStyleHandler?()
-                    previousBackgroundStyle = backgroundStyle
-                return backgroundStyle
-            }
-            
-            lazy var previousBackgroundStyle: NSView.BackgroundStyle = .normal
-            
-            /*
-            override var backgroundStyle: NSView.BackgroundStyle {
-                didSet {
-                    Swift.print("didSet")
-                  //  guard oldValue != backgroundStyle else { return }
-                  //  backgroundStyleHandler?()
-                }
-            }
-            */
-        }
-    }
 }

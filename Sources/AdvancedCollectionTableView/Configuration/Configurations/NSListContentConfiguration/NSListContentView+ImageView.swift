@@ -10,11 +10,11 @@ import FZSwiftUtils
 import FZUIKit
 
 internal extension NSListContentView {
-    class CellImageView: ImageView {
+    class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
-                update()
+                    update()
             }
         }
         
@@ -40,24 +40,32 @@ internal extension NSListContentView {
             
             return intrinsicContentSize
         }
-        
+                
         var calculatedSize: CGSize?
         
         func update() {
-            self.imageScaling = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
+            self.layer?.contentsGravity = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.tintColor = properties._resolvedTintColor
+            self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
             self.configurate(using: properties.shadowProperties, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
         
+        var imageObserver: NSKeyValueObservation? = nil
+                
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
+            self.wantsLayer = true
+            imageObserver = self.cell?.observeChanges(for: \.image, handler: { old, new in
+                guard old != new else { return }
+                Swift.print("image changed")
+            })
+            self.imageAlignment = .alignCenter
             self.update()
         }
         
