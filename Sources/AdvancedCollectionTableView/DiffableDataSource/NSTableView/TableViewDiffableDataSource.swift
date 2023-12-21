@@ -42,19 +42,20 @@ import FZSwiftUtils
  - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
-    internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
-    internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
-    internal typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
+    typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
+    typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>
     
-    internal let tableView: NSTableView
-    internal var dataSource: DataSoure!
-    internal var currentSnapshot: Snapshot = Snapshot()
-    internal var dragingRowIndexes = IndexSet()
-    internal var sectionRowIndexes: [Int] = []
-    internal var previousSelectedIDs: [Item.ID] = []
-    internal var keyDownMonitor: Any? = nil
-    internal var rightDownMonitor: NSEvent.Monitor? = nil
-    internal var hoveredRowObserver: NSKeyValueObservation? = nil
+    let tableView: NSTableView
+    var dataSource: DataSoure!
+    var currentSnapshot: Snapshot = Snapshot()
+    var dragingRowIndexes = IndexSet()
+    var sectionRowIndexes: [Int] = []
+    var previousSelectedIDs: [Item.ID] = []
+    var keyDownMonitor: Any? = nil
+    var rightDownMonitor: NSEvent.Monitor? = nil
+    var hoveredRowObserver: NSKeyValueObservation? = nil
+    lazy var delegateBridge = DelegateBridge(self)
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowViewProvider? = nil {
@@ -100,25 +101,6 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      */
     public var rowActionProvider: ((_ element: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
-    /// Handlers for selection of rows.
-    public var selectionHandlers = SelectionHandlers()
-    
-    /// Handlers for deletion of rows.
-    public var deletionHandlers = DeletionHandlers()
-    
-    /// Handlers for reordering of rows.
-    public var reorderingHandlers = ReorderingHandlers()
-    
-    /// Handlers that get called whenever the mouse is hovering a row.
-    public var hoverHandlers = HoverHandlers() {
-        didSet { self.setupHoverObserving()} }
-    
-    /// Handlers for drag and drop of files from and to the table view.
-    public var dragDropHandlers = DragDropHandlers()
-    
-    /// Handlers for table columns.
-    public var columnHandlers = ColumnHandlers()
-    
     /**
      A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
      
@@ -133,6 +115,80 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      */
     public var allowsDeleting: Bool = false {
         didSet { self.setupKeyDownMonitor() }
+    }
+    
+    /**
+     The default animation the UI uses to show differences between rows.
+     
+     The default value of this property is `effectFade`.
+     
+     If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
+     */
+    public var defaultRowAnimation: NSTableView.AnimationOptions {
+        get { self.dataSource.defaultRowAnimation }
+        set { self.dataSource.defaultRowAnimation = newValue }
+    }
+    
+    @objc dynamic internal var _defaultRowAnimation: UInt {
+        return self.dataSource.defaultRowAnimation.rawValue
+    }
+    
+    internal func setupRightDownMonitor() {
+        if menuProvider != nil, rightDownMonitor == nil {
+            self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+                self.tableView.menu = nil
+                if let contentView = self.tableView.window?.contentView {
+                    let location = event.location(in: contentView)
+                    if let view = contentView.hitTest(location), view.isDescendant(of: self.tableView) {
+                        let location = event.location(in: self.tableView)
+                        if self.tableView.bounds.contains(location) {
+                            self.setupMenu(for: location)
+                        }
+                    }
+                }
+                return event
+            }
+        } else if menuProvider == nil, rightDownMonitor != nil {
+            rightDownMonitor = nil
+        }
+    }
+    
+    internal func setupMenu(for location: CGPoint) {
+        if let menuProvider = self.menuProvider {
+            if let item = self.item(at: location) {
+                var menuItems: [Item] = [item]
+                let selectedItems = self.selectedItems
+                if selectedItems.contains(item) {
+                    menuItems = selectedItems
+                }
+                self.tableView.menu = menuProvider(menuItems)
+            } else {
+                self.tableView.menu = menuProvider([])
+            }
+        }
+    }
+    
+    internal func setupHoverObserving() {
+        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
+            self.tableView.setupObservingView()
+            if hoveredRowObserver == nil {
+                hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
+                    guard old != new else { return }
+                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let oldRow = old?.item {
+                        if oldRow != -1, let item = self.item(forRow: oldRow) {
+                            didEndHovering(item)
+                        }
+                    }
+                    if let isHovering = self.hoverHandlers.isHovering,  let newRow = new?.item {
+                        if newRow != -1, let item = self.item(forRow: newRow) {
+                            isHovering(item)
+                        }
+                    }
+                })
+            }
+        } else {
+            hoveredRowObserver = nil
+        }
     }
     
     // MARK: - Snapshot
@@ -182,22 +238,6 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             sectionRowIndexes.append(row)
             row = row + 1 + currentSnapshot.numberOfItems(inSection: section)
         }
-    }
-    
-    /**
-     The default animation the UI uses to show differences between rows.
-     
-     The default value of this property is `effectFade`.
-     
-     If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
-     */
-    public var defaultRowAnimation: NSTableView.AnimationOptions {
-        get { self.dataSource.defaultRowAnimation }
-        set { self.dataSource.defaultRowAnimation = newValue }
-    }
-    
-    @objc dynamic internal var _defaultRowAnimation: UInt {
-        return self.dataSource.defaultRowAnimation.rawValue
     }
     
     // MARK: - Init
@@ -325,171 +365,215 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
         return nil
     }
+            
+    // MARK: - Elements
     
-    // MARK: - Delegate conformance
+    /// All current items in the collection view.
+    internal var items: [Item] { currentSnapshot.itemIdentifiers }
     
-    lazy var delegateBridge = DelegateBridge(self)
+    /// An array of the selected items.
+    public var selectedItems: [Item] {
+        return self.tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
+    }
     
-    /*
-    public func tableViewSelectionDidChange(_ notification: Notification) {
-        guard selectionHandlers.didSelect != nil || selectionHandlers.didDeselect != nil else {
-            previousSelectedIDs = selectedItems.ids
-            return
+    /**
+     Returns the item at the specified row in the table view.
+     
+     - Parameter row: The row of the item in the table view.
+     - Returns: The item, or `nil` if the method doesn’t find an item at the provided row.
+     */
+    public func item(forRow row: Int) -> Item? {
+        if let itemID = dataSource.itemIdentifier(forRow: row) {
+            return items[id: itemID]
         }
-        let selectedIDs = selectedItems.ids
-        let deselected = previousSelectedIDs.filter({ selectedIDs.contains($0) == false })
-        let selected = selectedIDs.filter({ previousSelectedIDs.contains($0) == false })
-        
-        if selected.isEmpty == false, let didSelect = selectionHandlers.didSelect {
-            let selectedItems = self.items[ids: selected]
-            didSelect(selectedItems)
+        return nil
+    }
+    
+    /// Returns the row for the specified item.
+    public func row(for item: Item) -> Int? {
+        return self.dataSource.row(forItemIdentifier: item.id)
+    }
+    
+    /**
+     Returns the section for the specified row in the table view.
+     
+     - Parameter row: The row of the section in the table view.
+     - Returns: The section, or `nil if the method doesn’t find the section for the row.
+     */
+    public func section(forRow row: Int) -> Section? {
+        if let sectionID = dataSource.sectionIdentifier(forRow: row) {
+            return sections[id: sectionID]
         }
-        
-        if deselected.isEmpty == false, let didDeselect = selectionHandlers.didDeselect {
-            let deselectedItems = self.items[ids: deselected]
-            if deselectedItems.isEmpty == false {
-                didDeselect(deselectedItems)
+        return nil
+    }
+    
+    /**
+     Returns the item of the specified index path.
+     
+     - Parameter indexPath: The indexPath
+     - Returns: The item at the index path or nil if there isn't any item at the index path.
+     */
+    public func item(at point: CGPoint) -> Item? {
+        let row = self.tableView.row(at: point)
+        if row != -1 {
+            return item(forRow: row)
+        }
+        return nil
+    }
+    
+    /// Selects all table rows of the specified items.
+    public func selectItems(_ items: [Item], byExtendingSelection: Bool = false) {
+        self.selectItems(at: rows(for: items), byExtendingSelection: byExtendingSelection)
+    }
+    
+    /// Deselects all table rows of the specified items.
+    public func deselectItems(_ items: [Item]) {
+        items.compactMap({row(for: $0)}).forEach({ self.tableView.deselectRow($0) })
+        // self.deselectItems(at: rows(for: items))
+    }
+    
+    /// Selects all table rows of the items in the specified sections.
+    public func selectItems(in sections: [Section], byExtendingSelection: Bool = false) {
+        let rows = sections.flatMap({self.rows(for: $0)})
+        self.selectItems(at: rows, byExtendingSelection: byExtendingSelection)
+    }
+    
+    /// Deselects all table rows of the items in the specified sections.
+    public func deselectItems(in sections: [Section]) {
+        let rows = sections.flatMap({self.rows(for: $0)})
+        self.deselectItems(at: rows)
+    }
+    
+    /// Scrolls the table view to the specified item.
+    public func scrollToItem(_ item: Item, scrollPosition: NSCollectionView.ScrollPosition = []) {
+        if let row = self.row(for: item) {
+            self.tableView.scrollRowToVisible(row)
+        }
+    }
+    
+    /// An array of items that are visible.
+    internal func visibleItems() -> [Item] {
+        self.tableView.visibleRowIndexes().compactMap({ item(forRow: $0) })
+    }
+    
+    internal func rowView(for item: Item) -> NSTableRowView? {
+        if let row = row(for: item) {
+            return self.tableView.rowView(atRow: row, makeIfNecessary: false)
+        }
+        return nil
+    }
+    
+    internal func rows(for items: [Item]) -> [Int] {
+        return items.compactMap({row(for: $0)})
+    }
+    
+    internal func isSelected(at row: Int) -> Bool {
+        return self.tableView.selectedRowIndexes.contains(row)
+    }
+    
+    internal func isSelected(for item: Item) -> Bool {
+        if let row = row(for: item) {
+            return isSelected(at: row)
+        }
+        return false
+    }
+    
+    internal func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
+        self.tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: byExtendingSelection)
+    }
+    
+    internal func deselectItems(at rows: [Int]) {
+        rows.forEach({self.tableView.deselectRow($0)})
+    }
+    
+    internal func removeItems( _ items: [Item]) {
+        var snapshot = self.snapshot()
+        snapshot.deleteItems(items)
+        self.apply(snapshot, .animated)
+    }
+    
+    internal func transactionForMovingItems(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+        var row = row
+        var isLast: Bool = false
+        if row >= self.numberOfRows(in: tableView) {
+            row = row - 1
+            isLast = true
+        }
+        let dragingItems = rowIndexes.compactMap({item(forRow: $0)})
+        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+            return nil
+        }
+        var snapshot = self.snapshot()
+        if isLast {
+            for item in dragingItems.reversed() {
+                snapshot.moveItem(item, afterItem: toItem)
+            }
+        } else {
+            for item in dragingItems {
+                snapshot.moveItem(item, beforeItem: toItem)
             }
         }
-        previousSelectedIDs = selectedIDs
+        let initalSnapshot = self.currentSnapshot
+        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
-    public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
-        var proposedSelectionIndexes = proposedSelectionIndexes
-        sectionRowIndexes.forEach({ proposedSelectionIndexes.remove($0) })
-        guard self.selectionHandlers.shouldSelect != nil || self.selectionHandlers.shouldDeselect != nil  else {
-            return proposedSelectionIndexes
+    // MARK: - Sections
+
+    /// All current sections in the collection view.
+    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    
+    /// Returns the row for the specified section.
+    public func row(for section: Section) -> Int? {
+        return self.dataSource.row(forSectionIdentifier: section.id)
+    }
+    
+    /// Scrolls the table view to the specified section.
+    public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
+        if let row = self.row(for: section) {
+            self.tableView.scrollRowToVisible(row)
         }
-        let selectedRows = Array(self.tableView.selectedRowIndexes)
-        let proposedRows = Array(proposedSelectionIndexes)
-        
-        let deselected = selectedRows.filter({ proposedRows.contains($0) == false })
-        let selected = proposedRows.filter({ selectedRows.contains($0) == false })
-        
-        var selections: [Item] = []
-        let selectedItems = selected.compactMap({item(forRow: $0)})
-        let deselectedItems = deselected.compactMap({item(forRow: $0)})
-        if selectedItems.isEmpty == false, let shouldSelect = selectionHandlers.shouldSelect {
-            selections.append(contentsOf: shouldSelect(selectedItems))
-        } else {
-            selections.append(contentsOf: selectedItems)
-        }
-        
-        if deselectedItems.isEmpty == false, let shouldDeselect = selectionHandlers.shouldDeselect {
-            selections.append(contentsOf: shouldDeselect(deselectedItems))
-        } else {
-            selections.append(contentsOf: deselectedItems)
-        }
-        
-        return IndexSet(selections.compactMap({row(for: $0)}))
     }
     
-    public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        return self.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
+    internal func rows(for section: Section) -> [Int] {
+        let items = self.currentSnapshot.itemIdentifiers(inSection: section)
+        return self.rows(for: items)
     }
     
-    public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-        return self.dataSource.tableView(tableView, isGroupRow: row)
+    internal func rows(for sections: [Section]) -> [Int] {
+        return sections.flatMap({self.rows(for: $0)})
     }
-    
-    public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-        return self.dataSource.tableView(tableView, rowViewForRow: row)
-    }
-    
-    public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
-        if let item = item(forRow: row), let rowActionProvider = self.rowActionProvider {
-            return rowActionProvider(item, edge)
-        }
-        return []
-    }
-    
-    public func tableViewColumnDidMove(_ notification: Notification) {
-        guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
-              let newPos = notification.userInfo?["NSNewColumn"] as? Int,
-              let tableColumn = self.tableView.tableColumns[safe: newPos] else { return }
-        self.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
-    }
-    
-    public func tableViewColumnDidResize(_ notification: Notification) {
-        guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
-        self.columnHandlers.didResize?(tableColumn, oldWidth)
-    }
-    
-    public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
-        guard let tableColumn = self.tableView.tableColumns[safe: columnIndex] else { return true }
-        return self.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
-    }
-     */
     
     // MARK: - Handlers
     
-    internal func setupRightDownMonitor() {
-        if menuProvider != nil, rightDownMonitor == nil {
-            self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
-                self.tableView.menu = nil
-                if let contentView = self.tableView.window?.contentView {
-                    let location = event.location(in: contentView)
-                    if let view = contentView.hitTest(location), view.isDescendant(of: self.tableView) {
-                        let location = event.location(in: self.tableView)
-                        if self.tableView.bounds.contains(location) {
-                            self.setupMenu(for: location)
-                        }
-                    }
-                }
-                return event
-            }
-        } else if menuProvider == nil, rightDownMonitor != nil {
-            rightDownMonitor = nil
-        }
-    }
+    /// Handlers for selection of rows.
+    public var selectionHandlers = SelectionHandlers()
     
-    internal func setupMenu(for location: CGPoint) {
-        if let menuProvider = self.menuProvider {
-            if let item = self.item(at: location) {
-                var menuItems: [Item] = [item]
-                let selectedItems = self.selectedItems
-                if selectedItems.contains(item) {
-                    menuItems = selectedItems
-                }
-                self.tableView.menu = menuProvider(menuItems)
-            } else {
-                self.tableView.menu = menuProvider([])
-            }
-        }
-    }
+    /// Handlers for deletion of rows.
+    public var deletionHandlers = DeletionHandlers()
     
-    internal func setupHoverObserving() {
-        if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
-            self.tableView.setupObservingView()
-            if hoveredRowObserver == nil {
-                hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
-                    guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let oldRow = old?.item {
-                        if oldRow != -1, let item = self.item(forRow: oldRow) {
-                            didEndHovering(item)
-                        }
-                    }
-                    if let isHovering = self.hoverHandlers.isHovering,  let newRow = new?.item {
-                        if newRow != -1, let item = self.item(forRow: newRow) {
-                            isHovering(item)
-                        }
-                    }
-                })
-            }
-        } else {
-            hoveredRowObserver = nil
-        }
-    }
+    /// Handlers for reordering of rows.
+    public var reorderingHandlers = ReorderingHandlers()
+    
+    /// Handlers that get called whenever the mouse is hovering a row.
+    public var hoverHandlers = HoverHandlers() {
+        didSet { self.setupHoverObserving()} }
+    
+    /// Handlers for drag and drop of files from and to the table view.
+    public var dragDropHandlers = DragDropHandlers()
+    
+    /// Handlers for table columns.
+    public var columnHandlers = ColumnHandlers()
     
     /// Handlers for selection of items.
     public struct SelectionHandlers {
-        /// Handler that determines whether items should get selected.
+        /// The Handler that determines whether items should get selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
-        /// Handler that determines whether items should get deselected.
+        /// The Handler that determines whether items should get deselected.
         public var shouldDeselect: (([Item]) -> [Item])? = nil
-        /// Handler that gets called whenever items get selected.
+        /// The Handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)? = nil
-        /// Handler that gets called whenever items get deselected.
+        /// The Handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)? = nil
     }
     
@@ -497,32 +581,41 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     public struct ReorderingHandlers {
         /// The handler that determines whether you can reorder a particular item.
         public var canReorder: (([Item]) -> Bool)? = nil
-        /// Handler that prepares the diffable data source for reordering its items.
+        /// The Handler that prepares the diffable data source for reordering its items.
         public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-        /// Handler that processes a reordering transaction.
+        /// The Handler that processes a reordering transaction.
         public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for deletion.
     public struct DeletionHandlers {
-        /// Handler that determines whether Itemlements should get deleted.
+        /// The Handler that determines whether Itemlements should get deleted.
         public var shouldDelete: ((_ items: [Item]) -> [Item])? = nil
-        /// Handler that gets called whenever Itemlements get deleted.
+        /// The Handler that gets called whenever Itemlements get deleted.
         public var didDelete: ((_ items: [Item]) -> ())? = nil
     }
     
     /// Handlers for drag and drop of files from and to the table view.
     public struct DragDropHandlers {
-        public var canDropOutside: ((Item) -> PasteboardWriting)? = nil
-        public var didDropOutside: ((Item) -> ())? = nil
+        /// The handler that determines which items can be dragged outside the collection view.
+        public var canDragOutside: ((_ elements: [Item]) -> [Item])? = nil
+        /// The handler that gets called whenever items did drag ouside the collection view.
+        public var didDragOutside: (([Item]) -> ())? = nil
+        /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
+        public var pasteboardValue: ((_ element: Item) -> PasteboardWriting)? = nil
+        /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
         public var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
-        public var didDragInside:  (([PasteboardWriting]) -> ())? = nil
-        internal var acceptsDropInside: Bool {
-            self.canDragInside != nil && self.didDragInside != nil
+        /// The handler that gets called whenever pasteboard items did drag inside the collection view.
+        public var didDragInside: (([PasteboardWriting]) -> ())? = nil
+        /// The handler that determines the image when dragging items.
+        public var draggingImage: ((_ elements: [Item], NSEvent, NSPointPointer) -> NSImage?)? = nil
+        
+        var acceptsDragInside: Bool {
+            canDragInside != nil && didDragInside != nil
         }
         
-        internal var acceptsDragOutside: Bool {
-            self.canDropOutside != nil
+        var acceptsDragOutside: Bool {
+            canDragOutside != nil
         }
     }
     
@@ -536,8 +629,11 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     /// Handlers for table view columns.
     public struct ColumnHandlers {
+        /// The handler that gets called whenever a column did resize.
         public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> ())?
+        /// The handler that gets called whenever a column did reorder.
         public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
+        /// The handler that determines whenever a column can be reordered to a new index.
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
     }
 }
@@ -554,3 +650,73 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
         return nil
     }
 }
+
+/*
+ public func section(for item: Item) -> Section? {
+ return self.currentSnapshot.sectionIdentifier(containingItem: item)
+ }
+ 
+ public func frame(for item: Item) -> CGRect? {
+ self.tableView.fram
+ if let index = row(for: item)?.item {
+ return self.collectionView.frameForItem(at: index)
+ }
+ return nil
+ }
+ 
+ public func reconfigurateItems(_ items: [Item]) {
+ let indexPaths = items.compactMap({self.indexPath(for:$0)})
+ self.reconfigureItems(at: indexPaths)
+ }
+ 
+ public func reconfigureItems(at indexPaths: [IndexPath]) {
+ self.collectionView.reconfigureItems(at: indexPaths)
+ }
+ 
+ public func reloadItems(at rows: [Int], animated: Bool = false) {
+ let items = rows.compactMap({self.item(forRow: $0)})
+ self.reloadItems(items, animated: animated)
+ }
+ 
+ public func reloadItems(_ items: [Item], animated: Bool = false) {
+ var snapshot = dataSource.snapshot()
+ snapshot.reloadItems(items.ids)
+ dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
+ }
+ 
+ public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
+ var snapshot = snapshot()
+ snapshot.reloadItems(snapshot.itemIdentifiers)
+ self.apply(snapshot, animated ? .animated : .usingReloadData)
+ }
+ 
+ public func selectAll() {
+ self.tableView.selectAll(nil)
+ }
+ 
+ public func deselectAll() {
+ self.tableView.deselectAll(nil)
+ }
+ 
+ internal func moveItems( _ items: [Item], before beforeItem: Item) {
+ var snapshot = self.snapshot()
+ items.forEach({snapshot.moveItem($0, beforeItem: beforeItem)})
+ self.apply(snapshot)
+ }
+ 
+ internal func moveItems( _ items: [Item], after afterItem: Item) {
+ var snapshot = self.snapshot()
+ items.forEach({snapshot.moveItem($0, afterItem: afterItem)})
+ self.apply(snapshot)
+ }
+ 
+ internal func moveItems(at rows: [Int], to toRow: Int) {
+ let items = rows.compactMap({self.item(forRow: $0)})
+ if let toItem = self.item(forRow: toRow), items.isEmpty == false {
+ var snapshot = self.snapshot()
+ items.forEach({snapshot.moveItem($0, beforeItem: toItem)})
+ self.apply(snapshot)
+ //  self.moveItems(items, before: toItem)
+ }
+ }
+ */

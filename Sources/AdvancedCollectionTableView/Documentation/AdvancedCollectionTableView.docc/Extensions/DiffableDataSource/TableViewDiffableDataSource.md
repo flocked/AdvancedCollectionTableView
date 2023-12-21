@@ -60,19 +60,9 @@
 - ``SelectionHandlers-swift.struct``
 
 ### Data source requirements
-- ``tableViewColumnDidMove(_:)``
-- ``tableViewColumnDidResize(_:)``
-- ``tableViewSelectionDidChange(_:)``
-- ``tableView(_:isGroupRow:)``
-- ``tableView(_:rowViewForRow:)``
-- ``tableView(_:pasteboardWriterForRow:)``
-- ``tableView(_:viewFor:row:)``
-- ``tableView(_:selectionIndexesForProposedSelection:)``
-- ``tableView(_:shouldReorderColumn:toColumn:)``
-- ``tableView(_:rowActionsForRow:edge:)``
-
 - ``numberOfRows(in:)``
-- ``tableView(_:draggingSession:endedAt:operation:)``
 - ``tableView(_:acceptDrop:row:dropOperation:)``
+- ``tableView(_:draggingSession:endedAt:operation:)``
 - ``tableView(_:draggingSession:willBeginAt:forRowIndexes:)``
+- ``tableView(_:pasteboardWriterForRow:)``
 - ``tableView(_:validateDrop:proposedRow:proposedDropOperation:)``

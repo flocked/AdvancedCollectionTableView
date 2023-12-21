@@ -45,7 +45,7 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
             if let element = self.dataSource.element(for: indexPath) {
-                if let writing = self.dataSource.dragDropHandlers.dropOutside?(element).nsPasteboardWriting {
+                if let writing = self.dataSource.dragDropHandlers.pasteboardValue?(element).nsPasteboardWriting {
                     return writing
                 }
                 
