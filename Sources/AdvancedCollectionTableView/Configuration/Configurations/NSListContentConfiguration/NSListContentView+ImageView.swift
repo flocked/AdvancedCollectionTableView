@@ -10,27 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-extension Image {
-    func resizable(_ resizable: Bool) -> Image {
-        if resizable {
-            self.resizable()
-        } else {
-            self
-        }
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func aspectRatio(_ contentMode: ContentMode?) -> some View {
-        if let contentMode = contentMode {
-            self.aspectRatio(contentMode: contentMode)
-        } else {
-            self
-        }
-    }
-}
-
 internal extension NSListContentView {
     class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
@@ -38,6 +17,10 @@ internal extension NSListContentView {
                 guard oldValue != properties else { return }
                     update()
             }
+        }
+        
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("imageview setBackgroundStyle", backgroundStyle.rawValue)
         }
                 
         override var image: NSImage? {
