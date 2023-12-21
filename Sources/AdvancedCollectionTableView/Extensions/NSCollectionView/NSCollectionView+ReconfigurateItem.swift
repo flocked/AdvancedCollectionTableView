@@ -16,7 +16,7 @@ public extension NSCollectionView {
      
      Your item provider must dequeue the same type of item for the provided index path, and must return the same existing item for a given index path. Because this method reconfigures existing items, the collection view doesn’t item `prepareForReuse()` for each item dequeued. If you need to return a different type of item for an index path, use reloadItems(at:) instead.
      
-     - Important: You can only reconfigurate items that have been previously registered via  ``ItemRegistration``, ``register(_:)`` or ``register(_:nib:)``.
+     - Important: You can only reconfigurate items that have been previously registered via  ``ItemRegistration``, or by their class using ``register(_:)`` or ``register(_:nib:)``.
      
      - Parameters:
         - indexPaths: An array of IndexPath objects identifying the items you want to update.
@@ -33,8 +33,8 @@ public extension NSCollectionView {
     }
     
     internal var isReconfiguratingItems: Bool {
-        get { getAssociatedValue(key: "NSCollectionItem_isReconfiguratingItems", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "NSCollectionItem_isReconfiguratingItems", object: self)
+        get { getAssociatedValue(key: "isReconfiguratingItems", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "isReconfiguratingItems", object: self)
         }
     }
 }

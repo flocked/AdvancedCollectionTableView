@@ -30,41 +30,16 @@ public extension NSCollectionViewDiffableDataSource {
         - itemRegistration: A item registration that creates, configurate and returns each of the items for the collection view from the data the diffable data source provides.
         - supplementaryRegistrations: An array of collection view’s SupplementaryRegistration that provides supplementary views, such as headers and footers.
      */
-    convenience init<I: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<I, ItemIdentifierType>, supplementaryRegistrations: [NSCollectionViewSupplementaryProvider]) {
+    convenience init<I: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<I, ItemIdentifierType>, supplementaryRegistrations: [NSCollectionViewSupplementaryRegistration]) {
         self.init(collectionView: collectionView, itemRegistration: itemRegistration)
-        self.supplementaryViewProvider(using: supplementaryRegistrations)
+        self.supplementaryRegistrations(supplementaryRegistrations)
     }
     
-    /**
-     Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
-     
-     - Parameters:
-        - collectionView: The initialized collection view object to connect to the diffable data source.
-        - itemProvider: A closure that creates and returns each of the items for the collection view from the data the diffable data source provides.
-        - supplementaryProvider: A closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
-     */
-    convenience init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider, supplementaryProvider: @escaping SupplementaryViewProvider) {
-        self.init(collectionView: collectionView, itemProvider: itemProvider)
-        self.supplementaryViewProvider = supplementaryProvider
-    }
-    
-    /**
-     Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
-     
-     - Parameters:
-        - collectionView: The initialized collection view object to connect to the diffable data source.
-        - itemProvider: A closure that creates and returns each of the items for the collection view from the data the diffable data source provides.
-        - supplementaryRegistrations: An array of collection view’s SupplementaryRegistration that provides supplementary views, such as headers and footers.
-     */
-    convenience init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider, supplementaryRegistrations: [NSCollectionViewSupplementaryProvider]) {
-        self.init(collectionView: collectionView, itemProvider: itemProvider)
-        self.supplementaryViewProvider(using: supplementaryRegistrations)
-    }
-    
-    func supplementaryViewProvider(using providers: [NSCollectionViewSupplementaryProvider]) {
+    /// Applies the supplementary registrations to return supplementary views to `supplementaryViewProvider`.
+    func supplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
         self.supplementaryViewProvider = { tCollectionView, kind, indexPath in
-            if let provider = providers.first(where: {$0.elementKind == kind}) {
-                return (provider as! _NSCollectionViewSupplementaryProvider).makeSupplementaryView(tCollectionView, indexPath)
+            if let provider = registrations.first(where: {$0.elementKind == kind}) {
+                return (provider as! _NSCollectionViewSupplementaryRegistration).makeSupplementaryView(tCollectionView, indexPath)
             }
             return nil
         }

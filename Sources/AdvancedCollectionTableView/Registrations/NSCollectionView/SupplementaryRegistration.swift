@@ -24,11 +24,13 @@ public extension NSCollectionView {
     }
 }
 
-public protocol NSCollectionViewSupplementaryProvider {
+/// A supplementary view registration of a collection view.
+public protocol NSCollectionViewSupplementaryRegistration {
+    /// The element kind of the supplementary view.
     var elementKind: String { get }
 }
 
-internal protocol _NSCollectionViewSupplementaryProvider {
+internal protocol _NSCollectionViewSupplementaryRegistration {
     func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)
 }
 
@@ -62,7 +64,7 @@ public extension NSCollectionView {
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
-    struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryProvider, _NSCollectionViewSupplementaryProvider where Supplementary: (NSView & NSCollectionViewElement)  {
+    struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryRegistration, _NSCollectionViewSupplementaryRegistration where Supplementary: (NSView & NSCollectionViewElement)  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         internal let nib: NSNib?
@@ -75,7 +77,7 @@ public extension NSCollectionView {
          Creates a supplementary registration with the specified registration handler
          
          - Parameters:
-            - identifier: The identifier of the supplementary registration.
+            - elementKind: The identifier of the supplementary registration.
             - handler: The handler to configurate the supplementary view.
          */
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
@@ -90,7 +92,7 @@ public extension NSCollectionView {
          
          - Parameters:
             - nib: The nib of the supplementary view.
-            - identifier: The identifier of the supplementary registration.
+            - elementKind: The identifier of the supplementary registration.
             - handler: The handler to configurate the supplementary view.
          */
         public init(nib: NSNib, elementKind: SupplementaryElementKind, handler: @escaping Handler) {

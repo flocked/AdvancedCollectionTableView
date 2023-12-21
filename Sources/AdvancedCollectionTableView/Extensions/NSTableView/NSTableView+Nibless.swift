@@ -13,19 +13,48 @@ public extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
      
-     Use this method to register the classes that represent cells in your table view. When you request an cell using the `makeView(withIdentifier:owner:)` method, the table view recycles an existing cell with the same identifier or creates a new one by instantiating your class.
-     
-     Use this method to associate one of the NIB's cell views with identifier so that the table can instantiate this view when requested. This method is used when `makeView(withIdentifier:owner:)` is called, and there was no NIB created at design time for the specified identifier. This allows dynamic loading of NIBs that can be associated with the table.
-     Because a NIB can contain multiple views, you can associate the same NIB with multiple identifiers. To remove a previously associated NIB for identifier, pass in nil for the nib value.
+     Use this method to register the classes that represent cells in your table view. When you request an cell using the `makeView(withIdentifier:owner:)` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
      
      - Parameters:
-        - cellClass: A class to use for creating cell. Specify nil to unregister a previously registered class.
+        - cellClass: The table cell view class to register.
         - identifier: The string that identifies the type of cell. You use this string later when requesting a cell and it must be unique among the other registered cell classes of this table view. This parameter must not be an empty string or nil.
      */
     func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
         Self.swizzleTableViewCellRegister()
         registeredCellsByIdentifier[identifier] = cellClass
         self.registeredCellsByIdentifier = registeredCellsByIdentifier
+    }
+    
+    /**
+     Registers a class to use when creating new cells in the table view.
+     
+     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:owner:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
+     
+     - Parameter cellClass: The table cell view class to register.
+     */
+    func register(_ cellClass: NSTableCellView.Type) {
+        self.register(cellClass, forIdentifier: NSUserInterfaceItemIdentifier(rawValue: String(describing: cellClass)))
+    }
+    
+    /**
+     Returns a new or existing view with the specified table cell class.
+     
+     The be able to create a table view cell from a cell class, you have to register it first via ``register(_:)``.
+     
+     When this method is called, the table view automatically instantiates the cell view with the specified owner, which is usually the table view’s delegate. (The owner is useful in setting up outlets and target/actions from the view.).
+     
+     This method may also return a reused cell view with the same class that is no longer available on screen. If the cell class isn't registered, the cell can’t be instantiated or can't found in the reuse queue, this method returns nil.
+     
+     This method is usually called by the delegate in `tableView(_:viewFor:row:)`, but it can also be overridden to provide custom views for cell class. Note that `awakeFromNib()` is called each time this method is called, which means that `awakeFromNib` is also called on owner, even though the owner is already awake.
+     
+     - Parameters:
+        - cellClass: The class of the table cell view.
+        - owner: The owner of the NIB that may be loaded and instantiated to create a new view with the specified identifier.
+     
+     - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
+     */
+    func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type, owner: Any? = nil) -> TableCellView? {
+        self.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: String(describing: cellClass)), owner: owner) as? TableCellView
     }
     
     /**

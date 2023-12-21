@@ -14,7 +14,9 @@ public extension NSCollectionViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete items either via backspace keyboard shortcut.
      
-     If the value of this property is `true` (the default is `false`), users can delete items.
+     If `true`, the user can delete items using backspace. The default value is `false`.
+     
+     ``deletionHandlers`` provides additionalhandlers.
      */
     var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
@@ -25,11 +27,23 @@ public extension NSCollectionViewDiffableDataSource {
         }
     }
     
+    /// Handlers for deletion of items.
+    var deletionHandlers: DeletionHandlers {
+        get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
+        set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
+    }
+    
+    /// Handlers for deletion.
+    struct DeletionHandlers {
+        /// The Handler that determines whether Itemlements should get deleted.
+        public var shouldDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
+        /// The Handler that gets called whenever Itemlements get deleted.
+        public var didDelete: ((_ items: [ItemIdentifierType]) -> ())? = nil
+    }
+    
     internal var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_keyDownMonitor", object: self)
-        }
+        get { getAssociatedValue(key: "diffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "diffableDataSource_keyDownMonitor", object: self)  }
     }
     
     internal func setupKeyDownMonitor() {
@@ -40,8 +54,10 @@ public extension NSCollectionViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
                         let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
-                        let elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
-                        
+                        var elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
+                        if !elementsToDelete.isEmpty, let shouldDelete = self.deletionHandlers.shouldDelete {
+                            elementsToDelete = shouldDelete(elementsToDelete)
+                        }
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
@@ -49,6 +65,7 @@ public extension NSCollectionViewDiffableDataSource {
                             var snapshot = self.snapshot()
                             snapshot.deleteItems(elementsToDelete)
                             self.apply(snapshot, .usingReloadData)
+                            self.deletionHandlers.didDelete?(elementsToDelete)
                             if collectionView.allowsEmptySelection == false {
                                 let indexPath = (selectionIndexPaths.first ?? IndexPath(item: 0, section: 0))
                                 collectionView.selectItems(at: Set([indexPath]), scrollPosition: [])
