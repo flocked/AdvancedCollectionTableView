@@ -10,11 +10,23 @@ import FZSwiftUtils
 import FZUIKit
 
 internal extension NSListContentView {
-    class CellImageView: NSImageView {
+    class CellImageView: ImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
                     update()
+            }
+        }
+        
+        @objc public dynamic var backgroundStyle: NSView.BackgroundStyle = .normal {
+            didSet {
+                Swift.print("backgroundStyle changed")
+            }
+        }
+        
+        @objc public dynamic var _backgroundStyle: NSView.BackgroundStyle = .normal {
+            didSet {
+                Swift.print("_backgroundStyle changed")
             }
         }
         
@@ -44,50 +56,22 @@ internal extension NSListContentView {
         var calculatedSize: CGSize?
         
         func update() {
-            self.layer?.contentsGravity = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
+            self.imageScaling = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.contentTintColor = properties._resolvedTintColor
+            self.tintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
-            self.configurate(using: properties.shadowProperties, type: .outer)
+            self.configurate(using: properties.shadow, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
         
-        var imageObserver: NSKeyValueObservation? = nil
-        var cellObserver: KeyValueObserver<NSCell>? = nil
-        
-        override var cell: NSCell? {
-            didSet {
-                updateCellObserver()
-            }
-        }
-        
-        func updateCellObserver() {
-            if let cell = cell {
-                cellObserver = KeyValueObserver(cell)
-                cellObserver?.add(\.image) { old, new in
-                    guard old != new else { return }
-                    Swift.print("image changed")
-                }
-                cellObserver?.add(\.backgroundStyle) { old, new in
-                    guard old != new else { return }
-                    Swift.print("backgroundStyle", new.rawValue)
-                }
-                cellObserver?.add(\.interiorBackgroundStyle) { old, new in
-                    guard old != new else { return }
-                    Swift.print("interiorBackgroundStyle", new.rawValue)
-                }
-            }
-        }
-
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
-            self.updateCellObserver()
-            self.imageAlignment = .alignCenter
+          //  self.imageAlignment = .alignCenter
             self.update()
         }
         

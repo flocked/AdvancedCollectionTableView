@@ -103,8 +103,9 @@ public extension NSItemContentConfiguration {
         
         /// The corner radius of the badge.
         public var cornerRadius: CGFloat = 6.0
-        /// The shadow properties of the badge.
-        public var shadowProperties: ShadowConfiguration = .none()
+        
+        /// The shadow of the badge.
+        public var shadow: ShadowConfiguration = .none()
         
         /// The margins between the text and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(width: 12, height: 4)

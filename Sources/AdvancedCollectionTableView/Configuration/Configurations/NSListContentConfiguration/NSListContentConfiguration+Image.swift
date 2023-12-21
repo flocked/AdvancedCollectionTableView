@@ -13,28 +13,47 @@ import FZUIKit
 public extension NSListContentConfiguration {
     /// Properties that affect the image.
     struct ImageProperties: Hashable {
+        /// The sizing of the image.
         public enum Sizing: Hashable {
             /// The image is resized to fit the height of the text, or secondary text.
             case firstTextHeight
+            
             /// The image is resized to fit the height of both the text and secondary text.
             case totalTextHeight
+            
             /// The image is resized to the specified size.
             case size(CGSize)
+            
             /// The image is resized to fit the specified maximum width and height.
             case maxiumSize(width: CGFloat?, height: CGFloat?)
+            
             /// The image isn't resized.
             case none
         }
         
+        /// The scaling of the image.
         public enum Scaling: Hashable {
+            /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
             case fit
-            case fill
+         //   case fill
+            /// The image is resized to fit the entire bounds rectangle.
             case resize
+            /// The image isn't resized.
             case none
-            internal var contentsGravity: CALayerContentsGravity {
+            
+            var imageScaling: NSImageScaling {
+                switch self {
+                case .fit: return .scaleProportionallyUpOrDown
+             //   case .fill: return .scaleProportionallyUpOrDown
+                case .resize: return .scaleAxesIndependently
+                case .none: return .scaleNone
+                }
+            }
+            
+            var contentsGravity: CALayerContentsGravity {
                 switch self {
                 case .fit: return .resizeAspect
-                case .fill: return .resizeAspectFill
+            //    case .fill: return .resizeAspectFill
                 case .resize: return .resize
                 case .none: return .center
                 }
@@ -45,18 +64,27 @@ public extension NSListContentConfiguration {
         public enum Position: Hashable {
             /// The image is positioned leading the text.
             case leading(HorizontalPosition)
+            
             /// The image is positioned trailing the text.
             case trailing(HorizontalPosition)
+            
             /// The image is positioned below the text.
             case bottom(VerticalPosition)
+            
             /// The image is positioned above the text.
             case top(VerticalPosition)
             
+            /// The horizontal position of the image.
             public enum HorizontalPosition {
+                /// The image is positioned at the top edge.
                 case top
+                /// The image is positioned at the center.
                 case center
+                /// The image is positioned at the bottom edge.
                 case bottom
+                /// The image is positioned at the first baseline.
                 case firstBaseline
+                
                 internal var alignment: NSLayoutConstraint.Attribute {
                     switch self {
                     case .top: return .centerY
@@ -67,10 +95,15 @@ public extension NSListContentConfiguration {
                 }
             }
             
+            /// The vertical position of the image.
             public enum VerticalPosition {
+                /// The image is positioned at the leading edge.
                 case leading
+                /// The image is positioned at the center.
                 case center
+                /// The image is positioned at the trailing edge.
                 case trailing
+                
                 internal var alignment: NSLayoutConstraint.Attribute {
                     switch self {
                     case .leading: return .leading
@@ -162,8 +195,9 @@ public extension NSListContentConfiguration {
         
         /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
-        /// The shadow properties of the image.
-        public var shadowProperties: ShadowConfiguration = .none()
+        
+        /// The shadow of the image.
+        public var shadow: ShadowConfiguration = .none()
         
         /// The symbol configuration of the image.
         public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
