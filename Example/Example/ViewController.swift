@@ -64,6 +64,8 @@ class ViewController: NSViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         collectionView.collectionViewLayout = .grid(columns: 2)
         
         collectionView.dataSource = self.dataSource
@@ -77,18 +79,17 @@ class ViewController: NSViewController {
         
         // Applies a snapshot with sample gallery items.
         applySnapshot(with: GalleryItem.sampleItems)
-        
-        collectionView.selectItems(at: [.zero], scrollPosition: .top)
-                
-        super.viewDidLoad()
     }
     
     override func viewDidAppear() {
         super.viewDidAppear()
+
         toolbar.attachedWindow = self.view.window
         
         // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
+        
+        collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }
     
     func applySnapshot(with galleryItems: [GalleryItem]) {

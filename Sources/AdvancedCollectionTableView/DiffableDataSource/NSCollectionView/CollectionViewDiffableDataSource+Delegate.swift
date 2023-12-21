@@ -69,6 +69,7 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
+                Swift.print("dropOperation", dropOperation.rawValue)
                 if let transaction = self.dataSource.movingTransaction(at: Array(self.dataSource.draggingIndexPaths), to: indexPath) {
                     let selectedElements = dataSource.selectedElements
                     self.dataSource.reorderingHandlers.willReorder?(transaction)
