@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  QuicklookPreviewItem.swift
 //
 //
 //  Created by Florian Zand on 15.09.23.
@@ -10,7 +10,7 @@ import FZQuicklook
 import QuickLookUI
 
 // Used for Quicklook of selected collection items & table cells.
-internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
+ class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
     var view: NSView?
     
@@ -33,7 +33,7 @@ internal class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewab
     }
 }
 
-internal extension NSPasteboard.PasteboardType {
+extension NSPasteboard.PasteboardType {
     // Used for drag & drop
     static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
 }

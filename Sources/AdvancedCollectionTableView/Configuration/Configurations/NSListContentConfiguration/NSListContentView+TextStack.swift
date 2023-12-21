@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSListContentView+TextStack.swift
 //  
 //
 //  Created by Florian Zand on 30.08.23.
