@@ -278,8 +278,10 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
-            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true})!
-            return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            }
+            return NSTableCellView()
         })
     }
     
