@@ -80,7 +80,7 @@ public extension NSTableCellView {
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             self._textField.textCell.backgroundStyleHandler = {
-                Swift.print("backgroundstyle changed")
+                Swift.print("backgroundstyle changed", self._textField.textCell.backgroundStyle.rawValue)
             }
             self.textField = self._textField
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
@@ -309,14 +309,20 @@ public extension NSTableCellView {
         class TextCell: NSTextFieldCell {
             var backgroundStyleHandler: (()->())? = nil
             override var interiorBackgroundStyle: NSView.BackgroundStyle {
-                backgroundStyleHandler?()
+                if backgroundStyle != previousBackgroundStyle {
+                    backgroundStyleHandler?()
+                    previousBackgroundStyle = backgroundStyle
+                }
                 return backgroundStyle
             }
             
+            lazy var previousBackgroundStyle: NSView.BackgroundStyle = .normal
+            
             override var backgroundStyle: NSView.BackgroundStyle {
                 didSet {
-                    guard oldValue != backgroundStyle else { return }
-                    backgroundStyleHandler?()
+                    Swift.print("didSet")
+                  //  guard oldValue != backgroundStyle else { return }
+                  //  backgroundStyleHandler?()
                 }
             }
         }
