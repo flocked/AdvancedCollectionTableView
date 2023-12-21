@@ -122,6 +122,7 @@ public extension NSItemContentConfiguration {
         
         public var spacing: CGFloat = 3.0
         
+        /// Creates a badge.
         public init() {
             
         }

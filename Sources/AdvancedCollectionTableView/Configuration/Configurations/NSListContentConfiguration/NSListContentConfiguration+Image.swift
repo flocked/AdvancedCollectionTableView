@@ -11,7 +11,7 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSListContentConfiguration {
-    /// Properties that affect the cell content configuration’s image.
+    /// Properties that affect the image.
     struct ImageProperties: Hashable {
         public enum Sizing: Hashable {
             /// The image is resized to fit the height of the text, or secondary text.
@@ -169,9 +169,7 @@ public extension NSListContentConfiguration {
         public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
         
         /// The image scaling.
-        public var scaling: NSImageScaling = .scaleProportionallyUpOrDown
-        
-        public var scalingNew: Scaling = .fit
+        public var scaling: Scaling = .fit
         
         /// The sizing option for the image.
         public var sizing: Sizing = .totalTextHeight

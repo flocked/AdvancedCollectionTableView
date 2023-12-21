@@ -235,7 +235,7 @@ public class NSListContentView: NSView, NSContentView {
     
     internal func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
         switch _configuration.imageProperties.scaling {
-        case .scaleProportionallyDown, .scaleProportionallyUpOrDown:
+        case .fill, .fit:
             return imageSize.scaled(toHeight: size.height)
         default:
             return CGSize(size.height, size.height)

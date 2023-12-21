@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 internal extension NSListContentView {
-    class CellImageView: NSImageView {
+    class CellImageView: ImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
@@ -44,12 +44,12 @@ internal extension NSListContentView {
         var calculatedSize: CGSize?
         
         func update() {
-            self.imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling
+            self.imageScaling = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.contentTintColor = properties._resolvedTintColor
+            self.tintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
             self.configurate(using: properties.shadowProperties, type: .outer)
             self.invalidateIntrinsicContentSize()
@@ -58,7 +58,6 @@ internal extension NSListContentView {
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
-            self.imageAlignment = .alignCenter
             self.update()
         }
         

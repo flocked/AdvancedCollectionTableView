@@ -11,8 +11,9 @@ import FZUIKit
 import SwiftUI
 
 public extension NSItemContentConfiguration {
-    /// Properties of the content that displays the image and view.
+    /// Properties that affect the content that displays the image and view.
     struct ContentProperties: Hashable {
+        /// The scaling of the image.
         public enum ImageScaling {
             /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
             case fit

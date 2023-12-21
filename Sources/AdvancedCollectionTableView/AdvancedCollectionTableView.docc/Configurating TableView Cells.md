@@ -1,0 +1,68 @@
+# Configurating Table Cell Views
+
+Configurate the content of a table view cell.
+
+## Overview
+
+The content of a `NSTableCellView` can be configurated by providing a `NSContentConfiguration` to an item's ``AppKit/NSTableCellView/contentConfiguration``.
+
+## Topics
+
+### Table cell content configuration
+
+- ``NSListContentConfiguration``
+- ``NSListContentView``
+
+``NSListContentConfiguration`` is a content configuration suitable for a table row. It can display a text, secondary text, image and view.
+
+![A list content configuration](NSListContentConfiguration.png)
+
+```swift
+var content = tableCell.defaultContentConfiguration()
+
+// Configure content.
+content.image = NSImage(systemSymbolName: "star")
+content.text = "Favorites"
+
+// Customize appearance.
+content.imageProperties.tintColor = .purple
+
+tableCell.contentConfiguration = content
+```
+
+### Managing the content
+
+- ``AppKit/NSTableCellView/contentConfiguration``
+- ``AppKit/NSTableCellView/defaultContentConfiguration()``
+- ``AppKit/NSTableCellView/automaticallyUpdatesContentConfiguration``
+
+### Managing the state
+
+- ``AppKit/NSTableCellView/configurationState``
+- ``NSTableCellConfigurationState``
+- ``AppKit/NSTableCellView/setNeedsUpdateConfiguration()``
+- ``AppKit/NSTableCellView/updateConfiguration(using:)``
+- ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``
+- ``AppKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
+
+``NSTableCellConfigurationState`` provides the current state of a table view cell (e.g. `isSelected` or `isHovered`). It can be accessed via a table view cell's ``AppKit/NSTableCellView/configurationState``.
+
+To handle updates of a table view cell’s state, provide a handler to ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``.
+
+```swift
+var content = tableCell.defaultContentConfiguration()
+content.image = NSImage(systemSymbolName: "star")
+content.imageProperties.tintColor = .black
+
+tableCell.contentConfiguration = content
+
+tableCell.configurationUpdateHandler = { 
+    newState in 
+    if newState.isSelected {
+        content.imageProperties.tintColor = .controlAccentColor
+    } else {
+        content.imageProperties.tintColor = .black
+    }
+    tableCell.contentConfiguration = content
+}
+```

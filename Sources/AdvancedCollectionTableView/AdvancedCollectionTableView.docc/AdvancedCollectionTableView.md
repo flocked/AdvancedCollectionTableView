@@ -18,11 +18,11 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 ### Content Configurations
 
-- <doc:ConfiguratingCollectionViewItems>
+- <doc:Configurating-CollectionView-Items>
 - ``NSItemContentConfiguration``
 - ``NSItemContentView``
 - ``NSItemConfigurationState``
-- <doc:ConfiguratingTableViewCells>
+- <doc:Configurating-TableView-Cells>
 - ``NSListContentConfiguration``
 - ``NSListContentView``
 - ``NSTableCellConfigurationState``
