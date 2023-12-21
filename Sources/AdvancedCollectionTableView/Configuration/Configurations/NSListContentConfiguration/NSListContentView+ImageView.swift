@@ -64,11 +64,11 @@ internal extension NSListContentView {
             self.wantsLayer = true
             if let cell = cell {
                 var keyPath: PartialKeyPath<NSCell> = \.backgroundStyle
-                Swift.print("keyPath backgroundStyle", keyPath.stringValue)
+                Swift.print("keyPath backgroundStyle", keyPath._kvcKeyPathString ?? "nil")
                 keyPath = \.interiorBackgroundStyle
-                Swift.print("keyPath interiorBackgroundStyle", keyPath.stringValue)
+                Swift.print("keyPath interiorBackgroundStyle", keyPath._kvcKeyPathString ?? "nil")
                 keyPath = \.image
-                Swift.print("keyPath image", keyPath.stringValue)
+                Swift.print("keyPath image", keyPath._kvcKeyPathString ?? "nil")
                 cellObserver = KeyValueObserver(cell)
                 cellObserver?.add(\.image) { old, new in
                     guard old != new else { return }
