@@ -64,7 +64,7 @@ internal extension NSListContentView {
         }
         
         override var intrinsicContentSize: NSSize {
-            var intrinsicContentSize = super.intrinsicContentSize
+            var intrinsicContentSize = self.image?.size ?? super.intrinsicContentSize
             
             if image?.isSymbolImage == true, properties.position.orientation == .horizontal {
                 intrinsicContentSize.width = (intrinsicContentSize.height*2.5).rounded(.towardZero)
