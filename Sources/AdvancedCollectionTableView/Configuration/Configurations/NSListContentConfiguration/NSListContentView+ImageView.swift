@@ -56,15 +56,28 @@ internal extension NSListContentView {
         }
         
         var imageObserver: NSKeyValueObservation? = nil
-                
+        var cellObserver: KeyValueObserver<NSCell>? = nil
+
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
-            imageObserver = self.cell?.observeChanges(for: \.image, handler: { old, new in
-                guard old != new else { return }
-                Swift.print("image changed")
-            })
+            if let cell = cell {
+                Swift.print("cell")
+                cellObserver = KeyValueObserver(cell)
+                cellObserver?.add(\.image) { old, new in
+                    guard old != new else { return }
+                    Swift.print("image changed")
+                }
+                cellObserver?.add(\.backgroundStyle) { old, new in
+                    guard old != new else { return }
+                    Swift.print("backgroundStyle", new.rawValue)
+                }
+                cellObserver?.add(\.interiorBackgroundStyle) { old, new in
+                    guard old != new else { return }
+                    Swift.print("interiorBackgroundStyle", new.rawValue)
+                }
+            }
             self.imageAlignment = .alignCenter
             self.update()
         }
