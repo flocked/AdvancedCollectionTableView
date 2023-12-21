@@ -2,15 +2,15 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
 
-**For a full documentation take a look at the included documentation accessible via Xcode's documentation browser.**
-
-Take a look at the included example project which demonstrates:
-- NSCollectionView `itemRegistration`
-- NSTableView `cellRegistration`
+Take a look at the included sample app which demonstrates:
+- `NSCollectionView.ItemRegistration`
+- `NSTableView.CellRegistration`
 - `NSItemContentConfiguration`
 - `NSListContentConfiguration`
 - `CollectionViewDiffableDataSource`
 - NSCollectionView `reconfiguratingItems(at: _)`.
+
+**For a full documentation take a look at the included documentation.**
 
 ## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
 
@@ -196,3 +196,13 @@ collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryI
 
 collectionView.quicklookSelectedItems()
 ```
+
+## Installation
+
+Add AdvancedCollectionTableView to your app's Package.swift file, or selecting File -> Add Package Dependencies in Xcode:
+
+```swift
+.package(url: "https://github.com/flocked/AdvancedCollectionTableView")
+```
+
+If you clone the repo, you can run the sample app, which demonstrates most of the API`s.
