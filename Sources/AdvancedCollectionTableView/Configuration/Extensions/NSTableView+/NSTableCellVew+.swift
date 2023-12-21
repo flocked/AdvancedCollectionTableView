@@ -16,9 +16,11 @@ public extension NSTableCellView {
     /**
      The current content configuration of the cell.
      
-     Using a content configuration, you can set the cell’s content and styling for a variety of different item states.
-     Setting a content configuration replaces the existing contentView of the cell with a new content view instance from the configuration, or directly applies the configuration to the existing content view if the configuration is compatible with the existing content view type.
-     The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
+     Using a content configuration, you can set the cell’s content and styling for a variety of different cell states. You can get the default configuration using ``defaultContentConfiguration()``, assign your content to the configuration, customize any other properties, and assign it to the view as the current `contentConfiguration`.
+     
+     Setting a content configuration replaces the view of the cell with a new content view instance from the configuration, or directly applies the configuration to the existing view if the configuration is compatible with the existing content view type.
+     
+     The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     var contentConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
@@ -58,7 +60,7 @@ public extension NSTableCellView {
     /**
      A Boolean value that determines whether the cell automatically updates its content configuration when its state changes.
      
-     When this value is true, the cell automatically calls ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
+     When this value is true, the cell automatically calls `updated(for:)` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
      
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */

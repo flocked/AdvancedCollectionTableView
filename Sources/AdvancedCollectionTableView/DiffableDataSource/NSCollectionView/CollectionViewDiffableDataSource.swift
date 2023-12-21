@@ -63,14 +63,14 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      A closure that configures and returns a item for a collection view from its diffable data source.
      
-     A non-nil configured item object. The item provider must return a valid item object to the collection view.
+     A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
      
      - Parameters:
         - collectionView: The collection view to configure this cell for.
         -  indexpath: The index path that specifies the location of the item in the collection view.
         - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
      
-     - Returns: A non-nil configured item object. The item provider must return a valid cell object to the collection view.
+     - Returns: A non-`nil` configured item object. The item provider must return a valid cell object to the collection view.
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
     
@@ -86,7 +86,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         -  elementKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
         - indexpath: The index path that specifies the location of the supplementary view in the collection view.
      
-     - Returns: A non-nil configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
+     - Returns: A non-`nil` configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
      */
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ elementKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
     

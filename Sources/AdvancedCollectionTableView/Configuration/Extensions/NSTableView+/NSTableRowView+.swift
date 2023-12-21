@@ -27,15 +27,16 @@ public extension NSTableRowView {
      rowView.backgroundConfiguration = backgroundConfiguration
      ```
      
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets the following APIs to nil:
-     - ``backgroundColor``
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets the following APIs to nil:
+     - `backgroundColor`
      - ``backgroundView``
      - ``selectedBackgroundView``
+     - ``multipleSelectionBackgroundView``
      */
     var backgroundConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "NSTableRowVew_backgroundConfiguration", object: self) }
+        get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSTableRowVew_backgroundConfiguration", object: self)
+            set(associatedValue: newValue, key: "backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableRowView()
             }
@@ -50,8 +51,8 @@ public extension NSTableRowView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue(key: "NSTableRowVew_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "NSTableRowVew_automaticallyUpdatesBackgroundConfiguration", object: self)
+        get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
         }
     }
     
@@ -59,11 +60,18 @@ public extension NSTableRowView {
      The view that displays behind the row’s other content.
      
      Use this property to assign a custom background view to the row. The background view appears behind the content view and its frame automatically adjusts so that it fills the bounds of the row.
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
+     
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
     var backgroundView: NSView?   {
-        get { getAssociatedValue(key: "NSTableRowVew_backgroundView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableRowVew_backgroundView", object: self)
+        get { getAssociatedValue(key: "backgroundView", object: self) }
+        set { 
+            guard newValue != backgroundView else { return }
+            backgroundView?.removeFromSuperview()
+            if newValue != nil {
+                self.backgroundConfiguration = nil
+            }
+            set(associatedValue: newValue, key: "backgroundView", object: self)
             self.configurateBackgroundView()
         }
     }
@@ -72,44 +80,56 @@ public extension NSTableRowView {
      The view that displays just above the background view for a selected row.
      
      You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView``.
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
+     
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
     var selectedBackgroundView: NSView? {
-        get { getAssociatedValue(key: "NSTableRowVew_selectedBackgroundView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableRowVew_selectedBackgroundView", object: self)
+        get { getAssociatedValue(key: "selectedBackgroundView", object: self) }
+        set { 
+            guard newValue != selectedBackgroundView else { return }
+            selectedBackgroundView?.removeFromSuperview()
+            if newValue != nil {
+                self.backgroundConfiguration = nil
+            }
+            set(associatedValue: newValue, key: "selectedBackgroundView", object: self)
             self.configurateBackgroundView()
         }
     }
     
     internal var configurationBackgroundView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "NSTableRowVew_configurationBackgroundView", object: self) }
+        get { getAssociatedValue(key: "configurationBackgroundView", object: self) }
         set {
-            self.configurationBackgroundView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "NSTableRowVew_configurationBackgroundView", object: self)
+            configurationBackgroundView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "configurationBackgroundView", object: self)
         }
     }
     
     /**
      The view that displays just above the background view for a selected row.
      
-     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView`` and behind the ``contentView``.
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
+     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView``.
+     
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
     var multipleSelectionBackgroundView: NSView? {
-        get { getAssociatedValue(key: "NSTableRowVew_multipleSelectionBackgroundView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableRowVew_multipleSelectionBackgroundView", object: self)
+        get { getAssociatedValue(key: "multipleSelectionBackgroundView", object: self) }
+        set { 
+            guard newValue != multipleSelectionBackgroundView else { return }
+            multipleSelectionBackgroundView?.removeFromSuperview()
+            if newValue != nil {
+                self.backgroundConfiguration = nil
+            }
+            set(associatedValue: newValue, key: "multipleSelectionBackgroundView", object: self)
             self.configurateBackgroundView()
         }
     }
     
     internal func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            self.backgroundView?.removeFromSuperview()
             self.backgroundView = nil
-            self.selectedBackgroundView?.removeFromSuperview()
             self.selectedBackgroundView = nil
-            self.multipleSelectionBackgroundView?.removeFromSuperview()
             self.multipleSelectionBackgroundView = nil
+            self.backgroundColor = nil
             if var backgroundView = configurationBackgroundView,  backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
@@ -120,7 +140,6 @@ public extension NSTableRowView {
                 self.addSubview(withConstraint: backgroundView)
             }
         } else {
-            configurationBackgroundView?.removeFromSuperview()
             configurationBackgroundView = nil
             if self.isSelected {
                 self.backgroundView?.removeFromSuperview()

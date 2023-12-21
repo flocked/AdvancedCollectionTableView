@@ -27,22 +27,15 @@ public extension NSCollectionViewItem {
      item.backgroundConfiguration = backgroundConfiguration
      ```
      
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets the following APIs to nil:
-     - ``backgroundColor``
-     - ``backgroundView``
-     - ``selectedBackgroundView``
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets the ``backgroundView`` and ``selectedBackgroundView`` to `nil`.
      */
     var backgroundConfiguration: NSContentConfiguration?   {
-        get { 
-            getAssociatedValue(key: "_backgroundConfiguration", object: self) }
+        get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
                 self.configurateBackgroundView()
-            } else if backgroundView is (NSView & NSContentView) {
-                self.backgroundView?.removeFromSuperview()
-                self.backgroundView = nil
             }
         }
     }
@@ -69,7 +62,7 @@ public extension NSCollectionViewItem {
     /**
      A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
      
-     When this value is true, the item automatically calls  ``updated(for:)`` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is true, the item automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
      
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
@@ -83,19 +76,18 @@ public extension NSCollectionViewItem {
      The view that displays behind the item’s other content.
      
      Use this property to assign a custom background view to the item. The background view appears as background inside the item's view and its frame automatically adjusts so that it fills the bounds of the item.
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to nil.
      */
     var backgroundView: NSView?   {
         get { getAssociatedValue(key: "_backgroundView", object: self) }
         set {
-            if newValue != self.backgroundView {
-                self.backgroundView?.removeFromSuperview()
-            }
+            guard newValue != self.backgroundView else { return }
+            self.backgroundView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "_backgroundView", object: self)
             if newValue != nil {
                 self.backgroundConfiguration = nil
+                self.configurateBackgroundView()
             }
-            set(associatedValue: newValue, key: "_backgroundView", object: self)
-            self.configurateBackgroundView()
         }
     }
     
@@ -103,39 +95,41 @@ public extension NSCollectionViewItem {
      The view that displays just above the background view for a selected item.
      
      You can use this view to give a selected item a custom appearance. When the item has a selected state, this view layers inside the item's view above the ``backgroundView``.
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-nil value for this property resets ``backgroundConfiguration`` to nil.
+     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to nil.
      */
     var selectedBackgroundView: NSView? {
-        get { getAssociatedValue(key: "_selectedBackgroundView", object: self) }
+        get { getAssociatedValue(key: "selectedBackgroundView", object: self) }
         set {
-            if newValue != self.selectedBackgroundView {
-                self.selectedBackgroundView?.removeFromSuperview()
-            }
+            guard newValue != selectedBackgroundView else { return }
+            self.selectedBackgroundView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "selectedBackgroundView", object: self)
             if newValue != nil {
                 self.backgroundConfiguration = nil
+                self.configurateBackgroundView()
             }
-            set(associatedValue: newValue, key: "_selectedBackgroundView", object: self)
-            self.configurateBackgroundView()
         }
     }
     
     internal var backgroundConfigurationView: (NSView & NSContentView)?   {
-        self.backgroundView as? (NSView & NSContentView)
+        get { getAssociatedValue(key: "backgroundConfigurationView", object: self, initialValue: nil) }
+        set { 
+            backgroundConfigurationView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "backgroundConfigurationView", object: self) }
     }
     
     internal func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            self.selectedBackgroundView?.removeFromSuperview()
             self.selectedBackgroundView = nil
+            self.backgroundView = nil
             if var backgroundView = backgroundConfigurationView,  backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
-                self.backgroundView?.removeFromSuperview()
                 let backgroundView = backgroundConfiguration.makeContentView()
                 self.view.addSubview(withConstraint: backgroundView)
-                set(associatedValue: backgroundView, key: "_backgroundView", object: self)
+                backgroundConfigurationView = backgroundView
             }
         } else {
+            backgroundConfigurationView = nil
             if self.isSelected {
                 self.backgroundView?.removeFromSuperview()
                 if let selectedBackgroundView = self.selectedBackgroundView {
@@ -160,8 +154,10 @@ public extension NSCollectionViewItem {
      The current content configuration of the item.
      
      Using a content configuration, you can set the item’s content and styling for a variety of different item states.
-     Setting a content configuration replaces the existing ``view`` of the item with a new content view instance from the configuration, or directly applies the configuration to the existing content view if the configuration is compatible with the existing content view type.
-     The default value is nil. After you set a content configuration to this property, setting this property back to nil replaces the current content view with a new, empty content view.
+     
+     Setting a content configuration replaces the existing `view` of the item with a new view instance from the configuration, or directly applies the configuration to the `view` if the configuration is compatible with the existing view type.
+     
+     The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     var contentConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "_contentConfiguration", object: self) }
@@ -169,7 +165,6 @@ public extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "_contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeCollectionItem()
-                
             }
             self.configurateContentView()
         }
@@ -202,7 +197,7 @@ public extension NSCollectionViewItem {
     /**
      A Boolean value that determines whether the item automatically updates its content configuration when its state changes.
      
-     When this value is true, the item automatically calls ``updated(for:)`` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is true, the item automatically calls `updated(for:)` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
