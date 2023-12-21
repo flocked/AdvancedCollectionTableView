@@ -95,7 +95,7 @@ public extension NSListContentConfiguration {
                 default: return false
                 }
             }
-                        
+            
             internal var orientation: NSUserInterfaceLayoutOrientation {
                 switch self {
                 case .leading(_), .trailing(_):
@@ -106,8 +106,8 @@ public extension NSListContentConfiguration {
             }
         }
         
-     //   var reservedLayoutSize: CGSize = CGSize(0, 0)
-    //    static let standardDimension: CGFloat = -CGFloat.greatestFiniteMagnitude
+        //   var reservedLayoutSize: CGSize = CGSize(0, 0)
+        //    static let standardDimension: CGFloat = -CGFloat.greatestFiniteMagnitude
         
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? = nil {

@@ -64,7 +64,7 @@ internal extension NSListContentView {
             }
             return canBecome
         }
-              
+        
         var tableCellContentView: NSListContentView? {
             self.firstSuperview(for: NSListContentView.self)
         }
@@ -78,9 +78,9 @@ internal extension NSListContentView {
             var intrinsicContentSize = super.intrinsicContentSize
             intrinsicContentSize.width = NSView.noIntrinsicMetric
             let width = self.frame.size.width
-                        
+            
             if let cellSize = cell?.cellSize(forBounds: NSRect(x: 0, y: 0, width: width, height: 10000)) {
-            //    Swift.print(cellSize)
+                //    Swift.print(cellSize)
                 intrinsicContentSize.height = cellSize.height
             }
             

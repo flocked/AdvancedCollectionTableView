@@ -43,7 +43,7 @@ public class NSListContentView: NSView, NSContentView {
     internal var stackViewConstraints: [NSLayoutConstraint] = []
     internal var _configuration: NSListContentConfiguration {
         didSet { if oldValue != _configuration {
-                updateConfiguration() } } }
+            updateConfiguration() } } }
     
     internal lazy var textField = CellTextField(properties: self._configuration.textProperties)
     internal lazy var secondaryTextField = CellTextField(properties: self._configuration.secondaryTextProperties)
@@ -63,11 +63,11 @@ public class NSListContentView: NSView, NSContentView {
         stackView.distribution = .fill
         return stackView
     }()
-                
+    
     internal func updateConfiguration() {
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
-
+        
         textField.text(_configuration.text, attributedString: _configuration.attributedText)
         secondaryTextField.text(_configuration.secondaryText, attributedString: _configuration.secondaryAttributedText)
         imageView.image = _configuration.image
@@ -135,7 +135,7 @@ public class NSListContentView: NSView, NSContentView {
                     }
                 } else {
                     if _configuration.hasText {
-                       //  var offset = textField.font!.capHeight / 2.0
+                        //  var offset = textField.font!.capHeight / 2.0
                         let offset = (textField.font!.ascender + textField.font!.descender) / 2.0
                         imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: textField.firstBaselineAnchor, constant: -offset).activate()
                     } else if _configuration.hasSecondaryText {
@@ -253,7 +253,7 @@ public class NSListContentView: NSView, NSContentView {
     
     internal func updateRowHeight() {
         if let rowView = self.rowView, self.frame.size.height > self.fittingSize.height {
-                rowView.frame.size.height = self.fittingSize.height
+            rowView.frame.size.height = self.fittingSize.height
         }
     }
     

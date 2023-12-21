@@ -74,7 +74,7 @@ extension AccessoryView {
                     items
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-
+                
             }
         }
         
@@ -142,11 +142,11 @@ internal extension Text {
     @ViewBuilder
     func configurateAlt(using properties: TextConfiguration) -> some View {
         self
-        .font(Font(properties.font))
-        .foregroundColor(Color(properties.resolvedColor()))
-        .lineLimit(properties.numberOfLines == 0 ? nil : properties.numberOfLines)
-        .multilineTextAlignment(properties.alignment.swiftUIMultiline)
-        .frame(minWidth: 0, maxWidth: .infinity, alignment: properties.alignment.swiftUI)
+            .font(Font(properties.font))
+            .foregroundColor(Color(properties.resolvedColor()))
+            .lineLimit(properties.numberOfLines == 0 ? nil : properties.numberOfLines)
+            .multilineTextAlignment(properties.alignment.swiftUIMultiline)
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: properties.alignment.swiftUI)
     }
 }
 

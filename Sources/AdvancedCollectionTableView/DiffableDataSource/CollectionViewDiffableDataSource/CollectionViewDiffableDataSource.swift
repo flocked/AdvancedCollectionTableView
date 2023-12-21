@@ -13,7 +13,7 @@ import QuickLookUI
 
 /**
  An advanced version of `NSCollectionViewDiffableDataSource.
-
+ 
  It provides:
  - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
  - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
@@ -42,9 +42,9 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      A non-nil configured item object. The item provider must return a valid item object to the collection view.
      
      - Parameters:
-        - collectionView: The collection view to configure this cell for.
-        -  indexpath: The index path that specifies the location of the item in the collection view.
-        - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
+     - collectionView: The collection view to configure this cell for.
+     -  indexpath: The index path that specifies the location of the item in the collection view.
+     - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
      
      - Returns: A non-nil configured item object. The item provider must return a valid cell object to the collection view.
      */
@@ -58,9 +58,9 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
      
      - Parameters:
-        - collectionView: The collection view to configure this supplementary view for.
-        -  elementKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
-        - indexpath: The index path that specifies the location of the supplementary view in the collection view.
+     - collectionView: The collection view to configure this supplementary view for.
+     -  elementKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
+     - indexpath: The index path that specifies the location of the supplementary view in the collection view.
      
      - Returns: A non-nil configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
      */
@@ -75,7 +75,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     internal var previousDisplayingElements = [Element]()
     internal var rightDownMonitor: NSEvent.Monitor? = nil
     internal var hoveredItemObserver: NSKeyValueObservation? = nil
-
+    
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
      
@@ -139,9 +139,9 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
      
      - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the collection view.
-        - option: Option how to apply the snapshot to the collection view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
+     - snapshot: The snapshot that reflects the new state of the data in the collection view.
+     - option: Option how to apply the snapshot to the collection view.
+     - completion: A optional completion handlers which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
@@ -275,7 +275,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         let displayingElements = self.displayingElements
         let added = displayingElements.filter({previousDisplayingElements.contains($0) == false})
         let removed = previousDisplayingElements.filter({displayingElements.contains($0) == false})
-
+        
         if (added.isEmpty == false) {
             self.displayHandlers.isDisplaying?(added)
         }
@@ -298,8 +298,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      ```
      
      - Parameters:
-        - collectionView: The initialized collection view object to connect to the diffable data source.
-        - itemProvider: A closure that creates and returns each of the items for the collection view from the data the diffable data source provides.
+     - collectionView: The initialized collection view object to connect to the diffable data source.
+     - itemProvider: A closure that creates and returns each of the items for the collection view from the data the diffable data source provides.
      */
     public init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider) {
         self.collectionView = collectionView
@@ -329,8 +329,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      ```
      
      - Parameters:
-        - collectionView: The initialized collection view object to connect to the diffable data source.
-        - itemRegistration: A item registration which returns each of the items for the collection view from the data the diffable data source provides.
+     - collectionView: The initialized collection view object to connect to the diffable data source.
+     - itemRegistration: A item registration which returns each of the items for the collection view from the data the diffable data source provides.
      */
     public convenience init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
         self.init(collectionView: collectionView, itemProvider: { collectionView,indePath,element in

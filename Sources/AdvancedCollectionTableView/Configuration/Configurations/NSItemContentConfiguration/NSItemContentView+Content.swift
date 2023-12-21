@@ -86,13 +86,13 @@ internal extension NSItemContentView {
         
         override func layoutSubtreeIfNeeded() {
             super.layoutSubtreeIfNeeded()
-            Swift.print("layoutSubtreeIfNeeded", self.frame.size)
+            // Swift.print("layoutSubtreeIfNeeded", self.frame.size)
         }
         
         var previousFrameSize: CGSize = .zero
         override func layout() {
             super.layout()
-        //    Swift.print("layout", self.frame.size)
+            // Swift.print("layout", self.frame.size)
             invalidateIntrinsicContentSize()
             self.containerView.frame.size = self.bounds.size
             self.imageView.frame.size = self.bounds.size
@@ -185,36 +185,34 @@ internal extension NSItemContentView {
             badgeView.verticalConstraint?.activate(false)
             badgeView.widthConstraint?.activate(false)
             
-         //   let constant = -(2*(badge.type.spacing ?? 0))
-         //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: self.widthAnchor, constant: constant).activate()
+            //   let constant = -(2*(badge.type.spacing ?? 0))
+            //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: self.widthAnchor, constant: constant).activate()
             
             let badgeSize = badgeView.fittingSize
             switch badge.position {
-                case .topLeft, .top, .topRight:
-                    badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: self.topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
-                case .centerLeft, .center, .centerRight:
-                    badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: self.centerYAnchor).activate()
-                case .bottomLeft, .bottom, .bottomRight:
+            case .topLeft, .top, .topRight:
+                badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: self.topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
+            case .centerLeft, .center, .centerRight:
+                badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: self.centerYAnchor).activate()
+            case .bottomLeft, .bottom, .bottomRight:
                 badgeView.verticalConstraint = badgeView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: badge.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
-                
-                }
-                
-                switch badge.position {
-                case .topLeft, .centerLeft, .bottomLeft:
-                    badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
-                case .topRight, .centerRight, .bottomRight:
-                    badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant:  badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
-                case .top, .center, .bottom:
-                    badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: self.centerXAnchor).activate()
-                    
-                }
+            }
+            
+            switch badge.position {
+            case .topLeft, .centerLeft, .bottomLeft:
+                badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
+            case .topRight, .centerRight, .bottomRight:
+                badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant:  badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
+            case .top, .center, .bottom:
+                badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: self.centerXAnchor).activate()
+            }
         }
         
         var centerYConstraint: NSLayoutConstraint? = nil
         var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
         override var intrinsicContentSize: NSSize {
             if self.frame.size == .zero {
-               // Swift.print("intrinsicContentSize", CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric))
+                // Swift.print("intrinsicContentSize", CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric))
                 return CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
             }
             
@@ -237,14 +235,14 @@ internal extension NSItemContentView {
                     intrinsicContentSize.height = imagesize.height
                 case (nil, .some(let maxHeight)):
                     let imagesize = imageSize.scaled(toHeight: min(maxHeight, size.height))
-               //     Swift.print("maxHei", imageSize, imagesize, self.frame.size)
+                    // Swift.print("maxHei", imageSize, imagesize, self.frame.size)
                     intrinsicContentSize.width = imagesize.width
                     intrinsicContentSize.height = imagesize.height
                 case (nil, nil):
                     let imagesize = imageSize.scaled(toFit: size)
                     intrinsicContentSize.width = imagesize.width
                 }
-            //    Swift.print("intrinsicContentSize", intrinsicContentSize)
+                // Swift.print("intrinsicContentSize", intrinsicContentSize)
                 return intrinsicContentSize
             } else {
                 if let imageSize = self.image?.size, configuration.contentProperties.imageScaling == .none {
@@ -278,7 +276,6 @@ internal extension NSItemContentView {
                     }
                 }
                 
-                Swift.print("intrinsicContentSize", intrinsicContentSize)
                 return intrinsicContentSize
             }
         }
@@ -287,7 +284,7 @@ internal extension NSItemContentView {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
             self.containerView.borderColor = contentProperties._resolvedBorderColor
             self.containerView.borderWidth = contentProperties.resolvedBorderWidth
-         
+            
             self.cornerRadius = contentProperties.cornerRadius
             self.containerView.cornerRadius = contentProperties.cornerRadius
             self.imageView.cornerRadius = contentProperties.cornerRadius

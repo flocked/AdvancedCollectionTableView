@@ -75,15 +75,15 @@ extension AdvanceCollectionViewDiffableDataSource {
                     self.dataSource.reorderingHandlers.didReorder?(transaction)
                 }
                 /*
-              //  self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
-                let previousSnapshot = self.dataSource.currentSnapshot
-                self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
-                if let didReorder = self.dataSource.reorderingHandlers.didReorder {
-                    let newSnapshot = self.dataSource.currentSnapshot
-                    let difference = previousSnapshot.itemIdentifiers.difference(from: newSnapshot.itemIdentifiers)
-                    let transaction = DiffableDataSourceTransaction(initialSnapshot: previousSnapshot, finalSnapshot: newSnapshot, difference: difference)
-                    didReorder(transaction)
-                }
+                 //  self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
+                 let previousSnapshot = self.dataSource.currentSnapshot
+                 self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
+                 if let didReorder = self.dataSource.reorderingHandlers.didReorder {
+                 let newSnapshot = self.dataSource.currentSnapshot
+                 let difference = previousSnapshot.itemIdentifiers.difference(from: newSnapshot.itemIdentifiers)
+                 let transaction = DiffableDataSourceTransaction(initialSnapshot: previousSnapshot, finalSnapshot: newSnapshot, difference: difference)
+                 didReorder(transaction)
+                 }
                  */
             }
             return true

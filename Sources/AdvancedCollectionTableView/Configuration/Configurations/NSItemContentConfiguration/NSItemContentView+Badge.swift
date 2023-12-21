@@ -42,7 +42,7 @@ internal extension NSItemContentView {
                 self.view?.removeFromSuperview()
                 self.view = nil
             }
-
+            
             self.imageView.image = properties.image
             self.imageView.properties = properties.imageProperties
             
@@ -52,7 +52,7 @@ internal extension NSItemContentView {
             visualEffect?.material = .popover
             visualEffect?.state = .active
             self.visualEffect = visualEffect
-                        
+            
             stackViewConstraints.constant(properties.margins)
             self.stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {

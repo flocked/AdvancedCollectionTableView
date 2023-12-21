@@ -94,19 +94,19 @@ public extension NSTableView {
     }
     
     @objc dynamic var hoveredRow: IndexPath? {
-         get { getAssociatedValue(key: "NSTableView_hoveredRow", object: self, initialValue: nil) }
-         set {
-             guard newValue != hoveredRow else { return }
-             let previousRow = hoveredRow
-             set(associatedValue: newValue, key: "NSTableView_hoveredRow", object: self)
-             if let previousRow = previousRow, let rowView = self.rowView(atRow: previousRow.item, makeIfNecessary: false) {
-                 rowView.setNeedsAutomaticUpdateConfiguration()
-                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
-             }
-             if let rowView = self.hoveredRowView {
-                 rowView.setNeedsAutomaticUpdateConfiguration()
-                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
-             }
-         }
-     }
+        get { getAssociatedValue(key: "NSTableView_hoveredRow", object: self, initialValue: nil) }
+        set {
+            guard newValue != hoveredRow else { return }
+            let previousRow = hoveredRow
+            set(associatedValue: newValue, key: "NSTableView_hoveredRow", object: self)
+            if let previousRow = previousRow, let rowView = self.rowView(atRow: previousRow.item, makeIfNecessary: false) {
+                rowView.setNeedsAutomaticUpdateConfiguration()
+                rowView.setCellViewsNeedAutomaticUpdateConfiguration()
+            }
+            if let rowView = self.hoveredRowView {
+                rowView.setNeedsAutomaticUpdateConfiguration()
+                rowView.setCellViewsNeedAutomaticUpdateConfiguration()
+            }
+        }
+    }
 }

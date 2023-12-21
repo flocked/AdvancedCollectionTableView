@@ -11,8 +11,10 @@ import AppKit
 public struct DiffableDataSourceTransaction<Section, Element> where Section: Hashable, Element: Hashable {
     /// The snapshot before the transaction occured.
     let initialSnapshot: NSDiffableDataSourceSnapshot<Section, Element>
+    
     /// The snapshot after the transaction occured.
     let finalSnapshot: NSDiffableDataSourceSnapshot<Section, Element>
+    
     /// A collection of insertions and removals that describe the difference between initial and final snapshots.
     let difference: CollectionDifference<Element>
 }

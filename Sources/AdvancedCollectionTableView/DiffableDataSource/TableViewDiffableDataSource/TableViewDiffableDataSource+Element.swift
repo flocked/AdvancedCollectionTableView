@@ -55,7 +55,7 @@ extension AdvanceTableViewDiffableDataSource {
     public func row(for section: Section) -> Int? {
         return self.dataSource.row(forSectionIdentifier: section.id)
     }
-        
+    
     /**
      Returns the item of the specified index path.
      
@@ -78,7 +78,7 @@ extension AdvanceTableViewDiffableDataSource {
     /// Deselects all table rows of the specified items.
     public func deselectItems(_ items: [Item]) {
         items.compactMap({row(for: $0)}).forEach({ self.tableView.deselectRow($0) })
-       // self.deselectItems(at: rows(for: items))
+        // self.deselectItems(at: rows(for: items))
     }
     
     /// Selects all table rows of the items in the specified sections.
@@ -184,72 +184,72 @@ extension AdvanceTableViewDiffableDataSource {
     }
     
     /*
-    public func section(for item: Item) -> Section? {
-        return self.currentSnapshot.sectionIdentifier(containingItem: item)
-    }
+     public func section(for item: Item) -> Section? {
+     return self.currentSnapshot.sectionIdentifier(containingItem: item)
+     }
      
-    public func frame(for item: Item) -> CGRect? {
-        self.tableView.fram
-        if let index = row(for: item)?.item {
-            return self.collectionView.frameForItem(at: index)
-        }
-        return nil
-    }
-
-    public func reconfigurateItems(_ items: [Item]) {
-        let indexPaths = items.compactMap({self.indexPath(for:$0)})
-        self.reconfigureItems(at: indexPaths)
-    }
-    
-    public func reconfigureItems(at indexPaths: [IndexPath]) {
-        self.collectionView.reconfigureItems(at: indexPaths)
-    }
-
-    public func reloadItems(at rows: [Int], animated: Bool = false) {
-        let items = rows.compactMap({self.item(forRow: $0)})
-        self.reloadItems(items, animated: animated)
-    }
-    
-    public func reloadItems(_ items: [Item], animated: Bool = false) {
-        var snapshot = dataSource.snapshot()
-        snapshot.reloadItems(items.ids)
-        dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
-    }
-    
-    public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
-        var snapshot = snapshot()
-        snapshot.reloadItems(snapshot.itemIdentifiers)
-        self.apply(snapshot, animated ? .animated : .usingReloadData)
-    }
-    
-    public func selectAll() {
-        self.tableView.selectAll(nil)
-    }
-    
-    public func deselectAll() {
-        self.tableView.deselectAll(nil)
-    }
-
-    internal func moveItems( _ items: [Item], before beforeItem: Item) {
-        var snapshot = self.snapshot()
-        items.forEach({snapshot.moveItem($0, beforeItem: beforeItem)})
-        self.apply(snapshot)
-    }
-    
-    internal func moveItems( _ items: [Item], after afterItem: Item) {
-        var snapshot = self.snapshot()
-        items.forEach({snapshot.moveItem($0, afterItem: afterItem)})
-        self.apply(snapshot)
-    }
-
-    internal func moveItems(at rows: [Int], to toRow: Int) {
-        let items = rows.compactMap({self.item(forRow: $0)})
-        if let toItem = self.item(forRow: toRow), items.isEmpty == false {
-            var snapshot = self.snapshot()
-            items.forEach({snapshot.moveItem($0, beforeItem: toItem)})
-            self.apply(snapshot)
-          //  self.moveItems(items, before: toItem)
-        }
-    }
-    */
+     public func frame(for item: Item) -> CGRect? {
+     self.tableView.fram
+     if let index = row(for: item)?.item {
+     return self.collectionView.frameForItem(at: index)
+     }
+     return nil
+     }
+     
+     public func reconfigurateItems(_ items: [Item]) {
+     let indexPaths = items.compactMap({self.indexPath(for:$0)})
+     self.reconfigureItems(at: indexPaths)
+     }
+     
+     public func reconfigureItems(at indexPaths: [IndexPath]) {
+     self.collectionView.reconfigureItems(at: indexPaths)
+     }
+     
+     public func reloadItems(at rows: [Int], animated: Bool = false) {
+     let items = rows.compactMap({self.item(forRow: $0)})
+     self.reloadItems(items, animated: animated)
+     }
+     
+     public func reloadItems(_ items: [Item], animated: Bool = false) {
+     var snapshot = dataSource.snapshot()
+     snapshot.reloadItems(items.ids)
+     dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
+     }
+     
+     public func reloadAllItems(animated: Bool = false, complection: (() -> Void)? = nil) {
+     var snapshot = snapshot()
+     snapshot.reloadItems(snapshot.itemIdentifiers)
+     self.apply(snapshot, animated ? .animated : .usingReloadData)
+     }
+     
+     public func selectAll() {
+     self.tableView.selectAll(nil)
+     }
+     
+     public func deselectAll() {
+     self.tableView.deselectAll(nil)
+     }
+     
+     internal func moveItems( _ items: [Item], before beforeItem: Item) {
+     var snapshot = self.snapshot()
+     items.forEach({snapshot.moveItem($0, beforeItem: beforeItem)})
+     self.apply(snapshot)
+     }
+     
+     internal func moveItems( _ items: [Item], after afterItem: Item) {
+     var snapshot = self.snapshot()
+     items.forEach({snapshot.moveItem($0, afterItem: afterItem)})
+     self.apply(snapshot)
+     }
+     
+     internal func moveItems(at rows: [Int], to toRow: Int) {
+     let items = rows.compactMap({self.item(forRow: $0)})
+     if let toItem = self.item(forRow: toRow), items.isEmpty == false {
+     var snapshot = self.snapshot()
+     items.forEach({snapshot.moveItem($0, beforeItem: toItem)})
+     self.apply(snapshot)
+     //  self.moveItems(items, before: toItem)
+     }
+     }
+     */
 }

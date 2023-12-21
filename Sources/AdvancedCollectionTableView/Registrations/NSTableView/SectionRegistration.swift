@@ -14,9 +14,9 @@ public extension NSTableView {
      Dequeues a configured reusable section view object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionViewRegistration``.
-        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - section: The section element that provides data for the cell.
+     - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionViewRegistration``.
+     - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+     - section: The section element that provides data for the cell.
      
      - returns:A configured reusable section view object.
      */
@@ -59,9 +59,9 @@ public extension NSTableView {
          Creates a section view registration with the specified registration handler.
          
          - Parameters:
-            - identifier: The identifier of the section view registration.
-            - columnIdentifier: The identifier of the table column.
-            - handler: The handler to configurate the view.
+         - identifier: The identifier of the section view registration.
+         - columnIdentifier: The identifier of the table column.
+         - handler: The handler to configurate the view.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
@@ -73,8 +73,8 @@ public extension NSTableView {
          Creates a section view registration with the specified registration handler and nib file.
          
          - Parameters:
-            - nib: The nib of the view.
-            - handler: The handler to configurate the view.
+         - nib: The nib of the view.
+         - handler: The handler to configurate the view.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib

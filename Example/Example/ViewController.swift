@@ -33,14 +33,14 @@ class ViewController: NSViewController {
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
         
         if let badgeText = galleryItem.badge {
-            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
+            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .overlay(), position: .topRight)]
         }
         
         // Apply the configuration
         collectionViewItem.contentConfiguration = configuration
         
         // Gets called when the item state changes (on selection, mouse hover, etc.)
-        collectionViewItem.configurationUpdateHandler = { item, state in
+        collectionViewItem.configurationUpdateHandler = { item, state in            
             // Adds a selection border for state.isSelected
             configuration = configuration.updated(for: state)
             

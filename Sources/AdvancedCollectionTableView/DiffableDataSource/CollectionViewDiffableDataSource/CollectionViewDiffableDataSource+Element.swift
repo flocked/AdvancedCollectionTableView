@@ -17,7 +17,7 @@ extension AdvanceCollectionViewDiffableDataSource {
     internal var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
     }
-
+    
     /// An array of the selected elements.
     public var selectedElements: [Element] {
         return self.collectionView.selectionIndexPaths.compactMap({element(for: $0)})

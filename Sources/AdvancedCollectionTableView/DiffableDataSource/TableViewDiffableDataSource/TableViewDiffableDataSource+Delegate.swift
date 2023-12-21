@@ -94,7 +94,7 @@ extension AdvanceTableViewDiffableDataSource {
         
         public func tableViewColumnDidMove(_ notification: Notification) {
             guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
-                    let newPos = notification.userInfo?["NSNewColumn"] as? Int,
+                  let newPos = notification.userInfo?["NSNewColumn"] as? Int,
                   let tableColumn = dataSource.tableView.tableColumns[safe: newPos] else { return }
             dataSource.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
         }

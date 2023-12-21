@@ -15,9 +15,9 @@ public extension NSCollectionView {
      Dequeues a configured reusable item object.
      
      - Parameters:
-        - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
-        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
-        - element: The element that provides data for the item.
+     - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
+     - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
+     - element: The element that provides data for the item.
      
      - returns:A configured reusable item object.
      */
@@ -86,8 +86,8 @@ public extension NSCollectionView {
          Creates a item registration with the specified registration handler.
          
          - Parameters:
-            - identifier: The identifier of the item registration.
-            - handler: The handler to configurate the item.
+         - identifier: The identifier of the item registration.
+         - handler: The handler to configurate the item.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
@@ -99,9 +99,9 @@ public extension NSCollectionView {
          Creates a item registration with the specified registration handler and nib file.
          
          - Parameters:
-            - nib: The nib of the item.
-            - identifier: The identifier of the item registration.
-            - handler: The handler to configurate the item.
+         - nib: The nib of the item.
+         - identifier: The identifier of the item registration.
+         - handler: The handler to configurate the item.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib

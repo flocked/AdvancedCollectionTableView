@@ -10,7 +10,7 @@ import FZUIKit
 import FZQuicklook
 import FZSwiftUtils
 /**
-An advanced version or `NSTableViewDiffableDataSource`.
+ An advanced version or `NSTableViewDiffableDataSource`.
  
  It provides:
  - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
@@ -137,9 +137,9 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
      The system interrupts any ongoing item animations and immediately reloads the table view’s content.
      
      - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the table view.
-        - option: Option how to apply the snapshot to the table view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
+     - snapshot: The snapshot that reflects the new state of the data in the table view.
+     - option: Option how to apply the snapshot to the table view.
+     - completion: A optional completion handlers which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
@@ -158,7 +158,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         }
         return internalSnapshot
     }
-
+    
     internal func updateSectionHeaderRows() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
@@ -256,7 +256,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         self.tableView.delegate = self
         self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-
+        
     }
     
     /// A closure that configures and returns a cell for a table view from its diffable data source.
@@ -430,7 +430,7 @@ public class AdvanceTableViewDiffableDataSource<Section, Item> : NSObject, NSTab
             }
         }
     }
-            
+    
     internal func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()

@@ -225,9 +225,9 @@ public extension NSCollectionViewItem {
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
                 /*
-                if #available(macOS 14.0, *) {
-                    self.view.clipsToBounds = false
-                }
+                 if #available(macOS 14.0, *) {
+                 self.view.clipsToBounds = false
+                 }
                  */
                 self.view.clipsToBounds = false
                 self.view.frame = previousFrame
@@ -274,12 +274,12 @@ public extension NSCollectionViewItem {
         
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
-          //  self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
+            //  self.configurateBackgroundView(configuration: backgroundConfiguration.updated(for: state))
         }
         
         if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
-          //  self.configurateContentView(configuration: contentConfiguration.updated(for: state))
+            //  self.configurateContentView(configuration: contentConfiguration.updated(for: state))
         }
         
         configurationUpdateHandler?(self, state)
@@ -306,9 +306,9 @@ public extension NSCollectionViewItem {
      The type of block for handling updates to the item’s configuration using the current state.
      
      - Parameters:
-        - item: The collection view item to configure.
+     - item: The collection view item to configure.
      - state: The new state to use for updating the item’s configuration.
-        */
+     */
     typealias ConfigurationUpdateHandler = (_ item: NSCollectionViewItem, _ state: NSItemConfigurationState) -> Void
     
     
@@ -319,17 +319,17 @@ public extension NSCollectionViewItem {
      
      ```swift
      item.configurationUpdateHandler = { item, state in
-        var content = NSItemContentConfiguration()
-        content.text = "Mozart"
-        content.image = NSImage(named: "Mozart"")
-        if state.isSelected {
-            content.contentProperties.borderWidth = 1.0
-            content.contentProperties.borderColor = .controlAccentColor
-        } else {
-            content.contentProperties.borderWidth = 0.0
-            content.contentProperties.borderColor = nil
-        }
-        item.contentConfiguration = content
+     var content = NSItemContentConfiguration()
+     content.text = "Mozart"
+     content.image = NSImage(named: "Mozart"")
+     if state.isSelected {
+     content.contentProperties.borderWidth = 1.0
+     content.contentProperties.borderColor = .controlAccentColor
+     } else {
+     content.contentProperties.borderWidth = 0.0
+     content.contentProperties.borderColor = nil
+     }
+     item.contentConfiguration = content
      }
      ```
      

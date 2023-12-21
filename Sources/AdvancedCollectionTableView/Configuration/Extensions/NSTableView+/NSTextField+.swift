@@ -38,7 +38,7 @@ internal extension NSTextField {
             try Swizzle(NSTextField.self) {
                 #selector(NSTextField.textDidBeginEditing(_:)) <-> #selector(swizzled_textDidBeginEditing(_:))
                 #selector(NSTextField.textDidEndEditing(_:)) <-> #selector(swizzled_textDidEndEditing(_:))
-
+                
             }
         } catch {
             Swift.debugPrint(error)

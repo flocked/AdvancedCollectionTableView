@@ -32,10 +32,10 @@ public extension NSTableViewDiffableDataSource {
      Asks the datasource for a view to display the specified row and column.
      
      - Parameters:
-        - tableView: The table view that sent the message.
-        - tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
-        - row: The row index.
-
+     - tableView: The table view that sent the message.
+     - tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
+     - row: The row index.
+     
      - Returns: The view to display the specified column and row.
      */
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -54,9 +54,9 @@ public extension NSTableViewDiffableDataSource {
      Asks the delegate for a view to display the specified row.
      
      - Parameters:
-        - tableView: The table view that sent the message.
-        - row: The row index.
-
+     - tableView: The table view that sent the message.
+     - row: The row index.
+     
      - Returns: An instance or subclass of NSTableRowView. If nil is returned, an NSTableRowView instance will be created and used.
      */
     func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
@@ -75,9 +75,9 @@ public extension NSTableViewDiffableDataSource {
      Returns whether the specified row is a group row.
      
      - Parameters:
-        - tableView: The table view that sent the message.
-        - row: The row index.
-
+     - tableView: The table view that sent the message.
+     - row: The row index.
+     
      - Returns: `true` if the specified row should have the group row style drawn, `false otherwise.
      */
     func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {

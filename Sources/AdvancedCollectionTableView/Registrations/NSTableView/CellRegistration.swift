@@ -22,10 +22,10 @@ public extension NSTableView {
      Dequeues a configured reusable cell object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
-        - column: The table column in which the cell gets displayed in the table view.
-        - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - element: The element that provides data for the cell.
+     - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
+     - column: The table column in which the cell gets displayed in the table view.
+     - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+     - element: The element that provides data for the cell.
      
      - returns:A configured reusable cell object.
      */
@@ -64,7 +64,7 @@ public extension NSTableView {
      ```
      
      You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
-          
+     
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     struct CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
@@ -80,8 +80,8 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-            - columnIdentifier: The identifier of the table column.
-            - handler: The handler to configurate the cell.
+         - columnIdentifier: The identifier of the table column.
+         - handler: The handler to configurate the cell.
          */
         public init(columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.handler = handler
@@ -94,9 +94,9 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler and nib file.
          
          - Parameters:
-            - nib: The nib of the cell.
-            - columnIdentifier: The identifier of the table column.
-            - handler: The handler to configurate the cell.
+         - nib: The nib of the cell.
+         - columnIdentifier: The identifier of the table column.
+         - handler: The handler to configurate the cell.
          */
         public init(nib: NSNib, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
             self.nib = nib

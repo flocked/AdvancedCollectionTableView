@@ -13,7 +13,7 @@ import FZUIKit
  A content configuration for a collection view item based content view.
  
  An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view items via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own view via ``makeContentView()``.
-  
+ 
  ```swift
  var content = NSItemContentConfiguration()
  
@@ -177,7 +177,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         }
         return configuration
     }
-        
+    
     internal var contentAlignment: NSLayoutConstraint.Attribute  {
         switch self.contentPosition {
         case .bottom, .top: return .centerX

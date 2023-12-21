@@ -56,8 +56,8 @@ internal extension NSCollectionView {
             if let indexPath = hoveredIndexPath, let item = self.item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
-          //  previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
-         //   newValue?.setNeedsAutomaticUpdateConfiguration()
+            //  previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
+            //   newValue?.setNeedsAutomaticUpdateConfiguration()
         }
     }
     

@@ -17,8 +17,11 @@ public extension NSItemContentConfiguration {
         public enum BadgeType: Hashable {
             /// The badge is attached to the border of the item's content (image/view).
             case attachment
-            /// The badge is displayed as overlay to the item's content (image/view)
-            case overlay(spacing: CGFloat = 4.0)
+            /// The badge is displayed as overlay to the item's content (image/view) with a spacing to the content's edge.
+            case overlay(spacing: CGFloat)
+            
+            /// The badge is displayed as overlay to the item's content (image/view) with a spacing of `4.0` to the content's edge.
+            static let overlay = BadgeType.overlay(spacing: 4.0)
             
             internal var spacing: CGFloat? {
                 switch self {
@@ -78,7 +81,7 @@ public extension NSItemContentConfiguration {
          */
         public var visualEffect: VisualEffectConfiguration? = nil {
             didSet { updateResolvedColors() } }
-                
+        
         /// The border width of the badge.
         public var borderWidth: CGFloat = 0.0
         
@@ -118,7 +121,7 @@ public extension NSItemContentConfiguration {
         public var position: Position = .topRight
         
         public var spacing: CGFloat = 3.0
-
+        
         public init() {
             
         }
@@ -180,12 +183,12 @@ public extension NSItemContentConfiguration {
                 _resolvedBackgroundColor = nil
             }
             /*
-            if visualEffect?.appearance?.isDark == true, _resolvedTextColor == .white {
-                _resolvedTextColor = .labelColor
-            } else if visualEffect?.appearance?.isLight == true, _resolvedTextColor == .labelColor {
-                
-            }
-            */
+             if visualEffect?.appearance?.isDark == true, _resolvedTextColor == .white {
+             _resolvedTextColor = .labelColor
+             } else if visualEffect?.appearance?.isLight == true, _resolvedTextColor == .labelColor {
+             
+             }
+             */
         }
     }
 }
@@ -205,11 +208,11 @@ public extension NSItemContentConfiguration.Badge {
         
         /// Generates the resolved border color,, using the border color and border color transformer.
         public func resolvedTextColor() -> NSColor {
-             textColorTransform?(textColor) ?? textColor
+            textColorTransform?(textColor) ?? textColor
         }
         
         internal init() {
-
+            
         }
         
         internal var _resolvedTextColor: NSColor = .white
@@ -223,7 +226,7 @@ public extension NSItemContentConfiguration.Badge {
             case leading
             case trailing
         }
-                
+        
         /// The symbol configuration of the image.
         var symbolConfiguration: ImageSymbolConfiguration? = nil
         
@@ -237,7 +240,7 @@ public extension NSItemContentConfiguration.Badge {
         public var scaling: NSImageScaling = .scaleNone
         
         var position: Position = .leading
-                
+        
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
@@ -253,7 +256,7 @@ public extension NSItemContentConfiguration.Badge {
             }
             return nil
         }
-                
+        
         internal var _resolvedTintColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()

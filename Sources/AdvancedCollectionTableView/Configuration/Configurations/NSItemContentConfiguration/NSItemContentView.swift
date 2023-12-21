@@ -59,7 +59,7 @@ public class NSItemContentView: NSView, NSContentView {
         } else if let maxHeight = maxHeight, frame.height > maxHeight {
             frame = frame.scaled(toHeight: maxHeight)
         }
-
+        
         return frame
     }
     
@@ -75,7 +75,7 @@ public class NSItemContentView: NSView, NSContentView {
                     remainingRegion = remainingRegion.offsetBy(dx: appliedConfiguration.contentToTextPadding, dy: 0)
                 }
             } else {
-               // let contentRect = remainingRegion
+                // let contentRect = remainingRegion
             }
         }
     }
@@ -147,8 +147,8 @@ public class NSItemContentView: NSView, NSContentView {
     internal func updateConfiguration() {
         contentView.centerYConstraint?.activate(false)
         
-      //  contentView.backgroundColor = .red
-      //  Swift.print("item has", appliedConfiguration.hasContent)
+        //  contentView.backgroundColor = .red
+        //  Swift.print("item has", appliedConfiguration.hasContent)
         
         textField.properties = appliedConfiguration.textProperties
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText)

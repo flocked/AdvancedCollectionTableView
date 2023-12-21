@@ -59,7 +59,7 @@ public extension NSTableCellView {
      A Boolean value that determines whether the cell automatically updates its content configuration when its state changes.
      
      When this value is true, the cell automatically calls ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
-
+     
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     var automaticallyUpdatesContentConfiguration: Bool {
@@ -148,8 +148,8 @@ public extension NSTableCellView {
      The type of block for handling updates to the cell’s configuration using the current state.
      
      - Parameters:
-        - cell: The table view cell to configure.
-        - state: The new state to use for updating the cell’s configuration.
+     - cell: The table view cell to configure.
+     - state: The new state to use for updating the cell’s configuration.
      */
     typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSTableCellConfigurationState) -> Void
     

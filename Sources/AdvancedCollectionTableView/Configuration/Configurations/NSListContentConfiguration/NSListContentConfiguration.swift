@@ -65,7 +65,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, AutoSizeable, 
     public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
     
     // MARK: Creating item configurations
-
+    
     /// Creates a cell content configuration for a table view with plain style.
     public static func plain(imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
         var configuration = sidebar(.body, imageColor: imageColor)

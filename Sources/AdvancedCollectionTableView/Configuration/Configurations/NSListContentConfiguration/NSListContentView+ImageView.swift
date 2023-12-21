@@ -14,12 +14,12 @@ internal extension NSListContentView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
-                    update()
+                update()
             }
         }
         
         var verticalConstraint: NSLayoutConstraint? = nil
-
+        
         override var image: NSImage? {
             didSet {
                 self.isHidden = (self.image == nil)
@@ -40,7 +40,7 @@ internal extension NSListContentView {
             
             return intrinsicContentSize
         }
-                
+        
         var calculatedSize: CGSize?
         
         func update() {
@@ -54,7 +54,7 @@ internal extension NSListContentView {
             self.configurate(using: properties.shadowProperties, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
-                
+        
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)

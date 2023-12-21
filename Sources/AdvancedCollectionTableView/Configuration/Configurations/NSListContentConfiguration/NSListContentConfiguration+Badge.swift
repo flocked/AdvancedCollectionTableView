@@ -28,7 +28,7 @@ public extension NSListContentConfiguration {
         public var image: NSImage? = nil
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = ImageProperties()
-                
+        
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
         
@@ -95,7 +95,7 @@ public extension NSListContentConfiguration {
         public var position: Position = .trailing
         
         public var imageToTextPadding: CGFloat = 2.0
-
+        
         public init() {
             
         }
@@ -152,7 +152,7 @@ public extension NSListContentConfiguration.Badge {
             case leading
             case trailing
         }
-                
+        
         /// The symbol configuration of the image.
         var symbolConfiguration: ImageSymbolConfiguration? = nil
         
@@ -166,7 +166,7 @@ public extension NSListContentConfiguration.Badge {
         public var scaling: NSImageScaling = .scaleNone
         
         var position: Position = .leading
-                
+        
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
@@ -182,7 +182,7 @@ public extension NSListContentConfiguration.Badge {
             }
             return nil
         }
-                
+        
         internal var _resolvedTintColor: NSColor? = nil
         internal mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()

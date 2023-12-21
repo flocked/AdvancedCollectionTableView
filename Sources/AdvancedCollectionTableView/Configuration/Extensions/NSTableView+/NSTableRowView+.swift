@@ -157,8 +157,8 @@ public extension NSTableRowView {
      The type of block for handling updates to the row’s configuration using the current state.
      
      - Parameters:
-        - row: The table view row to configure.
-        - state: The new state to use for updating the row’s configuration.
+     - row: The table view row to configure.
+     - state: The new state to use for updating the row’s configuration.
      */
     typealias ConfigurationUpdateHandler = (_ rowView: NSTableRowView, _ state: NSTableRowConfigurationState) -> Void
     
