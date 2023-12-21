@@ -41,21 +41,6 @@ public extension NSListContentConfiguration {
             /// The image isn't resized.
             case none
             
-            var contentMode: ContentMode? {
-                switch self {
-                case .fit: return .fit
-                case .resize: return .fill
-                case .none: return nil
-                }
-            }
-            
-            var resizable: Bool {
-                switch self {
-                case .none: return false
-                default: return true
-                }
-            }
-            
             var imageScaling: NSImageScaling {
                 switch self {
                 case .fit: return .scaleProportionallyUpOrDown
