@@ -352,16 +352,14 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
-            let dragingItems = self.dragingRowIndexes.compactMap({item(forRow: $0)})
-            guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering else {
-                return false
-            }
             if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)
                 self.apply(transaction.finalSnapshot, .withoutAnimation)
                 self.selectItems(selectedItems)
                 self.reorderingHandlers.didReorder?(transaction)
+            } else {
+                return false
             }
         }
         return true
@@ -538,13 +536,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
         var snapshot = self.snapshot()
         if isLast {
-            for item in dragingItems.reversed() {
-                snapshot.moveItem(item, afterItem: toItem)
-            }
+            dragingItems.reversed().forEach({ snapshot.moveItem($0, afterItem: toItem) })
         } else {
-            for item in dragingItems {
-                snapshot.moveItem(item, beforeItem: toItem)
-            }
+            dragingItems.forEach({ snapshot.moveItem($0, beforeItem: toItem) })
         }
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)

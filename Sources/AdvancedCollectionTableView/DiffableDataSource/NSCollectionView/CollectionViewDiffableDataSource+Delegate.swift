@@ -70,21 +70,14 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
                 if let transaction = self.dataSource.movingTransaction(at: Array(self.dataSource.draggingIndexPaths), to: indexPath) {
+                    let selectedElements = dataSource.selectedElements
                     self.dataSource.reorderingHandlers.willReorder?(transaction)
                     self.dataSource.apply(transaction.finalSnapshot)
+                    self.dataSource.selectElements(selectedElements, scrollPosition: [])
                     self.dataSource.reorderingHandlers.didReorder?(transaction)
+                } else {
+                    return false
                 }
-                /*
-                 //  self.dataSource.reorderingHandlers.willReorder?(self.dataSource.draggingElements)
-                 let previousSnapshot = self.dataSource.currentSnapshot
-                 self.dataSource.moveElements(at: Array(self.dataSource.draggingIndexPaths), to: indexPath)
-                 if let didReorder = self.dataSource.reorderingHandlers.didReorder {
-                 let newSnapshot = self.dataSource.currentSnapshot
-                 let difference = previousSnapshot.itemIdentifiers.difference(from: newSnapshot.itemIdentifiers)
-                 let transaction = DiffableDataSourceTransaction(initialSnapshot: previousSnapshot, finalSnapshot: newSnapshot, difference: difference)
-                 didReorder(transaction)
-                 }
-                 */
             }
             return true
         }
