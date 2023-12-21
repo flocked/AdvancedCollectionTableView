@@ -11,7 +11,7 @@ import FZUIKit
 import SwiftUI
 
 internal extension NSListContentView {
-    class CellImageView: ImageView {
+    class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
@@ -27,11 +27,6 @@ internal extension NSListContentView {
         
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("setBackgroundStyle", backgroundStyle.rawValue)
-            if backgroundStyle == .emphasized {
-                (self.layer as? ImageLayer)?.tintColor = .alternateSelectedControlTextColor
-            } else {
-                (self.layer as? ImageLayer)?.tintColor = self.tintColor?.resolvedColor(for: self)
-            }
         }
         
         override var intrinsicContentSize: NSSize {
@@ -53,12 +48,12 @@ internal extension NSListContentView {
         var verticalConstraint: NSLayoutConstraint? = nil
         
         func update() {
-            self.imageScaling = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
+            self.imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling.imageScaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.tintColor = properties._resolvedTintColor
+            self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
             self.configurate(using: properties.shadow, type: .outer)
             self.invalidateIntrinsicContentSize()
