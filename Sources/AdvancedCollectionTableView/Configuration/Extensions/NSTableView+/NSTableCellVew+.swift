@@ -299,6 +299,7 @@ public extension NSTableCellView {
         get { getAssociatedValue(key: "CellTextField", object: self, initialValue: .init(wrappingLabelWithString: "")) }
     }
     class TextField: NSTextField {
+        
         lazy var textCell = TextCell(textCell: "")
         public override var cell: NSCell? {
             get { textCell }
@@ -307,6 +308,11 @@ public extension NSTableCellView {
         
         class TextCell: NSTextFieldCell {
             var backgroundStyleHandler: (()->())? = nil
+            override var interiorBackgroundStyle: NSView.BackgroundStyle {
+                backgroundStyleHandler?()
+                return backgroundStyle
+            }
+            
             override var backgroundStyle: NSView.BackgroundStyle {
                 didSet {
                     guard oldValue != backgroundStyle else { return }
