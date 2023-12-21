@@ -40,6 +40,8 @@ let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, G
 
 A port of UIContentConfiguration that allows configurating NSCollectionView items and NSTableView cells via content configurations.
 
+`NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide the property `contentConfiguration` where you can apply configurations.
+
 ### NSHostingConfiguration
 
 A content configuration suitable for hosting a hierarchy of SwiftUI views.
