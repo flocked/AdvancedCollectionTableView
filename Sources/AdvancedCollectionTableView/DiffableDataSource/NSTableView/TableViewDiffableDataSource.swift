@@ -533,18 +533,22 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             isLast = true
         }
         let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
-        guard !dragingItems.isEmpty, self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
             return nil
         }
-        let initalSnapshot = self.currentSnapshot
-        var finalSnapshot = self.snapshot()
+        var snapshot = self.snapshot()
         if isLast {
-            finalSnapshot.moveItems(dragingItems.reversed(), afterItem: toItem)
+            for item in dragingItems.reversed() {
+                snapshot.moveItem(item, afterItem: toItem)
+            }
         } else {
-            finalSnapshot.moveItems(dragingItems, beforeItem: toItem)
+            for item in dragingItems {
+                snapshot.moveItem(item, beforeItem: toItem)
+            }
         }
-        let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
+        let initalSnapshot = self.currentSnapshot
+        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     // MARK: - Sections
