@@ -79,10 +79,15 @@ public extension NSTableCellView {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            self._textField.textCell.backgroundStyleHandler = {
+                Swift.print("backgroundstyle changed")
+            }
+            self.textField = self._textField
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 self.contentView?.removeFromSuperview()
+               // self.textField
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
                 self.translatesAutoresizingMaskIntoConstraints = false
@@ -289,4 +294,25 @@ public extension NSTableCellView {
      }
      }
      */
+    
+    var _textField: NSTableCellView.TextField {
+        get { getAssociatedValue(key: "CellTextField", object: self, initialValue: .init()) }
+    }
+    class TextField: NSTextField {
+        lazy var textCell = TextCell(textCell: "")
+        public override var cell: NSCell? {
+            get { textCell }
+            set { }
+        }
+        
+        class TextCell: NSTextFieldCell {
+            var backgroundStyleHandler: (()->())? = nil
+            override var backgroundStyle: NSView.BackgroundStyle {
+                didSet {
+                    guard oldValue != backgroundStyle else { return }
+                    backgroundStyleHandler?()
+                }
+            }
+        }
+    }
 }

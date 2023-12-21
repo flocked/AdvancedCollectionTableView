@@ -10,6 +10,7 @@ import AdvancedCollectionTableView
 import FZUIKit
 import FZSwiftUtils
 
+
 class ViewController: NSViewController {
     
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
@@ -33,7 +34,7 @@ class ViewController: NSViewController {
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
         
         if let badgeText = galleryItem.badge {
-            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .overlay(), position: .topRight)]
+            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
         }
         
         // Apply the configuration
