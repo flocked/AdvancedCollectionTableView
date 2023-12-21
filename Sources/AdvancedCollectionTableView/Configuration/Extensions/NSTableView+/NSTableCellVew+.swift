@@ -79,16 +79,17 @@ public extension NSTableCellView {
     
     internal func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            Swift.print("cell", self._textField.cell != nil)
-            textFieldBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.backgroundStyle, handler: { old, new in
-                guard old != new else { return }
-                Swift.print("backgroundStyle changed", new.rawValue)
-            })
-            textFieldInteriorBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.interiorBackgroundStyle, handler: { old, new in
-                guard old != new else { return }
-                Swift.print("interiorBackgroundStyle changed", new.rawValue)
-            })
-            self.textField = self._textField
+            if textFieldBackgroundStyleObserver == nil {
+                textFieldBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.backgroundStyle, handler: { old, new in
+                    guard old != new else { return }
+                    Swift.print("backgroundStyle changed", new.rawValue)
+                })
+                textFieldInteriorBackgroundStyleObserver = self._textField.cell?.observeChanges(for: \.interiorBackgroundStyle, handler: { old, new in
+                    guard old != new else { return }
+                    Swift.print("interiorBackgroundStyle changed", new.rawValue)
+                })
+                self.textField = self._textField
+            }
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
