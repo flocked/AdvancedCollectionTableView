@@ -511,9 +511,20 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     internal func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         let elements = indexPaths.compactMap({self.element(for: $0)})
+        var toIndexPath = toIndexPath
+        var isLast = false
+        if let section = currentSnapshot.sectionIdentifiers[safe: toIndexPath.section], toIndexPath.item >= currentSnapshot.numberOfItems(inSection: section) {
+            toIndexPath.item -= 1
+            isLast = true
+        }
+        
         if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
             var snapshot = self.snapshot()
-            elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
+            if isLast {
+                elements.reversed().forEach({snapshot.moveItem($0, afterItem: toElement)})
+            } else {
+                elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
+            }
             let initalSnapshot = self.currentSnapshot
             let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
             return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
