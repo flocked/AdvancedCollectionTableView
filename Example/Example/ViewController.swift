@@ -86,8 +86,8 @@ class ViewController: NSViewController {
 
         toolbar.attachedWindow = self.view.window
         
-        // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
-        collectionView.becomeFirstResponder()
+        // Make the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
+        self.view.window?.makeFirstResponder(collectionView)
         
         collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }

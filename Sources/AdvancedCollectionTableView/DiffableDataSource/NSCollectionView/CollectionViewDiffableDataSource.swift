@@ -61,20 +61,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
     /**
-     A closure that configures and returns a item for a collection view from its diffable data source.
-     
-     A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
-     
-     - Parameters:
-        - collectionView: The collection view to configure this cell for.
-        -  indexpath: The index path that specifies the location of the item in the collection view.
-        - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
-     
-     - Returns: A non-`nil` configured item object. The item provider must return a valid cell object to the collection view.
-     */
-    public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
-    
-    /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
      */
     public var supplementaryViewProvider: SupplementaryViewProvider? = nil
@@ -96,7 +82,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      If the value of this property is true (the default is false), users can delete items.
      */
     public var allowsDeleting: Bool = false {
-        didSet { self.setupKeyDownMonitor() }
+        didSet { self.observeKeyDown() }
     }
     /**
      A Boolean value that indicates whether users can reorder items in the collection view when dragging them via mouse.
@@ -116,12 +102,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      When returning a menu to the `menuProvider`, the collection view will display a menu on right click.
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil {
-        didSet { setupRightDownMonitor() } }
+        didSet { observeRightMouseDown() } }
     
     /// A handler that gets called whenever collection view magnifies.
-    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
-    
-    internal func setupMagnificationHandler() {
+    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.observeMagnificationGesture() } }
+                    
+    internal func observeMagnificationGesture() {
         if pinchHandler != nil {
             if (magnifyGestureRecognizer == nil) {
                 self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
@@ -150,7 +136,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
     }
     
-    internal func setupRightDownMonitor() {
+    internal func observeRightMouseDown() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
                 self.collectionView.menu = nil
@@ -185,7 +171,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func setupHoverObserving() {
+    internal func observeHoveredItem() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.collectionView.setupObservingView()
             if hoveredItemObserver == nil {
@@ -204,7 +190,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func ensureTrackingDisplayingItems() {
+    internal func observeDisplayingItems() {
         if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
@@ -311,6 +297,21 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         sharedInit()
     }
+    
+    /**
+     A closure that configures and returns a item for a collection view from its diffable data source.
+     
+     A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
+     
+     - Parameters:
+        - collectionView: The collection view to configure this cell for.
+        -  indexpath: The index path that specifies the location of the item in the collection view.
+        - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
+     
+     - Returns: A non-`nil` configured item object. The item provider must return a valid cell object to the collection view.
+     */
+    public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
+    
     /**
      Creates a diffable data source with the specified item registration, and connects it to the specified collection view.
      
@@ -525,6 +526,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         } else {
             elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
         }
+        elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
+
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
         return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
@@ -567,7 +570,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers that get called whenever the mouse is hovering an item.
     public var hoverHandlers = HoverHandlers() {
-        didSet { self.setupHoverObserving() } }
+        didSet { self.observeHoveredItem() } }
     
     /// Handlers for selection of items.
     public var selectionHandlers = SelectionHandlers()
@@ -580,7 +583,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     ///Handlers for the displayed items. The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview scrolls to new items).
     public var displayHandlers = DisplayHandlers() {
-        didSet {  self.ensureTrackingDisplayingItems() } }
+        didSet {  self.observeDisplayingItems() } }
     
     /// Handlers for prefetching elements.
     public var prefetchHandlers = PrefetchHandlers()
@@ -613,11 +616,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for deletion of items.
     public struct DeletionHandlers {
-        /// The Handler that determines whether elements should get deleted.
-        public var shouldDelete: ((_ elements: [Element]) -> [Element])? = nil
-        /// The Handler that that prepares the diffable data source for deleting elements.
+        /// The Handler that determines which elements can be be deleted.
+        public var canDelete: ((_ elements: [Element]) -> [Element])? = nil
+        /// The Handler that that gets called before deleting elements.
         public var willDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
-        /// The Handler that gets called whenever elements get deleted.
+        /// The Handler that that gets called after deleting elements.
         public var didDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
@@ -634,7 +637,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /// Handlers for the highlight state of items.
     public struct HighlightHandlers {
         /// The Handler that determines which elements should change to a highlight state.
-        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
+        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil    
         /// The Handler that gets called whenever elements changed their highlight state.
         public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
@@ -683,6 +686,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
 }
+
+// MARK: - Quicklook
 
 extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {

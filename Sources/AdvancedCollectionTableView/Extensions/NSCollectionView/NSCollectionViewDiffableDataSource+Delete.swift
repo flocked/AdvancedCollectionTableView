@@ -36,7 +36,7 @@ public extension NSCollectionViewDiffableDataSource {
     /// Handlers for deletion.
     struct DeletionHandlers {
         /// The Handler that determines whether Itemlements should get deleted.
-        public var shouldDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
+        public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
         /// The Handler that gets called whenever Itemlements get deleted.
         public var didDelete: ((_ items: [ItemIdentifierType]) -> ())? = nil
     }
@@ -55,8 +55,8 @@ public extension NSCollectionViewDiffableDataSource {
                     if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
                         let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
                         var elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
-                        if !elementsToDelete.isEmpty, let shouldDelete = self.deletionHandlers.shouldDelete {
-                            elementsToDelete = shouldDelete(elementsToDelete)
+                        if !elementsToDelete.isEmpty, let canDelete = self.deletionHandlers.canDelete {
+                            elementsToDelete = canDelete(elementsToDelete)
                         }
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {

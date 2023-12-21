@@ -38,11 +38,13 @@ internal extension NSItemContentView {
         
         var overlayView: NSView? = nil {
             didSet {
+                guard oldValue != overlayView else { return }
                 oldValue?.removeFromSuperview()
                 if let newView = self.overlayView {
                     newView.clipsToBounds = true
+                    newView.cornerRadius = contentProperties.cornerRadius
                     newView.frame.size = self.bounds.size
-                    self.addSubview(newView)
+                    containerView.addSubview(newView)
                 }
             }
         }

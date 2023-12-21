@@ -38,7 +38,6 @@ class SidebarViewController: NSViewController {
         dataSource.allowsReordering = true
         // Enables deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
-        tableView.allowsMultipleSelection = true
         
         // Provides right click menu that displays the title of each selected sidebar item.
         dataSource.menuProvider = { sidebarItems in

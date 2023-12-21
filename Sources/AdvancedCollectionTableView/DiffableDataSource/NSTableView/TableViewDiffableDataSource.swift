@@ -616,11 +616,11 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     /// Handlers for deletion.
     public struct DeletionHandlers {
-        /// The Handler that determines whether Itemlements should get deleted.
-        public var shouldDelete: ((_ items: [Item]) -> [Item])? = nil
-        /// The Handler that that prepares the diffable data source for deleting items.
+        /// The Handler that determines which items can be be deleted.
+        public var canDelete: ((_ items: [Item]) -> [Item])? = nil
+        /// The Handler that that gets called before deleting items.
         public var willDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-        /// The Handler that gets called whenever Itemlements get deleted.
+        /// The Handler that gets called after deleting items.
         public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
@@ -666,6 +666,8 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
     }
 }
+
+// MARK: - Quicklook
 
 extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
     public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {

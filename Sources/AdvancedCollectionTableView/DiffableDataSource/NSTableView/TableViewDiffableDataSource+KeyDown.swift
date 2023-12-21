@@ -16,7 +16,7 @@ internal extension TableViewDiffableDataSource {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self, self.tableView.isFirstResponder else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        let elementsToDelete = deletionHandlers.shouldDelete?(self.selectedItems) ?? self.selectedItems
+                        let elementsToDelete = deletionHandlers.canDelete?(self.selectedItems) ?? self.selectedItems
                         if (elementsToDelete.isEmpty == false) {
                             let transaction = self.deletingTransaction(elementsToDelete)
                             self.deletionHandlers.willDelete?(elementsToDelete, transaction)
