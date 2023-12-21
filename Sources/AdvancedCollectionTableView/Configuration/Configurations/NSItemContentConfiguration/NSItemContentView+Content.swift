@@ -21,16 +21,17 @@ internal extension NSItemContentView {
         }
         
         let imageView: ImageView = ImageView()
+        let containerView = NSView(frame: .zero)
         var badgeViews: [BadgeView] = []
         
         var view: NSView? = nil {
             didSet {
                 oldValue?.removeFromSuperview()
                 if let newView = self.view {
-                    self.addSubview(withConstraint: newView)
+                    newView.frame.size = self.bounds.size
                     newView.clipsToBounds = true
+                    containerView.addSubview(newView)
                     self.overlayView?.sendToFront()
-                    self.badgeViews.forEach({$0.sendToFront()})
                 }
             }
         }
@@ -39,9 +40,9 @@ internal extension NSItemContentView {
             didSet {
                 oldValue?.removeFromSuperview()
                 if let newView = self.overlayView {
-                    self.addSubview(withConstraint: newView)
                     newView.clipsToBounds = true
-                    self.badgeViews.forEach({$0.sendToFront()})
+                    newView.frame.size = self.bounds.size
+                    self.addSubview(newView)
                 }
             }
         }
@@ -93,6 +94,7 @@ internal extension NSItemContentView {
             super.layout()
         //    Swift.print("layout", self.frame.size)
             invalidateIntrinsicContentSize()
+            self.containerView.frame.size = self.bounds.size
             self.imageView.frame.size = self.bounds.size
             /*
              if let imageSize = image?.size, contentProperties.imageScaling.shouldResize {
@@ -283,13 +285,11 @@ internal extension NSItemContentView {
         
         func updateConfiguration() {
             self.backgroundColor = contentProperties._resolvedBackgroundColor
-            self.borderColor = contentProperties._resolvedBorderColor
-            self.borderWidth = contentProperties.resolvedBorderWidth
+            self.containerView.borderColor = contentProperties._resolvedBorderColor
+            self.containerView.borderWidth = contentProperties.resolvedBorderWidth
+         
             self.cornerRadius = contentProperties.cornerRadius
-            self.imageView.cornerRadius = contentProperties.cornerRadius
-            self.overlayView?.cornerRadius = contentProperties.cornerRadius
-            self.view?.cornerRadius = contentProperties.cornerRadius
-            
+            self.containerView.cornerRadius = contentProperties.cornerRadius
             self.imageView.cornerRadius = contentProperties.cornerRadius
             self.view?.cornerRadius = contentProperties.cornerRadius
             self.overlayView?.cornerRadius = contentProperties.cornerRadius
@@ -322,8 +322,10 @@ internal extension NSItemContentView {
             self.configuration = configuration
             super.init(frame: .zero)
             self.clipsToBounds = false
+            self.containerView.clipsToBounds = true
+            self.addSubview(containerView)
             self.imageView.clipsToBounds = true
-            self.addSubview(imageView)
+            containerView.addSubview(imageView)
             self.updateConfiguration()
         }
         
