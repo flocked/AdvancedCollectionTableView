@@ -18,9 +18,6 @@ class SidebarViewController: NSViewController {
     
     lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
     
-    /// Sample items.
-    var items: [SidebarItem] = SidebarItem.sampleItems
-    
     let cellRegistration: CellRegistration = CellRegistration() { cell, column, row, sidebarItem in
         // defaultContentConfiguration returns a list content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = cell.defaultContentConfiguration()
@@ -49,10 +46,10 @@ class SidebarViewController: NSViewController {
             return menu
         }
         
-        applySnapshot()
+        applySnapshot(with: SidebarItem.sampleItems)
     }
     
-    func applySnapshot() {
+    func applySnapshot(with items: [SidebarItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items, toSection: .main)

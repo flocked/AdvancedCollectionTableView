@@ -74,10 +74,7 @@ class ViewController: NSViewController {
         dataSource.allowsDeleting = true
         // Enables reordering of items via drag and drop.
         dataSource.allowsReordering = true
-        
-        collectionView.allowsMultipleSelection = true
-        
-        // Applies a snapshot with sample gallery items.
+                
         applySnapshot(with: GalleryItem.sampleItems)
     }
     
