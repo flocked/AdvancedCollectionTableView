@@ -208,9 +208,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      The system interrupts any ongoing item animations and immediately reloads the table view’s content.
      
      - Parameters:
-     - snapshot: The snapshot that reflects the new state of the data in the table view.
-     - option: Option how to apply the snapshot to the table view.
-     - completion: A optional completion handlers which gets called after applying the snapshot.
+        - snapshot: The snapshot that reflects the new state of the data in the table view.
+        - option: Option how to apply the snapshot to the table view.
+        - completion: A optional completion handlers which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
@@ -252,8 +252,8 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
         self.init(tableView: tableView, cellProvider:  {
@@ -272,13 +272,13 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
-            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifier == column.identifier})!
+            let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true})!
             return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
         })
     }
@@ -296,8 +296,8 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView

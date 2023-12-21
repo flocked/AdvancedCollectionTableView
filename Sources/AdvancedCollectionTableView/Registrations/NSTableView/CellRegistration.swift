@@ -9,8 +9,10 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
+/// A table view cell registration.
 public protocol NSTableViewCellRegistration {
-    var columnIdentifier: NSUserInterfaceItemIdentifier? { get }
+    /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
+    var columnIdentifiers: [NSUserInterfaceItemIdentifier]? { get }
 }
 
 internal protocol _NSTableViewCellRegistration {
@@ -22,9 +24,9 @@ public extension NSTableView {
      Dequeues a configured reusable cell object.
      
      - Parameters:
-     - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
-     - column: The table column in which the cell gets displayed in the table view.
-     - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
+        - column: The table column in which the cell gets displayed in the table view.
+        - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
      - element: The element that provides data for the cell.
      
      - returns:A configured reusable cell object.
@@ -69,10 +71,12 @@ public extension NSTableView {
      */
     struct CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
         
-        internal let identifier: NSUserInterfaceItemIdentifier
+        let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
         private let handler: Handler
-        public let columnIdentifier: NSUserInterfaceItemIdentifier?
+        
+        /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
+        public let columnIdentifiers: [NSUserInterfaceItemIdentifier]?
         
         // MARK: Creating a cell registration
         
@@ -80,29 +84,29 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-         - columnIdentifier: The identifier of the table column.
-         - handler: The handler to configurate the cell.
+            - columnIdentifiers: The identifiers of the table columns,. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - handler: The handler to configurate the cell.
          */
-        public init(columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
             self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
-            self.columnIdentifier = columnIdentifier
+            self.columnIdentifiers = columnIdentifiers
         }
         
         /**
          Creates a cell registration with the specified registration handler and nib file.
          
          - Parameters:
-         - nib: The nib of the cell.
-         - columnIdentifier: The identifier of the table column.
-         - handler: The handler to configurate the cell.
+            - nib: The nib of the cell.
+            - columnIdentifiers: The identifiers of the table columns,. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - handler: The handler to configurate the cell.
          */
-        public init(nib: NSNib, columnIdentifier: NSUserInterfaceItemIdentifier? = nil, handler: @escaping Handler) {
+        public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
             self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
-            self.columnIdentifier = columnIdentifier
+            self.columnIdentifiers = columnIdentifiers
         }
         
         /// A closure that handles the cell registration and configuration.
@@ -110,7 +114,7 @@ public extension NSTableView {
         
         internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)
-            if let columnIdentifier = self.columnIdentifier, tableColumn.identifier != columnIdentifier {
+            if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
@@ -122,7 +126,7 @@ public extension NSTableView {
         
         internal func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
             self.registerIfNeeded(for: tableView)
-            if let columnIdentifier = self.columnIdentifier, tableColumn.identifier != columnIdentifier {
+            if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
             let element = element as! Element

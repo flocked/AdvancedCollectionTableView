@@ -1,6 +1,6 @@
-# Configurating Collection View Items
+# Registering Table Cells
 
-Configurate the content and background of a collection view item.
+Register table cell views with ``AppKit/NSTableView/CellRegistration``.
 
 ## Overview
 

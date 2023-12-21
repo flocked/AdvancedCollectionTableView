@@ -1,4 +1,4 @@
-# Configurating Table Cell Views
+# Configurating Table Cells
 
 Configurate the content of a table view cell.
 

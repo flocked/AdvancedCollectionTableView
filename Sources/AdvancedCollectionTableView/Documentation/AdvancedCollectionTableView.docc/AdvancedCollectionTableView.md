@@ -10,19 +10,21 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 ### Registrations
 
+- <doc:Registering-Collection-Items>
 - ``AppKit/NSCollectionView/ItemRegistration``
 - ``AppKit/NSCollectionView/SupplementaryRegistration``
+- <doc:Registering-Table-Cells>
 - ``AppKit/NSTableView/CellRegistration``
 - ``AppKit/NSTableView/RowViewRegistration``
 - ``AppKit/NSTableView/SectionViewRegistration``
 
 ### Content Configurations
 
-- <doc:Configurating-CollectionView-Items>
+- <doc:Configurating-Collection-Items>
 - ``NSItemContentConfiguration``
 - ``NSItemContentView``
 - ``NSItemConfigurationState``
-- <doc:Configurating-TableView-Cells>
+- <doc:Configurating-Table-Cells>
 - ``NSListContentConfiguration``
 - ``NSListContentView``
 - ``NSTableCellConfigurationState``
@@ -32,29 +34,4 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 - ``CollectionViewDiffableDataSource``
 - ``TableViewDiffableDataSource``
-
-### Collection view content configuration
-- ``AppKit/NSCollectionViewItem/backgroundConfiguration``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-- ``AppKit/NSCollectionViewItem/backgroundView``
-- ``AppKit/NSCollectionViewItem/selectedBackgroundView``
-- ``AppKit/NSCollectionViewItem/contentConfiguration``
-- ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-- ``AppKit/NSCollectionViewItem/configurationState``
-- ``NSItemConfigurationState``
-- ``AppKit/NSCollectionViewItem/setNeedsUpdateConfiguration()``
-- ``AppKit/NSCollectionViewItem/updateConfiguration(using:)``
-- ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
-- ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
-
-### Table cell content configuration
-- ``AppKit/NSTableCellView/contentConfiguration``
-- ``AppKit/NSTableCellView/defaultContentConfiguration()``
-- ``AppKit/NSTableCellView/automaticallyUpdatesContentConfiguration``
-- ``AppKit/NSTableCellView/configurationState``
-- ``NSTableCellConfigurationState``
-- ``AppKit/NSTableCellView/setNeedsUpdateConfiguration()``
-- ``AppKit/NSTableCellView/updateConfiguration(using:)``
-- ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``
-- ``AppKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
+- ``DiffableDataSourceTransaction``
