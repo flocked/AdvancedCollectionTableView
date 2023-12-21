@@ -40,7 +40,6 @@ class GalleryItem: NSObject, Identifiable {
                 GalleryItem(title: "Techno Club", detail: "Oil painting", imageName: "techno club oil"),
                 GalleryItem(title: "Fireworker Monkey", detail: "Japanese manga", imageName: "monkey fireworkers manga"),
                 GalleryItem(title: "Dystopian City", detail: "Oil painting", imageName: "dystopian city science fiction"),
-
         ]
     }
 }
@@ -57,5 +56,17 @@ extension GalleryItem: QuicklookPreviewable {
     
     var previewItemTitle: String? {
         return self.title
+    }
+}
+
+extension Array where Element: GalleryItem {
+    // Shuffles the items by replacing the info of each item.
+    func shuffleItems() {
+        var sampleItems = GalleryItem.sampleItems
+        for galleryItem in self {
+            let newRandomItem = sampleItems.randomElement(excluding: [galleryItem])!
+            sampleItems.remove(newRandomItem)
+            galleryItem.replaceInfo(with: newRandomItem)
+        }
     }
 }

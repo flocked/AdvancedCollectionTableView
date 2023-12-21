@@ -11,7 +11,7 @@ import AdvancedCollectionTableView
 class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
-    typealias DataSource = AdvanceTableViewDiffableDataSource<Section, SidebarItem>
+    typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
     
     @IBOutlet weak var tableView: NSTableView!

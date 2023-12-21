@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-extension AdvanceTableViewDiffableDataSource {
+extension TableViewDiffableDataSource {
     /// All current sections in the collection view.
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     

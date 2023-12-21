@@ -8,12 +8,12 @@
 import AppKit
 import FZUIKit
 
-extension AdvanceTableViewDiffableDataSource {
+extension TableViewDiffableDataSource {
     internal class DelegateBridge: NSObject, NSTableViewDelegate {
         
-        weak var dataSource: AdvanceTableViewDiffableDataSource!
+        weak var dataSource: TableViewDiffableDataSource!
         
-        init(_ dataSource: AdvanceTableViewDiffableDataSource) {
+        init(_ dataSource: TableViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
             self.dataSource.tableView.delegate = self

@@ -1,5 +1,5 @@
 //
-//  AdvanceCollectionViewDiffableDataSource+Element.swift
+//  CollectionViewDiffableDataSource+Element.swift
 //  NSHostingViewSizeInTableView
 //
 //  Created by Florian Zand on 02.11.22.
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension AdvanceCollectionViewDiffableDataSource {
+extension CollectionViewDiffableDataSource {
     /// All current sections in the collection view.
     internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
     

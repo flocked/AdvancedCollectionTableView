@@ -1,5 +1,5 @@
 //
-//  AdvanceTableViewDiffableDataSource+KeyDown.swift
+//  TableViewDiffableDataSource+KeyDown.swift
 //
 //
 //  Created by Florian Zand on 24.06.23.
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZQuicklook
 
-internal extension AdvanceTableViewDiffableDataSource {    
+internal extension TableViewDiffableDataSource {    
     func setupKeyDownMonitor() {
         if self.allowsDeleting {
             if keyDownMonitor == nil {

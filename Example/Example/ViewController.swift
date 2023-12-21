@@ -14,13 +14,10 @@ import FZSwiftUtils
 class ViewController: NSViewController {
     
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
-    typealias DataSource = AdvanceCollectionViewDiffableDataSource<Section, GalleryItem>
+    typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
     @IBOutlet weak var collectionView: NSCollectionView!
-    
-    /// Sample items.
-    var galleryItems: [GalleryItem] = GalleryItem.sampleItems
     
     lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
@@ -60,12 +57,9 @@ class ViewController: NSViewController {
         ToolbarItem.Button(image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
             .label("Reconfigurate")
             .onAction {
-                var galleryItems = self.dataSource.snapshot().itemIdentifiers
-                for galleryItem in galleryItems {
-                    let newRandomItem = GalleryItem.sampleItems.randomElement(excluding: [galleryItem])!
-                    galleryItem.replaceInfo(with: newRandomItem)
-                }
-                self.dataSource.reconfigureElements(galleryItems)
+                var snapshotGalleryItems = self.dataSource.snapshot().itemIdentifiers
+                snapshotGalleryItems.shuffleItems()
+                self.dataSource.reconfigureElements(snapshotGalleryItems)
             }
     }
     
@@ -79,26 +73,27 @@ class ViewController: NSViewController {
         // Enables reordering of items via drag and drop.
         dataSource.allowsReordering = true
         
-        applySnapshot(with: galleryItems, .usingReloadData)
+        // Applies a snapshot with sample gallery items.
+        applySnapshot(with: GalleryItem.sampleItems)
         
-        collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
+        collectionView.selectItems(at: [.zero], scrollPosition: .top)
                 
         super.viewDidLoad()
     }
     
     override func viewDidAppear() {
         super.viewDidAppear()
-        toolbar.attachedWindow(self.view.window)
+        toolbar.attachedWindow = self.view.window
         
         // Makes the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
         collectionView.becomeFirstResponder()
     }
     
-    func applySnapshot(with galleryItems: [GalleryItem], _ applyOption: NSDiffableDataSourceSnapshotApplyOption = .animated) {
+    func applySnapshot(with galleryItems: [GalleryItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(galleryItems, toSection: .main)
-        dataSource.apply(snapshot, applyOption)
+        dataSource.apply(snapshot, .usingReloadData)
     }
 }
 

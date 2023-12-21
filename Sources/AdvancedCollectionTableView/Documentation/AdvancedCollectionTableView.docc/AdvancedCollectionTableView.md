@@ -30,8 +30,8 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 ### Data Sources
 
-- ``AdvanceCollectionViewDiffableDataSource``
-- ``AdvanceTableViewDiffableDataSource``
+- ``CollectionViewDiffableDataSource``
+- ``TableViewDiffableDataSource``
 
 ### Collection view content configuration
 - ``AppKit/NSCollectionViewItem/backgroundConfiguration``

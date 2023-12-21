@@ -1,5 +1,5 @@
 //
-//  AdvanceCollectionViewDiffableDataSource.swift
+//  CollectionViewDiffableDataSource.swift
 //  Coll
 //
 //  Created by Florian Zand on 02.11.22.
@@ -12,26 +12,40 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- An advanced version of `NSCollectionViewDiffableDataSource.
+ A `NSCollectionViewDiffableDataSource` with additional functionality..
  
- It provides:
- - Reordering of items by enabling ``allowsReordering`` and optionally providing blocks to ``reorderingHandlers``.
- - Deleting of items by enabling  ``allowsDeleting`` and optionally providing blocks to ``deletionHandlers``.
- - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
- - Handlers for selection of items ``selectionHandlers``.
- - Handlers for items that get hovered by mouse ``hoverHandlers``.
- - Providing a right click menu for selected items via ``menuProvider`` block.
- - Handler for pinching of the collection view via ``pinchHandler``.
+ The diffable data source provides:
+ - Reordering of items by enabling ``allowsReordering``.
+ - Deleting of items by enabling  ``allowsDeleting``.
+ - Quicklook of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - A right click menu provider for selected items via ``menuProvider``.
+
+ ### Handlers
+ 
+ It includes handlers for:
+ - Prefetching of items via ``prefetchHandlers-swift.property``.
+ - Reordering of items via ``reorderingHandlers-swift.property``.
+ - Deleting of items via ``deletionHandlers-swift.property``.
+ - Selecting of items via ``selectionHandlers-swift.property``.
+ - Highlight state of items via ``highlightHandlers-swift.property``.
+ - Displayed items via ``displayHandlers-swift.property``.
+ - Items that are hovered by mouse via ``hoverHandlers-swift.property``.
+ - Drag and drop of files from and to the collection view via ``dragDropHandlers-swift.property``.
+ - Pinching of the collection view via ``pinchHandler``.
+
+ ### Configurating the data source
+ 
+ To connect a diffable data source to a collection view, you create the diffable data source using its ``init(collectionView:itemProvider:)`` or ``init(collectionView:itemRegistration:)`` initializer, passing in the collection view you want to associate with that data source.
  
  ```swift
- dataSource = AdvanceCollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
+ collectionView.dataSource = CollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
  ```
  
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
- - Important: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
+ - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
+public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     internal typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
     internal typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     internal typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
@@ -114,7 +128,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     /// Handlers for drag and drop of files from and to the collection view.
     public var dragDropHandlers = DragdropHandlers()
     
-    /// Handlers for highlight of elements.
+    /// Handlers for the highlight state of elements.
     public var highlightHandlers = HighlightHandlers()
     
     /**
@@ -132,6 +146,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.setupMagnificationHandler() } }
+    
+    // MARK: - Snapshot
     
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
@@ -285,13 +301,15 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         previousDisplayingElements = displayingElements
     }
     
+    // MARK: - Init
+    
     /**
      Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
      
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your items to determine how to display your data in the UI.
      
      ```swift
-     dataSource = AdvanceCollectionViewDiffableDataSource<Section, Element>(collectionView: collectionView, itemProvider: {
+     dataSource = CollectionViewDiffableDataSource<Section, Element>(collectionView: collectionView, itemProvider: {
      (collectionView, indexPath, element) in
      // configure and return item
      })
@@ -325,7 +343,7 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item registration, where each of your items gets determine how to display your data in the UI.
      
      ```swift
-     dataSource = AdvanceCollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
+     dataSource = CollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
      
      - Parameters:
@@ -348,6 +366,8 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
         
         self.delegateBridge = DelegateBridge(self)
     }
+        
+    // MARK: - DataSource implementation
     
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
@@ -364,9 +384,86 @@ public class AdvanceCollectionViewDiffableDataSource<Section: Identifiable & Has
     public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
+    
+    // MARK: - Handlers
+    
+    /// Handlers for prefetching items.
+    public struct PrefetchHandlers {
+        /// Handler that tells you to begin preparing data for the elements.
+        public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
+        /// Cancels a previously triggered data prefetch request.
+        public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
+    }
+    
+    /// Handlers for selection of items.
+    public struct SelectionHandlers {
+        /// Handler that determines whether elements should get selected.
+        public var shouldSelect: ((_ elements: [Element]) -> [Element])? = nil
+        /// Handler that determines whether elements should get deselected.
+        public var shouldDeselect: ((_ elements: [Element]) -> [Element])? = nil
+        /// Handler that gets called whenever elements get selected.
+        public var didSelect: ((_ elements: [Element]) -> ())? = nil
+        /// Handler that gets called whenever elements get deselected.
+        public var didDeselect: ((_ elements: [Element]) -> ())? = nil
+    }
+    
+    /// Handlers for deletion of items.
+    public struct DeletionHandlers {
+        /// Handler that determines whether elements should get deleted.
+        public var shouldDelete: ((_ elements: [Element]) -> [Element])? = nil
+        /// Handler that gets called whenever elements get deleted.
+        public var didDelete: ((_ elements: [Element]) -> ())? = nil
+    }
+    
+    /// Handlers for reordering items.
+    public struct ReorderingHandlers {
+        /// Handler that determines whether you can reorder a particular item.
+        public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
+        /// Handler that prepares the diffable data source for reordering its items.
+        public var willReorder: ((DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
+        /// Handler that processes a reordering transaction.
+        public var didReorder: ((DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
+    }
+    
+    /// Handlers for the highlight state of items.
+    public struct HighlightHandlers {
+        /// Handler that determines which elements should change to a highlight state.
+        public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
+        /// Handler that gets called whenever elements changed their highlight state.
+        public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
+    }
+    
+    /**
+     Handlers for the displayed items.
+     
+     The handlers get called whenever the collection view is displaying new items (e.g. when the enclosing scrollview scrolls to new items).
+     */
+    public struct DisplayHandlers {
+        /// Handler that gets called whenever elements start getting displayed.
+        public var isDisplaying: ((_ elements: [Element]) -> ())?
+        /// Handler that gets called whenever elements end getting displayed.
+        public var didEndDisplaying: ((_ elements: [Element]) -> ())?
+    }
+    
+    /// Handlers that get called whenever the mouse is hovering an item.
+    public struct HoverHandlers {
+        /// The handler that gets called whenever the mouse is hovering an item.
+        public var isHovering: ((_ element: Element) -> ())?
+        /// The handler that gets called whenever the mouse did end hovering an item.
+        public var didEndHovering: ((_ element: Element) -> ())?
+    }
+    
+    /// Handlers for drag and drop of files from and to the collection view.
+    public struct DragdropHandlers {
+        public var canDropOutside: ((_ elements: [Element]) -> [Element])? = nil
+        public var dropOutside: ((_ element: Element) -> PasteboardWriting)? = nil
+        public var canDrag: (([AnyObject]) -> Bool)? = nil
+        public var dragOutside: ((_ elements: [Element]) -> [AnyObject])? = nil
+        public var draggingImage: ((_ elements: [Element], NSEvent, NSPointPointer) -> NSImage?)? = nil
+    }
 }
 
-extension AdvanceCollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
+extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
         if let item = collectionView.item(at: indexPath), let previewable = element(for: indexPath) as? QuicklookPreviewable {
             return QuicklookPreviewItem(previewable, view: item.view)

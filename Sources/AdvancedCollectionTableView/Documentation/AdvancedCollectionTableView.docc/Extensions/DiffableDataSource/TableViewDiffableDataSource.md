@@ -1,4 +1,4 @@
-# ``AdvanceTableViewDiffableDataSource``
+# ``TableViewDiffableDataSource``
 
 ## Overview
 
@@ -20,7 +20,7 @@
 
 ### Identifying items
 - ``item(forRow:)``
-- ``row(for:)-3tih3``
+- ``row(for:)-3ouhk``
 - ``item(at:)``
 - ``selectedItems``
 - ``scrollToItem(_:scrollPosition:)``
@@ -31,34 +31,35 @@
 
 ### Identifying sections
 - ``section(forRow:)``
-- ``row(for:)-8fkk``
+- ``row(for:)-3rckc``
 - ``scrollToSection(_:scrollPosition:)``
-
-### Configurating
-- ``defaultRowAnimation``
-- ``allowsDeleting``
-- ``allowsReordering``
-- ``menuProvider``
-- ``rowActionProvider``
-- ``selectionHandlers-swift.property``
-- ``SelectionHandlers-swift.struct``
-- ``reorderingHandlers-swift.property``
-- ``ReorderingHandlers-swift.struct``
-- ``deletionHandlers-swift.property``
-- ``DeletionHandlers-swift.struct``
-- ``columnHandlers-swift.property``
-- ``ColumnHandlers-swift.struct``
-- ``dragDropHandlers-swift.property``
-- ``DragdropHandlers-swift.struct``
-- ``hoverHandlers-swift.property``
-- ``HoverHandlers-swift.struct``
 
 ### Updating data
 - ``snapshot()``
 - ``apply(_:_:completion:)``
 
+### Configurating
+- ``allowsDeleting``
+- ``allowsReordering``
+- ``defaultRowAnimation``
+- ``menuProvider``
+- ``rowActionProvider``
+
+### Handlers
+- ``columnHandlers-swift.property``
+- ``deletionHandlers-swift.property``
+- ``dragDropHandlers-swift.property``
+- ``hoverHandlers-swift.property``
+- ``reorderingHandlers-swift.property``
+- ``selectionHandlers-swift.property``
+- ``ColumnHandlers-swift.struct``
+- ``DeletionHandlers-swift.struct``
+- ``DragDropHandlers-swift.struct``
+- ``HoverHandlers-swift.struct``
+- ``ReorderingHandlers-swift.struct``
+- ``SelectionHandlers-swift.struct``
+
 ### Data source requirements
-- ``numberOfRows(in:)``
 - ``tableViewColumnDidMove(_:)``
 - ``tableViewColumnDidResize(_:)``
 - ``tableViewSelectionDidChange(_:)``
@@ -66,10 +67,11 @@
 - ``tableView(_:rowViewForRow:)``
 - ``tableView(_:pasteboardWriterForRow:)``
 - ``tableView(_:viewFor:row:)``
-- ``tableView(_:quicklookPreviewForRow:)``
 - ``tableView(_:selectionIndexesForProposedSelection:)``
 - ``tableView(_:shouldReorderColumn:toColumn:)``
 - ``tableView(_:rowActionsForRow:edge:)``
+
+- ``numberOfRows(in:)``
 - ``tableView(_:draggingSession:endedAt:operation:)``
 - ``tableView(_:acceptDrop:row:dropOperation:)``
 - ``tableView(_:draggingSession:willBeginAt:forRowIndexes:)``

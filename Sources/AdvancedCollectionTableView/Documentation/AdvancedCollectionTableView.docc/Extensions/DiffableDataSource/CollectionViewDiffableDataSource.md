@@ -1,4 +1,4 @@
-# ``AdvanceCollectionViewDiffableDataSource``
+# ``CollectionViewDiffableDataSource``
 
 ## Topics
 
@@ -26,31 +26,34 @@
 - ``index(for:)``
 - ``scrollToSection(_:scrollPosition:)``
 
-### Configurating
-- ``allowsDeleting``
-- ``allowsReordering``
-- ``prefetchHandlers-swift.property``
-- ``PrefetchHandlers-swift.struct``
-- ``selectionHandlers-swift.property``
-- ``SelectionHandlers-swift.struct``
-- ``highlightHandlers-swift.property``
-- ``HighlightHandlers-swift.struct``
-- ``deletionHandlers-swift.property``
-- ``DeletionHandlers-swift.struct``
-- ``reorderingHandlers-swift.property``
-- ``ReorderingHandlers-swift.struct``
-- ``hoverHandlers-swift.property``
-- ``HoverHandlers-swift.struct``
-- ``displayHandlers-swift.property``
-- ``DisplayHandlers-swift.struct``
-- ``dragdropHandlers-swift.property``
-- ``DragdropHandlers-swift.struct``
-- ``menuProvider``
-- ``pinchHandler``
-
 ### Updating data
 - ``snapshot()``
 - ``apply(_:_:completion:)``
+
+### Configurating
+
+- ``allowsDeleting``
+- ``allowsReordering``
+- ``menuProvider``
+
+### Handlers
+- ``deletionHandlers-swift.property``
+- ``displayHandlers-swift.property``
+- ``dragDropHandlers-swift.property``
+- ``highlightHandlers-swift.property``
+- ``hoverHandlers-swift.property``
+- ``reorderingHandlers-swift.property``
+- ``selectionHandlers-swift.property``
+- ``prefetchHandlers-swift.property``
+- ``pinchHandler``
+- ``DeletionHandlers-swift.struct``
+- ``DisplayHandlers-swift.struct``
+- ``DragdropHandlers-swift.struct``
+- ``HighlightHandlers-swift.struct``
+- ``HoverHandlers-swift.struct``
+- ``ReorderingHandlers-swift.struct``
+- ``SelectionHandlers-swift.struct``
+- ``PrefetchHandlers-swift.struct``
 
 ### Data source requirements
 - ``collectionView(_:itemForRepresentedObjectAt:)``
