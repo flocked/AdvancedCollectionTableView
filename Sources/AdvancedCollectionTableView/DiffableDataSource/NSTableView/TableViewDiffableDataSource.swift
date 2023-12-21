@@ -71,15 +71,16 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
     }
     
-    /*
+    /// A closure that configures and returns a row view for a table view from its diffable data source.
+    public typealias RowViewProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
+
+    
+    /// Applies the row view registration to configure and return table row views.
     public func rowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowViewRegistration<Row, Item>) {
-        rowViewProvider = { tableView, row, identifier in
-            return registration.makeView(tableView, row, identifier as! Item)
-            
+        rowViewProvider = { tableView, row, item in
+            return registration.makeView(tableView, row, item)
         }
-        _ tableView: NSTableView, _ row: Int, _ identifier: AnyHashable
     }
-    */
     
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
     public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
@@ -94,12 +95,17 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
     }
     
-    /// A closure that configures and returns a row view for a table view from its diffable data source.
-    public typealias RowViewProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
-    
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
     
+    
+    /// Applies the section header view registration to configure and return section header views.
+    public func sectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionViewRegistration<HeaderView, Section>) {
+        sectionHeaderViewProvider = { tableView, row, section in
+            return registration.makeView(tableView, row, section)
+        }
+    }
+
     /**     
      Right click menu provider.
      
