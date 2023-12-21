@@ -521,9 +521,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         var snapshot = self.snapshot()
         if isLast {
-            snapshot.moveItems(elements, afterItem: toElement)
+            elements.reversed().forEach({snapshot.moveItem($0, afterItem: toElement)})
         } else {
-            snapshot.moveItems(elements, beforeItem: toElement)
+            elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
         }
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)

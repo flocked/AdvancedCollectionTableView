@@ -536,9 +536,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
         var snapshot = self.snapshot()
         if isLast {
-            snapshot.moveItems(dragingItems, afterItem: toItem)
+            dragingItems.reversed().forEach({ snapshot.moveItem($0, afterItem: toItem) })
         } else {
-            snapshot.moveItems(dragingItems, beforeItem: toItem)
+            dragingItems.forEach({ snapshot.moveItem($0, beforeItem: toItem) })
         }
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
