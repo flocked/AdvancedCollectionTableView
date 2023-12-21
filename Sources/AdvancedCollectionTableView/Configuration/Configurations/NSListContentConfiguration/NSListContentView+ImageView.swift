@@ -63,7 +63,12 @@ internal extension NSListContentView {
             super.init(frame: .zero)
             self.wantsLayer = true
             if let cell = cell {
-                Swift.print("cell")
+                var keyPath: PartialKeyPath<NSCell> = \.backgroundStyle
+                Swift.print("keyPath backgroundStyle", keyPath.stringValue)
+                keyPath = \.interiorBackgroundStyle
+                Swift.print("keyPath interiorBackgroundStyle", keyPath.stringValue)
+                keyPath = \.image
+                Swift.print("keyPath image", keyPath.stringValue)
                 cellObserver = KeyValueObserver(cell)
                 cellObserver?.add(\.image) { old, new in
                     guard old != new else { return }
