@@ -14,13 +14,13 @@ public extension NSTableView {
      Dequeues a configured reusable row view object.
      
      - Parameters:
-        - registration: The row view registration for configuring the rowview object. See ``AppKit/NSTableView/RowViewRegistration``.
+        - registration: The row view registration for configuring the rowview object. See ``AppKit/NSTableView/RowRegistration``.
         - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
         - element: The element that provides data for the row.
      
      - returns:A configured reusable row view object.
      */
-    func makeRowView<RowView, Element>(using registration: RowViewRegistration<RowView, Element>, forRow row: Int, element: Element) -> RowView where RowView: NSTableRowView {
+    func makeRowView<RowView, Element>(using registration: RowRegistration<RowView, Element>, forRow row: Int, element: Element) -> RowView where RowView: NSTableRowView {
         return registration.makeView(self, row, element)
     }
 }
@@ -47,7 +47,7 @@ public extension NSTableView {
      }
      ```
      */
-    struct RowViewRegistration<RowView, Element> where RowView: NSTableRowView  {
+    struct RowRegistration<RowView, Element> where RowView: NSTableRowView  {
         
         private let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

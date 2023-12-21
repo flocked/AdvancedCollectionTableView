@@ -1,5 +1,5 @@
 //
-//  SectionViewRegistration.swift
+//  SectionHeaderRegistration.swift
 //
 //
 //  Created by Florian Zand on 27.04.22.
@@ -14,13 +14,13 @@ public extension NSTableView {
      Dequeues a configured reusable section view object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionViewRegistration``.
+        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionHeaderRegistration``.
         - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
         - section: The section element that provides data for the cell.
      
      - returns:A configured reusable section view object.
      */
-    func makeSectionView<View, Section>(using registration: SectionViewRegistration<View, Section>, row: Int, section: Section) -> View where View: NSView {
+    func makeSectionView<View, Section>(using registration: SectionHeaderRegistration<View, Section>, row: Int, section: Section) -> View where View: NSView {
         return registration.makeView(self, row, section)
     }
 }
@@ -34,7 +34,7 @@ public extension NSTableView {
      The following example creates a section view registration for views of type `NSTableViewCell`. Each cells textfield displays its element.
      
      ```swift
-     let sectionViewRegistration = NSTableView.SectionViewRegistration<NSTableViewCell, String> { cell, indexPath, string in
+     let sectionViewRegistration = NSTableView.SectionHeaderRegistration<NSTableViewCell, String> { cell, indexPath, string in
      cell.textField.stringValue = string
      }
      ```
@@ -47,7 +47,7 @@ public extension NSTableView {
      }
      ```
      */
-    struct SectionViewRegistration<View, Section> where View: NSView  {
+    struct SectionHeaderRegistration<View, Section> where View: NSView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

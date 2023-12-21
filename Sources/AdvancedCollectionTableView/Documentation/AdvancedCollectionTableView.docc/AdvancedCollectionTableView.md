@@ -15,8 +15,8 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 - ``AppKit/NSCollectionView/SupplementaryRegistration``
 - <doc:Registering-Table-Cells>
 - ``AppKit/NSTableView/CellRegistration``
-- ``AppKit/NSTableView/RowViewRegistration``
-- ``AppKit/NSTableView/SectionViewRegistration``
+- ``AppKit/NSTableView/RowRegistration``
+- ``AppKit/NSTableView/SectionHeaderRegistration``
 
 ### Content Configurations
 

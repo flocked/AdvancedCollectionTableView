@@ -1,4 +1,4 @@
-# ``AppKit/NSTableView/SectionViewRegistration``
+# ``AppKit/NSTableView/SectionHeaderRegistration``
 
 ## Topics
 

@@ -30,7 +30,7 @@ public extension NSTableViewDiffableDataSource {
         - cellRegistration: A cell registration that creates, configurates and returns each of the cells for the table view from the data the diffable data source provides.
         - sectionViewRegistration: A section view registration that creates, configurates and returns each of the section header views for the table view from the data the diffable data source provides.
      */
-    convenience init<I: NSTableCellView, S: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, ItemIdentifierType>, sectionViewRegistration: NSTableView.SectionViewRegistration<S, SectionIdentifierType>) {
+    convenience init<I: NSTableCellView, S: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, ItemIdentifierType>, sectionViewRegistration: NSTableView.SectionHeaderRegistration<S, SectionIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
             return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
@@ -69,7 +69,7 @@ public extension NSTableViewDiffableDataSource {
      
      - Important: Each of the cell registrations need to have a column identifier.
      */
-    convenience init<S: NSView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], sectionViewRegistration: NSTableView.SectionViewRegistration<S, SectionIdentifierType>) {
+    convenience init<S: NSView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], sectionViewRegistration: NSTableView.SectionHeaderRegistration<S, SectionIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, element in
             if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
@@ -80,7 +80,7 @@ public extension NSTableViewDiffableDataSource {
     }
     
     /// Applies the section header view registration to configure and return section header views.
-    func sectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionViewRegistration<HeaderView, SectionIdentifierType>) {
+    func sectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, SectionIdentifierType>) {
         sectionHeaderViewProvider = { tableView, row, section in
             return registration.makeView(tableView, row, section)
         }

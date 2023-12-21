@@ -1,4 +1,4 @@
-# ``AppKit/NSTableView/RowViewRegistration``
+# ``AppKit/NSTableView/RowRegistration``
 
 ## Topics
 
