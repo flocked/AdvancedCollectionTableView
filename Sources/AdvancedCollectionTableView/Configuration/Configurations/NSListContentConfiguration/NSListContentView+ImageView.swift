@@ -25,6 +25,15 @@ internal extension NSListContentView {
             }
         }
         
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("setBackgroundStyle", backgroundStyle.rawValue)
+            if backgroundStyle == .emphasized {
+                (self.layer as? ImageLayer)?.tintColor = .alternateSelectedControlTextColor
+            } else {
+                (self.layer as? ImageLayer)?.tintColor = self.tintColor?.resolvedColor(for: self)
+            }
+        }
+        
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
             
