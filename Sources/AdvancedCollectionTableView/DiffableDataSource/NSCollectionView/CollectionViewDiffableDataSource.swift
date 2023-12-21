@@ -517,19 +517,17 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             toIndexPath.item -= 1
             isLast = true
         }
+        guard let toElement = self.element(for: toIndexPath), elements.isEmpty == false else { return nil }
         
-        if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
-            var snapshot = self.snapshot()
-            if isLast {
-                elements.reversed().forEach({snapshot.moveItem($0, afterItem: toElement)})
-            } else {
-                elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
-            }
-            let initalSnapshot = self.currentSnapshot
-            let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-            return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        var snapshot = self.snapshot()
+        if isLast {
+            snapshot.moveItems(elements, afterItem: toElement)
+        } else {
+            snapshot.moveItems(elements, beforeItem: toElement)
         }
-        return nil
+        let initalSnapshot = self.currentSnapshot
+        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     // MARK: - Sections
