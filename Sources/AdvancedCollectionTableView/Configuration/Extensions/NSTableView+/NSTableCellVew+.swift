@@ -296,7 +296,7 @@ public extension NSTableCellView {
      */
     
     var _textField: NSTableCellView.TextField {
-        get { getAssociatedValue(key: "CellTextField", object: self, initialValue: .init()) }
+        get { getAssociatedValue(key: "CellTextField", object: self, initialValue: .init(wrappingLabelWithString: "")) }
     }
     class TextField: NSTextField {
         lazy var textCell = TextCell(textCell: "")
