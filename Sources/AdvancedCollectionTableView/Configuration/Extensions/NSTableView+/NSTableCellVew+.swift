@@ -309,10 +309,8 @@ public extension NSTableCellView {
         class TextCell: NSTextFieldCell {
             var backgroundStyleHandler: (()->())? = nil
             override var interiorBackgroundStyle: NSView.BackgroundStyle {
-                if backgroundStyle != previousBackgroundStyle {
                     backgroundStyleHandler?()
                     previousBackgroundStyle = backgroundStyle
-                }
                 return backgroundStyle
             }
             
