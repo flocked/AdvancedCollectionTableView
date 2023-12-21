@@ -34,6 +34,14 @@ class SidebarViewController: NSViewController {
         
         tableView.dataSource = self.dataSource
         
+        dataSource.rowViewProvider = { tableView, row, identifier in
+            Swift.print("rowview", identifier)
+            return tableView.rowView(atRow: row, makeIfNecessary: true) ?? NSTableRowView()
+        }
+        
+        Swift.print("itemID", items.first?.id.uuidString ?? "nil")
+
+        
         // Enables reordering of rows via drag and drop.
         dataSource.allowsReordering = true
         // Enables deleting of selected rows via backspace.
