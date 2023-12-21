@@ -356,7 +356,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering else {
                 return false
             }
-            if let transaction = self.transactionForMovingItems(at: dragingRowIndexes, to: row) {
+            if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)
                 self.apply(transaction.finalSnapshot, .withoutAnimation)
@@ -517,30 +517,34 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         self.apply(snapshot, .animated)
     }
     
-    internal func transactionForMovingItems(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+    internal func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> { 
+        let initalSnapshot = self.currentSnapshot
+        var newNnapshot = self.snapshot()
+        newNnapshot.deleteItems(deletionItems)
+        let difference = initalSnapshot.itemIdentifiers.difference(from: newNnapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: newNnapshot, difference: difference)
+    }
+    
+    internal func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
         var row = row
         var isLast: Bool = false
         if row >= self.numberOfRows(in: tableView) {
             row = row - 1
             isLast = true
         }
-        let dragingItems = rowIndexes.compactMap({item(forRow: $0)})
-        guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
+        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
+        guard !dragingItems.isEmpty, self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
             return nil
         }
-        var snapshot = self.snapshot()
-        if isLast {
-            for item in dragingItems.reversed() {
-                snapshot.moveItem(item, afterItem: toItem)
-            }
-        } else {
-            for item in dragingItems {
-                snapshot.moveItem(item, beforeItem: toItem)
-            }
-        }
         let initalSnapshot = self.currentSnapshot
-        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        var finalSnapshot = self.snapshot()
+        if isLast {
+            finalSnapshot.moveItems(dragingItems.reversed(), afterItem: toItem)
+        } else {
+            finalSnapshot.moveItems(dragingItems, beforeItem: toItem)
+        }
+        let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
     }
     
     // MARK: - Sections
@@ -616,8 +620,10 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     public struct DeletionHandlers {
         /// The Handler that determines whether Itemlements should get deleted.
         public var shouldDelete: ((_ items: [Item]) -> [Item])? = nil
+        /// The Handler that that prepares the diffable data source for deleting items.
+        public var willDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
         /// The Handler that gets called whenever Itemlements get deleted.
-        public var didDelete: ((_ items: [Item]) -> ())? = nil
+        public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for drag and drop of files from and to the table view.

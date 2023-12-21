@@ -501,22 +501,22 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.apply(snapshot, .animated)
     }
     
-    internal func transactionForRemovingElements(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
-        var snapshot = self.snapshot()
-        snapshot.deleteItems(elements)
+    internal func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
         let initalSnapshot = self.currentSnapshot
-        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        var finalSnapshot = self.snapshot()
+        finalSnapshot.deleteItems(elements)
+        let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
+        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
     }
     
-    internal func transactionForMovingElements(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
+    internal func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         let elements = indexPaths.compactMap({self.element(for: $0)})
         if let toElement = self.element(for: toIndexPath), elements.isEmpty == false {
-            var snapshot = self.snapshot()
-            elements.forEach({snapshot.moveItem($0, beforeItem: toElement)})
             let initalSnapshot = self.currentSnapshot
-            let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-            return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+            var finalSnapshot = self.currentSnapshot
+            finalSnapshot.moveItems(elements, beforeItem: toElement)
+            let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
+            return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
         }
         return nil
     }
@@ -606,8 +606,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public struct DeletionHandlers {
         /// The Handler that determines whether elements should get deleted.
         public var shouldDelete: ((_ elements: [Element]) -> [Element])? = nil
+        /// The Handler that that prepares the diffable data source for deleting elements.
+        public var willDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
         /// The Handler that gets called whenever elements get deleted.
-        public var didDelete: ((_ elements: [Element]) -> ())? = nil
+        public var didDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for reordering items.

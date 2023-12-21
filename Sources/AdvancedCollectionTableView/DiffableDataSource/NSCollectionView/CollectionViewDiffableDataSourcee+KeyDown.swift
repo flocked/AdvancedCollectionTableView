@@ -21,16 +21,17 @@ internal extension CollectionViewDiffableDataSource {
         if self.allowsDeleting {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
-                    guard let self = self else { return event }
-                    guard self.collectionView.window?.firstResponder == self.collectionView else { return event }
+                    guard let self = self, self.collectionView.isFirstResponder else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        let elementsToDelete =   deletionHandlers.shouldDelete?(self.selectedElements) ?? self.selectedElements
+                        let elementsToDelete =  deletionHandlers.shouldDelete?(self.selectedElements) ?? self.selectedElements
                         if (elementsToDelete.isEmpty == false) {
+                            let transaction = self.deletionTransaction(elementsToDelete)
+                            self.deletionHandlers.willDelete?(elementsToDelete, transaction)
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
-                            self.removeElements(elementsToDelete)
-                            deletionHandlers.didDelete?(elementsToDelete)
+                            self.apply(transaction.finalSnapshot, .animated)
+                            deletionHandlers.didDelete?(elementsToDelete, transaction)
                             return nil
                         }
                     }

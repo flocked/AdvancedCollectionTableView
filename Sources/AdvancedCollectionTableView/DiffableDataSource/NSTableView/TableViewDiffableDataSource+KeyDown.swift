@@ -14,16 +14,17 @@ internal extension TableViewDiffableDataSource {
         if self.allowsDeleting {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
-                    guard let self = self else { return event }
-                    guard self.tableView.window?.firstResponder == self.tableView else { return event }
+                    guard let self = self, self.tableView.isFirstResponder else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        let elementsToDelete =   deletionHandlers.shouldDelete?(self.selectedItems) ?? self.selectedItems
+                        let elementsToDelete = deletionHandlers.shouldDelete?(self.selectedItems) ?? self.selectedItems
                         if (elementsToDelete.isEmpty == false) {
+                            let transaction = self.deletingTransaction(elementsToDelete)
+                            self.deletionHandlers.willDelete?(elementsToDelete, transaction)
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
-                            self.removeItems(elementsToDelete)
-                            deletionHandlers.didDelete?(elementsToDelete)
+                            self.apply(transaction.finalSnapshot, .animated)
+                            deletionHandlers.didDelete?(elementsToDelete, transaction)
                             return nil
                         }
                     }

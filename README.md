@@ -36,15 +36,17 @@ let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, G
 }
 ```
 
-## ContentConfiguration
+## NSContentConfiguration
 
-A port of UIContentConfiguration that allows configurating NSCollectionView items and NSTableView cells via content configurations.
+A port of UIContentConfiguration that configurates styling and content for a content view.
 
-`NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide the property `contentConfiguration` where you can apply configurations.
+`NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide the property `contentConfiguration` where you can apply them to configurate the content of the item/cell.
 
 ### NSHostingConfiguration
 
-A content configuration suitable for hosting a hierarchy of SwiftUI views.
+A content configuration suitable for hosting a hierarchy of SwiftUI views. 
+
+With this configuration you can easily display a SwiftUI view in collection item and table cell:
 
 ```swift
 collectionViewItem.contentConfiguration = NSHostingConfiguration {
@@ -70,6 +72,7 @@ A content configuration for a table cell.
  content.image = NSImage(systemSymbolName: "photo")
 
  // Customize appearance
+ content.textProperties.font = .body
  content.imageProperties.tintColor = .controlAccentColor
 
  tableCell.contentConfiguration = content
@@ -77,7 +80,7 @@ A content configuration for a table cell.
  
  ### NSItemContentconfiguration
  
-A content configuration for a collectionview item.
+A content configuration for a collection view item.
 
 ![NSItemContentconfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/AdvancedCollectionTableView.docc/Resources/NSItemContentConfiguration.png)
 
