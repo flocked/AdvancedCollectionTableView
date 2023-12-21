@@ -105,7 +105,7 @@ public class NSItemContentView: NSView, NSContentView {
                 contentRect.size = imageSize.scaled(toHeight: remainingRegion.height)
                 contentRect.center = remainingRegion.center
             } else {
-                let contentRect = remainingRegion
+               // let contentRect = remainingRegion
             }
         }
     }
