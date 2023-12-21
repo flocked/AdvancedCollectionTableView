@@ -45,9 +45,9 @@ class ViewController: NSViewController {
             // Adds a selection border for state.isSelected
             configuration = configuration.updated(for: state)
             
-            // Updates the configuration based on whether the mouse is hovering the item.
+            // Updates the configuration based on whether the mouse is hovering the item
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
-            configuration.overlayView = state.isHovered ? NSView(color: .white.withAlphaComponent(0.25)) : nil
+            configuration.overlayView = state.isHovered ? NSView(color: .white, opacity: 0.25) : nil
  
             // Apply the updated configuration
             item.contentConfiguration = configuration
@@ -55,9 +55,9 @@ class ViewController: NSViewController {
     }
         
     // Window toolbar
-    lazy var toolbar = Toolbar("Toolbar") {
+    lazy var toolbar = Toolbar() {
         // Toolbar item that reconfigurates the collectionview items without reloading them which provides much better performance compared to `reloadItems(at: )`.
-        ToolbarItem.Button("Item", image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
+        ToolbarItem.Button(image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
             .label("Reconfigurate")
             .onAction {
                 var galleryItems = self.dataSource.snapshot().itemIdentifiers
@@ -103,8 +103,10 @@ class ViewController: NSViewController {
 }
 
 fileprivate extension NSView {
-    convenience init(color: NSUIColor) {
+    /// Creates a colored view.
+    convenience init(color: NSUIColor, opacity: CGFloat) {
         self.init(frame: .zero)
         self.backgroundColor = color
+        self.alphaValue = opacity
     }
 }
