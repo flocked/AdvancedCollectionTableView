@@ -53,6 +53,18 @@ internal extension NSListContentView {
             hostingController.rootView = ContentView(image: image, properties: properties)
             updateView()
         }
+        
+        override func layout() {
+            super.layout()
+            Swift.print("layout")
+            hostingController.view.frame.size = self.bounds.size
+        }
+        
+        override func display() {
+            super.display()
+            Swift.print("display")
+            hostingController.view.frame.size = self.bounds.size
+        }
                 
         func updateView() {
             self.borderColor = properties._resolvedBorderColor
@@ -64,7 +76,7 @@ internal extension NSListContentView {
         }
         
         override var intrinsicContentSize: NSSize {
-            var intrinsicContentSize = self.image?.size ?? super.intrinsicContentSize
+            var intrinsicContentSize = self.image?.alignmentRect.size ?? super.intrinsicContentSize
             
             if image?.isSymbolImage == true, properties.position.orientation == .horizontal {
                 intrinsicContentSize.width = (intrinsicContentSize.height*2.5).rounded(.towardZero)
