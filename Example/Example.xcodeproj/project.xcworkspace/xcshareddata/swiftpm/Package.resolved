@@ -6,7 +6,7 @@
       "location" : "https://github.com/flocked/AdvancedCollectionTableView.git",
       "state" : {
         "branch" : "main",
-        "revision" : "2a6e12fb5f353ea5b48c3976e5a5bfb689c67ccf"
+        "revision" : "2a7c5b5d0a328a1264b26e4c5d862b38fc33b411"
       }
     },
     {
@@ -33,7 +33,7 @@
       "location" : "https://github.com/flocked/FZUIKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3f470c030431c0744c07112bc30adce9c5f5d365"
+        "revision" : "d272e15efb92711b822c0ce28d0cb466ddc0b471"
       }
     }
   ],
