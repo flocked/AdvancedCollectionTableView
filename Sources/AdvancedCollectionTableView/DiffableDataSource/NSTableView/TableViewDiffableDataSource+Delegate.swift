@@ -26,6 +26,10 @@ extension TableViewDiffableDataSource {
                 return
             }
             let selectedIDs = dataSource.selectedItems.ids
+            
+            let diff = selectedIDs.difference(from: previousSelectedIDs)
+           // diff.removals.first?.
+            
             let deselected = previousSelectedIDs.filter({ selectedIDs.contains($0) == false })
             let selected = selectedIDs.filter({ previousSelectedIDs.contains($0) == false })
             
@@ -55,7 +59,21 @@ extension TableViewDiffableDataSource {
             let deselected = selectedRows.filter({ proposedRows.contains($0) == false })
             let selected = proposedRows.filter({ selectedRows.contains($0) == false })
             
+            
+            let diff = selectedRows.difference(to: proposedRows)
+            let selectedItems = diff.added.compactMap({dataSource.item(forRow: $0)})
+            let deselectedItems = diff.removed.compactMap({dataSource.item(forRow: $0)})
+
             var selections: [Item] = []
+            if !selectedItems.isEmpty {
+                selections = dataSource.selectionHandlers.shouldSelect?(selectedItems) ?? selectedItems
+            }
+            
+            if !deselectedItems.isEmpty {
+                selections += dataSource.selectionHandlers.shouldDeselect?(deselectedItems) ?? deselectedItems
+            }
+            
+            /*
             let selectedItems = selected.compactMap({dataSource.item(forRow: $0)})
             let deselectedItems = deselected.compactMap({dataSource.item(forRow: $0)})
             if selectedItems.isEmpty == false, let shouldSelect = dataSource.selectionHandlers.shouldSelect {
@@ -69,6 +87,7 @@ extension TableViewDiffableDataSource {
             } else {
                 selections.append(contentsOf: deselectedItems)
             }
+             */
             
             return IndexSet(selections.compactMap({dataSource.row(for: $0)}))
         }

@@ -21,8 +21,10 @@ class SidebarViewController: NSViewController {
     let cellRegistration: CellRegistration = CellRegistration() { cell, column, row, sidebarItem in
         // defaultContentConfiguration returns a list content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = cell.defaultContentConfiguration()
+        
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
+        
         cell.contentConfiguration = configuration
     }
     
