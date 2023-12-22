@@ -11,20 +11,6 @@ import FZUIKit
 import SwiftUI
 
 internal extension NSListContentView {
-    class TestView: NSView {
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("TestView setBackgroundStyle", backgroundStyle.rawValue)
-        }
-    }
-    
-    class SomeOther1View: NSView {
-        
-    }
-    
-    class SomeOther2View: NSView {
-        
-    }
-    
     class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
@@ -32,13 +18,7 @@ internal extension NSListContentView {
                     update()
             }
         }
-        
-        /*
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("setBackgroundStyle", self.cell?.backgroundStyle.rawValue ?? "nil")
-        }
-        */
-                
+   
         override var image: NSImage? {
             didSet {
                 self.isHidden = (self.image == nil)
@@ -74,21 +54,12 @@ internal extension NSListContentView {
             self.configurate(using: properties.shadow, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
-        
-        let testView = ImageView()
-        let teetView1 = TestView()
-        let someOtherView1 = SomeOther1View()
-        let someOtherView2 = SomeOther2View()
 
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
-         //   self.addSubview(someOtherView1)
-         //   someOtherView1.addSubview(someOtherView2)
-        //    self.addSubview(testView)
-          //  testView.addSubview(teetView1)
-          //  self.imageAlignment = .alignCenter
+            self.imageAlignment = .alignCenter
             self.update()
         }
         

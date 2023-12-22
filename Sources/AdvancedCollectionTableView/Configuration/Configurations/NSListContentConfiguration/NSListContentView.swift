@@ -17,34 +17,6 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         self.initialSetup()
         self.updateConfiguration()
-        self.addSubview(someOtherView)
-        self.addSubview(imgView)
-    }
-    
-    let someOtherView = OtherView()
-    let imgView = ImageView()
-    
-    class OtherView: NSControl {
-        /*
-        var textCell: NSCell? = NSTextFieldCell(textCell: "")
-        override var cell: NSCell? {
-            get { textCell }
-            set { textCell = newValue }
-        }
-         */
-        
-        override init(frame frameRect: NSRect) {
-            super.init(frame: frameRect)
-            self.wantsLayer = true
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            super.setBackgroundStyle(backgroundStyle)
-        }
     }
     
     /// The current configuration of the view.
