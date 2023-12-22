@@ -22,7 +22,7 @@ public class NSListContentView: NSView, NSContentView {
     
     let someOtherView = OtherView()
     
-    class OtherView: NSControl {
+    class OtherView: NSView {
         /*
         var textCell: NSCell? = NSTextFieldCell(textCell: "")
         override var cell: NSCell? {
