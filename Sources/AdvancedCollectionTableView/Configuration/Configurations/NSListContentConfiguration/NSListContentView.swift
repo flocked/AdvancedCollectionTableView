@@ -23,11 +23,13 @@ public class NSListContentView: NSView, NSContentView {
     let someOtherView = OtherView()
     
     class OtherView: NSControl {
+        /*
         var textCell: NSCell? = NSTextFieldCell(textCell: "")
         override var cell: NSCell? {
             get { textCell }
             set { textCell = newValue }
         }
+         */
         
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("setBackgroundStyle OtherView", backgroundStyle.rawValue)
