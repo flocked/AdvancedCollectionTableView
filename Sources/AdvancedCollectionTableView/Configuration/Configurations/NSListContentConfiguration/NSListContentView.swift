@@ -23,7 +23,9 @@ public class NSListContentView: NSView, NSContentView {
     let someOtherView = OtherView()
     
     class OtherView: NSView {
-        
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("setBackgroundStyle OtherView", backgroundStyle.rawValue)
+        }
     }
     
     /// The current configuration of the view.
