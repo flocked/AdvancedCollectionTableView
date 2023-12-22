@@ -11,14 +11,14 @@ import FZUIKit
 import SwiftUI
 
 internal extension NSListContentView {
-    class CellImageView: ImageView {
+    class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
-                update()
+                    update()
             }
         }
-        
+                
         override var image: NSImage? {
             didSet {
                 self.isHidden = (self.image == nil)
@@ -39,44 +39,25 @@ internal extension NSListContentView {
             
             return intrinsicContentSize
         }
-        
+                
         var calculatedSize: CGSize?
         var verticalConstraint: NSLayoutConstraint? = nil
         
         func update() {
-            self.imageScaling = image?.isSymbolImage == true  ? .center : properties.scaling.contentsGravity
+            self.imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling.imageScaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             self.borderColor = properties._resolvedBorderColor
             self.borderWidth = properties.borderWidth
             self.backgroundColor = properties._resolvedBackgroundColor
-            self.tintColor = properties._resolvedTintColor
+            self.contentTintColor = properties._resolvedTintColor
             self.cornerRadius = properties.cornerRadius
             self.configurate(using: properties.shadow, type: .outer)
             self.invalidateIntrinsicContentSize()
         }
         
-        class ObserveImageView: NSImageView {
-            var backgroundStyleHandler: ((NSView.BackgroundStyle)->())? = nil
-            override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-                backgroundStyleHandler?(backgroundStyle)
-            }
-        }
-        
-        let observerImageView = ObserveImageView()
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
-            self.addSubview(observerImageView)
-            observerImageView.backgroundStyleHandler = { backgroundStyle in
-                DisableActions {
-                    if backgroundStyle == .emphasized {
-                        self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = .alternateSelectedControlTextColor
-                        Swift.print("emphasized", self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor == .alternateSelectedControlTextColor)
-                    } else {
-                        self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = self.tintColor?.resolvedColor(for: self)
-                    }
-                }
-            }
             self.wantsLayer = true
           //  self.imageAlignment = .alignCenter
             self.update()
@@ -86,11 +67,4 @@ internal extension NSListContentView {
             fatalError("init(coder:) has not been implemented")
         }
     }
-}
-
-internal let DisableActions = { (changes: () -> Void) in
-  CATransaction.begin()
-  CATransaction.setDisableActions(true)
-  changes()
-  CATransaction.commit()
 }
