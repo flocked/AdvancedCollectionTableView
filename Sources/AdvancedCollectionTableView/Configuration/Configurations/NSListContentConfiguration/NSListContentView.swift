@@ -24,7 +24,7 @@ public class NSListContentView: NSView, NSContentView {
     let otherView = OtherView()
     let thisView = ThisView()
 
-    class OtherView: NSControl {
+    class OtherView: NSView {
        // @objc var backgroundStyle: NSView.BackgroundStyle = .normal
         
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
@@ -32,7 +32,7 @@ public class NSListContentView: NSView, NSContentView {
         }
     }
     
-    class ThisView: NSControl {
+    class ThisView: NSView {
        // @objc var backgroundStyle: NSView.BackgroundStyle = .normal
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("ThisView setBackgroundStyle")
