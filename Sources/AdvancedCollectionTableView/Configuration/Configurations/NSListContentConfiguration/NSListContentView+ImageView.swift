@@ -70,6 +70,7 @@ internal extension NSListContentView {
             observerImageView.backgroundStyleHandler = { backgroundStyle in
                 if backgroundStyle == .emphasized {
                     (self.layer as? ImageLayer)?.tintColor = .alternateSelectedControlTextColor
+                    Swift.print("emphasized", (self.layer as? ImageLayer)?.tintColor == .alternateSelectedControlTextColor)
                 } else {
                     (self.layer as? ImageLayer)?.tintColor = self.tintColor?.resolvedColor(for: self)
                 }
