@@ -334,7 +334,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
-        self.collectionView.setupCollectionViewFirstResponderObserver()
         self.collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         self.collectionView.registerForDraggedTypes([.itemID])
         self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
