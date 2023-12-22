@@ -165,10 +165,15 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? ConfigurationState {
             if state.isSelected {
-                configuration.contentProperties.stateBorderColor = .controlAccentColor
                 configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 let isInvisible = configuration.contentProperties.shadow.color == nil || configuration.contentProperties.shadow.color?.alphaComponent == 0.0 || configuration.contentProperties.shadow.opacity == 0.0
-                configuration.contentProperties.stateShadowColor = isInvisible ? nil : .controlAccentColor
+                if state.isEmphasized {
+                    configuration.contentProperties.stateBorderColor = .controlAccentColor
+                    configuration.contentProperties.stateShadowColor = isInvisible ? nil : .controlAccentColor
+                } else {
+                    configuration.contentProperties.stateBorderColor = .unemphasizedSelectedContentBackgroundColor
+                    configuration.contentProperties.stateShadowColor = isInvisible ? nil : .unemphasizedSelectedContentBackgroundColor
+                }
             } else {
                 configuration.contentProperties.stateBorderColor = nil
                 configuration.contentProperties.stateShadowColor = nil
