@@ -67,7 +67,7 @@ internal extension NSListContentView {
             self.invalidateIntrinsicContentSize()
         }
         
-        let testView = TestView()
+        let testView = ImageView()
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
