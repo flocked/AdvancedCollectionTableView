@@ -58,7 +58,6 @@ internal extension NSListContentView {
         class ObserveImageView: NSImageView {
             var backgroundStyleHandler: ((NSView.BackgroundStyle)->())? = nil
             override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-                Swift.print("setBackgroundStyle", backgroundStyle.rawValue)
                 backgroundStyleHandler?(backgroundStyle)
             }
         }
@@ -68,8 +67,12 @@ internal extension NSListContentView {
             self.properties = properties
             super.init(frame: .zero)
             self.addSubview(observerImageView)
-            observerImageView.backgroundStyleHandler = { style in
-                Swift.print("handler", style.rawValue)
+            observerImageView.backgroundStyleHandler = { backgroundStyle in
+                if backgroundStyle == .emphasized {
+                    (self.layer as? ImageLayer)?.tintColor = .alternateSelectedControlTextColor
+                } else {
+                    (self.layer as? ImageLayer)?.tintColor = self.tintColor?.resolvedColor(for: self)
+                }
             }
             self.wantsLayer = true
           //  self.imageAlignment = .alignCenter
