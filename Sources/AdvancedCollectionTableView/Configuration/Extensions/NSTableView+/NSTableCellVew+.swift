@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableCellView {
+extension NSTableCellView {
     
     // MARK: Managing the content
     
@@ -22,7 +22,7 @@ public extension NSTableCellView {
      
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
-    var contentConfiguration: NSContentConfiguration?   {
+    public var contentConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
@@ -53,7 +53,7 @@ public extension NSTableCellView {
      
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
-    func defaultContentConfiguration() -> NSListContentConfiguration {
+    public func defaultContentConfiguration() -> NSListContentConfiguration {
         return NSListContentConfiguration.automatic()
     }
     
@@ -64,7 +64,7 @@ public extension NSTableCellView {
      
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
-    var automaticallyUpdatesContentConfiguration: Bool {
+    @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "NSTableCellVew_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_automaticallyUpdatesContentConfiguration", object: self)
@@ -105,7 +105,7 @@ public extension NSTableCellView {
      
      To add your own custom state, see ``NSConfigurationStateCustomKey``.
      */
-    var configurationState: NSTableCellConfigurationState {
+    public var configurationState: NSTableCellConfigurationState {
         let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEmphasized: self.isEmphasized, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false)
         return state
     }
@@ -116,7 +116,7 @@ public extension NSTableCellView {
      You call this method when you need the cell to update its configuration according to the current configuration state. The system calls this method automatically when the cell’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the cell’s configuration state, make sure to call this method every time those custom states change.
      */
-    func setNeedsUpdateConfiguration() {
+    @objc open func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: self.configurationState)
     }
     
@@ -140,7 +140,7 @@ public extension NSTableCellView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSTableCellConfigurationState) {
+    public func updateConfiguration(using state: NSTableCellConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -154,7 +154,7 @@ public extension NSTableCellView {
         - cell: The table view cell to configure.
         - state: The new state to use for updating the cell’s configuration.
      */
-    typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSTableCellConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSTableCellConfigurationState) -> Void
     
     /**
      A block for handling updates to the cell’s configuration using the current state.
@@ -174,7 +174,7 @@ public extension NSTableCellView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
      */
-    var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "NSTableCellVew_configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_configurationUpdateHandler", object: self)

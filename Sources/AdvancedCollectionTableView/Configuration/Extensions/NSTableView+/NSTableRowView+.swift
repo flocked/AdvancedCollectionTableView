@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableRowView {
+extension NSTableRowView {
     
     // MARK: Configuring the background
     
@@ -33,7 +33,7 @@ public extension NSTableRowView {
      - ``selectedBackgroundView``
      - ``multipleSelectionBackgroundView``
      */
-    var backgroundConfiguration: NSContentConfiguration?   {
+    public var backgroundConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "backgroundConfiguration", object: self)
@@ -50,7 +50,7 @@ public extension NSTableRowView {
      When this value is true, the row automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
-    var automaticallyUpdatesBackgroundConfiguration: Bool {
+    @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
         get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
         set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
         }
@@ -63,7 +63,7 @@ public extension NSTableRowView {
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
-    var backgroundView: NSView?   {
+    @objc open var backgroundView: NSView?   {
         get { getAssociatedValue(key: "backgroundView", object: self) }
         set { 
             guard newValue != backgroundView else { return }
@@ -83,7 +83,7 @@ public extension NSTableRowView {
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
-    var selectedBackgroundView: NSView? {
+    @objc open var selectedBackgroundView: NSView? {
         get { getAssociatedValue(key: "selectedBackgroundView", object: self) }
         set { 
             guard newValue != selectedBackgroundView else { return }
@@ -111,7 +111,7 @@ public extension NSTableRowView {
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
      */
-    var multipleSelectionBackgroundView: NSView? {
+    @objc open var multipleSelectionBackgroundView: NSView? {
         get { getAssociatedValue(key: "multipleSelectionBackgroundView", object: self) }
         set { 
             guard newValue != multipleSelectionBackgroundView else { return }
@@ -179,7 +179,7 @@ public extension NSTableRowView {
         - row: The table view row to configure.
         - state: The new state to use for updating the row’s configuration.
      */
-    typealias ConfigurationUpdateHandler = (_ rowView: NSTableRowView, _ state: NSTableRowConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ rowView: NSTableRowView, _ state: NSTableRowConfigurationState) -> Void
     
     /**
      A block for handling updates to the row’s configuration using the current state.
@@ -199,7 +199,7 @@ public extension NSTableRowView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
      */
-    var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "_NSTableRowViewconfigurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "NSTableRowView_configurationUpdateHandler", object: self)
@@ -214,7 +214,7 @@ public extension NSTableRowView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    var configurationState: NSTableRowConfigurationState {
+    public var configurationState: NSTableRowConfigurationState {
         let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
@@ -225,7 +225,7 @@ public extension NSTableRowView {
      You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
-    func setNeedsUpdateConfiguration() {
+    @objc open func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: self.configurationState)
     }
     
@@ -256,7 +256,7 @@ public extension NSTableRowView {
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSTableRowConfigurationState) {
+    public func updateConfiguration(using state: NSTableRowConfigurationState) {
         if let backgroundConfiguration = self.backgroundConfiguration {
             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
         }

@@ -9,7 +9,8 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSCollectionViewItem {
+
+extension NSCollectionViewItem {
     
     // MARK: Configuring the background
     
@@ -29,7 +30,7 @@ public extension NSCollectionViewItem {
      
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets the ``backgroundView`` and ``selectedBackgroundView`` to `nil`.
      */
-    var backgroundConfiguration: NSContentConfiguration?   {
+    public var backgroundConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "_backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_backgroundConfiguration", object: self)
@@ -55,7 +56,7 @@ public extension NSCollectionViewItem {
      
      - Returns:A default background content configuration.
      */
-    func  defaultBackgroundConfiguration() -> NSBackgroundConfiguration {
+    public func  defaultBackgroundConfiguration() -> NSBackgroundConfiguration {
         return NSBackgroundConfiguration()
     }
     
@@ -66,7 +67,7 @@ public extension NSCollectionViewItem {
      
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
-    var automaticallyUpdatesBackgroundConfiguration: Bool {
+    @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
         get { getAssociatedValue(key: "_automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
         set { set(associatedValue: newValue, key: "_automaticallyUpdatesBackgroundConfiguration", object: self)
         }
@@ -78,7 +79,7 @@ public extension NSCollectionViewItem {
      Use this property to assign a custom background view to the item. The background view appears as background inside the item's view and its frame automatically adjusts so that it fills the bounds of the item.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to nil.
      */
-    var backgroundView: NSView?   {
+    @objc open var backgroundView: NSView?   {
         get { getAssociatedValue(key: "_backgroundView", object: self) }
         set {
             guard newValue != self.backgroundView else { return }
@@ -97,7 +98,7 @@ public extension NSCollectionViewItem {
      You can use this view to give a selected item a custom appearance. When the item has a selected state, this view layers inside the item's view above the ``backgroundView``.
      A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to nil.
      */
-    var selectedBackgroundView: NSView? {
+    @objc open var selectedBackgroundView: NSView? {
         get { getAssociatedValue(key: "selectedBackgroundView", object: self) }
         set {
             guard newValue != selectedBackgroundView else { return }
@@ -110,14 +111,14 @@ public extension NSCollectionViewItem {
         }
     }
     
-    internal var backgroundConfigurationView: (NSView & NSContentView)?   {
+    var backgroundConfigurationView: (NSView & NSContentView)?   {
         get { getAssociatedValue(key: "backgroundConfigurationView", object: self, initialValue: nil) }
         set { 
             backgroundConfigurationView?.removeFromSuperview()
             set(associatedValue: newValue, key: "backgroundConfigurationView", object: self) }
     }
     
-    internal func configurateBackgroundView() {
+    func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
             self.selectedBackgroundView = nil
             self.backgroundView = nil
@@ -159,7 +160,7 @@ public extension NSCollectionViewItem {
      
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
-    var contentConfiguration: NSContentConfiguration?   {
+    public var contentConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "_contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "_contentConfiguration", object: self)
@@ -190,7 +191,7 @@ public extension NSCollectionViewItem {
      
      - Returns:A default item content configuration. The system determines default values for the configuration according to the collection view and it’s style.
      */
-    func  defaultContentConfiguration() -> NSItemContentConfiguration {
+    public func  defaultContentConfiguration() -> NSItemContentConfiguration {
         return NSItemContentConfiguration()
     }
     
@@ -200,17 +201,17 @@ public extension NSCollectionViewItem {
      When this value is true, the item automatically calls `updated(for:)` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
-    var automaticallyUpdatesContentConfiguration: Bool {
+    @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "_automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
         set { set(associatedValue: newValue, key: "_automaticallyUpdatesContentConfiguration", object: self)
         }
     }
     
-    internal var contentView: NSContentView? {
+    var contentView: NSContentView? {
         get { self.view as? NSContentView }
     }
     
-    internal func configurateContentView() {
+    func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
@@ -244,7 +245,7 @@ public extension NSCollectionViewItem {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    var configurationState: NSItemConfigurationState {
+    public var configurationState: NSItemConfigurationState {
         let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized)
         /*
          if let listConfiguration = self.collectionView?.listConfiguration {
@@ -260,11 +261,11 @@ public extension NSCollectionViewItem {
      You call this method when you need the item to update its configuration according to the current configuration state. The system calls this method automatically when the item’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
      If you add custom states to the item’s configuration state, make sure to call this method every time those custom states change.
      */
-    func setNeedsUpdateConfiguration() {
+    @objc open func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: self.configurationState)
     }
     
-    internal func setNeedsAutomaticUpdateConfiguration() {
+    @objc open func setNeedsAutomaticUpdateConfiguration() {
         let state = self.configurationState
         
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
@@ -284,9 +285,10 @@ public extension NSCollectionViewItem {
      Updates the item’s configuration using the current state.
      
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
+     
      Override this method in a subclass to update the item’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSItemConfigurationState) {
+    public dynamic func updateConfiguration(using state: NSItemConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -304,7 +306,7 @@ public extension NSCollectionViewItem {
         - item: The collection view item to configure.
         - state: The new state to use for updating the item’s configuration.
      */
-    typealias ConfigurationUpdateHandler = (_ item: NSCollectionViewItem, _ state: NSItemConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ item: NSCollectionViewItem, _ state: NSItemConfigurationState) -> Void
     
     
     /**
@@ -330,7 +332,7 @@ public extension NSCollectionViewItem {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling ``updateConfiguration(using:)``.
      */
-    var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+   public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "_configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
@@ -426,7 +428,7 @@ public extension NSCollectionViewItem {
     }
     
     /// The previous item in the collection view.
-    var previousItem: NSCollectionViewItem? {
+    @objc open var previousItem: NSCollectionViewItem? {
         if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item - 1 >= 0 {
             let previousIndexPath = IndexPath(item: indexPath.item - 1, section: indexPath.section)
             return self.collectionView?.item(at: previousIndexPath)
@@ -435,7 +437,7 @@ public extension NSCollectionViewItem {
     }
     
     /// The next item in the collection view.
-    var nextItem: NSCollectionViewItem? {
+    @objc open var nextItem: NSCollectionViewItem? {
         if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item + 1 < (self.collectionView?.numberOfItems(inSection: indexPath.section) ?? -10) {
             let nextIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
             return self.collectionView?.item(at: nextIndexPath)
@@ -507,7 +509,6 @@ public extension NSCollectionViewItem {
      }
      */
 }
-
 
 extension NSCollectionViewItem {
     open override func loadView() {
