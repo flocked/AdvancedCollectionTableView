@@ -68,11 +68,13 @@ internal extension NSListContentView {
             super.init(frame: .zero)
             self.addSubview(observerImageView)
             observerImageView.backgroundStyleHandler = { backgroundStyle in
-                if backgroundStyle == .emphasized {
-                    self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = .alternateSelectedControlTextColor
-                    Swift.print("emphasized", self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor == .alternateSelectedControlTextColor)
-                } else {
-                    self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = self.tintColor?.resolvedColor(for: self)
+                DisableActions {
+                    if backgroundStyle == .emphasized {
+                        self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = .alternateSelectedControlTextColor
+                        Swift.print("emphasized", self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor == .alternateSelectedControlTextColor)
+                    } else {
+                        self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = self.tintColor?.resolvedColor(for: self)
+                    }
                 }
             }
             self.wantsLayer = true
@@ -84,4 +86,11 @@ internal extension NSListContentView {
             fatalError("init(coder:) has not been implemented")
         }
     }
+}
+
+internal let DisableActions = { (changes: () -> Void) in
+  CATransaction.begin()
+  CATransaction.setDisableActions(true)
+  changes()
+  CATransaction.commit()
 }
