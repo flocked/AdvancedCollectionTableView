@@ -198,6 +198,7 @@ extension NSCollectionViewItem {
      Informs the item to update its configuration for its current state.
      
      You call this method when you need the item to update its configuration according to the current configuration state. The system calls this method automatically when the item’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
+     
      If you add custom states to the item’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
@@ -255,17 +256,17 @@ extension NSCollectionViewItem {
      
      ```swift
      item.configurationUpdateHandler = { item, state in
-     var content = NSItemContentConfiguration()
-     content.text = "Mozart"
-     content.image = NSImage(named: "Mozart"")
-     if state.isSelected {
-     content.contentProperties.borderWidth = 1.0
-     content.contentProperties.borderColor = .controlAccentColor
-     } else {
-     content.contentProperties.borderWidth = 0.0
-     content.contentProperties.borderColor = nil
-     }
-     item.contentConfiguration = content
+        var content = NSItemContentConfiguration()
+        content.text = "Mozart"
+        content.image = NSImage(named: "Mozart"")
+        if state.isSelected {
+            content.contentProperties.borderWidth = 1.0
+            content.contentProperties.borderColor = .controlAccentColor
+        } else {
+            content.contentProperties.borderWidth = 0.0
+            content.contentProperties.borderColor = nil
+        }
+        item.contentConfiguration = content
      }
      ```
      

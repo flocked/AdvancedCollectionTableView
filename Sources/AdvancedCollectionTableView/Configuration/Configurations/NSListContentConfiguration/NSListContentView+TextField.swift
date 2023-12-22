@@ -150,5 +150,9 @@ internal extension NSListContentView {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+        
+        deinit {
+            self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
+        }
     }
 }
