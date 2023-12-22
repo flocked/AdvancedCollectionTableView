@@ -12,17 +12,21 @@ import SwiftUI
 
 internal extension NSListContentView {
     class TestView: NSView {
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("TestView setBackgroundStyle", backgroundStyle.rawValue)
         }
     }
     
     class SomeOther1View: NSView {
-        
+        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("SomeOther1 setBackgroundStyle", backgroundStyle.rawValue)
+        }
     }
     
     class SomeOther2View: NSView {
-        
+        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("SomeOther2 setBackgroundStyle", backgroundStyle.rawValue)
+        }
     }
     
     class CellImageView: NSImageView {
