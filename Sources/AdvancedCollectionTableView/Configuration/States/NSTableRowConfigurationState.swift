@@ -17,25 +17,20 @@ import FZUIKit
  You can create your own custom states to add to a row configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
+    
     /// A Boolean value that indicates whether the row is in a selected state.
     public var isSelected: Bool = false
     
-    /// A Boolean value that indicates whether the row is in a enabled state.
+    /// A Boolean value that indicates whether the row is in a enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
     public var isEnabled: Bool = true
     
-    /// A Boolean value that indicates whether the row is in a focused state.
-    public var isFocused: Bool = false
-    
-    /// A Boolean value that indicates whether the row is in a hovered state (if the mouse is above the row).
+    /// A Boolean value that indicates whether the row is in a hovered state (the mouse is hovering the row).
     public var isHovered: Bool = false
     
     /// A Boolean value that indicates whether the row is in a editing state.
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the row is in a expanded state.
-    public var isExpanded: Bool = false
-    
-    /// A Boolean value that indicates whether the row is in a emphasized state.
+    /// A Boolean value that indicates whether the row is in a emphasized state. It is `true` if the window that displays the cell is `main`.
     public var isEmphasized: Bool = false
     
     /// A Boolean value that indicates whether the next row is in a selected state.
@@ -43,6 +38,12 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the previous row is in a selected state.
     public var isPreviousRowSelected: Bool = false
+    
+    /// A Boolean value that indicates whether the row is in a focused state.
+    var isFocused: Bool = false
+    
+    /// A Boolean value that indicates whether the row is in a expanded state.
+    var isExpanded: Bool = false
     
     /*
      /// The emphasized state.
@@ -73,19 +74,15 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     
     public init(isSelected: Bool = false,
                 isEnabled: Bool = true,
-                isFocused: Bool = false,
                 isHovered: Bool = false,
                 isEditing: Bool = false,
-                isExpanded: Bool = false,
                 isEmphasized: Bool = false,
                 isNextRowSelected: Bool = false,
                 isPreviousRowSelected: Bool = false) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
-        self.isFocused = isFocused
         self.isHovered = isHovered
         self.isEditing = isEditing
-        self.isExpanded = isExpanded
         self.isEmphasized = isEmphasized
         self.isNextRowSelected = isNextRowSelected
         self.isPreviousRowSelected = isPreviousRowSelected

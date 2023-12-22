@@ -193,7 +193,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
-            self.tableView.setupObservingView()
+            self.tableView.setupObservation()
             if hoveredRowObserver == nil {
                 hoveredRowObserver = self.tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
                     guard old != new else { return }

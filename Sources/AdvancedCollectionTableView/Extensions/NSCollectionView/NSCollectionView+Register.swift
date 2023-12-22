@@ -19,8 +19,7 @@ public extension NSCollectionView {
         - itemClass: The class of a item that you want to use in the collection view.
      */
     func register<Item: NSCollectionViewItem>(_ item: Item.Type) {
-        let identifier = NSUserInterfaceItemIdentifier(String(describing: item.self))
-        self.register(item.self, forItemWithIdentifier: identifier)
+        self.register(item.self, forItemWithIdentifier: .init(item))
     }
     
     /**
@@ -35,8 +34,7 @@ public extension NSCollectionView {
         - nib: The nib object containing the item object. The nib file must contain only one top-level object and that object must be of the type NSCollectionViewItem.
      */
     func register<Item: NSCollectionViewItem>(_ item: Item.Type, nib: NSNib) {
-        let identifier = NSUserInterfaceItemIdentifier(String(describing: Item.self))
-        self.register(nib, forItemWithIdentifier: identifier)
+        self.register(nib, forItemWithIdentifier: .init(item))
     }
     
     /**

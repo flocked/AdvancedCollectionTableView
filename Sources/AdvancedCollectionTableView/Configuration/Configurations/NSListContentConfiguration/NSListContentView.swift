@@ -11,6 +11,7 @@ import FZUIKit
 
 /// A content view for displaying list-based content.
 public class NSListContentView: NSView, NSContentView {
+    
     /// Creates a table cell content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
         self._configuration = configuration

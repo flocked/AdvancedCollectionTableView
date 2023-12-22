@@ -33,7 +33,7 @@ public extension NSCollectionViewDiffableDataSource {
         set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
     }
     
-    /// Handlers for deletion.
+    /// Handlers for deletion of items.
     struct DeletionHandlers {
         /// The Handler that determines whether Itemlements should get deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil

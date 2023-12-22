@@ -32,7 +32,7 @@ internal extension NSCollectionView {
         firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
             guard old != new else { return }
             guard (old == self && new != self) || (old != self && new == self) else { return }
-            self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })
+      //      self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })
         })
     }
     
@@ -58,7 +58,7 @@ internal extension NSCollectionView {
         return self.item(at: indexPath)
     }
     
-    func setupObservingView(shouldObserve: Bool = true) {
+    func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observingView == nil) {
                 self.observingView = ObservingView()

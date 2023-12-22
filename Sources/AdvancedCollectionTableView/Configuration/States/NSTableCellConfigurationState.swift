@@ -25,13 +25,13 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a editing state.
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a hovered state (if the mouse is above the cell).
+    /// A Boolean value that indicates whether the cell is in a hovered state (ithe mouse is hovering the cell).
     public var isHovered: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a emphasized state.
+    /// A Boolean value that indicates whether the cell is in a emphasized state. It is `true` if the window that displays the cell is `main`.
     public var isEmphasized: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a enabled state.
+    /// A Boolean value that indicates whether the cell is in a enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
     internal var isEnabled: Bool = true
     
     /// A Boolean value that indicates whether the cell is in a focused state.

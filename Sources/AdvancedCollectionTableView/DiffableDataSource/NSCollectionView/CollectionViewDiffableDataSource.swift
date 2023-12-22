@@ -173,7 +173,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     func observeHoveredItem() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
-            self.collectionView.setupObservingView()
+            self.collectionView.setupObservation()
             if hoveredItemObserver == nil {
                 hoveredItemObserver = self.collectionView.observeChanges(for: \.hoveredIndexPath, handler: { old, new in
                     guard old != new else { return }

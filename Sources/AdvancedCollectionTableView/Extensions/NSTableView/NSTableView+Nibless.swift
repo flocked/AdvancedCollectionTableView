@@ -13,6 +13,17 @@ public extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
      
+     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:owner:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
+     
+     - Parameter cellClass: The table cell view class to register.
+     */
+    func register(_ cellClass: NSTableCellView.Type) {
+        self.register(cellClass, forIdentifier: .init(cellClass))
+    }
+    
+    /**
+     Registers a class to use when creating new cells in the table view.
+     
      Use this method to register the classes that represent cells in your table view. When you request an cell using the `makeView(withIdentifier:owner:)` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
      
      - Parameters:
@@ -23,17 +34,6 @@ public extension NSTableView {
         Self.swizzleTableViewCellRegister()
         registeredCellsByIdentifier[identifier] = cellClass
         self.registeredCellsByIdentifier = registeredCellsByIdentifier
-    }
-    
-    /**
-     Registers a class to use when creating new cells in the table view.
-     
-     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:owner:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
-     
-     - Parameter cellClass: The table cell view class to register.
-     */
-    func register(_ cellClass: NSTableCellView.Type) {
-        self.register(cellClass, forIdentifier: NSUserInterfaceItemIdentifier(rawValue: String(describing: cellClass)))
     }
     
     /**
@@ -54,7 +54,7 @@ public extension NSTableView {
      - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
      */
     func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type, owner: Any? = nil) -> TableCellView? {
-        self.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: String(describing: cellClass)), owner: owner) as? TableCellView
+        self.makeView(withIdentifier: .init(cellClass), owner: owner) as? TableCellView
     }
     
     /**
@@ -62,7 +62,7 @@ public extension NSTableView {
      
      Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.
      */
-    internal (set) var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
+    internal var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
         get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self, initialValue: [:]) }
         set { set(associatedValue: newValue, key: "_registeredCellsByIdentifier", object: self) }
     }

@@ -215,7 +215,7 @@ public extension NSTableRowView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
     
@@ -357,7 +357,7 @@ public extension NSTableRowView {
             if self.needsAutomaticRowHeights {
                 self.tableView?.usesAutomaticRowHeights = true
             }
-            self.tableView?.setupObservingView()
+            self.tableView?.setupObservation()
         }
         self.setNeedsUpdateConfiguration()
         self.setCellViewsNeedUpdateConfiguration()

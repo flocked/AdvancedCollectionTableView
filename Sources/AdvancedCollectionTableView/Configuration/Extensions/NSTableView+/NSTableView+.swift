@@ -35,7 +35,7 @@ public extension NSTableView {
         set { set(associatedValue: newValue, key: "tableIsEnabledObserver", object: self) }
     }
         
-    func setupObservingView(shouldObserve: Bool = true) {
+    func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if isEnabledObserver == nil {
                 isEnabledObserver = self.observeChanges(for: \.isEnabled, handler: { [weak self] old, new in

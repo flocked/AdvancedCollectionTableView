@@ -25,6 +25,20 @@ public extension NSTableViewDiffableDataSource {
         }
     }
     
+    /// Handlers for deletion of items.
+    var deletionHandlers: DeletionHandlers {
+        get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
+        set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
+    }
+    
+    /// Handlers for deletion of items.
+    struct DeletionHandlers {
+        /// The Handler that determines whether Itemlements should get deleted.
+        public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
+        /// The Handler that gets called whenever Itemlements get deleted.
+        public var didDelete: ((_ items: [ItemIdentifierType]) -> ())? = nil
+    }
+    
     internal var keyDownMonitor: Any? {
         get { getAssociatedValue(key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
         set {
@@ -40,8 +54,8 @@ public extension NSTableViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let tableView =  (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
                         let selecedRowIndexes = tableView.selectedRowIndexes.map({$0})
-                        let elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
-                        
+                        var elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
+                        elementsToDelete = self.deletionHandlers.canDelete?(elementsToDelete) ?? elementsToDelete
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
@@ -49,6 +63,7 @@ public extension NSTableViewDiffableDataSource {
                             var snapshot = self.snapshot()
                             snapshot.deleteItems(elementsToDelete)
                             self.apply(snapshot, .usingReloadData)
+                            self.deletionHandlers.didDelete?(elementsToDelete)
                             if tableView.allowsEmptySelection == false {
                                 let row = (selecedRowIndexes.first ?? 0)
                                 tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
