@@ -33,6 +33,15 @@ public class NSListContentView: NSView, NSContentView {
         }
          */
         
+        override init(frame frameRect: NSRect) {
+            super.init(frame: frameRect)
+            self.wantsLayer = true
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             super.setBackgroundStyle(backgroundStyle)
         }
