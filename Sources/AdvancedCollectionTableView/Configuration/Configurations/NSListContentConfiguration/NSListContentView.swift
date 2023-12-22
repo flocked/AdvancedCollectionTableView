@@ -17,6 +17,13 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         self.initialSetup()
         self.updateConfiguration()
+        self.addSubview(someOtherView)
+    }
+    
+    let someOtherView = OtherView()
+    
+    class OtherView: NSView {
+        
     }
     
     /// The current configuration of the view.
