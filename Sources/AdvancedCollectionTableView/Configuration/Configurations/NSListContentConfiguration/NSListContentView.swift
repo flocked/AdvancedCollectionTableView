@@ -19,6 +19,10 @@ public class NSListContentView: NSView, NSContentView {
         self.updateConfiguration()
     }
     
+    @objc public dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+        Swift.print("NSListContentView setBackgroundStyle", backgroundStyle.rawValue)
+    }
+    
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
