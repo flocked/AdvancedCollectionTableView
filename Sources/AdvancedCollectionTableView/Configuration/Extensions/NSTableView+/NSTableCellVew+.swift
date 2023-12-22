@@ -60,7 +60,7 @@ extension NSTableCellView {
     /**
      A Boolean value that determines whether the cell automatically updates its content configuration when its state changes.
      
-     When this value is true, the cell automatically calls `updated(for:)` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
+     When this value is `true`, the cell automatically calls `updated(for:)` on its ``contentConfiguration`` when the cell’s ``configurationState`` changes, and applies the updated configuration back to the cell. The default value is `true`.
      
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
@@ -114,6 +114,7 @@ extension NSTableCellView {
      Informs the cell to update its configuration for its current state.
      
      You call this method when you need the cell to update its configuration according to the current configuration state. The system calls this method automatically when the cell’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
+     
      If you add custom states to the cell’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
@@ -122,7 +123,8 @@ extension NSTableCellView {
     
     internal func setNeedsAutomaticUpdateConfiguration() {
         if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
+            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? false
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
         }
         
         if isConfigurationUpdatesEnabled {

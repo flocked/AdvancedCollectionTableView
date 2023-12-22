@@ -14,11 +14,14 @@ class SidebarViewController: NSViewController {
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
     
+    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableCellView, Section>
+
+    
     @IBOutlet weak var tableView: NSTableView!
     
     lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
     
-    let cellRegistration: CellRegistration = CellRegistration() { cell, column, row, sidebarItem in
+    let cellRegistration = CellRegistration() { cell, column, row, sidebarItem in
         // defaultContentConfiguration returns a list content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = cell.defaultContentConfiguration()
         
@@ -26,6 +29,12 @@ class SidebarViewController: NSViewController {
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
         
         cell.contentConfiguration = configuration
+    }
+    
+    let sectionHeaderRegistration = SectionHeaderRegistration() { cell, row, section in
+        var sidebarConfiguration = NSListContentConfiguration.sidebarHeader()
+        sidebarConfiguration.text = section.rawValue
+        cell.contentConfiguration = sidebarConfiguration
     }
     
     override func viewDidLoad() {

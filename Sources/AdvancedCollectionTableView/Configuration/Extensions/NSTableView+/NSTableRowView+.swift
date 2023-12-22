@@ -277,24 +277,6 @@ extension NSTableRowView {
         get { self.tableView?.isEnabled ?? true }
     }
     
-    internal var isFocused: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isFocused", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isFocused else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isFocused", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
-    internal var isReordering: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isReordering", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isReordering else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isReordering", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
     internal var isEditing: Bool {
         get { getAssociatedValue(key: "NSTableRowView_isEditing", object: self, initialValue: false) }
         set {
@@ -320,8 +302,6 @@ extension NSTableRowView {
     
     @objc internal func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
-        self.isEnabled = true
-        self.isReordering = false
         self.isEditing = false
         self.isConfigurationUpdatesEnabled = true
     }
@@ -363,3 +343,24 @@ extension NSTableRowView {
         self.setCellViewsNeedUpdateConfiguration()
     }
 }
+
+
+/*
+internal var isFocused: Bool {
+    get { getAssociatedValue(key: "NSTableRowView_isFocused", object: self, initialValue: false) }
+    set {
+        guard newValue != self.isFocused else { return }
+        set(associatedValue: newValue, key: "NSTableRowView_isFocused", object: self)
+        self.setNeedsAutomaticUpdateConfiguration()
+    }
+}
+
+internal var isReordering: Bool {
+    get { getAssociatedValue(key: "NSTableRowView_isReordering", object: self, initialValue: false) }
+    set {
+        guard newValue != self.isReordering else { return }
+        set(associatedValue: newValue, key: "NSTableRowView_isReordering", object: self)
+        self.setNeedsAutomaticUpdateConfiguration()
+    }
+}
+*/

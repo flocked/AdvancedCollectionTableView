@@ -222,7 +222,7 @@ public extension NSListContentConfiguration {
         return configuration
     }
     
-    internal func tableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
+    internal func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
