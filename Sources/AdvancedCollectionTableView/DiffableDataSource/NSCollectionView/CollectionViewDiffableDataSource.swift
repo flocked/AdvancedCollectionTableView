@@ -107,7 +107,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> ())? = nil { didSet { self.observeMagnificationGesture() } }
                     
-    internal func observeMagnificationGesture() {
+    func observeMagnificationGesture() {
         if pinchHandler != nil {
             if (magnifyGestureRecognizer == nil) {
                 self.magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
@@ -121,8 +121,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal var pinchElement: Element? = nil
-    @objc internal func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
+    var pinchElement: Element? = nil
+    @objc func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
         let pinchLocation = gesture.location(in: self.collectionView)
         switch gesture.state {
         case .began:
@@ -136,7 +136,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
     }
     
-    internal func observeRightMouseDown() {
+    func observeRightMouseDown() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
                 self.collectionView.menu = nil
@@ -156,7 +156,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func setupMenu(for location: CGPoint) {
+    func setupMenu(for location: CGPoint) {
         if let menuProvider = self.menuProvider {
             if let element = self.element(at: location) {
                 var menuItems: [Element] = [element]
@@ -171,7 +171,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func observeHoveredItem() {
+    func observeHoveredItem() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.collectionView.setupObservingView()
             if hoveredItemObserver == nil {
@@ -190,7 +190,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    internal func observeDisplayingItems() {
+    func observeDisplayingItems() {
         if (self.displayHandlers.isDisplaying != nil || self.displayHandlers.didEndDisplaying != nil) {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
@@ -203,7 +203,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
     }
     
-    @objc internal func scrollViewContentBoundsDidChange(_ notification: Notification) {
+    @objc func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
         let displayingElements = self.displayingElements
         let added = displayingElements.filter({previousDisplayingElements.contains($0) == false})
@@ -227,8 +227,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
-        - option: Option how to apply the snapshot to the collection view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
+        - option: Option how to apply the snapshot to the collection view. The default value is `animated`.
+        - completion: An optional completion handler which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
@@ -250,7 +250,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return snapshot
     }
     
-    internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
+    func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
         var internalSnapshot = InternalSnapshot()
         let sections = snapshot.sectionIdentifiers
         internalSnapshot.appendSections(sections.ids)
@@ -330,7 +330,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             return collectionView.makeItem(using: itemRegistration, for: indePath, element: element) })
     }
     
-    internal func sharedInit() {
+    func sharedInit() {
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
         
@@ -363,7 +363,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Elements
         
     /// All current elements in the collection view.
-    internal var allElements: [Element] {
+    var allElements: [Element] {
         return self.currentSnapshot.itemIdentifiers
     }
     
@@ -417,25 +417,25 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /// Selects all collection view items of the specified elements.
-    internal func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
+    func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         self.collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
     /// Deselects all collection view items of the specified elements.
-    internal func deselectElements(_ elements: [Element]) {
+    func deselectElements(_ elements: [Element]) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         self.collectionView.deselectItems(at: indexPaths)
     }
     
     /// Selects all collection view items of the elements in the specified sections.
-    internal func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
+    func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let elements = self.elements(for: sections)
         self.selectElements(elements, scrollPosition: scrollPosition)
     }
     
     /// Deselects all collection view items of the elements in the specified sections.
-    internal func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
+    func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let indexPaths = sections.flatMap({self.indexPaths(for: $0)})
         self.collectionView.deselectItems(at: Set(indexPaths))
     }
@@ -447,12 +447,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /// An array of elements that are displaying (currently visible).
-    internal var displayingElements: [Element] {
+    var displayingElements: [Element] {
         self.collectionView.displayingIndexPaths().compactMap({self.element(for: $0)})
     }
     
     /// The collection view item for the specified element.
-    internal func item(for element: Element) -> NSCollectionViewItem? {
+    func item(for element: Element) -> NSCollectionViewItem? {
         if let indexPath = indexPath(for: element) {
             return self.collectionView.item(at: indexPath)
         }
@@ -460,49 +460,49 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /// The frame of the collection view item for the specified element.
-    internal func itemFrame(for element: Element) -> CGRect? {
+    func itemFrame(for element: Element) -> CGRect? {
         if let indexPath = indexPath(for: element) {
             return self.collectionView.frameForItem(at: indexPath)
         }
         return nil
     }
     
-    internal func indexPaths(for elements: [Element]) -> [IndexPath] {
+    func indexPaths(for elements: [Element]) -> [IndexPath] {
         return elements.compactMap({indexPath(for: $0)})
     }
     
-    internal func indexPaths(for section: Section) -> [IndexPath] {
+    func indexPaths(for section: Section) -> [IndexPath] {
         let elements = self.currentSnapshot.itemIdentifiers(inSection: section)
         return self.indexPaths(for: elements)
     }
     
-    internal func indexPaths(for sections: [Section]) -> [IndexPath] {
+    func indexPaths(for sections: [Section]) -> [IndexPath] {
         return sections.flatMap({self.indexPaths(for: $0)})
     }
     
-    internal func elements(for sections: [Section]) -> [Element] {
+    func elements(for sections: [Section]) -> [Element] {
         let currentSnapshot = self.currentSnapshot
         return sections.flatMap({currentSnapshot.itemIdentifiers(inSection: $0)})
     }
     
-    internal func isSelected(at indexPath: IndexPath) -> Bool {
+    func isSelected(at indexPath: IndexPath) -> Bool {
         self.collectionView.selectionIndexPaths.contains(indexPath)
     }
     
-    internal func isSelected(for element: Element) -> Bool {
+    func isSelected(for element: Element) -> Bool {
         if let indexPath = indexPath(for: element) {
             return isSelected(at: indexPath)
         }
         return false
     }
     
-    internal func removeElements( _ elements: [Element]) {
+    func removeElements( _ elements: [Element]) {
         var snapshot = self.snapshot()
         snapshot.deleteItems(elements)
         self.apply(snapshot, .animated)
     }
     
-    internal func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
+    func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
         let initalSnapshot = self.currentSnapshot
         var finalSnapshot = self.snapshot()
         finalSnapshot.deleteItems(elements)
@@ -510,7 +510,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
     }
     
-    internal func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
+    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         let elements = indexPaths.compactMap({self.element(for: $0)})
         var toIndexPath = toIndexPath
         var isLast = false
@@ -536,7 +536,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Sections
     
     /// All current sections in the collection view.
-    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    var sections: [Section] { currentSnapshot.sectionIdentifiers }
     
     /// Returns the index for the section in the collection view.
     public func index(for section: Section) -> Int? {
@@ -548,11 +548,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return sections[safe: index]
     }
     
-    internal func section(for element: Element) -> Section? {
+    func section(for element: Element) -> Section? {
         return self.currentSnapshot.sectionIdentifier(containingItem: element)
     }
     
-    internal func section(at indexPath: IndexPath) -> Section? {
+    func section(at indexPath: IndexPath) -> Section? {
         if (indexPath.section <= self.sections.count-1) {
             return sections[indexPath.section]
         }

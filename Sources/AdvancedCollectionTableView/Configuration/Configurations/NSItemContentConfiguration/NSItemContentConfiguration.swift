@@ -163,7 +163,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
         var configuration = self
-        if let state = state as? CollectionConfigurationState {
+        if let state = state as? ConfigurationState {
             if state.isSelected {
                 configuration.contentProperties.stateBorderColor = .controlAccentColor
                 configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0

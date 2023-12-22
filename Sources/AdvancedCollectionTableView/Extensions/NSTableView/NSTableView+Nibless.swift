@@ -60,7 +60,7 @@ public extension NSTableView {
     /**
      The dictionary of all registered cells for view-based table view identifiers.
      
-     Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the `register(_:forIdentifier:)` method. The value of each key is the corresponding `NSTableCellView` class.
+     Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.
      */
     internal (set) var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
         get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self, initialValue: [:]) }

@@ -4,8 +4,8 @@
 
 ### Creating a table cell registration
 
-- ``init(columnIdentifier:handler:)``
-- ``init(nib:columnIdentifier:handler:)``
+- ``init(columnIdentifiers:handler:)``
+- ``init(nib:columnIdentifiers:handler:)``
 - ``Handler``
 
 ### Creating a table cell view

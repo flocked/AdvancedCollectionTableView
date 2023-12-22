@@ -152,11 +152,11 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         set { self.dataSource.defaultRowAnimation = newValue }
     }
     
-    @objc dynamic internal var _defaultRowAnimation: UInt {
+    @objc dynamic var _defaultRowAnimation: UInt {
         return self.dataSource.defaultRowAnimation.rawValue
     }
     
-    internal func setupRightDownMonitor() {
+    func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             self.rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
                 self.tableView.menu = nil
@@ -176,7 +176,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
     }
     
-    internal func setupMenu(for location: CGPoint) {
+    func setupMenu(for location: CGPoint) {
         if let menuProvider = self.menuProvider {
             if let item = self.item(at: location) {
                 var menuItems: [Item] = [item]
@@ -191,7 +191,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
     }
     
-    internal func setupHoverObserving() {
+    func setupHoverObserving() {
         if self.hoverHandlers.isHovering != nil || self.hoverHandlers.didEndHovering != nil {
             self.tableView.setupObservingView()
             if hoveredRowObserver == nil {
@@ -232,8 +232,8 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the table view.
-        - option: Option how to apply the snapshot to the table view.
-        - completion: A optional completion handlers which gets called after applying the snapshot.
+        - option: Option how to apply the snapshot to the table view. The default value is `animated`.
+        - completion: An optional completion handler which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = convertSnapshot(snapshot)
@@ -242,7 +242,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
     
-    internal func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
+    func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
         var internalSnapshot = InternalSnapshot()
         let sections = snapshot.sectionIdentifiers
         internalSnapshot.appendSections(sections.ids)
@@ -253,7 +253,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         return internalSnapshot
     }
     
-    internal func updateSectionHeaderRows() {
+    func updateSectionHeaderRows() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
         var row = 0
@@ -392,7 +392,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     // MARK: - Elements
     
     /// All current items in the collection view.
-    internal var items: [Item] { currentSnapshot.itemIdentifiers }
+    var items: [Item] { currentSnapshot.itemIdentifiers }
     
     /// An array of the selected items.
     public var selectedItems: [Item] {
@@ -475,47 +475,46 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     }
     
     /// An array of items that are visible.
-    internal func visibleItems() -> [Item] {
+    func visibleItems() -> [Item] {
         self.tableView.visibleRowIndexes().compactMap({ item(forRow: $0) })
     }
     
-    internal func rowView(for item: Item) -> NSTableRowView? {
+    func rowView(for item: Item) -> NSTableRowView? {
         if let row = row(for: item) {
             return self.tableView.rowView(atRow: row, makeIfNecessary: false)
         }
         return nil
     }
     
-    internal func rows(for items: [Item]) -> [Int] {
+    func rows(for items: [Item]) -> [Int] {
         return items.compactMap({row(for: $0)})
     }
     
-    internal func isSelected(at row: Int) -> Bool {
+    func isSelected(at row: Int) -> Bool {
         return self.tableView.selectedRowIndexes.contains(row)
     }
     
-    internal func isSelected(for item: Item) -> Bool {
+    func isSelected(for item: Item) -> Bool {
         if let row = row(for: item) {
             return isSelected(at: row)
         }
         return false
     }
     
-    internal func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
+    func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
         self.tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: byExtendingSelection)
     }
     
-    internal func deselectItems(at rows: [Int]) {
+    func deselectItems(at rows: [Int]) {
         rows.forEach({self.tableView.deselectRow($0)})
     }
     
-    internal func removeItems( _ items: [Item]) {
-        var snapshot = self.snapshot()
-        snapshot.deleteItems(items)
-        self.apply(snapshot, .animated)
+    @discardableResult
+    func removeItems( _ items: [Item]) -> DiffableDataSourceTransaction<Section, Item>  {
+        deletingTransaction(items)
     }
     
-    internal func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> { 
+    func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
         let initalSnapshot = self.currentSnapshot
         var newNnapshot = self.snapshot()
         newNnapshot.deleteItems(deletionItems)
@@ -523,7 +522,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: newNnapshot, difference: difference)
     }
     
-    internal func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
         var row = row
         var isLast: Bool = false
         if row >= self.numberOfRows(in: tableView) {
@@ -548,7 +547,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     // MARK: - Sections
 
     /// All current sections in the collection view.
-    internal var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    var sections: [Section] { currentSnapshot.sectionIdentifiers }
     
     /// Returns the row for the specified section.
     public func row(for section: Section) -> Int? {
@@ -562,12 +561,12 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
     }
     
-    internal func rows(for section: Section) -> [Int] {
+    func rows(for section: Section) -> [Int] {
         let items = self.currentSnapshot.itemIdentifiers(inSection: section)
         return self.rows(for: items)
     }
     
-    internal func rows(for sections: [Section]) -> [Int] {
+    func rows(for sections: [Section]) -> [Int] {
         return sections.flatMap({self.rows(for: $0)})
     }
     
@@ -729,19 +728,19 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
  self.tableView.deselectAll(nil)
  }
  
- internal func moveItems( _ items: [Item], before beforeItem: Item) {
+ func moveItems( _ items: [Item], before beforeItem: Item) {
  var snapshot = self.snapshot()
  items.forEach({snapshot.moveItem($0, beforeItem: beforeItem)})
  self.apply(snapshot)
  }
  
- internal func moveItems( _ items: [Item], after afterItem: Item) {
+ func moveItems( _ items: [Item], after afterItem: Item) {
  var snapshot = self.snapshot()
  items.forEach({snapshot.moveItem($0, afterItem: afterItem)})
  self.apply(snapshot)
  }
  
- internal func moveItems(at rows: [Int], to toRow: Int) {
+ func moveItems(at rows: [Int], to toRow: Int) {
  let items = rows.compactMap({self.item(forRow: $0)})
  if let toItem = self.item(forRow: toRow), items.isEmpty == false {
  var snapshot = self.snapshot()

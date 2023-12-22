@@ -85,7 +85,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isHovered = isHovered
     }
     
-    public init(isSelected: Bool,
+    init(isSelected: Bool,
                 isEnabled: Bool,
                 isFocused: Bool,
                 isHovered: Bool,

@@ -47,7 +47,7 @@ public extension NSTableRowView {
     /**
      A Boolean value that determines whether the row automatically updates its background configuration when its state changes.
      
-     When this value is true, the row automatically calls  ``FZUIKit/NSContentConfiguration/updated(for:)`` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
+     When this value is true, the row automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
      If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     var automaticallyUpdatesBackgroundConfiguration: Bool {
@@ -212,7 +212,7 @@ public extension NSTableRowView {
     /**
      The current configuration state of the row.
      
-     To add your own custom state, see ``NSConfigurationStateCustomKey``.
+     To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     var configurationState: NSTableRowConfigurationState {
         let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
@@ -274,12 +274,7 @@ public extension NSTableRowView {
     }
     
     internal var isEnabled: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isEnabled", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEnabled else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isEnabled", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+        get { self.tableView?.isEnabled ?? true }
     }
     
     internal var isFocused: Bool {

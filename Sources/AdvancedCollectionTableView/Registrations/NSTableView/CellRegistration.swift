@@ -139,11 +139,11 @@ public extension NSTableView {
         
         internal func registerIfNeeded(for tableView: NSTableView) {
             if let nib = nib {
-                if (tableView.registeredNibsByIdentifier?[self.identifier] != self.nib) {
+                if tableView.registeredNibsByIdentifier?[self.identifier] != self.nib {
                     tableView.register(nib, forIdentifier: self.identifier)
                 }
             } else {
-                if (tableView.registeredCellsByIdentifier[self.identifier] != Cell.self) {
+                if tableView.registeredCellsByIdentifier[self.identifier] != Cell.self {
                     tableView.register(Cell.self, forIdentifier: self.identifier)
                 }
             }

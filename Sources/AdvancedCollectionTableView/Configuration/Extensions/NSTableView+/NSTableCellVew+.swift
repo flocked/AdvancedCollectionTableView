@@ -190,17 +190,12 @@ public extension NSTableCellView {
         self.rowView?.isEmphasized ?? false
     }
     
-    internal var isTableViewFirstResponder: Bool {
-        self.rowView?.isTableViewFirstResponder ?? false
+    internal var isEnabled: Bool {
+        get { rowView?.isEnabled ?? true }
     }
     
-    internal var isEnabled: Bool {
-        get { getAssociatedValue(key: "NSTableCellVew_isEnabled", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEnabled else { return }
-            set(associatedValue: newValue, key: "NSTableCellVew_isEnabled", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+    internal var isTableViewFirstResponder: Bool {
+        self.rowView?.isTableViewFirstResponder ?? false
     }
     
     internal var isFocused: Bool {

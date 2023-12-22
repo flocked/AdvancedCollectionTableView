@@ -7,7 +7,7 @@
 
 import AppKit
 
-/// Options for applying snapshots to a diffable data source.
+/// Options for applying a snapshot to a diffable data source.
 public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     /**
      The snapshot gets applied animated.

@@ -22,14 +22,6 @@ internal extension NSCollectionView {
         }
     }
     
-    var isEnabled: Bool {
-        get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
-        set {
-            set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
-            self.visibleItems().forEach({$0.isEnabled = newValue })
-        }
-    }
-    
     var firstResponderObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
@@ -104,3 +96,13 @@ internal extension NSCollectionView {
         }
     }
 }
+
+/*
+var isEnabled: Bool {
+    get { getAssociatedValue(key: "NSCollectionView_isEnabled", object: self, initialValue: true) }
+    set {
+        set(associatedValue: newValue, key: "NSCollectionView_isEnabled", object: self)
+        self.visibleItems().forEach({$0.isEnabled = newValue })
+    }
+}
+ */

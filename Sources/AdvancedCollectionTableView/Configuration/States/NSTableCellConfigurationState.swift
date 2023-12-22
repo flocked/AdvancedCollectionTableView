@@ -72,7 +72,7 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
         self.isExpanded = false
     }
     
-    internal init(
+    init(
         isSelected: Bool,
         isEmphasized: Bool,
         isEnabled: Bool,

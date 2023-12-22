@@ -242,7 +242,7 @@ public extension NSCollectionViewItem {
     /**
      The current configuration state of the item.
      
-     To add your own custom state, see ``NSConfigurationStateCustomKey``.
+     To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     var configurationState: NSItemConfigurationState {
         let state = NSItemConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isFocused: self.isFocused, isHovered: self.isHovered, isEditing: self.isEditing, isExpanded: false, highlight: self.highlightState, isEmphasized: self.isEmphasized)
