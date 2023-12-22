@@ -293,3 +293,9 @@ public extension NSTableCellView {
      }
      */
 }
+
+extension NSTableCellView {
+    open override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+        Swift.print("setBackgroundStyle", backgroundStyle.rawValue)
+    }
+}
