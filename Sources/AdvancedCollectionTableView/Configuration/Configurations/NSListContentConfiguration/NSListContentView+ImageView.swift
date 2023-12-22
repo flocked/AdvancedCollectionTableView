@@ -18,6 +18,10 @@ internal extension NSListContentView {
                     update()
             }
         }
+        
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("setBackgroundStyle", self.cell?.backgroundStyle.rawValue ?? "nil")
+        }
                 
         override var image: NSImage? {
             didSet {
