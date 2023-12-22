@@ -17,31 +17,6 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         self.initialSetup()
         self.updateConfiguration()
-        self.addSubview(otherView)
-        otherView.addSubview(thisView)
-    }
-    
-    let otherView = OtherView()
-    let thisView = ThisView()
-
-    class OtherView: NSView {
-       // @objc var backgroundStyle: NSView.BackgroundStyle = .normal
-        
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("OtherView setBackgroundStyle")
-        }
-    }
-    
-    class ThisView: NSView {
-       // @objc var backgroundStyle: NSView.BackgroundStyle = .normal
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("ThisView setBackgroundStyle")
-        }
-        /*
-        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("setBackgroundStyle")
-        }
-        */
     }
     
     /// The current configuration of the view.
