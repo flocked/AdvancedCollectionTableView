@@ -68,6 +68,8 @@ public class NSListContentView: NSView, NSContentView {
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
         
+        textField.isEnabled = _configuration.state?.isEnabled != false
+        secondaryTextField.isEnabled = _configuration.state?.isEnabled != false
         textField.text(_configuration.text, attributedString: _configuration.attributedText)
         secondaryTextField.text(_configuration.secondaryText, attributedString: _configuration.secondaryAttributedText)
         imageView.image = _configuration.image

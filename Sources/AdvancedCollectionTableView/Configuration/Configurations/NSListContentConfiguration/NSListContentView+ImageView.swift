@@ -43,6 +43,18 @@ internal extension NSListContentView {
         var calculatedSize: CGSize?
         var verticalConstraint: NSLayoutConstraint? = nil
         
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {            
+            if let sup = self.superview?.superview?.superview {
+                Swift.print("3", type(of: sup))
+            }
+            if let sup = self.superview?.superview?.superview?.superview {
+                Swift.print("4", type(of: sup))
+            }
+            if let sup = self.superview?.superview?.superview?.superview?.superview {
+                Swift.print("5", type(of: sup))
+            }
+        }
+        
         func update() {
             self.imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling.imageScaling
             self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()

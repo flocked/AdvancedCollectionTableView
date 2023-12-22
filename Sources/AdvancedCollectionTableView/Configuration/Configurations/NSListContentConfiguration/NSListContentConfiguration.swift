@@ -147,6 +147,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return(self.badge?.isVisible == true)
     }
     
+    internal var state: NSTableCellConfigurationState? = nil
+    
     // MARK: Creating a content view
     
     /// Creates a new instance of the content view using the configuration.
@@ -158,7 +160,9 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSListContentConfiguration {
-        return self
+        var configuration = self
+        configuration.state = state as? NSTableCellConfigurationState
+        return configuration
         /*
          guard let state = state as? NSTableCellConfigurationState else { return self }
          var configuration = self
