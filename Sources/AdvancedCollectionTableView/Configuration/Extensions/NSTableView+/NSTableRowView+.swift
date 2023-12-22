@@ -26,12 +26,6 @@ extension NSTableRowView {
      
      rowView.backgroundConfiguration = backgroundConfiguration
      ```
-     
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets the following APIs to nil:
-     - `backgroundColor`
-     - ``backgroundView``
-     - ``selectedBackgroundView``
-     - ``multipleSelectionBackgroundView``
      */
     public var backgroundConfiguration: NSContentConfiguration?   {
         get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
@@ -48,51 +42,12 @@ extension NSTableRowView {
      A Boolean value that determines whether the row automatically updates its background configuration when its state changes.
      
      When this value is true, the row automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
-     If you override ``updateConfiguration(using:)`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
+     
+     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
      */
     @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
         get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
         set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
-        }
-    }
-    
-    /**
-     The view that displays behind the row’s other content.
-     
-     Use this property to assign a custom background view to the row. The background view appears behind the content view and its frame automatically adjusts so that it fills the bounds of the row.
-     
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
-     */
-    @objc open var backgroundView: NSView?   {
-        get { getAssociatedValue(key: "backgroundView", object: self) }
-        set { 
-            guard newValue != backgroundView else { return }
-            backgroundView?.removeFromSuperview()
-            if newValue != nil {
-                self.backgroundConfiguration = nil
-            }
-            set(associatedValue: newValue, key: "backgroundView", object: self)
-            self.configurateBackgroundView()
-        }
-    }
-    
-    /**
-     The view that displays just above the background view for a selected row.
-     
-     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView``.
-     
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
-     */
-    @objc open var selectedBackgroundView: NSView? {
-        get { getAssociatedValue(key: "selectedBackgroundView", object: self) }
-        set { 
-            guard newValue != selectedBackgroundView else { return }
-            selectedBackgroundView?.removeFromSuperview()
-            if newValue != nil {
-                self.backgroundConfiguration = nil
-            }
-            set(associatedValue: newValue, key: "selectedBackgroundView", object: self)
-            self.configurateBackgroundView()
         }
     }
     
@@ -104,31 +59,8 @@ extension NSTableRowView {
         }
     }
     
-    /**
-     The view that displays just above the background view for a selected row.
-     
-     You can use this view to give a selected row a custom appearance. When the row has a selected state, this view layers above the ``backgroundView``.
-     
-     A background configuration is mutually exclusive with background views, so you must use one approach or the other. Setting a non-`nil` value for this property resets ``backgroundConfiguration`` to `nil`.
-     */
-    @objc open var multipleSelectionBackgroundView: NSView? {
-        get { getAssociatedValue(key: "multipleSelectionBackgroundView", object: self) }
-        set { 
-            guard newValue != multipleSelectionBackgroundView else { return }
-            multipleSelectionBackgroundView?.removeFromSuperview()
-            if newValue != nil {
-                self.backgroundConfiguration = nil
-            }
-            set(associatedValue: newValue, key: "multipleSelectionBackgroundView", object: self)
-            self.configurateBackgroundView()
-        }
-    }
-    
     internal func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            self.backgroundView = nil
-            self.selectedBackgroundView = nil
-            self.multipleSelectionBackgroundView = nil
             self.backgroundColor = nil
             if var backgroundView = configurationBackgroundView,  backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
@@ -141,31 +73,7 @@ extension NSTableRowView {
             }
         } else {
             configurationBackgroundView = nil
-            if self.isSelected {
-                self.backgroundView?.removeFromSuperview()
-                if (isMultipleSelected) {
-                    if let multipleBackgroundView = self.multipleSelectionBackgroundView {
-                        self.selectedBackgroundView?.removeFromSuperview()
-                        self.addSubview(withConstraint: multipleBackgroundView)
-                    } else if let selectedBackgroundView = self.selectedBackgroundView {
-                        self.addSubview(withConstraint: selectedBackgroundView)
-                    }
-                }
-            } else {
-                self.selectedBackgroundView?.removeFromSuperview()
-                self.multipleSelectionBackgroundView?.removeFromSuperview()
-                if let backgroundView = self.backgroundView {
-                    self.addSubview(backgroundView)
-                }
-            }
         }
-        self.orderSubviews()
-    }
-    
-    internal func orderSubviews() {
-        selectedBackgroundView?.sendToBack()
-        multipleSelectionBackgroundView?.sendToBack()
-        backgroundView?.sendToBack()
     }
     
     internal var isMultipleSelected: Bool {
@@ -184,7 +92,7 @@ extension NSTableRowView {
     /**
      A block for handling updates to the row’s configuration using the current state.
      
-     A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
+     Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
      
      ```
      rowView.configurationUpdateHandler = { rowView, state in
@@ -197,7 +105,7 @@ extension NSTableRowView {
      }
      ```
      
-     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling u``pdateConfiguration(using:)``.
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "_NSTableRowViewconfigurationUpdateHandler", object: self) }
@@ -223,6 +131,7 @@ extension NSTableRowView {
      Informs the row to update its configuration for its current state.
      
      You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
+     
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
@@ -233,22 +142,13 @@ extension NSTableRowView {
     // Updates content configuration and background configuration if automatic updating is enabled.
     internal func setNeedsAutomaticUpdateConfiguration() {
         if isConfigurationUpdatesEnabled {
-            let state = self.configurationState
-            
-            if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = self.backgroundConfiguration {
-                self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+            if automaticallyUpdatesBackgroundConfiguration {
+                setNeedsUpdateConfiguration()
+            } else {
+                configurationUpdateHandler?(self,  configurationState)
             }
-            
-            configurationUpdateHandler?(self, state)
         }
     }
-    
-    /*
-     // Updates cell views content configuration.
-     internal func setNeedsCellViewsUpdateConfiguration() {
-     self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
-     }
-     */
     
     /**
      Updates the row’s configuration using the current state.
@@ -256,12 +156,12 @@ extension NSTableRowView {
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
-    public func updateConfiguration(using state: NSTableRowConfigurationState) {
+    func updateConfiguration(using state: NSTableRowConfigurationState) {
         if let backgroundConfiguration = self.backgroundConfiguration {
             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
         }
-        configurationUpdateHandler?(self, state)
         cellViews.forEach({$0.setNeedsUpdateConfiguration()})
+        configurationUpdateHandler?(self, state)
     }
     
     /**
@@ -364,3 +264,11 @@ internal var isReordering: Bool {
     }
 }
 */
+
+
+/*
+ // Updates cell views content configuration.
+ internal func setNeedsCellViewsUpdateConfiguration() {
+ self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
+ }
+ */

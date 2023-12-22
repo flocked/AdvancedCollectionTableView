@@ -62,7 +62,8 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     public init(isSelected: Bool = false,
                 isEditing: Bool = false,
                 isEmphasized: Bool = false,
-                isHovered: Bool = false) {
+                isHovered: Bool = false,
+                isEnabled: Bool = true) {
         self.isSelected = isSelected
         self.isEditing = isEditing
         self.isEmphasized = isEmphasized
