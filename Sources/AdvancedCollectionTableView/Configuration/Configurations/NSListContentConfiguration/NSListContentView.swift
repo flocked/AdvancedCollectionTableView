@@ -18,11 +18,13 @@ public class NSListContentView: NSView, NSContentView {
         self.initialSetup()
         self.updateConfiguration()
         self.addSubview(someOtherView)
+        self.addSubview(imgView)
     }
     
     let someOtherView = OtherView()
+    let imgView = ImageView()
     
-    class OtherView: NSView {
+    class OtherView: NSControl {
         /*
         var textCell: NSCell? = NSTextFieldCell(textCell: "")
         override var cell: NSCell? {
