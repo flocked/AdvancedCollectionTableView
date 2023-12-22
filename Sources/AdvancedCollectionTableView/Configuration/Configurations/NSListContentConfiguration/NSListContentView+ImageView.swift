@@ -17,6 +17,14 @@ internal extension NSListContentView {
         }
     }
     
+    class SomeOther1View: NSView {
+        
+    }
+    
+    class SomeOther2View: NSView {
+        
+    }
+    
     class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
@@ -69,12 +77,15 @@ internal extension NSListContentView {
         
         let testView = ImageView()
         let teetView1 = TestView()
-        let testView2 = NSView()
+        let someOtherView1 = SomeOther1View()
+        let someOtherView2 = SomeOther2View()
+
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
-            self.addSubview(testView2)
+            self.addSubview(someOtherView1)
+            someOtherView1.addSubview(someOtherView2)
         //    self.addSubview(testView)
           //  testView.addSubview(teetView1)
           //  self.imageAlignment = .alignCenter
