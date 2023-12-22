@@ -47,7 +47,7 @@ class SidebarViewController: NSViewController {
             }
             return menu
         }
-
+        
         applySnapshot(with: SidebarItem.sampleItems)
     }
     
