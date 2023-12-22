@@ -68,11 +68,13 @@ internal extension NSListContentView {
         }
         
         let testView = ImageView()
+        let teetView1 = TestView()
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
             self.addSubview(testView)
+            testView.addSubview(teetView1)
           //  self.imageAlignment = .alignCenter
             self.update()
         }
