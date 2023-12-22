@@ -9,12 +9,6 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension NSTableCellView {
-    @objc public dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-        Swift.print("NSTableCellView setBackgroundStyle", backgroundStyle.rawValue)
-    }
-}
-
 /// A content view for displaying list-based content.
 public class NSListContentView: NSView, NSContentView {
     /// Creates a table cell content view with the specified content configuration.
@@ -23,10 +17,6 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         self.initialSetup()
         self.updateConfiguration()
-    }
-    
-    @objc public dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-        Swift.print("NSListContentView setBackgroundStyle", backgroundStyle.rawValue)
     }
     
     /// The current configuration of the view.

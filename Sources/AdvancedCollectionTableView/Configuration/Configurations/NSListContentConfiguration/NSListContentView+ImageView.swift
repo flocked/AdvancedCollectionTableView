@@ -12,21 +12,17 @@ import SwiftUI
 
 internal extension NSListContentView {
     class TestView: NSView {
-        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("TestView setBackgroundStyle", backgroundStyle.rawValue)
         }
     }
     
     class SomeOther1View: NSView {
-        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("SomeOther1 setBackgroundStyle", backgroundStyle.rawValue)
-        }
+        
     }
     
     class SomeOther2View: NSView {
-        @objc dynamic func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
-            Swift.print("SomeOther2 setBackgroundStyle", backgroundStyle.rawValue)
-        }
+        
     }
     
     class CellImageView: NSImageView {
@@ -88,8 +84,8 @@ internal extension NSListContentView {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
-            self.addSubview(someOtherView1)
-            someOtherView1.addSubview(someOtherView2)
+         //   self.addSubview(someOtherView1)
+         //   someOtherView1.addSubview(someOtherView2)
         //    self.addSubview(testView)
           //  testView.addSubview(teetView1)
           //  self.imageAlignment = .alignCenter
