@@ -69,10 +69,10 @@ internal extension NSListContentView {
             self.addSubview(observerImageView)
             observerImageView.backgroundStyleHandler = { backgroundStyle in
                 if backgroundStyle == .emphasized {
-                    (self.layer as? ImageLayer)?.tintColor = .alternateSelectedControlTextColor
-                    Swift.print("emphasized", (self.layer as? ImageLayer)?.tintColor == .alternateSelectedControlTextColor)
+                    self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = .alternateSelectedControlTextColor
+                    Swift.print("emphasized", self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor == .alternateSelectedControlTextColor)
                 } else {
-                    (self.layer as? ImageLayer)?.tintColor = self.tintColor?.resolvedColor(for: self)
+                    self.layer?.firstSublayer(type: ImageLayer.self)?.tintColor = self.tintColor?.resolvedColor(for: self)
                 }
             }
             self.wantsLayer = true
