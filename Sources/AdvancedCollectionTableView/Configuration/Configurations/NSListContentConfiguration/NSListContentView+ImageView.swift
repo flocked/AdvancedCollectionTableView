@@ -11,6 +11,12 @@ import FZUIKit
 import SwiftUI
 
 internal extension NSListContentView {
+    class TestView: NSView {
+        override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
+            Swift.print("TestView setBackgroundStyle", backgroundStyle.rawValue)
+        }
+    }
+    
     class CellImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
@@ -19,9 +25,11 @@ internal extension NSListContentView {
             }
         }
         
+        /*
         override func setBackgroundStyle(_ backgroundStyle: NSView.BackgroundStyle) {
             Swift.print("setBackgroundStyle", self.cell?.backgroundStyle.rawValue ?? "nil")
         }
+        */
                 
         override var image: NSImage? {
             didSet {
@@ -59,10 +67,12 @@ internal extension NSListContentView {
             self.invalidateIntrinsicContentSize()
         }
         
+        let testView = TestView()
         init(properties: NSListContentConfiguration.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
             self.wantsLayer = true
+            self.addSubview(testView)
           //  self.imageAlignment = .alignCenter
             self.update()
         }
