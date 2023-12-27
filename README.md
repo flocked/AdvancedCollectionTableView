@@ -163,11 +163,11 @@ NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selec
 There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
 
 - NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`
-```
+```swift
 collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 ```
 - NSCollectionView's datasource `collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath)` & NSTableView's datasource `tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int)`
-```
+```swift
 func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
     let galleryItem = galleryItems[indexPath.item]
     return galleryItem.fileURL

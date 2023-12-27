@@ -38,7 +38,7 @@ extension NSTableCellView {
      
      The default content configuration has preconfigured default styling depending on the table view ``AppKit/NSTableView/style`` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
      
-     ```
+     ```swift
      var content = cell.defaultContentConfiguration()
      
      // Configure content.
@@ -163,7 +163,7 @@ extension NSTableCellView {
      
      Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
      
-     ```
+     ```swift
      cell.configurationUpdateHandler = { cell, state in
      var content = NSListContentConfiguration.sidebar().updated(for: state)
      content.text = "Hello world!"

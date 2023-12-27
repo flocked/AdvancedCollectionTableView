@@ -18,7 +18,7 @@ extension NSTableRowView {
      
      Using a background configuration, you can obtain system default background styling for a variety of different row states. Create a background configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
      
-     ```
+     ```swift
      var backgroundConfiguration = NSBackgroundConfiguration()
      
      // Set a nil background color to use the view's tint color.
@@ -94,7 +94,7 @@ extension NSTableRowView {
      
      Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
      
-     ```
+     ```swift
      rowView.configurationUpdateHandler = { rowView, state in
      var content = NSTableRowContentConfiguration.default().updated(for: state)
      content.backgroundColor = nil

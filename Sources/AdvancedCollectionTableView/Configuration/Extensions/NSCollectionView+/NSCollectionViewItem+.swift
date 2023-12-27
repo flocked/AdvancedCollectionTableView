@@ -19,7 +19,7 @@ extension NSCollectionViewItem {
      
      Using a background configuration, you can obtain system default background styling for a variety of different item states. Create a background configuration with one of the default system styles, customize the configuration to match your item’s style as necessary, and assign the configuration to this property.
      
-     ```
+     ```swift
      var backgroundConfiguration = NSBackgroundConfiguration.listPlainItem()
      
      // Set a nil background color to use the view's tint color.
@@ -40,8 +40,9 @@ extension NSCollectionViewItem {
     }
     
     /**
-     Retrieves a `NSBackgroundConfiguration` with default appearance.
-     ```
+     Retrieves a default background content configuration.
+     
+     ```swift
      var background = item.defaultBackgroundConfiguration()
      
      // Configure background.
@@ -122,7 +123,7 @@ extension NSCollectionViewItem {
      
      The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the item as the current content configuration.
      
-     ```
+     ```swift
      var content = item.defaultContentConfiguration()
      
      // Configure content.
