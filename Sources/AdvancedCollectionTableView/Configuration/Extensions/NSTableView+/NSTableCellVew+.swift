@@ -237,7 +237,8 @@ extension NSTableCellView {
     
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
-        tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
+        tableCellObserver = self.observeChanges(for: \.superview, sendInitalValue: true, handler: {old, new in
+            Swift.print("observeTableCellView", self.rowView != nil, self.tableView != nil)
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true

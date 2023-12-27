@@ -39,6 +39,7 @@ extension NSTableView {
         
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
+            Swift.print("setupObservation")
             if tableViewObserve == nil {
                 tableViewObserve = KeyValueObserver(self)
                 tableViewObserve?.add(\.isEnabled) { [weak self] old, new in
