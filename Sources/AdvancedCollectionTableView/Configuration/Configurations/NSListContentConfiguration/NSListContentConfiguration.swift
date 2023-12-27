@@ -219,7 +219,15 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return configuration
     }
     
-    /// Creates a list content configuration with an editable text.
+    /// Creates a plain list content configuration with a text.
+    public static func text(_ text: String
+    ) -> Self {
+        var configuration: Self = .plain()
+        configuration.text = text
+        return configuration
+    }
+    
+    /// Creates a plain list content configuration with an editable text.
     public static func editableText(_ text: String?, placeholderText: String?, onTextEditEnd: @escaping (String)->()) -> Self {
         var configuration: Self = .plain()
         configuration.text = text
