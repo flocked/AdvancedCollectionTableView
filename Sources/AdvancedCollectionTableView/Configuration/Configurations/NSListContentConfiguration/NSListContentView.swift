@@ -16,11 +16,17 @@ public class NSListContentView: NSView, NSContentView {
     public init(configuration: NSListContentConfiguration) {
         _configuration = configuration
         super.init(frame: .zero)
+        superviewObserver = self.observeChanges(for: \.superview) { old, new in
+            guard old != new, let rowView = new as? NSTableRowView else { return }
+            Swift.print("NSListContentView", rowView.contentConfiguration != nil)
+        }
+        /*
         superviewObserver = self.observeChanges(for: \.superview?.superview?.superview) { old, new in
             guard old != new, let tableView = new as? NSTableView else { return }
             Swift.print("NSListContentView", tableView.row(for: self), tableView.row(for: self.superview!))
            // Swift.print("NSListContentView", new ?? "nil")
         }
+         */
         
         /*
         superviewObserver = self.observeChanges(for: \.superview) { old, new in
