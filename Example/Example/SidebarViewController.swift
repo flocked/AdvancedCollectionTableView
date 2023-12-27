@@ -46,6 +46,8 @@ class SidebarViewController: NSViewController {
         // Enables deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
         
+        dataSource.sectionHeaderViewRegistration(sectionHeaderRegistration)
+        
         // Provides right click menu that displays the title of each selected sidebar item.
         dataSource.menuProvider = { sidebarItems in
             guard sidebarItems.isEmpty == false else { return nil }

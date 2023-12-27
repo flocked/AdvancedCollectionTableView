@@ -246,6 +246,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     
     internal var type: TableCellType? = nil
     internal var tableViewStyle: NSTableView.Style? = nil
+    var isGroupRow: Bool = false
         
     internal enum TableCellType {
         case automatic

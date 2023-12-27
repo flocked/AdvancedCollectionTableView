@@ -204,6 +204,14 @@ extension NSTableCellView {
         get { rowView?.isEnabled ?? true }
     }
     
+    public func updateIsGroupRow(_ isGroupRow: Bool, style: NSTableView.Style) {
+        if var configuration = contentConfiguration as? NSListContentConfiguration, configuration.type == .automatic  {
+            configuration.isGroupRow = isGroupRow
+            configuration = configuration.tableViewStyle(style, isGroupRow: isGroupRow)
+            self.contentConfiguration = configuration
+        }
+    }
+    
     var isEditing: Bool {
         get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
         set {

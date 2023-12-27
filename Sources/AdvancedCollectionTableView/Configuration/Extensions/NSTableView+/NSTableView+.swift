@@ -31,18 +31,24 @@ extension NSTableView {
         })
     }
     
-    var isEnabledObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "tableIsEnabledObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "tableIsEnabledObserver", object: self) }
+    var tableViewObserve: KeyValueObserver<NSTableView>? {
+        get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
+
         
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            if isEnabledObserver == nil {
-                isEnabledObserver = self.observeChanges(for: \.isEnabled, handler: { [weak self] old, new in
+            if tableViewObserve == nil {
+                tableViewObserve = KeyValueObserver(self)
+                tableViewObserve?.add(\.isEnabled) { [weak self] old, new in
                     guard let self = self, old != new else { return }
                     self.updateVisibleRowConfigurations()
-                })
+                }
+                tableViewObserve?.add(\.delegate, sendInitalValue: true) { [weak self] _, delegate in
+                    guard let self = self, let delegate = delegate else { return }
+                    Swift.print("found delegate")
+                }
             }
             if (observingView == nil) {
                 observingView = ObservingView()
