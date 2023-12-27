@@ -265,6 +265,7 @@ extension NSTableRowView {
     }
     
     func observeTableRowView() {
+        Swift.print("observeTableRowView", self)
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { old, new in
