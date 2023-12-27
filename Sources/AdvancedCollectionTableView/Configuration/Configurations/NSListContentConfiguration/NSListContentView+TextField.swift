@@ -19,54 +19,61 @@ internal extension NSListContentView {
             }
         }
         
-        func text(_ text: String?, attributedString: AttributedString?) {
+        func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
             if let attributedString = attributedString {
-                self.isHidden = false
-                self.attributedStringValue = NSAttributedString(attributedString)
+                attributedStringValue = NSAttributedString(attributedString)
             } else if let text = text {
-                self.stringValue = text
-                self.isHidden = false
+                stringValue = text
             } else {
-                self.stringValue = ""
-                self.isHidden = true
+                stringValue = ""
             }
+            
+            if let attributedPlaceholder = attributedPlaceholder {
+                placeholderAttributedString = NSAttributedString(attributedPlaceholder)
+            } else if let placeholder = placeholder {
+                placeholderString = placeholder
+            } else {
+                placeholderString = ""
+            }
+            isHidden = !(text != nil || attributedString != nil || placeholderString != nil || attributedPlaceholder != nil)
         }
         
         func update() {
-            self.maximumNumberOfLines = properties.numberOfLines
-            self.textColor = properties.resolvedColor()
-            self.lineBreakMode = properties.lineBreakMode
-            self.font = properties.font
-            self.alignment = properties.alignment
-            self.isSelectable = properties.isSelectable
-            self.isEditable = properties.isEditable
+            maximumNumberOfLines = properties.numberOfLines
+            textColor = properties.resolvedColor()
+            lineBreakMode = properties.lineBreakMode
+            font = properties.font
+            alignment = properties.alignment
+            isSelectable = properties.isSelectable
+            isEditable = properties.isEditable
             
-            self.drawsBackground = false
-            self.backgroundColor = nil
-            self.isBordered = false
+            drawsBackground = false
+            backgroundColor = nil
+            isBordered = false
         }
         
         init(properties: TextConfiguration) {
             self.properties = properties
             super.init(frame: .zero)
-            self.drawsBackground = false
-            self.backgroundColor = nil
-            self.delegate = self
-            self.textLayout = .wraps
-            self.truncatesLastVisibleLine = true
-            self.update()
+            drawsBackground = false
+            backgroundColor = nil
+            delegate = self
+            textLayout = .wraps
+            truncatesLastVisibleLine = true
+            update()
         }
         
         override func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
-                self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
+                firstSuperview(for: NSTableCellView.self)?.isEditing = true
+                previousStringValue = stringValue
             }
             return canBecome
         }
         
         var tableCellContentView: NSListContentView? {
-            self.firstSuperview(for: NSListContentView.self)
+            firstSuperview(for: NSListContentView.self)
         }
         
         override func layout() {
@@ -77,7 +84,7 @@ internal extension NSListContentView {
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
             intrinsicContentSize.width = NSView.noIntrinsicMetric
-            let width = self.frame.size.width
+            let width = frame.size.width
             
             if let cellSize = cell?.cellSize(forBounds: NSRect(x: 0, y: 0, width: width, height: 10000)) {
                 //    Swift.print(cellSize)
@@ -88,7 +95,7 @@ internal extension NSListContentView {
                 return intrinsicContentSize
             }
             
-            guard let fieldEditor = self.window?.fieldEditor(false, for: self) as? NSTextView else {
+            guard let fieldEditor = window?.fieldEditor(false, for: self) as? NSTextView else {
                 return intrinsicContentSize }
             if let textContainer = fieldEditor.textContainer, let layoutManager = fieldEditor.layoutManager {
                 layoutManager.ensureLayout(for: textContainer)
@@ -99,27 +106,27 @@ internal extension NSListContentView {
         }
         
         internal var lastContentSize = NSSize() { didSet {
-            lastContentSize = NSSize(width: ceil(self.lastContentSize.width), height: ceil(self.lastContentSize.height))
+            lastContentSize = NSSize(width: ceil(lastContentSize.width), height: ceil(lastContentSize.height))
         }}
         
         internal func stringValueSize() -> CGSize {
-            let stringSize = self.attributedStringValue.size()
+            let stringSize = attributedStringValue.size()
             return CGSize(width: stringSize.width, height: super.intrinsicContentSize.height)
         }
         
         var isEditing: Bool = false
         override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
-            self.isEditing = true
-            self.previousStringValue = self.stringValue
-            self.firstSuperview(for: NSTableCellView.self)?.isEditing = true
+            isEditing = true
+            previousStringValue = stringValue
+            firstSuperview(for: NSTableCellView.self)?.isEditing = true
         }
         
         override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
-            self.isEditing = false
-            self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
-            self.properties.onEditEnd?(self.stringValue)
+            isEditing = false
+            firstSuperview(for: NSTableCellView.self)?.isEditing = false
+            properties.onEditEnd?(stringValue)
         }
         
         override func textDidChange(_ notification: Notification) {
@@ -133,15 +140,15 @@ internal extension NSListContentView {
         var previousStringValue: String = ""
         func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                if self.properties.stringValidation?(self.stringValue) ?? true {
-                    self.window?.makeFirstResponder(tableView)
+                if properties.stringValidation?(stringValue) ?? true {
+                    window?.makeFirstResponder(tableView)
                     return true
                 } else {
                     NSSound.beep()
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
-                self.stringValue = self.previousStringValue
-                self.window?.makeFirstResponder(tableView)
+                stringValue = previousStringValue
+                window?.makeFirstResponder(tableView)
                 return true
             }
             return false
@@ -152,7 +159,7 @@ internal extension NSListContentView {
         }
         
         deinit {
-            self.firstSuperview(for: NSTableCellView.self)?.isEditing = false
+            firstSuperview(for: NSTableCellView.self)?.isEditing = false
         }
     }
 }

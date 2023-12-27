@@ -80,20 +80,119 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     
     // MARK: Creating item configurations
     
-    /// The primary text.
-    public var text: String? = nil
-    /// An attributed variant of the primary text.
-    public var attributedText: AttributedString? = nil
-    /// The secondary text.
-    public var secondaryText: String? = nil
-    /// An attributed variant of the secondary text.
-    public var secondaryAttributedText: AttributedString? = nil
+    /**
+     The primary text.
+     
+     If you configurate `text` with a non-`nil` value, ``attributedText`` will be `nil`.
+     */
+    public var text: String? = nil {
+        didSet {
+            if text != nil {
+                attributedText = nil
+            }
+        }
+    }
+    
+    /**
+     An attributed variant of the primary text.
+     
+     If you configurate `attributedText` with a non-`nil` value, ``text`` will be `nil`.
+     */
+    public var attributedText: AttributedString? = nil {
+        didSet {
+            if attributedText != nil {
+                text = nil
+            }
+        }
+    }
+    
+    /**
+     The primary placeholder text.
+     
+     If you configurate `placeholderText` with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
+     */
+    public var placeholderText: String? = nil {
+        didSet {
+            if placeholderText != nil {
+                attributedPlaceholderText = nil
+            }
+        }
+    }
+    
+    /**
+     An attributed variant of the primary placeholder text.
+     
+     If you configurate `attributedPlaceholderText` with a non-`nil` value, ``placeholderText`` will be `nil`.
+     */
+    public var attributedPlaceholderText: AttributedString? = nil {
+        didSet {
+            if attributedPlaceholderText != nil {
+                placeholderText = nil
+            }
+        }
+    }
+    
+    /**
+     The secondary text.
+     
+     If you configurate `secondaryText` with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
+     */
+    public var secondaryText: String? = nil {
+        didSet {
+            if secondaryText != nil {
+                secondaryAttributedText = nil
+            }
+        }
+    }
+    
+    /**
+     An attributed variant of the secondary text.
+     
+     If you configurate `secondaryAttributedText` with a non-`nil` value, ``secondaryText`` will be `nil`.
+     */
+    public var secondaryAttributedText: AttributedString? = nil {
+        didSet {
+            if secondaryAttributedText != nil {
+                secondaryText = nil
+            }
+        }
+    }
+    
+    /**
+     The secondary placeholder text.
+     
+     If you configurate `secondaryPlaceholderText` with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
+     */
+    public var secondaryPlaceholderText: String? = nil {
+        didSet {
+            if secondaryPlaceholderText != nil {
+                secondaryAttributedPlaceholderText = nil
+            }
+        }
+    }
+    
+    /**
+     An attributed variant of the secondary placeholder text.
+     
+     If you configurate `secondaryAttributedPlaceholderText` with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
+     */
+    public var secondaryAttributedPlaceholderText: AttributedString? = nil {
+        didSet {
+            if secondaryAttributedPlaceholderText != nil {
+                secondaryPlaceholderText = nil
+            }
+        }
+    }
+    
     /// The image to display.
     public var image: NSImage? = nil
+    
     /// The view to display.
     public var view: NSView? = nil
+    
     /// An overlay view the system places above the view and image and automatically resizes to fill the frame.
     public var overlayView: NSView? = nil
+    
     /// The badges displayed either as overlay or attachment next to the image/view.
     public var badges: [Badge] = []
     

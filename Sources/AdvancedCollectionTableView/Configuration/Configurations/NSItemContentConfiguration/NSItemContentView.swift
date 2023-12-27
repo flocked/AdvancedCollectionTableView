@@ -12,13 +12,12 @@ import FZUIKit
 public class NSItemContentView: NSView, NSContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
-        self.appliedConfiguration = configuration
+        appliedConfiguration = configuration
         super.init(frame: .zero)
-        self.isOpaque = false
-        self.clipsToBounds = false
-        self.backgroundColor = .red
-        self.stackviewConstraints = self.addSubview(withConstraint: stackView)
-        self.updateConfiguration()
+        isOpaque = false
+        clipsToBounds = false
+        stackviewConstraints = addSubview(withConstraint: stackView)
+        updateConfiguration()
     }
     
     /// The current configuration of the view.
@@ -26,7 +25,7 @@ public class NSItemContentView: NSView, NSContentView {
         get { appliedConfiguration }
         set {
             guard let newValue = newValue as? NSItemContentConfiguration else { return }
-            self.appliedConfiguration = newValue
+            appliedConfiguration = newValue
         }
     }
     
@@ -65,7 +64,7 @@ public class NSItemContentView: NSView, NSContentView {
     }
     
     func horizontalTest() {
-        let contentRegion = self.bounds.inset(by: appliedConfiguration.margins)
+        let contentRegion = bounds.inset(by: appliedConfiguration.margins)
         var remainingRegion = contentRegion
         if appliedConfiguration.hasContent {
             if let imageSize = appliedConfiguration.image?.size, appliedConfiguration.contentProperties.imageScaling == .fit {
@@ -82,7 +81,7 @@ public class NSItemContentView: NSView, NSContentView {
     }
     
     func test() {
-        let contentRegion = self.bounds.inset(by: appliedConfiguration.margins)
+        let contentRegion = bounds.inset(by: appliedConfiguration.margins)
         var remainingRegion = contentRegion
         if appliedConfiguration.hasSecondaryText, let height = secondaryTextField.cell?.cellSize(forBounds: NSRect(x: 0, y: 0, width: contentRegion.width, height: 10000)).height {
             let secondaryTextFieldArea = contentRegion.divided(atDistance: height, from: .maxYEdge)
@@ -140,8 +139,8 @@ public class NSItemContentView: NSView, NSContentView {
     
     internal var appliedConfiguration: NSItemContentConfiguration {
         didSet {
-            guard oldValue != self.appliedConfiguration else { return }
-            self.updateConfiguration()
+            guard oldValue != appliedConfiguration else { return }
+            updateConfiguration()
         }
     }
     
@@ -152,9 +151,9 @@ public class NSItemContentView: NSView, NSContentView {
         //  Swift.print("item has", appliedConfiguration.hasContent)
         
         textField.properties = appliedConfiguration.textProperties
-        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText)
+        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
-        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText)
+        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding

@@ -14,10 +14,10 @@ public class NSListContentView: NSView, NSContentView {
     
     /// Creates a table cell content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
-        self._configuration = configuration
+        _configuration = configuration
         super.init(frame: .zero)
-        self.initialSetup()
-        self.updateConfiguration()
+        initialSetup()
+        updateConfiguration()
     }
     
     /// The current configuration of the view.
@@ -35,10 +35,10 @@ public class NSListContentView: NSView, NSContentView {
     }
     
     internal func initialSetup() {
-        self.clipsToBounds = false
-        self.stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.stackViewConstraints = self.addSubview(withConstraint: stackView)
-        self.addSubview(stackView)
+        clipsToBounds = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackViewConstraints = addSubview(withConstraint: stackView)
+        addSubview(stackView)
     }
     
     internal var stackViewConstraints: [NSLayoutConstraint] = []
@@ -46,9 +46,9 @@ public class NSListContentView: NSView, NSContentView {
         didSet { if oldValue != _configuration {
             updateConfiguration() } } }
     
-    internal lazy var textField = CellTextField(properties: self._configuration.textProperties)
-    internal lazy var secondaryTextField = CellTextField(properties: self._configuration.secondaryTextProperties)
-    internal lazy var imageView = CellImageView(properties: self._configuration.imageProperties)
+    internal lazy var textField = CellTextField(properties: _configuration.textProperties)
+    internal lazy var secondaryTextField = CellTextField(properties: _configuration.secondaryTextProperties)
+    internal lazy var imageView = CellImageView(properties: _configuration.imageProperties)
     internal var badgeView: BadgeView? = nil
     
     internal lazy var textStackView: NSStackView = {
@@ -71,8 +71,8 @@ public class NSListContentView: NSView, NSContentView {
         
         textField.isEnabled = _configuration.state?.isEnabled != false
         secondaryTextField.isEnabled = _configuration.state?.isEnabled != false
-        textField.text(_configuration.text, attributedString: _configuration.attributedText)
-        secondaryTextField.text(_configuration.secondaryText, attributedString: _configuration.secondaryAttributedText)
+        textField.updateText(_configuration.text, _configuration.attributedText, _configuration.placeholderText, _configuration.attributedPlaceholderText)
+        secondaryTextField.updateText(_configuration.secondaryText, _configuration.secondaryAttributedText, _configuration.secondaryPlaceholderText, _configuration.secondaryAttributedPlaceholderText)
         imageView.image = _configuration.image
         
         imageView.properties = _configuration.imageProperties
@@ -117,7 +117,7 @@ public class NSListContentView: NSView, NSContentView {
             stackView.setCustomSpacing(NSStackView.useDefaultSpacing, after: textStackView)
         }
         
-        imageView.calculatedSize = self.calculateImageViewSize()
+        imageView.calculatedSize = calculateImageViewSize()
         imageView.invalidateIntrinsicContentSize()
         
         switch _configuration.imageProperties.position {
@@ -154,7 +154,7 @@ public class NSListContentView: NSView, NSContentView {
     
     internal func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
         var textFieldsSize: CGSize = .zero
-        textFieldsSize.width = self.frame.size.width-_configuration.margins.width
+        textFieldsSize.width = frame.size.width-_configuration.margins.width
         if _configuration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
             textFieldsSize.width = textFieldsSize.width - imageSize.width - _configuration.imageToTextPadding
         }
@@ -182,7 +182,7 @@ public class NSListContentView: NSView, NSContentView {
                 } else if _configuration.hasSecondaryText {
                     return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
                 } else {
-                    let width = self.frame.size.width - _configuration.margins.width
+                    let width = frame.size.width - _configuration.margins.width
                     if imageSize.width > width {
                         imageSize = imageSize.scaled(toWidth: width)
                     }
@@ -199,7 +199,7 @@ public class NSListContentView: NSView, NSContentView {
                 } else if _configuration.hasSecondaryText {
                     return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
                 } else {
-                    let width = self.frame.size.width - _configuration.margins.width
+                    let width = frame.size.width - _configuration.margins.width
                     if imageSize.width > width {
                         imageSize = imageSize.scaled(toWidth: width)
                     }
@@ -207,7 +207,7 @@ public class NSListContentView: NSView, NSContentView {
                 }
             case .size(let size):
                 var size = size
-                let width = self.frame.size.width - _configuration.margins.width
+                let width = frame.size.width - _configuration.margins.width
                 if size.width > width {
                     size.width = width
                 }
@@ -220,13 +220,13 @@ public class NSListContentView: NSView, NSContentView {
                 } else if let maxHeight = maxHeight, imageSize.height > maxHeight {
                     imageSize = imageSize.scaled(toHeight: maxHeight)
                 }
-                let width = self.frame.size.width - _configuration.margins.width
+                let width = frame.size.width - _configuration.margins.width
                 if imageSize.width > width {
                     imageSize = imageSize.scaled(toWidth: width)
                 }
                 return imageSize
             default:
-                let width = self.frame.size.width - _configuration.margins.width
+                let width = frame.size.width - _configuration.margins.width
                 if imageSize.width > width {
                     imageSize = imageSize.scaled(toWidth: width)
                 }
@@ -245,17 +245,17 @@ public class NSListContentView: NSView, NSContentView {
     }
     
     internal var rowView: NSTableRowView? {
-        self.superview?.superview as? NSTableRowView
+        superview?.superview as? NSTableRowView
     }
     
     public override func layout() {
         super.layout()
-        self.updateRowHeight()
+        updateRowHeight()
     }
     
     internal func updateRowHeight() {
-        if let rowView = self.rowView, self.frame.size.height > self.fittingSize.height {
-            rowView.frame.size.height = self.fittingSize.height
+        if let rowView = rowView, frame.size.height > fittingSize.height {
+            rowView.frame.size.height = fittingSize.height
         }
     }
     

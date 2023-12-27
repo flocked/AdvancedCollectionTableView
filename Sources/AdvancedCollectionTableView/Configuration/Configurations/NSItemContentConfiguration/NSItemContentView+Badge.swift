@@ -14,7 +14,7 @@ internal extension NSItemContentView {
         var properties: NSItemContentConfiguration.Badge {
             didSet {
                 guard oldValue != properties else { return }
-                self.updateBadge()
+                updateBadge()
             }
         }
         
@@ -23,28 +23,28 @@ internal extension NSItemContentView {
         var widthConstraint: NSLayoutConstraint? = nil
         
         func updateBadge() {
-            self.borderColor = properties._resolvedBorderColor
-            self.borderWidth = properties.borderWidth
-            self.cornerRadius = properties.cornerRadius
-            self.backgroundColor = properties._resolvedBackgroundColor
-            self.configurate(using: properties.shadow, type: .outer)
+            borderColor = properties._resolvedBorderColor
+            borderWidth = properties.borderWidth
+            cornerRadius = properties.cornerRadius
+            backgroundColor = properties._resolvedBackgroundColor
+            configurate(using: properties.shadow, type: .outer)
             
-            self.textField.properties = properties.textProperties
-            self.textField.text(properties.text, attributedText: properties.attributedText)
+            textField.properties = properties.textProperties
+            textField.text(properties.text, attributedText: properties.attributedText)
             
             if let view = properties.view {
-                if self.view != view {
+                if view != view {
                     self.view?.removeFromSuperview()
                     self.view = view
                     stackView.addArrangedSubview(view)
                 }
             } else {
-                self.view?.removeFromSuperview()
-                self.view = nil
+                view?.removeFromSuperview()
+                view = nil
             }
             
-            self.imageView.image = properties.image
-            self.imageView.properties = properties.imageProperties
+            imageView.image = properties.image
+            imageView.properties = properties.imageProperties
             
             var visualEffect = properties.visualEffect
             visualEffect?.blendingMode = .withinWindow
@@ -54,7 +54,7 @@ internal extension NSItemContentView {
             self.visualEffect = visualEffect
             
             stackViewConstraints.constant(properties.margins)
-            self.stackView.spacing = properties.imageToTextPadding
+            stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
                 stackView.removeArrangedSubview(textField)
                 stackView.addArrangedSubview(textField)
@@ -67,7 +67,7 @@ internal extension NSItemContentView {
             
             if let maxWidth = properties.maxWidth {
                 if widthConstraint == nil {
-                    widthConstraint = self.widthAnchor.constraint(equalToConstant: maxWidth)
+                    widthConstraint = widthAnchor.constraint(equalToConstant: maxWidth)
                 }
                 widthConstraint?.constant = maxWidth
                 widthConstraint?.activate()
@@ -80,8 +80,8 @@ internal extension NSItemContentView {
         init(properties: NSItemContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
-            self.initalSetup()
-            self.updateBadge()
+            initalSetup()
+            updateBadge()
         }
         
         lazy var textField = BadgeTextField(properties: properties.textProperties)
@@ -100,8 +100,8 @@ internal extension NSItemContentView {
         
         var stackViewConstraints: [NSLayoutConstraint] = []
         func initalSetup() {
-            self.translatesAutoresizingMaskIntoConstraints = false
-            stackViewConstraints = self.addSubview(withConstraint: stackView)
+            translatesAutoresizingMaskIntoConstraints = false
+            stackViewConstraints = addSubview(withConstraint: stackView)
         }
     }
     
@@ -115,28 +115,28 @@ internal extension NSItemContentView {
         
         func text(_ text: String?, attributedText: AttributedString?) {
             if let attributedText = attributedText {
-                self.attributedStringValue = NSAttributedString(attributedText)
+                attributedStringValue = NSAttributedString(attributedText)
             } else {
-                self.stringValue = text ?? ""
+                stringValue = text ?? ""
             }
-            self.isHidden = text == nil && attributedText == nil
+            isHidden = text == nil && attributedText == nil
         }
         
         func updateProperties() {
-            self.font = properties.font
-            self.textColor = properties._resolvedTextColor
+            font = properties.font
+            textColor = properties._resolvedTextColor
         }
         
         init(properties: NSItemContentConfiguration.Badge.TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
-            self.textLayout = .wraps
-            self.isSelectable = false
-            self.drawsBackground = false
-            self.isBezeled = false
-            self.isBordered = false
-            self.maximumNumberOfLines = 1
-            self.updateProperties()
+            textLayout = .wraps
+            isSelectable = false
+            drawsBackground = false
+            isBezeled = false
+            isBordered = false
+            maximumNumberOfLines = 1
+            updateProperties()
         }
         
         required init?(coder: NSCoder) {
@@ -154,12 +154,12 @@ internal extension NSItemContentView {
         init(properties: NSItemContentConfiguration.Badge.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
-            self.updateProperties()
+            updateProperties()
         }
         
         override var image: NSImage? {
             didSet {
-                self.isHidden = self.image == nil
+                isHidden = image == nil
             }
         }
         
@@ -179,10 +179,10 @@ internal extension NSItemContentView {
         }
         
         func updateProperties() {
-            self.contentTintColor = properties._resolvedTintColor
-            self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
-            self.imageScaling = properties.scaling
-            self.invalidateIntrinsicContentSize()
+            contentTintColor = properties._resolvedTintColor
+            symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
+            imageScaling = properties.scaling
+            invalidateIntrinsicContentSize()
         }
         
         required init?(coder: NSCoder) {

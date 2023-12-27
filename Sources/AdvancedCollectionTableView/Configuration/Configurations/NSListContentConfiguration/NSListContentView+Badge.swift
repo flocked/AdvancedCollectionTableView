@@ -14,7 +14,7 @@ internal extension NSListContentView {
         var properties: NSListContentConfiguration.Badge {
             didSet {
                 guard oldValue != properties else { return }
-                self.updateBadge()
+                updateBadge()
             }
         }
         
@@ -22,16 +22,16 @@ internal extension NSListContentView {
         var widthConstraint: NSLayoutConstraint? = nil
         
         func updateBadge() {
-            self.borderColor = properties._resolvedBorderColor
-            self.borderWidth = properties.borderWidth
-            self.cornerRadius = properties.cornerRadius
-            self.backgroundColor = properties._resolvedBackgroundColor
-            self.configurate(using: properties.shadow, type: .outer)
-            self.textField.font = properties.font
-            self.textField.textColor = properties._resolvedColor
-            self.imageView.image = properties.image
-            self.imageView.properties = properties.imageProperties
-            self.imageView.contentTintColor = properties.resolvedImageTintColor
+            borderColor = properties._resolvedBorderColor
+            borderWidth = properties.borderWidth
+            cornerRadius = properties.cornerRadius
+            backgroundColor = properties._resolvedBackgroundColor
+            configurate(using: properties.shadow, type: .outer)
+            textField.font = properties.font
+            textField.textColor = properties._resolvedColor
+            imageView.image = properties.image
+            imageView.properties = properties.imageProperties
+            imageView.contentTintColor = properties.resolvedImageTintColor
             if let attributedText = properties.attributedText {
                 textField.attributedStringValue = NSAttributedString(attributedText)
             } else {
@@ -40,7 +40,7 @@ internal extension NSListContentView {
             textField.isHidden = (properties.text == nil && properties.attributedText == nil)
             
             stackViewConstraints.constant(properties.margins)
-            self.stackView.spacing = properties.imageToTextPadding
+            stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
                 stackView.removeArrangedSubview(textField)
                 stackView.addArrangedSubview(textField)
@@ -53,7 +53,7 @@ internal extension NSListContentView {
             
             if let maxWidth = properties.maxWidth {
                 if widthConstraint == nil {
-                    widthConstraint = self.widthAnchor.constraint(equalToConstant: maxWidth)
+                    widthConstraint = widthAnchor.constraint(equalToConstant: maxWidth)
                 }
                 widthConstraint?.constant = maxWidth
                 widthConstraint?.activate()
@@ -66,8 +66,8 @@ internal extension NSListContentView {
         init(properties: NSListContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
-            self.initalSetup()
-            self.updateBadge()
+            initalSetup()
+            updateBadge()
         }
         
         let textField = NSTextField(wrappingLabelWithString: "")
@@ -85,11 +85,11 @@ internal extension NSListContentView {
         
         var stackViewConstraints: [NSLayoutConstraint] = []
         func initalSetup() {
-            self.translatesAutoresizingMaskIntoConstraints = false
+            translatesAutoresizingMaskIntoConstraints = false
             textField.textLayout = .wraps
             textField.maximumNumberOfLines = 1
             textField.isSelectable = false
-            stackViewConstraints = self.addSubview(withConstraint: stackView)
+            stackViewConstraints = addSubview(withConstraint: stackView)
         }
     }
     
@@ -103,12 +103,12 @@ internal extension NSListContentView {
         init(properties: NSListContentConfiguration.Badge.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
-            self.updateProperties()
+            updateProperties()
         }
         
         override var image: NSImage? {
             didSet {
-                self.isHidden = self.image == nil
+                isHidden = image == nil
             }
         }
         
@@ -128,10 +128,10 @@ internal extension NSListContentView {
         }
         
         func updateProperties() {
-            self.contentTintColor = properties._resolvedTintColor
-            self.symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
-            self.imageScaling = properties.scaling
-            self.invalidateIntrinsicContentSize()
+            contentTintColor = properties._resolvedTintColor
+            symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
+            imageScaling = properties.scaling
+            invalidateIntrinsicContentSize()
         }
         
         required init?(coder: NSCoder) {
