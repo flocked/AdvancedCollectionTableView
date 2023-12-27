@@ -204,10 +204,6 @@ extension NSTableCellView {
         get { rowView?.isEnabled ?? true }
     }
     
-    public var columnIndexNew: Int? {
-        self.tableView?.column(for: self) ?? nil
-    }
-    
     var isEditing: Bool {
         get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
         set {
