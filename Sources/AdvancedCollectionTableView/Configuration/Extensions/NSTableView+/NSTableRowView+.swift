@@ -51,7 +51,7 @@ extension NSTableRowView {
         }
     }
     
-    internal var configurationBackgroundView: (NSView & NSContentView)?   {
+    var configurationBackgroundView: (NSView & NSContentView)?   {
         get { getAssociatedValue(key: "configurationBackgroundView", object: self) }
         set {
             configurationBackgroundView?.removeFromSuperview()
@@ -59,7 +59,7 @@ extension NSTableRowView {
         }
     }
     
-    internal func configurateBackgroundView() {
+    func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
             self.backgroundColor = nil
             if var backgroundView = configurationBackgroundView,  backgroundView.supports(backgroundConfiguration) {
@@ -76,7 +76,7 @@ extension NSTableRowView {
         }
     }
     
-    internal var isMultipleSelected: Bool {
+    var isMultipleSelected: Bool {
         self.isSelected && self.isPreviousRowSelected && self.isNextRowSelected
     }
     
@@ -108,9 +108,9 @@ extension NSTableRowView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
-        get { getAssociatedValue(key: "_NSTableRowViewconfigurationUpdateHandler", object: self) }
+        get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSTableRowView_configurationUpdateHandler", object: self)
+            set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
             self.setNeedsUpdateConfiguration()
         }
     }
@@ -140,7 +140,7 @@ extension NSTableRowView {
     
     
     // Updates content configuration and background configuration if automatic updating is enabled.
-    internal func setNeedsAutomaticUpdateConfiguration() {
+    func setNeedsAutomaticUpdateConfiguration() {
         if isConfigurationUpdatesEnabled {
             if automaticallyUpdatesBackgroundConfiguration {
                 setNeedsUpdateConfiguration()
@@ -165,66 +165,69 @@ extension NSTableRowView {
     }
     
     /**
-     A Boolean value that specifies whether the current row view is hovered.
+     A Boolean value that specifies whether the row view is hovered.
      
      A hovered row view has the mouse pointer on it.
      */
-    internal var isHovered: Bool {
+    public var isHovered: Bool {
         get { self.tableView?.hoveredRowView == self }
     }
     
-    internal var isEnabled: Bool {
+    /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).
+    public var isEnabled: Bool {
         get { self.tableView?.isEnabled ?? true }
     }
     
-    internal var isEditing: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_isEditing", object: self, initialValue: false) }
+    /// A Boolean value that specifies whether the current cell is in a editing state.
+    var isEditing: Bool {
+        get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
         set {
             guard newValue != self.isEditing else { return }
-            set(associatedValue: newValue, key: "NSTableRowView_isEditing", object: self)
+            set(associatedValue: newValue, key: "_isEditing", object: self)
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
-    internal var isTableViewFirstResponder: Bool {
+    /// A Boolean value that specifies whether the row view is emphasized (the window is key).
+    public var isEmphasized: Bool {
+        get { self.window?.isKeyWindow ?? false }
+    }
+    
+    var isTableViewFirstResponder: Bool {
         get { self.tableView?.isFirstResponder ?? false }
     }
     
-    internal var isEmphasized: Bool {
-        get { self.tableView?.isEmphasized ?? false }
-    }
-    
     // A Boolean value that indicates whether automatic updating of the configuration is enabled.
-    internal var isConfigurationUpdatesEnabled: Bool {
-        get { getAssociatedValue(key: "NSTableRowView_automaticUpdateConfigurationEnabled", object: self, initialValue: true) }
-        set {  set(associatedValue: newValue, key: "NSTableRowView_automaticUpdateConfigurationEnabled", object: self) }
+    var isConfigurationUpdatesEnabled: Bool {
+        get { getAssociatedValue(key: "automaticUpdateConfigurationEnabled", object: self, initialValue: true) }
+        set {  set(associatedValue: newValue, key: "automaticUpdateConfigurationEnabled", object: self) }
     }
     
-    @objc internal func swizzled_PrepareForReuse() {
+    @objc func swizzled_PrepareForReuse() {
         self.isConfigurationUpdatesEnabled = false
         self.isEditing = false
         self.isConfigurationUpdatesEnabled = true
     }
     
-    internal func setCellViewsNeedUpdateConfiguration() {
+    func setCellViewsNeedUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsUpdateConfiguration() })
     }
     
-    internal func setCellViewsNeedAutomaticUpdateConfiguration() {
+    func setCellViewsNeedAutomaticUpdateConfiguration() {
         self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
     
-    internal var rowObserver: KeyValueObserver<NSTableRowView>? {
-        get { getAssociatedValue(key: "NSTableRowView_rowObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "NSTableRowView_rowObserver", object: self) }
+    var rowObserver: KeyValueObserver<NSTableRowView>? {
+        get { getAssociatedValue(key: "rowObserver", object: self, initialValue: nil) }
+        set {  set(associatedValue: newValue, key: "rowObserver", object: self) }
     }
     
-    internal var needsAutomaticRowHeights: Bool {
+    var needsAutomaticRowHeights: Bool {
         get { getAssociatedValue(key: "needsAutomaticRowHeights", object: self, initialValue: false) }
         set {  set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
     }
     
-    internal func observeTableRowView() {
+    func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { old, new in
@@ -246,7 +249,7 @@ extension NSTableRowView {
 
 
 /*
-internal var isFocused: Bool {
+var isFocused: Bool {
     get { getAssociatedValue(key: "NSTableRowView_isFocused", object: self, initialValue: false) }
     set {
         guard newValue != self.isFocused else { return }
@@ -255,7 +258,7 @@ internal var isFocused: Bool {
     }
 }
 
-internal var isReordering: Bool {
+var isReordering: Bool {
     get { getAssociatedValue(key: "NSTableRowView_isReordering", object: self, initialValue: false) }
     set {
         guard newValue != self.isReordering else { return }
@@ -268,7 +271,7 @@ internal var isReordering: Bool {
 
 /*
  // Updates cell views content configuration.
- internal func setNeedsCellViewsUpdateConfiguration() {
+ func setNeedsCellViewsUpdateConfiguration() {
  self.cellViews.forEach({$0.setNeedsUpdateConfiguration()})
  }
  */

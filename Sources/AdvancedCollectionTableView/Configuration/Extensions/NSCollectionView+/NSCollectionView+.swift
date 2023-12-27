@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSCollectionView {
+extension NSCollectionView {
     var isEmphasized: Bool {
         get { getAssociatedValue(key: "NSCollectionView_isEmphasized", object: self, initialValue: false) }
         set {

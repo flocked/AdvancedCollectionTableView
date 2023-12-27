@@ -10,12 +10,13 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableView {
-    internal var isEmphasized: Bool {
-        get { getAssociatedValue(key: "NSTableView_isEmphasized", object: self, initialValue: false) }
+extension NSTableView {
+    /// A Boolean value that specifies whether the row view is enabled. It's `true` when the table views `isEmphasized` is `true`.
+    public internal(set) var isEmphasized: Bool {
+        get { getAssociatedValue(key: "_isEmphasized", object: self, initialValue: false) }
         set {
             guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "NSTableView_isEmphasized", object: self)
+            set(associatedValue: newValue, key: "_isEmphasized", object: self)
             if newValue == false {
                 self.hoveredRow = nil
             }
@@ -23,14 +24,14 @@ public extension NSTableView {
         }
     }
     
-    internal func updateVisibleRowConfigurations() {
+    func updateVisibleRowConfigurations() {
         self.visibleRows().forEach({
             $0.setNeedsAutomaticUpdateConfiguration()
             $0.setCellViewsNeedAutomaticUpdateConfiguration()
         })
     }
     
-    internal var isEnabledObserver: NSKeyValueObservation? {
+    var isEnabledObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "tableIsEnabledObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableIsEnabledObserver", object: self) }
     }
@@ -84,7 +85,7 @@ public extension NSTableView {
         }
     }
     
-    internal var hoveredRowView: NSTableRowView? {
+    var hoveredRowView: NSTableRowView? {
         if let hoveredRow = hoveredRow, let rowView = self.rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
             return rowView
         }
@@ -110,12 +111,12 @@ public extension NSTableView {
 }
 
 /*
-internal var firstResponderObserver: NSKeyValueObservation? {
+var firstResponderObserver: NSKeyValueObservation? {
     get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
     set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
 }
 
-internal func setupTableViewFirstResponderObserver() {
+func setupTableViewFirstResponderObserver() {
     guard firstResponderObserver == nil else { return }
     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
         guard let self = self, old != new else { return }
