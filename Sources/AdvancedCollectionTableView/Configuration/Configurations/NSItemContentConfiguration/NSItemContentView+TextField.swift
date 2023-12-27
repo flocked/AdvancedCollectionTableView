@@ -19,6 +19,20 @@ internal extension NSItemContentView {
             }
         }
         
+        func updateText(_ text: String?, _ attributedText: AttributedString?) {
+            if let attributedText = attributedText {
+                self.isHidden = false
+                self.attributedStringValue = NSAttributedString(attributedText)
+            } else if let text = text {
+                self.stringValue = text
+                self.isHidden = false
+            } else {
+                self.stringValue = ""
+                self.isHidden = true
+            }
+        }
+
+/*
         func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
             if let attributedString = attributedString {
               //  self.isHidden = false
@@ -43,6 +57,7 @@ internal extension NSItemContentView {
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
+ */
         
         func update() {
             maximumNumberOfLines = properties.numberOfLines
