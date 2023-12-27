@@ -169,8 +169,13 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     // MARK: Creating item configurations
 
     /// Creates a list content configuration for a table view with plain style.
-    public static func plain(imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
-        var configuration = sidebar(.body, imageColor: imageColor)
+    /**
+     Creates a list content configuration for a table view with plain style.
+     
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+          */
+    public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+        var configuration = sidebar(.body, color: imageColor)
         configuration.imageToTextPadding = 6.0
         configuration.type = .plain
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -179,14 +184,22 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return configuration
     }
     
-    /// Creates a list content configuration for a sidebar table view (source style).
-    public static func sidebar(imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
-        return sidebar(.body, imageColor: imageColor)
+    /**
+     Creates a list content configuration for a sidebar table view (source style).
+     
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+     */
+    public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+        return sidebar(.body, color: imageColor)
     }
     
-    /// Creates a list content configuration for a sidebar table view (source style).
-    public static func image(systemName: String, imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
-        return sidebar(.body, imageColor: imageColor)
+    /**
+     Creates a list content configuration for a sidebar table view (source style).
+     
+     - parameter imageColor: The color of the symbol image. The default value is `accentColor`.
+     */
+    public static func image(systemName: String, imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+        return sidebar(.body, color: imageColor)
     }
     
     /// Creates a header list content configuration for a sidebar table view (source style).
@@ -203,19 +216,23 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return configuration
     }
     
-    /// Creates a large list content configuration for a sidebar table view (source style).
-    public static func sidebarLarge(imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
-        var configuration = sidebar(.title3, imageColor: imageColor)
+    /**
+     Creates a large list content configuration for a sidebar table view (source style).
+     
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+     */
+    public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+        var configuration = sidebar(.title3, color: imageColor)
         configuration.type = .sidebarLarge
         configuration.margins = .init(top: 8.0, leading: 4.0, bottom: 8.0, trailing: 4.0)
         return configuration
     }
     
     /// Creates a list content configuration with an editable text.
-    public static func editableText(placeholderText: String, text: String? = nil, onTextEditEnd: @escaping (String)->()) -> Self {
+    public static func editableText(text: String?, placeholderText: String?, onTextEditEnd: @escaping (String)->()) -> Self {
         var configuration: Self = .plain()
-        configuration.placeholderText = placeholderText
         configuration.text = text
+        configuration.placeholderText = placeholderText
         configuration.textProperties.onEditEnd = onTextEditEnd
         return configuration
     }
@@ -227,7 +244,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     
     internal var type: TableCellType? = nil
     internal var tableViewStyle: NSTableView.Style? = nil
-    
+        
     internal enum TableCellType {
         case automatic
         case plain
@@ -290,42 +307,9 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     }
 }
 
-public extension NSListContentConfiguration {
-    /// The image color of a sidebar content configuration.
-    enum SidebarImageColor {
-        /// Image with a tint color.
-        case color(NSColor)
-        /// Image with a multicolor symbol configuration.
-        case multicolor(NSColor)
-        /// Image with a hierarchical symbol configuration.
-        case hierarchical(NSColor)
-        /// Image with a palette color symbol configuration.
-        case palette(NSColor, NSColor, NSColor? = nil)
-        public static var accentColor: Self {
-            return .color(.controlAccentColor)
-        }
-        internal var tintColor: NSColor? {
-            switch self {
-            case .color(let color): return color
-            default: return nil
-            }
-        }
-        internal var symbolColorConfiguration: ImageSymbolConfiguration.ColorConfiguration {
-            switch self {
-            case .palette(let primary, let secondary, let terr):
-                return .palette(primary, secondary, terr)
-            case .multicolor(let color):
-                return .multicolor(color)
-            case .hierarchical(let color):
-                return .hierarchical(color)
-            case .color(_):
-                return .monochrome
-            }
-        }
-    }
-    
+public extension NSListContentConfiguration {    
     internal static func automatic() -> NSListContentConfiguration {
-        var configuration = sidebar(.body, imageColor: .accentColor)
+        var configuration = sidebar(.body, color: .accentColor)
         configuration.type = .automatic
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
@@ -344,12 +328,22 @@ public extension NSListContentConfiguration {
             configuration.imageToTextPadding = 6.0
             configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         case .sourceList:
-            configuration.textProperties.font = .body
-            configuration.secondaryTextProperties.font = .body
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
-            configuration.imageToTextPadding = 3.0
-            configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+            if isGroupRow {
+                configuration.textProperties.font = .subheadline.weight(.bold)
+                configuration.textProperties.color = .tertiaryLabelColor
+                configuration.imageProperties.tintColor = .tertiaryLabelColor
+                configuration.imageProperties.position = .leading(.firstBaseline)
+                configuration.imageProperties.sizing = .firstTextHeight
+                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
+                configuration.margins = .init(top: 2.0, leading: 0.0, bottom: 2.0, trailing: 2.0)
+            } else {
+                configuration.textProperties.font = .body
+                configuration.secondaryTextProperties.font = .body
+                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
+                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
+                configuration.imageToTextPadding = 3.0
+                configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+            }
         @unknown default:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
@@ -372,7 +366,7 @@ public extension NSListContentConfiguration {
         }
     }
     
-    internal static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, imageColor: SidebarImageColor = .accentColor) -> NSListContentConfiguration {
+    internal static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
         configuration.type = .sidebar
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -380,9 +374,9 @@ public extension NSListContentConfiguration {
         configuration.textProperties.numberOfLines = 1
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
-        configuration.imageProperties.tintColor = imageColor.tintColor
+        configuration.imageProperties.tintColor = color.primary
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .font(style).color(imageColor.symbolColorConfiguration)
+        configuration.imageProperties.symbolConfiguration = .font(style).color(color)
         configuration.imageToTextPadding = 3.0
         configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
         return configuration
