@@ -212,7 +212,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
-        configuration.margins = .init(top: 2, leading: 0.0, bottom: 2, trailing: 2.0)
+        configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
     
@@ -335,7 +335,7 @@ public extension NSListContentConfiguration {
                 configuration.imageProperties.position = .leading(.firstBaseline)
                 configuration.imageProperties.sizing = .firstTextHeight
                 configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
-                configuration.margins = .init(top: 2.0, leading: 0.0, bottom: 2.0, trailing: 2.0)
+                configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
             } else {
                 configuration.textProperties.font = .body
                 configuration.secondaryTextProperties.font = .body
@@ -350,7 +350,7 @@ public extension NSListContentConfiguration {
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
             configuration.imageToTextPadding = 8.0
-            configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+            configuration.margins = .init(top: 6.0, leading: isGroupRow ? 2.0 : 4.0, bottom: 6.0, trailing: 4.0)
         }
         return configuration
     }
