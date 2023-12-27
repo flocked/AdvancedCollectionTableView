@@ -21,21 +21,27 @@ internal extension NSItemContentView {
         
         func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
             if let attributedString = attributedString {
+              //  self.isHidden = false
                 attributedStringValue = NSAttributedString(attributedString)
             } else if let text = text {
+             //   self.isHidden = false
                 stringValue = text
             } else {
+               // self.isHidden = true
                 stringValue = ""
             }
             
             if let attributedPlaceholder = attributedPlaceholder {
+              //  self.isHidden = false
                 placeholderAttributedString = NSAttributedString(attributedPlaceholder)
             } else if let placeholder = placeholder {
+                self.isHidden = false
                 placeholderString = placeholder
             } else {
+              //  self.isHidden = text == nil && attributedString == nil
                 placeholderString = ""
             }
-            isHidden = !(text != nil || attributedString != nil || placeholder != nil || attributedPlaceholder != nil)
+            isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
         
         func update() {
