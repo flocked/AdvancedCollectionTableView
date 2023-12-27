@@ -52,7 +52,7 @@ open class TableSectionHeaderView: NSView {
      - Returns:A default cell content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     open func defaultContentConfiguration() -> NSListContentConfiguration {
-        return NSListContentConfiguration.automaticRow()
+        return NSListContentConfiguration.plain()
     }
     
     /**
