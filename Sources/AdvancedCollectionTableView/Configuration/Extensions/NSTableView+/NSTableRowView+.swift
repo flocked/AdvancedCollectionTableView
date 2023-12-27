@@ -253,12 +253,12 @@ extension NSTableRowView {
     }
     
     var headerRowView: NSTableRowView? {
-        (self.subviews.first as? NSTableRowView)
+        self.subviews(type: NSTableRowView.self).first
     }
     
     func updateContentConfiguration() {
         if let tableView = self.tableView {
-            Swift.print("automaticRow", self.row ?? "nil", headerRowView != nil)
+            Swift.print("automaticRow", self.row ?? "nil", self.headerRowView, self.subviews)
           //  Swift.print("isGroupRow", self.row ?? 0, tableView.delegate?.tableView?(tableView, isGroupRow: self.row ?? 0) ?? false)
          //   Swift.print("automaticRow", (self.subviews.first as? NSTableRowView) != nil, self.contentConfiguration != nil, (self.contentConfiguration as? NSListContentConfiguration)?.type?.rawValue ?? "nil")
         }
@@ -270,7 +270,6 @@ extension NSTableRowView {
     }
     
     func observeTableRowView() {
-        Swift.print("observeTableRowView", self)
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { old, new in
