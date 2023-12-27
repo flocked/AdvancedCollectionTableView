@@ -26,6 +26,7 @@ public class NSListContentView: NSView, NSContentView {
         superviewObserver = self.observeChanges(for: \.superview?.superview?.superview) { old, new in
             guard old != new, let tableView = new as? NSTableView, let rowView = self.superview as? NSTableRowView, var configuration = rowView.contentConfiguration as? NSListContentConfiguration, configuration.type == .automaticRow  else { return }
             configuration = configuration.tableViewStyle(tableView.style, isGroupRow: true)
+            Swift.print("NSListContentiew")
             rowView.contentConfiguration = configuration
           //  Swift.print("NSListContentView", tableView.row(for: self), tableView.row(for: self.superview!))
            // Swift.print("NSListContentView", new ?? "nil")
