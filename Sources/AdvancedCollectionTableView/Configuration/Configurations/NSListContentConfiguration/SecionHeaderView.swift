@@ -140,7 +140,7 @@ open class SectionHeaderCell: NSView {
         }
     }
     
-    var tableCellObserver: NSKeyValueObservation? = nil
+    var tableCellObserver: KeyValueObserver<SectionHeaderCell>? = nil
     
     var rowView: NSTableRowView? {
         return firstSuperview(for: NSTableRowView.self)
@@ -152,7 +152,8 @@ open class SectionHeaderCell: NSView {
     
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
-        tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
+        tableCellObserver = KeyValueObserver(self)
+        tableCellObserver?.add(\.superview, handler: {old, new in
             Swift.print("SectionHeaderCell", self.superview ?? "nil", self.tableView ?? "nil")
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
@@ -165,6 +166,10 @@ open class SectionHeaderCell: NSView {
             
             self.rowView?.observeTableRowView()
             self.setNeedsUpdateConfiguration()
+        })
+        
+        tableCellObserver?.add(\.superview?.superview, handler: {old, new in
+            Swift.print("SectionHeaderCell superview", new ?? "nil")
         })
     }
 }
