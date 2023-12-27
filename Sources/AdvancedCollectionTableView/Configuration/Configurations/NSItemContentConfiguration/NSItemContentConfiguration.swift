@@ -137,14 +137,26 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      
      If you configurate `secondaryText` with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
-    public var secondaryText: String? = nil
+    public var secondaryText: String? = nil {
+        didSet {
+            if secondaryText != nil {
+                secondaryAttributedText = nil
+            }
+        }
+    }
     
     /**
      An attributed variant of the secondary text.
      
      If you configurate `secondaryAttributedText` with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
-    public var secondaryAttributedText: AttributedString? = nil
+    public var secondaryAttributedText: AttributedString? = nil {
+        didSet {
+            if secondaryAttributedText != nil {
+                secondaryText = nil
+            }
+        }
+    }
     
     /**
      The secondary placeholder text.

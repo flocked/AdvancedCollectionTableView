@@ -35,7 +35,7 @@ internal extension NSListContentView {
             } else {
                 placeholderString = ""
             }
-            isHidden = !(text != nil || attributedString != nil || placeholderString != nil || attributedPlaceholder != nil)
+            isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
         
         func update() {
