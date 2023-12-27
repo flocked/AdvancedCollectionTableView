@@ -59,6 +59,7 @@ internal extension NSItemContentView {
             alignment = properties.alignment
             isSelectable = properties.isSelectable
             isEditable = properties.isEditable
+            formatter = properties.numberFormatter
         }
         
         init(properties: TextConfiguration) {

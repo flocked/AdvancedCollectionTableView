@@ -42,6 +42,7 @@ internal extension NSListContentView {
             maximumNumberOfLines = properties.numberOfLines
             textColor = properties.resolvedColor()
             lineBreakMode = properties.lineBreakMode
+            formatter = properties.numberFormatter
             font = properties.font
             alignment = properties.alignment
             isSelectable = properties.isSelectable
