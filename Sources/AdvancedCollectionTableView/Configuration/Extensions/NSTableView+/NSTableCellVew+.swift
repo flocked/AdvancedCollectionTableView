@@ -122,8 +122,9 @@ extension NSTableCellView {
     }
     
     func setNeedsAutomaticUpdateConfiguration() {
+        Swift.print("setNeedsAutomatic", self.tableView ?? "nil", self.rowView ?? "nil", self.rowView?.tableView ?? "nil")
         if let tableView = self.tableView {
-            Swift.debugPrint("setNeedsAutomatic",tableView.row(for: self), tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? "nil")
+         //   Swift.debugPrint("setNeedsAutomatic",tableView.row(for: self), tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? "nil")
         }
         if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
             let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? false
