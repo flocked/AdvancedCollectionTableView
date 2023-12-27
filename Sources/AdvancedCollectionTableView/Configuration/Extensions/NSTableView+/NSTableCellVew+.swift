@@ -123,7 +123,7 @@ extension NSTableCellView {
     
     func setNeedsAutomaticUpdateConfiguration() {
         if let tableView = self.tableView {
-            Swift.print("setNeedsAutomaticUpdateConfiguration", tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? "nil", tableView.delegate ?? "nil")
+            Swift.debugPrint("setNeedsAutomaticUpdateConfiguration", tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? "nil")
         }
         if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
             let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: tableView.row(for: self)) ?? false
@@ -241,7 +241,6 @@ extension NSTableCellView {
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
-            Swift.print("observeTableCellView", self.rowView != nil, self.tableView != nil)
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true

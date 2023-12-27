@@ -39,16 +39,11 @@ extension NSTableView {
         
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            Swift.print("setupObservation")
             if tableViewObserve == nil {
                 tableViewObserve = KeyValueObserver(self)
                 tableViewObserve?.add(\.isEnabled) { [weak self] old, new in
                     guard let self = self, old != new else { return }
                     self.updateVisibleRowConfigurations()
-                }
-                tableViewObserve?.add(\.delegate, sendInitalValue: true) { [weak self] _, delegate in
-                    guard let self = self, let delegate = delegate else { return }
-                    Swift.print("found delegate")
                 }
             }
             if (observingView == nil) {

@@ -321,7 +321,6 @@ public extension NSListContentConfiguration {
     
     internal func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
         var configuration = self
-        Swift.print("isGroupRow", isGroupRow)
         configuration.tableViewStyle = style
         switch style {
         case .automatic:

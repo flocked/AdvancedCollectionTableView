@@ -88,7 +88,7 @@ internal extension NSListContentView {
             let width = frame.size.width
             
             if let cellSize = cell?.cellSize(forBounds: NSRect(x: 0, y: 0, width: width, height: 10000)) {
-                //    Swift.print(cellSize)
+                //    Swift.debugPrint(cellSize)
                 intrinsicContentSize.height = cellSize.height
             }
             

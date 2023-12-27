@@ -88,13 +88,13 @@ internal extension NSItemContentView {
         
         override func layoutSubtreeIfNeeded() {
             super.layoutSubtreeIfNeeded()
-            // Swift.print("layoutSubtreeIfNeeded", frame.size)
+            // Swift.debugPrint("layoutSubtreeIfNeeded", frame.size)
         }
         
         var previousFrameSize: CGSize = .zero
         override func layout() {
             super.layout()
-            // Swift.print("layout", frame.size)
+            // Swift.debugPrint("layout", frame.size)
             invalidateIntrinsicContentSize()
             containerView.frame.size = bounds.size
             imageView.frame.size = bounds.size
@@ -118,7 +118,7 @@ internal extension NSItemContentView {
              newIntrinsicSize.height = imagesize.height
              case (nil, .some(let maxHeight)):
              let imagesize = imageSize.scaled(toHeight: min(maxHeight, size.height))
-             Swift.print("maxHeight", frame.size, imagesize)
+             Swift.debugPrint("maxHeight", frame.size, imagesize)
              newIntrinsicSize.width = imagesize.width
              newIntrinsicSize.height = imagesize.height
              case (nil, nil):
@@ -127,7 +127,7 @@ internal extension NSItemContentView {
              }
              if newIntrinsicSize != intrinsicSize {
              intrinsicSize = newIntrinsicSize
-             Swift.print("invalidateIntrinsicContentSize", intrinsicSize)
+             Swift.debugPrint("invalidateIntrinsicContentSize", intrinsicSize)
              invalidateIntrinsicContentSize()
              }
              } else {
@@ -155,11 +155,11 @@ internal extension NSItemContentView {
               if newWidth != width || newHeight != height {
               width = newWidth
               height = newHeight
-              Swift.print("invalidateIntrinsicContentSize", height ?? "")
+              Swift.debugPrint("invalidateIntrinsicContentSize", height ?? "")
               invalidateIntrinsicContentSize()
               }
               */
-             Swift.print("invalidateIntrinsicContentSize", intrinsicSize)
+             Swift.debugPrint("invalidateIntrinsicContentSize", intrinsicSize)
              invalidateIntrinsicContentSize()
              }
              */
@@ -214,7 +214,7 @@ internal extension NSItemContentView {
         var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
         override var intrinsicContentSize: NSSize {
             if frame.size == .zero {
-                // Swift.print("intrinsicContentSize", CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric))
+                // Swift.debugPrint("intrinsicContentSize", CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric))
                 return CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
             }
             
@@ -237,14 +237,14 @@ internal extension NSItemContentView {
                     intrinsicContentSize.height = imagesize.height
                 case (nil, .some(let maxHeight)):
                     let imagesize = imageSize.scaled(toHeight: min(maxHeight, size.height))
-                    // Swift.print("maxHei", imageSize, imagesize, frame.size)
+                    // Swift.debugPrint("maxHei", imageSize, imagesize, frame.size)
                     intrinsicContentSize.width = imagesize.width
                     intrinsicContentSize.height = imagesize.height
                 case (nil, nil):
                     let imagesize = imageSize.scaled(toFit: size)
                     intrinsicContentSize.width = imagesize.width
                 }
-                // Swift.print("intrinsicContentSize", intrinsicContentSize)
+                // Swift.debugPrint("intrinsicContentSize", intrinsicContentSize)
                 return intrinsicContentSize
             } else {
                 if let imageSize = image?.size, configuration.contentProperties.imageScaling == .none {
