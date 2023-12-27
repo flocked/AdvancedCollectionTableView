@@ -16,6 +16,7 @@ public class NSItemContentView: NSView, NSContentView {
         super.init(frame: .zero)
         self.isOpaque = false
         self.clipsToBounds = false
+        self.backgroundColor = .red
         self.stackviewConstraints = self.addSubview(withConstraint: stackView)
         self.updateConfiguration()
     }

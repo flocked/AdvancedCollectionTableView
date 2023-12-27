@@ -228,7 +228,7 @@ extension NSCollectionViewItem {
      
      Override this method in a subclass to update the item’s configuration using the provided state.
      */
-    dynamic func updateConfiguration(using state: NSItemConfigurationState) {
+    func updateConfiguration(using state: NSItemConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -374,7 +374,6 @@ extension NSCollectionViewItem {
             guard old != new else { return }
             self.setNeedsAutomaticUpdateConfiguration()
         }
-        
         self.itemObserver?.add(\.view.superview) { old, new in
             guard self._collectionView != nil else { return }
             // The collection view is observered to get the hovered (mouse over) collection item. It's much more performant instead of observing/installing a track area on each collection item view.
