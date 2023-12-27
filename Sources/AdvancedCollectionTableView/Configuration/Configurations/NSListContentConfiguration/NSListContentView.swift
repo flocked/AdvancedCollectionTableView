@@ -18,7 +18,7 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         superviewObserver = self.observeChanges(for: \.superview) { old, new in
             guard old != new else { return }
-            Swift.print("NSListContentView", new ?? "nil")
+            Swift.print("NSListContentView", new ?? "nil", (new as? NSTableRowView)?.row ?? "nil")
             
         }
         initialSetup()
