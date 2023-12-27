@@ -94,7 +94,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             }
         }
     }
-    
+        
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSView
     
@@ -315,6 +315,77 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     }
     
     /**
+     Creates a diffable data source with the specified cell and row registration, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration, rowRegistration: rowRegistration)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - rowRegistration: A row registration which returns each of the row view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<I: NSTableCellView, R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, rowRegistration: NSTableView.RowRegistration<R, Item>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        })
+        self.applyRowViewRegistration(rowRegistration)
+    }
+    
+    /**
+     Creates a diffable data source with the specified cell and section header view registration, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration, sectionHeaderRegistration: sectionHeaderRegistration)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionHeaderRegistration: A section header view registration which returns each of the section header view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<I: NSTableCellView, H: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        })
+        self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
+    }
+    
+    /**
+     Creates a diffable data source with the specified cell,  section header view and row registration, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration, sectionHeaderRegistration: sectionHeaderRegistration, rowRegistration: rowRegistration)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionHeaderRegistration: A section header view registration which returns each of the section header view for the table view from the data the diffable data source provides.
+        - rowRegistration: A row registration which returns each of the row view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<I: NSTableCellView, H: NSView,  R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>, rowRegistration: NSTableView.RowRegistration<R, Item>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        })
+        self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
+        self.applyRowViewRegistration(rowRegistration)
+    }
+    
+    ///     n<Row: NSTableRowView> <HeaderView: NSView>
+
+    
+    /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
@@ -336,6 +407,81 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             return NSTableCellView()
         })
     }
+    
+    /**
+     Creates a diffable data source with the specified cell and row registrations, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistrations: cellRegistrations)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - rowRegistration: A row registration which returns each of the row view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], rowRegistration: NSTableView.RowRegistration<R, Item>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            }
+            return NSTableCellView()
+        })
+    }
+    
+    /**
+     Creates a diffable data source with the specified cell and section header viewregistrations, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistrations: cellRegistrations)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionHeaderRegistration: A section header view registration which returns each of the section header view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<H: NSView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            }
+            return NSTableCellView()
+        })
+    }
+    
+    
+    /**
+     Creates a diffable data source with the specified cell, section header view and row registrations, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistrations: cellRegistrations)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionHeaderRegistration: A section header view registration which returns each of the section header view for the table view from the data the diffable data source provides.
+        - rowRegistration: A row registration which returns each of the row view for the table view from the data the diffable data source provides.
+     */
+    public convenience init<H: NSView, R: NSTableRowView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>, rowRegistration: NSTableView.RowRegistration<R, Item>) {
+        self.init(tableView: tableView, cellProvider:  {
+            _tableView, column, row, element in
+            if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            }
+            return NSTableCellView()
+        })
+    }
+    
     
     /**
      Creates a diffable data source with the specified cell provider, and connects it to the specified table view.
