@@ -83,7 +83,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The primary text.
      
-     If you configurate `text` with a non-`nil` value, ``attributedText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
      */
     public var text: String? = nil {
         didSet {
@@ -96,7 +96,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the primary text.
      
-     If you configurate `attributedText` with a non-`nil` value, ``text`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
      */
     public var attributedText: AttributedString? = nil {
         didSet {
@@ -109,7 +109,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The primary placeholder text.
      
-     If you configurate `placeholderText` with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
      */
     public var placeholderText: String? = nil {
         didSet {
@@ -122,7 +122,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the primary placeholder text.
      
-     If you configurate `attributedPlaceholderText` with a non-`nil` value, ``placeholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
      */
     public var attributedPlaceholderText: AttributedString? = nil {
         didSet {
@@ -135,7 +135,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The secondary text.
      
-     If you configurate `secondaryText` with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
     public var secondaryText: String? = nil {
         didSet {
@@ -148,7 +148,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the secondary text.
      
-     If you configurate `secondaryAttributedText` with a non-`nil` value, ``secondaryText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
     public var secondaryAttributedText: AttributedString? = nil {
         didSet {
@@ -161,7 +161,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The secondary placeholder text.
      
-     If you configurate `secondaryPlaceholderText` with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
      */
     public var secondaryPlaceholderText: String? = nil {
         didSet {
@@ -174,7 +174,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the secondary placeholder text.
      
-     If you configurate `secondaryAttributedPlaceholderText` with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? = nil {
         didSet {
