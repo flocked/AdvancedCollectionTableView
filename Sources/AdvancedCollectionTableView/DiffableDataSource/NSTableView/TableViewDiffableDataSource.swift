@@ -314,6 +314,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         })
     }
     
+    /*
     /**
      Creates a diffable data source with the specified cell and row registration, and connects it to the specified table view.
      
@@ -381,9 +382,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
         self.applyRowViewRegistration(rowRegistration)
     }
-    
-    ///     n<Row: NSTableRowView> <HeaderView: NSView>
-
+    */
     
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
@@ -408,6 +407,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         })
     }
     
+    /*
     /**
      Creates a diffable data source with the specified cell and row registrations, and connects it to the specified table view.
      
@@ -481,6 +481,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
             return NSTableCellView()
         })
     }
+    */
     
     
     /**
