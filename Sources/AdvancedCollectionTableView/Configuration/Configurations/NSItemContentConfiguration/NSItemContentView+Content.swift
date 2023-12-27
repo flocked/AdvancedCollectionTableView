@@ -223,7 +223,7 @@ internal extension NSItemContentView {
             if let superviewWidth = superview?.frame.size.width {
                 size.width = superviewWidth - configuration.margins.width
             }
-            if let imageSize = image?.size, contentProperties.imageScaling.shouldResize {
+            if let imageSize = image?.size, contentProperties.imageProperties.scaling.shouldResize {
                 switch (contentProperties.maximumWidth, contentProperties.maximumHeight) {
                 case (.some(let maxWidth), .some(let maxHeight)):
                     let width = min(maxWidth, size.width)
@@ -247,7 +247,7 @@ internal extension NSItemContentView {
                 // Swift.debugPrint("intrinsicContentSize", intrinsicContentSize)
                 return intrinsicContentSize
             } else {
-                if let imageSize = image?.size, configuration.contentProperties.imageScaling == .none {
+                if let imageSize = image?.size, configuration.contentProperties.imageProperties.scaling == .none {
                     
                     if imageSize.width < size.width {
                         intrinsicContentSize.width = imageSize.width
@@ -284,6 +284,7 @@ internal extension NSItemContentView {
         
         func updateConfiguration() {
             backgroundColor = contentProperties._resolvedBackgroundColor
+            visualEffect = contentProperties.visualEffect
             containerView.borderColor = contentProperties._resolvedBorderColor
             containerView.borderWidth = contentProperties.resolvedBorderWidth
             
@@ -296,8 +297,8 @@ internal extension NSItemContentView {
             configurate(using: contentProperties.stateShadow, type: .outer)
             
             imageView.tintColor = contentProperties._resolvedImageTintColor
-            imageView.imageScaling = contentProperties.imageScaling.gravity
-            imageView.symbolConfiguration = contentProperties.imageSymbolConfiguration?.nsSymbolConfiguration()
+            imageView.imageScaling = contentProperties.imageProperties.scaling.gravity
+            imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image
             
             if configuration.view != view {
@@ -312,8 +313,7 @@ internal extension NSItemContentView {
             updateBadges()
             
             anchorPoint = CGPoint(0.5, 0.5)
-            layer?.scale = CGPoint(contentProperties.scaleTransform, contentProperties.scaleTransform)
-            
+            layer?.scale = contentProperties.scaleTransform
             invalidateIntrinsicContentSize()
         }
         

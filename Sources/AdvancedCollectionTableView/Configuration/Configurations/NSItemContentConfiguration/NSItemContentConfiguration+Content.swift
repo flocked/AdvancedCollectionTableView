@@ -11,41 +11,8 @@ import FZUIKit
 import SwiftUI
 
 public extension NSItemContentConfiguration {
-    
     /// Properties that affect the content that displays the image and view.
     struct ContentProperties: Hashable {
-        
-        /// The scaling of the image.
-        public enum ImageScaling {
-            /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
-            case fit
-            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect ratio of the image. The image is centered in the axis it exceeds.
-            case fill
-            /// The image is resized to the entire bounds rectangle.
-            case resize
-            /// The image isn't resized.
-            case none
-            internal var gravity: CALayerContentsGravity {
-                switch self {
-                case .fit: return .resizeAspect
-                case .fill: return .resizeAspectFill
-                case .resize: return .resize
-                case .none: return .center
-                }
-            }
-            
-            internal var swiftui: ContentMode {
-                switch self {
-                case .none: return .fit
-                case .fit: return .fit
-                case .fill: return .fill
-                case .resize: return .fit
-                }
-            }
-            internal var shouldResize: Bool {
-                self == .fit
-            }
-        }
         
         /// The corner radius of the content.
         public var cornerRadius: CGFloat = 10.0
@@ -61,14 +28,16 @@ public extension NSItemContentConfiguration {
          
          The default is 1.0, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
          */
-        public var scaleTransform: CGFloat = 1.0
+        public var scaleTransform: CGPoint = CGPoint(x: 1, y: 1)
         
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
             didSet { updateResolvedColors() } }
+        
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
+        
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {
@@ -77,9 +46,12 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
+        /// The visual effect background of the content.
+        public var visualEffect: VisualEffectConfiguration? = nil
+        
         /// The border width.
         public var borderWidth: CGFloat = 0.0 {
-            didSet { resolvedBorderWidth = stateBorderWidth ?? borderWidth }
+            didSet { resolvedBorderWidth = state.borderWidth ?? borderWidth }
         }
         /// The border color.
         public var borderColor: NSColor? = nil {
@@ -97,63 +69,108 @@ public extension NSItemContentConfiguration {
             return nil
         }
         
-        internal var stateBorderWidth: CGFloat? {
-            didSet { resolvedBorderWidth = stateBorderWidth ?? borderWidth } }
+        struct State: Hashable {
+            var borderWidth: CGFloat? = nil
+            var borderColor: NSColor? = nil
+            var shadowColor: NSColor? = nil
+        }
         
-        internal var stateBorderColor: NSColor? {
-            didSet { updateResolvedColors() } }
-        
-        internal var stateShadowColor: NSColor? = nil
-        
-        internal var stateShadow: ShadowConfiguration {
-            guard let stateShadowColor else { return shadow }
+        var state: State = State() {
+            didSet {
+                resolvedBorderWidth = state.borderWidth ?? borderWidth
+                updateResolvedColors()
+            }
+        }
+   
+        var stateShadow: ShadowConfiguration {
+            guard let shadowColor = state.shadowColor else { return shadow }
             var shadow = shadow
-            shadow.color = stateShadowColor
+            shadow.color = shadowColor
             return shadow
         }
         
-        internal var resolvedBorderWidth: CGFloat = 0.0
+        var resolvedBorderWidth: CGFloat = 0.0
         
-        /// The symbol configuration for the image.
-        public var imageSymbolConfiguration: ImageSymbolConfiguration? = nil
-        
-        /// The image scaling.
-        public var imageScaling: ImageScaling = .fit
-        
-        /// The image tint color for an image that is a template or symbol image.
-        public var imageTintColor: NSColor? = nil
-        
-        /// The color transformer for resolving the image tint color.
-        public var imageTintColorTransform: ColorTransformer? = nil
-        
-        /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
-        public func resolvedImageTintColor() -> NSColor? {
-            if let imageTintColor = imageTintColor {
-                return imageTintColorTransform?(imageTintColor) ?? imageTintColor
-            }
-            return nil
-        }
+        /// Properties for configuring the image.
+        public var imageProperties: ImageProperties = ImageProperties()
         
         /// The shadow properties.
         public var shadow: ShadowConfiguration = .black()
         
         /// Resets the  border width to 0 when the item state isSelected is false.
-        internal var needsBorderWidthReset: Bool = false
+        var needsBorderWidthReset: Bool = false
         /// Resets the  border width to 0 when the item state isSelected is false.
-        internal var needsBorderColorReset: Bool = false
-        
-        internal var _resolvedImageTintColor: NSColor? = nil
-        internal var _resolvedBorderColor: NSColor? = nil
-        internal var _resolvedBackgroundColor: NSColor? = nil
-        internal mutating func updateResolvedColors() {
+        var needsBorderColorReset: Bool = false
+        var _resolvedImageTintColor: NSColor? = nil
+        var _resolvedBorderColor: NSColor? = nil
+        var _resolvedBackgroundColor: NSColor? = nil
+        mutating func updateResolvedColors() {
             //  imageSymbolConfiguration?.updateResolvedColors()
-            _resolvedImageTintColor = imageSymbolConfiguration?.resolvedPrimaryColor() ?? resolvedImageTintColor()
-            _resolvedBorderColor = stateBorderColor ?? resolvedBorderColor()
+            _resolvedImageTintColor = imageProperties.symbolConfiguration?.resolvedPrimaryColor() ?? imageProperties.resolvedTintColor()
+            _resolvedBorderColor = state.borderColor ?? resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
         
-        internal init() {
+        init() {
             
+        }
+        
+    }
+}
+
+extension NSItemContentConfiguration.ContentProperties {
+    /// Properties that affect the image of the content.
+    public struct ImageProperties: Hashable {
+        /// The scaling of the image.
+        public enum ImageScaling {
+            /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
+            case fit
+            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect ratio of the image. The image is centered in the axis it exceeds.
+            case fill
+            /// The image is resized to the entire bounds rectangle.
+            case resize
+            /// The image isn't resized.
+            case none
+            var gravity: CALayerContentsGravity {
+                switch self {
+                case .fit: return .resizeAspect
+                case .fill: return .resizeAspectFill
+                case .resize: return .resize
+                case .none: return .center
+                }
+            }
+            
+            var swiftui: ContentMode {
+                switch self {
+                case .none: return .fit
+                case .fit: return .fit
+                case .fill: return .fill
+                case .resize: return .fit
+                }
+            }
+            var shouldResize: Bool {
+                self == .fit
+            }
+        }
+        
+        /// The symbol configuration for the image.
+        public var symbolConfiguration: ImageSymbolConfiguration? = nil
+        
+        /// The image scaling.
+        public var scaling: ImageScaling = .fit
+        
+        /// The tint color for an image that is a template or symbol image.
+        public var tintColor: NSColor? = nil
+        
+        /// The color transformer for resolving the image tint color.
+        public var tintColorTransform: ColorTransformer? = nil
+        
+        /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
+        public func resolvedTintColor() -> NSColor? {
+            if let tintColor = tintColor {
+                return tintColorTransform?(tintColor) ?? tintColor
+            }
+            return nil
         }
         
     }

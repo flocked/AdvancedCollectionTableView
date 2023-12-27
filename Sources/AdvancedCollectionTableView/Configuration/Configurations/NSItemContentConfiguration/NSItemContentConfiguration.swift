@@ -248,7 +248,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      
      The default is 1.0, which displays the item at it's original scale. A larger value will display the item at a larger, a smaller value at a smaller size.
      */
-    public var scaleTransform: CGFloat = 1.0
+    public var scaleTransform: CGPoint = CGPoint(x: 1.0, y: 1.0)
     
     // MARK: Creating a content view
     
@@ -264,19 +264,19 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         var configuration = self
         if let state = state as? ConfigurationState {
             if state.isSelected {
-                configuration.contentProperties.stateBorderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
+                configuration.contentProperties.state.borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 let isInvisible = configuration.contentProperties.shadow.color == nil || configuration.contentProperties.shadow.color?.alphaComponent == 0.0 || configuration.contentProperties.shadow.opacity == 0.0
                 if state.isEmphasized {
-                    configuration.contentProperties.stateBorderColor = .controlAccentColor
-                    configuration.contentProperties.stateShadowColor = isInvisible ? nil : .controlAccentColor
+                    configuration.contentProperties.state.borderColor = .controlAccentColor
+                    configuration.contentProperties.state.shadowColor = isInvisible ? nil : .controlAccentColor
                 } else {
-                    configuration.contentProperties.stateBorderColor = .controlAccentColor.withAlphaComponent(0.5)
-                    configuration.contentProperties.stateShadowColor = isInvisible ? nil : .controlAccentColor.withAlphaComponent(0.5)
+                    configuration.contentProperties.state.borderColor = .controlAccentColor.withAlphaComponent(0.5)
+                    configuration.contentProperties.state.shadowColor = isInvisible ? nil : .controlAccentColor.withAlphaComponent(0.5)
                 }
             } else {
-                configuration.contentProperties.stateBorderColor = nil
-                configuration.contentProperties.stateShadowColor = nil
-                configuration.contentProperties.stateBorderWidth = nil
+                configuration.contentProperties.state.borderColor = nil
+                configuration.contentProperties.state.shadowColor = nil
+                configuration.contentProperties.state.borderWidth = nil
             }
         }
         return configuration
