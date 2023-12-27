@@ -1,5 +1,5 @@
 //
-//  acc.swift
+//  NSListContentConfiguration+AccessoryView.swift
 //  ItemConfiguration
 //
 //  Created by Florian Zand on 18.08.23.

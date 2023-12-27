@@ -1,6 +1,6 @@
 //
-//  TableCellConfiguration+Accessory+Image.swift
-//  ItemConfiguration
+//  NSListContentConfiguration+Accessory+Image.swift
+//
 //
 //  Created by Florian Zand on 13.08.23.
 //
