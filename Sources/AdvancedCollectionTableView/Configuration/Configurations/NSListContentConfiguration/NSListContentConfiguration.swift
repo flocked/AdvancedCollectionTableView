@@ -172,7 +172,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a list content configuration for a table view with plain style.
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
+     - parameter imageColor: The color of an template or symbol image. The default value is `monochrome(.controlAccentColor)`.
           */
     public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: imageColor)
@@ -187,7 +187,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a list content configuration for a sidebar table view (source style).
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
+     - parameter imageColor: The color of an template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
     public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         return sidebar(.body, color: imageColor)
@@ -219,7 +219,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a large list content configuration for a sidebar table view (source style).
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
+     - parameter imageColor: The color of an template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
     public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.title3, color: imageColor)
