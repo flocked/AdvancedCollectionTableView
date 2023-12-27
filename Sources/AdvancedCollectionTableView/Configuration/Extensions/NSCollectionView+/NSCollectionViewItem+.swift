@@ -40,7 +40,7 @@ extension NSCollectionViewItem {
     }
     
     /**
-     Retrieves a default background content configuration.
+     Retrieves a `NSBackgroundConfiguration` with default appearance.
      ```
      var background = item.defaultBackgroundConfiguration()
      
@@ -461,19 +461,3 @@ internal var isReordering: Bool {
  }
  }
  */
-
-extension NSBackgroundConfiguration {
-    /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
-    func _updated(for state: NSConfigurationState) -> NSBackgroundConfiguration {
-        var configuration = self
-        if let state = state as? NSItemConfigurationState {
-            if state.isSelected {
-                configuration.border.width = 2.0
-                configuration.border.color = .controlAccentColor
-            } else {
-                configuration.border = .none()
-            }
-        }
-        return configuration
-    }
-}
