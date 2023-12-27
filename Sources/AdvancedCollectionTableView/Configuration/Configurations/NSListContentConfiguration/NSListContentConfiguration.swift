@@ -340,9 +340,8 @@ public extension NSListContentConfiguration {
             configuration.imageToTextPadding = 6.0
             configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         case .sourceList:
-            Swift.print("ghhhh")
-
             if isGroupRow {
+                Swift.print("ghhhh")
                 configuration.textProperties.font = .subheadline.weight(.bold)
                 configuration.textProperties.color = .tertiaryLabelColor
                 configuration.imageProperties.tintColor = .tertiaryLabelColor

@@ -150,6 +150,8 @@ open class SectionHeaderCell: NSView {
         firstSuperview(for: NSTableView.self)
     }
     
+    var tableStyleObserver: NSKeyValueObservation? = nil
+    
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = KeyValueObserver(self)
@@ -171,6 +173,12 @@ open class SectionHeaderCell: NSView {
         tableCellObserver?.add(\.superview?.superview, handler: {old, new in
             guard old != new, let tableView = new as? NSTableView, var configuration = self.contentConfiguration as? NSListContentConfiguration, configuration.type == .automaticRow else { return }
             Swift.print("SectionHeaderCell superview1", tableView.style.rawValue, new ?? "nil")
+            self.tableStyleObserver = tableView.observeChanges(for: \.style, handler: { old, style in
+                guard old != style else { return }
+                Swift.print("observeChanges", style)
+                configuration = configuration.tableViewStyle(style, isGroupRow: true)
+                self.contentConfiguration = configuration
+            })
             configuration = configuration.tableViewStyle(tableView.style, isGroupRow: true)
             self.contentConfiguration = configuration
         })
