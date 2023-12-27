@@ -22,8 +22,9 @@ public class NSListContentView: NSView, NSContentView {
                 Swift.print("rowViewSuperviewObserver", new ?? "nil")
             })
             if let tableView = rowView.tableView {
-                
-                Swift.print("NSListContentView", tableView.row(for: self), tableView.row(for: rowView))
+                Swift.print("NSListContentView", rowView.superview ?? "nil", tableView.row(for: self), tableView.row(for: rowView))
+            } else {
+                Swift.print("NSListContentView", rowView.superview ?? "nil")
             }
            // Swift.print("NSListContentView", new ?? "nil", (new as? NSTableRowView)?.row ?? "nil")
             
