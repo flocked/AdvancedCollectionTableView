@@ -153,6 +153,7 @@ open class SectionHeaderCell: NSView {
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
+            Swift.print("SectionHeaderCell", self.superview ?? "nil")
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true

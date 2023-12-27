@@ -13,7 +13,7 @@ class SidebarViewController: NSViewController {
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
-    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableCellView, Section>
+    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<SectionHeaderCell, Section>
 
     
     @IBOutlet weak var tableView: NSTableView!
@@ -32,6 +32,7 @@ class SidebarViewController: NSViewController {
     let sectionHeaderRegistration = SectionHeaderRegistration() { rowView, row, section in
         var sidebarConfiguration = rowView.defaultContentConfiguration()
         sidebarConfiguration.text = section.rawValue
+
         rowView.contentConfiguration = sidebarConfiguration
     }
     
