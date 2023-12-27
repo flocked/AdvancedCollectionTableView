@@ -172,9 +172,9 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a list content configuration for a table view with plain style.
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
           */
-    public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+    public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: imageColor)
         configuration.imageToTextPadding = 6.0
         configuration.type = .plain
@@ -187,18 +187,18 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a list content configuration for a sidebar table view (source style).
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
-    public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+    public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         return sidebar(.body, color: imageColor)
     }
     
     /**
      Creates a list content configuration for a sidebar table view (source style).
      
-     - parameter imageColor: The color of the symbol image. The default value is `accentColor`.
+     - parameter imageColor: The color of the symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
-    public static func image(systemName: String, imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+    public static func image(systemName: String, imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         return sidebar(.body, color: imageColor)
     }
     
@@ -219,9 +219,9 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      Creates a large list content configuration for a sidebar table view (source style).
      
-     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `accentColor`.
+     - parameter imageColor: The color of the image, if it's a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
-    public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .accentColor) -> NSListContentConfiguration {
+    public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.title3, color: imageColor)
         configuration.type = .sidebarLarge
         configuration.margins = .init(top: 8.0, leading: 4.0, bottom: 8.0, trailing: 4.0)
