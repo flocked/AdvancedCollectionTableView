@@ -218,6 +218,37 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         previousDisplayingElements = displayingElements
     }
     
+    var keyDownMonitor: NSEvent.Monitor? = nil
+    
+    func observeKeyDown() {
+        if self.allowsDeleting {
+            if keyDownMonitor == nil {
+                keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
+                    guard let self = self, self.collectionView.isFirstResponder else { return event }
+                    if allowsDeleting, event.keyCode == 51 {
+                        let elementsToDelete =  deletionHandlers.canDelete?(self.selectedElements) ?? self.selectedElements
+                        if (elementsToDelete.isEmpty == false) {
+                            let transaction = self.deletionTransaction(elementsToDelete)
+                            self.deletionHandlers.willDelete?(elementsToDelete, transaction)
+                            if QuicklookPanel.shared.isVisible {
+                                QuicklookPanel.shared.close()
+                            }
+                            self.apply(transaction.finalSnapshot, .animated)
+                            deletionHandlers.didDelete?(elementsToDelete, transaction)
+                            return nil
+                        }
+                    }
+                    return event
+                })
+            }
+        } else {
+            if let keyDownMonitor = self.keyDownMonitor {
+                NSEvent.removeMonitor(keyDownMonitor)
+            }
+            keyDownMonitor = nil
+        }
+    }
+    
     // MARK: - Snapshot
     
     /**
