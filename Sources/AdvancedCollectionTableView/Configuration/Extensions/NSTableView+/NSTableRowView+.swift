@@ -242,9 +242,10 @@ extension NSTableRowView {
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.tableView?.setupObservation()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
-      //  self.setNeedsUpdateConfiguration()
-      //  self.setCellViewsNeedAutomaticUpdateConfiguration()
+        self.setNeedsUpdateConfiguration()
+        self.setCellViewsNeedAutomaticUpdateConfiguration()
     }
 }
 
