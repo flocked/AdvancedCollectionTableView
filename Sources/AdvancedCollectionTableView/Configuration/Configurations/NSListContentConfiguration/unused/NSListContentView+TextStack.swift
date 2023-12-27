@@ -37,8 +37,8 @@ internal extension NSListContentView {
             addSubview(secondaryTextField)
         }
         
-        internal lazy var textField = CellTextField(properties: configuration.textProperties)
-        internal lazy var secondaryTextField = CellTextField(properties: configuration.secondaryTextProperties)
+        internal lazy var textField = ListTextField(properties: configuration.textProperties)
+        internal lazy var secondaryTextField = ListTextField(properties: configuration.secondaryTextProperties)
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")

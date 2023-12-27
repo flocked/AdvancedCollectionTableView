@@ -11,7 +11,7 @@ import FZUIKit
 import SwiftUI
 
 internal extension NSListContentView {
-    class CellImageView: NSImageView {
+    class ListImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }

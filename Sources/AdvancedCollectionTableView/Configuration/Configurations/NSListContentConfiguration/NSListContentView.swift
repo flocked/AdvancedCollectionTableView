@@ -46,9 +46,9 @@ public class NSListContentView: NSView, NSContentView {
         didSet { if oldValue != _configuration {
             updateConfiguration() } } }
     
-    internal lazy var textField = CellTextField(properties: _configuration.textProperties)
-    internal lazy var secondaryTextField = CellTextField(properties: _configuration.secondaryTextProperties)
-    internal lazy var imageView = CellImageView(properties: _configuration.imageProperties)
+    internal lazy var textField = ListTextField(properties: _configuration.textProperties)
+    internal lazy var secondaryTextField = ListTextField(properties: _configuration.secondaryTextProperties)
+    internal lazy var imageView = ListImageView(properties: _configuration.imageProperties)
     internal var badgeView: BadgeView? = nil
     
     internal lazy var textStackView: NSStackView = {

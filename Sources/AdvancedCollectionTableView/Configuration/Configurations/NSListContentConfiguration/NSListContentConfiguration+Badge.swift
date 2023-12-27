@@ -1,5 +1,5 @@
 //
-//  NSListContentConfiguration+Image.swift
+//  NSListContentConfiguration+Badge.swift
 //
 //
 //  Created by Florian Zand on 19.06.23.
@@ -11,10 +11,8 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSListContentConfiguration {
-    
     /// Properties for a list badge.
     struct Badge: Hashable {
-        
         /// The position of the badge.
         public enum Position {
             /// The badge is vertically centered to the text, or if it's `nil` to the secondary text.

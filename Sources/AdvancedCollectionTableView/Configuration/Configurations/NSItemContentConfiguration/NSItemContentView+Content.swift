@@ -1,6 +1,6 @@
 //
-//  ItemContentView+Content.swift
-//  ItemConfiguration
+//  NSItemContentView+Content.swift
+//  
 //
 //  Created by Florian Zand on 07.08.23.
 //

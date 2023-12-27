@@ -1,6 +1,6 @@
 //
-//  ItemConfiguration.swift
-//  ItemConfiguration
+//  NSItemContentConfiguration.swift
+//  
 //
 //  Created by Florian Zand on 07.08.23.
 //

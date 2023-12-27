@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 internal extension NSListContentView {
-    class CellTextField: NSTextField, NSTextFieldDelegate {
+    class ListTextField: NSTextField, NSTextFieldDelegate {
         var properties: TextConfiguration {
             didSet {
                 if oldValue != properties {

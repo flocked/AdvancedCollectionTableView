@@ -90,7 +90,6 @@ internal extension NSItemContentView {
         override public func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
-                collectionViewItem?.isEditing = true
                 previousStringValue = stringValue
             }
             return canBecome

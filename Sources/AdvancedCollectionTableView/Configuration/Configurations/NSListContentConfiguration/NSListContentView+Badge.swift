@@ -1,6 +1,6 @@
 //
-//  TableCellContentView+Badge.swift
-//  ItemConfiguration
+//  NSListContentView+Badge.swift
+//  
 //
 //  Created by Florian Zand on 18.08.23.
 //
