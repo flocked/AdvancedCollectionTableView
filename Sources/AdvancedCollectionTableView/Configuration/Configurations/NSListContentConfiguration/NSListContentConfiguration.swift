@@ -207,7 +207,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: imageColor)
-        configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
+        configuration.margins = .init(top: 2.0, leading: 4.0, bottom: 2.0, trailing: 4.0)
+      //  configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
     
