@@ -169,11 +169,8 @@ open class SectionHeaderCell: NSView {
         })
         
         tableCellObserver?.add(\.superview?.superview, handler: {old, new in
+            guard old != new, let tableView = new as? NSTableView, let configuration = self.contentConfiguration as? NSListContentConfiguration, configuration.type == .automaticRow else { return }
             Swift.print("SectionHeaderCell superview1", new ?? "nil", new?.firstSuperview(for: NSTableView.self) ?? "nil")
-        })
-        
-        tableCellObserver?.add(\.superview?.superview?.superview, handler: {old, new in
-            Swift.print("SectionHeaderCell superview2", new ?? "nil", new?.firstSuperview(for: NSTableView.self) ?? "nil")
         })
     }
 }
