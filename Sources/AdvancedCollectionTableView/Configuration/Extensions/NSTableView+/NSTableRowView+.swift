@@ -11,68 +11,92 @@ import FZUIKit
 
 extension NSTableRowView {
     
-    // MARK: Configuring the background
+    // MARK: Configuring the content
     
     /**
-     The current background configuration of the row.
+     The current content configuration of the row.
      
-     Using a background configuration, you can obtain system default background styling for a variety of different row states. Create a background configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
+     Using a content configuration, you can obtain system default content styling for a variety of different row states. Create a content configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
      
      ```swift
-     var backgroundConfiguration = NSBackgroundConfiguration()
+     var contentConfiguration = NSBackgroundConfiguration()
      
      // Set a nil background color to use the view's tint color.
-     backgroundConfiguration.backgroundColor = nil
+     contentConfiguration.backgroundColor = nil
      
-     rowView.backgroundConfiguration = backgroundConfiguration
+     rowView.contentConfiguration = contentConfiguration
      ```
      */
-    public var backgroundConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
+    public var contentConfiguration: NSContentConfiguration?   {
+        get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "backgroundConfiguration", object: self)
+            set(associatedValue: newValue, key: "contentConfiguration", object: self)
             if (newValue != nil) {
                 self.observeTableRowView()
             }
-            self.configurateBackgroundView()
+            self.configurateContentView()
         }
     }
     
     /**
-     A Boolean value that determines whether the row automatically updates its background configuration when its state changes.
+     Retrieves a default content configuration for the row’s style. The system determines default values for the configuration according to the table view it is presented.
      
-     When this value is true, the row automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
+     The default content configuration has preconfigured default styling depending on the table view ``AppKit/NSTableView/style`` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the row as the current content configuration.
      
-     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
+     ```swift
+     var content = rowView.defaultContentConfiguration()
+     
+     // Configure content.
+     content.text = "Favorites"
+     content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
+     
+     // Customize appearance.
+     content.imageProperties.tintColor = .purple
+     
+     rowView.contentConfiguration = content
+     ```
+     
+     - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
-    @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
+    public func defaultContentConfiguration() -> NSListContentConfiguration {
+        return NSListContentConfiguration.automaticRow()
+    }
+    
+    /**
+     A Boolean value that determines whether the row automatically updates its content configuration when its state changes.
+     
+     When this value is true, the row automatically calls  `updated(for:)` on its ``contentConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
+     
+     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     */
+    @objc open var automaticallyUpdatesContentConfiguration: Bool {
+        get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
+        set { set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
         }
     }
     
-    var configurationBackgroundView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "configurationBackgroundView", object: self) }
+    var configurationContentView: (NSView & NSContentView)?   {
+        get { getAssociatedValue(key: "configurationContentView", object: self) }
         set {
-            configurationBackgroundView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "configurationBackgroundView", object: self)
+            configurationContentView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "configurationContentView", object: self)
         }
     }
     
-    func configurateBackgroundView() {
-        if let backgroundConfiguration = backgroundConfiguration {
+    func configurateContentView() {
+        if let contentConfiguration = contentConfiguration {
             self.backgroundColor = nil
-            if var backgroundView = configurationBackgroundView,  backgroundView.supports(backgroundConfiguration) {
-                backgroundView.configuration = backgroundConfiguration
+            if var contentView = configurationContentView, contentView.supports(contentConfiguration) {
+                contentView.configuration = contentConfiguration
             } else {
-                configurationBackgroundView?.removeFromSuperview()
-                var backgroundView = backgroundConfiguration.makeContentView()
-                backgroundView.configuration = backgroundConfiguration
-                configurationBackgroundView = backgroundView
-                self.addSubview(withConstraint: backgroundView)
+                configurationContentView?.removeFromSuperview()
+                var contentView = contentConfiguration.makeContentView()
+                contentView.configuration = contentConfiguration
+                configurationContentView = contentView
+                self.addSubview(withConstraint: contentView)
             }
         } else {
-            configurationBackgroundView = nil
+            configurationContentView = nil
         }
     }
     
@@ -101,7 +125,7 @@ extension NSTableRowView {
      if state.isSelected {
      content.backgroundColor = .controlAccentColor
      }
-     rowView.backgroundConfiguration = content
+     rowView.contentConfiguration = content
      }
      ```
      
@@ -139,10 +163,10 @@ extension NSTableRowView {
     }
     
     
-    // Updates content configuration and background configuration if automatic updating is enabled.
+    // Updates content configuration and content configuration if automatic updating is enabled.
     func setNeedsAutomaticUpdateConfiguration() {
         if isConfigurationUpdatesEnabled {
-            if automaticallyUpdatesBackgroundConfiguration {
+            if automaticallyUpdatesContentConfiguration {
                 setNeedsUpdateConfiguration()
             } else {
                 configurationUpdateHandler?(self,  configurationState)
@@ -157,8 +181,8 @@ extension NSTableRowView {
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     func updateConfiguration(using state: NSTableRowConfigurationState) {
-        if let backgroundConfiguration = self.backgroundConfiguration {
-            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+        if let contentConfiguration = self.contentConfiguration {
+            self.contentConfiguration = contentConfiguration.updated(for: state)
         }
         cellViews.forEach({$0.setNeedsUpdateConfiguration()})
         configurationUpdateHandler?(self, state)
@@ -178,7 +202,7 @@ extension NSTableRowView {
         get { self.tableView?.isEnabled ?? true }
     }
     
-    /// A Boolean value that specifies whether the current cell is in a editing state.
+    /// A Boolean value that specifies whether the current row is in a editing state.
     var isEditing: Bool {
         get { getAssociatedValue(key: "_isEditing", object: self, initialValue: false) }
         set {
@@ -227,14 +251,23 @@ extension NSTableRowView {
         set {  set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
     }
     
+    func updateContentConfiguration() {
+        Swift.print("updateContentConfiguration", self.row ?? "nil", self.subviews)
+        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = self.row {
+            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
+        }
+    }
+    
     func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { old, new in
             guard old != new else { return }
-            self.configurateBackgroundView()
+            self.configurateContentView()
             self.setNeedsAutomaticUpdateConfiguration()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
+            self.updateContentConfiguration()
         }
         rowObserver?.add(\.superview) { old, new in
             if self.needsAutomaticRowHeights {
@@ -242,9 +275,11 @@ extension NSTableRowView {
             }
             self.tableView?.setupObservation()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
+            self.updateContentConfiguration()
         }
         self.setNeedsUpdateConfiguration()
         self.setCellViewsNeedAutomaticUpdateConfiguration()
+        self.updateContentConfiguration()
     }
 }
 

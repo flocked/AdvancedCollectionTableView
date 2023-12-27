@@ -250,6 +250,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         
     internal enum TableCellType {
         case automatic
+        case automaticRow
         case plain
         case sidebar
         case sidebarLarge
@@ -314,6 +315,14 @@ public extension NSListContentConfiguration {
     internal static func automatic() -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: .accentColor)
         configuration.type = .automatic
+        configuration.imageProperties.position = .leading(.firstBaseline)
+        configuration.imageProperties.sizing = .firstTextHeight
+        return configuration
+    }
+    
+    internal static func automaticRow() -> NSListContentConfiguration {
+        var configuration = sidebar(.body, color: .accentColor)
+        configuration.type = .automaticRow
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         return configuration
