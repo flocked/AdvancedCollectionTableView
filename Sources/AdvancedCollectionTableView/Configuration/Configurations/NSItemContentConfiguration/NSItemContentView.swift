@@ -154,7 +154,7 @@ public class NSItemContentView: NSView, NSContentView {
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        Swift.print("secondaryTextField.isHidden", secondaryTextField.isHidden, appliedConfiguration.secondaryPlaceholderText != nil, appliedConfiguration.secondaryAttributedPlaceholderText != nil)
+        Swift.print("secondaryTextField.isHidden", secondaryTextField.isHidden, appliedConfiguration.secondaryText == nil, appliedConfiguration.secondaryAttributedText == nil, appliedConfiguration.secondaryPlaceholderText == nil, appliedConfiguration.secondaryAttributedPlaceholderText == nil)
         
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
