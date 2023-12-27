@@ -11,9 +11,9 @@ import FZUIKit
 /**
  A content configuration for a table cell based content view.
  
- A list content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via ``makeContentView()``.
+ A list content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via `makeContentView()`.
  
- Use  ``AppKit/NSTableCellView/defaultContentConfiguration()`` to get a content configuration that has preconfigured default styling based on the table view it is presented.
+ Use a table cells  ``AppKit/NSTableCellView/defaultContentConfiguration()`` to get a content configuration that has preconfigured default styling based on the table view it is presented.
  
  ```swift
  var content = tableCell.defaultContentConfiguration()
@@ -193,8 +193,12 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return sidebar(.body, color: imageColor)
     }
     
-    /// Creates a header list content configuration for a sidebar table view (source style).
-    public static func sidebarHeader() -> NSListContentConfiguration {
+    /**
+     Creates a header list content configuration for a sidebar table view (source style).
+     
+     - parameter imageColor: The color of an template or symbol image. The default value is `monochrome(.controlAccentColor)`.
+     */
+    public static func sidebarHeader(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
         configuration.type = .sidebarHeader
         configuration.textProperties.font = .subheadline.weight(.bold)
@@ -202,7 +206,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.imageProperties.tintColor = .tertiaryLabelColor
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
+        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: imageColor)
         configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
@@ -220,8 +224,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     /// Creates a plain list content configuration with a text.
-    public static func text(_ text: String
-    ) -> Self {
+    public static func text(_ text: String) -> Self {
         var configuration: Self = .plain()
         configuration.text = text
         return configuration
@@ -317,6 +320,7 @@ public extension NSListContentConfiguration {
     
     internal func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
         var configuration = self
+        Swift.print("isGroupRow", isGroupRow)
         configuration.tableViewStyle = style
         switch style {
         case .automatic:
