@@ -220,7 +220,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     }
     
     /// Creates a list content configuration with an editable text.
-    public static func editableText(text: String?, placeholderText: String?, onTextEditEnd: @escaping (String)->()) -> Self {
+    public static func editableText(_ text: String?, placeholderText: String?, onTextEditEnd: @escaping (String)->()) -> Self {
         var configuration: Self = .plain()
         configuration.text = text
         configuration.placeholderText = placeholderText
