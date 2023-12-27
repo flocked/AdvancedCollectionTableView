@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  SectionHeaderView.swift
 //  
 //
 //  Created by Florian Zand on 27.12.23.
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-open class SectionHeaderCell: NSView {
+open class TableSectionHeaderView: NSView {
     
     // MARK: Managing the content
     
@@ -140,7 +140,7 @@ open class SectionHeaderCell: NSView {
         }
     }
     
-    var tableCellObserver: KeyValueObserver<SectionHeaderCell>? = nil
+    var tableCellObserver: KeyValueObserver<TableSectionHeaderView>? = nil
     
     var rowView: NSTableRowView? {
         return firstSuperview(for: NSTableRowView.self)
