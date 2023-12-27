@@ -16,9 +16,16 @@ public class NSListContentView: NSView, NSContentView {
     public init(configuration: NSListContentConfiguration) {
         _configuration = configuration
         super.init(frame: .zero)
+        superviewObserver = self.observeChanges(for: \.superview) { old, new in
+            guard old != new else { return }
+            Swift.print("NSListContentView", new ?? "nil")
+            
+        }
         initialSetup()
         updateConfiguration()
     }
+    
+    var superviewObserver: NSKeyValueObservation? = nil
     
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
