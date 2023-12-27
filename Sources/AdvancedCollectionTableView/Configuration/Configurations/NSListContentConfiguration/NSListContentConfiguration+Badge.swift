@@ -11,8 +11,11 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSListContentConfiguration {
-    /// Properties for a badge.
+    
+    /// Properties for a list badge.
     struct Badge: Hashable {
+        
+        /// The position of the badge.
         public enum Position {
             /// The badge is vertically centered to the text, or if it's `nil` to the secondary text.
             case leading
@@ -22,10 +25,13 @@ public extension NSListContentConfiguration {
         
         /// The text of the badge..
         public var text: String? = nil
+        
         /// An attributed variant of the text.
         public var attributedText: AttributedString? = nil
+        
         /// The image of the badge..
         public var image: NSImage? = nil
+        
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = ImageProperties()
         
@@ -55,7 +61,7 @@ public extension NSListContentConfiguration {
         
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
+            if let backgroundColor = backgroundColor {
                 return backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
@@ -74,8 +80,8 @@ public extension NSListContentConfiguration {
         
         /// Generates the resolved border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = self.borderColor {
-                return self.borderColorTransform?(borderColor) ?? borderColor
+            if let borderColor = borderColor {
+                return borderColorTransform?(borderColor) ?? borderColor
             }
             return nil
         }
@@ -95,8 +101,11 @@ public extension NSListContentConfiguration {
         /// The position of the badge.
         public var position: Position = .trailing
         
+        
+        /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0
         
+        /// Creates a badge.
         public init() {
             
         }
@@ -129,7 +138,7 @@ public extension NSListContentConfiguration {
         }
         
         internal var isVisible: Bool {
-            self.text != nil || self.attributedText != nil || self.image != nil
+            text != nil || attributedText != nil || image != nil
         }
         
         internal var resolvedImageTintColor: NSColor {
@@ -148,9 +157,14 @@ public extension NSListContentConfiguration {
 }
 
 public extension NSListContentConfiguration.Badge {
+    /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
-        enum Position {
+        
+        /// The position of the badge image.
+        enum Position: Int, Hashable {
+            /// The image is leading.
             case leading
+            /// The image is trailing.
             case trailing
         }
         
@@ -178,8 +192,8 @@ public extension NSListContentConfiguration.Badge {
         
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
-            if let tintColor = self.tintColor {
-                return self.tintColorTransform?(tintColor) ?? tintColor
+            if let tintColor = tintColor {
+                return tintColorTransform?(tintColor) ?? tintColor
             }
             return nil
         }

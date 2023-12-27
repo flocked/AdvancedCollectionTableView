@@ -79,19 +79,19 @@ public extension NSListContentConfiguration {
         }
         
         internal var hasText: Bool {
-            self.text != nil || self.attributedText != nil
+            text != nil || attributedText != nil
         }
         
         internal var hasSecondaryText: Bool {
-            self.secondaryText != nil || self.secondaryAttributedText != nil
+            secondaryText != nil || secondaryAttributedText != nil
         }
         
         internal var hasContent: Bool {
-            return self.image != nil
+            return image != nil
         }
         
         internal var isVisible: Bool {
-            self.image != nil || self.hasText || self.hasSecondaryText
+            image != nil || hasText || hasSecondaryText
         }
     }
 }

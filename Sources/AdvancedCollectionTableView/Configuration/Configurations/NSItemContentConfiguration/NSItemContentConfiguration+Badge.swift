@@ -33,14 +33,23 @@ public extension NSItemContentConfiguration {
         
         /// The position of the badge.
         public enum Position: Int, Hashable, CaseIterable {
-            case topLeft = 0
+            /// The badge is positioned at the top left.
+            case topLeft
+            /// The badge is positioned at the top.
             case top
+            /// The badge is positioned at the top right.
             case topRight
+            /// The badge is positioned at the center left.
             case centerLeft
+            /// The badge is positioned at the center.
             case center
+            /// The badge is positioned at the center right.
             case centerRight
+            /// The badge is positioned at the bottom left.
             case bottomLeft
+            /// The badge is positioned at the bottom.
             case bottom
+            /// The badge is positioned at the bottom right.
             case bottomRight
         }
         
@@ -48,8 +57,11 @@ public extension NSItemContentConfiguration {
         public var text: String? = nil
         /// An attributed variant of the text.
         public var attributedText: AttributedString? = nil
+        
         /// The image of the badge..
         public var image: NSImage? = nil
+        
+        /// The view of the badge.
         public var view: NSView? = nil
         
         /// Properties for configuring the text.
@@ -68,7 +80,7 @@ public extension NSItemContentConfiguration {
         
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
+            if let backgroundColor = backgroundColor {
                 return backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
@@ -95,8 +107,8 @@ public extension NSItemContentConfiguration {
         
         /// Generates the resolved border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = self.borderColor {
-                return self.borderColorTransform?(borderColor) ?? borderColor
+            if let borderColor = borderColor {
+                return borderColorTransform?(borderColor) ?? borderColor
             }
             return nil
         }
@@ -113,6 +125,7 @@ public extension NSItemContentConfiguration {
         /// The maximum width of the badge. If the text is larger than the width, it will be truncated.
         public var maxWidth: CGFloat? = nil
         
+        /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0
         
         /// The type of the badge.
@@ -121,6 +134,7 @@ public extension NSItemContentConfiguration {
         /// The position of the badge.
         public var position: Position = .topRight
         
+        /// The spacing of the badge.
         public var spacing: CGFloat = 3.0
         
         /// Creates a badge.
@@ -172,7 +186,7 @@ public extension NSItemContentConfiguration {
         }
         
         internal var isVisible: Bool {
-            self.text != nil || self.attributedText != nil || self.image != nil || self.view != nil
+            text != nil || attributedText != nil || image != nil || view != nil
         }
         
         internal var _resolvedBorderColor: NSColor? = nil
@@ -196,7 +210,9 @@ public extension NSItemContentConfiguration {
 }
 
 public extension NSItemContentConfiguration.Badge {
+    /// Properties that affect the text of a badge.
     struct TextProperties: Hashable {
+        
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
         
@@ -223,9 +239,14 @@ public extension NSItemContentConfiguration.Badge {
         }
     }
     
+    /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
-        enum Position {
+        
+        /// The position of the badge image.
+        enum Position: Int, Hashable {
+            /// The image is leading.
             case leading
+            /// The image is trailing.
             case trailing
         }
         
@@ -241,6 +262,7 @@ public extension NSItemContentConfiguration.Badge {
         /// The image scaling.
         public var scaling: NSImageScaling = .scaleNone
         
+        /// The position of the image.
         var position: Position = .leading
         
         /// The tint color for an image that is a template or symbol image.
@@ -253,8 +275,8 @@ public extension NSItemContentConfiguration.Badge {
         
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
-            if let tintColor = self.tintColor {
-                return self.tintColorTransform?(tintColor) ?? tintColor
+            if let tintColor = tintColor {
+                return tintColorTransform?(tintColor) ?? tintColor
             }
             return nil
         }

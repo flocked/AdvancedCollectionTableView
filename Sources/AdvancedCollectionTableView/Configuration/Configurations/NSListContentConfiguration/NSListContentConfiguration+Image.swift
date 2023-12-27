@@ -152,8 +152,8 @@ public extension NSListContentConfiguration {
         
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
-            if let tintColor = self.tintColor {
-                return self.tintColorTransform?(tintColor) ?? tintColor
+            if let tintColor = tintColor {
+                return tintColorTransform?(tintColor) ?? tintColor
             }
             return nil
         }
@@ -168,8 +168,8 @@ public extension NSListContentConfiguration {
         
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
-                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
+            if let backgroundColor = backgroundColor {
+                return backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
@@ -187,8 +187,8 @@ public extension NSListContentConfiguration {
         
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = self.borderColor {
-                return self.borderColorTransform?(borderColor) ?? borderColor
+            if let borderColor = borderColor {
+                return borderColorTransform?(borderColor) ?? borderColor
             }
             return nil
         }

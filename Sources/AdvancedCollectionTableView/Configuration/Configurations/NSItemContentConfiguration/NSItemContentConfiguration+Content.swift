@@ -11,8 +11,10 @@ import FZUIKit
 import SwiftUI
 
 public extension NSItemContentConfiguration {
+    
     /// Properties that affect the content that displays the image and view.
     struct ContentProperties: Hashable {
+        
         /// The scaling of the image.
         public enum ImageScaling {
             /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
@@ -50,6 +52,7 @@ public extension NSItemContentConfiguration {
         
         /// The maximum width of the content.
         public var maximumWidth: CGFloat? = nil
+        
         /// The maximum height of the content.
         public var maximumHeight: CGFloat? = nil
         
@@ -68,8 +71,8 @@ public extension NSItemContentConfiguration {
             didSet { updateResolvedColors() } }
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = self.backgroundColor {
-                return self.backgroundColorTransform?(backgroundColor) ?? backgroundColor
+            if let backgroundColor = backgroundColor {
+                return backgroundColorTransform?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
@@ -81,13 +84,15 @@ public extension NSItemContentConfiguration {
         /// The border color.
         public var borderColor: NSColor? = nil {
             didSet { updateResolvedColors() } }
+        
         /// The color transformer for resolving the border color.
         public var borderColorTransform: ColorTransformer? = nil {
             didSet { updateResolvedColors() } }
+        
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = self.borderColor {
-                return self.borderColorTransform?(borderColor) ?? borderColor
+            if let borderColor = borderColor {
+                return borderColorTransform?(borderColor) ?? borderColor
             }
             return nil
         }
@@ -102,7 +107,7 @@ public extension NSItemContentConfiguration {
         
         internal var stateShadow: ShadowConfiguration {
             guard let stateShadowColor else { return shadow }
-            var shadow = self.shadow
+            var shadow = shadow
             shadow.color = stateShadowColor
             return shadow
         }
@@ -111,16 +116,20 @@ public extension NSItemContentConfiguration {
         
         /// The symbol configuration for the image.
         public var imageSymbolConfiguration: ImageSymbolConfiguration? = nil
+        
         /// The image scaling.
         public var imageScaling: ImageScaling = .fit
+        
         /// The image tint color for an image that is a template or symbol image.
         public var imageTintColor: NSColor? = nil
+        
         /// The color transformer for resolving the image tint color.
         public var imageTintColorTransform: ColorTransformer? = nil
+        
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedImageTintColor() -> NSColor? {
-            if let imageTintColor = self.imageTintColor {
-                return self.imageTintColorTransform?(imageTintColor) ?? imageTintColor
+            if let imageTintColor = imageTintColor {
+                return imageTintColorTransform?(imageTintColor) ?? imageTintColor
             }
             return nil
         }

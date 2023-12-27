@@ -283,7 +283,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     }
     
     internal var contentAlignment: NSLayoutConstraint.Attribute  {
-        switch self.contentPosition {
+        switch contentPosition {
         case .bottom, .top: return .centerX
         case .leading, .trailing: return .centerY
         case .leadingFirstBaseline, .trailingFirstBaseline: return .firstBaseline
@@ -291,19 +291,19 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     }
     
     internal var hasText: Bool {
-        self.text != nil || self.attributedText != nil
+        text != nil || attributedText != nil
     }
     
     internal var hasSecondaryText: Bool {
-        self.secondaryText != nil || self.secondaryAttributedText != nil
+        secondaryText != nil || secondaryAttributedText != nil
     }
     
     internal var hasContent: Bool {
-        self.image != nil || self.contentProperties.backgroundColor != nil || self.view != nil
+        image != nil || contentProperties.backgroundColor != nil || view != nil
     }
     
     internal var hasBadges: Bool {
-        self.badges.isEmpty == false && self.hasContent
+        badges.isEmpty == false && hasContent
     }
     
     /// The position of the content.
@@ -339,7 +339,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
  internal func shouldRecalculateContentView(_ previous: Self) {
  let keyPaths: [PartialKeyPath<Self>] = [\.contentProperties.imageScaling.shouldResize, \.image, \.view, \.contentProperties.maxWidth, \.contentProperties.maxHeight]
  
- self.contentProperties.imageScaling.shouldResize != previous.contentProperties.imageScaling.shouldResize ||
- self.image != previous.image
+ contentProperties.imageScaling.shouldResize != previous.contentProperties.imageScaling.shouldResize ||
+ image != previous.image
  }
  */
