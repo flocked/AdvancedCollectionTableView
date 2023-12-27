@@ -1,6 +1,6 @@
 # Advanced NSCollectionView & NSTableView
 
-A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
+A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of UIKit.
 
 Take a look at the included sample app which demonstrates:
 - `NSCollectionView.ItemRegistration`
@@ -8,9 +8,9 @@ Take a look at the included sample app which demonstrates:
 - `NSItemContentConfiguration`
 - `NSListContentConfiguration`
 - `CollectionViewDiffableDataSource`
-- NSCollectionView `reconfiguratingItems(at: _)`.
+- NSCollectionView's `reconfiguratingItems(at: _)`.
 
-**For a full documentation take a look at the included documentation.**
+**For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.**
 
 ## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
 
