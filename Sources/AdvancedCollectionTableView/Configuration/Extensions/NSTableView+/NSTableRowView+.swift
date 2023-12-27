@@ -256,19 +256,6 @@ extension NSTableRowView {
         self.subviews(type: NSTableRowView.self).first
     }
     
-    func updateContentConfiguration() {
-        if let tableView = self.tableView {
-            Swift.print("automaticRow", self.row ?? "nil", self.headerRowView?.contentConfiguration != nil, self.subviews)
-          //  Swift.print("isGroupRow", self.row ?? 0, tableView.delegate?.tableView?(tableView, isGroupRow: self.row ?? 0) ?? false)
-         //   Swift.print("automaticRow", (self.subviews.first as? NSTableRowView) != nil, self.contentConfiguration != nil, (self.contentConfiguration as? NSListContentConfiguration)?.type?.rawValue ?? "nil")
-        }
-        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle {
-            let row = self.row ?? 0
-            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
-        }
-    }
-    
     func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
@@ -277,7 +264,6 @@ extension NSTableRowView {
             self.configurateContentView()
             self.setNeedsAutomaticUpdateConfiguration()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
-            self.updateContentConfiguration()
         }
         rowObserver?.add(\.superview) { old, new in
             if self.needsAutomaticRowHeights {
@@ -285,11 +271,9 @@ extension NSTableRowView {
             }
             self.tableView?.setupObservation()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
-            self.updateContentConfiguration()
         }
         self.setNeedsUpdateConfiguration()
         self.setCellViewsNeedAutomaticUpdateConfiguration()
-        self.updateContentConfiguration()
     }
 }
 

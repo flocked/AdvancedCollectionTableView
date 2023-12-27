@@ -16,51 +16,9 @@ public class NSListContentView: NSView, NSContentView {
     public init(configuration: NSListContentConfiguration) {
         _configuration = configuration
         super.init(frame: .zero)
-        /*
-        superviewObserver = self.observeChanges(for: \.superview) { old, new in
-            guard old != new, let rowView = new as? NSTableRowView else { return }
-            Swift.print("NSListContentView", rowView.contentConfiguration != nil)
-        }
-         */
-        
-        superviewObserver = self.observeChanges(for: \.superview?.superview?.superview) { old, new in
-            guard old != new, let tableView = new as? NSTableView, let rowView = self.superview as? NSTableRowView, var configuration = rowView.contentConfiguration as? NSListContentConfiguration, configuration.type == .automaticRow  else { return }
-            configuration = configuration.tableViewStyle(tableView.style, isGroupRow: true)
-            Swift.print("NSListContentiew")
-            rowView.contentConfiguration = configuration
-          //  Swift.print("NSListContentView", tableView.row(for: self), tableView.row(for: self.superview!))
-           // Swift.print("NSListContentView", new ?? "nil")
-        }
-         
-        
-        /*
-        superviewObserver = self.observeChanges(for: \.superview) { old, new in
-            guard old != new, let rowView = new as? NSTableRowView else { return }
-            self.rowViewSuperviewObserver = rowView.observeChanges(for: \.superview, handler: { old, new in
-                guard old != new, let rowView = new as? NSTableRowView else { return }
-                self.rowViewSuperviewSuperViewObserver = rowView.observeChanges(for: \.superview, handler: { old, new in
-                    Swift.print("rowViewSuperviewSuperViewObserver", new ?? "nil", new?.superview ?? "nil")
-                })
-                Swift.print("rowViewSuperviewObserver", new ?? "nil", new?.superview ?? "nil")
-            })
-            if let tableView = rowView.tableView {
-                Swift.print("NSListContentView", rowView.superview ?? "nil", tableView.row(for: self), tableView.row(for: rowView))
-            } else {
-                Swift.print("NSListContentView", rowView.superview ?? "nil")
-            }
-           // Swift.print("NSListContentView", new ?? "nil", (new as? NSTableRowView)?.row ?? "nil")
-            
-        }
-         */
-
         initialSetup()
         updateConfiguration()
     }
-    
-    var superviewObserver: NSKeyValueObservation? = nil
-    var rowViewSuperviewObserver: NSKeyValueObservation? = nil
-    var rowViewSuperviewSuperViewObserver: NSKeyValueObservation? = nil
-
     
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
