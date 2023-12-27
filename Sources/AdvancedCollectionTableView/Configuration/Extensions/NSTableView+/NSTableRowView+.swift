@@ -85,6 +85,7 @@ extension NSTableRowView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            self.observeTableRowView()
             self.backgroundColor = nil
             if var contentView = configurationContentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
