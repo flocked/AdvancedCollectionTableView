@@ -253,7 +253,8 @@ extension NSTableRowView {
     
     func updateContentConfiguration() {
         if let tableView = self.tableView {
-            Swift.print("isGroupRow", self.row ?? 0, tableView.delegate?.tableView?(tableView, isGroupRow: self.row ?? 0) ?? false)
+          //  Swift.print("isGroupRow", self.row ?? 0, tableView.delegate?.tableView?(tableView, isGroupRow: self.row ?? 0) ?? false)
+            Swift.print("automaticRow", (self.contentConfiguration as? NSListContentConfiguration)?.type == .automaticRow)
         }
         if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle {
             let row = self.row ?? 0
