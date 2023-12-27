@@ -193,15 +193,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         return sidebar(.body, color: imageColor)
     }
     
-    /**
-     Creates a list content configuration for a sidebar table view (source style).
-     
-     - parameter imageColor: The color of the symbol image. The default value is `monochrome(.controlAccentColor)`.
-     */
-    public static func image(systemName: String, imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
-        return sidebar(.body, color: imageColor)
-    }
-    
     /// Creates a header list content configuration for a sidebar table view (source style).
     public static func sidebarHeader() -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
