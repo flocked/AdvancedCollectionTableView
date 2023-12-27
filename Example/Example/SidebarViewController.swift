@@ -31,7 +31,8 @@ class SidebarViewController: NSViewController {
     }
     
     let sectionHeaderRegistration = SectionHeaderRegistration() { cell, row, section in
-        var sidebarConfiguration = NSListContentConfiguration.sidebarHeader()
+        
+        var sidebarConfiguration = cell.defaultContentConfiguration()
         sidebarConfiguration.text = section.rawValue
         cell.contentConfiguration = sidebarConfiguration
     }
