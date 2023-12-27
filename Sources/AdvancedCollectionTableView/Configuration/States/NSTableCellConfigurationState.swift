@@ -1,6 +1,6 @@
 //
-//  State.swift
-//  IListContentConfiguration
+//  NSTableCellConfigurationState.swift
+//  
 //
 //  Created by Florian Zand on 02.09.22.
 //
@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 /**
- A structure that encapsulates a table view cell’s state.
+ A structure that encapsulates a table view cell state.
  
  You can use a table cell configuration state with content configurations to obtain the default appearance for a specific state.
  
@@ -22,22 +22,22 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a selected state.
     public var isSelected: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a editing state.
+    /// A Boolean value that indicates whether the cell is in an editing state.
     public var isEditing: Bool = false
     
     /// A Boolean value that indicates whether the cell is in a hovered state (ithe mouse is hovering the cell).
     public var isHovered: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a emphasized state. It is `true` if the window that displays the cell is `main`.
+    /// A Boolean value that indicates whether the cell is in an emphasized state. It is `true` if the window that displays the cell is `main`.
     public var isEmphasized: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
+    /// A Boolean value that indicates whether the cell is in an enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
     internal var isEnabled: Bool = true
     
     /// A Boolean value that indicates whether the cell is in a focused state.
     internal var isFocused: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in a expanded state.
+    /// A Boolean value that indicates whether the cell is in an expanded state.
     internal var isExpanded: Bool = false
     
     /*

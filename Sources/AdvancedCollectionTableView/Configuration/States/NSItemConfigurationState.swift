@@ -1,6 +1,6 @@
 //
-//  State.swift
-//  IListContentConfiguration
+//  NSItemConfigurationState.swift
+//  
 //
 //  Created by Florian Zand on 02.09.22.
 //

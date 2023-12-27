@@ -70,6 +70,42 @@ open class TableSectionHeaderView: NSView {
     }
     
     /**
+     The current configuration state of the section header view.
+     
+     To add your own custom state, see `NSConfigurationStateCustomKey`.
+     */
+    public var configurationState: NSTableSectionHeaderConfigurationState {
+        let state = NSTableSectionHeaderConfigurationState(isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized)
+        return state
+    }
+    
+    var isEditing: Bool = false {
+        didSet {
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
+    /**
+     A Boolean value that specifies whether the section header view is hovered.
+     
+     A hovered cell view has the mouse pointer on it.
+     */
+    public var isHovered: Bool {
+        self.rowView?.isHovered ?? false
+    }
+    
+    /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
+    public var isEmphasized: Bool {
+        self.window?.isKeyWindow ?? false
+    }
+    
+    /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
+    public var isEnabled: Bool {
+        get { rowView?.isEnabled ?? true }
+    }
+
+    
+    /**
      Informs the section header view to update its configuration for its current state.
      
      You call this method when you need the section header view to update its configuration according to the current configuration state. The system calls this method automatically when the section header view’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
@@ -77,7 +113,7 @@ open class TableSectionHeaderView: NSView {
      If you add custom states to the section header view’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
-        self.updateConfiguration(using: NSTableRowConfigurationState())
+        self.updateConfiguration(using: configurationState)
     }
     
     /// The row of the section header view.
@@ -97,10 +133,11 @@ open class TableSectionHeaderView: NSView {
         }
         
         if isConfigurationUpdatesEnabled {
-            let state = NSTableRowConfigurationState()
+            let state = configurationState
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
             }
+            configurationUpdateHandler?(self, state)
         }
     }
     
@@ -112,9 +149,38 @@ open class TableSectionHeaderView: NSView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the section header view’s configuration using the provided state.
      */
-    open func updateConfiguration(using state: NSTableRowConfigurationState) {
+    open func updateConfiguration(using state: NSTableSectionHeaderConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
+        }
+        configurationUpdateHandler?(self, state)
+    }
+    
+    /**
+     The type of block for handling updates to the section header view’s configuration using the current state.
+     
+     - Parameters:
+        - sectionHeaderView: The section header view to configure.
+        - state: The new state to use for updating the section header view’s configuration.
+     */
+    public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: TableSectionHeaderView, _ state: NSTableSectionHeaderConfigurationState) -> Void
+    
+    /**
+     A block for handling updates to the section header view’s configuration using the current state.
+     
+     Set a configuration update handler to update the section header view’s configuration using the new state in response to a configuration state change:
+     
+     ```swift
+     sectionHeaderView.configurationUpdateHandler = { headerView, state in
+     
+     }
+     ```
+     
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
+     */
+    public var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
+        didSet {
+            self.setNeedsUpdateConfiguration()
         }
     }
     
