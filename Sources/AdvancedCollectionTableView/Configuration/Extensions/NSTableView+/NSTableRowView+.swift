@@ -237,7 +237,7 @@ extension NSTableRowView {
             self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
         rowObserver?.add(\.superview) { old, new in
-            Swift.print("observeTableRowView", self, self.superview ?? "nil", self, self.superview?.superview ?? "nil")
+            Swift.print("observeTableRowView", self, self.superview ?? "nil", self, self.tableView ?? "nil")
             if self.needsAutomaticRowHeights {
                 self.tableView?.usesAutomaticRowHeights = true
             }
