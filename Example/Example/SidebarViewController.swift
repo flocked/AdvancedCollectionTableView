@@ -30,10 +30,10 @@ class SidebarViewController: NSViewController {
         cell.contentConfiguration = configuration
     }
     
-    let sectionHeaderRegistration = SectionHeaderRegistration() { cell, row, section in
-        var sidebarConfiguration: NSListContentConfiguration = .sidebarHeader()
+    let sectionHeaderRegistration = SectionHeaderRegistration() { rowView, row, section in
+        var sidebarConfiguration = rowView.defaultContentConfiguration()
         sidebarConfiguration.text = section.rawValue
-        cell.backgroundConfiguration = sidebarConfiguration
+        rowView.contentConfiguration = sidebarConfiguration
     }
     
     override func viewDidLoad() {
