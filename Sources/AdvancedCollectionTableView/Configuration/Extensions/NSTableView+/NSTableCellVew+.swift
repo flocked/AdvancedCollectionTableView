@@ -121,6 +121,7 @@ extension NSTableCellView {
         self.updateConfiguration(using: self.configurationState)
     }
     
+    /// The row of the cell.
     var row: Int? {
         guard let tableView = self.tableView else { return nil }
         var row = tableView.row(for: self)
@@ -137,11 +138,7 @@ extension NSTableCellView {
             Swift.print("setNeedsAutomatic", tableView?.row(for: self) ?? "nil", self.rowView ?? "nil")
 
         }
-        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-            var row = tableView.row(for: self)
-            if row == -1 {
-                row = 0
-            }
+        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = self.row {
             let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
         }

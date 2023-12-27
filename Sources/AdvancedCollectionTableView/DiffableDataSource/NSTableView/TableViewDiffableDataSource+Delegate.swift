@@ -68,18 +68,15 @@ extension TableViewDiffableDataSource {
         }
         
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-            return self.dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
+            self.dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
         }
         
         public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-            if  self.dataSource.dataSource.tableView(tableView, isGroupRow: row) {
-                Swift.print("isGroupRowHere", row)
-            }
-            return self.dataSource.dataSource.tableView(tableView, isGroupRow: row)
+            self.dataSource.dataSource.tableView(tableView, isGroupRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-            return self.dataSource.dataSource.tableView(tableView, rowViewForRow: row)
+            self.dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
