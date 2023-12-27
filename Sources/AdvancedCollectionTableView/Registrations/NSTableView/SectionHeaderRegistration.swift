@@ -20,7 +20,7 @@ public extension NSTableView {
      
      - returns:A configured reusable section view object.
      */
-    func makeSectionView<View, Section>(using registration: SectionHeaderRegistration<View, Section>, row: Int, section: Section) -> View where View: NSView {
+    func makeSectionView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
         return registration.makeView(self, row, section)
     }
 }
@@ -47,7 +47,7 @@ public extension NSTableView {
      }
      ```
      */
-    struct SectionHeaderRegistration<View, Section> where View: NSView  {
+    struct SectionHeaderRegistration<SectionHeaderView, Section> where SectionHeaderView: TableSectionHeaderView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?
@@ -83,27 +83,34 @@ public extension NSTableView {
         }
         
         /// A closure that handles the section view registration and configuration.
-        public typealias Handler = ((_ view: View, _ row: Int, _ sectionIdentifier: Section)->(Void))
+        public typealias Handler = ((_ view: SectionHeaderView, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
-        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> View {
+        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeaderView {
+            /*
             self.registerIfNeeded(for: tableView)
-            if viewIsTableCellView, let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? View {
+            if viewIsTableCellView, let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
                 self.handler(sectionView, row, section)
                 return sectionView
             } else {
-                let sectionView = View()
+                let sectionView = SectionHeaderView()
                 self.handler(sectionView, row, section)
                 return sectionView
             }
+            */
+            let sectionView = SectionHeaderView()
+            self.handler(sectionView, row, section)
+            return sectionView
         }
         
+        /*
         internal var viewIsTableCellView: Bool {
-            View.self is NSTableCellView.Type
+            SectionHeaderView.self is NSTableCellView.Type
         }
         
         internal var sectionViewTableCellType: NSTableCellView.Type? {
-            (View.self as? NSTableCellView.Type)
+            SectionHeaderView.self as? NSTableCellView.Type
         }
+         
         
         internal func registerIfNeeded(for tableView: NSTableView) {
             guard let sectionViewTableCellType = sectionViewTableCellType else { return }
@@ -112,7 +119,7 @@ public extension NSTableView {
                     tableView.register(nib, forIdentifier: self.identifier)
                 }
             } else {
-                if (tableView.registeredCellsByIdentifier[self.identifier] != View.self) {
+                if (tableView.registeredCellsByIdentifier[self.identifier] != SectionHeaderView.self) {
                     tableView.register(sectionViewTableCellType, forIdentifier: self.identifier)
                 }
             }
@@ -121,5 +128,6 @@ public extension NSTableView {
         internal func unregister(for tableView: NSTableView) {
             tableView.register(nil, forIdentifier: self.identifier)
         }
+        */
     }
 }
