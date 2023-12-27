@@ -72,7 +72,9 @@ extension TableViewDiffableDataSource {
         }
         
         public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-            Swift.print("isGroupRowHere", self.dataSource.dataSource.tableView(tableView, isGroupRow: row))
+            if  self.dataSource.dataSource.tableView(tableView, isGroupRow: row) {
+                Swift.print("isGroupRowHere", row)
+            }
             return self.dataSource.dataSource.tableView(tableView, isGroupRow: row)
         }
         
