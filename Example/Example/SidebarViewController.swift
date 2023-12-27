@@ -25,13 +25,12 @@ class SidebarViewController: NSViewController {
         var configuration = cell.defaultContentConfiguration()
         
         configuration.text = sidebarItem.title
-        configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName, accessibilityDescription: nil)
+        configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
         
         cell.contentConfiguration = configuration
     }
     
     let sectionHeaderRegistration = SectionHeaderRegistration() { cell, row, section in
-        
         var sidebarConfiguration = cell.defaultContentConfiguration()
         sidebarConfiguration.text = section.rawValue
         cell.contentConfiguration = sidebarConfiguration
