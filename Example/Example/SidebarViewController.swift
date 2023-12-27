@@ -59,16 +59,14 @@ class SidebarViewController: NSViewController {
             return menu
         }
         
-        applySnapshot(with: SidebarItem.sampleItems)
+        applySnapshot()
     }
     
-    func applySnapshot(with items: [SidebarItem]) {
+    func applySnapshot() {
         var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        snapshot.appendSections([.more])
-        let chunks = items.chunked(amount: 2)
-        snapshot.appendItems(chunks[0], toSection: .main)
-        snapshot.appendItems(chunks[1], toSection: .more)
+        snapshot.appendSections([.main, .more])
+        snapshot.appendItems(SidebarItem.sampleItems, toSection: .main)
+        snapshot.appendItems(SidebarItem.moreSampleItems, toSection: .more)
         dataSource.apply(snapshot, .usingReloadData)
     }
 }

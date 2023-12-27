@@ -16,7 +16,11 @@ struct SidebarItem: Hashable, Identifiable {
         return [SidebarItem(title: "Person", symbolName: "person"),
                 SidebarItem(title: "Photo", symbolName: "photo"),
                 SidebarItem(title: "Video", symbolName: "film"),
-                SidebarItem(title: "Table", symbolName: "table"),
+        ]
+    }
+    
+    static var moreSampleItems: [SidebarItem] {
+        return [SidebarItem(title: "Table", symbolName: "table"),
                 SidebarItem(title: "Collection", symbolName: "square.grid.3x3"),
         ]
     }
