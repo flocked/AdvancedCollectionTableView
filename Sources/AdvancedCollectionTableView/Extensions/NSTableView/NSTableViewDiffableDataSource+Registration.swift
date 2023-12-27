@@ -35,7 +35,7 @@ public extension NSTableViewDiffableDataSource {
             _tableView, column, row, element in
             return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
         })
-        sectionHeaderViewRegistration(sectionHeaderRegistration)
+        applySectionHeaderViewRegistration(sectionHeaderRegistration)
     }
     
     /**
@@ -75,11 +75,11 @@ public extension NSTableViewDiffableDataSource {
             }
             return NSTableCellView()
         })
-        sectionHeaderViewRegistration(sectionHeaderRegistration)
+        applySectionHeaderViewRegistration(sectionHeaderRegistration)
     }
     
     /// Applies the section header view registration to configure and return section header views.
-    func sectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, SectionIdentifierType>) {
+    func applySectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, SectionIdentifierType>) {
         sectionHeaderViewProvider = { tableView, row, section in
             tableView.makeSectionView(using: registration, row: row, section: section)
         }

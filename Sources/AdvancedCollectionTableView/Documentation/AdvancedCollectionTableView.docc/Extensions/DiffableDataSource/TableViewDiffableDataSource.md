@@ -13,12 +13,12 @@
 ### Creating row views
 - ``rowViewProvider-swift.property``
 - ``RowViewProvider-swift.typealias``
-- ``rowViewRegistration(_:)``
+- ``applyRowViewRegistration(_:)``
 
 ### Creating section header views
 - ``sectionHeaderViewProvider-swift.property``
 - ``SectionHeaderViewProvider-swift.typealias``
-- ``sectionHeaderViewRegistration(_:)``
+- ``applySectionHeaderViewRegistration(_:)``
 
 ### Identifying items
 - ``item(forRow:)``

@@ -76,7 +76,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
 
     
     /// Applies the row view registration to configure and return table row views.
-    public func rowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, Item>) {
+    public func applyRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, Item>) {
         rowViewProvider = { tableView, row, item in
             return registration.makeView(tableView, row, item)
         }
@@ -100,7 +100,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     
     /// Applies the section header view registration to configure and return section header views.
-    public func sectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, Section>) {
+    public func applySectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, Section>) {
         sectionHeaderViewProvider = { tableView, row, section in
             return registration.makeView(tableView, row, section)
         }
