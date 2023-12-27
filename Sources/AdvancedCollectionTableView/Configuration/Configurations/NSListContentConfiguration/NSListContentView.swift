@@ -18,7 +18,11 @@ public class NSListContentView: NSView, NSContentView {
         super.init(frame: .zero)
         superviewObserver = self.observeChanges(for: \.superview) { old, new in
             guard old != new, let rowView = new as? NSTableRowView else { return }
+            self.rowViewSuperviewObserver = rowView.observeChanges(for: \.superview, handler: { old, new in
+                Swift.print("rowViewSuperviewObserver", new ?? "nil")
+            })
             if let tableView = rowView.tableView {
+                
                 Swift.print("NSListContentView", tableView.row(for: self), tableView.row(for: rowView))
             }
            // Swift.print("NSListContentView", new ?? "nil", (new as? NSTableRowView)?.row ?? "nil")
@@ -30,6 +34,8 @@ public class NSListContentView: NSView, NSContentView {
     }
     
     var superviewObserver: NSKeyValueObservation? = nil
+    var rowViewSuperviewObserver: NSKeyValueObservation? = nil
+
     
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
