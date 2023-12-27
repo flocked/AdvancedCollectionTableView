@@ -245,17 +245,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         text != nil || attributedText != nil
     }
     
-    internal var hasAnyText: Bool {
-        text != nil || attributedText != nil || placeholderText != nil || attributedPlaceholderText != nil
-    }
-
-    
     internal var hasSecondaryText: Bool {
         secondaryText != nil || secondaryAttributedText != nil
-    }
-    
-    internal var hasAnySecondaryText: Bool {
-        secondaryText != nil || secondaryAttributedText != nil || secondaryPlaceholderText != nil || secondaryAttributedPlaceholderText != nil
     }
     
     internal var hasContent: Bool {

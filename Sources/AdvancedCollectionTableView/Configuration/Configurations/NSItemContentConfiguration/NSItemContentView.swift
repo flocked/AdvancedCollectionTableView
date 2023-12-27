@@ -146,17 +146,11 @@ public class NSItemContentView: NSView, NSContentView {
     
     internal func updateConfiguration() {
         contentView.centerYConstraint?.activate(false)
-        
-        //  contentView.backgroundColor = .red
-        //  Swift.print("item has", appliedConfiguration.hasContent)
-        
+                
         textField.properties = appliedConfiguration.textProperties
-      //  textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
-        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText)
+        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
-       // secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText)
-        Swift.print("secondaryTextField.isHidden", secondaryTextField.isHidden, appliedConfiguration.secondaryText == nil, appliedConfiguration.secondaryAttributedText == nil, appliedConfiguration.secondaryPlaceholderText == nil, appliedConfiguration.secondaryAttributedPlaceholderText == nil)
+        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
