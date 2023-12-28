@@ -49,9 +49,9 @@ public extension NSTableView {
      */
     struct SectionHeaderRegistration<SectionHeaderView, Section> where SectionHeaderView: NSTableSectionHeaderView  {
         
-        internal let identifier: NSUserInterfaceItemIdentifier
-        private let nib: NSNib?
-        private let handler: Handler
+        let identifier: NSUserInterfaceItemIdentifier
+        let nib: NSNib?
+        let handler: Handler
         
         // MARK: Creating a section view registration
         
@@ -66,7 +66,7 @@ public extension NSTableView {
         public init(handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = .init(UUID().uuidString)
         }
         
         /**
@@ -79,7 +79,7 @@ public extension NSTableView {
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
-            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = .init(UUID().uuidString)
         }
         
         /// A closure that handles the section view registration and configuration.

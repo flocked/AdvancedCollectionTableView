@@ -39,8 +39,6 @@ collectionViewItem.contentConfiguration = content
 
 - ``AppKit/NSCollectionViewItem/backgroundConfiguration``
 - ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-- ``AppKit/NSCollectionViewItem/backgroundView``
-- ``AppKit/NSCollectionViewItem/selectedBackgroundView``
 
 ## Managing the state
 

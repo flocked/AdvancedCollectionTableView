@@ -34,7 +34,7 @@ import QuickLookUI
  - Pinching of the collection view via ``pinchHandler``.
 
  ### Configurating the data source
- 
+  
  To connect a diffable data source to a collection view, you create the diffable data source using its ``init(collectionView:itemProvider:)`` or ``init(collectionView:itemRegistration:)`` initializer, passing in the collection view you want to associate with that data source.
  
  ```swift
@@ -43,7 +43,7 @@ import QuickLookUI
  
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
- - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
+ - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source. 
  */
 public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Item: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
@@ -60,10 +60,18 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
-    /**
-     The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
-     */
-    public var supplementaryViewProvider: SupplementaryViewProvider? = nil
+    /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
+    public var supplementaryViewProvider: SupplementaryViewProvider? = nil {
+        didSet {
+            if let supplementaryViewProvider = self.supplementaryViewProvider {
+                self.dataSource.supplementaryViewProvider = { collectionView, itemKind, indePath in
+                    return supplementaryViewProvider(collectionView, itemKind, indePath)
+                }
+            } else {
+                self.dataSource.supplementaryViewProvider = nil
+            }
+        }
+    }
     /**
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
      
@@ -252,6 +260,15 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Snapshot
     
     /**
+     Returns a representation of the current state of the data in the collection view.
+     
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
+    public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
+        return currentSnapshot
+    }
+    
+    /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
      The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
@@ -262,36 +279,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         - completion: An optional completion handler which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        let internalSnapshot = convertSnapshot(snapshot)
+        let internalSnapshot = snapshot.toIdentifiableSnapshot()
         self.currentSnapshot = snapshot
         self.dataSource.apply(internalSnapshot, option, completion: completion)
     }
-    
-    /**
-     Returns a representation of the current state of the data in the collection view.
-     
-     A snapshot containing section and item identifiers in the order that they appear in the UI.
-     */
-    public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
-        var snapshot = Snapshot()
-        snapshot.appendSections(currentSnapshot.sectionIdentifiers)
-        for section in currentSnapshot.sectionIdentifiers {
-            snapshot.appendItems(currentSnapshot.itemIdentifiers(inSection: section), toSection: section)
-        }
-        return snapshot
-    }
-    
-    func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
-        var internalSnapshot = InternalSnapshot()
-        let sections = snapshot.sectionIdentifiers
-        internalSnapshot.appendSections(sections.ids)
-        for section in sections {
-            let items = snapshot.itemIdentifiers(inSection: section)
-            internalSnapshot.appendItems(items.ids, toSection: section.id)
-        }
-        return internalSnapshot
-    }
-    
+            
     // MARK: - Init
     
     /**
@@ -320,17 +312,19 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             guard let self = self, let item = self.items[id: itemID] else { return nil }
             return itemProvider(collectionView, indePath, item)
         })
+                
+        self.collectionView.postsFrameChangedNotifications = false
+        self.collectionView.postsBoundsChangedNotifications = false
         
-        self.dataSource.supplementaryViewProvider = { [weak self] collectionView, itemKind, indePath in
-            guard let self = self else { return nil }
-            return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
-        }
+        self.collectionView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
+        self.collectionView.registerForDraggedTypes([.itemID])
+        self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         
-        sharedInit()
+        self.delegateBridge = DelegateBridge(self)
     }
     
     /**
-     A closure that configures and returns a item for a collection view from its diffable data source.
+     A closure that configures and returns an item for a collection view from its diffable data source.
      
      A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
      
@@ -339,7 +333,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         -  indexpath: The index path that specifies the location of the item in the collection view.
         - item: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
      
-     - Returns: A non-`nil` configured item object. The item provider must return a valid cell object to the collection view.
+     - Returns: A non-`nil` configured collection view item object. The item provider must return a valid item object to the collection view.
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ item: Item) -> NSCollectionViewItem?
     
@@ -360,18 +354,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.init(collectionView: collectionView, itemProvider: { collectionView,indePath,item in
             return collectionView.makeItem(using: itemRegistration, for: indePath, element: item) })
     }
-    
-    func sharedInit() {
-        self.collectionView.postsFrameChangedNotifications = false
-        self.collectionView.postsBoundsChangedNotifications = false
-        
-        self.collectionView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-        self.collectionView.registerForDraggedTypes([.itemID])
-        self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
-        
-        self.delegateBridge = DelegateBridge(self)
-    }
-        
+            
     // MARK: - DataSource implementation
     
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -532,15 +515,15 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.apply(snapshot, .animated)
     }
     
-    func deletionTransaction(_ items: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
+    func deletionTransaction(_ items: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
         let initalSnapshot = self.currentSnapshot
         var finalSnapshot = self.snapshot()
         finalSnapshot.deleteItems(items)
         let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
     }
     
-    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Item>? {
+    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Item>? {
         let items = indexPaths.compactMap({self.item(for: $0)})
         var toIndexPath = toIndexPath
         var isLast = false
@@ -560,7 +543,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     // MARK: - Sections
@@ -649,9 +632,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         /// The Handler that determines which items can be be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])? = nil
         /// The Handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
         /// The Handler that that gets called after deleting items.
-        public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for reordering items.
@@ -659,9 +642,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         /// The Handler that determines whether you can reorder a particular item.
         public var canReorder: ((_ items: [Item]) -> Bool)? = nil
         /// The Handler that prepares the diffable data source for reordering its items.
-        public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
         /// The Handler that processes a reordering transaction.
-        public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for the highlight state of items.

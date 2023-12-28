@@ -9,12 +9,12 @@ import AppKit
 import FZUIKit
 
 /**
- A content configuration for a table cell based content view.
+ A content configuration for a list-based content view.
  
- A list content configuration describes the styling and content for an individual table cell element. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own view via `makeContentView()`.
- 
- Use a table cells  ``AppKit/NSTableCellView/defaultContentConfiguration()`` to get a content configuration that has preconfigured default styling based on the table view it is presented.
- 
+ A list content configuration describes the styling and content for an individual element that might appear in a list, like a cell, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own custom list content view (``NSListContentView``).
+  
+ To get a list configuration that has preconfigured default styling based on the table view it is presented, use table cell's  ``AppKit/NSTableCellView/defaultContentConfiguration()``.
+  
  ```swift
  var content = tableCell.defaultContentConfiguration()
  

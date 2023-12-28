@@ -10,4 +10,4 @@
 
 ### Creating a table section header view
 
-- ``AppKit/NSTableView/makeSectionView(using:row:section:)``x
+- ``AppKit/NSTableView/makeSectionView(using:row:section:)``

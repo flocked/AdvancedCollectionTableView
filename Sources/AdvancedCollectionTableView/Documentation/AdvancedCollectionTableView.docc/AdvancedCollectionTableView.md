@@ -34,4 +34,18 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 - ``CollectionViewDiffableDataSource``
 - ``TableViewDiffableDataSource``
-- ``DiffableDataSourceTransaction``
+- ``NSDiffableDataSourceTransaction``
+- ``NSDiffableDataSourceSnapshotApplyOption``
+
+### Table View Extensions
+
+- <doc:NSTableView+>
+- <doc:NSTableCellView+>
+- <doc:NSTableRowView+>
+- <doc:NSTableViewDiffableDataSource+>
+
+### Collection View Extensions
+
+- <doc:NSCollectionView+>
+- <doc:NSCollectionViewItem+>
+- <doc:NSCollectionViewDiffableDataSource+>

@@ -7,7 +7,7 @@
 
 import AppKit
 
-public extension NSCollectionViewDiffableDataSource {
+extension NSCollectionViewDiffableDataSource {
     /**
      Returns the item identifiers for the specified index paths.
      

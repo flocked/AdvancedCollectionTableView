@@ -2,12 +2,13 @@
 
 ## Topics
 
-### Creating a Diffable Data Source
+### Creating a diffable data source
+
 - ``init(collectionView:itemProvider:)``
 - ``init(collectionView:itemRegistration:)``
 - ``ItemProvider``
 
-### Creating Supplementary Views
+### Creating supplementary views
 
 - ``supplementaryViewProvider-swift.property``
 - ``SupplementaryViewProvider-swift.typealias``
@@ -17,8 +18,8 @@
 - ``items``
 - ``selectedItems``
 - ``item(for:)``
-- ``indexPath(for:)``
 - ``item(at:)``
+- ``indexPath(for:)``
 - ``reconfigureItems(_:)``
 - ``reloadItems(_:animated:)``
 - ``selectItems(_:scrollPosition:addSpacing:)``
@@ -35,34 +36,50 @@
 - ``scrollToSection(_:scrollPosition:)``
 
 ### Updating data
+
 - ``snapshot()``
 - ``apply(_:_:completion:)``
 
 ### Configurating user interaction
 
-- ``allowsDeleting``
-- ``allowsReordering``
 - ``menuProvider``
-
-### Handlers
-
-- ``deletionHandlers-swift.property``
-- ``displayHandlers-swift.property``
-- ``dragDropHandlers-swift.property``
-- ``highlightHandlers-swift.property``
-- ``hoverHandlers-swift.property``
-- ``reorderingHandlers-swift.property``
-- ``selectionHandlers-swift.property``
-- ``prefetchHandlers-swift.property``
 - ``pinchHandler``
-- ``DeletionHandlers-swift.struct``
-- ``DisplayHandlers-swift.struct``
-- ``DragdropHandlers-swift.struct``
-- ``HighlightHandlers-swift.struct``
-- ``HoverHandlers-swift.struct``
-- ``ReorderingHandlers-swift.struct``
-- ``SelectionHandlers-swift.struct``
+
+### Supporting prefetching
+
+- ``prefetchHandlers-swift.property``
 - ``PrefetchHandlers-swift.struct``
+
+### Supporting reordering
+
+- ``allowsReordering``
+- ``reorderingHandlers-swift.property``
+- ``ReorderingHandlers-swift.struct``
+
+### Supporting deleting
+
+- ``allowsDeleting``
+- ``deletionHandlers-swift.property``
+- ``DeletionHandlers-swift.struct``
+
+### Supporting drag and drop
+
+- ``dragDropHandlers-swift.property``
+- ``DragdropHandlers-swift.struct``
+
+### Handling item changes
+
+- ``selectionHandlers-swift.property``
+- ``SelectionHandlers-swift.struct``
+
+- ``highlightHandlers-swift.property``
+- ``HighlightHandlers-swift.struct``
+
+- ``displayHandlers-swift.property``
+- ``DisplayHandlers-swift.struct``
+
+- ``hoverHandlers-swift.property``
+- ``HoverHandlers-swift.struct``
 
 ### Data source requirements
 

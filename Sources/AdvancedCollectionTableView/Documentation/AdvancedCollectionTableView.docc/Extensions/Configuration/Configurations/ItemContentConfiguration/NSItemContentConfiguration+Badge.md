@@ -49,7 +49,7 @@
 
 ### Customizing shadow
 
-- ``shadowProperties``
+- ``shadow``
 
 
 ### Customizing layout

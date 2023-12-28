@@ -49,9 +49,9 @@ public extension NSTableView {
      */
     struct RowRegistration<RowView, Element> where RowView: NSTableRowView  {
         
-        private let identifier: NSUserInterfaceItemIdentifier
-        private let nib: NSNib?
-        private let handler: Handler
+        let identifier: NSUserInterfaceItemIdentifier
+        let nib: NSNib?
+        let handler: Handler
         
         // MARK: Creating a row registration
         

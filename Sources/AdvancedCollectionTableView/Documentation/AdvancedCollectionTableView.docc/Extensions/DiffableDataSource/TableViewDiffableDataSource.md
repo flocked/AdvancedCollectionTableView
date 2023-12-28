@@ -6,16 +6,10 @@
 
 ### Creating a diffable data source
 
-- ``init(tableView:cellProvider:)``
-- ``init(tableView:cellRegistrations:)``
 - ``init(tableView:cellRegistration:)``
+- ``init(tableView:cellRegistrations:)``
+- ``init(tableView:cellProvider:)``
 - ``CellProvider``
-
-### Creating row views
-
-- ``rowViewProvider-swift.property``
-- ``RowViewProvider-swift.typealias``
-- ``applyRowViewRegistration(_:)``
 
 ### Creating section header views
 
@@ -23,18 +17,24 @@
 - ``SectionHeaderViewProvider-swift.typealias``
 - ``applySectionHeaderViewRegistration(_:)``
 
+### Creating row views
+
+- ``rowViewProvider-swift.property``
+- ``RowViewProvider-swift.typealias``
+- ``applyRowViewRegistration(_:)``
+
 ### Identifying items
 
 - ``items``
+- ``selectedItems``
 - ``item(forRow:)``
 - ``row(for:)-3ouhk``
 - ``item(at:)``
-- ``selectedItems``
-- ``scrollToItem(_:scrollPosition:)``
 - ``selectItems(_:byExtendingSelection:)``
 - ``selectItems(in:byExtendingSelection:)``
 - ``deselectItems(_:)``
 - ``deselectItems(in:)``
+- ``scrollToItem(_:scrollPosition:)``
 
 ### Identifying sections
 
@@ -51,25 +51,37 @@
 
 ### Configurating user interaction
 
-- ``allowsDeleting``
-- ``allowsReordering``
 - ``menuProvider``
 - ``rowActionProvider``
 
-### Handlers
+### Supporting reordering
+
+- ``allowsReordering``
+- ``reorderingHandlers-swift.property``
+- ``ReorderingHandlers-swift.struct``
+
+### Supporting deleting
+
+- ``allowsDeleting``
+- ``deletionHandlers-swift.property``
+- ``DeletionHandlers-swift.struct``
+
+### Supporting drag and drop
+
+- ``dragDropHandlers-swift.property``
+- ``DragDropHandlers-swift.struct``
+
+### Handling row changes
+
+- ``selectionHandlers-swift.property``
+- ``SelectionHandlers-swift.struct``
+- ``hoverHandlers-swift.property``
+- ``HoverHandlers-swift.struct``
+
+### Handling column changes
 
 - ``columnHandlers-swift.property``
-- ``deletionHandlers-swift.property``
-- ``dragDropHandlers-swift.property``
-- ``hoverHandlers-swift.property``
-- ``reorderingHandlers-swift.property``
-- ``selectionHandlers-swift.property``
 - ``ColumnHandlers-swift.struct``
-- ``DeletionHandlers-swift.struct``
-- ``DragDropHandlers-swift.struct``
-- ``HoverHandlers-swift.struct``
-- ``ReorderingHandlers-swift.struct``
-- ``SelectionHandlers-swift.struct``
 
 ### Data source requirements
 

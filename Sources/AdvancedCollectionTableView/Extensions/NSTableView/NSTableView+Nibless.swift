@@ -13,7 +13,7 @@ extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
      
-     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:owner:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
+     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
      
      - Parameter cellClass: The table cell view class to register.
      */

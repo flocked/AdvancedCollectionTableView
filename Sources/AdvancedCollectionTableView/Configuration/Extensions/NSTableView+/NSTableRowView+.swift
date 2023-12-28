@@ -41,7 +41,7 @@ extension NSTableRowView {
     /**
      Retrieves a default content configuration for the row’s style. The system determines default values for the configuration according to the table view it is presented.
      
-     The default content configuration has preconfigured default styling depending on the table view ``AppKit/NSTableView/style`` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the row as the current content configuration.
+     The default content configuration has preconfigured default styling depending on the table view `style` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the row as the current content configuration.
      
      ```swift
      var content = rowView.defaultContentConfiguration()

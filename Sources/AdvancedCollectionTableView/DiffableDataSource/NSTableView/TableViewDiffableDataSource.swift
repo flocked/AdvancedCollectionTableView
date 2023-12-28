@@ -15,7 +15,7 @@ import FZSwiftUtils
  The diffable data source provides:
  - Reordering of items by enabling ``allowsReordering``.
  - Deleting of items by enabling  ``allowsDeleting``.
- - Quicklooking of items via spacebar by providing elements conforming to ``QuicklookPreviewable``.
+ - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
  
@@ -41,7 +41,7 @@ import FZSwiftUtils
  
  - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
-public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
+open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
     typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
     typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>
@@ -148,12 +148,12 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
      If you set the value of this property, the new value becomes the default row animation for the next update that uses ``apply(_:_:completion:)``.
      */
     public var defaultRowAnimation: NSTableView.AnimationOptions {
-        get { self.dataSource.defaultRowAnimation }
-        set { self.dataSource.defaultRowAnimation = newValue }
+        get { dataSource.defaultRowAnimation }
+        set { dataSource.defaultRowAnimation = newValue }
     }
     
     @objc dynamic var _defaultRowAnimation: UInt {
-        return self.dataSource.defaultRowAnimation.rawValue
+        dataSource.defaultRowAnimation.rawValue
     }
     
     func setupRightDownMonitor() {
@@ -265,23 +265,12 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         - completion: An optional completion handler which gets called after applying the snapshot.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        let internalSnapshot = convertSnapshot(snapshot)
+        let internalSnapshot = snapshot.toIdentifiableSnapshot()
         self.currentSnapshot = snapshot
         self.updateSectionHeaderRows()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
-    
-    func convertSnapshot(_ snapshot: Snapshot) -> InternalSnapshot {
-        var internalSnapshot = InternalSnapshot()
-        let sections = snapshot.sectionIdentifiers
-        internalSnapshot.appendSections(sections.ids)
-        for section in sections {
-            let elements = snapshot.itemIdentifiers(inSection: section)
-            internalSnapshot.appendItems(elements.ids, toSection: section.id)
-        }
-        return internalSnapshot
-    }
-    
+        
     func updateSectionHeaderRows() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
@@ -367,7 +356,6 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         _ = delegateBridge
         self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-        
     }
     
     /// A closure that configures and returns a cell view for a table view from its diffable data source.
@@ -540,19 +528,19 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     }
     
     @discardableResult
-    func removeItems( _ items: [Item]) -> DiffableDataSourceTransaction<Section, Item>  {
+    func removeItems( _ items: [Item]) -> NSDiffableDataSourceTransaction<Section, Item>  {
         deletingTransaction(items)
     }
     
-    func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
+    func deletingTransaction(_ deletionItems: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
         let initalSnapshot = self.currentSnapshot
         var newNnapshot = self.snapshot()
         newNnapshot.deleteItems(deletionItems)
         let difference = initalSnapshot.itemIdentifiers.difference(from: newNnapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: newNnapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: newNnapshot, difference: difference)
     }
     
-    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
         var row = row
         var isLast: Bool = false
         if row >= self.numberOfRows(in: tableView) {
@@ -571,7 +559,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
         let initalSnapshot = self.currentSnapshot
         let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return DiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
     // MARK: - Sections
@@ -638,9 +626,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         /// The handler that determines whether you can reorder a particular item.
         public var canReorder: (([Item]) -> Bool)? = nil
         /// The Handler that prepares the diffable data source for reordering its items.
-        public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
         /// The Handler that processes a reordering transaction.
-        public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for deletion.
@@ -648,9 +636,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         /// The Handler that determines which items can be be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])? = nil
         /// The Handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
         /// The Handler that gets called after deleting items.
-        public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for drag and drop of files from and to the table view.

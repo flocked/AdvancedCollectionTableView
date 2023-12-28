@@ -23,6 +23,13 @@
 - ``badge-swift.property``
 - ``Badge-swift.struct``
 
+### Customizing placeholder
+
+- ``placeholderText``
+- ``attributedPlaceholderText``
+- ``secondaryPlaceholderText``
+- ``secondaryAttributedPlaceholderText``
+
 ### Customizing appearance
 
 - ``textProperties``

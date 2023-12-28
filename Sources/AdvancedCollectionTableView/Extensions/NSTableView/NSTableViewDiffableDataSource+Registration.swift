@@ -24,7 +24,7 @@ public extension NSTableViewDiffableDataSource {
     
     /**
      Creates a diffable data source with the specified cell and section view registration, and connects it to the specified table view.
-     
+
      - Parameters:
         - tableView: The initialized table view object to connect to the diffable data source.
         - cellRegistration: A cell registration that creates, configurates and returns each of the cells for the table view from the data the diffable data source provides.

@@ -32,42 +32,45 @@ public extension NSCollectionView {
      
      Use a item registration to register items with your collection view and configure each item for display. You create a item registration with your item type and data item type as the registration’s generic parameters, passing in a registration handler to configure the item. In the registration handler, you specify how to configure the content and appearance of that type of item.
      
-     The following example creates a item registration for items of type `NSCollectionViewItem`. Each items textfield displays its element.
-     
+     The following example creates a item registration for items of type `NSCollectionViewItem`. It creates a content configuration, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
+          
      ```swift
      struct GalleryItem {
-     let title: String
-     let image: NSImage
+        let title: String
+        let image: NSImage
      }
      
      let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { item, indexPath, galleryItem in
+        var contentConfiguration = NSItemContentConfiguration()
+         
+        contentConfiguration.text = galleryItem.title
+        contentConfiguration.image = galleryItem.image
+        contentConfiguration.textProperties.font = .title1
+         
+        item.contentConfiguration = contentConfiguration
      
-     item.textField.stringValue = galleryItem.title
-     item.imageView.image = galleryItem.image
-     
-     // Gets called whenever the state of the item changes (e.g. on selection)
-     item.configurationUpdateHandler = { item, state in
-     // Updates the text color based on selection state.
-     item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
+        // Gets called whenever the state of the item changes (e.g. on selection)
+        item.configurationUpdateHandler = { item, state in
+            // Updates the text color based on selection state.
+            contentConfiguration.textProperties.color = state.isSelected ? .controlAccentColor : .labelColor
+            item.contentConfiguration = contentConfiguration
+        }
      }
      ```
      
      After you create a item registration, you pass it in to ``AppKit/NSCollectionView/makeItem(using:for:element:)``, which you call from your data source’s item provider.
      
      ```swift
-     dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) {
-     (collectionView: NSCollectionView, indexPath: IndexPath, itemIdentifier: String) -> NSCollectionViewItem? in
-     
-     return collectionView.makeItem(using: itemRegistration,
-     for: indexPath,
-     item: itemIdentifier)
-     }
+     dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView, handler: {
+        collectionView, indexPath, galleryItem in
+        return collectionView.makeItem(using: itemRegistration, for: indexPath, element: galleryItem)
+     })
      ```
      
      `NSCollectionViewDiffableDataSource` provides a convenient initalizer:
      
      ```swift
-     dataSource = NSCollectionViewDiffableDataSource<Section, String>(collectionView: collectionView, itemRegistration: itemRegistration)
+     dataSource = NSCollectionViewDiffableDataSource(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
      
      You don’t need to call ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)``. The collection view registers your item automatically when you pass the item registration to ``AppKit/NSCollectionView/makeItem(using:for:element:)``.
@@ -76,9 +79,9 @@ public extension NSCollectionView {
      */
     struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
         
-        private let identifier: NSUserInterfaceItemIdentifier
-        private let nib: NSNib?
-        private let handler: Handler
+        let identifier: NSUserInterfaceItemIdentifier
+        let nib: NSNib?
+        let handler: Handler
         
         // MARK: Creating an item registration
         
@@ -90,7 +93,7 @@ public extension NSCollectionView {
         public init(handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = .init(Item.self)
+            self.identifier = .init(UUID().uuidString)
         }
         
         /**
@@ -102,7 +105,7 @@ public extension NSCollectionView {
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.nib = nib
-            self.identifier = .init(String(describing: Item.self) + String(describing: nib.self))
+            self.identifier = .init(UUID().uuidString)
             self.handler = handler
         }
         
@@ -144,7 +147,7 @@ public extension NSCollectionView {
     }
 }
 
-extension NSCollectionView {
+fileprivate extension NSCollectionView {
     var registeredItemRegistrations: [NSUserInterfaceItemIdentifier] {
         get { getAssociatedValue(key: "_registeredItemRegistrations", object: self, initialValue: []) }
         set { set(associatedValue: newValue, key: "_registeredItemRegistrations", object: self)

@@ -8,6 +8,10 @@
 - ``init(nib:columnIdentifiers:handler:)``
 - ``Handler``
 
+### Configurating columns
+
+- ``columnIdentifiers``
+
 ### Creating a table cell view
 
-- ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``
+- ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``

@@ -11,7 +11,7 @@
 ### Managing the state
 
 - ``configurationState``
-- ``setNeedsUpdateConfiguration``
+- ``setNeedsUpdateConfiguration()``
 - ``updateConfiguration(using:)``
 - ``configurationUpdateHandler``
 - ``ConfigurationUpdateHandler``

@@ -20,11 +20,6 @@ internal protocol _NSTableViewCellRegistration {
 }
 
 public extension NSTableView {
-    func test() {
-        var dic: [NSUserInterfaceItemIdentifier: NSTableViewCellRegistration] = [:]
-        var abc: NSUserInterfaceItemIdentifier = ""
-    }
-    
     /**
      Dequeues a configured reusable cell object.
      
@@ -55,7 +50,7 @@ public extension NSTableView {
      }
      ```
      
-     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``, which you call from your data source’s cell provider.
+     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
      
      ```swift
      dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
@@ -74,15 +69,15 @@ public extension NSTableView {
      
      Do use the registration for specific table columns, use their c
      
-     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
+     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``.
      
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     struct CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
         
         let identifier: NSUserInterfaceItemIdentifier
-        private let nib: NSNib?
-        private let handler: Handler
+        let nib: NSNib?
+        let handler: Handler
         
         /**
          The identifiers of the table columns, or `nil`, if the cell isn't restricted to specific columns.
@@ -103,7 +98,7 @@ public extension NSTableView {
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
-            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = .init(UUID().uuidString)
             self.columnIdentifiers = columnIdentifiers
         }
         
@@ -118,14 +113,14 @@ public extension NSTableView {
         public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
             self.nib = nib
             self.handler = handler
-            self.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
+            self.identifier = .init(UUID().uuidString)
             self.columnIdentifiers = columnIdentifiers
         }
         
         /// A closure that handles the cell registration and configuration.
         public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element)->(Void))
         
-        internal func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
+        func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
@@ -137,7 +132,7 @@ public extension NSTableView {
             return nil
         }
         
-        internal func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
+        func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
             self.registerIfNeeded(for: tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
@@ -150,7 +145,7 @@ public extension NSTableView {
             return nil
         }
         
-        internal func registerIfNeeded(for tableView: NSTableView) {
+        func registerIfNeeded(for tableView: NSTableView) {
             if let nib = nib {
                 if tableView.registeredNibsByIdentifier?[self.identifier] != self.nib {
                     tableView.register(nib, forIdentifier: self.identifier)
@@ -162,7 +157,7 @@ public extension NSTableView {
             }
         }
         
-        internal func unregister(for tableView: NSTableView) {
+        func unregister(for tableView: NSTableView) {
             tableView.register(nil, forIdentifier: self.identifier)
         }
     }

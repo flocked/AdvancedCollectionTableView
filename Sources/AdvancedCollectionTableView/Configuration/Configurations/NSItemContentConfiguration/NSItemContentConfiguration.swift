@@ -10,9 +10,9 @@ import FZSwiftUtils
 import FZUIKit
 
 /**
- A content configuration for a collection view item based content view.
+ A content configuration for a collection-based content view.
  
- An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view items via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own view via `makeContentView()`.
+ An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view item's via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own custom content view (``NSItemContentView``).
  
  ```swift
  var content = NSItemContentConfiguration()

@@ -36,7 +36,7 @@ extension NSTableCellView {
     /**
      Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view it is presented.
      
-     The default content configuration has preconfigured default styling depending on the table view ``AppKit/NSTableView/style`` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
+     The default content configuration has preconfigured default styling depending on the table view `style` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
      
      ```swift
      var content = cell.defaultContentConfiguration()
@@ -104,6 +104,8 @@ extension NSTableCellView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSTableCellConfigurationState {
+        NSTableRowConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        
         let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
         return state
     }
@@ -135,7 +137,8 @@ extension NSTableCellView {
     /**
      Updates the cell’s configuration using the current state.
      
-     Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
+     Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
+     
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSTableCellConfigurationState) {
@@ -176,7 +179,7 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            self.setNeedsUpdateConfiguration()
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -204,11 +207,11 @@ extension NSTableCellView {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
-    @objc open var isNextRowSelected: Bool {
+    var isNextRowSelected: Bool {
         rowView?.isNextRowSelected ?? false
     }
     
-    @objc open var isPreviousRowSelected: Bool {
+    var isPreviousRowSelected: Bool {
         rowView?.isPreviousRowSelected ?? false
     }
     
@@ -245,3 +248,13 @@ extension NSTableCellView {
         })
     }
 }
+
+/*
+ @objc open var isNextRowSelected: Bool {
+     rowView?.isNextRowSelected ?? false
+ }
+ 
+ @objc open var isPreviousRowSelected: Bool {
+     rowView?.isPreviousRowSelected ?? false
+ }
+ */

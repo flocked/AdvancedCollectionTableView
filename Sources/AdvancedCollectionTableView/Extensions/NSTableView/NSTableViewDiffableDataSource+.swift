@@ -7,7 +7,7 @@
 
 import AppKit
 
-public extension NSTableViewDiffableDataSource {
+extension NSTableViewDiffableDataSource {
     /**
      Asks the datasource for a view to display the specified row and column.
      

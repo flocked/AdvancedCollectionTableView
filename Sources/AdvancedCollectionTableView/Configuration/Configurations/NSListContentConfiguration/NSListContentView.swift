@@ -12,7 +12,7 @@ import FZUIKit
 /// A content view for displaying list-based content.
 public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
-    /// Creates a table cell content view with the specified content configuration.
+    /// Creates a list content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
         _configuration = configuration
         super.init(frame: .zero)
