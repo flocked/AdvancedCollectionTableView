@@ -239,6 +239,7 @@ open class NSTableSectionHeaderView: NSView {
         })
         
         tableCellObserver?.add(\.superview?.superview, handler: { old, new in
+            Swift.print(self.tableView?.style.rawValue ?? "nil", self.tableView?.effectiveStyle.rawValue ?? "nil")
             Swift.print("section superview2", new ?? "nil", self.tableView ?? "nil")
         })
     }
