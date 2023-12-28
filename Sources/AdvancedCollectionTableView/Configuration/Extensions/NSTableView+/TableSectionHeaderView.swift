@@ -111,8 +111,10 @@ open class NSTableSectionHeaderView: NSView {
     
     /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
     @objc open var isEnabled: Bool {
-        get { rowView?.isEnabled ?? true }
+        get { tableView?.isEnabled ?? true }
     }
+    
+    
     
     /**
      Informs the section header view to update its configuration for its current state.
@@ -231,9 +233,14 @@ open class NSTableSectionHeaderView: NSView {
         sharedInit()
     }
     
+    var isEnabledObserver: NSKeyValueObservation? = nil
+    
     func sharedInit() {
+        isEnabledObserver = self.observeChanges(for: \.tableView?.isEnabled) { old, new in
+            Swift.print("isEnabled", new)
+        }
         addSubview(withConstraint: observingView)
-        observingView.windowHandlers.isMain = { isKey in
+        observingView.windowHandlers.isKey = { isKey in
             self.isEmphasized = isKey
         }
         
