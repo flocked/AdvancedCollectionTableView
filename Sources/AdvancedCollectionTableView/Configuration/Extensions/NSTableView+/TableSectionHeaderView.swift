@@ -238,7 +238,16 @@ open class NSTableSectionHeaderView: NSView {
             self.setNeedsUpdateConfiguration()
         })
         
-        tableCellObserver?.add(\.superview?.superview, handler: { old, new in
+        tableCellObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
+            guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
+                return
+            }
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
+
+            
+
+            
+            
             Swift.print(self.tableView?.style.rawValue ?? "nil", self.tableView?.effectiveStyle.rawValue ?? "nil")
             Swift.print("section superview2", new ?? "nil", self.tableView ?? "nil")
         })
