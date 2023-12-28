@@ -25,7 +25,7 @@ class SidebarViewController: NSViewController {
     lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
     
     let cellRegistration = CellRegistration() { cell, column, row, sidebarItem in
-        // defaultContentConfiguration returns a list content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
+        // `defaultContentConfiguration()` returns a table cell content configuration with default styling based on the table view it's displayed at.
         var configuration = cell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
