@@ -37,9 +37,6 @@ class SidebarViewController: NSViewController {
         var configuration = headerView.defaultContentConfiguration()
         configuration.text = section.rawValue
         headerView.contentConfiguration = configuration
-        headerView.configurationUpdateHandler = { view, state in
-            Swift.print(state.isHovered)
-        }
     }
     
     override func viewDidLoad() {
