@@ -78,7 +78,7 @@ open class NSTableSectionHeaderView: NSView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    public var configurationState: NSTableCellConfigurationState {
+    @objc open var configurationState: NSTableCellConfigurationState {
         let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
         return state
     }
@@ -140,7 +140,7 @@ open class NSTableSectionHeaderView: NSView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the section header view’s configuration using the provided state.
      */
-    open func updateConfiguration(using state: NSTableCellConfigurationState) {
+    @objc open func updateConfiguration(using state: NSTableCellConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -169,7 +169,7 @@ open class NSTableSectionHeaderView: NSView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
-    public var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
         didSet {
             self.setNeedsUpdateConfiguration()
         }

@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import AdvancedCollectionTableViewObjc
 
 /**
  A structure that encapsulates a table view cell state.
@@ -69,7 +70,9 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
         isFocused: Bool,
         isHovered: Bool,
         isEditing: Bool,
-        isExpanded: Bool) {
+        isExpanded: Bool,
+        customStates: [NSConfigurationStateCustomKey:AnyHashable] = [:]
+    ) {
             self.isSelected = isSelected
             self.isEnabled = isEnabled
             self.isFocused = isFocused
@@ -77,7 +80,34 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
             self.isEditing = isEditing
             self.isExpanded = isExpanded
             self.isEmphasized = isEmphasized
+            self.customStates = customStates
         }
+}
+
+extension NSTableCellConfigurationState: _ObjectiveCBridgeable {
+
+    public func _bridgeToObjectiveC() -> NSTableCellConfigurationStateObjc {
+        let customStates = self.customStates.mapKeys({ $0.rawValue })
+        return NSTableCellConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
+    }
+
+    public static func _forceBridgeFromObjectiveC(_ source: NSTableCellConfigurationStateObjc, result: inout NSTableCellConfigurationState?) {
+        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+        result = NSTableCellConfigurationState(isSelected: source.isSelected, isEmphasized: source.isEmphasized, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, customStates: customStates)
+    }
+    
+    public static func _conditionallyBridgeFromObjectiveC(_ source: NSTableCellConfigurationStateObjc, result: inout NSTableCellConfigurationState?) -> Bool {
+        _forceBridgeFromObjectiveC(source, result: &result)
+        return true
+    }
+    
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSTableCellConfigurationStateObjc?) -> NSTableCellConfigurationState {
+        if let source = source {
+            let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+            return NSTableCellConfigurationState(isSelected: source.isSelected, isEmphasized: source.isEmphasized, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, customStates: customStates)
+        }
+        return NSTableCellConfigurationState()
+    }
 }
 
 /*

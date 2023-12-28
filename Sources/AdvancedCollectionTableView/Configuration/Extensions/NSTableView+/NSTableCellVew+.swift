@@ -103,7 +103,7 @@ extension NSTableCellView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    public var configurationState: NSTableCellConfigurationState {
+    @objc open var configurationState: NSTableCellConfigurationState {
         let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
         return state
     }
@@ -138,7 +138,7 @@ extension NSTableCellView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSTableCellConfigurationState) {
+    @objc open func updateConfiguration(using state: NSTableCellConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -172,7 +172,7 @@ extension NSTableCellView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
-    public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)

@@ -185,7 +185,7 @@ extension NSCollectionViewItem {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    public var configurationState: NSItemConfigurationState {
+    @objc open var configurationState: NSItemConfigurationState {
         let state = NSItemConfigurationState(isSelected: self.isSelected, highlight: self.highlightState, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered)
         return state
     }
@@ -223,7 +223,7 @@ extension NSCollectionViewItem {
      
      Override this method in a subclass to update the item’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSItemConfigurationState) {
+    @objc open func updateConfiguration(using state: NSItemConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -267,7 +267,7 @@ extension NSCollectionViewItem {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
-   public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {

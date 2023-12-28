@@ -8,6 +8,8 @@
 import Foundation
 import AppKit
 import FZUIKit
+import AdvancedCollectionTableViewObjc
+
 /**
  A structure that encapsulates a item’s state.
  
@@ -84,7 +86,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
                 isEditing: Bool,
                 isExpanded: Bool,
                 highlight: NSCollectionViewItem.HighlightState,
-                isEmphasized: Bool) {
+                isEmphasized: Bool,
+                customStates: [NSConfigurationStateCustomKey:AnyHashable] = [:]) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isFocused = isFocused
@@ -96,6 +99,32 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self["isSelected"] = isSelected
         self["isEmphasized"] = isEmphasized
         self["isItemState"] = true
+    }
+}
+
+extension NSItemConfigurationState: _ObjectiveCBridgeable {
+    
+    public func _bridgeToObjectiveC() -> NSItemConfigurationStateObjc {
+        let customStates = self.customStates.mapKeys({ $0.rawValue })
+        return NSItemConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: Int32(highlight.rawValue), customStates: customStates)
+    }
+
+    public static func _forceBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) {
+        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+        result = NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: .init(rawValue: source.highlight)!, isEmphasized: source.isEmphasized, customStates: customStates)
+    }
+    
+    public static func _conditionallyBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) -> Bool {
+        _forceBridgeFromObjectiveC(source, result: &result)
+        return true
+    }
+    
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc?) -> NSItemConfigurationState {
+        if let source = source {
+            let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+            return NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: .init(rawValue: source.highlight)!, isEmphasized: source.isEmphasized, customStates: customStates)
+        }
+        return NSItemConfigurationState()
     }
 }
 

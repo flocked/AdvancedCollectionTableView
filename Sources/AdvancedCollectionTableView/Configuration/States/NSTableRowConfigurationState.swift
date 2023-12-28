@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import AdvancedCollectionTableViewObjc
 
 /**
  A structure that encapsulates a table view row state.
@@ -67,6 +68,51 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
         self.isEmphasized = isEmphasized
         self.isNextRowSelected = isNextRowSelected
         self.isPreviousRowSelected = isPreviousRowSelected
+    }
+    
+    init(isSelected: Bool,
+                isEnabled: Bool,
+                isHovered: Bool,
+                isEditing: Bool,
+                isEmphasized: Bool,
+                isNextRowSelected: Bool,
+         isPreviousRowSelected: Bool,
+         customStates: [NSConfigurationStateCustomKey:AnyHashable]
+    ) {
+        self.isSelected = isSelected
+        self.isEnabled = isEnabled
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isEmphasized = isEmphasized
+        self.isNextRowSelected = isNextRowSelected
+        self.isPreviousRowSelected = isPreviousRowSelected
+        self.customStates = customStates
+    }
+}
+
+extension NSTableRowConfigurationState: _ObjectiveCBridgeable {
+
+    public func _bridgeToObjectiveC() -> NSTableRowConfigurationStateObjc {
+        let customStates = self.customStates.mapKeys({ $0.rawValue })
+        return NSTableRowConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextRowSelected: isNextRowSelected, isPreviousRowSelected: isPreviousRowSelected, customStates: customStates)
+    }
+
+    public static func _forceBridgeFromObjectiveC(_ source: NSTableRowConfigurationStateObjc, result: inout NSTableRowConfigurationState?) {
+        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+        result = NSTableRowConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextRowSelected: source.isNextRowSelected, isPreviousRowSelected: source.isPreviousRowSelected, customStates: customStates)
+    }
+    
+    public static func _conditionallyBridgeFromObjectiveC(_ source: NSTableRowConfigurationStateObjc, result: inout NSTableRowConfigurationState?) -> Bool {
+        _forceBridgeFromObjectiveC(source, result: &result)
+        return true
+    }
+    
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSTableRowConfigurationStateObjc?) -> NSTableRowConfigurationState {
+        if let source = source {
+            let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+            return NSTableRowConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextRowSelected: source.isNextRowSelected, isPreviousRowSelected: source.isPreviousRowSelected, customStates: customStates)
+        }
+        return NSTableRowConfigurationState()
     }
 }
 

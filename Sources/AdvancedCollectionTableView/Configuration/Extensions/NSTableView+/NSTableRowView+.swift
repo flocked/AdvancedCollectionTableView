@@ -128,7 +128,7 @@ extension NSTableRowView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
-    public var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
@@ -143,7 +143,7 @@ extension NSTableRowView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    public var configurationState: NSTableRowConfigurationState {
+    @objc open var configurationState: NSTableRowConfigurationState {
         let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
         return state
     }
@@ -175,7 +175,7 @@ extension NSTableRowView {
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
-    func updateConfiguration(using state: NSTableRowConfigurationState) {
+    @objc open func updateConfiguration(using state: NSTableRowConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
