@@ -84,7 +84,8 @@ open class NSTableSectionHeaderView: NSView {
         return state
     }
     
-    var isEditing: Bool {
+    /// A Boolean value that indicates whether the section header view is in an editable state. (the text of a content configuration is currently edited).
+    @objc open var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
@@ -93,20 +94,19 @@ open class NSTableSectionHeaderView: NSView {
      
      A hovered cell view has the mouse pointer on it.
      */
-    public var isHovered: Bool {
+    @objc open var isHovered: Bool {
         self.rowView?.isHovered ?? false
     }
     
     /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
-    public var isEmphasized: Bool {
+    @objc open var isEmphasized: Bool {
         self.window?.isKeyWindow ?? false
     }
     
     /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
-    public var isEnabled: Bool {
+    @objc open var isEnabled: Bool {
         get { rowView?.isEnabled ?? true }
     }
-
     
     /**
      Informs the section header view to update its configuration for its current state.
@@ -119,32 +119,14 @@ open class NSTableSectionHeaderView: NSView {
         self.updateConfiguration(using: configurationState)
     }
     
-    /// The row of the section header view.
-    var row: Int? {
-        guard let tableView = self.tableView else { return nil }
-        var row = tableView.row(for: self)
-        if row == -1 {
-            row = 0
-        }
-        return row
-    }
-    
     func setNeedsAutomaticUpdateConfiguration() {
-        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = self.row {
-            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
+        let state = configurationState
+        if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
+            self.contentConfiguration = contentConfiguration.updated(for: state)
         }
-        
-        if configurationUpdatingIsEnabled {
-            let state = configurationState
-            if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
-                self.contentConfiguration = contentConfiguration.updated(for: state)
-            }
-            configurationUpdateHandler?(self, state)
-        }
+        configurationUpdateHandler?(self, state)
     }
     
-    var configurationUpdatingIsEnabled: Bool = true
     
     /**
      Updates the section header view’s configuration using the current state.
@@ -189,7 +171,6 @@ open class NSTableSectionHeaderView: NSView {
     
     var contentView: (NSView & NSContentView)?  = nil
     
-    
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
@@ -224,32 +205,11 @@ open class NSTableSectionHeaderView: NSView {
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = KeyValueObserver(self)
-        tableCellObserver?.add(\.superview, handler: { old, new in
-            Swift.print("section supervie1", self.superview ?? "nil", self.tableView ?? "nil")
-            if self.contentConfiguration is NSListContentConfiguration {
-                self.rowView?.needsAutomaticRowHeights = true
-                self.tableView?.usesAutomaticRowHeights = true
-            }
-
-            if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-                self.setNeedsUpdateConfiguration()
-            }
-            self.rowView?.observeTableRowView()
-            self.setNeedsUpdateConfiguration()
-        })
-        
         tableCellObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
             guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
                 return
             }
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
-
-            
-
-            
-            
-            Swift.print(self.tableView?.style.rawValue ?? "nil", self.tableView?.effectiveStyle.rawValue ?? "nil")
-            Swift.print("section superview2", new ?? "nil", self.tableView ?? "nil")
         })
     }
 }

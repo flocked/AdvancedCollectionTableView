@@ -200,17 +200,17 @@ extension NSTableCellView {
         get { rowView?.isEnabled ?? true }
     }
     
+    /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
+    @objc open var isEditing: Bool {
+        (contentView as? EdiitingContentView)?.isEditing ?? false
+    }
+    
     @objc open var isNextRowSelected: Bool {
         rowView?.isNextRowSelected ?? false
     }
     
     @objc open var isPreviousRowSelected: Bool {
         rowView?.isPreviousRowSelected ?? false
-    }
-    
-    /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
-    @objc open var isEditing: Bool {
-        (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
     /// The row of the cell.
