@@ -17,7 +17,7 @@ import AdvancedCollectionTableViewObjc
  Typically, you don’t create a configuration state yourself. To obtain a configuration state, override the `updateConfiguration(using:)` method in your row subclass and use the state parameter. Outside of this method, you can get a row’s configuration state by using its `configurationState` property.
  You can create your own custom states to add to a row configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
-public struct NSListConfigurationState: NSConfigurationState, Hashable {
+struct NSListConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the row is in a selected state.
     public var isSelected: Bool = false
