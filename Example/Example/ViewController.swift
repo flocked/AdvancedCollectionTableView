@@ -43,13 +43,14 @@ class ViewController: NSViewController {
             configuration = configuration.updated(for: state)
             
             // Updates the configuration based on whether the mouse is hovering the item
-            configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
+            configuration.contentProperties.scaleTransform = state.isHovered ? CGPoint(x: 1.03, y: 1.03) : CGPoint(x: 1, y: 1)
             configuration.overlayView = state.isHovered ? NSView(color: .white, opacity: 0.25) : nil
  
             // Apply the updated configuration
             item.contentConfiguration = configuration
         }
     }
+    
         
     // Window toolbar
     lazy var toolbar = Toolbar() {
@@ -59,7 +60,7 @@ class ViewController: NSViewController {
             .onAction {
                 var snapshotGalleryItems = self.dataSource.snapshot().itemIdentifiers
                 snapshotGalleryItems.shuffleItems()
-                self.dataSource.reconfigureElements(snapshotGalleryItems)
+                self.dataSource.reconfigureItems(snapshotGalleryItems)
             }
     }
     
