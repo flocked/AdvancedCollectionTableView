@@ -21,13 +21,13 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            self.dataSource.prefetchHandlers.willPrefetch?(elements)
+            let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+            self.dataSource.prefetchHandlers.willPrefetch?(items)
         }
         
         func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            self.dataSource.prefetchHandlers.didCancelPrefetching?(elements)
+            let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+            self.dataSource.prefetchHandlers.didCancelPrefetching?(items)
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
@@ -36,22 +36,22 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexes: IndexSet, with event: NSEvent) -> Bool {
             if let canReorderHandler = self.dataSource.reorderingHandlers.canReorder {
-                let elements = indexes.compactMap({self.dataSource.element(for: IndexPath(item: $0, section: 0))})
-                return canReorderHandler(elements)
+                let items = indexes.compactMap({self.dataSource.item(for: IndexPath(item: $0, section: 0))})
+                return canReorderHandler(items)
             } else {
                 return self.dataSource.allowsReordering
             }
         }
         
         func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-            if let element = self.dataSource.element(for: indexPath) {
-                if let writing = self.dataSource.dragDropHandlers.pasteboardValue?(element).nsPasteboardWriting {
+            if let item = self.dataSource.item(for: indexPath) {
+                if let writing = self.dataSource.dragDropHandlers.pasteboardValue?(item).nsPasteboardWriting {
                     return writing
                 }
                 
-                let item = NSPasteboardItem()
-                item.setString(String(element.id.hashValue), forType: .itemID)
-                return item
+                let pasteboardItem = NSPasteboardItem()
+                pasteboardItem.setString(String(item.id.hashValue), forType: .itemID)
+                return pasteboardItem
             }
             return nil
         }
@@ -70,10 +70,10 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
             if (self.dataSource.draggingIndexPaths.isEmpty == false) {
                 if let transaction = self.dataSource.movingTransaction(at: Array(self.dataSource.draggingIndexPaths), to: indexPath) {
-                    let selectedElements = dataSource.selectedElements
+                    let selectedItems = dataSource.selectedItems
                     self.dataSource.reorderingHandlers.willReorder?(transaction)
                     self.dataSource.apply(transaction.finalSnapshot)
-                    self.dataSource.selectElements(selectedElements, scrollPosition: [])
+                    self.dataSource.selectItems(selectedItems, scrollPosition: [])
                     self.dataSource.reorderingHandlers.didReorder?(transaction)
                 } else {
                     return false
@@ -98,9 +98,9 @@ extension CollectionViewDiffableDataSource {
              let items = indexPaths.compactMap({collectionView.item(at: $0)})
              items.forEach({$0.isSelected = true})
              */
-            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            if (elements.isEmpty == false) {
-                self.dataSource.selectionHandlers.didSelect?(elements)
+            let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+            if (items.isEmpty == false) {
+                self.dataSource.selectionHandlers.didSelect?(items)
             }
         }
         
@@ -110,17 +110,17 @@ extension CollectionViewDiffableDataSource {
              let items = indexPaths.compactMap({collectionView.item(at: $0)})
              items.forEach({$0.isSelected = false})
              */
-            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            if (elements.isEmpty == false) {
-                self.dataSource.selectionHandlers.didDeselect?(elements)
+            let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+            if (items.isEmpty == false) {
+                self.dataSource.selectionHandlers.didDeselect?(items)
             }
         }
         
         func collectionView(_ collectionView: NSCollectionView, shouldSelectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
             if let shouldSelectHandler = self.dataSource.selectionHandlers.shouldSelect {
-                let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-                let returnElements = shouldSelectHandler(shouldElements)
-                return Set(returnElements.compactMap({self.dataSource.indexPath(for: $0)}))
+                let shouldItems = indexPaths.compactMap({self.dataSource.item(for: $0)})
+                let returnItems = shouldSelectHandler(shouldItems)
+                return Set(returnItems.compactMap({self.dataSource.indexPath(for: $0)}))
             } else {
                 return indexPaths
             }
@@ -128,9 +128,9 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, shouldDeselectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
             if let shouldDeselectHandler = self.dataSource.selectionHandlers.shouldDeselect {
-                let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-                let returnElements = shouldDeselectHandler(shouldElements)
-                return Set(returnElements.compactMap({self.dataSource.indexPath(for: $0)}))
+                let shouldItems = indexPaths.compactMap({self.dataSource.item(for: $0)})
+                let returnItems = shouldDeselectHandler(shouldItems)
+                return Set(returnItems.compactMap({self.dataSource.indexPath(for: $0)}))
             } else {
                 return indexPaths
             }
@@ -138,23 +138,23 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_ collectionView: NSCollectionView, shouldChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) -> Set<IndexPath> {
             if let shouldChangeItems = self.dataSource.highlightHandlers.shouldChange {
-                let shouldElements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-                let returnElements = shouldChangeItems(shouldElements, highlightState)
-                return Set(returnElements.compactMap({self.dataSource.indexPath(for: $0)}))
+                let shouldItems = indexPaths.compactMap({self.dataSource.item(for: $0)})
+                let returnItems = shouldChangeItems(shouldItems, highlightState)
+                return Set(returnItems.compactMap({self.dataSource.indexPath(for: $0)}))
             } else {
                 return indexPaths
             }
         }
         
         func collectionView(_ collectionView: NSCollectionView, didChangeItemsAt indexPaths: Set<IndexPath>, to highlightState: NSCollectionViewItem.HighlightState) {
-            let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-            self.dataSource.highlightHandlers.didChange?(elements, highlightState)
+            let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+            self.dataSource.highlightHandlers.didChange?(items, highlightState)
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingImageForItemsAt indexPaths: Set<IndexPath>, with event: NSEvent, offset dragImageOffset: NSPointPointer) -> NSImage {
             if let draggingImage = self.dataSource.dragDropHandlers.draggingImage {
-                let elements = indexPaths.compactMap({self.dataSource.element(for: $0)})
-                if let image = draggingImage(elements, event, dragImageOffset) {
+                let items = indexPaths.compactMap({self.dataSource.item(for: $0)})
+                if let image = draggingImage(items, event, dragImageOffset) {
                     return image
                 }
             }

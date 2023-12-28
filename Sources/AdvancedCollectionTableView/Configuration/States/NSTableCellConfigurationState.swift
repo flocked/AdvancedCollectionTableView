@@ -28,36 +28,25 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the cell is in a hovered state (ithe mouse is hovering the cell).
     public var isHovered: Bool = false
     
-    /// A Boolean value that indicates whether the cell is in an emphasized state. It is `true` if the window that displays the cell is `main`.
+    /// A Boolean value that indicates whether the cell is in an emphasized state. It is `true` if the window of the cell is `key`.
     public var isEmphasized: Bool = false
     
     /// A Boolean value that indicates whether the cell is in an enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
-    internal var isEnabled: Bool = true
+    public var isEnabled: Bool = true
     
     /// A Boolean value that indicates whether the cell is in a focused state.
-    internal var isFocused: Bool = false
+    var isFocused: Bool = false
     
     /// A Boolean value that indicates whether the cell is in an expanded state.
-    internal var isExpanded: Bool = false
+    var isExpanded: Bool = false
     
-    /*
-     /// The emphasized state.
-     public struct EmphasizedState: OptionSet, Hashable {
-     public let rawValue: UInt
-     /// The window of the item is key.
-     public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-     /// The collection view of the item is first responder.
-     public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-     
-     /// Creates a units structure with the specified raw value.
-     public init(rawValue: UInt) {
-     self.rawValue = rawValue
-     }
-     }
-     
-     /// The emphasized state.
-     public var emphasizedState: EmphasizedState = []
-     */
+    var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
+    
+    /// Accesses custom states by key.
+    public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
+        get { return customStates[key] }
+        set { customStates[key] = newValue }
+    }
     
     public init(isSelected: Bool = false,
                 isEditing: Bool = false,
@@ -89,13 +78,23 @@ public struct NSTableCellConfigurationState: NSConfigurationState, Hashable {
             self.isExpanded = isExpanded
             self.isEmphasized = isEmphasized
         }
-    
-    /// Accesses custom states by key.
-    public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
-        get { return customStates[key] }
-        set { customStates[key] = newValue }
-    }
-    
-    internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
 }
 
+/*
+ /// The emphasized state.
+ public struct EmphasizedState: OptionSet, Hashable {
+ public let rawValue: UInt
+ /// The window of the item is key.
+ public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+ /// The collection view of the item is first responder.
+ public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+ 
+ /// Creates a units structure with the specified raw value.
+ public init(rawValue: UInt) {
+ self.rawValue = rawValue
+ }
+ }
+ 
+ /// The emphasized state.
+ public var emphasizedState: EmphasizedState = []
+ */

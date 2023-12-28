@@ -13,7 +13,7 @@ class SidebarViewController: NSViewController {
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
-    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<TableSectionHeaderView, Section>
+    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
 
     
     @IBOutlet weak var tableView: NSTableView!

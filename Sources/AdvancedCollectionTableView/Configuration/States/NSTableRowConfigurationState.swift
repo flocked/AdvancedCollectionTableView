@@ -30,7 +30,7 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the row is in an editing state.
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the row is in an emphasized state. It is `true` if the window that displays the cell is `main`.
+    /// A Boolean value that indicates whether the row is in an emphasized state. It is `true` if the window of the row view is `key`.
     public var isEmphasized: Bool = false
     
     /// A Boolean value that indicates whether the next row is in a selected state.
@@ -45,32 +45,13 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the row is in an expanded state.
     var isExpanded: Bool = false
     
-    /*
-     /// The emphasized state.
-     public struct EmphasizedState: OptionSet, Hashable {
-     public let rawValue: UInt
-     /// The window of the item is key.
-     public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-     /// The collection view of the item is first responder.
-     public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-     
-     /// Creates a units structure with the specified raw value.
-     public init(rawValue: UInt) {
-     self.rawValue = rawValue
-     }
-     }
-     
-     /// The emphasized state.
-     public var emphasizedState: EmphasizedState = []
-     */
+    var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
         set { customStates[key] = newValue }
     }
-    
-    internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
     public init(isSelected: Bool = false,
                 isEnabled: Bool = true,
@@ -89,3 +70,21 @@ public struct NSTableRowConfigurationState: NSConfigurationState, Hashable {
     }
 }
 
+/*
+ /// The emphasized state.
+ public struct EmphasizedState: OptionSet, Hashable {
+ public let rawValue: UInt
+ /// The window of the item is key.
+ public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+ /// The collection view of the item is first responder.
+ public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+ 
+ /// Creates a units structure with the specified raw value.
+ public init(rawValue: UInt) {
+ self.rawValue = rawValue
+ }
+ }
+ 
+ /// The emphasized state.
+ public var emphasizedState: EmphasizedState = []
+ */

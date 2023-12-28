@@ -9,10 +9,15 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-open class TableSectionHeaderView: NSView {
+/**
+ The view shown for a section header in a table view.
+ 
+ `NSTableSectionHeaderView` is responsible for displaying attributes associated with the section header.
+ */
+open class NSTableSectionHeaderView: NSTableCellView {
     
     // MARK: Managing the content
-    
+    /*
     /**
      The current content configuration of the section header view.
      
@@ -74,15 +79,13 @@ open class TableSectionHeaderView: NSView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    public var configurationState: NSTableSectionHeaderConfigurationState {
-        let state = NSTableSectionHeaderConfigurationState(isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized)
+    public var configurationState: NSTableCellConfigurationState {
+        let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
         return state
     }
     
-    var isEditing: Bool = false {
-        didSet {
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+    var isEditing: Bool {
+        (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
     /**
@@ -132,7 +135,7 @@ open class TableSectionHeaderView: NSView {
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
         }
         
-        if isConfigurationUpdatesEnabled {
+        if configurationUpdatingIsEnabled {
             let state = configurationState
             if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
                 self.contentConfiguration = contentConfiguration.updated(for: state)
@@ -141,7 +144,7 @@ open class TableSectionHeaderView: NSView {
         }
     }
     
-    var isConfigurationUpdatesEnabled: Bool = true
+    var configurationUpdatingIsEnabled: Bool = true
     
     /**
      Updates the section header view’s configuration using the current state.
@@ -149,7 +152,7 @@ open class TableSectionHeaderView: NSView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the section header view’s configuration using the provided state.
      */
-    open func updateConfiguration(using state: NSTableSectionHeaderConfigurationState) {
+    open func updateConfiguration(using state: NSTableCellConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -163,7 +166,7 @@ open class TableSectionHeaderView: NSView {
         - sectionHeaderView: The section header view to configure.
         - state: The new state to use for updating the section header view’s configuration.
      */
-    public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: TableSectionHeaderView, _ state: NSTableSectionHeaderConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: NSTableSectionHeaderView, _ state: NSTableCellConfigurationState) -> Void
     
     /**
      A block for handling updates to the section header view’s configuration using the current state.
@@ -206,7 +209,7 @@ open class TableSectionHeaderView: NSView {
         }
     }
     
-    var tableCellObserver: KeyValueObserver<TableSectionHeaderView>? = nil
+    var tableCellObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
     
     var rowView: NSTableRowView? {
         return firstSuperview(for: NSTableRowView.self)
@@ -231,23 +234,9 @@ open class TableSectionHeaderView: NSView {
             if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
                 self.setNeedsUpdateConfiguration()
             }
-            
             self.rowView?.observeTableRowView()
             self.setNeedsUpdateConfiguration()
         })
-        /*
-        tableCellObserver?.add(\.superview?.superview, handler: {old, new in
-            guard old != new, let tableView = new as? NSTableView, var configuration = self.contentConfiguration as? NSListContentConfiguration, configuration.type == .automaticRow else { return }
-            Swift.print("SectionHeaderCell superview1", tableView.style.rawValue, new ?? "nil")
-            self.tableStyleObserver = tableView.observeChanges(for: \.style, handler: { old, style in
-                guard old != style else { return }
-                Swift.print("observeChanges", style)
-                configuration = configuration.tableViewStyle(style, isGroupRow: true)
-                self.contentConfiguration = configuration
-            })
-            configuration = configuration.tableViewStyle(tableView.style, isGroupRow: true)
-            self.contentConfiguration = configuration
-        })
-        */
     }
+     */
 }

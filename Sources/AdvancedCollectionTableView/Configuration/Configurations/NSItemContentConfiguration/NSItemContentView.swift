@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 /// A content view for displaying collection item-based content.
-public class NSItemContentView: NSView, NSContentView {
+public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         appliedConfiguration = configuration
@@ -66,6 +66,31 @@ public class NSItemContentView: NSView, NSContentView {
             guard oldValue != appliedConfiguration else { return }
             updateConfiguration()
         }
+    }
+    
+    var isEditing: Bool = false {
+        didSet {
+            guard oldValue != isEditing else { return }
+            if let tableCellView = self.tableCellView, tableCellView.contentView == self {
+                tableCellView.setNeedsAutomaticUpdateConfiguration()
+            } else if let tableRowView = self.tableRowView, tableRowView.contentView == self {
+                tableRowView.setNeedsAutomaticUpdateConfiguration()
+            } else if let collectionViewItem = self.collectionViewItem, collectionViewItem.view == self {
+                collectionViewItem.setNeedsAutomaticUpdateConfiguration()
+            }
+        }
+    }
+    
+    var tableCellView: NSTableCellView? {
+        firstSuperview(for: NSTableCellView.self)
+    }
+    
+    var tableRowView: NSTableRowView? {
+        firstSuperview(for: NSTableRowView.self)
+    }
+    
+    var collectionViewItem: NSCollectionViewItem? {
+        firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem
     }
     
     internal func updateConfiguration() {

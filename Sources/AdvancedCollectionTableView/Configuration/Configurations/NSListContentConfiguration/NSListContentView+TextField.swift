@@ -67,19 +67,19 @@ internal extension NSListContentView {
         override func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
-                firstSuperview(for: NSTableCellView.self)?.isEditing = true
+                listContentView?.isEditing = true
                 previousStringValue = stringValue
             }
             return canBecome
         }
         
-        var tableCellContentView: NSListContentView? {
+        var listContentView: NSListContentView? {
             firstSuperview(for: NSListContentView.self)
         }
         
         override func layout() {
             super.layout()
-            tableCellContentView?.updateRowHeight()
+            listContentView?.updateRowHeight()
         }
         
         override var intrinsicContentSize: NSSize {
@@ -120,13 +120,13 @@ internal extension NSListContentView {
             super.textDidBeginEditing(notification)
             isEditing = true
             previousStringValue = stringValue
-            firstSuperview(for: NSTableCellView.self)?.isEditing = true
+            listContentView?.isEditing = true
         }
         
         override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
             isEditing = false
-            firstSuperview(for: NSTableCellView.self)?.isEditing = false
+            listContentView?.isEditing = false
             properties.onEditEnd?(stringValue)
         }
         
@@ -157,10 +157,6 @@ internal extension NSListContentView {
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
-        }
-        
-        deinit {
-            firstSuperview(for: NSTableCellView.self)?.isEditing = false
         }
     }
 }

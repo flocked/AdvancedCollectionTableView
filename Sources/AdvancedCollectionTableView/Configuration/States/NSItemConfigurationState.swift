@@ -27,58 +27,39 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         }
     }
     
-    /// A value that indicates  the items highlight state.
+    /// A value that indicates the item's highlight state.
     public var highlight: NSCollectionViewItem.HighlightState = .none
     
     /// A Boolean value that indicates whether the item is in a editing state.
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the item is in a emphasized state.
+    /// A Boolean value that indicates whether the item is in a emphasized state. It is `true` if the window of the collection view item is `key`.
     public var isEmphasized: Bool = false {
         didSet {
             self["isEmphasized"] = isEmphasized
         }
     }
     
-    /// A Boolean value that indicates whether the item is in a hovered state (if the mouse is above the item).
+    /// A Boolean value that indicates whether the item is in a hovered state (ithe mouse is hovering the item).
     public var isHovered: Bool = false
     
     /// A Boolean value that indicates whether the item is in a enabled state.
-    internal var isEnabled: Bool = true
+    var isEnabled: Bool = true
     
     /// A Boolean value that indicates whether the item is in a focused state.
-    internal var isFocused: Bool = false
+    var isFocused: Bool = false
     
     /// A Boolean value that indicates whether the item is in a expanded state.
-    internal var isExpanded: Bool = false
+    var isExpanded: Bool = false
     
-    /*
-     /// The emphasized state.
-     public struct EmphasizedState: OptionSet, Hashable {
-     public let rawValue: UInt
-     /// The window of the item is key.
-     public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
-     /// The collection view of the item is first responder.
-     public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-     
-     /// Creates a units structure with the specified raw value.
-     public init(rawValue: UInt) {
-     self.rawValue = rawValue
-     }
-     }
-     
-     /// The emphasized state.
-     public var emphasizedState: EmphasizedState = []
-     */
+    var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
     
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
         set { customStates[key] = newValue }
     }
-    
-    internal var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
-    
+        
     public init(
         isSelected: Bool = false,
         highlight: NSCollectionViewItem.HighlightState = .none,
@@ -118,3 +99,21 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     }
 }
 
+/*
+ /// The emphasized state.
+ public struct EmphasizedState: OptionSet, Hashable {
+ public let rawValue: UInt
+ /// The window of the item is key.
+ public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
+ /// The collection view of the item is first responder.
+ public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
+ 
+ /// Creates a units structure with the specified raw value.
+ public init(rawValue: UInt) {
+ self.rawValue = rawValue
+ }
+ }
+ 
+ /// The emphasized state.
+ public var emphasizedState: EmphasizedState = []
+ */

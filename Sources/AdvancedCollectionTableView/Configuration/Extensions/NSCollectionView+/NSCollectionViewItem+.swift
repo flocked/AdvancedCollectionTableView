@@ -164,7 +164,6 @@ extension NSCollectionViewItem {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                self.cachedLayoutAttributes = nil
                 let previousFrame = self.view.frame
                 self.view = contentConfiguration.makeContentView()
                 self.view.wantsLayer = true
@@ -173,7 +172,6 @@ extension NSCollectionViewItem {
                 self.view.setNeedsLayout()
             }
         } else {
-            self.cachedLayoutAttributes = nil
             let previousFrame = self.view.frame
             self.view = NSView()
             self.view.frame = previousFrame
@@ -285,81 +283,28 @@ extension NSCollectionViewItem {
         return _collectionView?.indexPath(for: self)
     }
     
-    var layoutAttributes: NSCollectionViewLayoutAttributes? {
-        if let indexPath = indexPath {
-            return  collectionView?.layoutAttributesForItem(at: indexPath)
-        }
-        return nil
-    }
-    
-    var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
-        guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
-        
-        let context = InvalidationContext(invalidateEverything: false)
-        context.invalidateItems(at: [indexPath])
-        return context
-    }
-    
-    func invalidateSelfSizing() {
-        guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
-        
-        self.view.invalidateIntrinsicContentSize()
-        
-        collectionViewLayout.invalidateLayout(with: invalidationContext)
-        collectionView.layoutSubtreeIfNeeded()
-    }
-    
-    class InvalidationContext: NSCollectionViewLayoutInvalidationContext {
-        public override var invalidateEverything: Bool {
-            return _invalidateEverything
-        }
-        
-        private var _invalidateEverything: Bool
-        
-        public init(invalidateEverything: Bool) {
-            self._invalidateEverything = invalidateEverything
-        }
-    }
-    
     /**
      A Boolean value that specifies whether the item view is hovered.
      
      A hovered item view has the mouse pointer on it.
      */
-    public var isHovered: Bool {
+    @objc open var isHovered: Bool {
         get { collectionView?.hoveredItem == self }
     }
     
-    var isEditing: Bool {
-        get { getAssociatedValue(key: "isEditing", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEditing else { return }
-            set(associatedValue: newValue, key: "isEditing", object: self)
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
+    /// A Boolean value that indicates whether the collection view item is in an editable state. (the text of a content configuration is currently edited).
+    @objc open var isEditing: Bool {
+        (view as? EdiitingContentView)?.isEditing ?? false
     }
     
-    /// A Boolean value that specifies whether the item view is emphasized (the views window is key).
-    public var isEmphasized: Bool {
+    /// A Boolean value that specifies whether the item view is emphasized (the item view window is key).
+    @objc open var isEmphasized: Bool {
         get { self.view.window?.isKeyWindow ?? false }
     }
     
-    /// The previous item in the collection view, or `nil` if there isn't a previous item or the item isn't in a collection view..
-    @objc open var previousItem: NSCollectionViewItem? {
-        if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item - 1 >= 0 {
-            let previousIndexPath = IndexPath(item: indexPath.item - 1, section: indexPath.section)
-            return self.collectionView?.item(at: previousIndexPath)
-        }
-        return nil
-    }
-    
-    /// The next item in the collection view, or `nil` if there isn't a next item or the item isn't in a collection view..
-    @objc open var nextItem: NSCollectionViewItem? {
-        if let indexPath = self.collectionView?.indexPath(for: self), indexPath.item + 1 < (self.collectionView?.numberOfItems(inSection: indexPath.section) ?? -10) {
-            let nextIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
-            return self.collectionView?.item(at: nextIndexPath)
-        }
-        return nil
+    /// A Boolean value that specifies whether the collection view item is enabled (the collection view's `isEnabled` is `true`).
+    @objc open var isEnabled: Bool {
+        get { self._collectionView?.isEnabled ?? true }
     }
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
@@ -397,6 +342,42 @@ extension NSCollectionViewItem {
             set(associatedValue: newValue, key: "cachedLayoutAttributes", object: self)
         }
     }
+    
+    var layoutAttributes: NSCollectionViewLayoutAttributes? {
+        if let indexPath = indexPath {
+            return  collectionView?.layoutAttributesForItem(at: indexPath)
+        }
+        return nil
+    }
+    
+    var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
+        guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
+        
+        let context = InvalidationContext(invalidateEverything: false)
+        context.invalidateItems(at: [indexPath])
+        return context
+    }
+    
+    func invalidateSelfSizing() {
+        guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
+        
+        self.view.invalidateIntrinsicContentSize()
+        
+        collectionViewLayout.invalidateLayout(with: invalidationContext)
+        collectionView.layoutSubtreeIfNeeded()
+    }
+    
+    class InvalidationContext: NSCollectionViewLayoutInvalidationContext {
+        public override var invalidateEverything: Bool {
+            return _invalidateEverything
+        }
+        
+        private var _invalidateEverything: Bool
+        
+        public init(invalidateEverything: Bool) {
+            self._invalidateEverything = invalidateEverything
+        }
+    }
 }
 
 extension NSCollectionViewItem {
@@ -404,61 +385,3 @@ extension NSCollectionViewItem {
         self.view = NSView()
     }
 }
-
-
-/*
-var isEnabled: Bool {
-    get { getAssociatedValue(key: "isEnabled", object: self, initialValue: false) }
-    set {
-        guard newValue != self.isEnabled else { return }
-        set(associatedValue: newValue, key: "isEnabled", object: self)
-        self.setNeedsAutomaticUpdateConfiguration()
-    }
-}
-
-var isFocused: Bool {
-    get { getAssociatedValue(key: "isFocused", object: self, initialValue: false) }
-    set {
-        guard newValue != self.isFocused else { return }
-        set(associatedValue: newValue, key: "isFocused", object: self)
-        self.setNeedsAutomaticUpdateConfiguration()
-    }
-}
-
-var isReordering: Bool {
-    get { getAssociatedValue(key: "isReordering", object: self, initialValue: false) }
-    set {
-        guard newValue != self.isReordering else { return }
-        set(associatedValue: newValue, key: "isReordering", object: self)
-        self.setNeedsAutomaticUpdateConfiguration()
-    }
-}
-*/
-
-
-/*
- @objc func swizzled_PrepareForReuse() {
- self.isConfigurationUpdatesEnabled = false
- self.isHovered = false
- self.isEnabled = true
- self.isReordering = false
- self.isEditing = false
- self.isConfigurationUpdatesEnabled = true
- }
- 
- static var didSwizzlePrepareForReuse: Bool {
- get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self, initialValue: false) }
- set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzlePrepareForReuse", object: self) }
- }
- static func swizzlePrepareForReuse() {
- guard didSwizzlePrepareForReuse == false else { return }
- didSwizzlePrepareForReuse = true
- do {
- _ = try Swizzle(NSCollectionViewItem.self) {
- #selector(prepareForReuse) <-> #selector(swizzled_PrepareForReuse)
- }
- } catch {
- Swift.debugPrint(error)
- }
- }
- */

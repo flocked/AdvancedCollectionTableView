@@ -11,19 +11,6 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSTableView {
-    /// A Boolean value that specifies whether the row view is enabled. It's `true` when the table views `isEmphasized` is `true`.
-    public internal(set) var isEmphasized: Bool {
-        get { getAssociatedValue(key: "_isEmphasized", object: self, initialValue: false) }
-        set {
-            guard newValue != self.isEmphasized else { return }
-            set(associatedValue: newValue, key: "_isEmphasized", object: self)
-            if newValue == false {
-                self.hoveredRow = nil
-            }
-            updateVisibleRowConfigurations()
-        }
-    }
-    
     func updateVisibleRowConfigurations() {
         self.visibleRows().forEach({
             $0.setNeedsAutomaticUpdateConfiguration()
@@ -35,7 +22,6 @@ extension NSTableView {
         get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
-
         
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
@@ -52,7 +38,10 @@ extension NSTableView {
                 observingView!.sendToBack()
                 observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
-                    self.isEmphasized = windowIsKey
+                    if windowIsKey == false {
+                        self.hoveredRow = nil
+                    }
+                    self.updateVisibleRowConfigurations()
                 }
                 
                 observingView?.mouseHandlers.exited = { [weak self] event in

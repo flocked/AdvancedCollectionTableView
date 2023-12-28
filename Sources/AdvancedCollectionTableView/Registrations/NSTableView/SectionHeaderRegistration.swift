@@ -47,7 +47,7 @@ public extension NSTableView {
      }
      ```
      */
-    struct SectionHeaderRegistration<SectionHeaderView, Section> where SectionHeaderView: TableSectionHeaderView  {
+    struct SectionHeaderRegistration<SectionHeaderView, Section> where SectionHeaderView: NSTableSectionHeaderView  {
         
         internal let identifier: NSUserInterfaceItemIdentifier
         private let nib: NSNib?

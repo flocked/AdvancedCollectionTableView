@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 /// A content view for displaying list-based content.
-public class NSListContentView: NSView, NSContentView {
+public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
     /// Creates a table cell content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
@@ -64,6 +64,31 @@ public class NSListContentView: NSView, NSContentView {
         stackView.distribution = .fill
         return stackView
     }()
+    
+    var isEditing: Bool = false {
+        didSet {
+            guard oldValue != isEditing else { return }
+            if let tableCellView = self.tableCellView, tableCellView.contentView == self {
+                tableCellView.setNeedsAutomaticUpdateConfiguration()
+            } else if let tableRowView = self.tableRowView, tableRowView.contentView == self {
+                tableRowView.setNeedsAutomaticUpdateConfiguration()
+            } else if let collectionViewItem = self.collectionViewItem, collectionViewItem.view == self {
+                collectionViewItem.setNeedsAutomaticUpdateConfiguration()
+            }
+        }
+    }
+    
+    var tableCellView: NSTableCellView? {
+        firstSuperview(for: NSTableCellView.self)
+    }
+    
+    var tableRowView: NSTableRowView? {
+        firstSuperview(for: NSTableRowView.self)
+    }
+    
+    var collectionViewItem: NSCollectionViewItem? {
+        firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem
+    }
     
     internal func updateConfiguration() {
         imageView.verticalConstraint?.activate(false)

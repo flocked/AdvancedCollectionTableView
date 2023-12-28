@@ -83,13 +83,14 @@ internal extension NSItemContentView {
             return intrinsicContentSize
         }
         
-        internal var collectionViewItem: NSCollectionViewItem? {
-            (firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)
+        internal var itemContentView: NSItemContentView? {
+            firstSuperview(for: NSItemContentView.self)
         }
         
         override public func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
+                itemContentView?.isEditing = true
                 previousStringValue = stringValue
             }
             return canBecome
@@ -97,13 +98,13 @@ internal extension NSItemContentView {
         
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
-            collectionViewItem?.isEditing = true
+            itemContentView?.isEditing = true
         }
         
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
             previousStringValue = stringValue
-            collectionViewItem?.isEditing = false
+            itemContentView?.isEditing = false
             properties.onEditEnd?(stringValue)
         }
         
