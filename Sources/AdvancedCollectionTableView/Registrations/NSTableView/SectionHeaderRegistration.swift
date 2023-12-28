@@ -89,8 +89,8 @@ public extension NSTableView {
             
             self.registerIfNeeded(for: tableView)
             if let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
-                sectionView.constraints.activate(false)
                 self.handler(sectionView, row, section)
+                sectionView.constraints.activate(false)
                 return sectionView
             } else {
                 let sectionView = SectionHeaderView()
