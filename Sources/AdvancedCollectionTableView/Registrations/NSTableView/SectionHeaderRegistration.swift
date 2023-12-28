@@ -89,6 +89,7 @@ public extension NSTableView {
             
             self.registerIfNeeded(for: tableView)
             if let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
+                sectionView.translatesAutoresizingMaskIntoConstraints = false
                 self.handler(sectionView, row, section)
                 return sectionView
             } else {
