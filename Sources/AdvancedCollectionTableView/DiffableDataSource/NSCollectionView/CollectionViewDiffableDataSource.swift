@@ -60,8 +60,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
+   @objc dynamic var _isDiffableDataSource: Bool {
+        return true
+    }
+    
     public override func responds(to aSelector: Selector!) -> Bool {
-        Swift.print("responds", aSelector)
+        Swift.print("responds", aSelector, super.responds(to: aSelector))
         return super.responds(to: aSelector)
     }
     /**
