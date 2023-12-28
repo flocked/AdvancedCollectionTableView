@@ -20,7 +20,8 @@ import QuickLookUI
  - Quicklook of items via spacebar by providing items conforming to `QuicklookPreviewable`.
  - A right click menu for selected items via ``menuProvider``.
  
- It includes handlers for:
+ __It includes handlers for:__
+ 
  - Prefetching of items via ``prefetchHandlers-swift.property``.
  - Reordering of items via ``reorderingHandlers-swift.property``.
  - Deleting of items via ``deletionHandlers-swift.property``.

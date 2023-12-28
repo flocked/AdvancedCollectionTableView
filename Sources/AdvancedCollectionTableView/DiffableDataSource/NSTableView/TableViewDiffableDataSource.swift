@@ -19,9 +19,8 @@ import FZSwiftUtils
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
  
- ### Handlers
-
- It includes handlers for:
+ __It includes handlers for:__
+ 
  - Reordering of items via ``reorderingHandlers-swift.property``.
  - Deleting of items via ``deletionHandlers-swift.property``.
  - Selecting of items via ``selectionHandlers-swift.property``.
@@ -370,6 +369,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
+            Swift.print("transaction", row)
             if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)

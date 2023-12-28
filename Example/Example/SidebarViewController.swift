@@ -66,7 +66,7 @@ class SidebarViewController: NSViewController {
     
     func applySnapshot() {
         var snapshot = Snapshot()
-        snapshot.appendSections([.main, .more])
+        snapshot.appendSections([.main, .more, .empty])
         snapshot.appendItems(SidebarItem.sampleItems, toSection: .main)
         snapshot.appendItems(SidebarItem.moreSampleItems, toSection: .more)
         dataSource.apply(snapshot, .usingReloadData)
