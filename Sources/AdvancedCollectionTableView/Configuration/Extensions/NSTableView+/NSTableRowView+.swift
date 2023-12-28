@@ -59,7 +59,7 @@ extension NSTableRowView {
      - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     public func defaultContentConfiguration() -> NSListContentConfiguration {
-        return NSListContentConfiguration.automaticRow()
+        return NSListContentConfiguration.plain()
     }
     
     /**

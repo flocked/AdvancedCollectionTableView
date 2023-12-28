@@ -57,7 +57,7 @@ open class NSTableSectionHeaderView: NSView {
      - Returns:A default section header view content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     open func defaultContentConfiguration() -> NSListContentConfiguration {
-        return NSListContentConfiguration.plain()
+        return NSListContentConfiguration.automaticRow()
     }
     
     /**
