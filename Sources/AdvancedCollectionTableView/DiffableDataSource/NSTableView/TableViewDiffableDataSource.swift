@@ -384,6 +384,14 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     }
     
     public func tableView( _ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        var row = row
+        if row >= self.numberOfRows(in: tableView) || sectionRowIndexes.contains(row) {
+            row = row - 1
+        }
+        if self.item(forRow: row) == nil {
+            return []
+        }
+        
         if dropOperation == .above {
             return .move
         }
