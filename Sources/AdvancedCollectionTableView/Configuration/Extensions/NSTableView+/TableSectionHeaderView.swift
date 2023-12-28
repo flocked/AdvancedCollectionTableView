@@ -224,8 +224,8 @@ open class NSTableSectionHeaderView: NSView {
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = KeyValueObserver(self)
-        tableCellObserver?.add(\.superview, handler: {old, new in
-           // Swift.print("SectionHeaderCell", self.superview ?? "nil", self.tableView ?? "nil")
+        tableCellObserver?.add(\.superview, handler: { old, new in
+            Swift.print("section supervie1", self.superview ?? "nil", self.tableView ?? "nil")
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
@@ -236,6 +236,10 @@ open class NSTableSectionHeaderView: NSView {
             }
             self.rowView?.observeTableRowView()
             self.setNeedsUpdateConfiguration()
+        })
+        
+        tableCellObserver?.add(\.superview?.superview, handler: { old, new in
+            Swift.print("section superview2", new ?? "nil", self.tableView ?? "nil")
         })
     }
 }
