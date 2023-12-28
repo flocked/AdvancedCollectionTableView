@@ -382,6 +382,10 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
             Swift.print("iacceptDrop sGroupRow", self.delegateBridge.tableView(tableView, isGroupRow: row))
+            var row = row
+            if self.delegateBridge.tableView(tableView, isGroupRow: row) {
+                row -= 1
+            }
             if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)
