@@ -557,13 +557,14 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     }
     
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
+
         var row = row
         var isLast: Bool = false
         if row >= self.numberOfRows(in: tableView) {
             row = row - 1
             isLast = true
         }
-        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
         Swift.print("movingTransaction", row)
         guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
             return nil
