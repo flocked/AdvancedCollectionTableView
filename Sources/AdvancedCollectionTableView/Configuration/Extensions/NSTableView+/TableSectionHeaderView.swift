@@ -233,7 +233,7 @@ open class NSTableSectionHeaderView: NSView {
     
     func sharedInit() {
         addSubview(withConstraint: observingView)
-        observingView.windowHandlers.isKey = { isKey in
+        observingView.windowHandlers.isMain = { isKey in
             self.isEmphasized = isKey
         }
         
