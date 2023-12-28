@@ -86,24 +86,23 @@ public extension NSTableView {
         public typealias Handler = ((_ view: SectionHeaderView, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
         internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeaderView {
-            
+            /*
             self.registerIfNeeded(for: tableView)
-            if let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
+            if viewIsTableCellView, let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
                 self.handler(sectionView, row, section)
-                sectionView.constraints.activate(false)
                 return sectionView
             } else {
                 let sectionView = SectionHeaderView()
                 self.handler(sectionView, row, section)
                 return sectionView
             }
-        
+            */
             let sectionView = SectionHeaderView()
             self.handler(sectionView, row, section)
             return sectionView
         }
         
-        
+        /*
         internal var viewIsTableCellView: Bool {
             SectionHeaderView.self is NSTableCellView.Type
         }
@@ -114,13 +113,14 @@ public extension NSTableView {
          
         
         internal func registerIfNeeded(for tableView: NSTableView) {
+            guard let sectionViewTableCellType = sectionViewTableCellType else { return }
             if let nib = nib {
                 if (tableView.registeredNibsByIdentifier?[self.identifier] != self.nib) {
                     tableView.register(nib, forIdentifier: self.identifier)
                 }
             } else {
                 if (tableView.registeredCellsByIdentifier[self.identifier] != SectionHeaderView.self) {
-                    tableView.register(SectionHeaderView.self, forIdentifier: self.identifier)
+                    tableView.register(sectionViewTableCellType, forIdentifier: self.identifier)
                 }
             }
         }
@@ -128,5 +128,6 @@ public extension NSTableView {
         internal func unregister(for tableView: NSTableView) {
             tableView.register(nil, forIdentifier: self.identifier)
         }
+        */
     }
 }

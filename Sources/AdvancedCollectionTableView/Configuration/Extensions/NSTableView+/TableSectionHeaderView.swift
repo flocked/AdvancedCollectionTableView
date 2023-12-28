@@ -14,10 +14,10 @@ import FZUIKit
  
  `NSTableSectionHeaderView` is responsible for displaying attributes associated with the section header.
  */
-open class NSTableSectionHeaderView: NSTableCellView {
+open class NSTableSectionHeaderView: NSView {
     
     // MARK: Managing the content
-    /*
+    
     /**
      The current content configuration of the section header view.
      
@@ -238,5 +238,4 @@ open class NSTableSectionHeaderView: NSTableCellView {
             self.setNeedsUpdateConfiguration()
         })
     }
-     */
 }
