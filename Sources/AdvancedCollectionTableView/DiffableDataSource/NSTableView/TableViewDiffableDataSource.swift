@@ -429,7 +429,7 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         return true
     }
     
-    @objc dynamic func _tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    @objc dynamic func _tableView(_ tableView: NSTableView, viewForTableColumn: NSTableColumn?, row: Int) -> NSView? {
         Swift.print("viewFor")
         return nil
     }
