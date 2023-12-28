@@ -424,6 +424,15 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     /// All current items in the collection view.
     public var items: [Item] { currentSnapshot.itemIdentifiers }
     
+    @objc dynamic var _isDiffableDataSource: Bool {
+         return true
+     }
+     
+     public override func responds(to aSelector: Selector!) -> Bool {
+         Swift.print("responds", aSelector, super.responds(to: aSelector))
+         return super.responds(to: aSelector)
+     }
+    
     /// An array of the selected items.
     public var selectedItems: [Item] {
         return self.tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
