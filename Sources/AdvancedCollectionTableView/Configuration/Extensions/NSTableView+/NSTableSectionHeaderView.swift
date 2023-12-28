@@ -30,7 +30,7 @@ open class NSTableSectionHeaderView: NSView {
     open var contentConfiguration: NSContentConfiguration? = nil  {
         didSet {
             if (contentConfiguration != nil) {
-                observeTableCellView()
+                observeSectionHeaderView()
             }
             configurateContentView()
         }
@@ -82,38 +82,7 @@ open class NSTableSectionHeaderView: NSView {
         let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
         return state
     }
-    
-    /// A Boolean value that indicates whether the section header view is in an editable state. (the text of a content configuration is currently edited).
-    @objc open var isEditing: Bool {
-        (contentView as? EdiitingContentView)?.isEditing ?? false
-    }
-    
-    /**
-     A Boolean value that specifies whether the section header view is hovered.
-     
-     A hovered cell view has the mouse pointer on it.
-     */
-    @objc open var isHovered: Bool = false {
-        didSet {
-            guard oldValue != isHovered else { return }
-            setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
-    /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
-    @objc open var isEmphasized: Bool = false {
-        didSet {
-            guard oldValue != isEmphasized else { return }
-            setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
-    /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
-    @objc open var isEnabled: Bool {
-        tableView?.isEnabled ?? true
-    }
-    
-    
+        
     /**
      Informs the section header view to update its configuration for its current state.
      
@@ -171,8 +140,41 @@ open class NSTableSectionHeaderView: NSView {
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
         didSet {
+            if configurationUpdateHandler != nil {
+                observeSectionHeaderView()
+            }
             self.setNeedsUpdateConfiguration()
         }
+    }
+    
+    /// A Boolean value that indicates whether the section header view is in an editable state. (the text of a content configuration is currently edited).
+    @objc open var isEditing: Bool {
+        (contentView as? EdiitingContentView)?.isEditing ?? false
+    }
+    
+    /**
+     A Boolean value that specifies whether the section header view is hovered.
+     
+     A hovered cell view has the mouse pointer on it.
+     */
+    @objc open var isHovered: Bool = false {
+        didSet {
+            guard oldValue != isHovered else { return }
+            setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
+    /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
+    @objc open var isEmphasized: Bool = false {
+        didSet {
+            guard oldValue != isEmphasized else { return }
+            setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
+    /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
+    @objc open var isEnabled: Bool {
+        tableView?.isEnabled ?? true
     }
     
     var contentView: (NSView & NSContentView)?  = nil
@@ -196,42 +198,17 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-    var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
-    
-    var rowView: NSTableRowView? {
-        return firstSuperview(for: NSTableRowView.self)
-    }
-    
+        
     var tableView: NSTableView? {
         firstSuperview(for: NSTableView.self)
     }
     
-    var tableStyleObserver: NSKeyValueObservation? = nil
-    
-    func observeTableCellView() {
-        guard sectionHeaderObserver == nil else { return }
-        sectionHeaderObserver = KeyValueObserver(self)
-        sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
-            guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
-                return
-            }
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
-        })
-    }
-    
-    let observingView = ObservingView()
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        sharedInit()
-    }
-    
-    public override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        sharedInit()
-    }
-        
-    func sharedInit() {
+    var observingView: ObservingView? = nil
+    var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
+
+    func observeSectionHeaderView() {
+        guard observingView == nil else { return }
+        let observingView = ObservingView(frame: .zero)
         addSubview(withConstraint: observingView)
         observingView.windowHandlers.isKey = { isKey in
             self.isEmphasized = isKey
@@ -246,5 +223,15 @@ open class NSTableSectionHeaderView: NSView {
             self.isHovered = true
             return true
         }
+        self.observingView = observingView
+        
+        guard sectionHeaderObserver == nil else { return }
+        sectionHeaderObserver = KeyValueObserver(self)
+        sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
+            guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
+                return
+            }
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
+        })
     }
 }

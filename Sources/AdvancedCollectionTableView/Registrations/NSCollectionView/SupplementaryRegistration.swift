@@ -11,21 +11,6 @@ import FZUIKit
 
 public extension NSCollectionView {
     /**
-     Dequeues a configured reusable supplementary view object.
-     
-     - Parameters:
-        - registration: The supplementary registration for configuring the supplementary view object. See ``AppKit/NSCollectionView/SupplementaryRegistration``.
-        - indexPath: The index path that specifies the location of the supplementary view in the collection view.
-     
-     - returns: A configured reusable supplementary view object.
-     */
-    func makeSupplementaryView<Supplementary>(using registration: SupplementaryRegistration<Supplementary>, for indexPath: IndexPath) -> Supplementary {
-        return registration.makeSupplementaryView(self, indexPath) as! Supplementary
-    }
-}
-
-public extension NSCollectionView {
-    /**
      A registration for the collection view’s supplementary views.
      
      Use a supplementary registration to register supplementary views, like headers and footers, with your collection view and configure each view for display. You create a supplementary registration with your supplementary view type and data item type as the registration’s generic parameters, passing in a registration handler to configure the view. In the registration handler, you specify how to configure the content and appearance of that type of supplementary view.
@@ -35,9 +20,9 @@ public extension NSCollectionView {
      ```swift
      let headerRegistration = NSCollectionView.SupplementaryRegistration
      <HeaderView>(elementKind: "Header") {
-     supplementaryView, string, indexPath in
-     supplementaryView.label.text = "\(string) for section \(indexPath.section)"
-     supplementaryView.backgroundColor = .lightGray
+        supplementaryView, string, indexPath in
+        supplementaryView.label.text = "\(string) for section \(indexPath.section)"
+        supplementaryView.backgroundColor = .lightGray
      }
      ```
      
@@ -45,8 +30,7 @@ public extension NSCollectionView {
      
      ```swift
      dataSource.supplementaryViewProvider = { supplementaryView, elementKind, indexPath in
-     return collectionView.makeSupplementaryView(using: headerRegistration,
-     for: indexPath)
+        return collectionView.makeSupplementaryView(using: headerRegistration, for: indexPath)
      }
      ```
      
@@ -125,6 +109,21 @@ public extension NSCollectionView {
             collectionView.register(any, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)
             collectionView.registeredSupplementaryRegistrations.remove(identifier)
         }
+    }
+}
+
+public extension NSCollectionView {
+    /**
+     Dequeues a configured reusable supplementary view object.
+     
+     - Parameters:
+        - registration: The supplementary registration for configuring the supplementary view object. See ``AppKit/NSCollectionView/SupplementaryRegistration``.
+        - indexPath: The index path that specifies the location of the supplementary view in the collection view.
+     
+     - returns: A configured reusable supplementary view object.
+     */
+    func makeSupplementaryView<Supplementary>(using registration: SupplementaryRegistration<Supplementary>, for indexPath: IndexPath) -> Supplementary {
+        return registration.makeSupplementaryView(self, indexPath) as! Supplementary
     }
 }
 

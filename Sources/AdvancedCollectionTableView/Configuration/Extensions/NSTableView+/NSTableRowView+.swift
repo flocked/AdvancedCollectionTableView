@@ -132,7 +132,10 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            self.setNeedsUpdateConfiguration()
+            if(newValue != nil) {
+                observeTableRowView()
+            }
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -144,7 +147,7 @@ extension NSTableRowView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+        let state = NSTableRowConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextRowSelected: isNextRowSelected, isPreviousRowSelected: isPreviousRowSelected)
         return state
     }
     

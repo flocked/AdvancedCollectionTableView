@@ -9,33 +9,6 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-/// A table view cell registration.
-public protocol NSTableViewCellRegistration {
-    /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
-    var columnIdentifiers: [NSUserInterfaceItemIdentifier]? { get }
-}
-
-internal protocol _NSTableViewCellRegistration {
-    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
-}
-
-public extension NSTableView {
-    /**
-     Dequeues a configured reusable cell object.
-     
-     - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
-        - column: The table column in which the cell gets displayed in the table view.
-        - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - element: The element that provides data for the cell.
-     
-     - returns:A configured reusable cell object.
-     */
-    func makeCell<Cell, Item>(using registration: CellRegistration<Cell, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> Cell? where Cell: NSTableCellView {
-        return registration.makeCell(self, column, row, item)
-    }
-}
-
 public extension NSTableView {
     /**
      A registration for the table view’s cells.
@@ -46,7 +19,13 @@ public extension NSTableView {
      
      ```swift
      let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, column, row, string in
-     cell.textField.stringValue = string
+     
+        var contentConfiguration = cell.defaultContentConfiguration()
+     
+        contentConfiguration.text = string
+        contentConfiguration.textProperties.color = .lightGray
+     
+        cell.contentConfiguration = contentConfiguration
      }
      ```
      
@@ -55,21 +34,21 @@ public extension NSTableView {
      ```swift
      dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
      tableView, column, row, element in
-     return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)
+        return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)
      }
      ```
      
      `NSTableViewDiffableDataSource` provides a convenient initalizer:
      
      ```swift
-     dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
+     dataSource = NSTableViewDiffableDataSource(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
      
-     With `columnIdentifiers` you can restrict the cell to specific table columns with the same identifiers. The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value is `nil`,
-     
-     Do use the registration for specific table columns, use their c
-     
      You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``.
+     
+     ## Column Identifiers
+     
+     With `columnIdentifiers` you can restrict the cell to specific table columns when used with ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``. You only have to provide column identifiers when your table view has multiple columns and the columns should use different types of table cells. The data source will use the matching cell registration for each column.
      
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
@@ -92,7 +71,7 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns when used with `TableViewDiffableDataSource`.
             - handler: The handler to configurate the cell.
          */
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
@@ -107,7 +86,7 @@ public extension NSTableView {
          
          - Parameters:
             - nib: The nib of the cell.
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns when used with `TableViewDiffableDataSource`.
             - handler: The handler to configurate the cell.
          */
         public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
@@ -161,4 +140,31 @@ public extension NSTableView {
             tableView.register(nil, forIdentifier: self.identifier)
         }
     }
+}
+
+public extension NSTableView {
+    /**
+     Dequeues a configured reusable cell object.
+     
+     - Parameters:
+        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
+        - column: The table column in which the cell gets displayed in the table view.
+        - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+        - element: The element that provides data for the cell.
+     
+     - returns:A configured reusable cell object.
+     */
+    func makeCell<Cell, Item>(using registration: CellRegistration<Cell, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> Cell? where Cell: NSTableCellView {
+        return registration.makeCell(self, column, row, item)
+    }
+}
+
+/// A table view cell registration.
+public protocol NSTableViewCellRegistration {
+    /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
+    var columnIdentifiers: [NSUserInterfaceItemIdentifier]? { get }
+}
+
+internal protocol _NSTableViewCellRegistration {
+    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
 }

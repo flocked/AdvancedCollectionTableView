@@ -12,15 +12,13 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- A `NSCollectionViewDiffableDataSource` with additional functionality..
+ A  `NSCollectionViewDiffableDataSource` with additional functionality..
  
  The diffable data source provides:
  - Reordering of items by enabling ``allowsReordering``.
  - Deleting of items by enabling  ``allowsDeleting``.
  - Quicklook of items via spacebar by providing items conforming to `QuicklookPreviewable`.
- - A right click menu provider for selected items via ``menuProvider``.
-
- ### Handlers
+ - A right click menu for selected items via ``menuProvider``.
  
  It includes handlers for:
  - Prefetching of items via ``prefetchHandlers-swift.property``.

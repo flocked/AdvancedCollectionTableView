@@ -11,22 +11,6 @@ import FZUIKit
 
 public extension NSTableView {
     /**
-     Dequeues a configured reusable section view object.
-     
-     - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionHeaderRegistration``.
-        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - section: The section element that provides data for the cell.
-     
-     - returns:A configured reusable section view object.
-     */
-    func makeSectionView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
-        return registration.makeView(self, row, section)
-    }
-}
-
-public extension NSTableView {
-    /**
      A registration for the table view’s section header views.
      
      Use a section view registration to register views with your table view and configure each view for display. You create a section view registration with your view type and section type as the registration’s generic parameters, passing in a registration handler to configure the view. In the registration handler, you specify how to configure the content and appearance of that type of view.
@@ -129,5 +113,21 @@ public extension NSTableView {
             tableView.register(nil, forIdentifier: self.identifier)
         }
         */
+    }
+}
+
+public extension NSTableView {
+    /**
+     Dequeues a configured reusable section view object.
+     
+     - Parameters:
+        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionHeaderRegistration``.
+        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
+        - section: The section element that provides data for the cell.
+     
+     - returns:A configured reusable section view object.
+     */
+    func makeSectionView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
+        return registration.makeView(self, row, section)
     }
 }

@@ -10,23 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 
 public extension NSCollectionView {
-    // MARK: Creating items
-    /**
-     Dequeues a configured reusable item object.
-     
-     - Parameters:
-        - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
-        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
-        - element: The element that provides data for the item.
-     
-     - returns:A configured reusable item object.
-     */
-    func makeItem<Item, Element>(using registration: ItemRegistration<Item, Element>, for indexPath: IndexPath, element: Element) -> Item where Item: NSCollectionViewItem {
-        return registration.makeItem(self, indexPath, element)
-    }
-}
-
-public extension NSCollectionView {
     /**
      A registration for the collection view’s items.
      
@@ -144,6 +127,23 @@ public extension NSCollectionView {
             collectionView.register(any, forItemWithIdentifier: self.identifier)
             collectionView.registeredItemRegistrations.remove(self.identifier)
         }
+    }
+}
+
+public extension NSCollectionView {
+    // MARK: Creating items
+    /**
+     Dequeues a configured reusable item object.
+     
+     - Parameters:
+        - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
+        - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
+        - element: The element that provides data for the item.
+     
+     - returns:A configured reusable item object.
+     */
+    func makeItem<Item, Element>(using registration: ItemRegistration<Item, Element>, for indexPath: IndexPath, element: Element) -> Item where Item: NSCollectionViewItem {
+        return registration.makeItem(self, indexPath, element)
     }
 }
 

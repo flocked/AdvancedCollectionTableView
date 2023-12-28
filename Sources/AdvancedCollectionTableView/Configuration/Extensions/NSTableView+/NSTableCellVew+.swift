@@ -104,8 +104,6 @@ extension NSTableCellView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSTableCellConfigurationState {
-        NSTableRowConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
-        
         let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
         return state
     }
@@ -179,6 +177,9 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
+            if(newValue != nil) {
+                observeTableCellView()
+            }
             setNeedsUpdateConfiguration()
         }
     }
@@ -257,4 +258,7 @@ extension NSTableCellView {
  @objc open var isPreviousRowSelected: Bool {
      rowView?.isPreviousRowSelected ?? false
  }
+ 
+ NSTableRowConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
+
  */

@@ -271,10 +271,10 @@ extension NSCollectionViewItem {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             if(newValue != nil) {
-                self.observeCollectionItem()
+                observeCollectionItem()
             }
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            self.setNeedsUpdateConfiguration()
+            setNeedsUpdateConfiguration()
         }
     }
     
