@@ -55,7 +55,6 @@ extension NSTableView {
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         let row = self.row(at: location)
-                        Swift.print(row)
                         if row != -1 {
                             self.hoveredRow = IndexPath(item: row, section: 0)
                         } else {
