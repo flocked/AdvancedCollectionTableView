@@ -419,9 +419,47 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         return nil
     }
     
+    public override func responds(to aSelector: Selector!) -> Bool {
+        Swift.print("responds", aSelector, super.responds(to: aSelector))
+        return super.responds(to: aSelector)
+    }
+    
    @objc dynamic var _isDiffableDataSource: Bool {
         Swift.print("_isDiffableDataSource")
         return true
+    }
+    
+    @objc dynamic func _tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        Swift.print("viewFor")
+        return nil
+    }
+    
+    /**
+     Asks the delegate for a view to display the specified row.
+     
+     - Parameters:
+        - tableView: The table view that sent the message.
+        - row: The row index.
+     
+     - Returns: An instance or subclass of NSTableRowView. If nil is returned, an NSTableRowView instance will be created and used.
+     */
+    @objc dynamic func _tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        Swift.print("rowViewForRow")
+        return nil
+    }
+    
+    /**
+     Returns whether the specified row is a group row.
+     
+     - Parameters:
+        - tableView: The table view that sent the message.
+        - row: The row index.
+     
+     - Returns: `true` if the specified row should have the group row style drawn, `false otherwise.
+     */
+   @objc dynamic func _tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+        Swift.print("isGroupRow")
+        return false
     }
             
     // MARK: - Elements
