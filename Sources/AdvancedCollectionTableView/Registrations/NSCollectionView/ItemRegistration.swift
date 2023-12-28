@@ -85,9 +85,7 @@ public extension NSCollectionView {
         /**
          Creates a item registration with the specified registration handler.
          
-         - Parameters:
-            - identifier: The identifier of the item registration.
-            - handler: The handler to configurate the item.
+         - Parameter handler: The handler to configurate the item.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
@@ -100,7 +98,6 @@ public extension NSCollectionView {
          
          - Parameters:
             - nib: The nib of the item.
-            - identifier: The identifier of the item registration.
             - handler: The handler to configurate the item.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
@@ -112,7 +109,7 @@ public extension NSCollectionView {
         /// A closure that handles the item registration and configuration.
         public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ itemIdentifier: Element)->(Void))
         
-        internal func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
+        func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
             if isRegistered(collectionView) == false {
                 self.register(for: collectionView)
             }
@@ -126,11 +123,11 @@ public extension NSCollectionView {
             return item
         }
         
-        internal func isRegistered(_ collectionView: NSCollectionView) -> Bool {
+        func isRegistered(_ collectionView: NSCollectionView) -> Bool {
             collectionView.registeredItemRegistrations.contains(self.identifier)
         }
         
-        internal func register(for collectionView: NSCollectionView) {
+        func register(for collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forItemWithIdentifier: self.identifier)
             } else {
@@ -139,7 +136,7 @@ public extension NSCollectionView {
             collectionView.registeredItemRegistrations.append(self.identifier)
         }
         
-        internal func unregister(for collectionView: NSCollectionView) {
+        func unregister(for collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forItemWithIdentifier: self.identifier)
             collectionView.registeredItemRegistrations.remove(self.identifier)
@@ -147,7 +144,7 @@ public extension NSCollectionView {
     }
 }
 
-internal extension NSCollectionView {
+extension NSCollectionView {
     var registeredItemRegistrations: [NSUserInterfaceItemIdentifier] {
         get { getAssociatedValue(key: "_registeredItemRegistrations", object: self, initialValue: []) }
         set { set(associatedValue: newValue, key: "_registeredItemRegistrations", object: self)

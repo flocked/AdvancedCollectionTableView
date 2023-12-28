@@ -54,7 +54,8 @@ public extension NSTableViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let tableView =  (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
                         let selecedRowIndexes = tableView.selectedRowIndexes.map({$0})
-                        var elementsToDelete = self.itemIdentifiers(for: selecedRowIndexes)
+                                                
+                        var elementsToDelete = selecedRowIndexes.compactMap({self.itemIdentifier(forRow:$0)})
                         elementsToDelete = self.deletionHandlers.canDelete?(elementsToDelete) ?? elementsToDelete
                         if (elementsToDelete.isEmpty == false) {
                             if QuicklookPanel.shared.isVisible {

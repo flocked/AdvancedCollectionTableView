@@ -20,6 +20,11 @@ internal protocol _NSTableViewCellRegistration {
 }
 
 public extension NSTableView {
+    func test() {
+        var dic: [NSUserInterfaceItemIdentifier: NSTableViewCellRegistration] = [:]
+        var abc: NSUserInterfaceItemIdentifier = ""
+    }
+    
     /**
      Dequeues a configured reusable cell object.
      
@@ -40,7 +45,7 @@ public extension NSTableView {
     /**
      A registration for the table view’s cells.
      
-     Use a cell registration to register cells with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
+     Use a cell registration to register table cell views with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
      
      The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
      
@@ -65,6 +70,10 @@ public extension NSTableView {
      dataSource = NSTableViewDiffableDataSource<Section, String>(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
      
+     With `columnIdentifiers` you can restrict the cell to specific table columns with the same identifiers. The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value is `nil`,
+     
+     Do use the registration for specific table columns, use their c
+     
      You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:element:)``.
      
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
@@ -75,7 +84,11 @@ public extension NSTableView {
         private let nib: NSNib?
         private let handler: Handler
         
-        /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
+        /**
+         The identifiers of the table columns, or `nil`, if the cell isn't restricted to specific columns.
+         
+         The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value isn't `nil`, the table cell is displayed for the columns with the same identifiers.
+         */
         public let columnIdentifiers: [NSUserInterfaceItemIdentifier]?
         
         // MARK: Creating a cell registration
@@ -84,7 +97,7 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-            - columnIdentifiers: The identifiers of the table columns,. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
@@ -99,7 +112,7 @@ public extension NSTableView {
          
          - Parameters:
             - nib: The nib of the cell.
-            - columnIdentifiers: The identifiers of the table columns,. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
         public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {

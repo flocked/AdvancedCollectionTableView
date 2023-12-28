@@ -227,6 +227,7 @@ extension NSTableCellView {
         set {  set(associatedValue: newValue, key: "tableCellObserver", object: self) }
     }
     
+    // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
         tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in

@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableView {
+extension NSTableView {
     /**
      Registers a class to use when creating new cells in the table view.
      
@@ -17,7 +17,7 @@ public extension NSTableView {
      
      - Parameter cellClass: The table cell view class to register.
      */
-    func register(_ cellClass: NSTableCellView.Type) {
+    public func register(_ cellClass: NSTableCellView.Type) {
         self.register(cellClass, forIdentifier: .init(cellClass))
     }
     
@@ -30,7 +30,7 @@ public extension NSTableView {
         - cellClass: The table cell view class to register.
         - identifier: The string that identifies the type of cell. You use this string later when requesting a cell and it must be unique among the other registered cell classes of this table view. This parameter must not be an empty string or nil.
      */
-    func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+    public func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
         Self.swizzleTableViewCellRegister()
         registeredCellsByIdentifier[identifier] = cellClass
         self.registeredCellsByIdentifier = registeredCellsByIdentifier
@@ -47,14 +47,12 @@ public extension NSTableView {
      
      This method is usually called by the delegate in `tableView(_:viewFor:row:)`, but it can also be overridden to provide custom views for cell class. Note that `awakeFromNib()` is called each time this method is called, which means that `awakeFromNib` is also called on owner, even though the owner is already awake.
      
-     - Parameters:
-        - cellClass: The class of the table cell view.
-        - owner: The owner of the NIB that may be loaded and instantiated to create a new view with the specified identifier.
+     - Parameter cellClass: The class of the table cell view.
      
      - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
      */
-    func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type, owner: Any? = nil) -> TableCellView? {
-        self.makeView(withIdentifier: .init(cellClass), owner: owner) as? TableCellView
+    public func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type) -> TableCellView? {
+        self.makeView(withIdentifier: .init(cellClass), owner: nil) as? TableCellView
     }
     
     /**
@@ -62,20 +60,19 @@ public extension NSTableView {
      
      Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.
      */
-    internal var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
+    var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
         get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self, initialValue: [:]) }
         set { set(associatedValue: newValue, key: "_registeredCellsByIdentifier", object: self) }
     }
     
-    @objc internal func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+    @objc func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
         if nib == nil, registeredCellsByIdentifier[identifier] != nil {
             registeredCellsByIdentifier[identifier] = nil
-        } else {
-            self.swizzled_register(nib, forIdentifier: identifier)
         }
+        self.swizzled_register(nib, forIdentifier: identifier)
     }
     
-    @objc internal func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
+    @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
         if let registeredCellClass = self.registeredCellsByIdentifier[identifier] {
             if let tableCellView = self.swizzled_makeView(withIdentifier: identifier, owner: owner) {
                 return tableCellView
@@ -88,12 +85,12 @@ public extension NSTableView {
         return self.swizzled_makeView(withIdentifier: identifier, owner: owner)
     }
     
-    static internal var didSwizzleTableViewCellRegister: Bool {
-        get { getAssociatedValue(key: "NSTableView_didSwizzleTableViewCellRegister", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "NSTableView_didSwizzleTableViewCellRegister", object: self) }
+    static var didSwizzleTableViewCellRegister: Bool {
+        get { getAssociatedValue(key: "didSwizzleTableViewCellRegister", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleTableViewCellRegister", object: self) }
     }
     
-    @objc internal static func swizzleTableViewCellRegister() {
+    @objc static func swizzleTableViewCellRegister() {
         guard didSwizzleTableViewCellRegister == false else { return }
         didSwizzleTableViewCellRegister = true
         do {

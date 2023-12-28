@@ -418,6 +418,11 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         }
         return nil
     }
+    
+   @objc dynamic var _isDiffableDataSource: Bool {
+        Swift.print("_isDiffableDataSource")
+        return true
+    }
             
     // MARK: - Elements
     
