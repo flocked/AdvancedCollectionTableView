@@ -67,7 +67,7 @@ extension NSCollectionViewItem {
      
      When this value is true, the item automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
      
-     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the background configuration, disable automatic updates by setting this property to false.
+     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
         get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
@@ -247,7 +247,7 @@ extension NSCollectionViewItem {
     /**
      A block for handling updates to the item’s configuration using the current state.
      
-     Set a configuration update handler to update the item’s configuration using the new state in response to a configuration state change:
+     A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
      
      ```swift
      item.configurationUpdateHandler = { item, state in

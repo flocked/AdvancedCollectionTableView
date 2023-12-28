@@ -67,7 +67,7 @@ extension NSTableRowView {
      
      When this value is true, the row automatically calls  `updated(for:)` on its ``contentConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
      
-     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
@@ -113,7 +113,7 @@ extension NSTableRowView {
     /**
      A block for handling updates to the row’s configuration using the current state.
      
-     Set a configuration update handler to update the row’s configuration using the new state in response to a configuration state change:
+     A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
      
      ```swift
      rowView.configurationUpdateHandler = { rowView, state in
