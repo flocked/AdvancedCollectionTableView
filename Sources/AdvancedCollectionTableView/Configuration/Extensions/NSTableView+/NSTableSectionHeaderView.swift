@@ -1,5 +1,5 @@
 //
-//  SectionHeaderView.swift
+//  NSTableSectionHeaderView.swift
 //  
 //
 //  Created by Florian Zand on 27.12.23.
@@ -30,9 +30,9 @@ open class NSTableSectionHeaderView: NSView {
     open var contentConfiguration: NSContentConfiguration? = nil  {
         didSet {
             if (contentConfiguration != nil) {
-                self.observeTableCellView()
+                observeTableCellView()
             }
-            self.configurateContentView()
+            configurateContentView()
         }
     }
     
@@ -57,7 +57,7 @@ open class NSTableSectionHeaderView: NSView {
      - Returns:A default section header view content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     open func defaultContentConfiguration() -> NSListContentConfiguration {
-        return NSListContentConfiguration.automaticRow()
+        NSListContentConfiguration.automaticRow()
     }
     
     /**
@@ -69,8 +69,7 @@ open class NSTableSectionHeaderView: NSView {
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool = true {
         didSet {
-            self.setNeedsUpdateConfiguration()
-            
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -111,7 +110,7 @@ open class NSTableSectionHeaderView: NSView {
     
     /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
     @objc open var isEnabled: Bool {
-        get { tableView?.isEnabled ?? true }
+        tableView?.isEnabled ?? true
     }
     
     
@@ -123,7 +122,7 @@ open class NSTableSectionHeaderView: NSView {
      If you add custom states to the section header view’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
-        self.updateConfiguration(using: configurationState)
+        updateConfiguration(using: configurationState)
     }
     
     func setNeedsAutomaticUpdateConfiguration() {

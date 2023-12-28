@@ -1,6 +1,6 @@
 //
-//  NSCollectionView.swift
-//  NSHostingViewSizeInTableView
+//  NSCollectionView+.swift
+//
 //
 //  Created by Florian Zand on 01.11.22.
 //

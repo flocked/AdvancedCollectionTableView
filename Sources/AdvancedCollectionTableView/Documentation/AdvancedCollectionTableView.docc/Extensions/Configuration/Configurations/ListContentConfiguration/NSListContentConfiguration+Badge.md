@@ -4,56 +4,56 @@
 
 ### Creating a badge
 
-- ``NSListContentConfiguration/Badge-swift.struct/init()``
-- ``NSListContentConfiguration/Badge-swift.struct/text(_:font:color:)``
-- ``NSListContentConfiguration/Badge-swift.struct/image(_:color:)``
-- ``NSListContentConfiguration/Badge-swift.struct/symbolImage(_:textStyle:color:)``
+- ``init()``
+- ``text(_:font:color:)``
+- ``image(_:color:)``
+- ``symbolImage(_:textStyle:color:)``
 
 ### Configurating badge
 
-- ``NSListContentConfiguration/Badge-swift.struct/position-swift.property``
-- ``NSListContentConfiguration/Badge-swift.struct/Position-swift.enum``
+- ``position-swift.property``
+- ``Position-swift.enum``
 
 ### Customizing content
 
-- ``NSListContentConfiguration/Badge-swift.struct/text``
-- ``NSListContentConfiguration/Badge-swift.struct/attributedText``
-- ``NSListContentConfiguration/Badge-swift.struct/image``
+- ``text``
+- ``attributedText``
+- ``image``
 
 ### Customizing content appearance
 
-- ``NSListContentConfiguration/Badge-swift.struct/font``
-- ``NSListContentConfiguration/Badge-swift.struct/imageProperties-swift.property``
-- ``NSListContentConfiguration/Badge-swift.struct/ImageProperties-swift.struct``
+- ``font``
+- ``imageProperties-swift.property``
+- ``ImageProperties-swift.struct``
 
 ### Customizing color
 
-- ``NSListContentConfiguration/Badge-swift.struct/color``
-- ``NSListContentConfiguration/Badge-swift.struct/colorTransform``
-- ``NSListContentConfiguration/Badge-swift.struct/resolvedColor()``
+- ``color``
+- ``colorTransform``
+- ``resolvedColor()``
 
 ### Customizing background color
 
-- ``NSListContentConfiguration/Badge-swift.struct/backgroundColor``
-- ``NSListContentConfiguration/Badge-swift.struct/backgroundColorTransform``
-- ``NSListContentConfiguration/Badge-swift.struct/resolvedBackgroundColor()``
+- ``backgroundColor``
+- ``backgroundColorTransform``
+- ``resolvedBackgroundColor()``
 
 ### Customizing border
 
-- ``NSListContentConfiguration/Badge-swift.struct/cornerRadius``
-- ``NSListContentConfiguration/Badge-swift.struct/borderWidth``
-- ``NSListContentConfiguration/Badge-swift.struct/borderColor``
-- ``NSListContentConfiguration/Badge-swift.struct/borderColorTransform``
-- ``NSListContentConfiguration/Badge-swift.struct/resolvedBorderColor()``
+- ``cornerRadius``
+- ``borderWidth``
+- ``borderColor``
+- ``borderColorTransform``
+- ``resolvedBorderColor()``
 
 
 ### Customizing shadow
 
-- ``NSListContentConfiguration/Badge-swift.struct/shadowProperties``
+- ``shadow``
 
 
 ### Customizing layout
 
-- ``NSListContentConfiguration/Badge-swift.struct/margins``
-- ``NSListContentConfiguration/Badge-swift.struct/maxWidth``
-- ``NSListContentConfiguration/Badge-swift.struct/imageToTextPadding``
+- ``margins``
+- ``maxWidth``
+- ``imageToTextPadding``

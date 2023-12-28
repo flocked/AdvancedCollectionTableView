@@ -5,22 +5,27 @@
 ## Topics
 
 ### Creating a diffable data source
+
 - ``init(tableView:cellProvider:)``
 - ``init(tableView:cellRegistrations:)``
 - ``init(tableView:cellRegistration:)``
 - ``CellProvider``
 
 ### Creating row views
+
 - ``rowViewProvider-swift.property``
 - ``RowViewProvider-swift.typealias``
 - ``applyRowViewRegistration(_:)``
 
 ### Creating section header views
+
 - ``sectionHeaderViewProvider-swift.property``
 - ``SectionHeaderViewProvider-swift.typealias``
 - ``applySectionHeaderViewRegistration(_:)``
 
 ### Identifying items
+
+- ``items``
 - ``item(forRow:)``
 - ``row(for:)-3ouhk``
 - ``item(at:)``
@@ -32,22 +37,27 @@
 - ``deselectItems(in:)``
 
 ### Identifying sections
+
+- ``sections``
 - ``section(forRow:)``
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:scrollPosition:)``
 
 ### Updating data
+
 - ``snapshot()``
 - ``apply(_:_:completion:)``
+- ``defaultRowAnimation``
 
-### Configurating
+### Configurating user interaction
+
 - ``allowsDeleting``
 - ``allowsReordering``
-- ``defaultRowAnimation``
 - ``menuProvider``
 - ``rowActionProvider``
 
 ### Handlers
+
 - ``columnHandlers-swift.property``
 - ``deletionHandlers-swift.property``
 - ``dragDropHandlers-swift.property``
@@ -62,6 +72,7 @@
 - ``SelectionHandlers-swift.struct``
 
 ### Data source requirements
+
 - ``numberOfRows(in:)``
 - ``tableView(_:acceptDrop:row:dropOperation:)``
 - ``tableView(_:draggingSession:endedAt:operation:)``

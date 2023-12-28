@@ -1,6 +1,6 @@
 //
 //  NSTableRowView+.swift
-//  NSTableViewRegister
+//  
 //
 //  Created by Florian Zand on 14.12.22.
 //
@@ -189,12 +189,12 @@ extension NSTableRowView {
      A hovered row view has the mouse pointer on it.
      */
     @objc open var isHovered: Bool {
-        get { self.tableView?.hoveredRowView == self }
+        tableView?.hoveredRowView == self
     }
     
     /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).
     @objc open var isEnabled: Bool {
-        get { self.tableView?.isEnabled ?? true }
+        tableView?.isEnabled ?? true
     }
     
     /// A Boolean value that indicates whether the row view is in an editable state. (the text of a content configuration is currently edited).
@@ -204,25 +204,21 @@ extension NSTableRowView {
     
     /// A Boolean value that specifies whether the row view is emphasized (the window is key).
     @objc open var isEmphasized: Bool {
-        get { self.window?.isKeyWindow ?? false }
-    }
-    
-    func setCellViewsNeedUpdateConfiguration() {
-        self.cellViews.forEach({ $0.setNeedsUpdateConfiguration() })
+        window?.isKeyWindow ?? false
     }
     
     func setCellViewsNeedAutomaticUpdateConfiguration() {
-        self.cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
+        cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
     }
     
     var rowObserver: KeyValueObserver<NSTableRowView>? {
         get { getAssociatedValue(key: "rowObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "rowObserver", object: self) }
+        set { set(associatedValue: newValue, key: "rowObserver", object: self) }
     }
     
     var needsAutomaticRowHeights: Bool {
         get { getAssociatedValue(key: "needsAutomaticRowHeights", object: self, initialValue: false) }
-        set {  set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
+        set { set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
     }
     
     func observeTableRowView() {

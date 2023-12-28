@@ -1,6 +1,6 @@
 //
-//  TableViewDiffableDataSourceNew+.swift
-//  TableDelegate
+//  TableViewDiffableDataSource.swift
+//
 //
 //  Created by Florian Zand on 01.08.23.
 //
@@ -370,8 +370,9 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
         
     }
     
-    /// A closure that configures and returns a cell for a table view from its diffable data source.
+    /// A closure that configures and returns a cell view for a table view from its diffable data source.
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
+    
     
     // MARK: - DataSource conformance
     
@@ -381,11 +382,6 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if self.dragingRowIndexes.isEmpty == false {
-            Swift.print("iacceptDrop sGroupRow", self.delegateBridge.tableView(tableView, isGroupRow: row))
-            var row = row
-            if self.delegateBridge.tableView(tableView, isGroupRow: row) {
-                row -= 1
-            }
             if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)
@@ -557,15 +553,13 @@ public class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewD
     }
     
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
-        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
-
         var row = row
         var isLast: Bool = false
         if row >= self.numberOfRows(in: tableView) {
             row = row - 1
             isLast = true
         }
-        Swift.print("movingTransaction", row)
+        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
         guard self.reorderingHandlers.canReorder?(dragingItems) ?? self.allowsReordering, let toItem = self.item(forRow: row) else {
             return nil
         }

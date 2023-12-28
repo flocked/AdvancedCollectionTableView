@@ -1,6 +1,6 @@
 //
 //  CollectionViewDiffableDataSource.swift
-//  Coll
+//  
 //
 //  Created by Florian Zand on 02.11.22.
 //
@@ -60,6 +60,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
+    public override func responds(to aSelector: Selector!) -> Bool {
+        Swift.print("responds", aSelector)
+        return super.responds(to: aSelector)
+    }
     /**
      The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
      */

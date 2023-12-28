@@ -4,44 +4,44 @@
 
 ### Creating item configurations
 
-- ``NSItemContentConfiguration/init()``
-- ``NSItemContentConfiguration/viewItem(_:text:secondaryText:cornerRadius:)``
-- ``NSItemContentConfiguration/imageItem(_:text:secondaryText:cornerRadius:)``
-- ``NSItemContentConfiguration/listItem(_:secondaryText:image:)``
+- ``init()``
+- ``viewItem(_:text:secondaryText:cornerRadius:)``
+- ``imageItem(_:text:secondaryText:cornerRadius:)``
+- ``listItem(_:secondaryText:image:)``
 
 ### Customizing content
 
-- ``NSItemContentConfiguration/text``
-- ``NSItemContentConfiguration/attributedText``
-- ``NSItemContentConfiguration/secondaryText``
-- ``NSItemContentConfiguration/secondaryAttributedText``
-- ``NSItemContentConfiguration/image``
-- ``NSItemContentConfiguration/view``
-- ``NSItemContentConfiguration/overlayView``
-- ``NSItemContentConfiguration/badges``
-- ``NSItemContentConfiguration/Badge``
+- ``text``
+- ``attributedText``
+- ``secondaryText``
+- ``secondaryAttributedText``
+- ``image``
+- ``view``
+- ``overlayView``
+- ``badges``
+- ``Badge``
 
 
 ### Customizing appearance
 
-- ``NSItemContentConfiguration/textProperties``
-- ``NSItemContentConfiguration/secondaryTextProperties``
-- ``NSItemContentConfiguration/contentProperties-swift.property``
-- ``NSItemContentConfiguration/scaleTransform``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct``
+- ``textProperties``
+- ``secondaryTextProperties``
+- ``contentProperties-swift.property``
+- ``scaleTransform``
+- ``ContentProperties-swift.struct``
 
 ### Customizing layout
 
-- ``NSItemContentConfiguration/contentPosition-swift.property``
-- ``NSItemContentConfiguration/contentToTextPadding``
-- ``NSItemContentConfiguration/textToSecondaryTextPadding``
-- ``NSItemContentConfiguration/margins``
-- ``NSItemContentConfiguration/ContentPosition-swift.enum``
+- ``contentPosition-swift.property``
+- ``contentToTextPadding``
+- ``textToSecondaryTextPadding``
+- ``margins``
+- ``ContentPosition-swift.enum``
 
 ### Creating a content view
 
-- ``NSItemContentConfiguration/makeContentView()``
+- ``makeContentView()``
 
 ### Updating the configuration
 
-- ``NSItemContentConfiguration/updated(for:)-6d5nh``
+- ``updated(for:)-6d5nh``

@@ -4,13 +4,11 @@
 
 ### Creating row configuration states
 
-- ``init(isSelected:isEnabled:isFocused:isHovered:isEditing:isExpanded:isEmphasized:isNextRowSelected:isPreviousRowSelected:)``
+- ``init(isSelected:isEnabled:isHovered:isEditing:isEmphasized:isNextRowSelected:isPreviousRowSelected:)``
 
 ### Managing row configuration states
 
 - ``isSelected``
-- ``isExpanded``
-- ``isFocused``
 - ``isEditing``
 - ``isEmphasized``
 - ``isPreviousRowSelected``
@@ -20,4 +18,4 @@
 
 ### Creating a configuration state manually
 
-- ``subscript(key:)``
+- ``subscript(_:)``

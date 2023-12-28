@@ -4,7 +4,7 @@
 
 ### Creating cell configuration states
 
-- ``init(isSelected:isEditing:isEmphasized:isHovered:)``
+- ``init(isSelected:isEditing:isEmphasized:isHovered:isEnabled:)``
 
 ### Managing cell configuration states
 
@@ -12,8 +12,8 @@
 - ``isEmphasized``
 - ``isHovered``
 - ``isEditing``
-
+- ``isEnabled``
 
 ### Creating a configuration state manually
 
-- ``subscript(key:)``
+- ``subscript(_:)``

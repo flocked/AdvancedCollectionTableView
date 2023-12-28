@@ -1,6 +1,6 @@
 //
 //  NSTableView+.swift
-//  NSTableViewRegister
+//  
 //
 //  Created by Florian Zand on 10.12.22.
 //

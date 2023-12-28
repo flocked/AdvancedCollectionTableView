@@ -180,7 +180,6 @@ extension NSTableCellView {
         }
     }
     
-    
     /**
      A Boolean value that specifies whether the cell view is hovered.
      

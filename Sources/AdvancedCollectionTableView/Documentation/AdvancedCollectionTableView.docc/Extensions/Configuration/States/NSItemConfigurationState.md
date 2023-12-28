@@ -14,7 +14,6 @@
 - ``isHovered``
 - ``highlight``
 
-
 ### Creating a configuration state manually
 
-- ``subscript(key:)``
+- ``subscript(_:)``

@@ -4,42 +4,43 @@
 
 ### Creating item configurations
 
-- ``NSListContentConfiguration/init()``
-- ``NSListContentConfiguration/plain(imageColor:)``
-- ``NSListContentConfiguration/sidebar(imageColor:)``
-- ``NSListContentConfiguration/sidebarHeader()``
-- ``NSListContentConfiguration/sidebarLarge(imageColor:)``
-- ``NSListContentConfiguration/image(systemName:imageColor:)``
+- ``init()``
+- ``plain(imageColor:)``
+- ``sidebar(imageColor:)``
+- ``sidebarHeader(imageColor:)``
+- ``sidebarLarge(imageColor:)``
+- ``text(_:)``
+- ``editableText(_:placeholderText:onTextEditEnd:)``
+
 
 ### Customizing content
 
-- ``NSListContentConfiguration/text``
-- ``NSListContentConfiguration/attributedText``
-- ``NSListContentConfiguration/secondaryText``
-- ``NSListContentConfiguration/secondaryAttributedText``
-- ``NSListContentConfiguration/image``
-- ``NSListContentConfiguration/badge-swift.property``
-- ``NSListContentConfiguration/Badge-swift.struct``
-
+- ``text``
+- ``attributedText``
+- ``secondaryText``
+- ``secondaryAttributedText``
+- ``image``
+- ``badge-swift.property``
+- ``Badge-swift.struct``
 
 ### Customizing appearance
 
-- ``NSListContentConfiguration/textProperties``
-- ``NSListContentConfiguration/secondaryTextProperties``
-- ``NSListContentConfiguration/imageProperties-swift.property``
-- ``NSListContentConfiguration/ImageProperties-swift.struct``
+- ``textProperties``
+- ``secondaryTextProperties``
+- ``imageProperties-swift.property``
+- ``ImageProperties-swift.struct``
 
 ### Customizing layout
 
-- ``NSListContentConfiguration/imageToTextPadding``
-- ``NSListContentConfiguration/textToSecondaryTextPadding``
-- ``NSListContentConfiguration/textToBadgePadding``
-- ``NSListContentConfiguration/margins``
+- ``imageToTextPadding``
+- ``textToSecondaryTextPadding``
+- ``textToBadgePadding``
+- ``margins``
 
 ### Creating a content view
 
-- ``NSListContentConfiguration/makeContentView()``
+- ``makeContentView()``
 
 ### Updating the configuration
 
-- ``NSListContentConfiguration/updated(for:)``
+- ``updated(for:)``

@@ -1,8 +1,8 @@
 //
-//  NSCollectionView.swift
-//  NSListContentConfiguration
+//  NSCollectionViewItem+.swift
+//  
 //
-//  Created by Florian Za    nd on 01.11.22.
+//  Created by Florian Zand on 01.11.22.
 //
 
 import AppKit
@@ -75,24 +75,24 @@ extension NSCollectionViewItem {
         }
     }
         
-    var backgroundConfigurationView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "backgroundConfigurationView", object: self, initialValue: nil) }
+    var backgroundView: (NSView & NSContentView)?   {
+        get { getAssociatedValue(key: "backgroundView", object: self, initialValue: nil) }
         set { 
-            backgroundConfigurationView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "backgroundConfigurationView", object: self) }
+            backgroundView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "backgroundView", object: self) }
     }
     
     func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            if var backgroundView = backgroundConfigurationView,  backgroundView.supports(backgroundConfiguration) {
+            if var backgroundView = backgroundView, backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
                 let backgroundView = backgroundConfiguration.makeContentView()
                 self.view.addSubview(withConstraint: backgroundView)
-                backgroundConfigurationView = backgroundView
+                self.backgroundView = backgroundView
             }
         } else {
-            backgroundConfigurationView = nil
+            backgroundView = nil
         }
     }
     
@@ -156,7 +156,7 @@ extension NSCollectionViewItem {
     }
     
     var contentView: NSContentView? {
-        get { self.view as? NSContentView }
+        self.view as? NSContentView
     }
     
     func configurateContentView() {
@@ -164,17 +164,16 @@ extension NSCollectionViewItem {
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                let previousFrame = self.view.frame
-                self.view = contentConfiguration.makeContentView()
-                self.view.wantsLayer = true
-                self.view.clipsToBounds = false
-                self.view.frame = previousFrame
-                self.view.setNeedsLayout()
+                let previousFrame = view.frame
+                view = contentConfiguration.makeContentView()
+                view.wantsLayer = true
+                view.clipsToBounds = false
+                view.frame = previousFrame
+                view.setNeedsLayout()
             }
         } else {
-            let previousFrame = self.view.frame
-            self.view = NSView()
-            self.view.frame = previousFrame
+            let previousFrame = view.frame
+            view = NSView(frame: previousFrame)
         }
         self.configurateBackgroundView()
     }
@@ -280,7 +279,7 @@ extension NSCollectionViewItem {
     }
     
     var indexPath: IndexPath? {
-        return _collectionView?.indexPath(for: self)
+        _collectionView?.indexPath(for: self)
     }
     
     /**
@@ -289,7 +288,7 @@ extension NSCollectionViewItem {
      A hovered item view has the mouse pointer on it.
      */
     @objc open var isHovered: Bool {
-        get { collectionView?.hoveredItem == self }
+        collectionView?.hoveredItem == self
     }
     
     /// A Boolean value that indicates whether the collection view item is in an editable state. (the text of a content configuration is currently edited).
@@ -299,17 +298,17 @@ extension NSCollectionViewItem {
     
     /// A Boolean value that specifies whether the item view is emphasized (the item view window is key).
     @objc open var isEmphasized: Bool {
-        get { self.view.window?.isKeyWindow ?? false }
+        view.window?.isKeyWindow ?? false
     }
     
     /// A Boolean value that specifies whether the collection view item is enabled (the collection view's `isEnabled` is `true`).
     @objc open var isEnabled: Bool {
-        get { self._collectionView?.isEnabled ?? true }
+        _collectionView?.isEnabled ?? true
     }
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
         get { getAssociatedValue(key: "itemObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "itemObserver", object: self) }
+        set { set(associatedValue: newValue, key: "itemObserver", object: self) }
     }
     
     func observeCollectionItem() {
@@ -333,50 +332,7 @@ extension NSCollectionViewItem {
     
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     var _collectionView: NSCollectionView? {
-        self.collectionView ?? self.view.firstSuperview(for: NSCollectionView.self)
-    }
-    
-    var cachedLayoutAttributes: NSCollectionViewLayoutAttributes?   {
-        get { getAssociatedValue(key: "cachedLayoutAttributes", object: self) }
-        set {
-            set(associatedValue: newValue, key: "cachedLayoutAttributes", object: self)
-        }
-    }
-    
-    var layoutAttributes: NSCollectionViewLayoutAttributes? {
-        if let indexPath = indexPath {
-            return  collectionView?.layoutAttributesForItem(at: indexPath)
-        }
-        return nil
-    }
-    
-    var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
-        guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
-        
-        let context = InvalidationContext(invalidateEverything: false)
-        context.invalidateItems(at: [indexPath])
-        return context
-    }
-    
-    func invalidateSelfSizing() {
-        guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
-        
-        self.view.invalidateIntrinsicContentSize()
-        
-        collectionViewLayout.invalidateLayout(with: invalidationContext)
-        collectionView.layoutSubtreeIfNeeded()
-    }
-    
-    class InvalidationContext: NSCollectionViewLayoutInvalidationContext {
-        public override var invalidateEverything: Bool {
-            return _invalidateEverything
-        }
-        
-        private var _invalidateEverything: Bool
-        
-        public init(invalidateEverything: Bool) {
-            self._invalidateEverything = invalidateEverything
-        }
+        collectionView ?? view.firstSuperview(for: NSCollectionView.self)
     }
 }
 

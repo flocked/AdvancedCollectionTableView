@@ -12,16 +12,24 @@
 - ``supplementaryViewProvider-swift.property``
 - ``SupplementaryViewProvider-swift.typealias``
 
-### Identifying elements
-- ``element(for:)``
+### Identifying items
+
+- ``items``
+- ``selectedItems``
+- ``item(for:)``
 - ``indexPath(for:)``
-- ``element(at:)``
-- ``selectedElements``
-- ``reconfigureElements(_:)``
-- ``reloadElements(_:animated:)``
-- ``scrollToElements(_:scrollPosition:)``
+- ``item(at:)``
+- ``reconfigureItems(_:)``
+- ``reloadItems(_:animated:)``
+- ``selectItems(_:scrollPosition:addSpacing:)``
+- ``selectItems(in:scrollPosition:)``
+- ``deselectItems(_:)``
+- ``deselectItems(in:scrollPosition:)``
+- ``scrollToItems(_:scrollPosition:)``
 
 ### Identifying sections
+
+- ``sections``
 - ``section(for:)``
 - ``index(for:)``
 - ``scrollToSection(_:scrollPosition:)``
@@ -30,13 +38,14 @@
 - ``snapshot()``
 - ``apply(_:_:completion:)``
 
-### Configurating
+### Configurating user interaction
 
 - ``allowsDeleting``
 - ``allowsReordering``
 - ``menuProvider``
 
 ### Handlers
+
 - ``deletionHandlers-swift.property``
 - ``displayHandlers-swift.property``
 - ``dragDropHandlers-swift.property``
@@ -56,6 +65,7 @@
 - ``PrefetchHandlers-swift.struct``
 
 ### Data source requirements
+
 - ``collectionView(_:itemForRepresentedObjectAt:)``
 - ``collectionView(_:viewForSupplementaryElementOfKind:at:)``
 - ``collectionView(_:numberOfItemsInSection:)``

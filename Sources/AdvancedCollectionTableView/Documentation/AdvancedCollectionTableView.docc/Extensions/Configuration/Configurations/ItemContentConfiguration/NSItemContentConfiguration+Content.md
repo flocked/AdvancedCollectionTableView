@@ -4,33 +4,29 @@
 
 ### Configuring content properties
 
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/cornerRadius``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/maximumWidth``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/maximumHeight``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/scaleTransform``
+- ``cornerRadius``
+- ``maximumWidth``
+- ``maximumHeight``
+- ``scaleTransform``
 
 ### Configuring background color
 
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/backgroundColor``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/backgroundColorTransform``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/resolvedBackgroundColor()``
+- ``backgroundColor``
+- ``backgroundColorTransform``
+- ``resolvedBackgroundColor()``
 
 ### Configuring border
 
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/borderWidth``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/borderColor``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/borderColorTransform``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/resolvedBorderColor()``
+- ``borderWidth``
+- ``borderColor``
+- ``borderColorTransform``
+- ``resolvedBorderColor()``
 
 ### Configuring image appearance
 
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/imageScaling-swift.property``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/imageSymbolConfiguration``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/imageTintColor``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/imageTintColorTransform``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/resolvedImageTintColor()``
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/ImageScaling-swift.enum``
+- ``imageProperties-swift.property``
+- ``ImageProperties-swift.struct``
 
 ### Configuring shadow
 
-- ``NSItemContentConfiguration/ContentProperties-swift.struct/shadow``
+- ``shadow``

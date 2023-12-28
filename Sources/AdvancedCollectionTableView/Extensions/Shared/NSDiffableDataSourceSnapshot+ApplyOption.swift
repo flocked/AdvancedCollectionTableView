@@ -7,7 +7,19 @@
 
 import AppKit
 
-/// Options for applying a snapshot to a diffable data source.
+/**
+ Options for applying a snapshot to a diffable data source.
+  
+ When using Apple's `apply(_:animatingDifferences:completion:)` to apply a snapshot to a diffable data source, passing `true` to `animatingDifferences` would apply the diff and animate updates in the UI, while passing `false` is equivalent to calling `reloadData()`.
+ 
+ `NSDiffableDataSourceSnapshotApplyOption` lets you always perform a diff for mich improved performance using ``withoutAnimation``.
+ 
+ You can also change the apply animation duration using ``animated(duration:)``.
+ 
+ ```swift
+ collectionViewDatasource.apply(snapshot, .withoutAnimation)
+ ```
+ */
 public enum NSDiffableDataSourceSnapshotApplyOption: Hashable {
     /**
      The snapshot gets applied animated.
