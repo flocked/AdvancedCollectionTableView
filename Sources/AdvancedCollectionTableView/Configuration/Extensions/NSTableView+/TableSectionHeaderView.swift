@@ -70,7 +70,7 @@ open class NSTableSectionHeaderView: NSView {
     @objc open var automaticallyUpdatesContentConfiguration: Bool = true {
         didSet {
             self.setNeedsUpdateConfiguration()
-
+            
         }
     }
     
@@ -94,13 +94,19 @@ open class NSTableSectionHeaderView: NSView {
      
      A hovered cell view has the mouse pointer on it.
      */
-    @objc open var isHovered: Bool {
-        self.rowView?.isHovered ?? false
+    @objc open var isHovered: Bool = false {
+        didSet {
+            guard oldValue != isHovered else { return }
+            setNeedsAutomaticUpdateConfiguration()
+        }
     }
     
     /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
-    @objc open var isEmphasized: Bool {
-        self.window?.isKeyWindow ?? false
+    @objc open var isEmphasized: Bool = false {
+        didSet {
+            guard oldValue != isEmphasized else { return }
+            setNeedsAutomaticUpdateConfiguration()
+        }
     }
     
     /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
@@ -145,8 +151,8 @@ open class NSTableSectionHeaderView: NSView {
      The type of block for handling updates to the section header view’s configuration using the current state.
      
      - Parameters:
-        - sectionHeaderView: The section header view to configure.
-        - state: The new state to use for updating the section header view’s configuration.
+     - sectionHeaderView: The section header view to configure.
+     - state: The new state to use for updating the section header view’s configuration.
      */
     public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: NSTableSectionHeaderView, _ state: NSTableCellConfigurationState) -> Void
     
@@ -177,7 +183,7 @@ open class NSTableSectionHeaderView: NSView {
                 contentView.configuration = contentConfiguration
             } else {
                 self.contentView?.removeFromSuperview()
-               // self.textField
+                // self.textField
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
                 self.translatesAutoresizingMaskIntoConstraints = false
@@ -195,7 +201,7 @@ open class NSTableSectionHeaderView: NSView {
     var rowView: NSTableRowView? {
         return firstSuperview(for: NSTableRowView.self)
     }
-
+    
     var tableView: NSTableView? {
         firstSuperview(for: NSTableView.self)
     }
@@ -211,5 +217,34 @@ open class NSTableSectionHeaderView: NSView {
             }
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
         })
+    }
+    
+    let observingView = ObservingView()
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        sharedInit()
+    }
+    
+    public override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        sharedInit()
+    }
+    
+    func sharedInit() {
+        addSubview(withConstraint: observingView)
+        observingView.windowHandlers.isKey = { isKey in
+            self.isEmphasized = isKey
+        }
+        
+        observingView.mouseHandlers.exited = { event in
+            self.isHovered = false
+            return true
+        }
+        
+        observingView.mouseHandlers.entered = { event in
+            self.isHovered = true
+            return true
+        }
     }
 }
