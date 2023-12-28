@@ -373,9 +373,9 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             if let transaction = self.movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = self.selectedItems
                 self.reorderingHandlers.willReorder?(transaction)
-             //   self.apply(transaction.finalSnapshot, .withoutAnimation)
-             //   self.selectItems(selectedItems)
-             //   self.reorderingHandlers.didReorder?(transaction)
+                self.apply(transaction.finalSnapshot, .withoutAnimation)
+                self.selectItems(selectedItems)
+                self.reorderingHandlers.didReorder?(transaction)
             } else {
                 return false
             }
@@ -543,7 +543,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
         var row = row
         var isLast: Bool = false
-        if row >= self.numberOfRows(in: tableView) {
+        if row >= self.numberOfRows(in: tableView) || sectionRowIndexes.contains(row) {
             row = row - 1
             isLast = true
         }
