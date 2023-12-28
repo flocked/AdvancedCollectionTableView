@@ -115,7 +115,6 @@ open class NSTableSectionHeaderView: NSView {
     }
     
     
-    
     /**
      Informs the section header view to update its configuration for its current state.
      
@@ -198,7 +197,7 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-    var tableCellObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
+    var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
     
     var rowView: NSTableRowView? {
         return firstSuperview(for: NSTableRowView.self)
@@ -211,9 +210,9 @@ open class NSTableSectionHeaderView: NSView {
     var tableStyleObserver: NSKeyValueObservation? = nil
     
     func observeTableCellView() {
-        guard tableCellObserver == nil else { return }
-        tableCellObserver = KeyValueObserver(self)
-        tableCellObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
+        guard sectionHeaderObserver == nil else { return }
+        sectionHeaderObserver = KeyValueObserver(self)
+        sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
             guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
                 return
             }
@@ -232,13 +231,8 @@ open class NSTableSectionHeaderView: NSView {
         super.init(frame: frameRect)
         sharedInit()
     }
-    
-    var isEnabledObserver: NSKeyValueObservation? = nil
-    
+        
     func sharedInit() {
-        isEnabledObserver = self.observeChanges(for: \.tableView?.isEnabled) { old, new in
-            Swift.print("isEnabled", new)
-        }
         addSubview(withConstraint: observingView)
         observingView.windowHandlers.isKey = { isKey in
             self.isEmphasized = isKey
