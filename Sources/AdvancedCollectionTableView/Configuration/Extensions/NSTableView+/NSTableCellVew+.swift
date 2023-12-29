@@ -103,8 +103,10 @@ extension NSTableCellView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    @objc open var configurationState: NSTableCellConfigurationState {
-        let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
+    @objc open var configurationState: NSListConfigurationState {
+        let state = NSListConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: self.isNextRowSelected, isPreviousSelected: self.isPreviousRowSelected)
+        
+       // let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
         return state
     }
     
@@ -139,7 +141,7 @@ extension NSTableCellView {
      
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
-    @objc open func updateConfiguration(using state: NSTableCellConfigurationState) {
+    @objc open func updateConfiguration(using state: NSListConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -153,7 +155,7 @@ extension NSTableCellView {
         - cell: The table view cell to configure.
         - state: The new state to use for updating the cell’s configuration.
      */
-    public typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSTableCellConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ cell: NSTableCellView, _ state: NSListConfigurationState) -> Void
     
     /**
      A block for handling updates to the cell’s configuration using the current state.

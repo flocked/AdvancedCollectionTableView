@@ -108,7 +108,7 @@ extension NSTableRowView {
         - row: The table view row to configure.
         - state: The new state to use for updating the row’s configuration.
      */
-    public typealias ConfigurationUpdateHandler = (_ rowView: NSTableRowView, _ state: NSTableRowConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ rowView: NSTableRowView, _ state: NSListConfigurationState) -> Void
     
     /**
      A block for handling updates to the row’s configuration using the current state.
@@ -146,8 +146,9 @@ extension NSTableRowView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    @objc open var configurationState: NSTableRowConfigurationState {
-        let state = NSTableRowConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextRowSelected: isNextRowSelected, isPreviousRowSelected: isPreviousRowSelected)
+    @objc open var configurationState: NSListConfigurationState {
+        let state = NSListConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: self.isNextRowSelected, isPreviousSelected: self.isPreviousRowSelected)
+      //  let state = NSTableRowConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextRowSelected: isNextRowSelected, isPreviousRowSelected: isPreviousRowSelected)
         return state
     }
     
@@ -178,7 +179,7 @@ extension NSTableRowView {
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
-    @objc open func updateConfiguration(using state: NSTableRowConfigurationState) {
+    @objc open func updateConfiguration(using state: NSListConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }

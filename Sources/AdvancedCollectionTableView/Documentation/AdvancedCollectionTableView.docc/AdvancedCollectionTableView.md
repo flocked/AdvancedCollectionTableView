@@ -27,8 +27,7 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 - <doc:Configurating-Table-Cells>
 - ``NSListContentConfiguration``
 - ``NSListContentView``
-- ``NSTableCellConfigurationState``
-- ``NSTableRowConfigurationState``
+- ``NSListConfigurationState``
 
 ### Data Sources
 

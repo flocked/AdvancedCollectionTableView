@@ -78,8 +78,9 @@ open class NSTableSectionHeaderView: NSView {
      
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
-    @objc open var configurationState: NSTableCellConfigurationState {
-        let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
+    @objc open var configurationState: NSListConfigurationState {
+        let state = NSListConfigurationState(isSelected: false, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: false, isPreviousSelected: false)
+       // let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
         return state
     }
         
@@ -109,7 +110,7 @@ open class NSTableSectionHeaderView: NSView {
      Avoid calling this method directly. Instead, use setNeedsUpdateConfiguration() to request an update.
      Override this method in a subclass to update the section header view’s configuration using the provided state.
      */
-    @objc open func updateConfiguration(using state: NSTableCellConfigurationState) {
+    @objc open func updateConfiguration(using state: NSListConfigurationState) {
         if let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -123,7 +124,7 @@ open class NSTableSectionHeaderView: NSView {
      - sectionHeaderView: The section header view to configure.
      - state: The new state to use for updating the section header view’s configuration.
      */
-    public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: NSTableSectionHeaderView, _ state: NSTableCellConfigurationState) -> Void
+    public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: NSTableSectionHeaderView, _ state: NSListConfigurationState) -> Void
     
     /**
      A block for handling updates to the section header view’s configuration using the current state.

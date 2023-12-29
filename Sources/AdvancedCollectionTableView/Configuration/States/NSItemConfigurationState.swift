@@ -13,11 +13,11 @@ import AdvancedCollectionTableViewObjc
 /**
  A structure that encapsulates a item’s state.
  
- Am item configuration encapsulates states like isSelected, highlightState, isEmphasized or isHovered.
+ Am item configuration encapsulates states like selected, highlighted, emphasized or hovered.
  
  You can use a item configuration state with background and content configurations to obtain the default appearance for a specific state.
  
- Typically, you don’t create a configuration state yourself. To obtain a configuration state, use `NSCollectionViewItem` ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property`` or override the ``AppKit/NSCollectionViewItem/updateConfiguration(using:)`` method in your item subclass and use the state parameter. Outside of this method, you can get a item’s configuration state by using its ``AppKit/NSCollectionViewItem/configurationState`` property.
+ Typically, you don’t create a configuration state yourself. To obtain a configuration state, use `NSCollectionViewItems` ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property`` or override the ``AppKit/NSCollectionViewItem/updateConfiguration(using:)`` method in your item subclass and use the state parameter. Outside of this method, you can get a item’s configuration state by using its ``AppKit/NSCollectionViewItem/configurationState`` property.
  
  You can create your own custom states to add to a item configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
@@ -121,8 +121,9 @@ extension NSItemConfigurationState: _ObjectiveCBridgeable {
     
     public static func _unconditionallyBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc?) -> NSItemConfigurationState {
         if let source = source {
-            let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
-            return NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: .init(rawValue: source.highlight)!, isEmphasized: source.isEmphasized, customStates: customStates)
+            var result: NSItemConfigurationState?
+            _forceBridgeFromObjectiveC(source, result: &result)
+            return result!
         }
         return NSItemConfigurationState()
     }

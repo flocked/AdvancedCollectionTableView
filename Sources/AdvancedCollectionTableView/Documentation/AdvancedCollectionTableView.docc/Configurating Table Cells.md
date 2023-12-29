@@ -39,13 +39,13 @@ tableCell.contentConfiguration = content
 ### Managing the state
 
 - ``AppKit/NSTableCellView/configurationState``
-- ``NSTableCellConfigurationState``
+- ``NSListConfigurationState``
 - ``AppKit/NSTableCellView/setNeedsUpdateConfiguration()``
 - ``AppKit/NSTableCellView/updateConfiguration(using:)``
 - ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``
-- ``AppKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
+- ``Ap<<<<<<<pKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
 
-``NSTableCellConfigurationState`` provides the current state of a table view cell (e.g. `isSelected` or `isHovered`). It can be accessed via a table view cell's ``AppKit/NSTableCellView/configurationState``.
+``NSListConfigurationState`` provides the current state of a table view cell (e.g. `isSelected` or `isHovered`). It can be accessed via a table view cell's ``AppKit/NSTableCellView/configurationState``.
 
 To handle updates of a table view cell’s state, provide a handler to ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``.
 

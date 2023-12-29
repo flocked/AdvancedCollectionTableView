@@ -1,6 +1,6 @@
 //
-//  NSTableRowView+NSItemConfigurationState.h
-//  Tester
+//  NSItemConfigurationStateObjc.h
+//  
 //
 //  Created by Florian Zand on 28.12.23.
 //

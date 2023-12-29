@@ -15,5 +15,4 @@ protocol ConfigurationState: NSConfigurationState {
 }
 
 extension NSItemConfigurationState: ConfigurationState { }
-extension NSTableCellConfigurationState: ConfigurationState { }
-extension NSTableRowConfigurationState: ConfigurationState { }
+extension NSListConfigurationState: ConfigurationState { }
