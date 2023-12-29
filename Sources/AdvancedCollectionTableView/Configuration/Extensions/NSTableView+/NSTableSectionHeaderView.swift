@@ -29,9 +29,6 @@ open class NSTableSectionHeaderView: NSView {
      */
     open var contentConfiguration: NSContentConfiguration? = nil  {
         didSet {
-            if (contentConfiguration != nil) {
-                observeSectionHeaderView()
-            }
             configurateContentView()
         }
     }
@@ -79,8 +76,7 @@ open class NSTableSectionHeaderView: NSView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
-        let state = NSListConfigurationState(isSelected: false, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: false, isPreviousSelected: false)
-       // let state = NSTableCellConfigurationState(isSelected: false, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
+        let state = NSListConfigurationState(isSelected: false, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: false, isPreviousSelected: false)
         return state
     }
         
@@ -144,7 +140,7 @@ open class NSTableSectionHeaderView: NSView {
             if configurationUpdateHandler != nil {
                 observeSectionHeaderView()
             }
-            self.setNeedsUpdateConfiguration()
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -182,6 +178,7 @@ open class NSTableSectionHeaderView: NSView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            observeSectionHeaderView()
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {

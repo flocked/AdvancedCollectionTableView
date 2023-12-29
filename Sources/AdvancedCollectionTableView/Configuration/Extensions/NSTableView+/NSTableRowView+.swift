@@ -31,10 +31,7 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "contentConfiguration", object: self)
-            if (newValue != nil) {
-                self.observeTableRowView()
-            }
-            self.configurateContentView()
+            configurateContentView()
         }
     }
     
@@ -59,7 +56,7 @@ extension NSTableRowView {
      - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     public func defaultContentConfiguration() -> NSListContentConfiguration {
-        return NSListContentConfiguration.plain()
+        NSListContentConfiguration.plain()
     }
     
     /**
@@ -85,8 +82,8 @@ extension NSTableRowView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            self.observeTableRowView()
-            self.backgroundColor = nil
+            observeTableRowView()
+            backgroundColor = nil
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -94,7 +91,7 @@ extension NSTableRowView {
                 var contentView = contentConfiguration.makeContentView()
                 contentView.configuration = contentConfiguration
                 self.contentView = contentView
-                self.addSubview(withConstraint: contentView)
+                addSubview(withConstraint: contentView)
             }
         } else {
             contentView = nil
@@ -147,8 +144,7 @@ extension NSTableRowView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
-        let state = NSListConfigurationState(isSelected: self.isSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: self.isNextRowSelected, isPreviousSelected: self.isPreviousRowSelected)
-      //  let state = NSTableRowConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextRowSelected: isNextRowSelected, isPreviousRowSelected: isPreviousRowSelected)
+        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
         return state
     }
     
@@ -160,7 +156,7 @@ extension NSTableRowView {
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
-        self.updateConfiguration(using: self.configurationState)
+        updateConfiguration(using: configurationState)
     }
     
     
@@ -241,7 +237,7 @@ extension NSTableRowView {
             self.tableView?.setupObservation()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
-        self.setNeedsUpdateConfiguration()
-        self.setCellViewsNeedAutomaticUpdateConfiguration()
+        setNeedsUpdateConfiguration()
+        setCellViewsNeedAutomaticUpdateConfiguration()
     }
 }

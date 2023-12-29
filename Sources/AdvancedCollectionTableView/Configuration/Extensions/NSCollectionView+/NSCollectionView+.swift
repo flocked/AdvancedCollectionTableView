@@ -10,20 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionView {
-    var firstResponderObserver: NSKeyValueObservation? {
-        get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
-    }
-    
-    func setupCollectionViewFirstResponderObserver() {
-        guard firstResponderObserver == nil else { return }
-        firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
-            guard old != new else { return }
-            guard (old == self && new != self) || (old != self && new == self) else { return }
-      //      self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })
-        })
-    }
-    
     @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
         set {
@@ -36,14 +22,12 @@ extension NSCollectionView {
             if let indexPath = hoveredIndexPath, let item = self.item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
-            //  previousHoveredItem?.setNeedsAutomaticUpdateConfiguration()
-            //   newValue?.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     var hoveredItem: NSCollectionViewItem? {
         guard let indexPath = hoveredIndexPath else { return nil }
-        return self.item(at: indexPath)
+        return item(at: indexPath)
     }
     
     func setupObservation(shouldObserve: Bool = true) {
@@ -121,5 +105,19 @@ extension NSCollectionView {
          }
          self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
          }
+ }
+ 
+ var firstResponderObserver: NSKeyValueObservation? {
+     get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
+     set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
+ }
+ 
+ func setupCollectionViewFirstResponderObserver() {
+     guard firstResponderObserver == nil else { return }
+     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
+         guard old != new else { return }
+         guard (old == self && new != self) || (old != self && new == self) else { return }
+   //      self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })
+     })
  }
  */

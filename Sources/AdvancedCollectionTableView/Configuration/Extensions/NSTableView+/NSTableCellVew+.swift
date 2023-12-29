@@ -26,10 +26,7 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
-            if (newValue != nil) {
-                self.observeTableCellView()
-            }
-            self.configurateContentView()
+            configurateContentView()
         }
     }
     
@@ -68,7 +65,7 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
         set {
             set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
-            self.setNeedsUpdateConfiguration()
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -80,19 +77,21 @@ extension NSTableCellView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
+            observeTableCellView()
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                self.contentView?.removeFromSuperview()
+                contentView?.removeFromSuperview()
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
-                self.translatesAutoresizingMaskIntoConstraints = false
-                self.addSubview(withConstraint: contentView)
-                self.setNeedsDisplay()
+                translatesAutoresizingMaskIntoConstraints = false
+                addSubview(withConstraint: contentView)
+                setNeedsDisplay()
                 contentView.setNeedsDisplay()
             }
         } else {
-            self.contentView?.removeFromSuperview()
+            contentView?.removeFromSuperview()
+            contentView = nil
         }
     }
     
@@ -104,9 +103,7 @@ extension NSTableCellView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
-        let state = NSListConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextSelected: self.isNextRowSelected, isPreviousSelected: self.isPreviousRowSelected)
-        
-       // let state = NSTableCellConfigurationState(isSelected: self.isRowSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: self.isEnabled)
+        let state = NSListConfigurationState(isSelected: isRowSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
         return state
     }
     
@@ -118,7 +115,7 @@ extension NSTableCellView {
      If you add custom states to the table cell’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
-        self.updateConfiguration(using: self.configurationState)
+        updateConfiguration(using: configurationState)
     }
     
     func setNeedsAutomaticUpdateConfiguration() {
@@ -127,7 +124,7 @@ extension NSTableCellView {
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
         }
         
-        let state = self.configurationState
+        let state = configurationState
         if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
@@ -197,7 +194,7 @@ extension NSTableCellView {
     
     /// A Boolean value that specifies whether the cell view is emphasized (the cell window is key).
     @objc open var isEmphasized: Bool {
-        self.window?.isKeyWindow ?? false
+        window?.isKeyWindow ?? false
     }
     
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
@@ -230,13 +227,13 @@ extension NSTableCellView {
     
     var tableCellObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "tableCellObserver", object: self, initialValue: nil) }
-        set {  set(associatedValue: newValue, key: "tableCellObserver", object: self) }
+        set { set(associatedValue: newValue, key: "tableCellObserver", object: self) }
     }
     
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
         guard tableCellObserver == nil else { return }
-        tableCellObserver = self.observeChanges(for: \.superview, handler: {old, new in
+        tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
             if self.contentConfiguration is NSListContentConfiguration {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
@@ -251,16 +248,3 @@ extension NSTableCellView {
         })
     }
 }
-
-/*
- @objc open var isNextRowSelected: Bool {
-     rowView?.isNextRowSelected ?? false
- }
- 
- @objc open var isPreviousRowSelected: Bool {
-     rowView?.isPreviousRowSelected ?? false
- }
- 
- NSTableRowConfigurationState(isSelected: self.isRowSelected, isEnabled: self.isEnabled, isHovered: self.isHovered, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isNextRowSelected: self.isNextRowSelected, isPreviousRowSelected: self.isPreviousRowSelected)
-
- */
