@@ -54,7 +54,7 @@ public extension NSCollectionViewDiffableDataSource {
                     guard event.keyCode ==  51 else { return event }
                     if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
                         let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
-                        var elementsToDelete = self.itemIdentifiers(for: selectionIndexPaths)
+                        var elementsToDelete = selectionIndexPaths.compactMap({self.itemIdentifier(for:$0)})
                         if !elementsToDelete.isEmpty, let canDelete = self.deletionHandlers.canDelete {
                             elementsToDelete = canDelete(elementsToDelete)
                         }

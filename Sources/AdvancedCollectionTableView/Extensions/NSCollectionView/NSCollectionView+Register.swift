@@ -7,7 +7,7 @@
 
 import AppKit
 
-public extension NSCollectionView {
+extension NSCollectionView {
     /**
      Registers a class for use in creating new collection view items.
      
@@ -18,7 +18,7 @@ public extension NSCollectionView {
      - Parameters:
         - itemClass: The class of a item that you want to use in the collection view.
      */
-    func register<Item: NSCollectionViewItem>(_ item: Item.Type) {
+    public func register<Item: NSCollectionViewItem>(_ item: Item.Type) {
         self.register(item.self, forItemWithIdentifier: .init(item))
     }
     
@@ -33,7 +33,7 @@ public extension NSCollectionView {
         - itemClass: The class of a item that you want to use in the collection view.
         - nib: The nib object containing the item object. The nib file must contain only one top-level object and that object must be of the type NSCollectionViewItem.
      */
-    func register<Item: NSCollectionViewItem>(_ item: Item.Type, nib: NSNib) {
+    public func register<Item: NSCollectionViewItem>(_ item: Item.Type, nib: NSNib) {
         self.register(nib, forItemWithIdentifier: .init(item))
     }
     
@@ -50,7 +50,7 @@ public extension NSCollectionView {
      
      - Returns: A valid item object.
      */
-    func makeItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, for indexPath: IndexPath) -> Item {
+    public func makeItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, for indexPath: IndexPath) -> Item {
         return self.makeReconfigurableItem(Item.self, withIdentifier: .init(Item.self), for: indexPath)
     }
     
@@ -67,11 +67,11 @@ public extension NSCollectionView {
      
      - Returns: A valid item object.
      */
-    func makeItem<Item: NSCollectionViewItem>(for indexPath: IndexPath) -> Item {
+    public func makeItem<Item: NSCollectionViewItem>(for indexPath: IndexPath) -> Item {
         return self.makeReconfigurableItem(Item.self, withIdentifier: .init(Item.self), for: indexPath)
     }
     
-    internal func makeReconfigurableItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier, for indexPath: IndexPath) -> Item {
+    func makeReconfigurableItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier, for indexPath: IndexPath) -> Item {
         if self.isReconfiguratingItems, let item = self.item(at: indexPath) as? Item {
             return item
         }
@@ -80,7 +80,7 @@ public extension NSCollectionView {
     }
 }
 
-public extension NSCollectionView {
+extension NSCollectionView {
     /**
      Registers a class to use when creating new supplementary views in the collection view.
      
@@ -94,7 +94,7 @@ public extension NSCollectionView {
         - viewClass: The view class to use for the supplementary view. This class must be descended from `NSView` and must conform to the `NSCollectionViewElement` protocol. Specify nil to unregister a previously registered class or nib file.
         - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
-    func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
+    public func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
         self.register(SupplementaryView.self, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
     }
     
@@ -112,7 +112,7 @@ public extension NSCollectionView {
         - nib: The nib object containing the supplementary view’s definition. The nib file must contain exactly one `NSView` object at the top level and that view must conform to the `NSCollectionViewElement` protocol. Specify nil to unregister a previously registered class or nib file.
         - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
-    func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
+    public func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
         self.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
     }
     
@@ -129,7 +129,7 @@ public extension NSCollectionView {
      
      - Returns: The supplementary view.
      */
-    func makeSupplementaryView<SupplementaryView>(ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
+    public func makeSupplementaryView<SupplementaryView>(ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
         return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(SupplementaryView.self), for: indexPath) as! SupplementaryView
     }
     
@@ -147,7 +147,7 @@ public extension NSCollectionView {
      
      - Returns: The supplementary view.
      */
-    func makeSupplementaryView<SupplementaryView>(_ viewClass: SupplementaryView.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
+    public func makeSupplementaryView<SupplementaryView>(_ viewClass: SupplementaryView.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
         return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(SupplementaryView.self), for: indexPath) as! SupplementaryView
     }
 }
