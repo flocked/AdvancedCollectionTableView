@@ -681,11 +681,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         /// The handler that gets called whenever items did drag ouside the collection view.
         public var didDragOutside: (([Item]) -> ())? = nil
         /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
-        public var pasteboardValue: ((_ item: Item) -> PasteboardWriting)? = nil
+        public var pasteboardValue: ((_ item: Item) -> PasteboardReadWriting)? = nil
         /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
-        public var canDragInside: (([PasteboardWriting]) -> [PasteboardWriting])? = nil
+        public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])? = nil
         /// The handler that gets called whenever pasteboard items did drag inside the collection view.
-        public var didDragInside: (([PasteboardWriting]) -> ())? = nil
+        public var didDragInside: (([PasteboardReadWriting]) -> ())? = nil
         /// The handler that determines the image when dragging items.
         public var draggingImage: ((_ items: [Item], NSEvent, NSPointPointer) -> NSImage?)? = nil
         
