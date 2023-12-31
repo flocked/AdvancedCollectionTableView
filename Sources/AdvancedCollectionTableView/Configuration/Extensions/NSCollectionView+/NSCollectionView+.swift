@@ -33,7 +33,7 @@ extension NSCollectionView {
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if (self.observingView == nil) {
-                self.observingView = ObservingView()
+                self.observingView = ObserverView()
                 self.addSubview(withConstraint: self.observingView!)
                 self.observingView!.sendToBack()
                 self.observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
@@ -65,7 +65,7 @@ extension NSCollectionView {
         }
     }
     
-    var observingView: ObservingView? {
+    var observingView: ObserverView? {
         get { getAssociatedValue(key: "NSCollectionView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSCollectionView_observingView", object: self)
         }

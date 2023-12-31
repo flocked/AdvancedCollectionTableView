@@ -201,12 +201,12 @@ open class NSTableSectionHeaderView: NSView {
         firstSuperview(for: NSTableView.self)
     }
     
-    var observingView: ObservingView? = nil
+    var observingView: ObserverView? = nil
     var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
 
     func observeSectionHeaderView() {
         guard observingView == nil else { return }
-        let observingView = ObservingView(frame: .zero)
+        let observingView = ObserverView(frame: .zero)
         addSubview(withConstraint: observingView)
         observingView.windowHandlers.isKey = { isKey in
             self.isEmphasized = isKey

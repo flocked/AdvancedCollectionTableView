@@ -33,7 +33,7 @@ extension NSTableView {
                 }
             }
             if (observingView == nil) {
-                observingView = ObservingView()
+                observingView = ObserverView()
                 addSubview(withConstraint: self.observingView!)
                 observingView!.sendToBack()
                 observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
@@ -70,7 +70,7 @@ extension NSTableView {
         }
     }
     
-    var observingView: ObservingView? {
+    var observingView: ObserverView? {
         get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
         }
