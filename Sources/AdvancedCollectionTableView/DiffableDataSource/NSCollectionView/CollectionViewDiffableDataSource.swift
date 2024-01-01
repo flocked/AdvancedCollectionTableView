@@ -15,20 +15,20 @@ import QuickLookUI
  A  `NSCollectionViewDiffableDataSource` with additional functionality.
  
  The diffable data source provides:
- - Reordering of elements by enabling ``allowsReordering``.
- - Deleting of elements by enabling  ``allowsDeleting``.
- - Quicklook of elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Reordering elements by enabling ``allowsReordering``.
+ - Deleting elements by enabling  ``allowsDeleting``.
+ - Quicklooking elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - A right click menu for selected elements via ``menuProvider``.
  
  __It includes handlers for:__
  
- - Prefetching of elements via ``prefetchHandlers-swift.property``.
- - Reordering of elements via ``reorderingHandlers-swift.property``.
- - Deleting of elements via ``deletionHandlers-swift.property``.
- - Selecting of elements via ``selectionHandlers-swift.property``.
- - Highlight state of elements via ``highlightHandlers-swift.property``.
- - Displayed elements via ``displayHandlers-swift.property``.
- - Items that are hovered by mouse via ``hoverHandlers-swift.property``.
+ - Prefetching elements via ``prefetchHandlers-swift.property``.
+ - Reordering elements via ``reorderingHandlers-swift.property``.
+ - Deleting elements via ``deletionHandlers-swift.property``.
+ - Selecting elements via ``selectionHandlers-swift.property``.
+ - Highlighting elements via ``highlightHandlers-swift.property``.
+ - Displaying elements via ``displayHandlers-swift.property``.
+ - Hovering elements by mouse via ``hoverHandlers-swift.property``.
  - Drag and drop of files from and to the collection view via ``dragDropHandlers-swift.property``.
  - Pinching of the collection view via ``pinchHandler``.
 

@@ -13,18 +13,18 @@ import FZSwiftUtils
  A`NSTableViewDiffableDataSource` with additional functionality.
  
  The diffable data source provides:
- - Reordering of items by enabling ``allowsReordering``.
- - Deleting of items by enabling  ``allowsDeleting``.
+ - Reordering items by enabling ``allowsReordering``.
+ - Deleting items by enabling  ``allowsDeleting``.
  - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
  
  __It includes handlers for:__
  
- - Reordering of items via ``reorderingHandlers-swift.property``.
- - Deleting of items via ``deletionHandlers-swift.property``.
- - Selecting of items via ``selectionHandlers-swift.property``.
- - Items that are hovered by mouse via ``hoverHandlers-swift.property``.
+ - Reordering items via ``reorderingHandlers-swift.property``.
+ - Deleting items via ``deletionHandlers-swift.property``.
+ - Selecting items via ``selectionHandlers-swift.property``.
+ - Hovering items by mouse via ``hoverHandlers-swift.property``.
  - Drag and drop of files from and to the table view via ``dragDropHandlers-swift.property``.
  - Table column handlers via ``columnHandlers-swift.property``.
 
