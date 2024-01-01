@@ -32,11 +32,11 @@ public extension NSCollectionViewDiffableDataSource {
      */
     convenience init<I: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<I, ItemIdentifierType>, supplementaryRegistrations: [NSCollectionViewSupplementaryRegistration]) {
         self.init(collectionView: collectionView, itemRegistration: itemRegistration)
-        self.supplementaryRegistrations(supplementaryRegistrations)
+        self.useSupplementaryRegistrations(supplementaryRegistrations)
     }
     
-    /// Applies the supplementary registrations to return supplementary views to `supplementaryViewProvider`.
-    func supplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
+    /// Uses the supplementary registrations to return supplementary views to `supplementaryViewProvider`.
+    func useSupplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
         self.supplementaryViewProvider = { tCollectionView, kind, indexPath in
             if let provider = registrations.first(where: {$0.elementKind == kind}) {
                 return (provider as! _NSCollectionViewSupplementaryRegistration).makeSupplementaryView(tCollectionView, indexPath)
