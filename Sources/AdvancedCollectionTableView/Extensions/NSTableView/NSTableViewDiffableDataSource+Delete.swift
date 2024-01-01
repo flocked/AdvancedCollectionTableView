@@ -13,8 +13,8 @@ import FZQuicklook
 extension NSTableViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete rows either via backsapace keyboard shortcut.
-     
-     If the value of this property is `true` (the default is `false), users can delete rows.   
+          
+     If `true`, the user can delete items using backspace. The default value is `false`.
      
      ``deletionHandlers`` provides additional handlers.
      */
@@ -27,13 +27,13 @@ extension NSTableViewDiffableDataSource {
         }
     }
     
-    /// Handlers for deletion of items.
+    /// The handlers for deleting of items.
     public var deletionHandlers: DeletionHandlers {
         get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
         set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
     }
     
-    /// Handlers for deletion of items.
+    /// Handlers for deleting of items.
     public struct DeletionHandlers {
         /// The handler that determines whether items should get deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil

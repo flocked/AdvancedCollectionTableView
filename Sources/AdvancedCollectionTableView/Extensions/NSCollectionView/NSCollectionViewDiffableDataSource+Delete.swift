@@ -27,13 +27,13 @@ import FZQuicklook
         }
     }
     
-    /// Handlers for deletion of items.
+    /// The handlers for deleting of items.
     public var deletionHandlers: DeletionHandlers {
         get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
         set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
     }
     
-    /// Handlers for deletion of items.
+    /// Handlers for deleting of items.
     public struct DeletionHandlers {
         /// The handler that determines whether items should get deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil

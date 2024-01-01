@@ -118,22 +118,20 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
         didSet { setupRightDownMonitor() } }
     
-    /**
-     Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
-     */
+    /// Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
     public var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
     /**
      A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
      
-     If the value of this property is true (the default is false), users can reorder items in the table view.
+     If the value of this property is `true`, users can reorder items in the table view. The default value is `false`.
      */
     public var allowsReordering: Bool = false
     
     /**
      A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
      
-     If the value of this property is true (the default is false), users can delete items.
+     If `true`, the user can delete items using backspace. The default value is `false`.
      */
     public var allowsDeleting: Bool = false {
         didSet { self.setupKeyDownMonitor() }
@@ -570,6 +568,27 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
+    /// Opens `QuicklookPanel` that presents quicklook previews of the selected items.
+    public func quicklookSelectedItems() where Item: QuicklookPreviewable {
+        tableView.quicklookSelectedRows()
+    }
+    
+    /**
+     Opens `QuicklookPanel` that presents quicklook previews of the specified items.
+     
+     - Parameters:
+        - items: The items to preview.
+        - current: The item that starts the preview. The default value is `nil`.
+     */
+    public func quicklookItems(_ items: [Item], current: Item? = nil) where Item: QuicklookPreviewable {
+        let rows = items.compactMap({row(for: $0)})
+        if let current = current, let currentRow = row(for: current) {
+            tableView.quicklookRows(at: rows, current: currentRow)
+        } else {
+            tableView.quicklookRows(at: rows)
+        }
+    }
+    
     // MARK: - Sections
 
     /// All current sections in the collection view.
@@ -598,26 +617,26 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     // MARK: - Handlers
     
-    /// Handlers for selection of rows.
+    /// The handlers for selecting of items.
     public var selectionHandlers = SelectionHandlers()
     
-    /// Handlers for deletion of rows.
+    /// The handlers for deleting of items.
     public var deletionHandlers = DeletionHandlers()
     
-    /// Handlers for reordering of rows.
+    /// The handlers for reordering of items.
     public var reorderingHandlers = ReorderingHandlers()
     
-    /// Handlers that get called whenever the mouse is hovering a row.
+    /// The handlers for hovering items with the mouse.
     public var hoverHandlers = HoverHandlers() {
         didSet { self.setupHoverObserving()} }
     
-    /// Handlers for drag and drop of files from and to the table view.
+    /// The handlers for drag and drop of files from and to the table view.
     public var dragDropHandlers = DragDropHandlers()
     
-    /// Handlers for table columns.
+    /// The handlers for table columns.
     public var columnHandlers = ColumnHandlers()
     
-    /// Handlers for selection of items.
+    /// Handlers for selecting of items.
     public struct SelectionHandlers {
         /// The handler that determines whether items should get selected. The default value is `nil` which indicates that all items should be selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
@@ -639,7 +658,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
-    /// Handlers for deletion.
+    /// Handlers for deleting of items.
     public struct DeletionHandlers {
         /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])? = nil
@@ -673,7 +692,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
     }
     
-    /// Handlers that get called whenever the mouse is hovering an item.
+    /// Handlers for hovering items with the mouse.
     public struct HoverHandlers {
         /// The handler that gets called whenever the mouse is hovering an item.
         public var isHovering: ((Item) -> Void)?

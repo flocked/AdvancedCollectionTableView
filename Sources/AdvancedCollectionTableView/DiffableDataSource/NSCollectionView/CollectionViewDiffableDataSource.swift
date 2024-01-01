@@ -86,7 +86,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      A Boolean value that indicates whether users can delete elements either via keyboard shortcut or right click menu.
      
-     If the value of this property is true (the default is false), users can delete elements.
+     If `true`, the user can delete elements using backspace. The default value is `false`.     
      */
     public var allowsDeleting: Bool = false {
         didSet { self.observeKeyDown() }
@@ -94,7 +94,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      A Boolean value that indicates whether users can reorder elements in the collection view when dragging them via mouse.
      
-     If the value of this property is true (the default is false), users can reorder elements in the collection view.
+     If the value of this property is `true`, users can reorder elements in the collection view. The default value is `false`.
      */
     public var allowsReordering: Bool = false
     
@@ -545,6 +545,27 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
+    /// Opens `QuicklookPanel` that presents quicklook previews of the selected elements.
+    public func quicklookSelectedElements() where Element: QuicklookPreviewable {
+        collectionView.quicklookSelectedItems()
+    }
+    
+    /**
+     Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
+     
+     - Parameters:
+        - elements: The elements to preview.
+        - current: The element that starts the preview. The default value is `nil`.
+     */
+    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
+        let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
+        if let current = current, let currentIndexPath = indexPath(for: current) {
+            collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)
+        } else {
+            collectionView.quicklookItems(at: indexPaths)
+        }
+    }
+    
     // MARK: - Sections
     
     /// All current sections in the collection view.
@@ -580,30 +601,30 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     // MARK: - Handlers
     
-    /// Handlers that get called whenever the mouse is hovering an element.
+    /// The handlers for hovering elements with the mouse.
     public var hoverHandlers = HoverHandlers() {
         didSet { self.observeHoveredItem() } }
     
-    /// Handlers for selection of elements.
+    /// The handlers for selecting of elements.
     public var selectionHandlers = SelectionHandlers()
     
-    /// Handlers for deletion of elements.
+    /// The handlers for deleting of elements.
     public var deletionHandlers = DeletionHandlers()
     
-    /// Handlers for reordering of elements.
+    /// The handlers for reordering of elements.
     public var reorderingHandlers = ReorderingHandlers()
     
-    ///Handlers for the displayed elements. The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
+    ///Handlers for the displaying elements. The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
     public var displayHandlers = DisplayHandlers() {
         didSet {  self.observeDisplayingItems() } }
     
-    /// Handlers for prefetching elements.
+    /// The handlers for prefetching elements.
     public var prefetchHandlers = PrefetchHandlers()
     
-    /// Handlers for drag and drop of files from and to the collection view.
+    /// The handlers for drag and drop of files from and to the collection view.
     public var dragDropHandlers = DragDropHandlers()
     
-    /// Handlers for the highlight state of elements.
+    /// The handlers for the highlight state of elements.
     public var highlightHandlers = HighlightHandlers()
     
     /// Handlers for prefetching elements.
@@ -655,7 +676,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /**
-     Handlers for the displayed elements.
+     Handlers for displaying of elements.
      
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
@@ -666,7 +687,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         public var didEndDisplaying: ((_ elements: [Element]) -> ())?
     }
     
-    /// Handlers that get called whenever the mouse is hovering an element.
+    /// Handlers for hovering elements with the mouse.
     public struct HoverHandlers {
         /// The handler that gets called whenever the mouse is hovering an element.
         public var isHovering: ((_ element: Element) -> ())?
