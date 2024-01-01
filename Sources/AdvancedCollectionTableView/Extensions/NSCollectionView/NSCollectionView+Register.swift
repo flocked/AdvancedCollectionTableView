@@ -50,7 +50,7 @@ extension NSCollectionView {
      
      - Returns: A valid item object.
      */
-    public func makeItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, for indexPath: IndexPath) -> Item {
+    func makeItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, for indexPath: IndexPath) -> Item {
         return self.makeReconfigurableItem(Item.self, withIdentifier: .init(Item.self), for: indexPath)
     }
     
@@ -147,7 +147,7 @@ extension NSCollectionView {
      
      - Returns: The supplementary view.
      */
-    public func makeSupplementaryView<SupplementaryView>(_ viewClass: SupplementaryView.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
+    func makeSupplementaryView<SupplementaryView>(_ viewClass: SupplementaryView.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
         return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(SupplementaryView.self), for: indexPath) as! SupplementaryView
     }
 }
