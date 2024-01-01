@@ -46,11 +46,9 @@
 - ``borderColorTransform``
 - ``resolvedBorderColor()``
 
-
 ### Customizing shadow
 
 - ``shadow``
-
 
 ### Customizing layout
 
