@@ -29,12 +29,12 @@ public extension NSTableView {
      }
      ```
      
-     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
+     After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
      
      ```swift
      dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
      tableView, column, row, element in
-        return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)
+        return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)
      }
      ```
      
@@ -44,7 +44,7 @@ public extension NSTableView {
      dataSource = NSTableViewDiffableDataSource(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
      
-     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``.
+     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``.
      
      ## Column Identifiers
      
@@ -71,7 +71,7 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
          
          - Parameters:
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns when used with `TableViewDiffableDataSource`.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, which indicates that the cell isn't restricted to specific columns when used with ``TableViewDiffableDataSource``.
             - handler: The handler to configurate the cell.
          */
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
@@ -86,7 +86,7 @@ public extension NSTableView {
          
          - Parameters:
             - nib: The nib of the cell.
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, indicating that the cell isn't restricted to specific columns when used with `TableViewDiffableDataSource`.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, which indicates that the cell isn't restricted to specific columns when used with ``TableViewDiffableDataSource``.
             - handler: The handler to configurate the cell.
          */
         public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
@@ -99,7 +99,7 @@ public extension NSTableView {
         /// A closure that handles the cell registration and configuration.
         public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element)->(Void))
         
-        func makeCell(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
+        func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
             self.registerIfNeeded(for: tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
@@ -154,8 +154,8 @@ public extension NSTableView {
      
      - returns:A configured reusable cell object.
      */
-    func makeCell<Cell, Item>(using registration: CellRegistration<Cell, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> Cell? where Cell: NSTableCellView {
-        return registration.makeCell(self, column, row, item)
+    func makeCellView<Cell, Item>(using registration: CellRegistration<Cell, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> Cell? where Cell: NSTableCellView {
+        return registration.makeCellView(self, column, row, item)
     }
 }
 

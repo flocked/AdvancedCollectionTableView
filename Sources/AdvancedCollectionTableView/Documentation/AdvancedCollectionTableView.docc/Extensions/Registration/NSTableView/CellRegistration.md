@@ -14,4 +14,4 @@
 
 ### Creating a table cell view
 
-- ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``
+- ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``

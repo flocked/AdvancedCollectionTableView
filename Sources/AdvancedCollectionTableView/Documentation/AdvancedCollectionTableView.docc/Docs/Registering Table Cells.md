@@ -20,12 +20,12 @@ let cellRegistration = NSTableView.CellRegistration<NSTableCellView, Int> { tabl
 }
 ```
 
-After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
+After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
 
 ```swift
 dataSource = NSTableViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
     (tableView: NSTableView, column: NSTableColumn, row: Int, itemIdentifier: Int) -> NSView in
     
-    return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, item: itemIdentifier)
+    return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: itemIdentifier)
 }
 ```

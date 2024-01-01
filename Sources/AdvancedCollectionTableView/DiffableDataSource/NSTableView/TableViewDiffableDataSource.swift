@@ -298,7 +298,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, item in
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, item: item)!
+            return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
         })
     }
     
@@ -796,7 +796,7 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
 public convenience init<I: NSTableCellView, R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, rowRegistration: NSTableView.RowRegistration<R, Item>) {
     self.init(tableView: tableView, cellProvider:  {
         _tableView, column, row, element in
-        return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)!
     })
     self.applyRowViewRegistration(rowRegistration)
 }
@@ -818,7 +818,7 @@ public convenience init<I: NSTableCellView, R: NSTableRowView>(tableView: NSTabl
 public convenience init<I: NSTableCellView, H: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>) {
     self.init(tableView: tableView, cellProvider:  {
         _tableView, column, row, element in
-        return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)!
     })
     self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
 }
@@ -841,7 +841,7 @@ public convenience init<I: NSTableCellView, H: NSView>(tableView: NSTableView, c
 public convenience init<I: NSTableCellView, H: NSView,  R: NSTableRowView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>, sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<H, Section>, rowRegistration: NSTableView.RowRegistration<R, Item>) {
     self.init(tableView: tableView, cellProvider:  {
         _tableView, column, row, element in
-        return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, element: element)!
+        return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)!
     })
     self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
     self.applyRowViewRegistration(rowRegistration)

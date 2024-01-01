@@ -8,7 +8,7 @@
 - ``AppKit/NSTableView/register(_:forIdentifier:)``
 - ``AppKit/NSTableView/makeView(for:)``
 - ``AppKit/NSTableView/CellRegistration``
-- ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``
+- ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``
 
 ### Creating table row views
 

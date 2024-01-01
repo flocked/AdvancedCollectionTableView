@@ -18,7 +18,7 @@ public extension NSTableViewDiffableDataSource {
     convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, ItemIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, item in
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, item: item)!
+            return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
         })
     }
     
@@ -33,7 +33,7 @@ public extension NSTableViewDiffableDataSource {
     convenience init<I: NSTableCellView, S: NSView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, ItemIdentifierType>, sectionHeaderRegistration: NSTableView.SectionHeaderRegistration<S, SectionIdentifierType>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, item in
-            return _tableView.makeCell(using: cellRegistration, forColumn: column, row: row, item: item)!
+            return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
         })
         applySectionHeaderViewRegistration(sectionHeaderRegistration)
     }
