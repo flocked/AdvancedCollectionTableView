@@ -1,5 +1,5 @@
 version: 1
 builder:
   configs:
-    - documentation_targets: [AdvancedCollectionTableView-Package]
+    - documentation_targets: [AdvancedCollectionTableView-Package, AdvancedCollectionTableView]
       custom_documentation_parameters: [--include-extended-types]
