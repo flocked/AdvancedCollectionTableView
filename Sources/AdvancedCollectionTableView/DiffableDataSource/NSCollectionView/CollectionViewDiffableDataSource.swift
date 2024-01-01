@@ -374,7 +374,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        Swift.print("Supplementary", kind)
+        Swift.print("Supplementary", collectionView.dataSource?.collectionView?(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath) ?? "nil")
         return NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 1))
     }
     
