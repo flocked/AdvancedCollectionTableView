@@ -2,7 +2,7 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of UIKit.
 
-**Take a look at the included sample app which demonstrates most features.**
+Take a look at the included sample app located at */Example* which demonstrates most features.
 
 **For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.**
 
