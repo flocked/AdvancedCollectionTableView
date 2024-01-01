@@ -1,5 +1,7 @@
 # NSCollectionView
 
+Extensions for `NSCollectionView`.
+
 ## Topics
 
 ### Creating items

@@ -1,5 +1,7 @@
 # NSTableRowView
 
+Extensions for `NSTableRowView`.
+
 ## Topics
 
 ### Managing the content

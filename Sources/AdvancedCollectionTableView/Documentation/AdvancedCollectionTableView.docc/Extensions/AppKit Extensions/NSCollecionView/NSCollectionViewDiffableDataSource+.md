@@ -1,5 +1,7 @@
 # NSCollectionViewDiffableDataSource
 
+Extensions for `NSCollectionViewDiffableDataSource`.
+
 ## Topics
 
 ### Creating a Diffable Data Source

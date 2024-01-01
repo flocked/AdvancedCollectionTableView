@@ -1,5 +1,7 @@
 # NSTableCellView
 
+Extensions for `NSTableCellView`.
+
 ## Topics
 
 ### Managing the content

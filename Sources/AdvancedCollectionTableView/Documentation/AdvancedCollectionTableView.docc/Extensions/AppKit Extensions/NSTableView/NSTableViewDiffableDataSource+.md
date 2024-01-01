@@ -1,5 +1,7 @@
 # NSTableViewDiffableDataSource
 
+Extensions for `NSTableViewDiffableDataSource`.
+
 ## Topics
 
 ### Creating a Diffable Data Source

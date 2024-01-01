@@ -1,5 +1,7 @@
 # NSTableView
 
+Extensions for `NSTableView`.
+
 ## Topics
 
 ### Creating table cell views
