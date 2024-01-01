@@ -83,11 +83,6 @@
 - ``columnHandlers-swift.property``
 - ``ColumnHandlers-swift.struct``
 
-### Data source requirements
+### Supporting protocol requirements
 
-- ``numberOfRows(in:)``
-- ``tableView(_:acceptDrop:row:dropOperation:)``
-- ``tableView(_:draggingSession:endedAt:operation:)``
-- ``tableView(_:draggingSession:willBeginAt:forRowIndexes:)``
-- ``tableView(_:pasteboardWriterForRow:)``
-- ``tableView(_:validateDrop:proposedRow:proposedDropOperation:)``
+- <doc:TableViewDiffableDataSource---Protocol-Implementations>

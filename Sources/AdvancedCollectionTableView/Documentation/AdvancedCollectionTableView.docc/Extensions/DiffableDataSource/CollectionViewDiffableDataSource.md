@@ -81,9 +81,7 @@
 - ``hoverHandlers-swift.property``
 - ``HoverHandlers-swift.struct``
 
-### Data source requirements
+### Supporting protocol requirements
 
-- ``collectionView(_:itemForRepresentedObjectAt:)``
-- ``collectionView(_:viewForSupplementaryElementOfKind:at:)``
-- ``collectionView(_:numberOfItemsInSection:)``
-- ``numberOfSections(in:)``
+- <doc:CollectionViewDiffableDataSource---Protocol-Implementations>
+
