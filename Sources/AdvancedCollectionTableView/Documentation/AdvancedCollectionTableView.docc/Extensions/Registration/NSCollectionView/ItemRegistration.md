@@ -1,5 +1,9 @@
 # ``AppKit/NSCollectionView/ItemRegistration``
 
+@Metadata {
+  @DisplayName("ItemRegistration")
+}
+
 ## Topics
 
 ### Creating an item registration

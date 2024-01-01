@@ -1,5 +1,9 @@
 # ``AppKit/NSTableView/RowRegistration``
 
+@Metadata {
+  @DisplayName("RowRegistration")
+}
+
 ## Topics
 
 ### Creating a table row view registration
@@ -10,4 +14,4 @@
 
 ### Creating a table row view
 
-- ``AppKit/NSTableView/makeRowView(using:forRow:element:)``
+- ``AppKit/NSTableView/makeRowView(using:forRow:Item:)``

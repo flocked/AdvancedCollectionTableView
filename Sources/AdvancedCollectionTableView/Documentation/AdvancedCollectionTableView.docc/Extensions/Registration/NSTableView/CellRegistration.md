@@ -1,5 +1,9 @@
 # ``AppKit/NSTableView/CellRegistration``
 
+@Metadata {
+  @DisplayName("CellRegistration")
+}
+
 ## Topics
 
 ### Creating a table cell registration

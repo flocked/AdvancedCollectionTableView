@@ -1,5 +1,9 @@
 # ``AppKit/NSTableView/SectionHeaderRegistration``
 
+@Metadata {
+  @DisplayName("SectionHeaderRegistration")
+}
+
 ## Topics
 
 ### Creating a table section header view registration

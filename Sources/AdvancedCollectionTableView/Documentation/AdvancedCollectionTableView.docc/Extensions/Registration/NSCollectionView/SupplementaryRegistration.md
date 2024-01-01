@@ -1,5 +1,9 @@
 # ``AppKit/NSCollectionView/SupplementaryRegistration``
 
+@Metadata {
+  @DisplayName("SupplementaryRegistration")
+}
+
 ## Topics
 
 ### Creating a supplementary registration
