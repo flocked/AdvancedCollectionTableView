@@ -6,6 +6,7 @@
 
 - ``init(elementKind:handler:)``
 - ``init(nib:elementKind:handler:)``
+- ``elementKind``
 - ``Handler``
 
 ### Creating a supplementary view
