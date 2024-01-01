@@ -608,7 +608,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {
-        /// The Handler that tells you to begin preparing data for the elements.
+        /// The handler that tells you to begin preparing data for the elements.
         public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
         /// Cancels a previously triggered data prefetch request.
         public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
@@ -616,41 +616,41 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for selection of elements.
     public struct SelectionHandlers {
-        /// The Handler that determines whether elements should get selected.
+        /// The handler that determines whether elements should get selected. The default value is `nil` which indicates that all elements should be selected.
         public var shouldSelect: ((_ elements: [Element]) -> [Element])? = nil
-        /// The Handler that gets called whenever elements get selected.
+        /// The handler that gets called whenever elements get selected.
         public var didSelect: ((_ elements: [Element]) -> ())? = nil
-        /// The Handler that determines whether elements should get deselected.
+        /// The handler that determines whether elements should get deselected. The default value is `nil` which indicates that all elements should be deselected.
         public var shouldDeselect: ((_ elements: [Element]) -> [Element])? = nil
-        /// The Handler that gets called whenever elements get deselected.
+        /// The handler that gets called whenever elements get deselected.
         public var didDeselect: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for deletion of elements.
     public struct DeletionHandlers {
-        /// The Handler that determines which elements can be be deleted.
+        /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
         public var canDelete: ((_ elements: [Element]) -> [Element])? = nil
-        /// The Handler that that gets called before deleting elements.
+        /// The handler that that gets called before deleting elements.
         public var willDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
-        /// The Handler that that gets called after deleting elements.
+        /// The handler that that gets called after deleting elements.
         public var didDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for reordering elements.
     public struct ReorderingHandlers {
-        /// The Handler that determines whether you can reorder a particular element.
+        /// The handler that determines whether you can reorder elements. The default value is `nil` which indicates that the elements can be reordered.
         public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
-        /// The Handler that prepares the diffable data source for reordering its elements.
+        /// The handler that prepares the diffable data source for reordering its elements.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
-        /// The Handler that processes a reordering transaction.
+        /// The handler that processes a reordering transaction.
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for the highlight state of elements.
     public struct HighlightHandlers {
-        /// The Handler that determines which elements should change to a highlight state.
+        /// The handler that determines which elements should change to a highlight state. The default value is `nil` which indicates that all elements should change their highlight state.
         public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
-        /// The Handler that gets called whenever elements changed their highlight state.
+        /// The handler that gets called whenever elements changed their highlight state.
         public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
     
@@ -660,9 +660,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
     public struct DisplayHandlers {
-        /// The Handler that gets called whenever elements start getting displayed.
+        /// The handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [Element]) -> ())?
-        /// The Handler that gets called whenever elements end getting displayed.
+        /// The handler that gets called whenever elements end getting displayed.
         public var didEndDisplaying: ((_ elements: [Element]) -> ())?
     }
     

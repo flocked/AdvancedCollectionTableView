@@ -18,8 +18,8 @@ extension NSCollectionView {
      - Parameters:
         - itemClass: The class of a item that you want to use in the collection view.
      */
-    public func register<Item: NSCollectionViewItem>(_ item: Item.Type) {
-        self.register(item.self, forItemWithIdentifier: .init(item))
+    public func register<Item: NSCollectionViewItem>(_ itemClass: Item.Type) {
+        self.register(itemClass.self, forItemWithIdentifier: .init(itemClass))
     }
     
     /**
@@ -33,8 +33,8 @@ extension NSCollectionView {
         - itemClass: The class of a item that you want to use in the collection view.
         - nib: The nib object containing the item object. The nib file must contain only one top-level object and that object must be of the type NSCollectionViewItem.
      */
-    public func register<Item: NSCollectionViewItem>(_ item: Item.Type, nib: NSNib) {
-        self.register(nib, forItemWithIdentifier: .init(item))
+    public func register<Item: NSCollectionViewItem>(_ itemClass: Item.Type, nib: NSNib) {
+        self.register(nib, forItemWithIdentifier: .init(itemClass))
     }
     
     /**
@@ -62,7 +62,6 @@ extension NSCollectionView {
      - Important: You must register a class or nib file using ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)`` before calling this method.
      
      - Parameters:
-        - itemClass: The class of a item that you want to use in the collection view.
         - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
      
      - Returns: A valid item object.

@@ -35,10 +35,12 @@ import FZQuicklook
     
     /// Handlers for deletion of items.
     public struct DeletionHandlers {
-        /// The Handler that determines whether Itemlements should get deleted.
+        /// The handler that determines whether items should get deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
-        /// The Handler that gets called whenever Itemlements get deleted.
-        public var didDelete: ((_ items: [ItemIdentifierType]) -> ())? = nil
+        /// The handler that that gets called before deleting items.
+        public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> ())? = nil
+        /// The handler that that gets called after deleting items.
+        public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> ())? = nil
     }
     
     var keyDownMonitor: Any? {
@@ -62,10 +64,28 @@ import FZQuicklook
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
-                            var snapshot = self.snapshot()
-                            snapshot.deleteItems(elementsToDelete)
-                            self.apply(snapshot, .usingReloadData)
-                            self.deletionHandlers.didDelete?(elementsToDelete)
+                            var finalSnapshot = self.snapshot()
+                            finalSnapshot.deleteItems(elementsToDelete)
+                                                        
+                            func getTransaction() ->  NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> {
+                                let initalSnapshot = self.snapshot()
+                                let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
+                                return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
+                            }
+                            
+                            var transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>? = nil
+                            
+                            if let willDelete = deletionHandlers.willDelete {
+                                transaction = getTransaction()
+                                willDelete(elementsToDelete, transaction!)
+                            }
+                            
+                            self.apply(finalSnapshot, .usingReloadData)
+                            
+                            if let didDelete = deletionHandlers.didDelete {
+                                didDelete(elementsToDelete, transaction ?? getTransaction())
+                            }
+                            
                             if collectionView.allowsEmptySelection == false {
                                 let indexPath = (selectionIndexPaths.first ?? IndexPath(item: 0, section: 0))
                                 collectionView.selectItems(at: Set([indexPath]), scrollPosition: [])

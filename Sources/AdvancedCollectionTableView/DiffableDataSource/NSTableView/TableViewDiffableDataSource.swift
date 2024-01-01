@@ -619,33 +619,33 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     /// Handlers for selection of items.
     public struct SelectionHandlers {
-        /// The Handler that determines whether items should get selected.
+        /// The handler that determines whether items should get selected. The default value is `nil` which indicates that all items should be selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
-        /// The Handler that gets called whenever items get selected.
+        /// The handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)? = nil
-        /// The Handler that determines whether items should get deselected.
+        /// The handler that determines whether items should get deselected. The default value is `nil` which indicates that all items should be deselected.
         public var shouldDeselect: (([Item]) -> [Item])? = nil
-        /// The Handler that gets called whenever items get deselected.
+        /// The handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)? = nil
     }
     
     /// Handlers for reordering items.
     public struct ReorderingHandlers {
-        /// The handler that determines whether you can reorder a particular item.
+        /// The handler that determines whether you can reorder items. The default value is `nil` which indicates that the items can be reordered.
         public var canReorder: (([Item]) -> Bool)? = nil
-        /// The Handler that prepares the diffable data source for reordering its items.
+        /// The handler that prepares the diffable data source for reordering its items.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-        /// The Handler that processes a reordering transaction.
+        /// The handler that processes a reordering transaction.
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
     /// Handlers for deletion.
     public struct DeletionHandlers {
-        /// The Handler that determines which items can be be deleted.
+        /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])? = nil
-        /// The Handler that that gets called before deleting items.
+        /// The handler that that gets called before deleting items.
         public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-        /// The Handler that gets called after deleting items.
+        /// The handler that gets called after deleting items.
         public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
