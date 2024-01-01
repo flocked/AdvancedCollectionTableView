@@ -83,7 +83,7 @@ public extension NSCollectionView {
         
         func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)   {
             if isRegistered(collectionView) == false {
-                register(for: collectionView)
+                register(collectionView)
             }
             
             let view = collectionView.makeSupplementaryView(ofKind: self.elementKind, withIdentifier: self.identifier, for: indexPath) as! Supplementary
@@ -95,7 +95,7 @@ public extension NSCollectionView {
             collectionView.registeredSupplementaryRegistrations.contains(identifier)
         }
         
-        func register(for collectionView: NSCollectionView) {
+        func register(_ collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)
             } else {
@@ -104,7 +104,7 @@ public extension NSCollectionView {
             collectionView.registeredSupplementaryRegistrations.append(identifier)
         }
         
-        func unregister(for collectionView: NSCollectionView) {
+        func unregister(_ collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)
             collectionView.registeredSupplementaryRegistrations.remove(identifier)

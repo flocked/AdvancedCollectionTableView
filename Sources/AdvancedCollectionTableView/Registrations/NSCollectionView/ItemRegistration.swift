@@ -97,7 +97,7 @@ public extension NSCollectionView {
         
         func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
             if isRegistered(collectionView) == false {
-                self.register(for: collectionView)
+                self.register(collectionView)
             }
             let item: Item
             if collectionView.isReconfiguratingItems, let existingItem = collectionView.item(at: indexPath) as? Item {
@@ -113,7 +113,7 @@ public extension NSCollectionView {
             collectionView.registeredItemRegistrations.contains(self.identifier)
         }
         
-        func register(for collectionView: NSCollectionView) {
+        func register(_ collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forItemWithIdentifier: self.identifier)
             } else {
@@ -122,7 +122,7 @@ public extension NSCollectionView {
             collectionView.registeredItemRegistrations.append(self.identifier)
         }
         
-        func unregister(for collectionView: NSCollectionView) {
+        func unregister(_ collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forItemWithIdentifier: self.identifier)
             collectionView.registeredItemRegistrations.remove(self.identifier)

@@ -100,7 +100,7 @@ public extension NSTableView {
         public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item)->(Void))
         
         func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
-            self.registerIfNeeded(for: tableView)
+            self.register(tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
@@ -112,7 +112,7 @@ public extension NSTableView {
         }
         
         func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) ->NSTableCellView? {
-            self.registerIfNeeded(for: tableView)
+            self.register(tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
@@ -124,7 +124,7 @@ public extension NSTableView {
             return nil
         }
         
-        func registerIfNeeded(for tableView: NSTableView) {
+        func register(_ tableView: NSTableView) {
             if let nib = nib {
                 if tableView.registeredNibsByIdentifier?[self.identifier] != self.nib {
                     tableView.register(nib, forIdentifier: self.identifier)
@@ -136,7 +136,7 @@ public extension NSTableView {
             }
         }
         
-        func unregister(for tableView: NSTableView) {
+        func unregister(_ tableView: NSTableView) {
             tableView.register(nil, forIdentifier: self.identifier)
         }
     }
