@@ -70,10 +70,10 @@ extension NSTableCellView {
     }
     
     var contentView: (NSView & NSContentView)?   {
-        get { getAssociatedValue(key: "_contentView", object: self) }
+        get { getAssociatedValue(key: "contentView", object: self) }
         set { 
             contentView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "_contentView", object: self)
+            set(associatedValue: newValue, key: "contentView", object: self)
         }
     }
     

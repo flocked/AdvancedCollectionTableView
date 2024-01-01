@@ -9,7 +9,7 @@
 
 ### Creating supplementary views
 
-- ``AppKit/NSCollectionViewDiffableDataSource/supplementaryRegistrations(_:)``
+- ``AppKit/NSCollectionViewDiffableDataSource/useSupplementaryRegistrations(_:)``
 
 ### Updating data
 

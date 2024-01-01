@@ -129,8 +129,8 @@ public extension NSCollectionView {
 
 fileprivate extension NSCollectionView {
     var registeredSupplementaryRegistrations: [NSUserInterfaceItemIdentifier] {
-        get { getAssociatedValue(key: "_registeredSupplementaryRegistrations", object: self, initialValue: []) }
-        set { set(associatedValue: newValue, key: "_registeredSupplementaryRegistrations", object: self)
+        get { getAssociatedValue(key: "registeredSupplementaryRegistrations", object: self, initialValue: []) }
+        set { set(associatedValue: newValue, key: "registeredSupplementaryRegistrations", object: self)
         }
     }
 }

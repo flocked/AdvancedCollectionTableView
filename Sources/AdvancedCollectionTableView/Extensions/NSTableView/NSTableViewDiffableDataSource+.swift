@@ -18,7 +18,7 @@ extension NSTableViewDiffableDataSource {
      
      - Returns: The view to display the specified column and row.
      */
-    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -39,7 +39,7 @@ extension NSTableViewDiffableDataSource {
      
      - Returns: An instance or subclass of NSTableRowView. If nil is returned, an NSTableRowView instance will be created and used.
      */
-    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+    public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         let selector = NSSelectorFromString("_tableView:rowViewForRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -60,7 +60,7 @@ extension NSTableViewDiffableDataSource {
      
      - Returns: `true` if the specified row should have the group row style drawn, `false otherwise.
      */
-    func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+    public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
         let selector = NSSelectorFromString("_tableView:isGroupRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)

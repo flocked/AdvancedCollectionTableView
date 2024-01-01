@@ -327,8 +327,8 @@ extension NSTextField {
     }
     
     var _font: NSFont? {
-        get { getAssociatedValue(key: "_font", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "_font", object: self) }
+        get { getAssociatedValue(key: "font", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "font", object: self) }
     }
     
     var didSwizzleTextField: Bool {

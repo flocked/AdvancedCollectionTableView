@@ -11,7 +11,7 @@
 
 ### Creating Section Views
 
-- ``AppKit/NSTableViewDiffableDataSource/applySectionHeaderViewRegistration(_:)``
+- ``AppKit/NSTableViewDiffableDataSource/useSectionHeaderViewRegistration(_:)``
 
 ### Updating data
 
@@ -22,3 +22,9 @@
 - ``AppKit/NSTableViewDiffableDataSource/allowsDeleting``
 - ``AppKit/NSTableViewDiffableDataSource/deletionHandlers-swift.property``
 - ``AppKit/NSTableViewDiffableDataSource/DeletionHandlers-swift.struct``
+
+### Supporting protocol requirements
+
+- ``AppKit/NSTableViewDiffableDataSource/tableView(_:isGroupRow:)``
+- ``AppKit/NSTableViewDiffableDataSource/tableView(_:rowViewForRow:)``
+- ``AppKit/NSTableViewDiffableDataSource/tableView(_:viewFor:row:)``

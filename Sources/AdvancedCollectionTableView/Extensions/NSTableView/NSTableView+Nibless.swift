@@ -61,8 +61,8 @@ extension NSTableView {
      Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.
      */
     var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier : NSTableCellView.Type] {
-        get { getAssociatedValue(key: "_registeredCellsByIdentifier", object: self, initialValue: [:]) }
-        set { set(associatedValue: newValue, key: "_registeredCellsByIdentifier", object: self) }
+        get { getAssociatedValue(key: "registeredCellsByIdentifier", object: self, initialValue: [:]) }
+        set { set(associatedValue: newValue, key: "registeredCellsByIdentifier", object: self) }
     }
     
     @objc func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {

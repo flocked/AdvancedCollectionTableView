@@ -13,7 +13,7 @@
 ### Creating table row views
 
 - ``AppKit/NSTableView/RowRegistration``
-- ``AppKit/NSTableView/makeRowView(using:forRow:element:)``
+- ``AppKit/NSTableView/makeRowView(using:forRow:item:)``
 
 ### Creating section header views
 

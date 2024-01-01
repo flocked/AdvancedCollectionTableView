@@ -13,20 +13,20 @@
 - ``supplementaryViewProvider-swift.property``
 - ``SupplementaryViewProvider-swift.typealias``
 
-### Identifying items
+### Identifying elements
 
-- ``items``
-- ``selectedItems``
-- ``item(for:)``
-- ``item(at:)``
+- ``elements``
+- ``selectedElements``
+- ``element(for:)``
+- ``element(at:)``
 - ``indexPath(for:)``
-- ``reconfigureItems(_:)``
-- ``reloadItems(_:animated:)``
-- ``selectItems(_:scrollPosition:addSpacing:)``
-- ``selectItems(in:scrollPosition:)``
-- ``deselectItems(_:)``
-- ``deselectItems(in:scrollPosition:)``
-- ``scrollToItems(_:scrollPosition:)``
+- ``reconfigureElements(_:)``
+- ``reloadElements(_:animated:)``
+- ``selectElements(_:scrollPosition:addSpacing:)``
+- ``selectElements(in:scrollPosition:)``
+- ``deselectElements(_:)``
+- ``deselectElements(in:scrollPosition:)``
+- ``scrollToElements(_:scrollPosition:)``
 
 ### Identifying sections
 
@@ -34,6 +34,11 @@
 - ``section(for:)``
 - ``index(for:)``
 - ``scrollToSection(_:scrollPosition:)``
+
+### Previewing elements
+
+- ``quicklookElements(_:current:)``
+- ``quicklookSelectedElements()``
 
 ### Updating data
 
@@ -45,18 +50,18 @@
 - ``menuProvider``
 - ``pinchHandler``
 
-### Supporting prefetching
+### Supporting prefetching elements
 
 - ``prefetchHandlers-swift.property``
 - ``PrefetchHandlers-swift.struct``
 
-### Supporting reordering
+### Supporting reordering elements
 
 - ``allowsReordering``
 - ``reorderingHandlers-swift.property``
 - ``ReorderingHandlers-swift.struct``
 
-### Supporting deleting
+### Supporting deleting elements
 
 - ``allowsDeleting``
 - ``deletionHandlers-swift.property``
@@ -67,19 +72,25 @@
 - ``dragDropHandlers-swift.property``
 - ``DragDropHandlers-swift.struct``
 
-### Handling item changes
+### Handling selecting elements
 
 - ``selectionHandlers-swift.property``
 - ``SelectionHandlers-swift.struct``
 
-- ``highlightHandlers-swift.property``
-- ``HighlightHandlers-swift.struct``
+### Handling displaying elements
 
 - ``displayHandlers-swift.property``
 - ``DisplayHandlers-swift.struct``
 
+### Handling hovering elements
+
 - ``hoverHandlers-swift.property``
 - ``HoverHandlers-swift.struct``
+
+### Handling highlighting elements
+
+- ``highlightHandlers-swift.property``
+- ``HighlightHandlers-swift.struct``
 
 ### Supporting protocol requirements
 

@@ -337,6 +337,7 @@ extension NSCollectionViewItem {
 }
 
 extension NSCollectionViewItem {
+    /// Instantiates a view for the item.
     open override func loadView() {
         view = NSView()
     }

@@ -43,6 +43,11 @@
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:scrollPosition:)``
 
+### Previewing items
+
+- ``quicklookItems(_:current:)``
+- ``quicklookSelectedItems()``
+
 ### Updating data
 
 - ``snapshot()``
@@ -54,13 +59,13 @@
 - ``menuProvider``
 - ``rowActionProvider``
 
-### Supporting reordering
+### Supporting reordering items
 
 - ``allowsReordering``
 - ``reorderingHandlers-swift.property``
 - ``ReorderingHandlers-swift.struct``
 
-### Supporting deleting
+### Supporting deleting items
 
 - ``allowsDeleting``
 - ``deletionHandlers-swift.property``
@@ -71,10 +76,13 @@
 - ``dragDropHandlers-swift.property``
 - ``DragDropHandlers-swift.struct``
 
-### Handling row changes
+### Handling selecting items
 
 - ``selectionHandlers-swift.property``
 - ``SelectionHandlers-swift.struct``
+
+### Handling hovering items
+
 - ``hoverHandlers-swift.property``
 - ``HoverHandlers-swift.struct``
 
