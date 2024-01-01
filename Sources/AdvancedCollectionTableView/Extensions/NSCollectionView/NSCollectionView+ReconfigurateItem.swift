@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 
-public extension NSCollectionView {
+extension NSCollectionView {
     /**
      Updates the data for the items at the index paths you specify, preserving existing items.
           
@@ -21,7 +21,7 @@ public extension NSCollectionView {
      - Parameters:
         - indexPaths: An array of IndexPath objects identifying the items you want to update.
      */
-    func reconfigureItems(at indexPaths: [IndexPath]) {
+    public func reconfigureItems(at indexPaths: [IndexPath]) {
         self.isReconfiguratingItems = true
         let visibleIndexPaths = self.indexPathsForVisibleItems()
         for indexPath in indexPaths {
@@ -32,7 +32,7 @@ public extension NSCollectionView {
         self.isReconfiguratingItems = false
     }
     
-    internal var isReconfiguratingItems: Bool {
+    var isReconfiguratingItems: Bool {
         get { getAssociatedValue(key: "isReconfiguratingItems", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "isReconfiguratingItems", object: self)
         }

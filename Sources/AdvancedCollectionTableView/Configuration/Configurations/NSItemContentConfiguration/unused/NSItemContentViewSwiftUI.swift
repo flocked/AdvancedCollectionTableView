@@ -13,7 +13,7 @@ import SwiftUI
 
 // Unused SwiftUI based version of NSItemContentView
 @available(macOS 13.0, *)
-internal class NSItemContentViewSwiftUI: NSView, NSContentView {
+class NSItemContentViewSwiftUI: NSView, NSContentView {
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { _configuration }
@@ -39,7 +39,7 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
         self.clipsToBounds = false
     }
     
-    internal var _configuration: NSItemContentConfiguration {
+    var _configuration: NSItemContentConfiguration {
         didSet {
             if oldValue != _configuration {
                 updateConfiguration()
@@ -47,11 +47,11 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
         }
     }
     
-    internal func updateConfiguration() {
+    func updateConfiguration() {
         hostingController.rootView =  ContentView(configuration: self._configuration)
     }
     
-    internal lazy var hostingController: NSHostingController<ContentView> = {
+    lazy var hostingController: NSHostingController<ContentView> = {
         let hostingView = ContentView(configuration: self._configuration)
         let hostingController = NSHostingController<ContentView>(rootView: hostingView)
         hostingController.view.backgroundColor = .clear
@@ -88,7 +88,7 @@ internal class NSItemContentViewSwiftUI: NSView, NSContentView {
 }
 
 @available(macOS 13.0, *)
-internal extension NSItemContentViewSwiftUI {
+extension NSItemContentViewSwiftUI {
     @available(macOS 13.0, *)
     struct ContentItem: View {
         let view: NSView?
@@ -237,7 +237,7 @@ internal extension NSItemContentViewSwiftUI {
     }
 }
 
-internal extension Shape {
+extension Shape {
     @ViewBuilder
     func stroke(_ properties: NSItemContentConfiguration.ContentProperties) -> some View {
         self
@@ -245,7 +245,7 @@ internal extension Shape {
     }
 }
 
-internal extension View {
+extension View {
     @ViewBuilder
     func sizing(_ sizing: NSItemContentConfiguration.ContentProperties.SizeOption?, hasImage: Bool, isVertical: Bool) -> some View {
         switch sizing {

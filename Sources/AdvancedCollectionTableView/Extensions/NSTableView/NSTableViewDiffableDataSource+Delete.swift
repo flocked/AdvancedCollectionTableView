@@ -10,13 +10,13 @@ import FZSwiftUtils
 import FZUIKit
 import FZQuicklook
 
-public extension NSTableViewDiffableDataSource {
+extension NSTableViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete rows either via backsapace keyboard shortcut.
      
      If the value of this property is `true` (the default is `false), users can delete rows.     
      */
-    var allowsDeleting: Bool {
+    public var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
         set {
             guard newValue != allowsDeleting else { return }
@@ -26,27 +26,27 @@ public extension NSTableViewDiffableDataSource {
     }
     
     /// Handlers for deletion of items.
-    var deletionHandlers: DeletionHandlers {
+    public var deletionHandlers: DeletionHandlers {
         get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
         set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
     }
     
     /// Handlers for deletion of items.
-    struct DeletionHandlers {
+    public struct DeletionHandlers {
         /// The Handler that determines whether Itemlements should get deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])? = nil
         /// The Handler that gets called whenever Itemlements get deleted.
         public var didDelete: ((_ items: [ItemIdentifierType]) -> ())? = nil
     }
     
-    internal var keyDownMonitor: Any? {
+    var keyDownMonitor: Any? {
         get { getAssociatedValue(key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
         set {
             set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self)
         }
     }
     
-    internal func setupKeyDownMonitor() {
+    func setupKeyDownMonitor() {
         if self.allowsDeleting {
             if keyDownMonitor == nil {
                 keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in

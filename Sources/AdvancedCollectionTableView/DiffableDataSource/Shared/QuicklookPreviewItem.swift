@@ -27,7 +27,7 @@ import QuickLookUI
         view?.renderedImage ?? preview.previewItemTransitionImage
     }
     
-    internal init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
+    init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
         self.preview = preview
         self.view = view
     }

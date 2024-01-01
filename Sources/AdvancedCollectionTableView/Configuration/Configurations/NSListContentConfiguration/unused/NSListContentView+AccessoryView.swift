@@ -138,7 +138,7 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 @available(macOS 11.0, iOS 15.0, tvOS 15.0, watchOS 6.0, *)
-internal extension Text {
+ extension Text {
     @ViewBuilder
     func configurateAlt(using properties: TextConfiguration) -> some View {
         self
@@ -150,7 +150,7 @@ internal extension Text {
     }
 }
 
-internal extension NSTextAlignment {
+extension NSTextAlignment {
     var swiftUI: Alignment {
         switch self {
         case .left: return .leading

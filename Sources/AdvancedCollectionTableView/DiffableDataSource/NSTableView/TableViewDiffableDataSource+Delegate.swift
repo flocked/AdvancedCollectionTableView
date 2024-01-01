@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 extension TableViewDiffableDataSource {
-    internal class DelegateBridge: NSObject, NSTableViewDelegate {
+    class DelegateBridge: NSObject, NSTableViewDelegate {
         
         weak var dataSource: TableViewDiffableDataSource!
         
@@ -19,7 +19,7 @@ extension TableViewDiffableDataSource {
             self.dataSource.tableView.delegate = self
         }
         
-        internal var previousSelectedIDs: [Item.ID] = []
+        var previousSelectedIDs: [Item.ID] = []
         public func tableViewSelectionDidChange(_ notification: Notification) {
             guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
                 previousSelectedIDs = dataSource.selectedItems.ids

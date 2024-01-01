@@ -10,7 +10,7 @@ import FZUIKit
 
 /*
 // Currently not used
-internal extension NSItemContentConfiguration {
+extension NSItemContentConfiguration {
     func animate(with configuration: TransitionConfiguration) {
         guard let view = (self.collectionViewItem?.contentView as? NSItemContentView), let collectionView = self.collectionViewItem?._collectionView else { return }
         var backgroundView: NSView? = nil

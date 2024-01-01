@@ -78,19 +78,19 @@ extension NSListContentConfiguration {
             case trailing
         }
         
-        internal var hasText: Bool {
+        var hasText: Bool {
             text != nil || attributedText != nil
         }
         
-        internal var hasSecondaryText: Bool {
+        var hasSecondaryText: Bool {
             secondaryText != nil || secondaryAttributedText != nil
         }
         
-        internal var hasContent: Bool {
+        var hasContent: Bool {
             return image != nil
         }
         
-        internal var isVisible: Bool {
+        var isVisible: Bool {
             image != nil || hasText || hasSecondaryText
         }
     }

@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 extension CollectionViewDiffableDataSource {
-    internal class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
+    class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
         weak var dataSource: CollectionViewDiffableDataSource!
         
@@ -163,8 +163,7 @@ extension CollectionViewDiffableDataSource {
     }
 }
 
-
-internal extension PasteboardReadWriting {
+extension PasteboardReadWriting {
     var nsPasteboardReadWriting: NSPasteboardWriting? {
         return (self as? NSPasteboardWriting) ?? (self as? NSURL)
     }

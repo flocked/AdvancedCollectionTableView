@@ -43,7 +43,7 @@
  }
  }
  
- internal extension NSCollectionViewItem {
+extension NSCollectionViewItem {
  static var didSwizzleCollectionViewItem: Bool {
  get { getAssociatedValue(key: "NSCollectionViewItem_didSwizzleCollectionViewItem", object: self, initialValue: false) }
  set { set(associatedValue: newValue, key: "NSCollectionViewItem_didSwizzleCollectionViewItem", object: self) }

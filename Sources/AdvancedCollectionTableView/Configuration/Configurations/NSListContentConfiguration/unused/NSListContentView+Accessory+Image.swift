@@ -18,11 +18,11 @@ extension NSListContentConfiguration.AccessoryProperties {
             case resize
             case none
             
-            internal var isResizable: Bool {
+            var isResizable: Bool {
                 self != .none
             }
             
-            internal var contentMode: ContentMode? {
+            var contentMode: ContentMode? {
                 switch self {
                 case .scaleToFit: return .fit
                 case .scaleToFill: return .fill
