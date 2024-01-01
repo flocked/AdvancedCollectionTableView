@@ -11,7 +11,6 @@ import FZSwiftUtils
 import FZUIKit
 
 /// Properties that affect the text.
-@available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 6.0, *)
 public struct TextProperties {
     /// The font of the text.
     public var font: NSUIFont = .body
@@ -211,7 +210,6 @@ public struct TextProperties {
     }
 }
 
-@available(macOS 11.0, iOS 15.0, tvOS 15.0, watchOS 6.0, *)
 extension TextProperties: Hashable {
     public static func == (lhs: TextProperties, rhs: TextProperties) -> Bool {
         lhs.hashValue == rhs.hashValue
@@ -228,7 +226,6 @@ extension TextProperties: Hashable {
     }
 }
 
-@available(macOS 11.0, iOS 15.0, tvOS 15.0, watchOS 6.0, *)
 extension Text {
     @ViewBuilder
     func configurate(using properties: TextProperties) -> some View {
@@ -241,7 +238,6 @@ extension Text {
     }
 }
 
-@available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 6.0, *)
 extension NSTextView {
     /**
      Configurates the text view.
@@ -261,7 +257,6 @@ extension NSTextView {
 }
 
 
-@available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 6.0, *)
 extension NSTextField {
     /**
      Configurates the text field.
