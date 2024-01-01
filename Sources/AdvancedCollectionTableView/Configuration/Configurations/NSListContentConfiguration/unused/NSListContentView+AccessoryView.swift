@@ -140,7 +140,7 @@ struct ContentView_Previews: PreviewProvider {
 @available(macOS 11.0, iOS 15.0, tvOS 15.0, watchOS 6.0, *)
  extension Text {
     @ViewBuilder
-    func configurateAlt(using properties: TextConfiguration) -> some View {
+    func configurateAlt(using properties: TextProperties) -> some View {
         self
             .font(Font(properties.font))
             .foregroundColor(Color(properties.resolvedColor()))

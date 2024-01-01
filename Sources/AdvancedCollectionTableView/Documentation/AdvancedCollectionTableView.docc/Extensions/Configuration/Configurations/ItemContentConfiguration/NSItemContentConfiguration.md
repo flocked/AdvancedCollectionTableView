@@ -35,6 +35,7 @@
 
 - ``textProperties``
 - ``secondaryTextProperties``
+- ``TextProperties``
 - ``contentProperties-swift.property``
 - ``ContentProperties-swift.struct``
 - ``scaleTransform``

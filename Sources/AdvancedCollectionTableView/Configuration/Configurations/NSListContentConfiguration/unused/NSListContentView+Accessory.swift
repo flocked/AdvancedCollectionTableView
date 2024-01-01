@@ -57,9 +57,9 @@ extension NSListContentConfiguration {
         // MARK: Customizing appearance
         
         /// Properties for configuring the primary text.
-        public var textProperties: TextConfiguration = .primary
+        public var textProperties: TextProperties = .primary
         /// Properties for configuring the secondary text.
-        public var secondaryTextProperties: TextConfiguration = .secondary
+        public var secondaryTextProperties: TextProperties = .secondary
         /// Properties for configuring the image.
         public var imageProperties = ImageProperties()
         

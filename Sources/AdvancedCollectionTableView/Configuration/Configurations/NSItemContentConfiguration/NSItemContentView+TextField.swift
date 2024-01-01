@@ -11,7 +11,7 @@ import FZUIKit
 
 extension NSItemContentView {
     class ItemTextField: NSTextField, NSTextFieldDelegate {
-        var properties: TextConfiguration {
+        var properties: TextProperties {
             didSet {
                 if oldValue != properties {
                     update()
@@ -62,7 +62,7 @@ extension NSItemContentView {
             formatter = properties.numberFormatter
         }
         
-        init(properties: TextConfiguration) {
+        init(properties: TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
             delegate = self

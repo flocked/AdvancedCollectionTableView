@@ -199,15 +199,15 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     // MARK: Customizing appearance
     
     /// Properties for configuring the primary text.
-    public var textProperties: TextConfiguration = {
-        var properties: TextConfiguration = .body
+    public var textProperties: TextProperties = {
+        var properties: TextProperties = .body
         properties.alignment = .center
         return properties
     }()
     
     /// Properties for configuring the secondary text.
-    public var secondaryTextProperties: TextConfiguration = {
-        var properties: TextConfiguration = .caption1
+    public var secondaryTextProperties: TextProperties = {
+        var properties: TextProperties = .caption1
         properties.alignment = .center
         return properties
     }()

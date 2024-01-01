@@ -11,7 +11,7 @@ import FZUIKit
 
 extension NSListContentView {
     class ListTextField: NSTextField, NSTextFieldDelegate {
-        var properties: TextConfiguration {
+        var properties: TextProperties {
             didSet {
                 if oldValue != properties {
                     update()
@@ -53,7 +53,7 @@ extension NSListContentView {
             isBordered = false
         }
         
-        init(properties: TextConfiguration) {
+        init(properties: TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
             drawsBackground = false
