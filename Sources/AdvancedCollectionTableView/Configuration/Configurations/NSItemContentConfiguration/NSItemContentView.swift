@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 /// A content view for displaying collection-based item content.
-public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
+open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         appliedConfiguration = configuration
@@ -29,8 +29,13 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    /// Determines whether the view is compatible with the provided configuration.
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+    ///
+    /**
+     Determines whether the view is compatible with the provided configuration.
+     
+     Returns `true` if the configuration is ``NSItemContentConfiguration``, or `false` if not.
+     */
+    open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
     
@@ -57,7 +62,7 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     var stackviewConstraints: [NSLayoutConstraint] = []
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

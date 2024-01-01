@@ -10,11 +10,11 @@ import FZSwiftUtils
 import FZUIKit
 
 /// A content view for displaying list-based content.
-public class NSListContentView: NSView, NSContentView, EdiitingContentView {
+open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
     /// Creates a list content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
-        _configuration = configuration
+        appliedConfiguration = configuration
         super.init(frame: .zero)
         initialSetup()
         updateConfiguration()
@@ -22,15 +22,19 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
-        get { _configuration }
+        get { appliedConfiguration }
         set {
             if let newValue = newValue as? NSListContentConfiguration {
-                _configuration = newValue }
+                appliedConfiguration = newValue }
         }
     }
     
-    /// Determines whether the view is compatible with the provided configuration.
-    public func supports(_ configuration: NSContentConfiguration) -> Bool {
+    /**
+     Determines whether the view is compatible with the provided configuration.
+     
+     Returns `true` if the configuration is ``NSListContentConfiguration``, or `false` if not.
+     */
+    open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSListContentConfiguration
     }
     
@@ -42,13 +46,16 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
     
     var stackViewConstraints: [NSLayoutConstraint] = []
-    var _configuration: NSListContentConfiguration {
-        didSet { if oldValue != _configuration {
-            updateConfiguration() } } }
+    var appliedConfiguration: NSListContentConfiguration {
+        didSet { 
+            guard oldValue != appliedConfiguration else { return }
+            updateConfiguration()
+        }
+    }
     
-    lazy var textField = ListTextField(properties: _configuration.textProperties)
-    lazy var secondaryTextField = ListTextField(properties: _configuration.secondaryTextProperties)
-    lazy var imageView = ListImageView(properties: _configuration.imageProperties)
+    lazy var textField = ListTextField(properties: appliedConfiguration.textProperties)
+    lazy var secondaryTextField = ListTextField(properties: appliedConfiguration.secondaryTextProperties)
+    lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView? = nil
     
     lazy var textStackView: NSStackView = {
@@ -94,32 +101,32 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
         
-        textField.isEnabled = _configuration.state?.isEnabled != false
-        secondaryTextField.isEnabled = _configuration.state?.isEnabled != false
-        textField.updateText(_configuration.text, _configuration.attributedText, _configuration.placeholderText, _configuration.attributedPlaceholderText)
-        secondaryTextField.updateText(_configuration.secondaryText, _configuration.secondaryAttributedText, _configuration.secondaryPlaceholderText, _configuration.secondaryAttributedPlaceholderText)
-        imageView.image = _configuration.image
+        textField.isEnabled = appliedConfiguration.state?.isEnabled != false
+        secondaryTextField.isEnabled = appliedConfiguration.state?.isEnabled != false
+        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
+        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
+        imageView.image = appliedConfiguration.image
         
-        imageView.properties = _configuration.imageProperties
-        textField.properties = _configuration.textProperties
-        secondaryTextField.properties = _configuration.secondaryTextProperties
+        imageView.properties = appliedConfiguration.imageProperties
+        textField.properties = appliedConfiguration.textProperties
+        secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         
-        textStackView.spacing = _configuration.textToSecondaryTextPadding
-        stackView.spacing = _configuration.imageToTextPadding
-        stackView.orientation = _configuration.imageProperties.position.orientation
-        stackView.alignment = _configuration.imageProperties.position.alignment
+        textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
+        stackView.spacing = appliedConfiguration.imageToTextPadding
+        stackView.orientation = appliedConfiguration.imageProperties.position.orientation
+        stackView.alignment = appliedConfiguration.imageProperties.position.alignment
         
-        if _configuration.imageProperties.position.imageIsLeading,  stackView.arrangedSubviews.first != imageView {
+        if appliedConfiguration.imageProperties.position.imageIsLeading,  stackView.arrangedSubviews.first != imageView {
             stackView.removeArrangedSubview(textStackView)
             stackView.addArrangedSubview(textStackView)
-        } else if _configuration.imageProperties.position.imageIsLeading == false,  stackView.arrangedSubviews.last != imageView {
+        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false,  stackView.arrangedSubviews.last != imageView {
             stackView.removeArrangedSubview(imageView)
             stackView.addArrangedSubview(imageView)
         }
         
-        stackViewConstraints.constant(_configuration.margins)
+        stackViewConstraints.constant(appliedConfiguration.margins)
         
-        if _configuration.hasBadge, _configuration.imageProperties.position.orientation == .horizontal, let badge = _configuration.badge {
+        if appliedConfiguration.hasBadge, appliedConfiguration.imageProperties.position.orientation == .horizontal, let badge = appliedConfiguration.badge {
             if badgeView == nil {
                 badgeView = BadgeView(properties: badge)
             }
@@ -128,12 +135,12 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
             if badge.position == .leading, stackView.arrangedSubviews.first != badgeView {
                 badgeView.removeFromSuperview()
                 stackView.insertArrangedSubview(badgeView, at: 0)
-                stackView.setCustomSpacing(_configuration.textToBadgePadding, after: badgeView)
+                stackView.setCustomSpacing(appliedConfiguration.textToBadgePadding, after: badgeView)
                 stackView.setCustomSpacing(NSStackView.useDefaultSpacing, after: textStackView)
             } else if badge.position == .trailing, stackView.arrangedSubviews.last != badgeView {
                 badgeView.removeFromSuperview()
                 stackView.addArrangedSubview(badgeView)
-                stackView.setCustomSpacing(_configuration.textToBadgePadding, after: textStackView)
+                stackView.setCustomSpacing(appliedConfiguration.textToBadgePadding, after: textStackView)
                 stackView.setCustomSpacing(NSStackView.useDefaultSpacing, after: badgeView)
             }
         } else {
@@ -145,7 +152,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageView.calculatedSize = calculateImageViewSize()
         imageView.invalidateIntrinsicContentSize()
         
-        switch _configuration.imageProperties.position {
+        switch appliedConfiguration.imageProperties.position {
         case .leading(let value), .trailing(let value):
             switch value {
             case .bottom:
@@ -155,18 +162,18 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
             case .top:
                 imageView.verticalConstraint = imageView.topAnchor.constraint(equalTo: textStackView.topAnchor).activate()
             case .firstBaseline:
-                if _configuration.image?.isSymbolImage == true {
-                    if _configuration.hasText {
+                if appliedConfiguration.image?.isSymbolImage == true {
+                    if appliedConfiguration.hasText {
                         imageView.verticalConstraint = imageView.firstBaselineAnchor.constraint(equalTo: textField.firstBaselineAnchor)
-                    } else if _configuration.hasSecondaryText {
+                    } else if appliedConfiguration.hasSecondaryText {
                         imageView.verticalConstraint = imageView.firstBaselineAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor)
                     }
                 } else {
-                    if _configuration.hasText {
+                    if appliedConfiguration.hasText {
                         //  var offset = textField.font!.capHeight / 2.0
                         let offset = (textField.font!.ascender + textField.font!.descender) / 2.0
                         imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: textField.firstBaselineAnchor, constant: -offset).activate()
-                    } else if _configuration.hasSecondaryText {
+                    } else if appliedConfiguration.hasSecondaryText {
                         // var offset = secondaryTextField.font!.capHeight / 2.0
                         let offset = (secondaryTextField.font!.ascender + secondaryTextField.font!.descender) / 2.0
                         imageView.verticalConstraint = imageView.centerYAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor, constant: -offset).activate()
@@ -179,52 +186,52 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
     func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
         var textFieldsSize: CGSize = .zero
-        textFieldsSize.width = frame.size.width-_configuration.margins.width
-        if _configuration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
-            textFieldsSize.width = textFieldsSize.width - imageSize.width - _configuration.imageToTextPadding
+        textFieldsSize.width = frame.size.width-appliedConfiguration.margins.width
+        if appliedConfiguration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
+            textFieldsSize.width = textFieldsSize.width - imageSize.width - appliedConfiguration.imageToTextPadding
         }
         textField.frame.size.width = textFieldsSize.width
         secondaryTextField.frame.size.width = textFieldsSize.width
-        if _configuration.hasSecondaryText {
+        if appliedConfiguration.hasSecondaryText {
             textFieldsSize.height = secondaryTextField.intrinsicContentSize.height
-            if _configuration.hasText {
-                textFieldsSize.height += _configuration.textToSecondaryTextPadding
+            if appliedConfiguration.hasText {
+                textFieldsSize.height += appliedConfiguration.textToSecondaryTextPadding
             }
         }
-        if _configuration.hasText {
+        if appliedConfiguration.hasText {
             textFieldsSize.height += textField.intrinsicContentSize.height
         }
         return textFieldsSize
     }
     
     func calculateImageViewSize() -> CGSize? {
-        if let image = _configuration.image {
+        if let image = appliedConfiguration.image {
             var imageSize = image.size
-            switch _configuration.imageProperties.sizing {
+            switch appliedConfiguration.imageProperties.sizing {
             case .firstTextHeight:
-                if _configuration.hasText {
+                if appliedConfiguration.hasText {
                     return scaleImageSize(imageSize, to: textField.intrinsicContentSize)
-                } else if _configuration.hasSecondaryText {
+                } else if appliedConfiguration.hasSecondaryText {
                     return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
                 } else {
-                    let width = frame.size.width - _configuration.margins.width
+                    let width = frame.size.width - appliedConfiguration.margins.width
                     if imageSize.width > width {
                         imageSize = imageSize.scaled(toWidth: width)
                     }
                     return imageSize
                 }
             case .totalTextHeight:
-                if _configuration.hasText && _configuration.hasSecondaryText {
+                if appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText {
                     var size = textField.intrinsicContentSize
                     size.height += secondaryTextField.intrinsicContentSize.height
-                    size.height += _configuration.textToSecondaryTextPadding
+                    size.height += appliedConfiguration.textToSecondaryTextPadding
                     return scaleImageSize(imageSize, to: size)
-                } else if _configuration.hasText {
+                } else if appliedConfiguration.hasText {
                     return scaleImageSize(imageSize, to: textField.intrinsicContentSize)
-                } else if _configuration.hasSecondaryText {
+                } else if appliedConfiguration.hasSecondaryText {
                     return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
                 } else {
-                    let width = frame.size.width - _configuration.margins.width
+                    let width = frame.size.width - appliedConfiguration.margins.width
                     if imageSize.width > width {
                         imageSize = imageSize.scaled(toWidth: width)
                     }
@@ -232,7 +239,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 }
             case .size(let size):
                 var size = size
-                let width = frame.size.width - _configuration.margins.width
+                let width = frame.size.width - appliedConfiguration.margins.width
                 if size.width > width {
                     size.width = width
                 }
@@ -245,13 +252,13 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 } else if let maxHeight = maxHeight, imageSize.height > maxHeight {
                     imageSize = imageSize.scaled(toHeight: maxHeight)
                 }
-                let width = frame.size.width - _configuration.margins.width
+                let width = frame.size.width - appliedConfiguration.margins.width
                 if imageSize.width > width {
                     imageSize = imageSize.scaled(toWidth: width)
                 }
                 return imageSize
             default:
-                let width = frame.size.width - _configuration.margins.width
+                let width = frame.size.width - appliedConfiguration.margins.width
                 if imageSize.width > width {
                     imageSize = imageSize.scaled(toWidth: width)
                 }
@@ -262,7 +269,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
     
     func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
-        switch _configuration.imageProperties.scaling {
+        switch appliedConfiguration.imageProperties.scaling {
        // case .fill, .fit: return imageSize.scaled(toHeight: size.height)
         case .fit: return imageSize.scaled(toHeight: size.height)
         default: return CGSize(size.height, size.height)
@@ -273,7 +280,8 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         superview?.superview as? NSTableRowView
     }
     
-    public override func layout() {
+    /// Perform layout in concert with the constraint-based layout system.
+    open override func layout() {
         super.layout()
         updateRowHeight()
     }
@@ -285,7 +293,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

@@ -13,3 +13,7 @@
 ### Determining configuration support
 
 - ``NSListContentView/supports(_:)``
+
+### Managing the layout
+
+- ``NSListContentView/layout()``
