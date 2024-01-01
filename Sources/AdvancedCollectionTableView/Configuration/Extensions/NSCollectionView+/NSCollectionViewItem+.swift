@@ -273,9 +273,9 @@ extension NSCollectionViewItem {
     }
     
     /**
-     A Boolean value that specifies whether the item view is hovered.
+     A Boolean value that specifies whether the item is hovered.
      
-     A hovered item view has the mouse pointer on it.
+     A hovered item has the mouse pointer on it's view.
      */
     @objc open var isHovered: Bool {
         collectionView?.hoveredItem == self
