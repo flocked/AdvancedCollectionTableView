@@ -27,6 +27,9 @@ public extension NSListContentConfiguration {
             /// The image is resized to fit the specified maximum width and height.
             case maxiumSize(width: CGFloat?, height: CGFloat?)
             
+            /// The image is resized to fit the specified relative maximum width and height.
+            case maxiumSizeRelative(width: CGFloat?, height: CGFloat?)
+            
             /// The image isn't resized.
             case none
         }

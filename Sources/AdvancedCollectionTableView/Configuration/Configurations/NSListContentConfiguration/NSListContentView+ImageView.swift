@@ -40,7 +40,11 @@ extension NSListContentView {
             return intrinsicContentSize
         }
                 
-        var calculatedSize: CGSize?
+        var calculatedSize: CGSize? {
+            didSet {
+                invalidateIntrinsicContentSize()
+            }
+        }
         var verticalConstraint: NSLayoutConstraint? = nil
         
         func update() {

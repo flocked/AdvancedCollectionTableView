@@ -222,7 +222,7 @@ extension NSItemContentView {
                 size.width = superviewWidth - configuration.margins.width
             }
             if let imageSize = image?.size, contentProperties.imageProperties.scaling.shouldResize {
-                switch (contentProperties.maximumWidth, contentProperties.maximumHeight) {
+                switch (contentProperties.maximumSize.width, contentProperties.maximumSize.height) {
                 case (.some(let maxWidth), .some(let maxHeight)):
                     let width = min(maxWidth, size.width)
                     let height = min(maxHeight, size.height)
@@ -254,23 +254,37 @@ extension NSItemContentView {
                     }
                 }
                 
-                if let maxWidth = contentProperties.maximumWidth {
+                if let maxWidth = contentProperties.maximumSize.width {
                     if intrinsicContentSize.width != -1 {
                         if intrinsicContentSize.width > maxWidth {
                             intrinsicContentSize.width = maxWidth
                         }
-                    } else if size.width > maxWidth {
-                        intrinsicContentSize.width = maxWidth
+                    } else {
+                        switch contentProperties.maximumSize.mode {
+                        case .absolute:
+                            if size.width > maxWidth {
+                                intrinsicContentSize.width = maxWidth
+                            }
+                        case .relative:
+                            intrinsicContentSize.width = size.width * maxWidth
+                        }
                     }
                 }
                 
-                if let maxHeight = contentProperties.maximumHeight {
+                if let maxHeight = contentProperties.maximumSize.height {
                     if intrinsicContentSize.height != -1 {
                         if intrinsicContentSize.height > maxHeight {
                             intrinsicContentSize.height = maxHeight
                         }
-                    } else if size.height > maxHeight {
-                        intrinsicContentSize.height = maxHeight
+                    } else {
+                        switch contentProperties.maximumSize.mode {
+                        case .absolute:
+                            if size.height > maxHeight {
+                                intrinsicContentSize.height = maxHeight
+                            }
+                        case .relative:
+                            intrinsicContentSize.height = size.height * maxHeight
+                        }
                     }
                 }
                 

@@ -149,8 +149,17 @@ extension NSItemContentView {
                 frame.size = imageSize
             }
         }
-        let maxWidth = appliedConfiguration.contentProperties.maximumWidth
-        let maxHeight = appliedConfiguration.contentProperties.maximumHeight
+        var maxWidth = appliedConfiguration.contentProperties.maximumSize.width
+        var maxHeight = appliedConfiguration.contentProperties.maximumSize.height
+        if appliedConfiguration.contentProperties.maximumSize.mode == .relative {
+            if let _maxWidth = maxWidth {
+                maxWidth = _maxWidth * frame.width
+            }
+            if let _maxHeight = maxHeight {
+                maxHeight = _maxHeight * frame.height
+            }
+        }
+        
         if let maxWidth = maxWidth, let maxHeight = maxHeight, frame.width > maxWidth, frame.height > maxHeight {
             frame = frame.scaled(toFit: CGSize(maxWidth, maxHeight))
         } else if let maxWidth = maxWidth, frame.width > maxWidth {

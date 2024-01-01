@@ -17,11 +17,25 @@ public extension NSItemContentConfiguration {
         /// The corner radius of the content.
         public var cornerRadius: CGFloat = 10.0
         
-        /// The maximum width of the content.
-        public var maximumWidth: CGFloat? = nil
+        /// The maximum size of the content.
+        public var maximumSize = ProposedSize()
         
-        /// The maximum height of the content.
-        public var maximumHeight: CGFloat? = nil
+        public struct ProposedSize: Hashable {
+            /// The proposed width.
+            public var width: CGFloat? = nil
+            /// The proposed height.
+            public var height: CGFloat? = nil
+            /// The proposed Sizing mode. The default value is `absolute`.
+            public var mode: Mode = .absolute
+            
+            /// Proposed Sizing mode.
+            public enum Mode: Int, Hashable {
+                /// The `width` and `height` is absolute.
+                case absolute
+                /// The `width` and `height` is relative.
+                case relative
+            }
+        }
         
         /**
          The scaling of the content view.

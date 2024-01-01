@@ -25,7 +25,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         get { appliedConfiguration }
         set {
             if let newValue = newValue as? NSListContentConfiguration {
-                appliedConfiguration = newValue }
+                appliedConfiguration = newValue
+            }
         }
     }
     
@@ -150,7 +151,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
         
         imageView.calculatedSize = calculateImageViewSize()
-        imageView.invalidateIntrinsicContentSize()
         
         switch appliedConfiguration.imageProperties.position {
         case .leading(let value), .trailing(let value):
@@ -241,7 +241,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 var size = size
                 let width = frame.size.width - appliedConfiguration.margins.width
                 if size.width > width {
-                    size.width = width
+                    size = size.scaled(toWidth: width)
                 }
                 return size
             case .maxiumSize(width: let maxWidth, height: let maxHeight):
@@ -255,6 +255,16 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 let width = frame.size.width - appliedConfiguration.margins.width
                 if imageSize.width > width {
                     imageSize = imageSize.scaled(toWidth: width)
+                }
+                return imageSize
+            case .maxiumSizeRelative(width: let relativeWidth, height: let relativeHeight):
+                let width = bounds.width - appliedConfiguration.margins.width
+                if let relativeWidth = relativeWidth, let relativeHeight = relativeHeight {
+                    imageSize = imageSize.scaled(toFit: CGSize(width * relativeWidth, bounds.width * relativeHeight))
+                } else if let relativeWidth = relativeWidth {
+                    imageSize = imageSize.scaled(toWidth: width * relativeWidth)
+                } else if let relativeHeight = relativeHeight {
+                    imageSize = imageSize.scaled(toHeight: width * relativeHeight)
                 }
                 return imageSize
             default:
@@ -276,19 +286,18 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    var rowView: NSTableRowView? {
-        superview?.superview as? NSTableRowView
-    }
-    
     /// Perform layout in concert with the constraint-based layout system.
     open override func layout() {
         super.layout()
-        updateRowHeight()
+        updateTableRowHeight()
     }
     
-    func updateRowHeight() {
-        if let rowView = rowView, frame.size.height > fittingSize.height {
-            rowView.frame.size.height = fittingSize.height
+    var width: CGFloat = 0.0
+    func updateTableRowHeight() {
+        guard bounds.width != width else { return }
+        width = bounds.width
+        if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
+            tableRowView.frame.size.height = fittingSize.height
         }
     }
     

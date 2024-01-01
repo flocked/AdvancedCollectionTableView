@@ -79,7 +79,7 @@ extension NSListContentView {
         
         override func layout() {
             super.layout()
-            listContentView?.updateRowHeight()
+            listContentView?.updateTableRowHeight()
         }
         
         override var intrinsicContentSize: NSSize {
