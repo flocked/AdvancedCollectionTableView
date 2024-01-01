@@ -304,6 +304,7 @@ extension NSCollectionViewItem {
         set { set(associatedValue: newValue, key: "itemObserver", object: self) }
     }
     
+    
     func observeCollectionItem() {
         if contentConfiguration != nil || backgroundConfiguration != nil || configurationUpdateHandler != nil {
             guard itemObserver == nil else { return }

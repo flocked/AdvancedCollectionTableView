@@ -118,9 +118,8 @@ extension NSTableCellView {
     }
     
     func setNeedsAutomaticUpdateConfiguration() {
-        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = row {
-            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle {
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: false)
         }
         
         let state = configurationState
@@ -222,16 +221,6 @@ extension NSTableCellView {
     
     var isPreviousRowSelected: Bool {
         rowView?.isPreviousRowSelected ?? false
-    }
-    
-    /// The row of the cell.
-    var row: Int? {
-        guard let tableView = tableView else { return nil }
-        var row = tableView.row(for: self)
-        if row == -1 {
-            row = 0
-        }
-        return row
     }
     
     var tableCellObserver: NSKeyValueObservation? {

@@ -10,10 +10,6 @@ import AdvancedCollectionTableView
 
 class SidebarViewController: NSViewController {
     
-    lazy var itemRegistration: NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>(handler: { collectionViewItem, indexPath, galleryItem in
-        
-    })
-    
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
