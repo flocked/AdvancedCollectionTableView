@@ -1,7 +1,5 @@
 # ``NSDiffableDataSourceTransaction``
 
-## Overview
-
 ## Topics
 
 ### Accessing a transaction's information

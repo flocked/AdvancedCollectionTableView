@@ -53,12 +53,12 @@ public extension NSItemContentConfiguration {
             case bottomRight
         }
         
-        /// The text of the badge..
+        /// The text of the badge.
         public var text: String? = nil
         /// An attributed variant of the text.
         public var attributedText: AttributedString? = nil
         
-        /// The image of the badge..
+        /// The image of the badge.
         public var image: NSImage? = nil
         
         /// The view of the badge.
@@ -216,7 +216,7 @@ public extension NSItemContentConfiguration.Badge {
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
         
-        /// The border color of the badge..
+        /// The border color of the badge.
         public var textColor: NSColor = .white {
             didSet { updateResolvedColors() } }
         

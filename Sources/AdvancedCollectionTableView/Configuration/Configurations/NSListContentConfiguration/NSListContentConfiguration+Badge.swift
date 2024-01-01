@@ -21,13 +21,13 @@ public extension NSListContentConfiguration {
             case trailing
         }
         
-        /// The text of the badge..
+        /// The text of the badge.
         public var text: String? = nil
         
         /// An attributed variant of the text.
         public var attributedText: AttributedString? = nil
         
-        /// The image of the badge..
+        /// The image of the badge.
         public var image: NSImage? = nil
         
         /// Properties for configuring the image.

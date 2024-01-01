@@ -11,7 +11,7 @@ import FZUIKit
 import AdvancedCollectionTableViewObjc
 
 /**
- A structure that encapsulates a item’s state.
+ A structure that encapsulates an collection-based item’s state.
  
  Am item configuration encapsulates states like selected, highlighted, emphasized or hovered.
  

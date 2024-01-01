@@ -1,7 +1,5 @@
 # ``NSDiffableDataSourceSnapshotApplyOption``
 
-## Overview
-
 ## Topics
 
 ### Snapshot applying options

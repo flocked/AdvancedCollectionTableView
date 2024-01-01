@@ -1,10 +1,10 @@
 # ``AdvancedCollectionTableView``
 
-A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of modern UIKit.
+A collection of classes and extensions for `NSCollectionView` and `NSTableView`, many of them ported from modern `UIKit`.
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+`AdvancedCollectionTableView` provides A collection of classes and extensions for `NSCollectionView` and `NSTableView` classes and extensions.
 
 ## Topics
 

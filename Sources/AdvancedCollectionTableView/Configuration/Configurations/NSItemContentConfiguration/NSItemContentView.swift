@@ -8,7 +8,7 @@
 import AppKit
 import FZUIKit
 
-/// A content view for displaying collection item-based content.
+/// A content view for displaying collection-based item content.
 public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {

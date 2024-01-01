@@ -12,7 +12,7 @@ import FZQuicklook
 import QuickLookUI
 
 /**
- A  `NSCollectionViewDiffableDataSource` with additional functionality..
+ A  `NSCollectionViewDiffableDataSource` with additional functionality.
  
  The diffable data source provides:
  - Reordering of items by enabling ``allowsReordering``.
