@@ -95,7 +95,6 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSListConfigurationState: _ObjectiveCBridgeable {
-
     public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
         let customStates = self.customStates.mapKeys({ $0.rawValue })
         return NSListConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)

@@ -18,4 +18,4 @@
 ### Creating section header views
 
 - ``AppKit/NSTableView/SectionHeaderRegistration``
-- ``AppKit/NSTableView/makeSectionView(using:row:section:)``
+- ``AppKit/NSTableView/makeSectionHeaderView(using:row:section:)``

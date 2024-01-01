@@ -81,7 +81,7 @@ public extension NSTableViewDiffableDataSource {
     /// Applies the section header view registration to configure and return section header views.
     func applySectionHeaderViewRegistration<HeaderView: NSView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, SectionIdentifierType>) {
         sectionHeaderViewProvider = { tableView, row, section in
-            tableView.makeSectionView(using: registration, row: row, section: section)
+            tableView.makeSectionHeaderView(using: registration, row: row, section: section)
         }
     }
 }

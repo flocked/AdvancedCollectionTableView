@@ -13,21 +13,25 @@ public extension NSTableView {
     /**
      A registration for the table view’s section header views.
      
-     Use a section view registration to register views with your table view and configure each view for display. You create a section view registration with your view type and section type as the registration’s generic parameters, passing in a registration handler to configure the view. In the registration handler, you specify how to configure the content and appearance of that type of view.
+     Use a section header view registration to register views with your table view and configure each view for display. You create a section header view registration with your view type and section type as the registration’s generic parameters, passing in a registration handler to configure the view. In the registration handler, you specify how to configure the content and appearance of that type of view.
      
-     The following example creates a section view registration for views of type `NSTableViewCell`. Each cells textfield displays its element.
+     The following example creates a section view registration for views of type `NSTableSectionHeaderView`. Each section header views defautl content configuration text displays its string.
      
      ```swift
-     let sectionViewRegistration = NSTableView.SectionHeaderRegistration<NSTableViewCell, String> { cell, indexPath, string in
-     cell.textField.stringValue = string
+     let sectionViewRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, String> {
+     sectionHeaderView, indexPath, string in
+        var configuration = sectionHeaderView.defaultContentConfiguration()
+        configuration.text = string
+     
+        sectionHeaderView.contentConfiguration = configuration
      }
      ```
      
-     After you create a section view registration, you pass it in to ``AppKit/NSTableView/makeSectionView(using:row:section:)``, which you call from your data source’s section header view provider.
+     After you create a section view registration, you pass it in to ``AppKit/NSTableView/makeSectionHeaderView(using:row:section:)``, which you call from your data source’s section header view provider.
      
      ```swift
      dataSource.sectionHeaderViewProvider = { tableView, row, section in
-     return tableView.makeSectionView(using: sectionViewRegistration, row: row, section: section)
+        return tableView.makeSectionHeaderView(using: sectionViewRegistration, row: row, section: section)
      }
      ```
      */
@@ -69,50 +73,11 @@ public extension NSTableView {
         /// A closure that handles the section view registration and configuration.
         public typealias Handler = ((_ view: SectionHeaderView, _ row: Int, _ sectionIdentifier: Section)->(Void))
         
-        internal func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeaderView {
-            /*
-            self.registerIfNeeded(for: tableView)
-            if viewIsTableCellView, let sectionView = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? SectionHeaderView {
-                self.handler(sectionView, row, section)
-                return sectionView
-            } else {
-                let sectionView = SectionHeaderView()
-                self.handler(sectionView, row, section)
-                return sectionView
-            }
-            */
+        func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeaderView {
             let sectionView = SectionHeaderView()
             self.handler(sectionView, row, section)
             return sectionView
         }
-        
-        /*
-        internal var viewIsTableCellView: Bool {
-            SectionHeaderView.self is NSTableCellView.Type
-        }
-        
-        internal var sectionViewTableCellType: NSTableCellView.Type? {
-            SectionHeaderView.self as? NSTableCellView.Type
-        }
-         
-        
-        internal func registerIfNeeded(for tableView: NSTableView) {
-            guard let sectionViewTableCellType = sectionViewTableCellType else { return }
-            if let nib = nib {
-                if (tableView.registeredNibsByIdentifier?[self.identifier] != self.nib) {
-                    tableView.register(nib, forIdentifier: self.identifier)
-                }
-            } else {
-                if (tableView.registeredCellsByIdentifier[self.identifier] != SectionHeaderView.self) {
-                    tableView.register(sectionViewTableCellType, forIdentifier: self.identifier)
-                }
-            }
-        }
-        
-        internal func unregister(for tableView: NSTableView) {
-            tableView.register(nil, forIdentifier: self.identifier)
-        }
-        */
     }
 }
 
@@ -121,13 +86,13 @@ public extension NSTableView {
      Dequeues a configured reusable section view object.
      
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/SectionHeaderRegistration``.
-        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - section: The section element that provides data for the cell.
+        - registration: The section header view registration for configuring the section header view object. See ``AppKit/NSTableView/SectionHeaderRegistration``.
+        - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the section header view and should just pass it along. This method uses the row to perform additional configuration based on the section header view’s position in the table view.
+        - section: The section element that provides data for the section header view.
      
      - returns:A configured reusable section view object.
      */
-    func makeSectionView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
+    func makeSectionHeaderView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
         return registration.makeView(self, row, section)
     }
 }

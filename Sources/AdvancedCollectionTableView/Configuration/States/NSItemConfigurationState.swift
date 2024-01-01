@@ -103,7 +103,6 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSItemConfigurationState: _ObjectiveCBridgeable {
-    
     public func _bridgeToObjectiveC() -> NSItemConfigurationStateObjc {
         let customStates = self.customStates.mapKeys({ $0.rawValue })
         return NSItemConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: Int32(highlight.rawValue), customStates: customStates)

@@ -165,6 +165,6 @@ public protocol NSTableViewCellRegistration {
     var columnIdentifiers: [NSUserInterfaceItemIdentifier]? { get }
 }
 
-internal protocol _NSTableViewCellRegistration {
+protocol _NSTableViewCellRegistration {
     func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
 }

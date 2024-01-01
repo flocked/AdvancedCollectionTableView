@@ -69,7 +69,7 @@ public extension NSTableView {
         /// A closure that handles the row registration and configuration.
         public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
         
-        internal func makeView(_ tableView: NSTableView, _ row: Int, _ element: Element) -> RowView {
+        func makeView(_ tableView: NSTableView, _ row: Int, _ element: Element) -> RowView {
             let rowView = (tableView.rowView(atRow: row, makeIfNecessary: false) as? RowView) ?? RowView(frame: .zero)
             rowView.identifier = identifier
             self.handler(rowView, row, element)
