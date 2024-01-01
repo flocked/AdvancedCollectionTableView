@@ -36,15 +36,18 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 - ``NSDiffableDataSourceTransaction``
 - ``NSDiffableDataSourceSnapshotApplyOption``
 
+### Collection View Extensions
+
+- <doc:NSCollectionView+>
+- <doc:NSCollectionViewItem+>
+- <doc:NSCollectionViewDiffableDataSource+>
+- ``NSCollectionViewSupplementaryRegistration``
+
 ### Table View Extensions
 
 - <doc:NSTableView+>
 - <doc:NSTableCellView+>
 - <doc:NSTableRowView+>
 - <doc:NSTableViewDiffableDataSource+>
-
-### Collection View Extensions
-
-- <doc:NSCollectionView+>
-- <doc:NSCollectionViewItem+>
-- <doc:NSCollectionViewDiffableDataSource+>
+- ``NSTableSectionHeaderView``
+- ``NSTableViewCellRegistration``

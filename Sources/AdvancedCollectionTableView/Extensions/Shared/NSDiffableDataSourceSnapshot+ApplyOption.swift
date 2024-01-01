@@ -12,7 +12,7 @@ import AppKit
   
  When using Apple's `apply(_:animatingDifferences:completion:)` to apply a snapshot to a diffable data source, passing `true` to `animatingDifferences` would apply the diff and animate updates in the UI, while passing `false` is equivalent to calling `reloadData()`.
  
- `NSDiffableDataSourceSnapshotApplyOption` lets you always perform a diff for much improved performance using `withoutAnimation`.
+ This options let you always perform a diff for much improved performance using `withoutAnimation`.
  
  ```swift
  collectionViewDatasource.apply(snapshot, .withoutAnimation)
@@ -53,14 +53,16 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
      */
     case withoutAnimation
     
-    internal static var noAnimationDuration: TimeInterval { 2344235 }
-    internal var animationDuration: TimeInterval? {
+    static var noAnimationDuration: TimeInterval { 2344235 }
+    
+    var animationDuration: TimeInterval? {
         switch self {
         case .animated(let duration): return (duration != Self.noAnimationDuration) ? duration : nil
         default: return nil
         }
     }
-    internal var isAnimating: Bool {
+    
+    var isAnimating: Bool {
         switch self {
         case .animated(_): return true
         default: return false
