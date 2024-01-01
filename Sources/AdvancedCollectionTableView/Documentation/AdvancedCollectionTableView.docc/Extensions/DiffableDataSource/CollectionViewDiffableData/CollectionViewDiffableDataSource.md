@@ -65,7 +65,7 @@
 ### Supporting drag and drop
 
 - ``dragDropHandlers-swift.property``
-- ``DragdropHandlers-swift.struct``
+- ``DragDropHandlers-swift.struct``
 
 ### Handling item changes
 

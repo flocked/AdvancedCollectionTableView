@@ -601,7 +601,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var prefetchHandlers = PrefetchHandlers()
     
     /// Handlers for drag and drop of files from and to the collection view.
-    public var dragDropHandlers = DragdropHandlers()
+    public var dragDropHandlers = DragDropHandlers()
     
     /// Handlers for the highlight state of items.
     public var highlightHandlers = HighlightHandlers()
@@ -675,7 +675,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /// Handlers for drag and drop of files from and to the collection view.
-    public struct DragdropHandlers {
+    public struct DragDropHandlers {
         /// The handler that determines which items can be dragged outside the collection view.
         public var canDragOutside: ((_ items: [Item]) -> [Item])? = nil
         /// The handler that gets called whenever items did drag ouside the collection view.
