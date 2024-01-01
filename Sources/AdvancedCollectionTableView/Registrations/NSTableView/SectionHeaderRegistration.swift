@@ -35,7 +35,7 @@ public extension NSTableView {
      }
      ```
      */
-    struct SectionHeaderRegistration<SectionHeaderView, Section> where SectionHeaderView: NSTableSectionHeaderView  {
+    struct SectionHeaderRegistration<SectionHeader, Section> where SectionHeader: NSTableSectionHeaderView  {
         
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
@@ -71,10 +71,10 @@ public extension NSTableView {
         }
         
         /// A closure that handles the section view registration and configuration.
-        public typealias Handler = ((_ view: SectionHeaderView, _ row: Int, _ sectionIdentifier: Section)->(Void))
+        public typealias Handler = ((_ sectionHeaderView: SectionHeader, _ row: Int, _ section: Section)->(Void))
         
-        func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeaderView {
-            let sectionView = SectionHeaderView()
+        func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeader {
+            let sectionView = SectionHeader()
             self.handler(sectionView, row, section)
             return sectionView
         }

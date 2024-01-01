@@ -97,7 +97,7 @@ public extension NSTableView {
         }
         
         /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item)->(Void))
+        public typealias Handler = ((_ cellView: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item)->(Void))
         
         func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
             self.register(tableView)

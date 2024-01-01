@@ -108,12 +108,12 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     /**     
      Right click menu provider.
      
+     The provided menu is used when right clicking the table view.
+     
      `items` provides:
      - if right-click on a selected item, all selected items,
-     - or else if right-click on a non selected item, that item,
-     - or else an empty array.
-     
-     When returning a menu to the `menuProvider`, the table view will display a menu on right click.
+     - else if right-click on a non selected item, that item,
+     - else an empty array.
      */
     public var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
         didSet { setupRightDownMonitor() } }
@@ -122,16 +122,20 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
     /**
-     A Boolean value that indicates whether users can reorder items in the table view when dragging them via mouse.
+     A Boolean value that indicates whether users can reorder items in the table view by dragging them via mouse.
      
-     If the value of this property is `true`, users can reorder items in the table view. The default value is `false`.
+     If the value of this property is `true`, users can reorder items. The default value is `false`.
+     
+     ``reorderingHandlers`` provides additional handlers.
      */
     public var allowsReordering: Bool = false
     
     /**
-     A Boolean value that indicates whether users can delete items either via keyboard shortcut or right click menu.
+     A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
+
+     If the value of this property is `true`, users can delete items using the backspace. The default value is `false`.
      
-     If `true`, the user can delete items using backspace. The default value is `false`.
+     ``deletionHandlers`` provides additional handlers.
      */
     public var allowsDeleting: Bool = false {
         didSet { setupKeyDownMonitor() }
@@ -294,7 +298,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         - tableView: The initialized table view object to connect to the diffable data source.
         - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
-    public convenience init<I: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<I, Item>) {
+    public convenience init<Cell: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<Cell, Item>) {
         self.init(tableView: tableView, cellProvider:  {
             _tableView, column, row, item in
             return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!

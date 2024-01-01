@@ -79,7 +79,7 @@ public extension NSCollectionView {
         }
         
         /// A closure that handles the supplementary registration and configuration.
-        public typealias Handler = ((Supplementary, SupplementaryElementKind, IndexPath)->(Void))
+        public typealias Handler = ((_ supplementaryView: Supplementary, _ kind: SupplementaryElementKind, _ indexPath: IndexPath)->(Void))
         
         func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)   {
             if isRegistered(collectionView) == false {

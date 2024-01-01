@@ -93,7 +93,7 @@ public extension NSCollectionView {
         }
         
         /// A closure that handles the item registration and configuration.
-        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ itemIdentifier: Element)->(Void))
+        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ element: Element)->(Void))
         
         func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
             if isRegistered(collectionView) == false {

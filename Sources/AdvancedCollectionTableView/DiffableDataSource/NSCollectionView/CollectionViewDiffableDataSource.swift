@@ -84,29 +84,33 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ itemKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
     
     /**
-     A Boolean value that indicates whether users can delete elements either via keyboard shortcut or right click menu.
+     A Boolean value that indicates whether users can delete elements via backspace keyboard shortcut.
+
+     If the value of this property is `true`, users can delete elements using the backspace. The default value is `false`.
      
-     If `true`, the user can delete elements using backspace. The default value is `false`.     
+     ``deletionHandlers`` provides additional handlers.
      */
     public var allowsDeleting: Bool = false {
         didSet { observeKeyDown() }
     }
     /**
-     A Boolean value that indicates whether users can reorder elements in the collection view when dragging them via mouse.
+     A Boolean value that indicates whether users can reorder elements in the collection view by dragging them via mouse.
      
-     If the value of this property is `true`, users can reorder elements in the collection view. The default value is `false`.
+     If the value of this property is `true`, users can reorder elements. The default value is `false`.
+     
+     ``reorderingHandlers`` provides additional handlers.
      */
     public var allowsReordering: Bool = false
     
     /**
      Right click menu provider.
      
-     `elements` provides:
-     - if right-click on a selected item, all selected elements,
-     - or else if right-click on a non selected item, that item,
-     - or else an empty array.
+     The provided menu is used when right clicking the collection view.
      
-     When returning a menu to the `menuProvider`, the collection view will display a menu on right click.
+     `elements` provides:
+     - if right-click on a selected element, all selected elements,
+     - else if right-click on a non selected element, that element,
+     - else an empty array.
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? = nil {
         didSet { observeRightMouseDown() } }
@@ -354,7 +358,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         - collectionView: The initialized collection view object to connect to the diffable data source.
         - itemRegistration: A item registration which returns each of the elements for the collection view from the data the diffable data source provides.
      */
-    public convenience init<CollectionViewItem: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<CollectionViewItem, Element>) {
+    public convenience init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
         self.init(collectionView: collectionView, itemProvider: { collectionView,indePath,item in
             return collectionView.makeItem(using: itemRegistration, for: indePath, element: item) })
     }

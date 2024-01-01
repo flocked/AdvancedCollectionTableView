@@ -12,9 +12,9 @@ import FZQuicklook
 
  extension NSCollectionViewDiffableDataSource {
     /**
-     A Boolean value that indicates whether users can delete items either via backspace keyboard shortcut.
-     
-     If `true`, the user can delete items using backspace. The default value is `false`.
+     A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
+
+     If the value of this property is `true`, users can delete items using the backspace. The default value is `false`.
      
      ``deletionHandlers`` provides additional handlers.
      */
