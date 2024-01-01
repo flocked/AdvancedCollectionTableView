@@ -2,17 +2,11 @@
 
 A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of UIKit.
 
-Take a look at the included sample app which demonstrates:
-- `NSCollectionView.ItemRegistration`
-- `NSTableView.CellRegistration`
-- `NSItemContentConfiguration`
-- `NSListContentConfiguration`
-- `CollectionViewDiffableDataSource`
-- NSCollectionView's `reconfiguratingItems(at: _)`.
+**Take a look at the included sample app which demonstrates most features.**
 
-**For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.**
+**For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.
 
-## NSCollectionView.ItemRegistration & NSTableView.CellRegistration
+## NSCollectionView ItemRegistration & NSTableView CellRegistration
 
 A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
 
@@ -100,7 +94,7 @@ A content configuration for a collection view item.
 
 ## NSCollectionView reconfigureItems
 
-Updates the data for the items without reloading and replacing them (`reloadItems(at: _)`. For optimal performance, choose to reconfigure items instead of reloading items unless you have an explicit need to replace the existing item with a new item.
+Updates the data for the items without reloading and replacing them (`reloadItems(at: _)`. For optimal performance, choose to reconfigure items instead of reloading items unless you have an explicit need to replace the existing item with a new item. A port of `UICollectionView.reconfigureItems`.
 
 Any item that has been registered via  `ItemRegistration`, or by class using `register(_ itemClass: NSCollectionViewItem.Type)`, can be recofigurated.
 
