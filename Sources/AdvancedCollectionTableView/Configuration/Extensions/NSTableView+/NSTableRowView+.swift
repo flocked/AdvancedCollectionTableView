@@ -236,12 +236,14 @@ extension NSTableRowView {
                 self.setNeedsAutomaticUpdateConfiguration()
                 self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
-            rowObserver?.add(\.superview) { old, new in
-                if self.cellViews.contains(where: { $0.contentConfiguration is NSListContentConfiguration }) {
-                    self.tableView?.usesAutomaticRowHeights = true
+            if tableView?.observingView == nil {
+                rowObserver?.add(\.superview) { old, new in
+                    if self.cellViews.contains(where: { $0.contentConfiguration is NSListContentConfiguration }) {
+                        self.tableView?.usesAutomaticRowHeights = true
+                    }
+                    self.tableView?.setupObservation()
+                    self.setCellViewsNeedAutomaticUpdateConfiguration()
                 }
-                self.tableView?.setupObservation()
-                self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
             setNeedsUpdateConfiguration()
             setCellViewsNeedAutomaticUpdateConfiguration()
