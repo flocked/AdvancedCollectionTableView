@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSListContentView {
+extension NSListContentView {
     class TextStack: NSView {
         var configuration: NSListContentConfiguration {
             didSet {

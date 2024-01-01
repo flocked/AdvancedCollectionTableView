@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 import SwiftUI
 
-public extension NSListContentConfiguration.AccessoryProperties {
+extension NSListContentConfiguration.AccessoryProperties {
     /// Properties that affect the cell content configuration’s image.
     struct ImageProperties: Hashable {
         enum ImageScaling {
@@ -38,7 +38,7 @@ public extension NSListContentConfiguration.AccessoryProperties {
     }
 }
 
-internal extension Image {
+extension Image {
     @ViewBuilder
     func configurate(using properties: NSListContentConfiguration.AccessoryProperties.ImageProperties) -> some View {
         if properties.scaling.isResizable {

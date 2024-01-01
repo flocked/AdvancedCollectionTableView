@@ -21,17 +21,17 @@
 - ``secondaryAttributedText``
 - ``image``
 
-### Configurating badge
-
-- ``badge-swift.property``
-- ``Badge-swift.struct``
-
 ### Customizing placeholder
 
 - ``placeholderText``
 - ``attributedPlaceholderText``
 - ``secondaryPlaceholderText``
 - ``secondaryAttributedPlaceholderText``
+
+### Configurating badge
+
+- ``badge-swift.property``
+- ``Badge-swift.struct``
 
 ### Customizing appearance
 

@@ -19,6 +19,13 @@
 - ``view``
 - ``overlayView``
 
+### Customizing placeholder
+
+- ``placeholderText``
+- ``attributedPlaceholderText``
+- ``secondaryPlaceholderText``
+- ``secondaryAttributedPlaceholderText``
+
 ### Configurating badges
 
 - ``badges``
@@ -46,4 +53,4 @@
 
 ### Updating the configuration
 
-- ``updated(for:)-6d5nh``
+- ``updated(for:)``

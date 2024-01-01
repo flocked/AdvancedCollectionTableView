@@ -10,7 +10,7 @@ import SwiftUI
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSListContentConfiguration {
+extension NSListContentConfiguration {
     /// Properties that affect the cell content configuration’s image.
     struct Accessory: Hashable {
         var leading: AccessoryProperties = {
@@ -38,7 +38,7 @@ public extension NSListContentConfiguration {
     }
 }
 
-public extension NSListContentConfiguration {
+extension NSListContentConfiguration {
     /// Properties that affect the cell content configuration’s image.
     struct AccessoryProperties: Hashable {
         // MARK: Customizing content
