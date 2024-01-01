@@ -1,72 +1,31 @@
-# Registering Collection Items
+# Registering Collection View Items
 
 Register collection view items with ``AppKit/NSCollectionView/ItemRegistration``.
 
 ## Overview
 
-The content and background of a `NSCollectionViewItem` can be configurated by providing a `NSContentConfiguration` to an item's ``AppKit/NSCollectionViewItem/contentConfiguration`` and ``AppKit/NSCollectionViewItem/backgroundConfiguration``.
+Use an item registration to register items with your collection view and configure each item for display. You create a item registration with your item type and data item type as the registration’s generic parameters, passing in a registration handler to configure the item. In the registration handler, you specify how to configure the content and appearance of that type of item.
 
-## Item content configuration
-
-- ``NSItemContentConfiguration``
-- ``NSItemContentView``
-
-``NSItemContentConfiguration`` is a content configuration suitable for a collection view item. It displays content (image/view) with a text and secondary text.
-
-![An item content configuration](NSItemContentConfiguration.png)
+The following example creates a item registration for items of type `NSCollectionViewItem`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
 
 ```swift
-var content = NSItemContentConfiguration()
-
-// Configure content.
-content.image = NSImage(named: "Mozart")
-content.text = "Mozart"
-content.secondaryText = "A genius composer"
-
-// Customize appearance.
-content.textProperties.font = .body
-
-collectionViewItem.contentConfiguration = content
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, Int> { item, indexPath, number in
+    
+    var contentConfiguration = item.defaultContentConfiguration()
+    
+    contentConfiguration.text = "\(number)"
+    contentConfiguration.textProperties.color = .lightGray
+    
+    item.contentConfiguration = contentConfiguration
+}
 ```
 
-## Managing the content
-
-- ``AppKit/NSCollectionViewItem/contentConfiguration``
-- ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-
-## Configuring the background
-
-- ``AppKit/NSCollectionViewItem/backgroundConfiguration``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-
-## Managing the state
-
-- ``AppKit/NSCollectionViewItem/configurationState``
-- ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
-- ``NSItemConfigurationState``
-- ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
-
-``NSItemConfigurationState`` provides the current state of an item (e.g. `isSelected` or `highlightState). It can be accessed via an item's ``AppKit/NSCollectionViewItem/configurationState``.
-
-
-To handle updates of an item’s state, provide a handler to ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``.
+After you create a item registration, you pass it in to ``AppKit/NSCollectionView/makeItem(using:for:element:)``, which you call from your data source’s item provider.
 
 ```swift
-var content = NSItemContentConfiguration()
-content.text = "Mozart"
-content.image = NSImage(named: "Mozart")
-
-collectionViewItem.contentConfiguration = content
-
-collectionViewItem.configurationUpdateHandler = { item, state in
-   if state.isSelected {
-       content.contentProperties.borderWidth = 1.0
-       content.contentProperties.borderColor = .controlAccentColor
-   } else {
-       content.contentProperties.borderWidth = 0.0
-       content.contentProperties.borderColor = nil
-   }
-    collectionViewItem.contentConfiguration = content
+dataSource = NSCollectionViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
+    (collectionView: NSCollectionView, indexPath: IndexPath, itemIdentifier: Int) -> NSCollectionViewItem? in
+    
+    return collectionView.makeItem(using: itemRegistration, for: indexPath, item: itemIdentifier)
 }
 ```

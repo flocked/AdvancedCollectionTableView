@@ -4,7 +4,7 @@ Configurate the content of a table view cell.
 
 ## Overview
 
-The content of a `NSTableCellView` can be configurated by providing a `NSContentConfiguration` to an item's ``AppKit/NSTableCellView/contentConfiguration``.
+The content of a `NSTableCellView` can be configurated by providing a `NSContentConfiguration` to a table cell's ``AppKit/NSTableCellView/contentConfiguration``.
 
 ## Topics
 
@@ -32,22 +32,29 @@ tableCell.contentConfiguration = content
 
 ### Managing the content
 
+To manage the content of the cell you provide a `NSContentConfiguration` to cells `contentConfiguration`.
+
 - ``AppKit/NSTableCellView/contentConfiguration``
 - ``AppKit/NSTableCellView/defaultContentConfiguration()``
 - ``AppKit/NSTableCellView/automaticallyUpdatesContentConfiguration``
 
 ### Managing the state
 
+`configurationState` provides the current state of a table view cell (e.g. `isSelected` or `isHovered`).
+
 - ``AppKit/NSTableCellView/configurationState``
 - ``NSListConfigurationState``
 - ``AppKit/NSTableCellView/setNeedsUpdateConfiguration()``
 - ``AppKit/NSTableCellView/updateConfiguration(using:)``
+
+### Handling updates to the state
+
+To handle updates of a table view cell’s state, provide a handler to the cells  `configurationUpdateHandler`.
+
 - ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``
 - ``AppKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
 
-``NSListConfigurationState`` provides the current state of a table view cell (e.g. `isSelected` or `isHovered`). It can be accessed via a table view cell's ``AppKit/NSTableCellView/configurationState``.
-
-To handle updates of a table view cell’s state, provide a handler to ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``.
+**Example usage of the configuration update handler:**
 
 ```swift
 var content = tableCell.defaultContentConfiguration()

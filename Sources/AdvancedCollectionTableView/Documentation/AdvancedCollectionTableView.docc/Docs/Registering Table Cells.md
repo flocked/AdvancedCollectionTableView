@@ -1,72 +1,31 @@
 # Registering Table Cells
 
-Register table cell views with ``AppKit/NSTableView/CellRegistration``.
+Register table view cells with ``AppKit/NSTableView/CellRegistration``.
 
 ## Overview
 
-The content and background of a `NSCollectionViewItem` can be configurated by providing a `NSContentConfiguration` to an item's ``AppKit/NSCollectionViewItem/contentConfiguration`` and ``AppKit/NSCollectionViewItem/backgroundConfiguration``.
+Use a cell registration to register table view cells with your table view and configure each cell for display. You create a cell registration with your cell type and data item type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
 
-## Item content configuration
-
-- ``NSItemContentConfiguration``
-- ``NSItemContentView``
-
-``NSItemContentConfiguration`` is a content configuration suitable for a collection view item. It displays content (image/view) with a text and secondary text.
-
-![An item content configuration](NSItemContentConfiguration.png)
+The following example creates a cell registration for cells of type `NSTableCellView`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the cell.
 
 ```swift
-var content = NSItemContentConfiguration()
-
-// Configure content.
-content.image = NSImage(named: "Mozart")
-content.text = "Mozart"
-content.secondaryText = "A genius composer"
-
-// Customize appearance.
-content.textProperties.font = .body
-
-collectionViewItem.contentConfiguration = content
+let cellRegistration = NSTableView.CellRegistration<NSTableCellView, Int> { tableCell, indexPath, number in
+    
+    var contentConfiguration = tableCell.defaultContentConfiguration()
+    
+    contentConfiguration.text = "\(number)"
+    contentConfiguration.textProperties.color = .lightGray
+    
+    tableCell.contentConfiguration = contentConfiguration
+}
 ```
 
-## Managing the content
-
-- ``AppKit/NSCollectionViewItem/contentConfiguration``
-- ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-
-## Configuring the background
-
-- ``AppKit/NSCollectionViewItem/backgroundConfiguration``
-- ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
-
-## Managing the state
-
-- ``AppKit/NSCollectionViewItem/configurationState``
-- ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
-- ``NSItemConfigurationState``
-- ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
-
-``NSItemConfigurationState`` provides the current state of an item (e.g. `isSelected` or `highlightState). It can be accessed via an item's ``AppKit/NSCollectionViewItem/configurationState``.
-
-
-To handle updates of an item’s state, provide a handler to ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``.
+After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCell(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
 
 ```swift
-var content = NSItemContentConfiguration()
-content.text = "Mozart"
-content.image = NSImage(named: "Mozart")
-
-collectionViewItem.contentConfiguration = content
-
-collectionViewItem.configurationUpdateHandler = { item, state in
-   if state.isSelected {
-       content.contentProperties.borderWidth = 1.0
-       content.contentProperties.borderColor = .controlAccentColor
-   } else {
-       content.contentProperties.borderWidth = 0.0
-       content.contentProperties.borderColor = nil
-   }
-    collectionViewItem.contentConfiguration = content
+dataSource = NSTableViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
+    (tableView: NSTableView, column: NSTableColumn, row: Int, itemIdentifier: Int) -> NSView in
+    
+    return tableView.makeCell(using: cellRegistration, forColumn: column, row: row, item: itemIdentifier)
 }
 ```

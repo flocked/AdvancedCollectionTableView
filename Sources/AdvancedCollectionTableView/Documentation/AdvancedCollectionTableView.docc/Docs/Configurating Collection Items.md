@@ -1,4 +1,4 @@
-# Configurating Collection Items
+# Configurating Collection View Items
 
 Configurate the content and background of a collection view item.
 
@@ -11,7 +11,7 @@ The content and background of a `NSCollectionViewItem` can be configurated by pr
 - ``NSItemContentConfiguration``
 - ``NSItemContentView``
 
-``NSItemContentConfiguration`` is a content configuration suitable for a collection view item. It displays content (image/view) with a text and secondary text.
+``NSItemContentConfiguration`` is a content configuration suitable for a collection view item. It displays an image and/or view with a text and secondary text.
 
 ![An item content configuration](NSItemContentConfiguration.png)
 
@@ -25,11 +25,14 @@ content.secondaryText = "A genius composer"
 
 // Customize appearance.
 content.textProperties.font = .body
+content.secondaryTextProperties.font = .caption1
 
 collectionViewItem.contentConfiguration = content
 ```
 
 ## Managing the content
+
+To manage the content of the item you provide a `NSContentConfiguration` to items `contentConfiguration`.
 
 - ``AppKit/NSCollectionViewItem/contentConfiguration``
 - ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
@@ -37,20 +40,26 @@ collectionViewItem.contentConfiguration = content
 
 ## Configuring the background
 
+To configurate the background of the item you provide a `NSContentConfiguration` to items `backgroundConfiguration`.
+
 - ``AppKit/NSCollectionViewItem/backgroundConfiguration``
 - ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
 
 ## Managing the state
 
+`configurationState` provides the current state of an item (e.g. `isSelected` or `highlightState).
+
 - ``AppKit/NSCollectionViewItem/configurationState``
 - ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
+
+### Handling updates to the state
+
+To handle updates of an item’s state, provide a handler to the items `configurationUpdateHandler`.
+
 - ``NSItemConfigurationState``
 - ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
 
-``NSItemConfigurationState`` provides the current state of an item (e.g. `isSelected` or `highlightState). It can be accessed via an item's ``AppKit/NSCollectionViewItem/configurationState``.
-
-
-To handle updates of an item’s state, provide a handler to ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``.
+**Example usage of the configuration update handler:**
 
 ```swift
 var content = NSItemContentConfiguration()
