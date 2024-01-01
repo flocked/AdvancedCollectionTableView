@@ -37,9 +37,9 @@
 
 - ``textProperties``
 - ``secondaryTextProperties``
-- ``TextProperties``
 - ``imageProperties-swift.property``
 - ``ImageProperties-swift.struct``
+- ``TextProperties``
 
 ### Customizing layout
 
