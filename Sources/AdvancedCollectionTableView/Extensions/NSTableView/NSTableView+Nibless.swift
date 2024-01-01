@@ -92,12 +92,12 @@ extension NSTableView {
     
     @objc static func swizzleTableViewCellRegister() {
         guard didSwizzleTableViewCellRegister == false else { return }
-        didSwizzleTableViewCellRegister = true
         do {
             try Swizzle(NSTableView.self) {
                 #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
                 #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(self.swizzled_register(_:forIdentifier:))
             }
+            didSwizzleTableViewCellRegister = true
         } catch {
             Swift.debugPrint(error)
         }

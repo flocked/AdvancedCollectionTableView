@@ -83,36 +83,36 @@ extension NSCollectionView {
     /**
      Registers a class to use when creating new supplementary views in the collection view.
      
-     Use this method to register the classes that represent the supplementary views in your collection view. When you request a view using the ``makeSupplementaryView(_:ofKind:for:)`` method, the collection view recycles an existing view with the same type and kind values or creates a new one by instantiating your class and calling the `init(frame:)` method of the resulting object.
+     Use this method to register the classes that represent the supplementary views in your collection view. When you request a view using the ``makeSupplementaryView(ofKind:for:)`` method, the collection view recycles an existing view with the same type and kind values or creates a new one by instantiating your class and calling the `init(frame:)` method of the resulting object.
      
      The layout object is responsible for defining the kind of supplementary views it supports and how those views are used. For example, the flow layout (`NSCollectionViewFlowLayout` class) lets you specify supplementary views to act as headers and footers for each section.
      
-     Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the ``makeSupplementaryView(_:ofKind:for:)`` method until after you register the corresponding view.
+     Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the ``makeSupplementaryView(ofKind:for:)`` method until after you register the corresponding view.
      
      - Parameters:
         - viewClass: The view class to use for the supplementary view. This class must be descended from `NSView` and must conform to the `NSCollectionViewElement` protocol. Specify nil to unregister a previously registered class or nib file.
         - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
-    public func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
-        self.register(SupplementaryView.self, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
+    public func register<Supplementary>(_ viewClass: Supplementary.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where Supplementary: (NSView & NSCollectionViewElement) {
+        self.register(Supplementary.self, forSupplementaryViewOfKind: kind, withIdentifier: .init(Supplementary.self))
     }
     
     /**
      Registers a class to use when creating new supplementary views in the collection view.
           
-     Use this method to register nib files containing prototype supplementary views in your collection view. When you request a view using ``makeSupplementaryView(_:ofKind:for:)``, the collection view recycles an existing view with the same type and kind values or creates a new one by loading the contents of your nib file.
+     Use this method to register nib files containing prototype supplementary views in your collection view. When you request a view using ``makeSupplementaryView(ofKind:for:)``, the collection view recycles an existing view with the same type and kind values or creates a new one by loading the contents of your nib file.
      
      The layout object is responsible for defining the kind of supplementary views it supports and how those views are used. For example, the flow layout (`NSCollectionViewFlowLayout` class) lets you specify supplementary views to act as headers and footers for each section.
      
-     Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the ``makeSupplementaryView(_:ofKind:for:)`` method until after you register the corresponding view.
+     Typically, you register your supplementary views when initializing your collection view interface. Although you can register new views at any time, you must not call the ``makeSupplementaryView(ofKind:for:)`` method until after you register the corresponding view.
      
      - Parameters:
         - viewClass: The class of the supplementary view. This class must be descended from `NSView` and must conform to `NSCollectionViewElement`.
         - nib: The nib object containing the supplementary view’s definition. The nib file must contain exactly one `NSView` object at the top level and that view must conform to the `NSCollectionViewElement` protocol. Specify nil to unregister a previously registered class or nib file.
         - kind: The kind of the supplementary view. Layout objects define the kinds of supplementary views they support and are responsible for providing appropriate strings that you can pass for this parameter. This parameter must not be an empty string or nil.
      */
-    public func register<SupplementaryView>(_ viewClass: SupplementaryView.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where SupplementaryView: (NSView & NSCollectionViewElement) {
-        self.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: .init(SupplementaryView.self))
+    public func register<Supplementary>(_ viewClass: Supplementary.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where Supplementary: (NSView & NSCollectionViewElement) {
+        self.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: .init(Supplementary.self))
     }
     
     /**
@@ -128,8 +128,8 @@ extension NSCollectionView {
      
      - Returns: The supplementary view.
      */
-    public func makeSupplementaryView<SupplementaryView>(ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
-        return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(SupplementaryView.self), for: indexPath) as! SupplementaryView
+    public func makeSupplementaryView<Supplementary>(ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> Supplementary where Supplementary: (NSView & NSCollectionViewElement) {
+        return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(Supplementary.self), for: indexPath) as! Supplementary
     }
     
     /**
@@ -146,7 +146,7 @@ extension NSCollectionView {
      
      - Returns: The supplementary view.
      */
-    func makeSupplementaryView<SupplementaryView>(_ viewClass: SupplementaryView.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: (NSView & NSCollectionViewElement) {
-        return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(SupplementaryView.self), for: indexPath) as! SupplementaryView
+    func makeSupplementaryView<Supplementary>(_ viewClass: Supplementary.Type, ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> Supplementary where Supplementary: (NSView & NSCollectionViewElement) {
+        return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(Supplementary.self), for: indexPath) as! Supplementary
     }
 }

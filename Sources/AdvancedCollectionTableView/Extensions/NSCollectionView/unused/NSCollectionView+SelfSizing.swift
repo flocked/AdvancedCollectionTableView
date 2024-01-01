@@ -46,13 +46,13 @@ extension NSCollectionViewItem {
     
     static func swizzleCollectionViewItemIfNeeded() {
         if didSwizzleCollectionViewItem == false {
-            didSwizzleCollectionViewItem = true
             do {
                 _ = try Swizzle(NSCollectionViewItem.self) {
                     #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
                     #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
                 }
+                didSwizzleCollectionViewItem = true
             } catch {
                 Swift.debugPrint(error)
             }
