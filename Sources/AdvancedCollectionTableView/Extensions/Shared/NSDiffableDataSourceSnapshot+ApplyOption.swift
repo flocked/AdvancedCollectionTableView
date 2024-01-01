@@ -10,15 +10,21 @@ import AppKit
 /**
  Options for applying a snapshot to a diffable data source.
   
- When using Apple's `apply(_:animatingDifferences:completion:)` to apply a snapshot to a diffable data source, passing `true` to `animatingDifferences` would apply the diff and animate updates in the UI, while passing `false` is equivalent to calling `reloadData()`.
+ Apple's `apply(_:animatingDifferences:completion:)` provides two options for applying snapshots to a diffable data source depending on `animatingDifferences`:
+ - `true` applies a diff of the old and new state and animates updates in the UI.
+ - `false`  is equivalent to calling `reloadData()`. It reloads every item.
+  
+ **Non-animated diff**
  
- This options let you always perform a diff for much improved performance using `withoutAnimation`.
+ `NSDiffableDataSourceSnapshotApplyOption`  lets you perform a diff even without animations using `withoutAnimation` for much better performance compared to using Apple's `reloadData()`.
  
  ```swift
  collectionViewDatasource.apply(snapshot, .withoutAnimation)
  ```
  
- You can also change the apply animation duration using `animated(duration:)`.
+ **Animation duration**
+ 
+ When you want to apply the snapshot animated, you can also change the animation duration  using `animated(duration:)`.
  
  ```swift
  collectionViewDatasource.apply(snapshot, .animated(duration: 1.0))
@@ -28,16 +34,15 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     /**
      The snapshot gets applied animated.
      
-     The diffable data source computes the difference between the current state and the new state in the snapshot, which is an O(n) operation, where n is the number of items in the snapshot. The differences in the UI between the current state and new state are animated.
+     The data source computes a diff of the previous and new state and applies the new state animated with a default animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     public static var animated: Self { return .animated(duration: Self.noAnimationDuration) }
     
     /**
      The snapshot gets applied animiated with the specified animation duration.
      
-     The diffable data source computes the difference between the current state and the new state in the snapshot, which is an O(n) operation, where n is the number of items in the snapshot. The differences in the UI between the current state and new state are animated.
+     The data source computes a diff of the previous and new state and applies the new state animated with the specified animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
-    
     case animated(duration: TimeInterval)
     
     /**
@@ -49,7 +54,7 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     /**
      The snapshot gets applied without any animation.
      
-     The UI is set to the new state without any animations, with no additional overhead for computing a diff of the previous and new state. Any ongoing item animations are interrupted and the content is reloaded immediately.
+     The data source computes a diff of the previous and new state and applies the new state non animated. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     case withoutAnimation
     
