@@ -16,16 +16,16 @@ struct GalleryItem {
     let image: NSImage
 }
 
-let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem> { 
-    item, indexPath, galleryItem in
-
-    item.textField.stringValue = galleryItem.title
-    item.imageView.image = galleryItem.image
+let tableCellRegistration = NSTableView.CellRegistration<NSTableCellView, GalleryItem> { 
+    tableCell, column, row, galleryItem in
+    
+    tableCell.textField.stringValue = galleryItem.title
+    tableCell.imageView.image = galleryItem.image
     
     // Gets called whenever the state of the item changes (e.g. on selection)
-    item.configurationUpdateHandler = { item, state in
+    tableCell.configurationUpdateHandler = { tableCell, state in
         // Updates the text color based on selection state.
-        item.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
+        tableCell.textField.textColor = state.isSelected ? .controlAccentColor : .labelColor
     }
 }
 ```
@@ -34,13 +34,13 @@ let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, G
 
 A port of UIContentConfiguration that configurates styling and content for a content view.
 
-`NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide the property `contentConfiguration` where you can apply them to configurate the content of the item/cell.
+`NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide `contentConfiguration` where you can apply them to configurate the content of the item/cell.
 
 ### NSHostingConfiguration
 
 A content configuration suitable for hosting a hierarchy of SwiftUI views. 
 
-With this configuration you can easily display a SwiftUI view in collection item and table cell:
+With this configuration you can easily display a SwiftUI view in a collection item and table cell:
 
 ```swift
 collectionViewItem.contentConfiguration = NSHostingConfiguration {
@@ -53,7 +53,7 @@ collectionViewItem.contentConfiguration = NSHostingConfiguration {
 ```
 ### NSListContentConfiguration
 
-A content configuration for a table cell.
+A content configuration for a table view cell.
 
 ![NSListContentConfiguration](https://raw.githubusercontent.com/flocked/AdvancedCollectionTableView/main/Sources/AdvancedCollectionTableView/Documentation/AdvancedCollectionTableView.docc/Resources/NSListContentConfiguration.png)
 
@@ -94,12 +94,12 @@ A content configuration for a collection view item.
 
 ## NSCollectionView reconfigureItems
 
-Updates the data for the items without reloading and replacing them (`reloadItems(at: _)`. For optimal performance, choose to reconfigure items instead of reloading items unless you have an explicit need to replace the existing item with a new item. A port of `UICollectionView.reconfigureItems`.
+Updates the data for the items without reloading and replacing them. It provides much better performance compared to reloading items. A port of `UICollectionView.reconfigureItems`.
 
 Any item that has been registered via  `ItemRegistration`, or by class using `register(_ itemClass: NSCollectionViewItem.Type)`, can be recofigurated.
 
 ```swift
-collectionView.reconfigureItems(at: [IndexPath(item: 1, section: 1)])
+collectionView.reconfigureItems(at: indexPaths)
 ```
 
 ## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
@@ -107,48 +107,50 @@ collectionView.reconfigureItems(at: [IndexPath(item: 1, section: 1)])
 `allowsDeleting` enables deleting of items and rows via backspace.
 
  ```swift
- diffableCollectionViewDataSource.allowsDeleting = true
+ diffableDataSource.allowsDeleting = true
  ```
  
 ## NSDiffableDataSourceSnapshot Apply Options
 
-When using Apple's  `apply(_ snapshot:, animatingDifferences: Bool)` to apply a snapshot to a diffable datasource, it either animates changes (animatingDifferences = true) or uses `reloadedData` (animatingDifferences = false), which reloads every items and leads to bad performance.
+ Apple's `apply(_:animatingDifferences:completion:)` provides two options for applying snapshots to a diffable data source depending on `animatingDifferences`:
+ - `true` applies a diff of the old and new state and animates updates in the UI.
+ - `false`  is equivalent to calling `reloadData()`. It reloads every item.
+ 
+  `NSDiffableDataSourceSnapshotApplyOption`  lets you perform a diff even without animations for much better performance compared to using Apple's `reloadData()`.
 
-`NSDiffableDataSourceSnapshotApplyOptions`provides additional options:
+It also provides additional options:
 - **usingReloadData**: All items get reloaded.
 - **animated(withDuration: CGFloat)**: Changes get applied animated.
 - **nonAnimated**: Changes get applied immediatly.
 
  ```swift
- diffableDataSource.apply(mySnapshot, .withoutAnimation)
- 
-  diffableDataSource.apply(mySnapshot, .animated(3.0))
+diffableDataSource.apply(mySnapshot, .withoutAnimation)
+
+diffableDataSource.apply(mySnapshot, .animated(3.0))
  ```
  
 ## CollectionViewDiffableDataSource
 
 An extended `NSCollectionViewDiffableDataSource that provides:
-
- - Reordering of items by enabling `allowsReordering`.
- - Deleting of items by enabling  `allowsDeleting`.
- - Quicklook of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
- - A right click menu provider for selected items via `menuProvider`.
-
- ### Handlers
+ - Reordering items by dragging them
+ - Deleting items via backspace
+ - Quicklook previewing items via spacebar by providing items conforming to `QuicklookPreviewable`
+ - Right click menu provider for selected items
  
- - Prefetching of items via `prefetchHandlers`.
- - Reordering of items via `reorderingHandlers`.
- - Deleting of items via `deletionHandlers`.
- - Selecting of items via `selectionHandlers`.
- - Highlight state of items via `highlightHandlers`.
- - Displayed items via `displayHandlers`.
- - Items that are hovered by mouse via `hoverHandlers`.
- - Drag and drop of files from and to the collection view via `dragDropHandlers`.
- - Pinching of the collection view via `pinchHandler`.
+ __It includes handlers for:__
+ - Prefetching items
+ - Reordering items
+ - Deleting items
+ - Selecting items
+ - Highlighting items
+ - Displaying items
+ - Hovering items with the mouse.
+ - Drag and drop of files from and to the collection view
+ - Pinching of the collection view
   
  ## TableViewDiffableDataSource
  
- Simliar to CollectionViewDiffableDataSource. *Work in progress.*
+ Simliar to CollectionViewDiffableDataSource.
 
 ## Quicklook for NSTableView & NSCollectionView
 
