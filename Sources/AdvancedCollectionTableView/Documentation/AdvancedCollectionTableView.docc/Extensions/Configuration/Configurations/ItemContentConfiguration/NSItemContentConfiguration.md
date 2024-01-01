@@ -18,17 +18,19 @@
 - ``image``
 - ``view``
 - ``overlayView``
+
+### Configurating badges
+
 - ``badges``
 - ``Badge``
-
 
 ### Customizing appearance
 
 - ``textProperties``
 - ``secondaryTextProperties``
 - ``contentProperties-swift.property``
-- ``scaleTransform``
 - ``ContentProperties-swift.struct``
+- ``scaleTransform``
 
 ### Customizing layout
 

@@ -20,6 +20,9 @@
 - ``secondaryText``
 - ``secondaryAttributedText``
 - ``image``
+
+### Configurating badge
+
 - ``badge-swift.property``
 - ``Badge-swift.struct``
 
