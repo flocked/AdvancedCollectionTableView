@@ -16,7 +16,7 @@ import FZQuicklook
      
      If `true`, the user can delete items using backspace. The default value is `false`.
      
-     ``deletionHandlers`` provides additionalhandlers.
+     ``deletionHandlers`` provides additional handlers.
      */
     public var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }

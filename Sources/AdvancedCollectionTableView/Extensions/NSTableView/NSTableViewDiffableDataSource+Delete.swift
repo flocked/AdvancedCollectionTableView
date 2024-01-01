@@ -14,7 +14,9 @@ extension NSTableViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete rows either via backsapace keyboard shortcut.
      
-     If the value of this property is `true` (the default is `false), users can delete rows.     
+     If the value of this property is `true` (the default is `false), users can delete rows.   
+     
+     ``deletionHandlers`` provides additional handlers.
      */
     public var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
