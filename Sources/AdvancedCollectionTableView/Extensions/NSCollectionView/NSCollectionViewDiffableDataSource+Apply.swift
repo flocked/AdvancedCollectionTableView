@@ -15,10 +15,10 @@ public extension NSCollectionViewDiffableDataSource {
      
      - Parameters:
         - snapshot: The snapshot reflecting the new state of the data in the collection view.
-        - option:  Option how to apply the snapshot to the collection view.
-        - completion: A closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue.
+        - option: Option how to apply the snapshot to the table view. The default value is `animated`.
+        - completion: An optional closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue. The default value is `nil`.
      */
-    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption, completion: (() -> Void)? = nil) {
+    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         switch option {
         case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
