@@ -294,8 +294,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     
     var width: CGFloat = 0.0
     func updateTableRowHeight() {
-        guard bounds.width != width else { return }
-        width = bounds.width
+     //   guard bounds.width != width else { return }
+     //   width = bounds.width
         if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
             tableRowView.frame.size.height = fittingSize.height
         }

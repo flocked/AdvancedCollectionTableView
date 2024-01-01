@@ -28,6 +28,8 @@ class SidebarViewController: NSViewController {
         // `defaultContentConfiguration()` returns a table cell content configuration with default styling based on the table view it's displayed at.
         var configuration = cell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
+        configuration.secondaryText = sidebarItem.subtitle
+
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
         
         cell.contentConfiguration = configuration

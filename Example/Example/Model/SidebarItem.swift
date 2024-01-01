@@ -6,10 +6,11 @@
 //
 
 import Foundation
-
+import FZSwiftUtils
 struct SidebarItem: Hashable, Identifiable {
     let id = UUID()
     var title: String
+    var subtitle: String = loremIpsum.sentences(1...5)
     var symbolName: String
     
     static var sampleItems: [SidebarItem] {
