@@ -131,6 +131,7 @@ extension NSItemContentConfiguration.ContentProperties {
             case resize
             /// The image isn't resized.
             case none
+            
             var gravity: CALayerContentsGravity {
                 switch self {
                 case .fit: return .resizeAspect
@@ -148,6 +149,7 @@ extension NSItemContentConfiguration.ContentProperties {
                 case .resize: return .fit
                 }
             }
+            
             var shouldResize: Bool {
                 self == .fit
             }

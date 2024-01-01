@@ -249,6 +249,14 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     var type: TableCellType? = nil
     var tableViewStyle: NSTableView.Style? = nil
     var isGroupRow: Bool = false
+    
+    enum ListStyle {
+        enum ContentPosition {
+            case leading
+            case trailing
+        }
+        case fullscreen(position: ContentPosition)
+    }
         
     enum TableCellType: Int, Hashable {
         case automatic
