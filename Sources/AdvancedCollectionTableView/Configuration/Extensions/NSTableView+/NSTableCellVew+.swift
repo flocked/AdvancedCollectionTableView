@@ -23,9 +23,9 @@ extension NSTableCellView {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
+        get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
+            set(associatedValue: newValue, key: "contentConfiguration", object: self)
             configurateContentView()
         }
     }
@@ -71,17 +71,17 @@ extension NSTableCellView {
     
     var contentView: (NSView & NSContentView)?   {
         get { getAssociatedValue(key: "_contentView", object: self) }
-        set { set(associatedValue: newValue, key: "_contentView", object: self)
+        set { 
+            contentView?.removeFromSuperview()
+            set(associatedValue: newValue, key: "_contentView", object: self)
         }
     }
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            observeTableCellView()
-            if var contentView = self.contentView, contentView.supports(contentConfiguration) {
+            if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                contentView?.removeFromSuperview()
                 let contentView = contentConfiguration.makeContentView()
                 self.contentView = contentView
                 translatesAutoresizingMaskIntoConstraints = false
@@ -90,7 +90,6 @@ extension NSTableCellView {
                 contentView.setNeedsDisplay()
             }
         } else {
-            contentView?.removeFromSuperview()
             contentView = nil
         }
     }
@@ -119,13 +118,13 @@ extension NSTableCellView {
     }
     
     func setNeedsAutomaticUpdateConfiguration() {
-        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = self.row {
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = row {
             let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
             self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
         }
         
         let state = configurationState
-        if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
+        if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
@@ -139,7 +138,7 @@ extension NSTableCellView {
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration {
+        if let contentConfiguration = contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
@@ -170,15 +169,13 @@ extension NSTableCellView {
      }
      ```
      
-     Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            if(newValue != nil) {
-                observeTableCellView()
-            }
+            observeTableCellView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -189,21 +186,33 @@ extension NSTableCellView {
      A hovered cell view has the mouse pointer on it.
      */
     @objc open var isHovered: Bool {
-        self.rowView?.isHovered ?? false
+        rowView?.isHovered ?? false
     }
     
-    /// A Boolean value that specifies whether the cell view is emphasized (the cell window is key).
+    /**
+     A Boolean value that specifies whether the cell view is emphasized.
+     
+     The cell view is emphasized when it's window is key.
+     */
     @objc open var isEmphasized: Bool {
         window?.isKeyWindow ?? false
     }
     
-    /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
+    /**
+     A Boolean value that specifies whether the cell view is enabled.
+     
+     The value of this property is `true` when the table view`s `isEnabled` is `true`.
+     */
     @objc open var isEnabled: Bool {
         get { rowView?.isEnabled ?? true }
     }
     
-    /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
-    @objc open var isEditing: Bool {
+    /**
+     A Boolean value that indicates whether the table cell is in an editing state.
+
+     The value of this property is `true` when the text of a list or item content configuration is currently edited.
+     */
+     @objc open var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
@@ -217,7 +226,7 @@ extension NSTableCellView {
     
     /// The row of the cell.
     var row: Int? {
-        guard let tableView = self.tableView else { return nil }
+        guard let tableView = tableView else { return nil }
         var row = tableView.row(for: self)
         if row == -1 {
             row = 0
@@ -232,19 +241,22 @@ extension NSTableCellView {
     
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
-        guard tableCellObserver == nil else { return }
-        tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
-            if self.contentConfiguration is NSListContentConfiguration {
-                self.rowView?.needsAutomaticRowHeights = true
-                self.tableView?.usesAutomaticRowHeights = true
-            }
-
-            if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard tableCellObserver == nil else { return }
+            tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
+                if self.contentConfiguration is NSListContentConfiguration {
+                    self.tableView?.usesAutomaticRowHeights = true
+                }
+                
+                if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
+                    self.setNeedsUpdateConfiguration()
+                }
+                
+                self.rowView?.observeTableRowView()
                 self.setNeedsUpdateConfiguration()
-            }
-            
-            self.rowView?.observeTableRowView()
-            self.setNeedsUpdateConfiguration()
-        })
+            })
+        } else {
+            tableCellObserver = nil
+        }
     }
 }

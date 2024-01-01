@@ -31,6 +31,7 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "contentConfiguration", object: self)
+            observeTableRowView()
             configurateContentView()
         }
     }
@@ -82,12 +83,10 @@ extension NSTableRowView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            observeTableRowView()
             backgroundColor = nil
             if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                contentView?.removeFromSuperview()
                 var contentView = contentConfiguration.makeContentView()
                 contentView.configuration = contentConfiguration
                 self.contentView = contentView
@@ -123,15 +122,13 @@ extension NSTableRowView {
      }
      ```
      
-     Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            if(newValue != nil) {
-                observeTableRowView()
-            }
+            observeTableRowView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -176,7 +173,7 @@ extension NSTableRowView {
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration {
+        if let contentConfiguration = contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
         cellViews.forEach({$0.setNeedsUpdateConfiguration()})
@@ -192,17 +189,29 @@ extension NSTableRowView {
         tableView?.hoveredRowView == self
     }
     
-    /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).
+    /**
+     A Boolean value that specifies whether the row view is enabled.
+     
+     The value of this property is `true` when the table view`s `isEnabled` is `true`.
+     */
     @objc open var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
     
-    /// A Boolean value that indicates whether the row view is in an editable state. (the text of a content configuration is currently edited).
+    /**
+     A Boolean value that indicates whether the table row is in an editing state.
+     
+     The value of this property is `true` when the text of a list or item content configuration is currently edited.
+     */
     @objc open var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
-    /// A Boolean value that specifies whether the row view is emphasized (the window is key).
+    /**
+     A Boolean value that specifies whether the row view is emphasized.
+     
+     The row view is emphasized when it's window is key.
+     */
     @objc open var isEmphasized: Bool {
         window?.isKeyWindow ?? false
     }
@@ -216,28 +225,27 @@ extension NSTableRowView {
         set { set(associatedValue: newValue, key: "rowObserver", object: self) }
     }
     
-    var needsAutomaticRowHeights: Bool {
-        get { getAssociatedValue(key: "needsAutomaticRowHeights", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
-    }
-    
     func observeTableRowView() {
-        guard rowObserver == nil else { return }
-        rowObserver = KeyValueObserver(self)
-        rowObserver?.add(\.isSelected) { old, new in
-            guard old != new else { return }
-            self.configurateContentView()
-            self.setNeedsAutomaticUpdateConfiguration()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
-        rowObserver?.add(\.superview) { old, new in
-            if self.needsAutomaticRowHeights {
-                self.tableView?.usesAutomaticRowHeights = true
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard rowObserver == nil else { return }
+            rowObserver = KeyValueObserver(self)
+            rowObserver?.add(\.isSelected) { old, new in
+                guard old != new else { return }
+                self.configurateContentView()
+                self.setNeedsAutomaticUpdateConfiguration()
+                self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
-            self.tableView?.setupObservation()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
+            rowObserver?.add(\.superview) { old, new in
+                if self.cellViews.contains(where: { $0.contentConfiguration is NSListContentConfiguration }) {
+                    self.tableView?.usesAutomaticRowHeights = true
+                }
+                self.tableView?.setupObservation()
+                self.setCellViewsNeedAutomaticUpdateConfiguration()
+            }
+            setNeedsUpdateConfiguration()
+            setCellViewsNeedAutomaticUpdateConfiguration()
+        } else {
+            rowObserver = nil
         }
-        setNeedsUpdateConfiguration()
-        setCellViewsNeedAutomaticUpdateConfiguration()
     }
 }

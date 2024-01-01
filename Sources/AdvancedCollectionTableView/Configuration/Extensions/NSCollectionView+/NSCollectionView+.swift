@@ -16,10 +16,10 @@ extension NSCollectionView {
             guard newValue != hoveredIndexPath else { return }
             let previousIndexPath = hoveredIndexPath
             set(associatedValue: newValue, key: "hoveredIndexPath", object: self)
-            if let indexPath = previousIndexPath, let item = self.item(at: indexPath) {
+            if let indexPath = previousIndexPath, let item = item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
-            if let indexPath = hoveredIndexPath, let item = self.item(at: indexPath) {
+            if let indexPath = hoveredIndexPath, let item = item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
         }
@@ -32,11 +32,11 @@ extension NSCollectionView {
     
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            if (self.observingView == nil) {
-                self.observingView = ObserverView()
-                self.addSubview(withConstraint: self.observingView!)
-                self.observingView!.sendToBack()
-                self.observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
+            if (observingView == nil) {
+                observingView = ObserverView()
+                addSubview(withConstraint: self.observingView!)
+                observingView!.sendToBack()
+                observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     if windowIsKey == false {
                         self.hoveredIndexPath = nil
@@ -44,13 +44,13 @@ extension NSCollectionView {
                     self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
                 }
                 
-                self.observingView?.mouseHandlers.exited = { [weak self] event in
+                observingView?.mouseHandlers.exited = { [weak self] event in
                     guard let self = self else { return true }
                     self.hoveredIndexPath = nil
                     return true
                 }
                 
-                self.observingView?.mouseHandlers.moved = { [weak self] event in
+                observingView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {

@@ -133,7 +133,7 @@ open class NSTableSectionHeaderView: NSView {
      }
      ```
      
-     Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
+     Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
         didSet {
@@ -144,7 +144,11 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-    /// A Boolean value that indicates whether the section header view is in an editable state. (the text of a content configuration is currently edited).
+    /**
+     A Boolean value that indicates whether the section header view is in an editing state.
+     
+     The value of this property is `true` when the text of a list or item content configuration is currently edited.
+     */
     @objc open var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
@@ -161,7 +165,11 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-    /// A Boolean value that specifies whether the section header view is emphasized (the window is key).
+    /**
+     A Boolean value that specifies whether the section header view is emphasized.
+     
+     The section header view is emphasized when it's window is key.
+     */
     @objc open var isEmphasized: Bool = false {
         didSet {
             guard oldValue != isEmphasized else { return }
@@ -169,7 +177,11 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-    /// A Boolean value that specifies whether the section header view is enabled (the table view's `isEnabled` is `true`).
+    /**
+     A Boolean value that specifies whether the section header view is enabled.
+     
+     The value of this property is `true` when the table view`s `isEnabled` is `true`.
+     */
     @objc open var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
