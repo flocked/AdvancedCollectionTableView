@@ -49,6 +49,7 @@ extension NSListContentView {
                 }
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+            Swift.print("needsRowHeightUpdate", needsRowHeightUpdate)
             if needsRowHeightUpdate {
                 listContentView?.updateTableRowHeight()
             }
