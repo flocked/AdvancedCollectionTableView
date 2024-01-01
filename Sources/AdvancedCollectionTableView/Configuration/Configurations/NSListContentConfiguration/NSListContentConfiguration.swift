@@ -245,11 +245,11 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         
     }
     
-    internal var type: TableCellType? = nil
-    internal var tableViewStyle: NSTableView.Style? = nil
+    var type: TableCellType? = nil
+    var tableViewStyle: NSTableView.Style? = nil
     var isGroupRow: Bool = false
         
-    internal enum TableCellType: Int, Hashable {
+    enum TableCellType: Int, Hashable {
         case automatic
         case automaticRow
         case plain
@@ -263,23 +263,23 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         }
     }
     
-    internal var hasText: Bool {
+    var hasText: Bool {
         text != nil || attributedText != nil
     }
     
-    internal var hasSecondaryText: Bool {
+    var hasSecondaryText: Bool {
         secondaryText != nil || secondaryAttributedText != nil
     }
     
-    internal var hasContent: Bool {
+    var hasContent: Bool {
         image != nil
     }
     
-    internal var hasBadge: Bool {
+    var hasBadge: Bool {
         badge?.isVisible == true
     }
     
-    internal var state: NSListConfigurationState? = nil
+    var state: NSListConfigurationState? = nil
     
     // MARK: Creating a content view
     
@@ -312,8 +312,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     }
 }
 
-public extension NSListContentConfiguration {
-    internal static func automatic() -> NSListContentConfiguration {
+extension NSListContentConfiguration {
+    static func automatic() -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: .accentColor)
         configuration.type = .automatic
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -321,7 +321,7 @@ public extension NSListContentConfiguration {
         return configuration
     }
     
-    internal static func automaticRow() -> NSListContentConfiguration {
+    static func automaticRow() -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: .accentColor)
         configuration.type = .automaticRow
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -329,7 +329,7 @@ public extension NSListContentConfiguration {
         return configuration
     }
     
-    internal func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
+    func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
@@ -368,7 +368,7 @@ public extension NSListContentConfiguration {
         return configuration
     }
     
-    internal static func tableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
+    static func tableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
         switch style {
         case .automatic: return .sidebar()
         case .fullWidth:  return .plain()
@@ -379,7 +379,7 @@ public extension NSListContentConfiguration {
         }
     }
     
-    internal static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
+    static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
         configuration.type = .sidebar
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -397,7 +397,7 @@ public extension NSListContentConfiguration {
     
 }
 
-internal extension NSFont.Weight {
+extension NSFont.Weight {
     var symbolWeight: NSUIImage.SymbolWeight {
         switch self {
         case .ultraLight: return .ultraLight

@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSListContentView {
+extension NSListContentView {
     class ListTextField: NSTextField, NSTextFieldDelegate {
         var properties: TextConfiguration {
             didSet {
@@ -106,11 +106,11 @@ internal extension NSListContentView {
             return intrinsicContentSize
         }
         
-        internal var lastContentSize = NSSize() { didSet {
+        var lastContentSize = NSSize() { didSet {
             lastContentSize = NSSize(width: ceil(lastContentSize.width), height: ceil(lastContentSize.height))
         }}
         
-        internal func stringValueSize() -> CGSize {
+        func stringValueSize() -> CGSize {
             let stringSize = attributedStringValue.size()
             return CGSize(width: stringSize.width, height: super.intrinsicContentSize.height)
         }
@@ -134,7 +134,7 @@ internal extension NSListContentView {
             invalidateIntrinsicContentSize()
         }
         
-        internal var tableView: NSTableView? {
+        var tableView: NSTableView? {
             firstSuperview(for: NSTableView.self)
         }
         

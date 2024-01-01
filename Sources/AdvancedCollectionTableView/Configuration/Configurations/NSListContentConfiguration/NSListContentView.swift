@@ -34,31 +34,31 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         configuration is NSListContentConfiguration
     }
     
-    internal func initialSetup() {
+    func initialSetup() {
         clipsToBounds = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackViewConstraints = addSubview(withConstraint: stackView)
         addSubview(stackView)
     }
     
-    internal var stackViewConstraints: [NSLayoutConstraint] = []
-    internal var _configuration: NSListContentConfiguration {
+    var stackViewConstraints: [NSLayoutConstraint] = []
+    var _configuration: NSListContentConfiguration {
         didSet { if oldValue != _configuration {
             updateConfiguration() } } }
     
-    internal lazy var textField = ListTextField(properties: _configuration.textProperties)
-    internal lazy var secondaryTextField = ListTextField(properties: _configuration.secondaryTextProperties)
-    internal lazy var imageView = ListImageView(properties: _configuration.imageProperties)
-    internal var badgeView: BadgeView? = nil
+    lazy var textField = ListTextField(properties: _configuration.textProperties)
+    lazy var secondaryTextField = ListTextField(properties: _configuration.secondaryTextProperties)
+    lazy var imageView = ListImageView(properties: _configuration.imageProperties)
+    var badgeView: BadgeView? = nil
     
-    internal lazy var textStackView: NSStackView = {
+    lazy var textStackView: NSStackView = {
         var stackView = NSStackView(views: [textField, secondaryTextField])
         stackView.orientation = .vertical
         stackView.alignment = .leading
         return stackView
     }()
     
-    internal lazy var stackView: NSStackView = {
+    lazy var stackView: NSStackView = {
         var stackView = NSStackView(views: [imageView, textStackView])
         stackView.orientation = .horizontal
         stackView.distribution = .fill
@@ -90,7 +90,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem
     }
     
-    internal func updateConfiguration() {
+    func updateConfiguration() {
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
         
@@ -177,7 +177,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    internal func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
+    func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
         var textFieldsSize: CGSize = .zero
         textFieldsSize.width = frame.size.width-_configuration.margins.width
         if _configuration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
@@ -197,7 +197,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         return textFieldsSize
     }
     
-    internal func calculateImageViewSize() -> CGSize? {
+    func calculateImageViewSize() -> CGSize? {
         if let image = _configuration.image {
             var imageSize = image.size
             switch _configuration.imageProperties.sizing {
@@ -261,7 +261,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         return nil
     }
     
-    internal func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
+    func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
         switch _configuration.imageProperties.scaling {
        // case .fill, .fit: return imageSize.scaled(toHeight: size.height)
         case .fit: return imageSize.scaled(toHeight: size.height)
@@ -269,7 +269,7 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    internal var rowView: NSTableRowView? {
+    var rowView: NSTableRowView? {
         superview?.superview as? NSTableRowView
     }
     
@@ -278,14 +278,14 @@ public class NSListContentView: NSView, NSContentView, EdiitingContentView {
         updateRowHeight()
     }
     
-    internal func updateRowHeight() {
+    func updateRowHeight() {
         if let rowView = rowView, frame.size.height > fittingSize.height {
             rowView.frame.size.height = fittingSize.height
         }
     }
     
     @available(*, unavailable)
-    internal required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

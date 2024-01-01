@@ -135,18 +135,18 @@ public extension NSListContentConfiguration {
             return badge
         }
         
-        internal var isVisible: Bool {
+        var isVisible: Bool {
             text != nil || attributedText != nil || image != nil
         }
         
-        internal var resolvedImageTintColor: NSColor {
+        var resolvedImageTintColor: NSColor {
             imageProperties._resolvedTintColor ?? color
         }
         
-        internal var _resolvedBorderColor: NSColor? = nil
-        internal var _resolvedBackgroundColor: NSColor? = .controlAccentColor
-        internal var _resolvedColor: NSColor = .white
-        internal mutating func updateResolvedColors() {
+        var _resolvedBorderColor: NSColor? = nil
+        var _resolvedBackgroundColor: NSColor? = .controlAccentColor
+        var _resolvedColor: NSColor = .white
+        mutating func updateResolvedColors() {
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
             _resolvedColor = resolvedColor()
@@ -196,8 +196,8 @@ public extension NSListContentConfiguration.Badge {
             return nil
         }
         
-        internal var _resolvedTintColor: NSColor? = nil
-        internal mutating func updateResolvedColors() {
+        var _resolvedTintColor: NSColor? = nil
+        mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
         }
     }

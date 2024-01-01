@@ -85,7 +85,7 @@ public extension NSListContentConfiguration {
                 /// The image is positioned at the first baseline.
                 case firstBaseline
                 
-                internal var alignment: NSLayoutConstraint.Attribute {
+                var alignment: NSLayoutConstraint.Attribute {
                     switch self {
                     case .top: return .centerY
                     case .center: return .centerY
@@ -104,7 +104,7 @@ public extension NSListContentConfiguration {
                 /// The image is positioned at the trailing edge.
                 case trailing
                 
-                internal var alignment: NSLayoutConstraint.Attribute {
+                var alignment: NSLayoutConstraint.Attribute {
                     switch self {
                     case .leading: return .leading
                     case .center: return .centerX
@@ -113,7 +113,7 @@ public extension NSListContentConfiguration {
                 }
             }
             
-            internal var alignment: NSLayoutConstraint.Attribute {
+            var alignment: NSLayoutConstraint.Attribute {
                 switch self {
                 case .top(let vertical), .bottom(let vertical):
                     return vertical.alignment
@@ -122,14 +122,14 @@ public extension NSListContentConfiguration {
                 }
             }
             
-            internal var imageIsLeading: Bool {
+            var imageIsLeading: Bool {
                 switch self {
                 case .leading(_), .top(_): return true
                 default: return false
                 }
             }
             
-            internal var orientation: NSUserInterfaceLayoutOrientation {
+            var orientation: NSUserInterfaceLayoutOrientation {
                 switch self {
                 case .leading(_), .trailing(_):
                     return .horizontal
@@ -211,14 +211,14 @@ public extension NSListContentConfiguration {
         /// The position of the image.
         public var position: Position = .leading(.center)
         
-        internal init() {
+        init() {
             
         }
         
-        internal var _resolvedTintColor: NSColor? = nil
-        internal var _resolvedBorderColor: NSColor? = nil
-        internal var _resolvedBackgroundColor: NSColor? = nil
-        internal mutating func updateResolvedColors() {
+        var _resolvedTintColor: NSColor? = nil
+        var _resolvedBorderColor: NSColor? = nil
+        var _resolvedBackgroundColor: NSColor? = nil
+        mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
             _resolvedBorderColor = resolvedBorderColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()

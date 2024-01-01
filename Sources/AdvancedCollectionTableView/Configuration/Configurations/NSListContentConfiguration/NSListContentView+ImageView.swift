@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-internal extension NSListContentView {
+extension NSListContentView {
     class ListImageView: NSImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {

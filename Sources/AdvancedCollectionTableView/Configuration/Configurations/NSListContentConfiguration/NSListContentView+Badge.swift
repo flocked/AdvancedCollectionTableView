@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSListContentView {
+extension NSListContentView {
     class BadgeView: NSView {
         var properties: NSListContentConfiguration.Badge {
             didSet {
