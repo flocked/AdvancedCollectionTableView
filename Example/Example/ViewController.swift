@@ -60,7 +60,7 @@ class ViewController: NSViewController {
             .onAction {
                 var snapshotGalleryItems = self.dataSource.snapshot().itemIdentifiers
                 snapshotGalleryItems.shuffleItems()
-                self.dataSource.reconfigureItems(snapshotGalleryItems)
+                self.dataSource.reconfigureElements(snapshotGalleryItems)
             }
     }
     
@@ -70,7 +70,7 @@ class ViewController: NSViewController {
 
         collectionView.collectionViewLayout = .grid(columns: 2)
         
-        collectionView.dataSource = self.dataSource
+        collectionView.dataSource = dataSource
         
         // Enables deleting of selected items via backspace.
         dataSource.allowsDeleting = true
@@ -83,10 +83,10 @@ class ViewController: NSViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
 
-        toolbar.attachedWindow = self.view.window
+        toolbar.attachedWindow = view.window
         
         // Make the collectionview first responder so it reacts to backspace item deletion and spacebar item quicklook preview.
-        self.view.window?.makeFirstResponder(collectionView)
+        view.window?.makeFirstResponder(collectionView)
         
         collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }
@@ -103,7 +103,7 @@ fileprivate extension NSView {
     /// Creates a colored view.
     convenience init(color: NSUIColor, opacity: CGFloat) {
         self.init(frame: .zero)
-        self.backgroundColor = color
-        self.alphaValue = opacity
+        backgroundColor = color
+        alphaValue = opacity
     }
 }

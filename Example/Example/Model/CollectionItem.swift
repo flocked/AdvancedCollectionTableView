@@ -55,7 +55,7 @@ extension GalleryItem: QuicklookPreviewable {
     }
     
     var previewItemTitle: String? {
-        return self.title
+        return title
     }
 }
 

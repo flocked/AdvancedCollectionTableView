@@ -374,6 +374,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+        Swift.print("gg")
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
     

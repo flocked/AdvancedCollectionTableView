@@ -22,7 +22,7 @@ class SidebarViewController: NSViewController {
     
     @IBOutlet weak var tableView: NSTableView!
     
-    lazy var dataSource: DataSource = DataSource(tableView: self.tableView, cellRegistration: self.cellRegistration)
+    lazy var dataSource: DataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
     
     let cellRegistration = CellRegistration() { cell, column, row, sidebarItem in
         // `defaultContentConfiguration()` returns a table cell content configuration with default styling based on the table view it's displayed at.
@@ -42,7 +42,7 @@ class SidebarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self.dataSource
+        tableView.dataSource = dataSource
         
         // Enables reordering of rows via drag and drop.
         dataSource.allowsReordering = true
