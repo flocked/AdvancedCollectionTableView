@@ -154,7 +154,7 @@ public extension NSTableView {
      
      - returns:A configured reusable cell object.
      */
-    func makeCellView<Cell, Item>(using registration: CellRegistration<Cell, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> Cell? where Cell: NSTableCellView {
+    func makeCellView<CellView, Item>(using registration: CellRegistration<CellView, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> CellView? where CellView: NSTableCellView {
         return registration.makeCellView(self, column, row, item)
     }
 }
