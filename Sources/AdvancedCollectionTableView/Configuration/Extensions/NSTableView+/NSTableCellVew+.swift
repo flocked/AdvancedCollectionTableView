@@ -89,6 +89,7 @@ extension NSTableCellView {
                 setNeedsDisplay()
                 contentView.setNeedsDisplay()
             }
+            setNeedsAutomaticUpdateConfiguration()
         } else {
             contentView = nil
         }

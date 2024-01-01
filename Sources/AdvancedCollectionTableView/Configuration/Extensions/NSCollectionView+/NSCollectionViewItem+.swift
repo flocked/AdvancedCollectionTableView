@@ -89,6 +89,7 @@ extension NSCollectionViewItem {
                 view.addSubview(withConstraint: backgroundView)
                 self.backgroundView = backgroundView
             }
+            setNeedsAutomaticUpdateConfiguration()
         } else {
             backgroundView = nil
         }
@@ -167,6 +168,7 @@ extension NSCollectionViewItem {
                 view.frame = previousFrame
                 view.setNeedsLayout()
             }
+            setNeedsAutomaticUpdateConfiguration()
         } else {
             let previousFrame = view.frame
             view = NSView(frame: previousFrame)

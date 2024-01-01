@@ -92,6 +92,7 @@ extension NSTableRowView {
                 self.contentView = contentView
                 addSubview(withConstraint: contentView)
             }
+            setNeedsAutomaticUpdateConfiguration()
         } else {
             contentView = nil
         }

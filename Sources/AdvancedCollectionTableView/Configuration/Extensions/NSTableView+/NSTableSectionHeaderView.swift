@@ -29,6 +29,7 @@ open class NSTableSectionHeaderView: NSView {
      */
     open var contentConfiguration: NSContentConfiguration? = nil  {
         didSet {
+            observeSectionHeaderView()
             configurateContentView()
         }
     }
@@ -137,9 +138,7 @@ open class NSTableSectionHeaderView: NSView {
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
         didSet {
-            if configurationUpdateHandler != nil {
-                observeSectionHeaderView()
-            }
+            observeSectionHeaderView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -190,7 +189,6 @@ open class NSTableSectionHeaderView: NSView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            observeSectionHeaderView()
             if var contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -203,6 +201,7 @@ open class NSTableSectionHeaderView: NSView {
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
             }
+            setNeedsAutomaticUpdateConfiguration()
         } else {
             self.contentView?.removeFromSuperview()
         }
@@ -217,31 +216,37 @@ open class NSTableSectionHeaderView: NSView {
     var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
 
     func observeSectionHeaderView() {
-        guard observingView == nil else { return }
-        let observingView = ObserverView(frame: .zero)
-        addSubview(withConstraint: observingView)
-        observingView.windowHandlers.isKey = { isKey in
-            self.isEmphasized = isKey
-        }
-        
-        observingView.mouseHandlers.exited = { event in
-            self.isHovered = false
-            return true
-        }
-        
-        observingView.mouseHandlers.entered = { event in
-            self.isHovered = true
-            return true
-        }
-        self.observingView = observingView
-        
-        guard sectionHeaderObserver == nil else { return }
-        sectionHeaderObserver = KeyValueObserver(self)
-        sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
-            guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
-                return
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard observingView == nil else { return }
+            let observingView = ObserverView(frame: .zero)
+            addSubview(withConstraint: observingView)
+            observingView.windowHandlers.isKey = { isKey in
+                self.isEmphasized = isKey
             }
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
-        })
+            
+            observingView.mouseHandlers.exited = { event in
+                self.isHovered = false
+                return true
+            }
+            
+            observingView.mouseHandlers.entered = { event in
+                self.isHovered = true
+                return true
+            }
+            self.observingView = observingView
+            
+            guard sectionHeaderObserver == nil else { return }
+            sectionHeaderObserver = KeyValueObserver(self)
+            sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
+                guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
+                    return
+                }
+                self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
+            })
+        } else {
+            observingView?.removeFromSuperview()
+            observingView = nil
+            sectionHeaderObserver = nil
+        }
     }
 }
