@@ -298,6 +298,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
       //  width = bounds.width
         tableRowView?.frame.size.width += 1
         tableRowView?.frame.size.width -= 1
+        self.frame.size.width += 1
+        self.frame.size.width -= 1
         Swift.print("updateTableRowHeight", tableRowView != nil, tableRowView?.tableView != nil)
         if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
             tableRowView.frame.size.height = fittingSize.height
