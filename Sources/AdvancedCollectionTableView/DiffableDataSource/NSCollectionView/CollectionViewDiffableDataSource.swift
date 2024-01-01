@@ -373,11 +373,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return dataSource.numberOfSections(in: collectionView)
     }
     
+    /*
     public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        let abc = dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
-        Swift.print("gg", abc)
         return dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
+     */
     
     // MARK: - Elements
         
