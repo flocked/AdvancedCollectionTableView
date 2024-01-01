@@ -23,7 +23,7 @@ public extension NSItemContentConfiguration {
             /// The badge is displayed as overlay to the item's content (image/view) with a spacing of `4.0` to the content's edge.
             static let overlay = BadgeType.overlay(spacing: 4.0)
             
-            internal var spacing: CGFloat? {
+            var spacing: CGFloat? {
                 switch self {
                 case .overlay(spacing: let spacing): return spacing
                 case .attachment: return nil
@@ -185,13 +185,13 @@ public extension NSItemContentConfiguration {
             return badge
         }
         
-        internal var isVisible: Bool {
+        var isVisible: Bool {
             text != nil || attributedText != nil || image != nil || view != nil
         }
         
-        internal var _resolvedBorderColor: NSColor? = nil
-        internal var _resolvedBackgroundColor: NSColor? = .controlAccentColor
-        internal mutating func updateResolvedColors() {
+        var _resolvedBorderColor: NSColor? = nil
+        var _resolvedBackgroundColor: NSColor? = .controlAccentColor
+        mutating func updateResolvedColors() {
             _resolvedBorderColor = resolvedBorderColor()
             if visualEffect == nil {
                 _resolvedBackgroundColor = resolvedBackgroundColor()
@@ -229,12 +229,12 @@ public extension NSItemContentConfiguration.Badge {
             textColorTransform?(textColor) ?? textColor
         }
         
-        internal init() {
+        init() {
             
         }
         
-        internal var _resolvedTextColor: NSColor = .white
-        internal mutating func updateResolvedColors() {
+        var _resolvedTextColor: NSColor = .white
+        mutating func updateResolvedColors() {
             _resolvedTextColor = resolvedTextColor()
         }
     }
@@ -281,8 +281,8 @@ public extension NSItemContentConfiguration.Badge {
             return nil
         }
         
-        internal var _resolvedTintColor: NSColor? = nil
-        internal mutating func updateResolvedColors() {
+        var _resolvedTintColor: NSColor? = nil
+        mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
         }
     }

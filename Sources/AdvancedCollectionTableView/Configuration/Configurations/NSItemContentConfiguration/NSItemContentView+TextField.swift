@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSItemContentView {
+extension NSItemContentView {
     class ItemTextField: NSTextField, NSTextFieldDelegate {
         var properties: TextConfiguration {
             didSet {
@@ -83,7 +83,7 @@ internal extension NSItemContentView {
             return intrinsicContentSize
         }
         
-        internal var itemContentView: NSItemContentView? {
+        var itemContentView: NSItemContentView? {
             firstSuperview(for: NSItemContentView.self)
         }
         
@@ -108,7 +108,7 @@ internal extension NSItemContentView {
             properties.onEditEnd?(stringValue)
         }
         
-        internal var previousStringValue: String = ""
+        var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 if properties.stringValidation?(stringValue) ?? true {

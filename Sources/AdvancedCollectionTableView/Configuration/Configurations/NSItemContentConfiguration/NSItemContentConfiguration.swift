@@ -282,7 +282,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         return configuration
     }
     
-    internal var contentAlignment: NSLayoutConstraint.Attribute  {
+    var contentAlignment: NSLayoutConstraint.Attribute  {
         switch contentPosition {
         case .bottom, .top: return .centerX
         case .leading, .trailing: return .centerY
@@ -290,19 +290,19 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         }
     }
     
-    internal var hasText: Bool {
+    var hasText: Bool {
         text != nil || attributedText != nil
     }
     
-    internal var hasSecondaryText: Bool {
+    var hasSecondaryText: Bool {
         secondaryText != nil || secondaryAttributedText != nil
     }
     
-    internal var hasContent: Bool {
+    var hasContent: Bool {
         image != nil || contentProperties.backgroundColor != nil || view != nil
     }
     
-    internal var hasBadges: Bool {
+    var hasBadges: Bool {
         badges.isEmpty == false && hasContent
     }
     
@@ -321,22 +321,22 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         /// The content is displayed bellow the text.
         case bottom
         
-        internal var contentIsLeading: Bool {
+        var contentIsLeading: Bool {
             self == .leading || self == .leadingFirstBaseline || self == .top
         }
         
-        internal var isFirstBaseline: Bool {
+        var isFirstBaseline: Bool {
             self == .trailingFirstBaseline || self == .leadingFirstBaseline
         }
         
-        internal var orientation: NSUserInterfaceLayoutOrientation {
+        var orientation: NSUserInterfaceLayoutOrientation {
             return (self == .top || self == .bottom) ? .vertical : .horizontal
         }
     }
 }
 
 /*
- internal func shouldRecalculateContentView(_ previous: Self) {
+ func shouldRecalculateContentView(_ previous: Self) {
  let keyPaths: [PartialKeyPath<Self>] = [\.contentProperties.imageScaling.shouldResize, \.image, \.view, \.contentProperties.maxWidth, \.contentProperties.maxHeight]
  
  contentProperties.imageScaling.shouldResize != previous.contentProperties.imageScaling.shouldResize ||

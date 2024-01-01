@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-internal extension NSItemContentView {
+extension NSItemContentView {
     class ItemContentView: NSView {
         typealias Badge = NSItemContentConfiguration.Badge
         var configuration: NSItemContentConfiguration {
@@ -335,7 +335,7 @@ internal extension NSItemContentView {
 }
 
 extension OptionalProtocol where Wrapped == CGFloat {
-    internal var reverse: CGFloat? {
+    var reverse: CGFloat? {
         if let optional = optional {
             return -optional
         }

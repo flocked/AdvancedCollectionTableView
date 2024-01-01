@@ -34,11 +34,11 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         configuration is NSItemContentConfiguration
     }
     
-    internal lazy var textField = ItemTextField(properties: appliedConfiguration.textProperties)
-    internal lazy var secondaryTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
-    internal lazy var contentView = ItemContentView(configuration: appliedConfiguration)
+    lazy var textField = ItemTextField(properties: appliedConfiguration.textProperties)
+    lazy var secondaryTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
+    lazy var contentView = ItemContentView(configuration: appliedConfiguration)
     
-    internal lazy var textStackView: NSStackView = {
+    lazy var textStackView: NSStackView = {
         let stackView = NSStackView(views: [textField, secondaryTextField])
         stackView.orientation = .vertical
         stackView.alignment = .leading
@@ -46,7 +46,7 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         return stackView
     }()
     
-    internal lazy var stackView: NSStackView = {
+    lazy var stackView: NSStackView = {
         let stackView = NSStackView(views: [contentView, textStackView])
         stackView.orientation = appliedConfiguration.contentPosition.orientation
         stackView.alignment = appliedConfiguration.contentAlignment
@@ -54,14 +54,14 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         return stackView
     }()
     
-    internal var stackviewConstraints: [NSLayoutConstraint] = []
+    var stackviewConstraints: [NSLayoutConstraint] = []
     
     @available(*, unavailable)
-    internal required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    internal var appliedConfiguration: NSItemContentConfiguration {
+    var appliedConfiguration: NSItemContentConfiguration {
         didSet {
             guard oldValue != appliedConfiguration else { return }
             updateConfiguration()
@@ -93,7 +93,7 @@ public class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem
     }
     
-    internal func updateConfiguration() {
+    func updateConfiguration() {
         contentView.centerYConstraint?.activate(false)
                 
         textField.properties = appliedConfiguration.textProperties
