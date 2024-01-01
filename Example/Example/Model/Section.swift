@@ -7,11 +7,12 @@
 
 import Foundation
 
-enum Section: String, Hashable, Identifiable {
+public enum Section: String, Hashable, Identifiable {
     case main = "Main"
     case more = "More"
     case empty = "Empty"
-    var id: String {
+    
+    public var id: String {
         return rawValue
     }
 }

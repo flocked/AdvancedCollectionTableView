@@ -1,7 +1,5 @@
 # NSCollectionViewItem
 
-Extensions for `NSCollectionViewItem`.
-
 ## Topics
 
 ### Configuring the background
@@ -27,6 +25,6 @@ Extensions for `NSCollectionViewItem`.
 - ``AppKit/NSCollectionViewItem/isEditing``
 - ``AppKit/NSCollectionViewItem/isHovered``
 
-### Managing view
+### Managing the view
 
 - ``AppKit/NSCollectionViewItem/loadView()``

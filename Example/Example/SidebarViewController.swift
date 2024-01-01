@@ -15,26 +15,22 @@ class SidebarViewController: NSViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
     typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
 
-    
     @IBOutlet weak var tableView: NSTableView!
     
     lazy var dataSource: DataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
     
-    let cellRegistration = CellRegistration() { cell, column, row, sidebarItem in
-        // `defaultContentConfiguration()` returns a table cell content configuration with default styling based on the table view it's displayed at.
-        var configuration = cell.defaultContentConfiguration()
+    let cellRegistration = CellRegistration() { tableCell, column, row, sidebarItem in
+        // `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
+        var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
-        configuration.secondaryText = sidebarItem.subtitle
-
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
-        
-        cell.contentConfiguration = configuration
+        tableCell.contentConfiguration = configuration
     }
     
-    let sectionHeaderRegistration = SectionHeaderRegistration() { headerView, row, section in
-        var configuration = headerView.defaultContentConfiguration()
+    let sectionHeaderRegistration = SectionHeaderRegistration() { sectionHeaderView, row, section in
+        var configuration = sectionHeaderView.defaultContentConfiguration()
         configuration.text = section.rawValue
-        headerView.contentConfiguration = configuration
+        sectionHeaderView.contentConfiguration = configuration
     }
     
     override func viewDidLoad() {
@@ -48,17 +44,7 @@ class SidebarViewController: NSViewController {
         dataSource.allowsDeleting = true
         
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
-        
-        // Provides right click menu that displays the title of each selected sidebar item.
-        dataSource.menuProvider = { sidebarItems in
-            guard sidebarItems.isEmpty == false else { return nil }
-            let menu = NSMenu()
-            for sidebarItem in sidebarItems {
-                menu.addItem(NSMenuItem(sidebarItem.title))
-            }
-            return menu
-        }
-        
+                
         applySnapshot()
     }
     

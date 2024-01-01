@@ -6,7 +6,7 @@
 
 ## Topics
 
-### Creating a table section header view registration
+### Creating a table section header registration
 
 - ``init(handler:)``
 - ``init(nib:handler:)``

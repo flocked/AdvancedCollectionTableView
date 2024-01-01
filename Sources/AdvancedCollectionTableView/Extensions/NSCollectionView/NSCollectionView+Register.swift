@@ -11,7 +11,9 @@ extension NSCollectionView {
     /**
      Registers a class for use in creating new collection view items.
      
-     To dequeues the registered item use  ``AppKit/NSCollectionView/makeItem(_:for:)``.
+     Use this method to register the classes that represent items in your collection view.
+          
+     To request the registered item use  ``AppKit/NSCollectionView/makeItem(for:)``. The collection view recycles an existing item or creates a new one by instantiating your class and calling the init() method of the resulting object.
      
      Any item registered with this method can be reconfigurate using ``reconfigureItems(at:)``.
           
@@ -25,8 +27,8 @@ extension NSCollectionView {
     /**
      Registers a nib file for use in creating new collection view items.
      
-     To dequeues the registered item use ``AppKit/NSCollectionView/makeItem(_:for:)``.
-     
+     To request the registered item use  ``AppKit/NSCollectionView/makeItem(for:)``. The collection view recycles an existing item or creates a new one by instantiating your class and calling the init() method of the resulting object.
+
      Any item registered with this method can be reconfigurate using ``reconfigureItems(at:)``.
      
      - Parameters:
@@ -55,9 +57,9 @@ extension NSCollectionView {
     }
     
     /**
-     Dequeues a reusable item object located by its type.
+     Creates or returns a reusable item of the specified type.
      
-     Call this method from your data source object when asked to provide a new item for the collection view. This method dequeues an existing item if one is available or creates a new one based on the class or nib file you previously registered.
+     Call this method from your data source object when asked to provide a new item for the collection view. This method uses an existing item if one is available or creates a new one based on the class or nib file you previously registered.
      
      - Important: You must register a class or nib file using ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)`` before calling this method.
      

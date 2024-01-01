@@ -6,7 +6,7 @@
 
 ## Topics
 
-### Creating a table row view registration
+### Creating a table row registration
 
 - ``init(handler:)``
 - ``init(nib:handler:)``
@@ -14,4 +14,4 @@
 
 ### Creating a table row view
 
-- ``AppKit/NSTableView/makeRowView(using:forRow:Item:)``
+- ``AppKit/NSTableView/makeRowView(using:forRow:item:)``

@@ -271,6 +271,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return currentSnapshot
     }
     
+    /// Returns an empty snapshot.
+    public func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
+        return .init()
+    }
+    
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
@@ -557,13 +562,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
-    /// Opens `QuicklookPanel` that presents quicklook previews of the selected elements.
-    public func quicklookSelectedElements() where Element: QuicklookPreviewable {
-        collectionView.quicklookSelectedItems()
-    }
+    // MARK: - Previewing elements
     
     /**
      Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
+     
+     To quicklook the selected elements, use collection view's `quicklookSelectedItems()`.
      
      - Parameters:
         - elements: The elements to preview.
@@ -593,6 +597,13 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return sections[safe: index]
     }
     
+    /// Scrolls the collection view to the specified section.
+    public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
+        guard let index = index(for: section) else { return }
+        let indexPaths = Set([IndexPath(item: 0, section: index)])
+        collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
+    }
+    
     func section(for element: Element) -> Section? {
         return currentSnapshot.sectionIdentifier(containingItem: element)
     }
@@ -604,31 +615,28 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return nil
     }
     
-    /// Scrolls the collection view to the specified section.
-    public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
-        guard let index = index(for: section) else { return }
-        let indexPaths = Set([IndexPath(item: 0, section: index)])
-        collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
-    }
-    
     // MARK: - Handlers
     
     /// The handlers for hovering elements with the mouse.
     public var hoverHandlers = HoverHandlers() {
         didSet { observeHoveredItem() } }
     
-    /// The handlers for selecting of elements.
+    /// The handlers for selecting elements.
     public var selectionHandlers = SelectionHandlers() {
         didSet { updateDelegate() } }
     
-    /// The handlers for deleting of elements.
+    /// The handlers for deleting elements.
     public var deletionHandlers = DeletionHandlers()
     
-    /// The handlers for reordering of elements.
+    /// The handlers for reordering elements.
     public var reorderingHandlers = ReorderingHandlers() {
         didSet { updateDelegate() } }
     
-    ///Handlers for the displaying elements. The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
+    /**
+     The handlers for the displaying elements.
+     
+     The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
+     */
     public var displayHandlers = DisplayHandlers() {
         didSet {  observeDisplayingItems() } }
     
@@ -640,7 +648,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var dragDropHandlers = DragDropHandlers() {
         didSet { updateDelegate() } }
     
-    /// The handlers for the highlight state of elements.
+    /// The handlers highlighting elements.
     public var highlightHandlers = HighlightHandlers() {
         didSet { updateDelegate() } }
     
@@ -652,7 +660,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
     }
     
-    /// Handlers for selection of elements.
+    /// Handlers for selecting elements.
     public struct SelectionHandlers {
         /// The handler that determines whether elements should get selected. The default value is `nil` which indicates that all elements should be selected.
         public var shouldSelect: ((_ elements: [Element]) -> [Element])? = nil
@@ -664,7 +672,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         public var didDeselect: ((_ elements: [Element]) -> ())? = nil
     }
     
-    /// Handlers for deletion of elements.
+    /// Handlers for deleting elements.
     public struct DeletionHandlers {
         /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
         public var canDelete: ((_ elements: [Element]) -> [Element])? = nil
@@ -693,7 +701,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /**
-     Handlers for displaying of elements.
+     Handlers for displaying elements.
      
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */

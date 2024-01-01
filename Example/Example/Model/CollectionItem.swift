@@ -8,29 +8,21 @@
 import Foundation
 import FZQuicklook
 
-class GalleryItem: NSObject, Identifiable {
-    let id = UUID()
+public class GalleryItem: NSObject, Identifiable {
+    public let id = UUID()
+    public var title: String
+    public var detail: String
+    public var imageName: String
+    public var badge: String?
     
-    var title: String
-    var detail: String
-    var imageName: String
-    var badge: String?
-    
-    init(title: String, detail: String, imageName: String, badge: String? = nil) {
+    public init(title: String, detail: String, imageName: String, badge: String? = nil) {
         self.title = title
         self.detail = detail
         self.imageName = imageName
         self.badge = badge
     }
     
-    func replaceInfo(with item: GalleryItem) {
-        self.title = item.title
-        self.detail = item.detail
-        self.imageName = item.imageName
-        self.badge = item.badge
-    }
-    
-    static var sampleItems: [GalleryItem] {
+    public static var sampleItems: [GalleryItem] {
         return [GalleryItem(title: "Astronaut Cat", detail: "Liquid ink", imageName: "astronaut cat"),
                 GalleryItem(title: "Cat", detail: "Painted by Vermeer", imageName: "cat vermeer"),
                 GalleryItem(title: "Cat", detail: "Vaporwave", imageName: "cat vaporwave", badge: "new"),
@@ -50,23 +42,26 @@ class GalleryItem: NSObject, Identifiable {
  A NSCollectionView or NSTableView with a diffable data source can also quicklook the item by enabling their `isQuicklookPreviewable` property.
  */
 extension GalleryItem: QuicklookPreviewable {
-    var previewItemURL: URL? {
+    public var previewItemURL: URL? {
         return Bundle.main.urlForImageResource(imageName)
     }
     
-    var previewItemTitle: String? {
+    public var previewItemTitle: String? {
         return title
     }
 }
 
 extension Array where Element: GalleryItem {
-    // Shuffles the items by replacing the info of each item.
-    func shuffleItems() {
+    /// Shuffles the items by replacing the info of each item.
+    public func shuffleItems() {
         var sampleItems = GalleryItem.sampleItems
         for galleryItem in self {
             let newRandomItem = sampleItems.randomElement(excluding: [galleryItem])!
             sampleItems.remove(newRandomItem)
-            galleryItem.replaceInfo(with: newRandomItem)
+            galleryItem.title = newRandomItem.title
+            galleryItem.detail = newRandomItem.detail
+            galleryItem.imageName = newRandomItem.imageName
+            galleryItem.badge = newRandomItem.badge
         }
     }
 }

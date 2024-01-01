@@ -5,4 +5,5 @@
 ### Deleting items
 
 - ``canDelete``
+- ``willDelete``
 - ``didDelete``

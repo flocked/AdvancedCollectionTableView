@@ -255,6 +255,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return currentSnapshot
     }
     
+    /// Returns an empty snapshot.
+    public func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
+        return .init()
+    }
+    
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
@@ -576,13 +581,12 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
     }
     
-    /// Opens `QuicklookPanel` that presents quicklook previews of the selected items.
-    public func quicklookSelectedItems() where Item: QuicklookPreviewable {
-        tableView.quicklookSelectedRows()
-    }
+    // MARK: - Previewing items
     
     /**
      Opens `QuicklookPanel` that presents quicklook previews of the specified items.
+     
+     To quicklook the selected elements, use table view's `quicklookSelectedRows()`.
      
      - Parameters:
         - items: The items to preview.
@@ -607,6 +611,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return dataSource.row(forSectionIdentifier: section.id)
     }
     
+    /// Returns the section at the index in the collection view.
+    public func section(for index: Int) -> Section? {
+        return sections[safe: index]
+    }
+    
     /// Scrolls the table view to the specified section.
     public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
         if let row = row(for: section) {
@@ -625,14 +634,14 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     // MARK: - Handlers
     
-    /// The handlers for selecting of items.
+    /// The handlers for selecting items.
     public var selectionHandlers = SelectionHandlers() {
         didSet { updateDelegate() } }
     
-    /// The handlers for deleting of items.
+    /// The handlers for deleting items.
     public var deletionHandlers = DeletionHandlers()
     
-    /// The handlers for reordering of items.
+    /// The handlers for reordering items.
     public var reorderingHandlers = ReorderingHandlers()
     
     /// The handlers for hovering items with the mouse.
@@ -646,7 +655,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public var columnHandlers = ColumnHandlers() {
         didSet { updateDelegate() } }
     
-    /// Handlers for selecting of items.
+    /// Handlers for selecting items.
     public struct SelectionHandlers {
         /// The handler that determines whether items should get selected. The default value is `nil` which indicates that all items should be selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
@@ -668,7 +677,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     
-    /// Handlers for deleting of items.
+    /// Handlers for deleting items.
     public struct DeletionHandlers {
         /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])? = nil

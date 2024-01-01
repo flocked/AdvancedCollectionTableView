@@ -43,14 +43,10 @@
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:scrollPosition:)``
 
-### Previewing items
-
-- ``quicklookItems(_:current:)``
-- ``quicklookSelectedItems()``
-
 ### Updating data
 
 - ``snapshot()``
+- ``emptySnapshot()``
 - ``apply(_:_:completion:)``
 - ``defaultRowAnimation``
 
@@ -58,6 +54,10 @@
 
 - ``menuProvider``
 - ``rowActionProvider``
+
+### Previewing items
+
+- ``quicklookItems(_:current:)``
 
 ### Supporting reordering items
 

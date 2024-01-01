@@ -35,20 +35,20 @@
 - ``index(for:)``
 - ``scrollToSection(_:scrollPosition:)``
 
-### Previewing elements
-
-- ``quicklookElements(_:current:)``
-- ``quicklookSelectedElements()``
-
 ### Updating data
 
 - ``snapshot()``
+- ``emptySnapshot()``
 - ``apply(_:_:completion:)``
 
 ### Configurating user interaction
 
 - ``menuProvider``
 - ``pinchHandler``
+
+### Previewing elements
+
+- ``quicklookElements(_:current:)``
 
 ### Supporting prefetching elements
 

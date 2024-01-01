@@ -9,6 +9,9 @@ Extensions for `NSTableView`.
 - ``AppKit/NSTableView/register(_:)``
 - ``AppKit/NSTableView/register(_:forIdentifier:)``
 - ``AppKit/NSTableView/makeView(for:)``
+
+### Creating table cell views using cell registration
+
 - ``AppKit/NSTableView/CellRegistration``
 - ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``
 

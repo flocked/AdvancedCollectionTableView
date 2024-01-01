@@ -5,8 +5,7 @@
 ### Configuring content properties
 
 - ``cornerRadius``
-- ``maximumWidth``
-- ``maximumHeight``
+- ``maximumSize``
 - ``scaleTransform``
 
 ### Configuring background color
