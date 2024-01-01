@@ -300,8 +300,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         tableRowView?.tableView?.usesAutomaticRowHeights = true
         if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
             tableRowView.frame.size.height = fittingSize.height
-            tableRowView.setNeedsDisplay()
-            tableRowView.setNeedsLayout()
         }
     }
     
