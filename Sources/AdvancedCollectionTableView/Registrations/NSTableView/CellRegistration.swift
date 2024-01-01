@@ -15,7 +15,7 @@ public extension NSTableView {
      
      Use a cell registration to register table cell views with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
      
-     The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its element.
+     The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its item.
      
      ```swift
      let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, column, row, string in
@@ -33,8 +33,8 @@ public extension NSTableView {
      
      ```swift
      dataSource = NSTableViewDiffableDataSource<Section, String>(tableView: tableView) {
-     tableView, column, row, element in
-        return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)
+     tableView, column, row, item in
+        return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)
      }
      ```
      
@@ -52,7 +52,7 @@ public extension NSTableView {
      
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
-    struct CellRegistration<Cell, Element>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
+    struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
         
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
@@ -97,28 +97,28 @@ public extension NSTableView {
         }
         
         /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element)->(Void))
+        public typealias Handler = ((_ cell: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item)->(Void))
         
-        func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Element) -> Cell? {
+        func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
             self.registerIfNeeded(for: tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
-                self.handler(cell, tableColumn, row, element)
+                self.handler(cell, tableColumn, row, item)
                 return cell
             }
             return nil
         }
         
-        func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView? {
+        func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) ->NSTableCellView? {
             self.registerIfNeeded(for: tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
-            let element = element as! Element
+            let item = item as! Item
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
-                self.handler(cell, tableColumn, row, element)
+                self.handler(cell, tableColumn, row, item)
                 return cell
             }
             return nil
@@ -150,7 +150,7 @@ public extension NSTableView {
         - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
         - column: The table column in which the cell gets displayed in the table view.
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
-        - element: The element that provides data for the cell.
+        - item: The item that provides data for the cell.
      
      - returns:A configured reusable cell object.
      */
@@ -166,5 +166,5 @@ public protocol NSTableViewCellRegistration {
 }
 
 protocol _NSTableViewCellRegistration {
-    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ element: Any) ->NSTableCellView?
+    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) ->NSTableCellView?
 }

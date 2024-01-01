@@ -23,15 +23,15 @@ public extension NSTableView {
      }
      ```
      
-     After you create a row registration, you pass it in to ``AppKit/NSTableView/makeRowView(using:forRow:element:)``, which you call from your data source’s row provider.
+     After you create a row registration, you pass it in to ``AppKit/NSTableView/makeRowView(using:forRow:item:)``, which you call from your data source’s row provider.
      
      ```swift
-     dataSource.rowProvider = { tableView, row, element in
-     return tableView.makeRowView(using: rowRegistration, forRow: row, element)
+     dataSource.rowProvider = { tableView, row, item in
+     return tableView.makeRowView(using: rowRegistration, forRow: row, item)
      }
      ```
      */
-    struct RowRegistration<RowView, Element> where RowView: NSTableRowView  {
+    struct RowRegistration<RowView, Item> where RowView: NSTableRowView  {
         
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
@@ -67,12 +67,12 @@ public extension NSTableView {
         }
         
         /// A closure that handles the row registration and configuration.
-        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Element)->(Void))
+        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ rowViewIdentifier: Item)->(Void))
         
-        func makeView(_ tableView: NSTableView, _ row: Int, _ element: Element) -> RowView {
+        func makeView(_ tableView: NSTableView, _ row: Int, _ item: Item) -> RowView {
             let rowView = (tableView.rowView(atRow: row, makeIfNecessary: false) as? RowView) ?? RowView(frame: .zero)
             rowView.identifier = identifier
-            self.handler(rowView, row, element)
+            self.handler(rowView, row, item)
             return rowView
         }
     }
@@ -85,11 +85,11 @@ public extension NSTableView {
      - Parameters:
         - registration: The row view registration for configuring the rowview object. See ``AppKit/NSTableView/RowRegistration``.
         - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
-        - element: The element that provides data for the row.
+        - item: The item that provides data for the row.
      
      - returns:A configured reusable row view object.
      */
-    func makeRowView<RowView, Element>(using registration: RowRegistration<RowView, Element>, forRow row: Int, element: Element) -> RowView where RowView: NSTableRowView {
-        return registration.makeView(self, row, element)
+    func makeRowView<RowView, Item>(using registration: RowRegistration<RowView, Item>, forRow row: Int, item: Item) -> RowView where RowView: NSTableRowView {
+        return registration.makeView(self, row, item)
     }
 }
