@@ -621,10 +621,10 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public struct SelectionHandlers {
         /// The Handler that determines whether items should get selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
-        /// The Handler that determines whether items should get deselected.
-        public var shouldDeselect: (([Item]) -> [Item])? = nil
         /// The Handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)? = nil
+        /// The Handler that determines whether items should get deselected.
+        public var shouldDeselect: (([Item]) -> [Item])? = nil
         /// The Handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)? = nil
     }
@@ -685,10 +685,10 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public struct ColumnHandlers {
         /// The handler that gets called whenever a column did resize.
         public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> ())?
-        /// The handler that gets called whenever a column did reorder.
-        public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
         /// The handler that determines whenever a column can be reordered to a new index.
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
+        /// The handler that gets called whenever a column did reorder.
+        public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
     }
 }
 
