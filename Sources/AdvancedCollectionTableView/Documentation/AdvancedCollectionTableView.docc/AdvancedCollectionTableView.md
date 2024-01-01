@@ -8,33 +8,39 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 
 ## Topics
 
-### Registrations
-
-- <doc:Registering-Collection-Items>
-- ``AppKit/NSCollectionView/ItemRegistration``
-- ``AppKit/NSCollectionView/SupplementaryRegistration``
-- <doc:Registering-Table-Cells>
-- ``AppKit/NSTableView/CellRegistration``
-- ``AppKit/NSTableView/RowRegistration``
-- ``AppKit/NSTableView/SectionHeaderRegistration``
-
-### Content Configurations
-
-- <doc:Configurating-Collection-Items>
-- ``NSItemContentConfiguration``
-- ``NSItemContentView``
-- ``NSItemConfigurationState``
-- <doc:Configurating-Table-Cells>
-- ``NSListContentConfiguration``
-- ``NSListContentView``
-- ``NSListConfigurationState``
-
 ### Data Sources
 
 - ``CollectionViewDiffableDataSource``
 - ``TableViewDiffableDataSource``
 - ``NSDiffableDataSourceTransaction``
 - ``NSDiffableDataSourceSnapshotApplyOption``
+
+### CollectionView Registration
+
+- <doc:Registering-Collection-Items>
+- ``AppKit/NSCollectionView/ItemRegistration``
+- ``AppKit/NSCollectionView/SupplementaryRegistration``
+
+### TableView Registration
+
+- <doc:Registering-Table-Cells>
+- ``AppKit/NSTableView/CellRegistration``
+- ``AppKit/NSTableView/RowRegistration``
+- ``AppKit/NSTableView/SectionHeaderRegistration``
+
+### Item Content Configuration
+
+- <doc:Configurating-Collection-Items>
+- ``NSItemContentConfiguration``
+- ``NSItemContentView``
+- ``NSItemConfigurationState``
+
+### List Content Configuration
+
+- <doc:Configurating-Table-Cells>
+- ``NSListContentConfiguration``
+- ``NSListContentView``
+- ``NSListConfigurationState``
 
 ### Collection View Extensions
 
