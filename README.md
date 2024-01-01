@@ -4,7 +4,7 @@ A collection of classes and extensions for NSCollectionView and NSTableView, man
 
 **Take a look at the included sample app which demonstrates most features.**
 
-**For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.
+**For a full documentation take a look at the included documentation located at */Documentation*. Opening the file launches Xcode's documentation browser.**
 
 ## NSCollectionView ItemRegistration & NSTableView CellRegistration
 
