@@ -20,22 +20,38 @@ extension NSListContentView {
         }
         
         func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
+            var needsRowHeightUpdate = false
             if let attributedString = attributedString {
                 attributedStringValue = NSAttributedString(attributedString)
+                listContentView?.updateTableRowHeight()
             } else if let text = text {
+                needsRowHeightUpdate = text != stringValue
                 stringValue = text
             } else {
+                needsRowHeightUpdate = stringValue != ""
                 stringValue = ""
             }
             
             if let attributedPlaceholder = attributedPlaceholder {
                 placeholderAttributedString = NSAttributedString(attributedPlaceholder)
+                if stringValue == "" {
+                    needsRowHeightUpdate = true
+                }
             } else if let placeholder = placeholder {
                 placeholderString = placeholder
+                if stringValue == "" {
+                    needsRowHeightUpdate = true
+                }
             } else {
                 placeholderString = ""
+                if stringValue == "" {
+                    needsRowHeightUpdate = true
+                }
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+            if needsRowHeightUpdate {
+                listContentView?.updateTableRowHeight()
+            }
         }
         
         func update() {
