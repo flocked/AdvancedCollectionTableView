@@ -45,7 +45,7 @@ public extension NSCollectionView {
         let handler: Handler
         
         /// The kind of the supplementary view.
-        let elementKind: SupplementaryElementKind
+        public let elementKind: SupplementaryElementKind
         
         // MARK: Creating a supplementary registration
         
@@ -136,16 +136,13 @@ fileprivate extension NSCollectionView {
 }
 
 /// A supplementary view registration of a collection view.
-public protocol NSCollectionViewSupplementaryRegistration { }
-
-extension NSCollectionViewSupplementaryRegistration {
-    var elementKind: String {
-        (self as! _NSCollectionViewSupplementaryRegistration).elementKind
-    }
+public protocol NSCollectionViewSupplementaryRegistration {
+    /// The kind of the supplementary view.
+    var elementKind: String { get }
 }
+
+extension NSCollectionViewSupplementaryRegistration { }
 
 protocol _NSCollectionViewSupplementaryRegistration {
     func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)
-    /// The element kind of the supplementary view.
-    var elementKind: String { get }
 }
