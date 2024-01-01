@@ -90,7 +90,7 @@ public extension NSTableView {
         - row: The index path specifying the row of the section view. The data source receives this information when it is asked for the section header view and should just pass it along. This method uses the row to perform additional configuration based on the section header view’s position in the table view.
         - section: The section element that provides data for the section header view.
      
-     - returns:A configured reusable section view object.
+     - Returns: A configured reusable section view object.
      */
     func makeSectionHeaderView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
         return registration.makeView(self, row, section)

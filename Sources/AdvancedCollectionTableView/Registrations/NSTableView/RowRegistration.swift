@@ -87,7 +87,7 @@ public extension NSTableView {
         - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
         - item: The item that provides data for the row.
      
-     - returns:A configured reusable row view object.
+     - Returns:A configured reusable row view object.
      */
     func makeRowView<RowView, Item>(using registration: RowRegistration<RowView, Item>, forRow row: Int, item: Item) -> RowView where RowView: NSTableRowView {
         return registration.makeView(self, row, item)

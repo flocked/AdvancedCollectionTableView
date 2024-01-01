@@ -152,7 +152,7 @@ public extension NSTableView {
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
         - item: The item that provides data for the cell.
      
-     - returns:A configured reusable cell object.
+     - Returns: A configured reusable cell object.
      */
     func makeCellView<CellView, Item>(using registration: CellRegistration<CellView, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> CellView? where CellView: NSTableCellView {
         return registration.makeCellView(self, column, row, item)
