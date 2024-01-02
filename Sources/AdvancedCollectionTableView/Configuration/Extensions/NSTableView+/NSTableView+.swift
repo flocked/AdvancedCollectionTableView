@@ -18,16 +18,16 @@ extension NSTableView {
         })
     }
     
-    var tableViewObserve: KeyValueObserver<NSTableView>? {
+    var tableViewObserver: KeyValueObserver<NSTableView>? {
         get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
         
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            if tableViewObserve == nil {
-                tableViewObserve = KeyValueObserver(self)
-                tableViewObserve?.add(\.isEnabled) { [weak self] old, new in
+            if tableViewObserver == nil {
+                tableViewObserver = KeyValueObserver(self)
+                tableViewObserver?.add(\.isEnabled) { [weak self] old, new in
                     guard let self = self, old != new else { return }
                     self.updateVisibleRowConfigurations()
                 }

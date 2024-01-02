@@ -23,9 +23,9 @@ extension NSTableCellView {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration?   {
-        get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
+        get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
-            set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
+            set(associatedValue: newValue, key: "contentConfiguration", object: self)
             observeTableCellView()
             configurateContentView()
         }
@@ -225,6 +225,7 @@ extension NSTableCellView {
     
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
             guard tableCellObserver == nil else { return }
             tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
                 if self.contentConfiguration is NSListContentConfiguration {
@@ -234,5 +235,8 @@ extension NSTableCellView {
                 self.rowView?.observeTableRowView()
                 self.setNeedsUpdateConfiguration()
             })
+        } else {
+            tableCellObserver = nil
+        }
     }
 }

@@ -184,16 +184,12 @@ extension NSCollectionViewItem {
     
     @objc func setNeedsAutomaticUpdateConfiguration() {
         let state = configurationState
-        
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
             backgroundView.configuration = backgroundConfiguration.updated(for: state)
-            
         }
-        
         if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration, let contentView = contentView {
             contentView.configuration = contentConfiguration.updated(for: state)
         }
-        
         configurationUpdateHandler?(self, state)
     }
     
@@ -208,7 +204,6 @@ extension NSCollectionViewItem {
         if let contentConfiguration = contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
-        
         if let backgroundConfiguration = backgroundConfiguration {
             self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
         }
