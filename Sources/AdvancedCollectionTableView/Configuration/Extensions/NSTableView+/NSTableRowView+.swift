@@ -215,12 +215,7 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "rowObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "rowObserver", object: self) }
     }
-    
-    var needsAutomaticRowHeights: Bool {
-        get { getAssociatedValue(key: "needsAutomaticRowHeights", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
-    }
-    
+        
     func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
@@ -231,7 +226,7 @@ extension NSTableRowView {
             self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
         rowObserver?.add(\.superview) { old, new in
-            if self.needsAutomaticRowHeights {
+            if self.cellViews.contains(where: {$0.contentConfiguration is NSListContentConfiguration}) {
                 self.tableView?.usesAutomaticRowHeights = true
             }
             self.tableView?.setupObservation()

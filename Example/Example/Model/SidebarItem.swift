@@ -13,14 +13,14 @@ public struct SidebarItem: Hashable, Identifiable {
     public let title: String
     public let symbolName: String
     
-    public static var sampleItems: [SidebarItem] {
+    public static var sampleItems1: [SidebarItem] {
         [SidebarItem(title: "Person", symbolName: "person"),
          SidebarItem(title: "Photo", symbolName: "photo"),
          SidebarItem(title: "Video", symbolName: "film"),
         ]
     }
     
-    public static var moreSampleItems: [SidebarItem] {
+    public static var sampleItems2: [SidebarItem] {
         [SidebarItem(title: "Table", symbolName: "table"),
          SidebarItem(title: "Collection", symbolName: "square.grid.3x3"),
         ]

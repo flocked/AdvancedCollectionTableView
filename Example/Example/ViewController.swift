@@ -54,21 +54,18 @@ class ViewController: NSViewController {
         }
     }
         
-    // Window toolbar
     lazy var toolbar = Toolbar() {
-        // Toolbar item that reconfigurates the collectionview items without reloading them which provides much better performance compared to `reloadItems(at: )`.
+        // Reconfigurates the collection view items without reloading them which provides much better performance compared to `reloadItems(at: )`.
         ToolbarItem.Button(image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
             .label("Reconfigurate")
             .onAction {
-                var snapshotGalleryItems = self.dataSource.snapshot().itemIdentifiers
-                snapshotGalleryItems.shuffleItems()
-                self.dataSource.reconfigureElements(snapshotGalleryItems)
+                self.dataSource.reconfigureElements(self.galleryItems.shuffledItems())
             }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.collectionViewLayout = .grid(columns: 2)
         
         collectionView.dataSource = dataSource

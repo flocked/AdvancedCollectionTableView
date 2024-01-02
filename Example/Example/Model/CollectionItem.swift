@@ -13,7 +13,7 @@ public class GalleryItem: NSObject, Identifiable {
     public var title: String
     public var detail: String
     public var imageName: String
-    public var badge: String?
+    public var badge: String? = nil
     
     public init(title: String, detail: String, imageName: String, badge: String? = nil) {
         self.title = title
@@ -53,7 +53,7 @@ extension GalleryItem: QuicklookPreviewable {
 
 extension Array where Element: GalleryItem {
     /// Shuffles the items by replacing the info of each item.
-    public func shuffleItems() {
+    public func shuffledItems() -> Self {
         var sampleItems = GalleryItem.sampleItems
         for galleryItem in self {
             let newRandomItem = sampleItems.randomElement(excluding: [galleryItem])!
@@ -63,5 +63,6 @@ extension Array where Element: GalleryItem {
             galleryItem.imageName = newRandomItem.imageName
             galleryItem.badge = newRandomItem.badge
         }
+        return self
     }
 }

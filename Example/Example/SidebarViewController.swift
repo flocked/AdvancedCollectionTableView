@@ -35,6 +35,7 @@ class SidebarViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = dataSource
         
         // Enables reordering of rows via drag and drop.
@@ -60,8 +61,8 @@ class SidebarViewController: NSViewController {
     func applySnapshot() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main, .more, .empty])
-        snapshot.appendItems(SidebarItem.sampleItems, toSection: .main)
-        snapshot.appendItems(SidebarItem.moreSampleItems, toSection: .more)
+        snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
+        snapshot.appendItems(SidebarItem.sampleItems2, toSection: .more)
         dataSource.apply(snapshot, .usingReloadData)
     }
 }
