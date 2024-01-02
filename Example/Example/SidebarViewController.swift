@@ -39,16 +39,17 @@ class SidebarViewController: NSViewController {
         
         // Enables reordering of rows via drag and drop.
         dataSource.allowsReordering = true
-        // Enables deleting of selected rows via backspace.
+        // Deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
         
+        /// Row action for swiping right to delete.
         dataSource.rowActionProvider = { item, edge in
-           let action =  NSTableViewRowAction(style: .destructive, title: "Delete", handler: { rowedge, value in
+            guard edge == .trailing else { return [] }
+           return [NSTableViewRowAction(style: .destructive, title: "Delete", handler: { rowedge, value in
                 var currentSnapshot = self.dataSource.snapshot()
                 currentSnapshot.deleteItems([item])
                 self.dataSource.apply(currentSnapshot, .animated)
-            })
-            return [action]
+            })]
         }
         
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
