@@ -834,7 +834,7 @@
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q8m-Nl-wlU">
                                 <rect key="frame" x="18" y="34" width="184" height="197"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" selectable="YES" id="yZT-g7-awv">
+                                <textFieldCell key="cell" id="yZT-g7-awv">
                                     <font key="font" textStyle="title3" name=".SFNS-Regular"/>
                                     <string key="title">Reorder items and cells by dragging and delete them via backspace.
 
