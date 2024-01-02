@@ -90,7 +90,7 @@ class ViewController: NSViewController {
             menu.addItem(deleteMenuItem)
             return menu
         }
-                
+                        
         applySnapshot(using: galleryItems)
     }
         

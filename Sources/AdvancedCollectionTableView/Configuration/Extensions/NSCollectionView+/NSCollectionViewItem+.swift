@@ -144,7 +144,6 @@ extension NSCollectionViewItem {
                 view.frame = previousFrame
                 view.setNeedsLayout()
             }
-            setNeedsAutomaticUpdateConfiguration()
         } else {
             let previousFrame = view.frame
             view = NSView(frame: previousFrame)

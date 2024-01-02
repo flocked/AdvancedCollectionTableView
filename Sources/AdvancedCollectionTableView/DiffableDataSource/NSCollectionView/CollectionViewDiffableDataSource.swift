@@ -45,6 +45,7 @@ import QuickLookUI
  - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source. 
  */
 public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
+    
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
     typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
     typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
@@ -333,7 +334,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func updateDelegate() {
-        collectionView.delegate = delegateBridge
+     //   collectionView.delegate = delegateBridge
     }
     
     /**
@@ -381,13 +382,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public func numberOfSections(in collectionView: NSCollectionView) -> Int {
         return dataSource.numberOfSections(in: collectionView)
     }
-    
-    /*
-    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        Swift.print("Supplementary", collectionView.dataSource?.collectionView?(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath) ?? "nil")
-        return NSView(frame: NSRect(x: 0, y: 0, width: 1, height: 1))
-    }
-     */
     
     // MARK: - Elements
         

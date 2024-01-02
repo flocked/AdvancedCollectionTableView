@@ -41,6 +41,7 @@ import FZSwiftUtils
  - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
+    
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
     typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
     typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>

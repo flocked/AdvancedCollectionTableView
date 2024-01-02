@@ -201,7 +201,6 @@ open class NSTableSectionHeaderView: NSView {
                 self.setNeedsDisplay()
                 contentView.setNeedsDisplay()
             }
-            setNeedsAutomaticUpdateConfiguration()
         } else {
             self.contentView?.removeFromSuperview()
         }
