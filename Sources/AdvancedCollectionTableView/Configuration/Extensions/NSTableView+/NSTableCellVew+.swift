@@ -78,7 +78,7 @@ extension NSTableCellView {
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             observeTableCellView()
-            if var contentView = contentView, contentView.supports(contentConfiguration) {
+            if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 contentView?.removeFromSuperview()

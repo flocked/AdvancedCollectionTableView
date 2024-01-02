@@ -4,7 +4,7 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 
 ## Overview
 
-`AdvancedCollectionTableView` provides A collection of classes and extensions for `NSCollectionView` and `NSTableView` classes and extensions.
+`AdvancedCollectionTableView` provides a collection of classes and extensions for `NSCollectionView` and `NSTableView`.
 
 ## Topics
 

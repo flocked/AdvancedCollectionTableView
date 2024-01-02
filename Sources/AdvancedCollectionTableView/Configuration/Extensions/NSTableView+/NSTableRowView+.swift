@@ -84,11 +84,11 @@ extension NSTableRowView {
         if let contentConfiguration = contentConfiguration {
             observeTableRowView()
             backgroundColor = nil
-            if var contentView = contentView, contentView.supports(contentConfiguration) {
+            if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 contentView?.removeFromSuperview()
-                var contentView = contentConfiguration.makeContentView()
+                let contentView = contentConfiguration.makeContentView()
                 contentView.configuration = contentConfiguration
                 self.contentView = contentView
                 addSubview(withConstraint: contentView)
