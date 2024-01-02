@@ -526,6 +526,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Element>? {
+        /*
         let elements = indexPaths.compactMap({element(for: $0)})
         var toIndexPath = toIndexPath
         var isLast = false
@@ -543,6 +544,24 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
         elements.forEach({snapshot.moveItem($0, beforeItem: toItem)})
         return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+         */
+        var indexPath = indexPath
+        var newSnapshot = snapshot()
+        var newItems = indexPaths.compactMap({element(for: $0)})
+        if let item = element(for: toIndexPath) {
+            newSnapshot.insertItems(newItems, beforeItem: item)
+        } else if let section = section(at: toIndexPath) {
+            var indexPath = toIndexPath
+            indexPath.item -= 1
+            if let item = element(for: indexPath) {
+                newSnapshot.insertItems(newItems, afterItem: item)
+            } else {
+                newSnapshot.appendItems(newItems, toSection: section)
+            }
+        } else if let section = sections.last {
+            newSnapshot.appendItems(newItems, toSection: section)
+        }
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
             
     // MARK: - Sections

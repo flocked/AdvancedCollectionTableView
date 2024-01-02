@@ -392,17 +392,13 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     }
     
     public func tableView( _ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        var row = row
-        if row >= numberOfRows(in: tableView) || sectionRowIndexes.contains(row) {
-            row = row - 1
-        }
-        if item(forRow: row) == nil {
-            return []
-        }
-        
-        if dropOperation == .above {
+
+        guard dropOperation == .above else { return [] }
+
+        if row >= (sectionHeaderViewProvider != nil ? 1 : 0) {
             return .move
         }
+        
         return []
     }
     
@@ -556,22 +552,20 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
         var row = row
-        var isLast: Bool = false
-        if row >= numberOfRows(in: tableView) || sectionRowIndexes.contains(row) {
-            row = row - 1
-            isLast = true
+        var newSnapshot = snapshot()
+        var newItems = rowIndexes.compactMap({item(forRow: $0)})
+        if let item = item(forRow: row) {
+            newSnapshot.insertItems(newItems, beforeItem: item)
+        } else if let section = section(forRow: row) {
+            if let item = item(forRow: row - 1) {
+                newSnapshot.insertItems(newItems, afterItem: item)
+            } else {
+                newSnapshot.appendItems(newItems, toSection: section)
+            }
+        } else if let section = sections.last {
+            newSnapshot.appendItems(newItems, toSection: section)
         }
-        let dragingItems = rowIndexes.compactMap({ item(forRow: $0) })
-        guard reorderingHandlers.canReorder?(dragingItems) ?? allowsReordering, let toItem = item(forRow: row) else {
-            return nil
-        }
-        var snapshot = snapshot()
-        if isLast {
-            dragingItems.reversed().forEach({ snapshot.moveItem($0, afterItem: toItem) })
-        } else {
-            dragingItems.forEach({ snapshot.moveItem($0, beforeItem: toItem) })
-        }
-        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
     
     // MARK: - Sections
