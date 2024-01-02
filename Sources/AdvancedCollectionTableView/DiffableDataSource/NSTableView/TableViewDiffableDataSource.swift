@@ -55,7 +55,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     var keyDownMonitor: Any? = nil
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredRowObserver: NSKeyValueObservation? = nil
-    lazy var delegateBridge = DelegateBridge(self)
+    var delegateBridge: DelegateBridge!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     public var rowViewProvider: RowViewProvider? = nil {
@@ -359,10 +359,10 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             return cellProvider(tableview, tablecolumn, row, item)
         })
         
-        self.tableView.registerForDraggedTypes([.itemID])
-       // self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
-        _ = delegateBridge
-        self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
+        delegateBridge = DelegateBridge(self)
+        tableView.registerForDraggedTypes([.itemID])
+        // self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+        tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
         tableView.delegate = delegateBridge
     }
     

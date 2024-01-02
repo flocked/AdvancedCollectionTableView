@@ -305,14 +305,14 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView = collectionView
         super.init()
         
-        self.dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
+        dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
             [weak self] collectionView, indePath, itemID in
             
             guard let self = self, let item = self.elements[id: itemID] else { return nil }
             return itemProvider(collectionView, indePath, item)
         })
         
-        self.dataSource.supplementaryViewProvider = { [weak self] collectionView, itemKind, indePath in
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, itemKind, indePath in
                guard let self = self else { return nil }
                return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
@@ -324,7 +324,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         collectionView.registerForDraggedTypes([.itemID])
         collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
-        self.delegateBridge = DelegateBridge(self)
+        delegateBridge = DelegateBridge(self)
     }
     
     /**
@@ -362,15 +362,15 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - DataSource implementation
     
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.collectionView(collectionView, numberOfItemsInSection: section)
+        dataSource.collectionView(collectionView, numberOfItemsInSection: section)
     }
     
     public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        return dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
+        dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
     }
     
     public func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return dataSource.numberOfSections(in: collectionView)
+        dataSource.numberOfSections(in: collectionView)
     }
     
     public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
@@ -381,12 +381,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
     /// All current elements in the collection view.
     public var elements: [Element] {
-        return currentSnapshot.itemIdentifiers
+        currentSnapshot.itemIdentifiers
     }
     
     /// An array of the selected elements.
     public var selectedElements: [Element] {
-        return collectionView.selectionIndexPaths.compactMap({element(for: $0)})
+        collectionView.selectionIndexPaths.compactMap({element(for: $0)})
     }
     
     /**
@@ -404,7 +404,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Returns the index path for the specified element in the collection view.
     public func indexPath(for element: Element) -> IndexPath? {
-        return dataSource.indexPath(for: element.id)
+        dataSource.indexPath(for: element.id)
     }
     
     /**
@@ -485,7 +485,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func indexPaths(for elements: [Element]) -> [IndexPath] {
-        return elements.compactMap({indexPath(for: $0)})
+        elements.compactMap({indexPath(for: $0)})
     }
     
     func indexPaths(for section: Section) -> [IndexPath] {
@@ -494,7 +494,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func indexPaths(for sections: [Section]) -> [IndexPath] {
-        return sections.flatMap({indexPaths(for: $0)})
+        sections.flatMap({indexPaths(for: $0)})
     }
     
     func elements(for sections: [Section]) -> [Element] {
@@ -526,9 +526,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Element>? {
-        var indexPath = indexPath
         var newSnapshot = snapshot()
-        var newItems = indexPaths.compactMap({element(for: $0)})
+        let newItems = indexPaths.compactMap({element(for: $0)})
         if let item = element(for: toIndexPath) {
             newSnapshot.insertItems(newItems, beforeItem: item)
         } else if let section = section(at: toIndexPath) {
@@ -548,7 +547,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Sections
     
     /// All current sections in the collection view.
-    public var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    public var sections: [Section] {
+        currentSnapshot.sectionIdentifiers
+    }
     
     /// Returns the index for the section in the collection view.
     public func index(for section: Section) -> Int? {
@@ -678,6 +679,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
     public struct DisplayHandlers {
+        
         /// The handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [Element]) -> ())?
         
@@ -691,6 +693,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for hovering elements with the mouse.
     public struct HoverHandlers {
+        
         /// The handler that gets called whenever the mouse is hovering an element.
         public var isHovering: ((_ element: Element) -> ())?
         
@@ -728,14 +731,19 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         
         /// The handler that determines which elements can be dragged outside the collection view.
         public var canDragOutside: ((_ elements: [Element]) -> [Element])? = nil
+        
         /// The handler that gets called whenever elements did drag ouside the collection view.
         public var didDragOutside: (([Element]) -> ())? = nil
+        
         /// The handler that determines the pasteboard value of an element when dragged outside the collection view.
         public var pasteboardValue: ((_ element: Element) -> PasteboardReadWriting)? = nil
+        
         /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
         public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])? = nil
+        
         /// The handler that gets called whenever pasteboard elements did drag inside the collection view.
         public var didDragInside: (([PasteboardReadWriting]) -> ())? = nil
+        
         /// The handler that determines the image when dragging elements.
         public var draggingImage: ((_ elements: [Element], NSEvent, NSPointPointer) -> NSImage?)? = nil
         
