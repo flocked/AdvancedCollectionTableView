@@ -11,6 +11,5 @@ The diffable data source type conforms to `NSCollectionViewDataSource`.
 ### Implementation
 
 - ``CollectionViewDiffableDataSource/collectionView(_:itemForRepresentedObjectAt:)``
-- ``CollectionViewDiffableDataSource/collectionView(_:viewForSupplementaryElementOfKind:at:)``
 - ``CollectionViewDiffableDataSource/collectionView(_:numberOfItemsInSection:)``
 - ``CollectionViewDiffableDataSource/numberOfSections(in:)``

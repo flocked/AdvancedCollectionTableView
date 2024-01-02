@@ -35,7 +35,6 @@ collectionViewItem.contentConfiguration = content
 To manage the content of the item you provide a `NSContentConfiguration` to items `contentConfiguration`.
 
 - ``AppKit/NSCollectionViewItem/contentConfiguration``
-- ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
 - ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
 
 ## Configuring the background
