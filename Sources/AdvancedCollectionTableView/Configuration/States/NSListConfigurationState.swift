@@ -23,19 +23,35 @@ import AdvancedCollectionTableViewObjc
  */
 public struct NSListConfigurationState: NSConfigurationState, Hashable {
     
-    /// A Boolean value that indicates whether the list element is in a selected state.
+    /// A Boolean value that indicates whether the list element is selected.
     public var isSelected: Bool = false
     
-    /// A Boolean value that indicates whether the list element is in an enabled state. If displayed in a table view, it reflects the table view`s `isEnabled`.
+    /**
+     A Boolean value that indicates whether the list element is enabled.
+     
+     The value of this property is `true`, if it's table view `isEnabled` is `true`.
+     */
     public var isEnabled: Bool = true
     
-    /// A Boolean value that indicates whether the list element is in a hovered state (the mouse is hovering the row).
+    /**
+     A Boolean value that indicates whether the list element is in a hovered state.
+     
+     The value of this property is `true`, if the mouse is hovering the element.
+     */
     public var isHovered: Bool = false
     
-    /// A Boolean value that indicates whether the list element is in an editing state.
+    /**
+     A Boolean value that indicates whether the list element is in an editing state.
+     
+     The value of this property is `true`, if the text of a list or item content configuration is being edited.
+     */
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the list element is in an emphasized state. It is `true` if the window of the row view is `key`.
+    /**
+     A Boolean value that indicates whether the list element is in an emphasized state.
+     
+     The value of this property is `true`, if it's window is key.
+     */
     public var isEmphasized: Bool = false
     
     /// A Boolean value that indicates whether the next list element is in a selected state.

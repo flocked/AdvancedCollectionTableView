@@ -22,7 +22,8 @@ import AdvancedCollectionTableViewObjc
  You can create your own custom states to add to a item configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
-    /// A Boolean value that indicates whether the item is in a selected state.
+    
+    /// A Boolean value that indicates whether the item is selected.
     public var isSelected: Bool = false {
         didSet {
             self["isSelected"] = isSelected
@@ -32,17 +33,29 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A value that indicates the item's highlight state.
     public var highlight: NSCollectionViewItem.HighlightState = .none
     
-    /// A Boolean value that indicates whether the item is in a editing state.
+    /**
+     A Boolean value that indicates whether the item is in an editing state.
+     
+     The value of this property is `true`, if the text of a list or item content configuration is being edited.
+     */
     public var isEditing: Bool = false
     
-    /// A Boolean value that indicates whether the item is in a emphasized state. It is `true` if the window of the collection view item is `key`.
+    /**
+     A Boolean value that indicates whether the item is in an emphasized state.
+     
+     The value of this property is `true`, if it's window is key.
+     */
     public var isEmphasized: Bool = false {
         didSet {
             self["isEmphasized"] = isEmphasized
         }
     }
     
-    /// A Boolean value that indicates whether the item is in a hovered state (ithe mouse is hovering the item).
+    /**
+     A Boolean value that indicates whether the item is in a hovered state.
+     
+     The value of this property is `true`, if the mouse is hovering the item.
+     */
     public var isHovered: Bool = false
     
     /// A Boolean value that indicates whether the item is in a enabled state.
