@@ -26,6 +26,7 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "NSTableCellVew_contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "NSTableCellVew_contentConfiguration", object: self)
+            observeTableCellView()
             configurateContentView()
         }
     }
@@ -76,8 +77,10 @@ extension NSTableCellView {
     }
     
     func configurateContentView() {
-        if let contentConfiguration = contentConfiguration {
-            observeTableCellView()
+        if var contentConfiguration = contentConfiguration {
+            if automaticallyUpdatesContentConfiguration {
+                contentConfiguration = contentConfiguration.updated(for: configurationState)
+            }
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -126,11 +129,11 @@ extension NSTableCellView {
     
     func setNeedsAutomaticUpdateConfiguration() {
         updateContentConfigurationStyle()
-        let state = configurationState
-        if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if automaticallyUpdatesContentConfiguration {
+            setNeedsUpdateConfiguration()
+        } else {
+            configurationUpdateHandler?(self, configurationState)
         }
-        configurationUpdateHandler?(self, state)
     }
     
     /**
@@ -141,8 +144,8 @@ extension NSTableCellView {
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if let contentConfiguration = self.contentConfiguration, let contentView = contentView {
+            contentView.configuration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
     }
@@ -178,9 +181,7 @@ extension NSTableCellView {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            if(newValue != nil) {
-                observeTableCellView()
-            }
+            observeTableCellView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -224,14 +225,14 @@ extension NSTableCellView {
     
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
-        guard tableCellObserver == nil else { return }
-        tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
-            if self.contentConfiguration is NSListContentConfiguration {
-                self.tableView?.usesAutomaticRowHeights = true
-            }
-            self.updateContentConfigurationStyle()
-            self.rowView?.observeTableRowView()
-            self.setNeedsUpdateConfiguration()
-        })
+            guard tableCellObserver == nil else { return }
+            tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
+                if self.contentConfiguration is NSListContentConfiguration {
+                    self.tableView?.usesAutomaticRowHeights = true
+                }
+                self.updateContentConfigurationStyle()
+                self.rowView?.observeTableRowView()
+                self.setNeedsUpdateConfiguration()
+            })
     }
 }

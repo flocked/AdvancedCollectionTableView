@@ -15,13 +15,12 @@ class ViewController: NSViewController {
     
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, GalleryItem>
     
     @IBOutlet weak var collectionView: NSCollectionView!
+        
+    var galleryItems = GalleryItem.sampleItems
     
     lazy var dataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
-    
-    var galleryItems = GalleryItem.sampleItems
     
     lazy var itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
 
@@ -94,14 +93,14 @@ class ViewController: NSViewController {
         
     override func viewDidAppear() {
         super.viewDidAppear()
-
+        
         toolbar.attachedWindow = view.window
         view.window?.makeFirstResponder(collectionView)
         collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }
     
     func applySnapshot(using items: [GalleryItem]) {
-        var snapshot = Snapshot()
+        var snapshot = dataSource.emptySnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items, toSection: .main)
         dataSource.apply(snapshot, .animated)

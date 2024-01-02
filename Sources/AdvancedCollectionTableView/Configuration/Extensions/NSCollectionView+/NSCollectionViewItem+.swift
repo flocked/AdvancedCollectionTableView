@@ -55,7 +55,8 @@ extension NSCollectionViewItem {
      */
     public func  defaultBackgroundConfiguration() -> NSBackgroundConfiguration {
         var configuration = NSBackgroundConfiguration()
-        configuration.cornerRadius = 4.0
+        configuration.cornerRadius = 16.0
+        configuration.shadow = .black(opacity: 0.4, radius: 3.0)
         configuration.color = .unemphasizedSelectedContentBackgroundColor
         return configuration
     }
@@ -81,7 +82,10 @@ extension NSCollectionViewItem {
     }
     
     func configurateBackgroundView() {
-        if let backgroundConfiguration = backgroundConfiguration {
+        if var backgroundConfiguration = backgroundConfiguration {
+            if automaticallyUpdatesBackgroundConfiguration {
+                backgroundConfiguration = backgroundConfiguration.updated(for: configurationState)
+            }
             if let backgroundView = backgroundView, backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
@@ -133,7 +137,10 @@ extension NSCollectionViewItem {
     }
     
     func configurateContentView() {
-        if let contentConfiguration = contentConfiguration {
+        if var contentConfiguration = contentConfiguration {
+            if automaticallyUpdatesContentConfiguration {
+                contentConfiguration = contentConfiguration.updated(for: configurationState)
+            }
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -178,12 +185,13 @@ extension NSCollectionViewItem {
     @objc func setNeedsAutomaticUpdateConfiguration() {
         let state = configurationState
         
-        if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = backgroundConfiguration {
-            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+        if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
+            backgroundView.configuration = backgroundConfiguration.updated(for: state)
+            
         }
         
-        if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration, let contentView = contentView {
+            contentView.configuration = contentConfiguration.updated(for: state)
         }
         
         configurationUpdateHandler?(self, state)

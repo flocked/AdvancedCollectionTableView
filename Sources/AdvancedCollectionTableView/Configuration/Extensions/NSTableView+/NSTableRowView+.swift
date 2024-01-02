@@ -31,6 +31,7 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "contentConfiguration", object: self)
+            observeTableRowView()
             configurateContentView()
         }
     }
@@ -81,8 +82,10 @@ extension NSTableRowView {
     }
     
     func configurateContentView() {
-        if let contentConfiguration = contentConfiguration {
-            observeTableRowView()
+        if var contentConfiguration = contentConfiguration {
+            if automaticallyUpdatesContentConfiguration {
+                contentConfiguration = contentConfiguration.updated(for: configurationState)
+            }
             backgroundColor = nil
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
@@ -129,9 +132,7 @@ extension NSTableRowView {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
-            if(newValue != nil) {
-                observeTableRowView()
-            }
+            observeTableRowView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -176,8 +177,8 @@ extension NSTableRowView {
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if let contentConfiguration = self.contentConfiguration, let contentView = contentView {
+            contentView.configuration = contentConfiguration.updated(for: state)
         }
         cellViews.forEach({$0.setNeedsUpdateConfiguration()})
         configurationUpdateHandler?(self, state)
@@ -217,22 +218,22 @@ extension NSTableRowView {
     }
         
     func observeTableRowView() {
-        guard rowObserver == nil else { return }
-        rowObserver = KeyValueObserver(self)
-        rowObserver?.add(\.isSelected) { old, new in
-            guard old != new else { return }
-            self.configurateContentView()
-            self.setNeedsAutomaticUpdateConfiguration()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
-        rowObserver?.add(\.superview) { old, new in
-            if self.cellViews.contains(where: {$0.contentConfiguration is NSListContentConfiguration}) {
-                self.tableView?.usesAutomaticRowHeights = true
+            guard rowObserver == nil else { return }
+            rowObserver = KeyValueObserver(self)
+            rowObserver?.add(\.isSelected) { old, new in
+                guard old != new else { return }
+                self.configurateContentView()
+                self.setNeedsAutomaticUpdateConfiguration()
+                self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
-            self.tableView?.setupObservation()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
-        setNeedsUpdateConfiguration()
-        setCellViewsNeedAutomaticUpdateConfiguration()
+            rowObserver?.add(\.superview) { old, new in
+                if self.cellViews.contains(where: {$0.contentConfiguration is NSListContentConfiguration}) {
+                    self.tableView?.usesAutomaticRowHeights = true
+                }
+                self.tableView?.setupObservation()
+                self.setCellViewsNeedAutomaticUpdateConfiguration()
+            }
+            setNeedsUpdateConfiguration()
+            setCellViewsNeedAutomaticUpdateConfiguration()
     }
 }

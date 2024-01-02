@@ -12,7 +12,6 @@ class SidebarViewController: NSViewController {
     
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SidebarItem>
     typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
 
     @IBOutlet weak var tableView: NSTableView!
@@ -43,6 +42,10 @@ class SidebarViewController: NSViewController {
         // Deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
         
+        dataSource.deletionHandlers.didDelete = { items,_ in
+            Swift.print(items.compactMap({$0.title}))
+        }
+        
         /// Row action for swiping right to delete.
         dataSource.rowActionProvider = { item, edge in
             guard edge == .trailing else { return [] }
@@ -59,7 +62,7 @@ class SidebarViewController: NSViewController {
     }
     
     func applySnapshot() {
-        var snapshot = Snapshot()
+        var snapshot = dataSource.emptySnapshot()
         snapshot.appendSections([.main, .section2, .section3])
         snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)

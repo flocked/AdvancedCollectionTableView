@@ -93,11 +93,11 @@ open class NSTableSectionHeaderView: NSView {
     }
     
     func setNeedsAutomaticUpdateConfiguration() {
-        let state = configurationState
-        if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if automaticallyUpdatesContentConfiguration {
+            setNeedsUpdateConfiguration()
+        } else {
+            configurationUpdateHandler?(self, configurationState)
         }
-        configurationUpdateHandler?(self, state)
     }
     
     
@@ -108,8 +108,8 @@ open class NSTableSectionHeaderView: NSView {
      Override this method in a subclass to update the section header view’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if let contentConfiguration = self.contentConfiguration, let contentView = self.contentView {
+            contentView.configuration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
     }
@@ -188,7 +188,10 @@ open class NSTableSectionHeaderView: NSView {
     var contentView: (NSView & NSContentView)?  = nil
     
     func configurateContentView() {
-        if let contentConfiguration = contentConfiguration {
+        if var contentConfiguration = contentConfiguration {
+            if automaticallyUpdatesContentConfiguration {
+                contentConfiguration = contentConfiguration.updated(for: configurationState)
+            }
             if let contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
@@ -206,7 +209,6 @@ open class NSTableSectionHeaderView: NSView {
         }
     }
     
-        
     var tableView: NSTableView? {
         firstSuperview(for: NSTableView.self)
     }

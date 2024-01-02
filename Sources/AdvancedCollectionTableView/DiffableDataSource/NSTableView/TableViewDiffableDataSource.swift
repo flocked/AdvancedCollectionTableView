@@ -551,9 +551,8 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     }
     
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
-        var row = row
         var newSnapshot = snapshot()
-        var newItems = rowIndexes.compactMap({item(forRow: $0)})
+        let newItems = rowIndexes.compactMap({item(forRow: $0)})
         if let item = item(forRow: row) {
             newSnapshot.insertItems(newItems, beforeItem: item)
         } else if let section = section(forRow: row) {
