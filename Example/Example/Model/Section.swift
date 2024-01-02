@@ -9,8 +9,8 @@ import Foundation
 
 public enum Section: String, Hashable, Identifiable {
     case main = "Main"
-    case more = "More"
-    case empty = "Empty"
+    case section2 = "Section 2"
+    case section3 = "Section 3"
     
     public var id: String {
         return rawValue
