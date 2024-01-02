@@ -41,11 +41,7 @@ class SidebarViewController: NSViewController {
         dataSource.allowsReordering = true
         // Deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
-        
-        dataSource.deletionHandlers.didDelete = { items,_ in
-            Swift.print(items.compactMap({$0.title}))
-        }
-        
+                
         /// Row action for swiping right to delete.
         dataSource.rowActionProvider = { item, edge in
             guard edge == .trailing else { return [] }
