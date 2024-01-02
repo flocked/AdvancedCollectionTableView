@@ -646,7 +646,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         didSet { setupHoverObserving()} }
     
     /// The handlers for drag and drop of files from and to the table view.
-    public var dragDropHandlers = DragDropHandlers()
+    var dragDropHandlers = DragDropHandlers()
     
     /// The handlers for table columns.
     public var columnHandlers = ColumnHandlers() {
@@ -685,7 +685,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     }
     
     /// Handlers for drag and drop of files from and to the table view.
-    public struct DragDropHandlers {
+    struct DragDropHandlers {
         /// The handler that determines which items can be dragged outside the collection view.
         public var canDragOutside: ((_ elements: [Item]) -> [Item])? = nil
         /// The handler that gets called whenever items did drag ouside the collection view.

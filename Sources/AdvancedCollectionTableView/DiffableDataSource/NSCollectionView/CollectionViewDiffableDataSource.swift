@@ -633,7 +633,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         didSet { updateDelegate() } }
     
     /// The handlers for drag and drop of files from and to the collection view.
-    public var dragDropHandlers = DragDropHandlers() {
+    var dragDropHandlers = DragDropHandlers() {
         didSet { updateDelegate() } }
     
     /// The handlers highlighting elements.
@@ -719,7 +719,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     /// Handlers for drag and drop of files from and to the collection view.
-    public struct DragDropHandlers {
+    struct DragDropHandlers {
         /// The handler that determines which elements can be dragged outside the collection view.
         public var canDragOutside: ((_ elements: [Element]) -> [Element])? = nil
         /// The handler that gets called whenever elements did drag ouside the collection view.

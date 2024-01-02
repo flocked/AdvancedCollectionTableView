@@ -67,11 +67,6 @@
 - ``deletionHandlers-swift.property``
 - ``DeletionHandlers-swift.struct``
 
-### Supporting drag and drop
-
-- ``dragDropHandlers-swift.property``
-- ``DragDropHandlers-swift.struct``
-
 ### Handling selecting elements
 
 - ``selectionHandlers-swift.property``
