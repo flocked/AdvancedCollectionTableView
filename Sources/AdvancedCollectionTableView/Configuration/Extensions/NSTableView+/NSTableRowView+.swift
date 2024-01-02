@@ -35,31 +35,7 @@ extension NSTableRowView {
             configurateContentView()
         }
     }
-    
-    /**
-     Retrieves a default content configuration for the row’s style. The system determines default values for the configuration according to the table view it is presented.
-     
-     The default content configuration has preconfigured default styling depending on the table view `style` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the row as the current content configuration.
-     
-     ```swift
-     var content = rowView.defaultContentConfiguration()
-     
-     // Configure content.
-     content.text = "Favorites"
-     content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
-     
-     // Customize appearance.
-     content.imageProperties.tintColor = .purple
-     
-     rowView.contentConfiguration = content
-     ```
-     
-     - Returns:A default row content configuration. The system determines default values for the configuration according to the table view and it’s style.
-     */
-    public func defaultContentConfiguration() -> NSListContentConfiguration {
-        NSListContentConfiguration.plain()
-    }
-    
+        
     /**
      A Boolean value that determines whether the row automatically updates its content configuration when its state changes.
      
