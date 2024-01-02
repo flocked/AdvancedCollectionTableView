@@ -57,6 +57,7 @@
 
 ### Previewing items
 
+- ``isQuicklookPreviewable``
 - ``quicklookItems(_:current:)``
 
 ### Supporting reordering items

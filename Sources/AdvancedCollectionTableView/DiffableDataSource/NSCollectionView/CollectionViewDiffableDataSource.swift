@@ -280,7 +280,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
-        updateDelegate()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
             
@@ -318,18 +317,14 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
                 
-        self.collectionView.postsFrameChangedNotifications = false
-        self.collectionView.postsBoundsChangedNotifications = false
+        collectionView.postsFrameChangedNotifications = false
+        collectionView.postsBoundsChangedNotifications = false
         
-        self.collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
-        self.collectionView.registerForDraggedTypes([.itemID])
-        self.collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
-        
+        collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
+        collectionView.registerForDraggedTypes([.itemID])
+        collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
+        collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
         self.delegateBridge = DelegateBridge(self)
-    }
-    
-    func updateDelegate() {
-     //   collectionView.delegate = delegateBridge
     }
     
     /**
@@ -549,27 +544,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         elements.forEach({snapshot.moveItem($0, beforeItem: toItem)})
         return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
     }
-    
-    // MARK: - Previewing elements
-    
-    /**
-     Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
-     
-     To quicklook the selected elements, use collection view's `quicklookSelectedItems()`.
-     
-     - Parameters:
-        - elements: The elements to preview.
-        - current: The element that starts the preview. The default value is `nil`.
-     */
-    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
-        let indexPaths = elements.compactMap({indexPath(for: $0)}).sorted()
-        if let current = current, let currentIndexPath = indexPath(for: current) {
-            collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)
-        } else {
-            collectionView.quicklookItems(at: indexPaths)
-        }
-    }
-    
+            
     // MARK: - Sections
     
     /// All current sections in the collection view.
@@ -610,15 +585,13 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         didSet { observeHoveredItem() } }
     
     /// The handlers for selecting elements.
-    public var selectionHandlers = SelectionHandlers() {
-        didSet { updateDelegate() } }
+    public var selectionHandlers = SelectionHandlers()
     
     /// The handlers for deleting elements.
     public var deletionHandlers = DeletionHandlers()
     
     /// The handlers for reordering elements.
-    public var reorderingHandlers = ReorderingHandlers() {
-        didSet { updateDelegate() } }
+    public var reorderingHandlers = ReorderingHandlers()
     
     /**
      The handlers for the displaying elements.
@@ -629,61 +602,72 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         didSet {  observeDisplayingItems() } }
     
     /// The handlers for prefetching elements.
-    public var prefetchHandlers = PrefetchHandlers() {
-        didSet { updateDelegate() } }
-    
-    /// The handlers for drag and drop of files from and to the collection view.
-    var dragDropHandlers = DragDropHandlers() {
-        didSet { updateDelegate() } }
+    public var prefetchHandlers = PrefetchHandlers()
     
     /// The handlers highlighting elements.
-    public var highlightHandlers = HighlightHandlers() {
-        didSet { updateDelegate() } }
+    public var highlightHandlers = HighlightHandlers()
+    
+    /// The handlers for drag and drop of files from and to the collection view.
+    var dragDropHandlers = DragDropHandlers()
     
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {
+        
         /// The handler that tells you to begin preparing data for the elements.
         public var willPrefetch: ((_ elements: [Element]) -> ())? = nil
+        
         /// Cancels a previously triggered data prefetch request.
         public var didCancelPrefetching: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for selecting elements.
     public struct SelectionHandlers {
+        
         /// The handler that determines whether elements should get selected. The default value is `nil` which indicates that all elements should be selected.
         public var shouldSelect: ((_ elements: [Element]) -> [Element])? = nil
+        
         /// The handler that gets called whenever elements get selected.
         public var didSelect: ((_ elements: [Element]) -> ())? = nil
+        
         /// The handler that determines whether elements should get deselected. The default value is `nil` which indicates that all elements should be deselected.
         public var shouldDeselect: ((_ elements: [Element]) -> [Element])? = nil
+        
         /// The handler that gets called whenever elements get deselected.
         public var didDeselect: ((_ elements: [Element]) -> ())? = nil
     }
     
     /// Handlers for deleting elements.
     public struct DeletionHandlers {
+        
         /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
         public var canDelete: ((_ elements: [Element]) -> [Element])? = nil
+        
         /// The handler that that gets called before deleting elements.
         public var willDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
+        
         /// The handler that that gets called after deleting elements.
         public var didDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for reordering elements.
     public struct ReorderingHandlers {
+        
         /// The handler that determines if elements can be reordered. The default value is `nil` which indicates that the elements can be reordered.
         public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
+        
         /// The handler that that gets called before reordering elements.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
+        
         /// The handler that that gets called after reordering elements.
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for the highlight state of elements.
     public struct HighlightHandlers {
+        
         /// The handler that determines which elements should change to a new highlight state. The default value is `nil` which indicates that all elements should change.
         public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
+        
         /// The handler that gets called whenever elements changed their highlight state.
         public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
     }
@@ -720,6 +704,28 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for drag and drop of files from and to the collection view.
     struct DragDropHandlers {
+        
+        public struct DropHandlers {
+            public var fileURLs: ((_ urls: [URL]) -> [Element])? = nil
+            public var urls: ((_ urls: [URL]) -> [Element])? = nil
+            public var images: ((_ images: [NSImage]) -> [Element])? = nil
+            public var string: ((_ string: String) -> Element?)? = nil
+        }
+        
+        public struct DraggedInside {
+            public var fileURLs: ((_ urls: [URL]) -> [Element])? = nil
+            public var urls: ((_ urls: [URL]) -> [Element])? = nil
+            public var images: ((_ images: [NSImage]) -> [Element])? = nil
+            public var string: ((_ string: String) -> Element?)? = nil
+            public var color: ((_ string: NSColor) -> Element?)? = nil
+            public var item: ((_ item: NSPasteboardItem) -> Element?)? = nil
+        }
+        
+        public var inside = DraggedInside()
+        
+        public var drop = DropHandlers()
+    
+        
         /// The handler that determines which elements can be dragged outside the collection view.
         public var canDragOutside: ((_ elements: [Element]) -> [Element])? = nil
         /// The handler that gets called whenever elements did drag ouside the collection view.
@@ -744,6 +750,32 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 }
 
 // MARK: - Quicklook
+
+extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
+    /// A Boolean value that indicates whether the user can quicklook selected elements by pressing space bar.
+    public var isQuicklookPreviewable: Bool {
+        get { collectionView.isQuicklookPreviewable }
+        set { collectionView.isQuicklookPreviewable = newValue }
+    }
+    
+    /**
+     Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
+     
+     To quicklook the selected elements, use collection view's `quicklookSelectedItems()`.
+     
+     - Parameters:
+        - elements: The elements to preview.
+        - current: The element that starts the preview. The default value is `nil`.
+     */
+    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
+        let indexPaths = elements.compactMap({indexPath(for: $0)}).sorted()
+        if let current = current, let currentIndexPath = indexPath(for: current) {
+            collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)
+        } else {
+            collectionView.quicklookItems(at: indexPaths)
+        }
+    }
+}
 
 extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
     public func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {

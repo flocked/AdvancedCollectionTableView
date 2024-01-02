@@ -48,6 +48,7 @@
 
 ### Previewing elements
 
+- ``isQuicklookPreviewable``
 - ``quicklookElements(_:current:)``
 
 ### Supporting prefetching elements

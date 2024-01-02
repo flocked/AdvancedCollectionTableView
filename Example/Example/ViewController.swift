@@ -75,13 +75,7 @@ class ViewController: NSViewController {
         
         // Enables reordering of items by dragging them.
         dataSource.allowsReordering = true
-        
-        
-        dataSource.dragDropHandlers.canDragOutside = { $0 }
-        dataSource.dragDropHandlers.pasteboardValue = {
-            NSImage(named: $0.imageName)!
-        }
-        
+                
         // Right click menu for deleting selected items.
         dataSource.menuProvider = { selectedItems in
             guard !selectedItems.isEmpty else { return nil }

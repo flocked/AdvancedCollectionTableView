@@ -130,7 +130,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
      ``reorderingHandlers`` provides additional handlers.
      */
     public var allowsReordering: Bool = false
-    
+        
     /**
      A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
 
@@ -274,7 +274,6 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
-        updateDelegate()
         updateSectionHeaderRows()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
@@ -361,12 +360,9 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         })
         
         self.tableView.registerForDraggedTypes([.itemID])
-        self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+       // self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         _ = delegateBridge
         self.tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-    }
-    
-    func updateDelegate() {
         tableView.delegate = delegateBridge
     }
     
@@ -578,26 +574,6 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
     }
     
-    // MARK: - Previewing items
-    
-    /**
-     Opens `QuicklookPanel` that presents quicklook previews of the specified items.
-     
-     To quicklook the selected elements, use table view's `quicklookSelectedRows()`.
-     
-     - Parameters:
-        - items: The items to preview.
-        - current: The item that starts the preview. The default value is `nil`.
-     */
-    public func quicklookItems(_ items: [Item], current: Item? = nil) where Item: QuicklookPreviewable {
-        let rows = items.compactMap({row(for: $0)})
-        if let current = current, let currentRow = row(for: current) {
-            tableView.quicklookRows(at: rows, current: currentRow)
-        } else {
-            tableView.quicklookRows(at: rows)
-        }
-    }
-    
     // MARK: - Sections
 
     /// All current sections in the collection view.
@@ -632,8 +608,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     // MARK: - Handlers
     
     /// The handlers for selecting items.
-    public var selectionHandlers = SelectionHandlers() {
-        didSet { updateDelegate() } }
+    public var selectionHandlers = SelectionHandlers()
     
     /// The handlers for deleting items.
     public var deletionHandlers = DeletionHandlers()
@@ -645,73 +620,68 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public var hoverHandlers = HoverHandlers() {
         didSet { setupHoverObserving()} }
     
+    /// The handlers for table columns.
+    public var columnHandlers = ColumnHandlers()
+    
     /// The handlers for drag and drop of files from and to the table view.
     var dragDropHandlers = DragDropHandlers()
     
-    /// The handlers for table columns.
-    public var columnHandlers = ColumnHandlers() {
-        didSet { updateDelegate() } }
-    
     /// Handlers for selecting items.
     public struct SelectionHandlers {
+        
         /// The handler that determines which items should get selected. The default value is `nil` which indicates that all items should get selected.
-        public var shouldSelect: (([Item]) -> [Item])? = nil
+        public var shouldSelect: (([Item]) -> [Item])?
+        
         /// The handler that gets called whenever items get selected.
-        public var didSelect: (([Item]) -> Void)? = nil
+        public var didSelect: (([Item]) -> Void)?
+        
         /// The handler that determines which items should get deselected. The default value is `nil` which indicates that all items should get deselected.
-        public var shouldDeselect: (([Item]) -> [Item])? = nil
+        public var shouldDeselect: (([Item]) -> [Item])?
+        
         /// The handler that gets called whenever items get deselected.
-        public var didDeselect: (([Item]) -> Void)? = nil
+        public var didDeselect: (([Item]) -> Void)?
+        
+        var checkSelection: Bool {
+            shouldSelect != nil || shouldDeselect != nil
+        }
+        
+        var reportSelection: Bool {
+            didSelect != nil || didDeselect != nil
+        }
     }
     
     /// Handlers for reordering items.
     public struct ReorderingHandlers {
+        
         /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can be reordered.
-        public var canReorder: (([Item]) -> Bool)? = nil
+        public var canReorder: (([Item]) -> Bool)?
+        
         /// The handler that that gets called before reordering items.
-        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
+        
         /// The handler that that gets called after reordering items.
-        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
     }
     
     /// Handlers for deleting items.
     public struct DeletionHandlers {
+        
         /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
-        public var canDelete: ((_ items: [Item]) -> [Item])? = nil
+        public var canDelete: ((_ items: [Item]) -> [Item])?
+        
         /// The handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
+        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())?
+        
         /// The handler that gets called after deleting items.
-        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-    }
-    
-    /// Handlers for drag and drop of files from and to the table view.
-    struct DragDropHandlers {
-        /// The handler that determines which items can be dragged outside the collection view.
-        public var canDragOutside: ((_ elements: [Item]) -> [Item])? = nil
-        /// The handler that gets called whenever items did drag ouside the collection view.
-        public var didDragOutside: (([Item]) -> ())? = nil
-        /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
-        public var pasteboardValue: ((_ element: Item) -> PasteboardReadWriting)? = nil
-        /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
-        public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])? = nil
-        /// The handler that gets called whenever pasteboard items did drag inside the collection view.
-        public var didDragInside: (([PasteboardReadWriting]) -> ())? = nil
-        /// The handler that determines the image when dragging items.
-        public var draggingImage: ((_ elements: [Item], NSEvent, NSPointPointer) -> NSImage?)? = nil
-        
-        var acceptsDragInside: Bool {
-            canDragInside != nil && didDragInside != nil
-        }
-        
-        var acceptsDragOutside: Bool {
-            canDragOutside != nil
-        }
+        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())?
     }
     
     /// Handlers for hovering items with the mouse.
     public struct HoverHandlers {
+        
         /// The handler that gets called whenever the mouse is hovering an item.
         public var isHovering: ((Item) -> Void)?
+        
         /// The handler that gets called whenever the mouse did end hovering an item.
         public var didEndHovering: ((Item) -> Void)?
         
@@ -722,16 +692,75 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     /// Handlers for table view columns.
     public struct ColumnHandlers {
+        
         /// The handler that gets called whenever a column did resize.
         public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> ())?
+        
         /// The handler that determines whenever a column can be reordered to a new index.
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
+        
         /// The handler that gets called whenever a column did reorder.
         public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
+    }
+    
+    /// Handlers for drag and drop of files from and to the table view.
+    struct DragDropHandlers {
+        
+        /// The handler that determines which items can be dragged outside the collection view.
+        public var canDragOutside: ((_ elements: [Item]) -> [Item])?
+        
+        /// The handler that gets called whenever items did drag ouside the collection view.
+        public var didDragOutside: (([Item]) -> ())?
+        
+        /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
+        public var pasteboardValue: ((_ element: Item) -> PasteboardReadWriting)?
+        
+        /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
+        public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])?
+        
+        /// The handler that gets called whenever pasteboard items did drag inside the collection view.
+        public var didDragInside: (([PasteboardReadWriting]) -> ())?
+        
+        /// The handler that determines the image when dragging items.
+        public var draggingImage: ((_ elements: [Item], NSEvent, NSPointPointer) -> NSImage?)?
+        
+        var acceptsDragInside: Bool {
+            canDragInside != nil && didDragInside != nil
+        }
+        
+        var acceptsDragOutside: Bool {
+            canDragOutside != nil
+        }
     }
 }
 
 // MARK: - Quicklook
+
+extension TableViewDiffableDataSource where Item: QuicklookPreviewable {
+    /// A Boolean value that indicates whether the user can quicklook selected items by pressing space bar.
+    public var isQuicklookPreviewable: Bool {
+        get { tableView.isQuicklookPreviewable }
+        set { tableView.isQuicklookPreviewable = newValue }
+    }
+    
+    /**
+     Opens `QuicklookPanel` that presents quicklook previews of the specified items.
+     
+     To quicklook the selected elements, use table view's `quicklookSelectedRows()`.
+     
+     - Parameters:
+        - items: The items to preview.
+        - current: The item that starts the preview. The default value is `nil`.
+     */
+    public func quicklookItems(_ items: [Item], current: Item? = nil) where Item: QuicklookPreviewable {
+        let rows = items.compactMap({row(for: $0)})
+        if let current = current, let currentRow = row(for: current) {
+            tableView.quicklookRows(at: rows, current: currentRow)
+        } else {
+            tableView.quicklookRows(at: rows)
+        }
+    }
+}
 
 extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
     public func tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int) -> QuicklookPreviewable? {

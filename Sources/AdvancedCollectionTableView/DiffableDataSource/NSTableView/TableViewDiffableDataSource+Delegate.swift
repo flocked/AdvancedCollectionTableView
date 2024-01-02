@@ -68,34 +68,36 @@ extension TableViewDiffableDataSource {
         }
         
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-            self.dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
+            dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
         }
         
         public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
-            self.dataSource.dataSource.tableView(tableView, isGroupRow: row)
+            dataSource.dataSource.tableView(tableView, isGroupRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-            self.dataSource.dataSource.tableView(tableView, rowViewForRow: row)
+            dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
         
         public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
-            if let item = dataSource.item(forRow: row), let rowActionProvider = dataSource.rowActionProvider {
+            if let rowActionProvider = dataSource.rowActionProvider, let item = dataSource.item(forRow: row) {
                 return rowActionProvider(item, edge)
             }
             return []
         }
         
         public func tableViewColumnDidMove(_ notification: Notification) {
+            guard let didReorder = dataSource.columnHandlers.didReorder else { return }
             guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
                   let newPos = notification.userInfo?["NSNewColumn"] as? Int,
                   let tableColumn = dataSource.tableView.tableColumns[safe: newPos] else { return }
-            dataSource.columnHandlers.didReorder?(tableColumn, oldPos, newPos)
+            didReorder(tableColumn, oldPos, newPos)
         }
         
         public func tableViewColumnDidResize(_ notification: Notification) {
+            guard let didResize = dataSource.columnHandlers.didResize else { return }
             guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
-            dataSource.columnHandlers.didResize?(tableColumn, oldWidth)
+            didResize(tableColumn, oldWidth)
         }
         
         public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
