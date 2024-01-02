@@ -25,7 +25,6 @@ import FZSwiftUtils
  - Deleting items via ``deletionHandlers-swift.property``.
  - Selecting items via ``selectionHandlers-swift.property``.
  - Hovering items by mouse via ``hoverHandlers-swift.property``.
- - Drag and drop of files from and to the table view via ``dragDropHandlers-swift.property``.
  - Table column handlers via ``columnHandlers-swift.property``.
 
  ### Configurating the data source

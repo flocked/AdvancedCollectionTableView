@@ -29,7 +29,6 @@ import QuickLookUI
  - Highlighting elements via ``highlightHandlers-swift.property``.
  - Displaying elements via ``displayHandlers-swift.property``.
  - Hovering elements by mouse via ``hoverHandlers-swift.property``.
- - Drag and drop of files from and to the collection view via ``dragDropHandlers-swift.property``.
  - Pinching of the collection view via ``pinchHandler``.
 
  ### Configurating the data source
