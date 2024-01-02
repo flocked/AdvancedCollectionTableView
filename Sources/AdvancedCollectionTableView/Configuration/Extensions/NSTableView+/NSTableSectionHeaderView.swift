@@ -240,7 +240,7 @@ open class NSTableSectionHeaderView: NSView {
                 guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
                     return
                 }
-                self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: true)
+                self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isHeader: true)
             })
         } else {
             observingView?.removeFromSuperview()

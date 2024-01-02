@@ -78,7 +78,7 @@ extension NSTableCellView {
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             observeTableCellView()
-            if var contentView = self.contentView, contentView.supports(contentConfiguration) {
+            if var contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 contentView?.removeFromSuperview()
@@ -118,14 +118,16 @@ extension NSTableCellView {
         updateConfiguration(using: configurationState)
     }
     
-    func setNeedsAutomaticUpdateConfiguration() {
-        if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle, let row = self.row {
-            let isGroupRow = tableView.delegate?.tableView?(tableView, isGroupRow: row) ?? false
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isGroupRow: isGroupRow)
+    func updateContentConfigurationStyle() {
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle {
+            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
         }
-        
+    }
+    
+    func setNeedsAutomaticUpdateConfiguration() {
+        updateContentConfigurationStyle()
         let state = configurationState
-        if automaticallyUpdatesContentConfiguration, let contentConfiguration = self.contentConfiguration {
+        if automaticallyUpdatesContentConfiguration, let contentConfiguration = contentConfiguration {
             self.contentConfiguration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
@@ -189,7 +191,7 @@ extension NSTableCellView {
      A hovered cell view has the mouse pointer on it.
      */
     @objc open var isHovered: Bool {
-        self.rowView?.isHovered ?? false
+        rowView?.isHovered ?? false
     }
     
     /// A Boolean value that specifies whether the cell view is emphasized (the cell window is key).
@@ -199,7 +201,7 @@ extension NSTableCellView {
     
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
     @objc open var isEnabled: Bool {
-        get { rowView?.isEnabled ?? true }
+        rowView?.isEnabled ?? true
     }
     
     /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
@@ -215,16 +217,6 @@ extension NSTableCellView {
         rowView?.isPreviousRowSelected ?? false
     }
     
-    /// The row of the cell.
-    var row: Int? {
-        guard let tableView = self.tableView else { return nil }
-        var row = tableView.row(for: self)
-        if row == -1 {
-            row = 0
-        }
-        return row
-    }
-    
     var tableCellObserver: NSKeyValueObservation? {
         get { getAssociatedValue(key: "tableCellObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableCellObserver", object: self) }
@@ -238,11 +230,7 @@ extension NSTableCellView {
                 self.rowView?.needsAutomaticRowHeights = true
                 self.tableView?.usesAutomaticRowHeights = true
             }
-
-            if let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = self.tableView, tableView.style == .automatic, contentConfiguration.tableViewStyle != tableView.effectiveStyle  {
-                self.setNeedsUpdateConfiguration()
-            }
-            
+            self.updateContentConfigurationStyle()
             self.rowView?.observeTableRowView()
             self.setNeedsUpdateConfiguration()
         })

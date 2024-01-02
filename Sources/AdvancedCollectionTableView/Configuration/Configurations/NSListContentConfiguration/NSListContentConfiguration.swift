@@ -338,7 +338,7 @@ extension NSListContentConfiguration {
         return configuration
     }
     
-    func tableViewStyle(_ style: NSTableView.Style, isGroupRow: Bool = false) -> NSListContentConfiguration {
+    func tableViewStyle(_ style: NSTableView.Style, isHeader: Bool = false) -> NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
@@ -350,7 +350,7 @@ extension NSListContentConfiguration {
             configuration.imageToTextPadding = 6.0
             configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         case .sourceList:
-            if isGroupRow {
+            if isHeader {
                 configuration.textProperties.font = .subheadline.weight(.bold)
                 configuration.textProperties.color = .tertiaryLabelColor
                 configuration.imageProperties.tintColor = .tertiaryLabelColor
