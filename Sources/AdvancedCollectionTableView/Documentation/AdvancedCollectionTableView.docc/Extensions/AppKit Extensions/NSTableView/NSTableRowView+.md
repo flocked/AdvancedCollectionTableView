@@ -6,7 +6,6 @@ Extensions for `NSTableRowView`.
 
 ### Managing the content
 
-- ``AppKit/NSTableRowView/defaultContentConfiguration()``
 - ``AppKit/NSTableRowView/contentConfiguration``
 - ``AppKit/NSTableRowView/automaticallyUpdatesContentConfiguration``
 

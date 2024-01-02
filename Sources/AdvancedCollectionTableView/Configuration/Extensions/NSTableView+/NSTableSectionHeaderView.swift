@@ -189,7 +189,7 @@ open class NSTableSectionHeaderView: NSView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if var contentView = self.contentView, contentView.supports(contentConfiguration) {
+            if let contentView = self.contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 self.contentView?.removeFromSuperview()

@@ -68,9 +68,7 @@ import FZQuicklook
                             finalSnapshot.deleteItems(elementsToDelete)
                                                         
                             func getTransaction() ->  NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> {
-                                let initalSnapshot = self.snapshot()
-                                let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
-                                return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
+                                return NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
                             }
                             
                             var transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>? = nil

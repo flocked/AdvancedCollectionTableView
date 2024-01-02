@@ -552,11 +552,9 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     }
     
     func deletingTransaction(_ deletionItems: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
-        let initalSnapshot = currentSnapshot
         var newNnapshot = snapshot()
         newNnapshot.deleteItems(deletionItems)
-        let difference = initalSnapshot.itemIdentifiers.difference(from: newNnapshot.itemIdentifiers)
-        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: newNnapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newNnapshot)
     }
     
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
@@ -576,9 +574,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         } else {
             dragingItems.forEach({ snapshot.moveItem($0, beforeItem: toItem) })
         }
-        let initalSnapshot = currentSnapshot
-        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
     }
     
     // MARK: - Previewing items

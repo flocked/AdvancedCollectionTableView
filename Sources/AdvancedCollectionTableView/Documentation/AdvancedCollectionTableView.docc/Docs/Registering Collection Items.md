@@ -11,7 +11,7 @@ The following example creates a item registration for items of type `NSCollectio
 ```swift
 let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, Int> { item, indexPath, number in
     
-    var contentConfiguration = item.defaultContentConfiguration()
+    var contentConfiguration = NSItemContentConfiguration()
     
     contentConfiguration.text = "\(number)"
     contentConfiguration.textProperties.color = .lightGray

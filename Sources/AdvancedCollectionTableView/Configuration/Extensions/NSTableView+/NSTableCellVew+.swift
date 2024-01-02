@@ -79,7 +79,7 @@ extension NSTableCellView {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if var contentView = contentView, contentView.supports(contentConfiguration) {
+            if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 let contentView = contentConfiguration.makeContentView()

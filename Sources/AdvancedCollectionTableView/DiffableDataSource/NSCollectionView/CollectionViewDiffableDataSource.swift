@@ -532,11 +532,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
     
     func deletionTransaction(_ elements: [Element]) -> NSDiffableDataSourceTransaction<Section, Element> {
-        let initalSnapshot = currentSnapshot
         var finalSnapshot = snapshot()
         finalSnapshot.deleteItems(elements)
-        let difference = initalSnapshot.itemIdentifiers.difference(from: finalSnapshot.itemIdentifiers)
-        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: finalSnapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: finalSnapshot)
     }
     
     func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Element>? {
@@ -556,10 +554,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             elements.forEach({snapshot.moveItem($0, beforeItem: toItem)})
         }
         elements.forEach({snapshot.moveItem($0, beforeItem: toItem)})
-
-        let initalSnapshot = currentSnapshot
-        let difference = initalSnapshot.itemIdentifiers.difference(from: snapshot.itemIdentifiers)
-        return NSDiffableDataSourceTransaction(initialSnapshot: initalSnapshot, finalSnapshot: snapshot, difference: difference)
+        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
     }
     
     // MARK: - Previewing elements

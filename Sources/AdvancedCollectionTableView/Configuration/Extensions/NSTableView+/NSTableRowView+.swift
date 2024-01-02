@@ -60,10 +60,10 @@ extension NSTableRowView {
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
             backgroundColor = nil
-            if var contentView = contentView, contentView.supports(contentConfiguration) {
+            if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                var contentView = contentConfiguration.makeContentView()
+                let contentView = contentConfiguration.makeContentView()
                 contentView.configuration = contentConfiguration
                 self.contentView = contentView
                 addSubview(withConstraint: contentView)

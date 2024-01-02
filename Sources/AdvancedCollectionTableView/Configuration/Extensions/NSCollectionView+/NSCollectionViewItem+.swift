@@ -82,7 +82,7 @@ extension NSCollectionViewItem {
     
     func configurateBackgroundView() {
         if let backgroundConfiguration = backgroundConfiguration {
-            if var backgroundView = backgroundView, backgroundView.supports(backgroundConfiguration) {
+            if let backgroundView = backgroundView, backgroundView.supports(backgroundConfiguration) {
                 backgroundView.configuration = backgroundConfiguration
             } else {
                 let backgroundView = backgroundConfiguration.makeContentView()
@@ -116,30 +116,6 @@ extension NSCollectionViewItem {
     }
     
     /**
-     Retrieves a default item content configuration.
-     
-     The default content configuration has preconfigured default styling, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the item as the current content configuration.
-     
-     ```swift
-     var content = item.defaultContentConfiguration()
-     
-     // Configure content.
-     content.text = "Favorites"
-     content.image = NSImage(systemSymbolName: "star", accessibilityDescription: "star")
-     
-     // Customize appearance.
-     content.contentProperties.tintColor = .purple
-     
-     item.contentConfiguration = content
-     ```
-     
-     - Returns:A default item content configuration. The system determines default values for the configuration according to the collection view and it’s style.
-     */
-    public func defaultContentConfiguration() -> NSItemContentConfiguration {
-        return NSItemContentConfiguration()
-    }
-    
-    /**
      A Boolean value that determines whether the item automatically updates its content configuration when its state changes.
      
      When this value is true, the item automatically calls `updated(for:)` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
@@ -158,7 +134,7 @@ extension NSCollectionViewItem {
     
     func configurateContentView() {
         if let contentConfiguration = contentConfiguration {
-            if var contentView = contentView, contentView.supports(contentConfiguration) {
+            if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 let previousFrame = view.frame

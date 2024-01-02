@@ -10,7 +10,6 @@
 
 ### Managing the content
 
-- ``AppKit/NSCollectionViewItem/defaultContentConfiguration()``
 - ``AppKit/NSCollectionViewItem/contentConfiguration``
 - ``AppKit/NSCollectionViewItem/automaticallyUpdatesContentConfiguration``
 

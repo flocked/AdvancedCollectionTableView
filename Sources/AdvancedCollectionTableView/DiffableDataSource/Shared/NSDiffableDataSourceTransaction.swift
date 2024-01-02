@@ -18,3 +18,11 @@ public struct NSDiffableDataSourceTransaction<Section, Element> where Section: H
     /// A collection of insertions and removals that describe the difference between initial and final snapshots.
     public let difference: CollectionDifference<Element>
 }
+
+extension NSDiffableDataSourceTransaction {
+    init(initial: NSDiffableDataSourceSnapshot<Section, Element>, final: NSDiffableDataSourceSnapshot<Section, Element>) {
+        self.initialSnapshot = initial
+        self.finalSnapshot = final
+        self.difference = initial.itemIdentifiers.difference(from: final.itemIdentifiers)
+    }
+}
