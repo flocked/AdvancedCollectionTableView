@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSListConfigurationStateObjc : NSObject
+@interface NSListConfigurationStateObjc : NSObject<NSCopying>
 
 - (instancetype)initWithIsSelected:(BOOL)isSelected isEditing:(BOOL)isEditing isEmphasized:(BOOL)isEmphasized isHovered:(BOOL)isHovered isEnabled:(BOOL)isEnabled isFocused:(BOOL)isFocused isExpanded:(BOOL)isExpanded isNextSelected:(BOOL)isNextSelected isPreviousSelected:(BOOL)isPreviousSelected customStates:(NSDictionary<NSString *,id> *)customStates;
 

@@ -424,7 +424,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     /// All current items in the collection view.
     public var items: [Item] { currentSnapshot.itemIdentifiers }
     
-    /// An array of the selected items.
+    /// The selected items.
     public var selectedItems: [Item] {
         return tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
     }
@@ -474,24 +474,24 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return nil
     }
     
-    /// Selects all table rows of the specified items.
+    /// Selects all specified items.
     public func selectItems(_ items: [Item], byExtendingSelection: Bool = false) {
         selectItems(at: rows(for: items), byExtendingSelection: byExtendingSelection)
     }
     
-    /// Deselects all table rows of the specified items.
+    /// Deselects all specified items.
     public func deselectItems(_ items: [Item]) {
         items.compactMap({row(for: $0)}).forEach({ tableView.deselectRow($0) })
         // sdeselectItems(at: rows(for: items))
     }
     
-    /// Selects all table rows of the items in the specified sections.
+    /// Selects all items in the specified sections.
     public func selectItems(in sections: [Section], byExtendingSelection: Bool = false) {
         let sectionRows = sections.flatMap({rows(for: $0)})
         selectItems(at: sectionRows, byExtendingSelection: byExtendingSelection)
     }
     
-    /// Deselects all table rows of the items in the specified sections.
+    /// Deselects all items in the specified sections.
     public func deselectItems(in sections: [Section]) {
         let sectionRows = sections.flatMap({rows(for: $0)})
         deselectItems(at: sectionRows)
@@ -652,7 +652,34 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         /// The handler that that gets called before reordering items.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
         
-        /// The handler that that gets called after reordering items.
+        /**
+         The handler that that gets called after reordering items.
+         
+         The system calls the didReorder handler after a reordering transaction (NSDiffableDataSourceTransaction) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Enables reordering
+         dataSource.allowsReordering = true
+
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+
+         // Option 2: Update the backing store from the final item identifiers
+         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
     }
     

@@ -26,4 +26,8 @@
     return self;
 }
 
+- (nonnull id)copyWithZone:(nullable NSZone *)zone {
+    return [[NSListConfigurationStateObjc allocWithZone:zone] initWithIsSelected:self.isSelected isEditing:self.isEditing isEmphasized:self.isEmphasized isHovered:self.isHovered isEnabled:self.isEnabled isFocused:self.isFocused isExpanded:self.isExpanded isNextSelected:self.isNextSelected isPreviousSelected:self.isPreviousSelected customStates:self.customStates];
+}
+
 @end

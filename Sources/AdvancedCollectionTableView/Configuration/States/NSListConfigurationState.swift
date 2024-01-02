@@ -110,7 +110,28 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
     }
 }
 
-extension NSListConfigurationState: _ObjectiveCBridgeable {
+extension NSListConfigurationState: ReferenceConvertible {
+    public typealias ReferenceType = NSListConfigurationStateObjc
+    
+    public var debugDescription: String {
+        description
+    }
+    
+    public var description: String {
+                """
+                NSListConfigurationState(
+                    isSelected: \(isSelected)
+                    isEnabled: \(isEnabled)
+                    isHovered: \(isHovered)
+                    isEditing: \(isEditing)
+                    isEmphasized: \(isEmphasized)
+                    isNextSelected: \(isNextSelected)
+                    isPreviousSelected: \(isPreviousSelected)
+                    customStates: \(customStates)
+                )
+                """
+    }
+    
     public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
         let customStates = self.customStates.mapKeys({ $0.rawValue })
         return NSListConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)

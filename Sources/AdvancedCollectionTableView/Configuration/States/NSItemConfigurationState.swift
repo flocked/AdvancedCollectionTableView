@@ -115,10 +115,30 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     }
 }
 
-extension NSItemConfigurationState: _ObjectiveCBridgeable {
+extension NSItemConfigurationState: ReferenceConvertible {
+    public typealias ReferenceType = NSItemConfigurationStateObjc
+    
+    
+    public var debugDescription: String {
+        description
+    }
+    
+    public var description: String {
+                """
+                NSItemConfigurationState(
+                    isEnabled: \(isEnabled)
+                    isHovered: \(isHovered)
+                    isEditing: \(isEditing)
+                    highlight: \(highlight.rawValue)
+                    isEmphasized: \(isEmphasized)
+                    customStates: \(customStates)
+                )
+                """
+    }
+    
     public func _bridgeToObjectiveC() -> NSItemConfigurationStateObjc {
         let customStates = self.customStates.mapKeys({ $0.rawValue })
-        return NSItemConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: Int32(highlight.rawValue), customStates: customStates)
+        return NSItemConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: highlight.rawValue, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) {

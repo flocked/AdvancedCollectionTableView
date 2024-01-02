@@ -384,7 +384,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         currentSnapshot.itemIdentifiers
     }
     
-    /// An array of the selected elements.
+    /// The selected elements.
     public var selectedElements: [Element] {
         collectionView.selectionIndexPaths.compactMap({element(for: $0)})
     }
@@ -433,25 +433,25 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
     }
     
-    /// Selects all collection view elements of the specified elements.
+    /// Selects the specified elements.
     public func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
     
-    /// Deselects all collection view elements of the specified elements.
+    /// Deselects the specified elements.
     public func deselectElements(_ elements: [Element]) {
         let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
         collectionView.deselectItems(at: indexPaths)
     }
     
-    /// Selects all collection view elements of the elements in the specified sections.
+    /// Selects all elements in the specified sections.
     public func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let elements = elements(for: sections)
         selectElements(elements, scrollPosition: scrollPosition)
     }
     
-    /// Deselects all collection view elements of the elements in the specified sections.
+    /// Deselects all elementsin the specified sections.
     public func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let elementIndexPaths = Set(sections.flatMap({indexPaths(for: $0)}))
         collectionView.deselectItems(at: elementIndexPaths)
