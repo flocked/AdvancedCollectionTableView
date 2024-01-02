@@ -19,11 +19,11 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var collectionView: NSCollectionView!
     
-    lazy var dataSource: DataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
+    lazy var dataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
     
     var galleryItems = GalleryItem.sampleItems
     
-    lazy var itemRegistration: ItemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
+    lazy var itemRegistration = ItemRegistration() { collectionViewItem, indexPath, galleryItem in
 
         // Configurate the item
         var configuration = NSItemContentConfiguration()
@@ -72,6 +72,7 @@ class ViewController: NSViewController {
         
         // Enables deleting of selected items via backspace keyboard shortcut.
         dataSource.allowsDeleting = true
+        
         // Enables reordering of items by dragging them.
         dataSource.allowsReordering = true
         
@@ -87,7 +88,7 @@ class ViewController: NSViewController {
             menu.addItem(deleteMenuItem)
             return menu
         }
-                
+                        
         applySnapshot(using: galleryItems)
     }
         
@@ -95,10 +96,7 @@ class ViewController: NSViewController {
         super.viewDidAppear()
 
         toolbar.attachedWindow = view.window
-        
-        // Make the collectionview first responder so it reacts to backspace and spacebar item quicklook preview.
         view.window?.makeFirstResponder(collectionView)
-        
         collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }
     
@@ -117,4 +115,38 @@ fileprivate extension NSView {
         backgroundColor = color
         alphaValue = opacity
     }
+}
+
+
+final class HeaderCell: NSView, NSCollectionViewSectionHeaderView {
+    lazy var label: NSTextField = {
+        let label = NSTextField()
+        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.stringValue = "Header"
+        label.textColor = NSColor.labelColor
+        label.isBordered = false
+        label.isEditable = false
+        label.isSelectable = false
+        label.backgroundColor = .clear
+        return label
+    }()
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+
+        addSubview(label)
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: label.leadingAnchor, constant: -16),
+            bottomAnchor.constraint(equalTo: label.bottomAnchor, constant: 4),
+            widthAnchor.constraint(equalTo: label.widthAnchor),
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    static let id = NSUserInterfaceItemIdentifier(rawValue: "sectionHeader")
 }

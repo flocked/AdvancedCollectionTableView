@@ -17,7 +17,7 @@ class SidebarViewController: NSViewController {
 
     @IBOutlet weak var tableView: NSTableView!
     
-    lazy var dataSource: DataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
+    lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
     
     let cellRegistration = CellRegistration() { tableCell, column, row, sidebarItem in
         // `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).

@@ -654,11 +654,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     /// Handlers for selecting items.
     public struct SelectionHandlers {
-        /// The handler that determines whether items should get selected. The default value is `nil` which indicates that all items should be selected.
+        /// The handler that determines which items should get selected. The default value is `nil` which indicates that all items should get selected.
         public var shouldSelect: (([Item]) -> [Item])? = nil
         /// The handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)? = nil
-        /// The handler that determines whether items should get deselected. The default value is `nil` which indicates that all items should be deselected.
+        /// The handler that determines which items should get deselected. The default value is `nil` which indicates that all items should get deselected.
         public var shouldDeselect: (([Item]) -> [Item])? = nil
         /// The handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)? = nil
@@ -666,11 +666,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     
     /// Handlers for reordering items.
     public struct ReorderingHandlers {
-        /// The handler that determines whether you can reorder items. The default value is `nil` which indicates that the items can be reordered.
+        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can be reordered.
         public var canReorder: (([Item]) -> Bool)? = nil
-        /// The handler that prepares the diffable data source for reordering its items.
+        /// The handler that that gets called before reordering items.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
-        /// The handler that processes a reordering transaction.
+        /// The handler that that gets called after reordering items.
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())? = nil
     }
     

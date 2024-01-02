@@ -61,17 +61,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
-    public var supplementaryViewProvider: SupplementaryViewProvider? = nil {
-        didSet {
-            if let supplementaryViewProvider = self.supplementaryViewProvider {
-                dataSource.supplementaryViewProvider = { collectionView, itemKind, indePath in
-                    return supplementaryViewProvider(collectionView, itemKind, indePath)
-                }
-            } else {
-                dataSource.supplementaryViewProvider = nil
-            }
-        }
-    }
+    public var supplementaryViewProvider: SupplementaryViewProvider? = nil
     /**
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
      
@@ -322,6 +312,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             guard let self = self, let item = self.elements[id: itemID] else { return nil }
             return itemProvider(collectionView, indePath, item)
         })
+        
+        self.dataSource.supplementaryViewProvider = { [weak self] collectionView, itemKind, indePath in
+               guard let self = self else { return nil }
+               return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
+        }
                 
         self.collectionView.postsFrameChangedNotifications = false
         self.collectionView.postsBoundsChangedNotifications = false
@@ -381,6 +376,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     public func numberOfSections(in collectionView: NSCollectionView) -> Int {
         return dataSource.numberOfSections(in: collectionView)
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+        dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
     
     // MARK: - Elements
@@ -673,17 +672,17 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     /// Handlers for reordering elements.
     public struct ReorderingHandlers {
-        /// The handler that determines whether you can reorder elements. The default value is `nil` which indicates that the elements can be reordered.
+        /// The handler that determines if elements can be reordered. The default value is `nil` which indicates that the elements can be reordered.
         public var canReorder: ((_ elements: [Element]) -> Bool)? = nil
-        /// The handler that prepares the diffable data source for reordering its elements.
+        /// The handler that that gets called before reordering elements.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
-        /// The handler that processes a reordering transaction.
+        /// The handler that that gets called after reordering elements.
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> ())? = nil
     }
     
     /// Handlers for the highlight state of elements.
     public struct HighlightHandlers {
-        /// The handler that determines which elements should change to a highlight state. The default value is `nil` which indicates that all elements should change their highlight state.
+        /// The handler that determines which elements should change to a new highlight state. The default value is `nil` which indicates that all elements should change.
         public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])? = nil
         /// The handler that gets called whenever elements changed their highlight state.
         public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> ())? = nil
@@ -697,6 +696,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public struct DisplayHandlers {
         /// The handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [Element]) -> ())?
+        
         /// The handler that gets called whenever elements end getting displayed.
         public var didEndDisplaying: ((_ elements: [Element]) -> ())?
         
@@ -709,6 +709,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public struct HoverHandlers {
         /// The handler that gets called whenever the mouse is hovering an element.
         public var isHovering: ((_ element: Element) -> ())?
+        
         /// The handler that gets called whenever the mouse did end hovering an element.
         public var didEndHovering: ((_ element: Element) -> ())?
         
