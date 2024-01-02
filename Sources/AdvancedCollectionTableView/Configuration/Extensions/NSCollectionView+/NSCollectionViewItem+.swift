@@ -254,7 +254,7 @@ extension NSCollectionViewItem {
      
      A hovered item has the mouse pointer on it's view.
      */
-    @objc open var isHovered: Bool {
+    @objc var isHovered: Bool {
         collectionView?.hoveredItem == self
     }
     
@@ -263,7 +263,7 @@ extension NSCollectionViewItem {
 
      The value of this property is `true` when the text of a list or item content configuration is currently edited.
      */
-    @objc open var isEditing: Bool {
+    @objc var isEditing: Bool {
         (view as? EdiitingContentView)?.isEditing ?? false
     }
     
@@ -272,7 +272,7 @@ extension NSCollectionViewItem {
      
      The item is emphasized when it's window is key.
      */
-    @objc open var isEmphasized: Bool {
+    @objc var isEmphasized: Bool {
         view.window?.isKeyWindow ?? false
     }
     

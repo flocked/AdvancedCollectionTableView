@@ -188,22 +188,22 @@ extension NSTableRowView {
      
      A hovered row view has the mouse pointer on it.
      */
-    @objc open var isHovered: Bool {
+    @objc var isHovered: Bool {
         tableView?.hoveredRowView == self
     }
     
     /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).
-    @objc open var isEnabled: Bool {
+    @objc var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
     
     /// A Boolean value that indicates whether the row view is in an editable state. (the text of a content configuration is currently edited).
-    @objc open var isEditing: Bool {
+    @objc var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
     /// A Boolean value that specifies whether the row view is emphasized (the window is key).
-    @objc open var isEmphasized: Bool {
+    @objc var isEmphasized: Bool {
         window?.isKeyWindow ?? false
     }
     

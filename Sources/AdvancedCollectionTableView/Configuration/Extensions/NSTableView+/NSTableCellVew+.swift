@@ -190,22 +190,22 @@ extension NSTableCellView {
      
      A hovered cell view has the mouse pointer on it.
      */
-    @objc open var isHovered: Bool {
+    @objc var isHovered: Bool {
         rowView?.isHovered ?? false
     }
     
     /// A Boolean value that specifies whether the cell view is emphasized (the cell window is key).
-    @objc open var isEmphasized: Bool {
+    @objc var isEmphasized: Bool {
         window?.isKeyWindow ?? false
     }
     
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
-    @objc open var isEnabled: Bool {
+    @objc var isEnabled: Bool {
         rowView?.isEnabled ?? true
     }
     
     /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
-    @objc open var isEditing: Bool {
+    @objc var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     

@@ -16,7 +16,4 @@ Extensions for `NSTableRowView`.
 - ``AppKit/NSTableRowView/updateConfiguration(using:)``
 - ``AppKit/NSTableRowView/configurationUpdateHandler-swift.property``
 - ``AppKit/NSTableRowView/ConfigurationUpdateHandler-swift.typealias``
-- ``AppKit/NSTableRowView/isEnabled``
-- ``AppKit/NSTableRowView/isEmphasized``
-- ``AppKit/NSTableRowView/isEditing``
-- ``AppKit/NSTableRowView/isHovered``
+

@@ -20,9 +20,6 @@
 - ``AppKit/NSCollectionViewItem/updateConfiguration(using:)``
 - ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
 - ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
-- ``AppKit/NSCollectionViewItem/isEmphasized``
-- ``AppKit/NSCollectionViewItem/isEditing``
-- ``AppKit/NSCollectionViewItem/isHovered``
 
 ### Managing the view
 

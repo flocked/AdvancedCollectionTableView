@@ -148,7 +148,7 @@ open class NSTableSectionHeaderView: NSView {
      
      The value of this property is `true` when the text of a list or item content configuration is currently edited.
      */
-    @objc open var isEditing: Bool {
+    @objc var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
     
@@ -157,7 +157,7 @@ open class NSTableSectionHeaderView: NSView {
      
      A hovered cell view has the mouse pointer on it.
      */
-    @objc open var isHovered: Bool = false {
+    @objc var isHovered: Bool = false {
         didSet {
             guard oldValue != isHovered else { return }
             setNeedsAutomaticUpdateConfiguration()
@@ -169,7 +169,7 @@ open class NSTableSectionHeaderView: NSView {
      
      The section header view is emphasized when it's window is key.
      */
-    @objc open var isEmphasized: Bool = false {
+    @objc var isEmphasized: Bool = false {
         didSet {
             guard oldValue != isEmphasized else { return }
             setNeedsAutomaticUpdateConfiguration()
@@ -181,7 +181,7 @@ open class NSTableSectionHeaderView: NSView {
      
      The value of this property is `true` when the table view`s `isEnabled` is `true`.
      */
-    @objc open var isEnabled: Bool {
+    @objc var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
     

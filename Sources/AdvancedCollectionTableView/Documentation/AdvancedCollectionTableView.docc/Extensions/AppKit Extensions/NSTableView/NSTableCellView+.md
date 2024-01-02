@@ -17,7 +17,4 @@ Extensions for `NSTableCellView`.
 - ``AppKit/NSTableCellView/updateConfiguration(using:)``
 - ``AppKit/NSTableCellView/configurationUpdateHandler-swift.property``
 - ``AppKit/NSTableCellView/ConfigurationUpdateHandler-swift.typealias``
-- ``AppKit/NSTableCellView/isEnabled``
-- ``AppKit/NSTableCellView/isEmphasized``
-- ``AppKit/NSTableCellView/isEditing``
-- ``AppKit/NSTableCellView/isHovered``
+

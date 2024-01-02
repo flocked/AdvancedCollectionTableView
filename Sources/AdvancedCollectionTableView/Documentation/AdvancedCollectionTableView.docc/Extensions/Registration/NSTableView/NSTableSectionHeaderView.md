@@ -15,7 +15,3 @@
 - ``updateConfiguration(using:)``
 - ``configurationUpdateHandler``
 - ``ConfigurationUpdateHandler``
-- ``isEditing``
-- ``isHovered``
-- ``isEmphasized``
-- ``isEnabled``
