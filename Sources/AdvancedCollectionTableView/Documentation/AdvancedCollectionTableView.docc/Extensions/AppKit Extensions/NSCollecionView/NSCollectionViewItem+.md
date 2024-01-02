@@ -1,5 +1,7 @@
 # NSCollectionViewItem
 
+Extensions for `NSCollectionViewItem`.
+
 ## Topics
 
 ### Configuring the background
