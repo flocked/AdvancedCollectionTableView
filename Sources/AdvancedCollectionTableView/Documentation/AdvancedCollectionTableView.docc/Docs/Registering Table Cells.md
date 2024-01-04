@@ -9,7 +9,8 @@ Use ``AppKit/NSTableView/CellRegistration`` to register table view cells with yo
 The following example creates a cell registration for cells of type `NSTableCellView`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the cell.
 
 ```swift
-let cellRegistration = NSTableView.CellRegistration<NSTableCellView, Int> { tableCell, indexPath, number in
+let cellRegistration = NSTableView.CellRegistration<NSTableCellView, Int> { 
+    tableCell, indexPath, number in
     
     var contentConfiguration = tableCell.defaultContentConfiguration()
     
@@ -23,7 +24,7 @@ let cellRegistration = NSTableView.CellRegistration<NSTableCellView, Int> { tabl
 After you create a cell registration, you pass it in to ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``, which you call from your data source’s cell provider.
 
 ```swift
-dataSource = NSTableViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
+dataSource = NSTableViewDiffableDataSource<Section, Int>(tableView: tableView) {
     (tableView: NSTableView, column: NSTableColumn, row: Int, itemIdentifier: Int) -> NSView in
     
     return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: itemIdentifier)

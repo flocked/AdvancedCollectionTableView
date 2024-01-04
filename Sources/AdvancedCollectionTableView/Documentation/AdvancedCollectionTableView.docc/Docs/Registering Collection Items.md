@@ -9,7 +9,8 @@ Use ``AppKit/NSCollectionView/ItemRegistration`` to register items with your col
 The following example creates a item registration for items of type `NSCollectionViewItem`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
 
 ```swift
-let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, Int> { item, indexPath, number in
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, Int> { 
+    item, indexPath, number in
     
     var contentConfiguration = NSItemContentConfiguration()
     
