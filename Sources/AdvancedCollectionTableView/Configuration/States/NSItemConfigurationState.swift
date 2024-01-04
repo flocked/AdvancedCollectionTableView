@@ -116,6 +116,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSItemConfigurationState: ReferenceConvertible {
+    
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSItemConfigurationStateObjc
     

@@ -111,6 +111,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSListConfigurationState: ReferenceConvertible {
+    
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSListConfigurationStateObjc
     
