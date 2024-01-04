@@ -1,6 +1,6 @@
 # Registering Table Cells
 
-Register table view cells with ``AppKit/NSTableView/CellRegistration``.
+Register table view cells with `CellRegistration`.
 
 ## Overview
 

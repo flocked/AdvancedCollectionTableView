@@ -1,6 +1,6 @@
 # Registering Collection View Items
 
-Register collection view items with ``AppKit/NSCollectionView/ItemRegistration``.
+Register collection view items with `ItemRegistration`.
 
 ## Overview
 
