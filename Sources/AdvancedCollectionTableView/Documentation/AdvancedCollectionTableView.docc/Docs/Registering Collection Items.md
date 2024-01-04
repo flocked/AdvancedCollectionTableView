@@ -4,7 +4,7 @@ Register collection view items with `ItemRegistration`.
 
 ## Overview
 
-Use an item registration to register items with your collection view and configure each item for display. You create a item registration with your item type and data item type as the registration’s generic parameters, passing in a registration handler to configure the item. In the registration handler, you specify how to configure the content and appearance of that type of item.
+Use ``AppKit/NSCollectionView/ItemRegistration`` to register items with your collection view and configure each item for display. You create a item registration with your item type and data item type as the registration’s generic parameters, passing in a registration handler to configure the item. In the registration handler, you specify how to configure the content and appearance of that type of item.
 
 The following example creates a item registration for items of type `NSCollectionViewItem`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
 

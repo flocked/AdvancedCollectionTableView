@@ -4,7 +4,7 @@ Register table view cells with `CellRegistration`.
 
 ## Overview
 
-Use a cell registration to register table view cells with your table view and configure each cell for display. You create a cell registration with your cell type and data item type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
+Use ``AppKit/NSTableView/CellRegistration`` to register table view cells with your table view and configure each cell for display. You create a cell registration with your cell type and data item type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
 
 The following example creates a cell registration for cells of type `NSTableCellView`. It creates a content configuration with a system default style, customizes the content and appearance of the configuration, and then assigns the configuration to the cell.
 
