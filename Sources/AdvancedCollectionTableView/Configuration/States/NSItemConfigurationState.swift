@@ -119,10 +119,6 @@ extension NSItemConfigurationState: ReferenceConvertible {
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSItemConfigurationStateObjc
     
-    public var debugDescription: String {
-        description
-    }
-    
     public var description: String {
                 """
                 NSItemConfigurationState(
@@ -134,6 +130,10 @@ extension NSItemConfigurationState: ReferenceConvertible {
                     customStates: \(customStates)
                 )
                 """
+    }
+    
+    public var debugDescription: String {
+        return description
     }
     
     public func _bridgeToObjectiveC() -> NSItemConfigurationStateObjc {

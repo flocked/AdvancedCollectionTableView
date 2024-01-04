@@ -10,7 +10,7 @@ import FZUIKit
 import FZQuicklook
 import FZSwiftUtils
 /**
- A`NSTableViewDiffableDataSource` with additional functionality.
+ A `NSTableViewDiffableDataSource` with additional functionality.
  
  The diffable data source provides:
  - Reordering items by enabling ``allowsReordering``.

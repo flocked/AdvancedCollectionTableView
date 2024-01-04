@@ -114,10 +114,6 @@ extension NSListConfigurationState: ReferenceConvertible {
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSListConfigurationStateObjc
     
-    public var debugDescription: String {
-        description
-    }
-    
     public var description: String {
                 """
                 NSListConfigurationState(
@@ -131,6 +127,10 @@ extension NSListConfigurationState: ReferenceConvertible {
                     customStates: \(customStates)
                 )
                 """
+    }
+    
+    public var debugDescription: String {
+        return description
     }
     
     public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
