@@ -8,7 +8,7 @@ Take a look at the included sample app located at */Example/* which demonstrates
 
 ## NSCollectionView ItemRegistration & NSTableView CellRegistration
 
-A port of `UICollectionView.CellRegistration`. A registration for collection view items and table cells that greatly simplifies  configurating them.
+A registration for collection view items and table cells that greatly simplifies  configurating them. A port of `UICollectionView.CellRegistration`.
 
 ```swift
 struct GalleryItem {
@@ -32,7 +32,7 @@ let tableCellRegistration = NSTableView.CellRegistration<NSTableCellView, Galler
 
 ## NSContentConfiguration
 
-A port of UIContentConfiguration that configurates styling and content for a content view.
+Configurates styling and content for a content view. A port of UIContentConfiguration`.
 
 `NSCollectionviewItem`, `NSTableCellView` and `NSTableRowView` provide `contentConfiguration` where you can apply them to configurate the content of the item/cell.
 
@@ -147,7 +147,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  - Quicklooking items via spacebar by providing items conforming to `QuicklookPreviewable`
  - Right click menu provider for selected items
  
- __It includes handlers for:__
+ **It includes handlers for:**
  - Prefetching items
  - Selecting items
  - Reordering items
