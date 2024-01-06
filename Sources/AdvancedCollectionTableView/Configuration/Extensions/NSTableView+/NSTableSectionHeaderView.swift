@@ -55,7 +55,7 @@ open class NSTableSectionHeaderView: NSView {
      - Returns:A default section header view content configuration. The system determines default values for the configuration according to the table view and it’s style.
      */
     open func defaultContentConfiguration() -> NSListContentConfiguration {
-        NSListContentConfiguration.automaticRow()
+        NSListContentConfiguration.automaticHeader()
     }
     
     /**
@@ -239,10 +239,10 @@ open class NSTableSectionHeaderView: NSView {
             guard sectionHeaderObserver == nil else { return }
             sectionHeaderObserver = KeyValueObserver(self)
             sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
-                guard let self = self, let tableView = self.tableView, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableView.effectiveStyle else {
+                guard let self = self, let tableViewStyle = self.tableView?.effectiveStyle, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableViewStyle else {
                     return
                 }
-                self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle, isHeader: true)
+                self.contentConfiguration = contentConfiguration.applyTableViewStyle(tableViewStyle, isHeader: true)
             })
         } else {
             observingView?.removeFromSuperview()

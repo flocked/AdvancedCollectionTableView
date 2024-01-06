@@ -56,6 +56,27 @@ extension NSTableView {
     }
     
     /**
+     Returns a new or existing view with the specified table cell class and identifier.
+     
+     The be able to create a table view cell from a cell class, you have to register it first via ``register(_:forIdentifier:)``.
+     
+     When this method is called, the table view automatically instantiates the cell view with the specified owner, which is usually the table view’s delegate. (The owner is useful in setting up outlets and target/actions from the view.).
+     
+     This method may also return a reused cell view with the same class that is no longer available on screen. If the cell class isn't registered, the cell can’t be instantiated or can't found in the reuse queue, this method returns nil.
+     
+     This method is usually called by the delegate in `tableView(_:viewFor:row:)`, but it can also be overridden to provide custom views for cell class. Note that `awakeFromNib()` is called each time this method is called, which means that `awakeFromNib` is also called on owner, even though the owner is already awake.
+     
+     - Parameters:
+        - cellClass: The class of the table cell view.
+        - identifer: The cell identifier.
+
+     - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
+     */
+    public func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> TableCellView? {
+        self.makeView(withIdentifier: identifier, owner: nil) as? TableCellView
+    }
+    
+    /**
      The dictionary of all registered cells for view-based table view identifiers.
      
      Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.

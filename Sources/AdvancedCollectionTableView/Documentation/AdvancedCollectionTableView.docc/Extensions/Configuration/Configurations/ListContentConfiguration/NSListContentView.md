@@ -4,16 +4,16 @@
 
 ### Creating a list content view
 
-- ``NSListContentView/init(configuration:)``
+- ``init(configuration:)``
 
 ### Managing the content configuration
 
-- ``NSListContentView/configuration``
+- ``configuration``
 
 ### Determining configuration support
 
-- ``NSListContentView/supports(_:)``
+- ``supports(_:)``
 
 ### Managing the layout
 
-- ``NSListContentView/layout()``
+- ``layout()``

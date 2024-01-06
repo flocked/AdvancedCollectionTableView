@@ -62,15 +62,10 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     
     var animationDuration: TimeInterval? {
         switch self {
-        case .animated(let duration): return (duration != Self.noAnimationDuration) ? duration : nil
-        default: return nil
-        }
-    }
-    
-    var isAnimating: Bool {
-        switch self {
-        case .animated(_): return true
-        default: return false
+        case .animated(let duration):
+            return (duration != Self.noAnimationDuration) ? duration : nil
+        default:
+            return nil
         }
     }
 }

@@ -50,14 +50,14 @@ public struct TextProperties {
      */
     public var isEditable: Bool = false
     /**
-     The edit handler that gets called when editing of the text ended.
+     The handler that gets called when editing of the text ended.
      
      It only gets called, if `isEditable` is true.
      */
     public var onEditEnd: ((String)->())? = nil
     
     /**
-     Handler that determines whether the edited string is valid.
+     The Handler that determines whether the edited string is valid.
      
      It only gets called, if `isEditable` is true.
      */

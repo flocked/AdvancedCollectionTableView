@@ -122,8 +122,8 @@ extension NSTableCellView {
     }
     
     func updateContentConfigurationStyle() {
-        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableView = tableView, contentConfiguration.tableViewStyle != tableView.effectiveStyle {
-            self.contentConfiguration = contentConfiguration.tableViewStyle(tableView.effectiveStyle)
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableViewStyle = tableView?.effectiveStyle, contentConfiguration.tableViewStyle != tableViewStyle {
+            self.contentConfiguration = contentConfiguration.applyTableViewStyle(tableViewStyle)
         }
     }
     

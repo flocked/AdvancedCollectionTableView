@@ -4,7 +4,7 @@
 
 ### Snapshot applying options
 
-- ``NSDiffableDataSourceSnapshotApplyOption/animated``
-- ``NSDiffableDataSourceSnapshotApplyOption/animated(duration:)``
-- ``NSDiffableDataSourceSnapshotApplyOption/withoutAnimation``
-- ``NSDiffableDataSourceSnapshotApplyOption/usingReloadData``
+- ``animated``
+- ``animated(duration:)``
+- ``withoutAnimation``
+- ``usingReloadData``
