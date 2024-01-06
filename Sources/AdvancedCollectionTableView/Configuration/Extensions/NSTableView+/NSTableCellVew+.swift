@@ -230,6 +230,7 @@ extension NSTableCellView {
             tableCellObserver = observeChanges(for: \.superview, handler: {old, new in
                 if self.contentConfiguration is NSListContentConfiguration {
                     self.tableView?.usesAutomaticRowHeights = true
+                    self.rowView?.needsAutomaticRowHeights = true
                 }
                 self.updateContentConfigurationStyle()
                 self.rowView?.observeTableRowView()
