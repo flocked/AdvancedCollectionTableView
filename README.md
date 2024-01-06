@@ -102,6 +102,16 @@ Any item that has been registered via  `ItemRegistration`, or by class using `re
 collectionView.reconfigureItems(at: indexPaths)
 ```
 
+ ## NSTableView register NSTableCellView by Class
+
+Apple only allows registering `NSTableCellView` using `NSNib`. This framework lets you register table cell class.
+
+```swift
+tableView.register(NSTableCellView.self)
+
+let dequeuedTableCell = tableView.makeView(for: NSTableCellView.self)
+```
+
 ## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
 
 `allowsDeleting` enables deleting of items and rows via backspace.
@@ -159,6 +169,7 @@ NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selec
 There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
 
 - NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`
+
 ```swift
 collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 ```
