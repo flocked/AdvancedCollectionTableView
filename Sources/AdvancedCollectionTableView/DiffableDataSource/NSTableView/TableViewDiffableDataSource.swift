@@ -15,7 +15,7 @@ import FZSwiftUtils
  The diffable data source provides:
  - Reordering items by enabling ``allowsReordering``.
  - Deleting items by enabling  ``allowsDeleting``.
- - Quicklooking of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Quicklook previews of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
  
@@ -40,17 +40,12 @@ import FZSwiftUtils
  - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
-    
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section,  Item>
-    typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Item.ID>
-    typealias DataSoure = NSTableViewDiffableDataSource<Section.ID,  Item.ID>
-    
+        
     let tableView: NSTableView
-    var dataSource: DataSoure!
-    var currentSnapshot: Snapshot = Snapshot()
+    var dataSource: NSTableViewDiffableDataSource<Section.ID,  Item.ID>!
+    var currentSnapshot = NSDiffableDataSourceSnapshot<Section,  Item>()
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
-    var previousSelectedIDs: [Item.ID] = []
     var keyDownMonitor: Any? = nil
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredRowObserver: NSKeyValueObservation? = nil
@@ -273,11 +268,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
-        updateSectionHeaderRows()
+        updateSectionRowIndexes()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
         
-    func updateSectionHeaderRows() {
+    func updateSectionRowIndexes() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
         var row = 0
@@ -352,7 +347,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         self.tableView = tableView
         super.init()
         
-        self.dataSource = DataSoure(tableView: self.tableView, cellProvider: {
+        self.dataSource = .init(tableView: self.tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
             return cellProvider(tableview, tablecolumn, row, item)
@@ -360,9 +355,9 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         
         delegateBridge = DelegateBridge(self)
         tableView.registerForDraggedTypes([.itemID])
-        // self.tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-        tableView.delegate = delegateBridge
     }
     
     /// A closure that configures and returns a cell view for a table view from its diffable data source.

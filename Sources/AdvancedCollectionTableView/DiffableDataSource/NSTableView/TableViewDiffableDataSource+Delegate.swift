@@ -16,7 +16,7 @@ extension TableViewDiffableDataSource {
         init(_ dataSource: TableViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
-            self.dataSource.tableView.delegate = self
+            dataSource.tableView.delegate = self
         }
         
         var previousSelectedIDs: [Item.ID] = []

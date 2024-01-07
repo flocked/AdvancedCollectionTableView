@@ -12,6 +12,7 @@ extension CollectionViewDiffableDataSource {
     class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
         weak var dataSource: CollectionViewDiffableDataSource!
+        var draggingIndexPaths = Set<IndexPath>()
         
         init(_ dataSource: CollectionViewDiffableDataSource) {
             self.dataSource = dataSource
@@ -33,7 +34,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation operation: NSDragOperation) {
-            self.dataSource.draggingIndexPaths = []
+            draggingIndexPaths = []
         }
         
         func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
@@ -59,7 +60,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
-            dataSource.draggingIndexPaths = indexPaths
+            draggingIndexPaths = indexPaths
         }
         
         func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
@@ -70,8 +71,8 @@ extension CollectionViewDiffableDataSource {
         }
         
         func internalDrag(_ collectionView: NSCollectionView, draggingInfo: NSDraggingInfo, indexPath: IndexPath) {
-            if (self.dataSource.draggingIndexPaths.isEmpty == false) {
-                if let transaction = self.dataSource.movingTransaction(at: Array(self.dataSource.draggingIndexPaths), to: indexPath) {
+            if draggingIndexPaths.isEmpty == false {
+                if let transaction = self.dataSource.movingTransaction(at: Array(draggingIndexPaths), to: indexPath) {
                     let selectedItems = dataSource.selectedElements
                     self.dataSource.reorderingHandlers.willReorder?(transaction)
                     self.dataSource.apply(transaction.finalSnapshot)

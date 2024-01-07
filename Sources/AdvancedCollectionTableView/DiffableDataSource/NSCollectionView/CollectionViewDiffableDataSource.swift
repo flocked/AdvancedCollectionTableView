@@ -17,7 +17,7 @@ import QuickLookUI
  The diffable data source provides:
  - Reordering elements by enabling ``allowsReordering``.
  - Deleting elements by enabling  ``allowsDeleting``.
- - Quicklooking elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Quicklook previews of elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - A right click menu for selected elements via ``menuProvider``.
  
  __It includes handlers for:__
@@ -44,18 +44,13 @@ import QuickLookUI
  - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source. 
  */
 public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
-    
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Element>
-    typealias InternalSnapshot = NSDiffableDataSourceSnapshot<Section.ID,  Element.ID>
-    typealias DataSoure = NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>
-    
+        
     weak var collectionView: NSCollectionView!
-    var dataSource: DataSoure!
+    var dataSource: NSCollectionViewDiffableDataSource<Section.ID,  Element.ID>!
     var delegateBridge: DelegateBridge!
-    var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
-    var currentSnapshot: Snapshot = Snapshot()
-    var draggingIndexPaths = Set<IndexPath>()
-    var previousDisplayingItems = [Element]()
+    var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
+    var previousDisplayingItems = [Element.ID]()
+    var magnifyGestureRecognizer: NSMagnificationGestureRecognizer? = nil
     var rightDownMonitor: NSEvent.Monitor? = nil
     var hoveredItemObserver: NSKeyValueObservation? = nil
     
@@ -206,15 +201,22 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     
     @objc func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
-        let displayingItems = self.displayingElements
-        let added = displayingItems.filter({previousDisplayingItems.contains($0) == false})
-        let removed = previousDisplayingItems.filter({displayingItems.contains($0) == false})
+        let displayingItems = self.displayingElements.ids
         
-        if (added.isEmpty == false) {
-            displayHandlers.isDisplaying?(added)
+        if let isDisplaying = displayHandlers.isDisplaying {
+            let added = displayingItems.filter({previousDisplayingItems.contains($0) == false})
+            let addedElements = elements[ids: added]
+            if addedElements.isEmpty == false {
+                isDisplaying(addedElements)
+            }
         }
-        if (removed.isEmpty == false) {
-            displayHandlers.didEndDisplaying?(removed)
+        
+        if let didEndDisplaying = displayHandlers.didEndDisplaying {
+            let removed = previousDisplayingItems.filter({displayingItems.contains($0) == false})
+            let removedElements = elements[ids: removed]
+            if removedElements.isEmpty == false {
+                didEndDisplaying(removedElements)
+            }
         }
         previousDisplayingItems = displayingItems
     }
@@ -304,7 +306,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         self.collectionView = collectionView
         super.init()
         
-        dataSource = DataSoure(collectionView: self.collectionView, itemProvider: {
+        dataSource = .init(collectionView: self.collectionView, itemProvider: {
             [weak self] collectionView, indePath, itemID in
             
             guard let self = self, let item = self.elements[id: itemID] else { return nil }
@@ -315,15 +317,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                guard let self = self else { return nil }
                return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
-                
-        collectionView.postsFrameChangedNotifications = false
-        collectionView.postsBoundsChangedNotifications = false
-        
+                 
+        delegateBridge = DelegateBridge(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         collectionView.registerForDraggedTypes([.itemID])
-        collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
-        collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
-        delegateBridge = DelegateBridge(self)
+        // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
+        // collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
     }
     
     /**
