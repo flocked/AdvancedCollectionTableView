@@ -7,12 +7,13 @@
 
 import AppKit
 import FZUIKit
+import FZSwiftUtils
 
 extension CollectionViewDiffableDataSource {
     class DelegateBridge: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         
         weak var dataSource: CollectionViewDiffableDataSource!
-        var draggingIndexPaths = Set<IndexPath>()
+        var draggingIndexPaths: Set<IndexPath> = []
         
         init(_ dataSource: CollectionViewDiffableDataSource) {
             self.dataSource = dataSource
