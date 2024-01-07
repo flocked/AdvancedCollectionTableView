@@ -23,8 +23,8 @@ extension NSItemContentView {
         var widthConstraint: NSLayoutConstraint? = nil
         
         func updateBadge() {
-            borderColor = properties._resolvedBorderColor
-            borderWidth = properties.borderWidth
+            border.color = properties._resolvedBorderColor
+            border.width = properties.borderWidth
             cornerRadius = properties.cornerRadius
             backgroundColor = properties._resolvedBackgroundColor
             configurate(using: properties.shadow, type: .outer)

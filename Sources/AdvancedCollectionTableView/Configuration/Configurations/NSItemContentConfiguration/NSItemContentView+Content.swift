@@ -298,8 +298,8 @@ extension NSItemContentView {
         func updateConfiguration() {
             backgroundColor = contentProperties._resolvedBackgroundColor
             visualEffect = contentProperties.visualEffect
-            containerView.borderColor = contentProperties._resolvedBorderColor
-            containerView.borderWidth = contentProperties.resolvedBorderWidth
+            containerView.border.color = contentProperties._resolvedBorderColor
+            containerView.border.width = contentProperties.resolvedBorderWidth
             
             cornerRadius = contentProperties.cornerRadius
             containerView.cornerRadius = contentProperties.cornerRadius
