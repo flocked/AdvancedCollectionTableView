@@ -92,11 +92,14 @@ extension NSItemContentView {
         }
         
         var previousFrameSize: CGSize = .zero
+        
         override func layout() {
             super.layout()
             invalidateIntrinsicContentSize()
             containerView.frame.size = bounds.size
             imageView.frame.size = bounds.size
+            view?.frame.size = bounds.size
+            overlayView?.frame.size = bounds.size
             /*
              if let imageSize = image?.size, contentProperties.imageScaling.shouldResize {
              var size = frame.size
