@@ -23,6 +23,9 @@ class SidebarViewController: NSViewController {
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
+        if sidebarItem.isFavorite {
+            configuration.badge = .symbolImage("star.fill", color: .systemYellow, backgroundColor: nil)
+        }
         tableCell.contentConfiguration = configuration
     }
     
@@ -35,6 +38,7 @@ class SidebarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.floatsGroupRows = false
         tableView.dataSource = dataSource
         
         // Enables reordering of rows via drag and drop.
@@ -42,14 +46,25 @@ class SidebarViewController: NSViewController {
         // Deleting of selected rows via backspace.
         dataSource.allowsDeleting = true
                 
-        /// Row action for swiping right to delete.
+        /// Swipe row actions for deleting and favoriting items.
         dataSource.rowActionProvider = { item, edge in
-            guard edge == .trailing else { return [] }
-           return [NSTableViewRowAction(style: .destructive, title: "Delete", handler: { rowedge, value in
-                var currentSnapshot = self.dataSource.snapshot()
-                currentSnapshot.deleteItems([item])
-                self.dataSource.apply(currentSnapshot, .animated)
-            })]
+            if edge == .leading {
+                return [NSTableViewRowAction(
+                    style: .regular, title: "",
+                    systemSymbol: item.isFavorite ?  "star" : "star.fill",
+                    color: item.isFavorite ? .systemGray : .systemYellow) { _,_ in
+                    item.isFavorite = !item.isFavorite
+                    self.dataSource.reloadItems([item])
+                    self.tableView.rowActionsVisible = false
+                 }]
+            } else {
+                return [NSTableViewRowAction(
+                    style: .destructive, title: "", systemSymbol: "trash.fill") { _,_ in
+                    var currentSnapshot = self.dataSource.snapshot()
+                    currentSnapshot.deleteItems([item])
+                    self.dataSource.apply(currentSnapshot, .animated)
+                }]
+            }
         }
         
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)

@@ -498,6 +498,13 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
     }
     
+    /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
+    public func reloadItems(_ items: [Item]) {
+        let rows = IndexSet(items.compactMap({row(for:$0)}))
+        let columns = IndexSet((0..<tableView.numberOfColumns).compactMap({$0}))
+        tableView.reloadData(forRowIndexes: rows, columnIndexes: columns)
+    }
+    
     /// An array of items that are visible.
     func visibleItems() -> [Item] {
         tableView.visibleRowIndexes().compactMap({ item(forRow: $0) })

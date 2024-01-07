@@ -108,30 +108,54 @@ public extension NSListContentConfiguration {
             
         }
         
-        /// A text badge.
-        public static func text(_ text: String, font: NSFont = .body, color: NSColor = .controlAccentColor) -> Badge {
+        /**
+         A badge displaying a text.
+         
+         - Parameters:
+            - text: The text of the badge.
+            - font: The font of the text. The default value is `body`.
+            - color: The color of the text. The default value is `white`.
+            - backgroundColor: The background color of the badge. The default value is `controlAccentColor`.
+         */
+        public static func text(_ text: String, font: NSFont = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor) -> Badge {
             var badge = Badge()
             badge.text = text
             badge.font = font
-            badge.backgroundColor = color
+            badge.color = color
+            badge.backgroundColor = backgroundColor
             return badge
         }
         
-        /// A badge displaying an image.
-        public static func image(_ image: NSImage, color: NSColor = .controlAccentColor) -> Badge {
+        /**
+         A badge displaying an image.
+         
+         - Parameters:
+            - image: The image of the badge.
+            - backgroundColor: The background color of the badge. The default value is `controlAccentColor`.
+         */
+        public static func image(_ image: NSImage, backgroundColor: NSColor? = .controlAccentColor) -> Badge {
             var badge = Badge()
             badge.image = image
-            badge.backgroundColor = color
+            badge.backgroundColor = backgroundColor
             return badge
         }
         
-        /// A badge displaying a symbol image.
-        public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor = .controlAccentColor) -> Badge? {
+        /**
+         A badge displaying a symbol image.
+         
+         - Parameters:
+            - symbolName: The name of the symbol image.
+            - textStyle: The text style for the symbol image. The default value is `caption1`.
+            - color: The color of the symbol image. The default value is `white`.
+            - backgroundColor: The background color of the badge. The default value is `controlAccentColor`.
+         */
+        public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor) -> Badge? {
             guard let image = NSImage(systemSymbolName: symbolName) else { return nil }
             var badge = Badge()
             badge.image = image
+            badge.color = color
             badge.imageProperties.symbolConfiguration = .font(textStyle)
-            badge.backgroundColor = color
+            badge.backgroundColor = backgroundColor
             return badge
         }
         

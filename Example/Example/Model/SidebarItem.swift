@@ -8,10 +8,16 @@
 import Foundation
 import FZSwiftUtils
 
-public struct SidebarItem: Hashable, Identifiable {
+class SidebarItem: NSObject, Identifiable {
     public let id = UUID()
     public let title: String
     public let symbolName: String
+    public var isFavorite: Bool = false
+    
+    public init(title: String, symbolName: String) {
+        self.title = title
+        self.symbolName = symbolName
+    }
     
     public static var sampleItems1: [SidebarItem] {
         [SidebarItem(title: "Person", symbolName: "person"),
