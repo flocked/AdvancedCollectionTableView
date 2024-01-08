@@ -10,7 +10,7 @@
 - ``sidebarHeader(imageColor:)``
 - ``sidebarLarge(imageColor:)``
 - ``text(_:)``
-- ``editableText(_:placeholderText:onTextEditEnd:)``
+- ``editableText(_:placeholderText:onTextEditEnd:stringValidation:)``
 
 
 ### Customizing content

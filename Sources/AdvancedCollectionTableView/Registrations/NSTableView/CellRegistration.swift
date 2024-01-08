@@ -104,6 +104,10 @@ public extension NSTableView {
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
+            if tableView.isReconfiguratingRows, let columnIndex = tableView.tableColumns.firstIndex(of: tableColumn), let existingCell = tableView.view(atColumn: columnIndex, row: row, makeIfNecessary: false) as? Cell {
+                self.handler(existingCell, tableColumn, row, item)
+                return existingCell
+            }
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, item)
                 return cell
@@ -117,6 +121,11 @@ public extension NSTableView {
                 return nil
             }
             let item = item as! Item
+            
+            if tableView.isReconfiguratingRows, let columnIndex = tableView.tableColumns.firstIndex(of: tableColumn), let existingCell = tableView.view(atColumn: columnIndex, row: row, makeIfNecessary: false) as? Cell {
+                self.handler(existingCell, tableColumn, row, item)
+                return existingCell
+            }
             if let cell = tableView.makeView(withIdentifier: self.identifier, owner: nil) as? Cell {
                 self.handler(cell, tableColumn, row, item)
                 return cell

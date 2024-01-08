@@ -5,9 +5,9 @@
 ### Creating a badge
 
 - ``init()``
-- ``text(_:font:color:)``
-- ``image(_:color:)``
-- ``symbolImage(_:textStyle:color:)``
+- ``text(_:font:color:backgroundColor:)``
+- ``image(_:backgroundColor:)``
+- ``symbolImage(_:textStyle:color:backgroundColor:)``
 
 ### Configurating badge
 

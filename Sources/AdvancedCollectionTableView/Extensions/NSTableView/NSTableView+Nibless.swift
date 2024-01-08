@@ -52,7 +52,10 @@ extension NSTableView {
      - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
      */
     public func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type) -> TableCellView? {
-        self.makeView(withIdentifier: .init(cellClass), owner: nil) as? TableCellView
+        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) as? TableCellView {
+            return cell
+        }
+        return self.makeView(withIdentifier: .init(cellClass), owner: nil) as? TableCellView
     }
     
     /**
@@ -73,7 +76,10 @@ extension NSTableView {
      - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
      */
     public func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> TableCellView? {
-        self.makeView(withIdentifier: identifier, owner: nil) as? TableCellView
+        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) as? TableCellView {
+            return cell
+        }
+        return self.makeView(withIdentifier: identifier, owner: nil) as? TableCellView
     }
     
     /**

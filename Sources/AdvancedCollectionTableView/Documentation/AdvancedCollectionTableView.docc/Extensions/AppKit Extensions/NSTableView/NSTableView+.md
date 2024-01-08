@@ -25,3 +25,7 @@ Extensions for `NSTableView`.
 
 - ``AppKit/NSTableView/SectionHeaderRegistration``
 - ``AppKit/NSTableView/makeSectionHeaderView(using:row:section:)``
+
+### Reloading content
+
+- ``AppKit/NSTableView/reconfigureRows(at:)``
