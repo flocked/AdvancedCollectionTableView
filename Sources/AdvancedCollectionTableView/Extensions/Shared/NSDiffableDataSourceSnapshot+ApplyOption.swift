@@ -63,7 +63,10 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     var animationDuration: TimeInterval? {
         switch self {
         case .animated(let duration):
-            return (duration != Self.noAnimationDuration) ? duration : nil
+            guard duration != Self.noAnimationDuration else { return nil }
+            guard let currentEvent = NSApplication.shared.currentEvent else { return duration }
+            let flags = currentEvent.modifierFlags.intersection([.shift, .option, .control, .command])
+            return duration * (flags == .shift ? 10 : 1)
         default:
             return nil
         }

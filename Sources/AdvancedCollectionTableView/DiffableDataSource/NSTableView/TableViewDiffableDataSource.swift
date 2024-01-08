@@ -9,6 +9,7 @@ import AppKit
 import FZUIKit
 import FZQuicklook
 import FZSwiftUtils
+
 /**
  A `NSTableViewDiffableDataSource` with additional functionality.
  
@@ -413,7 +414,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         return nil
     }
             
-    // MARK: - Elements
+    // MARK: - Items
     
     /// All current items in the collection view.
     public var items: [Item] { currentSnapshot.itemIdentifiers }

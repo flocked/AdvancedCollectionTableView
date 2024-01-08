@@ -51,7 +51,7 @@ class SidebarViewController: NSViewController {
             if edge == .leading {
                 return [NSTableViewRowAction(
                     style: .regular, title: "",
-                    systemSymbol: item.isFavorite ?  "star" : "star.fill",
+                    symbolName: item.isFavorite ?  "star" : "star.fill",
                     color: item.isFavorite ? .systemGray : .systemYellow) { _,_ in
                     item.isFavorite = !item.isFavorite
                     self.dataSource.reloadItems([item])
@@ -59,7 +59,7 @@ class SidebarViewController: NSViewController {
                  }]
             } else {
                 return [NSTableViewRowAction(
-                    style: .destructive, title: "", systemSymbol: "trash.fill") { _,_ in
+                    style: .destructive, title: "", symbolName: "trash.fill") { _,_ in
                     var currentSnapshot = self.dataSource.snapshot()
                     currentSnapshot.deleteItems([item])
                     self.dataSource.apply(currentSnapshot, .animated)
