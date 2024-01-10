@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  EditingContentView.swift
+//
 //
 //  Created by Florian Zand on 28.12.23.
 //

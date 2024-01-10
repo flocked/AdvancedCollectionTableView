@@ -1,6 +1,6 @@
 //
 //  Section.swift
-//  
+//
 //
 //  Created by Florian Zand on 22.06.23.
 //
@@ -13,6 +13,6 @@ public enum Section: String, Hashable, Identifiable {
     case section3 = "Section 3"
 
     public var id: String {
-        return rawValue
+        rawValue
     }
 }

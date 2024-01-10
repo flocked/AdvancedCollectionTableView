@@ -1,6 +1,6 @@
 //
 //  NSItemContentConfiguration+Content.swift
-//  
+//
 //
 //  Created by Florian Zand on 07.08.23.
 //
@@ -13,7 +13,6 @@ import SwiftUI
 public extension NSItemContentConfiguration {
     /// Properties that affect the content that displays the image and view.
     struct ContentProperties: Hashable {
-
         /// The corner radius of the content.
         public var cornerRadius: CGFloat = 10.0
 
@@ -39,18 +38,20 @@ public extension NSItemContentConfiguration {
 
         /**
          The scaling of the content view.
-         
+
          The default is 1.0, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
          */
-        public var scaleTransform: CGPoint = CGPoint(x: 1, y: 1)
+        public var scaleTransform: CGPoint = .init(x: 1, y: 1)
 
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -67,13 +68,16 @@ public extension NSItemContentConfiguration {
         public var borderWidth: CGFloat = 0.0 {
             didSet { resolvedBorderWidth = state.borderWidth ?? borderWidth }
         }
+
         /// The border color.
         public var borderColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the border color.
         public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -89,7 +93,7 @@ public extension NSItemContentConfiguration {
             var shadowColor: NSColor?
         }
 
-        var state: State = State() {
+        var state: State = .init() {
             didSet {
                 resolvedBorderWidth = state.borderWidth ?? borderWidth
                 updateResolvedColors()
@@ -106,7 +110,7 @@ public extension NSItemContentConfiguration {
         var resolvedBorderWidth: CGFloat = 0.0
 
         /// Properties for configuring the image.
-        public var imageProperties: ImageProperties = ImageProperties()
+        public var imageProperties: ImageProperties = .init()
 
         /// The shadow properties.
         public var shadow: ShadowConfiguration = .black()
@@ -125,16 +129,13 @@ public extension NSItemContentConfiguration {
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
 
-        init() {
-
-        }
-
+        init() {}
     }
 }
 
-extension NSItemContentConfiguration.ContentProperties {
+public extension NSItemContentConfiguration.ContentProperties {
     /// Properties that affect the image of the content.
-    public struct ImageProperties: Hashable {
+    struct ImageProperties: Hashable {
         /// The scaling of the image.
         public enum ImageScaling {
             /// The image is resized to fit the bounds size, while still preserving the aspect ratio of the image.
@@ -188,6 +189,5 @@ extension NSItemContentConfiguration.ContentProperties {
             }
             return nil
         }
-
     }
 }

@@ -6,9 +6,9 @@
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
 public extension NSListContentConfiguration {
     /// Properties that affect the image.
@@ -38,7 +38,7 @@ public extension NSListContentConfiguration {
         public enum Scaling: Hashable {
             /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
             case fit
-         //   case fill
+            //   case fill
             /// The image is resized to fit the entire bounds rectangle.
             case resize
             /// The image isn't resized.
@@ -47,7 +47,7 @@ public extension NSListContentConfiguration {
             var imageScaling: NSImageScaling {
                 switch self {
                 case .fit: return .scaleProportionallyUpOrDown
-             //   case .fill: return .scaleProportionallyUpOrDown
+                //   case .fill: return .scaleProportionallyUpOrDown
                 case .resize: return .scaleAxesIndependently
                 case .none: return .scaleNone
                 }
@@ -56,7 +56,7 @@ public extension NSListContentConfiguration {
             var contentsGravity: CALayerContentsGravity {
                 switch self {
                 case .fit: return .resizeAspect
-            //    case .fill: return .resizeAspectFill
+                //    case .fill: return .resizeAspectFill
                 case .resize: return .resize
                 case .none: return .center
                 }
@@ -118,9 +118,9 @@ public extension NSListContentConfiguration {
 
             var alignment: NSLayoutConstraint.Attribute {
                 switch self {
-                case .top(let vertical), .bottom(let vertical):
+                case let .top(vertical), let .bottom(vertical):
                     return vertical.alignment
-                case .leading(let horizonal), .trailing(let horizonal):
+                case let .leading(horizonal), let .trailing(horizonal):
                     return horizonal.alignment
                 }
             }
@@ -147,11 +147,13 @@ public extension NSListContentConfiguration {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
@@ -163,11 +165,13 @@ public extension NSListContentConfiguration {
 
         /// The background color.
         public var backgroundColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -182,11 +186,13 @@ public extension NSListContentConfiguration {
 
         /// The border color of the image.
         public var borderColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer of the border color.
         public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -214,9 +220,7 @@ public extension NSListContentConfiguration {
         /// The position of the image.
         public var position: Position = .leading(.center)
 
-        init() {
-
-        }
+        init() {}
 
         var _resolvedTintColor: NSColor?
         var _resolvedBorderColor: NSColor?

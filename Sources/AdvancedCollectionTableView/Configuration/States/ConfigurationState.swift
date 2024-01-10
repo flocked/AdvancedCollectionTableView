@@ -1,6 +1,6 @@
 //
 //  ConfigurationState.swift
-//  
+//
 //
 //  Created by Florian Zand on 12.10.23.
 //
@@ -14,5 +14,5 @@ protocol ConfigurationState: NSConfigurationState {
     var isHovered: Bool { get }
 }
 
-extension NSItemConfigurationState: ConfigurationState { }
-extension NSListConfigurationState: ConfigurationState { }
+extension NSItemConfigurationState: ConfigurationState {}
+extension NSListConfigurationState: ConfigurationState {}

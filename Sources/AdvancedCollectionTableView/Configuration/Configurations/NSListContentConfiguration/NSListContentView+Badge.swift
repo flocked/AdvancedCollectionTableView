@@ -1,6 +1,6 @@
 //
 //  NSListContentView+Badge.swift
-//  
+//
 //
 //  Created by Florian Zand on 18.08.23.
 //
@@ -79,7 +79,8 @@ extension NSListContentView {
             return stackView
         }()
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -100,6 +101,7 @@ extension NSListContentView {
                 updateProperties()
             }
         }
+
         init(properties: NSListContentConfiguration.Badge.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
@@ -134,7 +136,8 @@ extension NSListContentView {
             invalidateIntrinsicContentSize()
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

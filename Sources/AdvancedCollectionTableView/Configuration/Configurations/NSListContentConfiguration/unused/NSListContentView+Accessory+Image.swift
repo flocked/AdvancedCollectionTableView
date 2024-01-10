@@ -1,5 +1,5 @@
 //
-//  NSListContentConfiguration+Accessory+Image.swift
+//  NSListContentView+Accessory+Image.swift
 //
 //
 //  Created by Florian Zand on 13.08.23.
@@ -30,6 +30,7 @@ extension NSListContentConfiguration.AccessoryProperties {
                 }
             }
         }
+
         var scaling: ImageScaling = .scaleToFit
         var tintColor: NSColor?
         var symbolConfiguration: ImageSymbolConfiguration?
@@ -42,14 +43,13 @@ extension Image {
     @ViewBuilder
     func configurate(using properties: NSListContentConfiguration.AccessoryProperties.ImageProperties) -> some View {
         if properties.scaling.isResizable {
-            self.resizable()
+            resizable()
                 .foregroundColor(properties.tintColor?.swiftUI)
                 .symbolConfiguration(tintColor: properties.tintColor?.swiftUI, configuration: properties.symbolConfiguration)
                 .aspectRatio(contentMode: properties.scaling.contentMode ?? .fit)
                 .frame(maxWidth: properties.maxWidth, maxHeight: properties.maxHeight)
         } else {
-            self
-                .foregroundColor(properties.tintColor?.swiftUI)
+            foregroundColor(properties.tintColor?.swiftUI)
                 .frame(maxWidth: properties.maxWidth, maxHeight: properties.maxHeight)
         }
     }

@@ -1,14 +1,14 @@
 //
-//  NSListContentConfiguration+Accessory.swift
+//  NSListContentView+Accessory.swift
 //
 //
 //  Created by Florian Zand on 19.06.23.
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
 extension NSListContentConfiguration {
     /// Properties that affect the cell content configuration’s image.
@@ -65,7 +65,7 @@ extension NSListContentConfiguration {
 
         // MARK: Customizing layout
 
-        /// The padding to 
+        /// The padding to
         public var padding: CGFloat = 4.0
         /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 8.0
@@ -87,7 +87,7 @@ extension NSListContentConfiguration {
         }
 
         var hasContent: Bool {
-            return image != nil
+            image != nil
         }
 
         var isVisible: Bool {

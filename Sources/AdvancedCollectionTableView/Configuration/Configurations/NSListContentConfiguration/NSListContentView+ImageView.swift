@@ -15,7 +15,7 @@ extension NSListContentView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
-                    update()
+                update()
             }
         }
 
@@ -29,7 +29,7 @@ extension NSListContentView {
             var intrinsicContentSize = super.intrinsicContentSize
 
             if image?.isSymbolImage == true, properties.position.orientation == .horizontal {
-                intrinsicContentSize.width = (intrinsicContentSize.height*2.5).rounded(.towardZero)
+                intrinsicContentSize.width = (intrinsicContentSize.height * 2.5).rounded(.towardZero)
                 return intrinsicContentSize
             }
 
@@ -45,10 +45,11 @@ extension NSListContentView {
                 invalidateIntrinsicContentSize()
             }
         }
+
         var verticalConstraint: NSLayoutConstraint?
 
         func update() {
-            imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling.imageScaling
+            imageScaling = image?.isSymbolImage == true ? .scaleNone : properties.scaling.imageScaling
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             border.color = properties._resolvedBorderColor
             border.width = properties.borderWidth
@@ -67,7 +68,8 @@ extension NSListContentView {
             update()
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

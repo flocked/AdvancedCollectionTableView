@@ -34,14 +34,14 @@ extension NSCollectionView {
         if shouldObserve {
             if observingView == nil {
                 observingView = ObserverView()
-                addSubview(withConstraint: self.observingView!)
+                addSubview(withConstraint: observingView!)
                 observingView!.sendToBack()
                 observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     if windowIsKey == false {
                         self.hoveredIndexPath = nil
                     }
-                    self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
+                    self.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
                 }
 
                 observingView?.mouseHandlers.exited = { [weak self] _ in
@@ -77,10 +77,10 @@ extension NSCollectionView {
      get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
      set { set(associatedValue: newValue, key: "keyDownMonitor", object: self) }
  }
- 
+
  /**
   A Boolean value that indicates whether the receiver reacts to mouse events.
-  
+
   The value of this property is `true` if the receiver responds to mouse events; otherwise, `false`.
   */
  public var isEnabled: Bool {
@@ -106,12 +106,12 @@ extension NSCollectionView {
          self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
          }
  }
- 
+
  var firstResponderObserver: NSKeyValueObservation? {
      get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
      set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
  }
- 
+
  func setupCollectionViewFirstResponderObserver() {
      guard firstResponderObserver == nil else { return }
      firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in

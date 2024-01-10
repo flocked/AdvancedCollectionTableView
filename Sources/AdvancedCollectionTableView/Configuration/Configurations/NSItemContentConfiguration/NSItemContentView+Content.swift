@@ -1,6 +1,6 @@
 //
 //  NSItemContentView+Content.swift
-//  
+//
 //
 //  Created by Florian Zand on 07.08.23.
 //
@@ -14,13 +14,15 @@ extension NSItemContentView {
         typealias Badge = NSItemContentConfiguration.Badge
         var configuration: NSItemContentConfiguration {
             didSet { if oldValue != configuration {
-                updateConfiguration() } } }
-
-        var contentProperties: NSItemContentConfiguration.ContentProperties {
-            return configuration.contentProperties
+                updateConfiguration()
+            } }
         }
 
-        let imageView: ImageView = ImageView()
+        var contentProperties: NSItemContentConfiguration.ContentProperties {
+            configuration.contentProperties
+        }
+
+        let imageView: ImageView = .init()
         let containerView = NSView(frame: .zero)
         var badgeViews: [BadgeView] = []
 
@@ -59,17 +61,17 @@ extension NSItemContentView {
         }
 
         func updateBadges() {
-            let badges = configuration.badges.filter({$0.isVisible})
+            let badges = configuration.badges.filter(\.isVisible)
             if configuration.hasContent {
                 let badgeViewsNeeded = badges.count - badgeViews.count
                 if badgeViewsNeeded > 0 {
-                    for i in 0..<badgeViewsNeeded {
+                    for i in 0 ..< badgeViewsNeeded {
                         let badgeView = BadgeView(properties: badges[i])
                         badgeViews.append(badgeView)
                         addSubview(badgeView)
                     }
                 } else if badgeViewsNeeded < 0 {
-                    for _ in 0..<(-badgeViewsNeeded) {
+                    for _ in 0 ..< -badgeViewsNeeded {
                         badgeViews.last?.removeFromSuperview()
                         badgeViews.removeLast()
                     }
@@ -80,7 +82,7 @@ extension NSItemContentView {
                 }
                 layoutBadges()
             } else {
-                badgeViews.forEach({$0.removeFromSuperview()})
+                badgeViews.forEach { $0.removeFromSuperview() }
                 badgeViews.removeAll()
             }
         }
@@ -132,22 +134,22 @@ extension NSItemContentView {
              if let superviewWidth = superview?.frame.size.width {
              size.width = superviewWidth - configuration.margins.width
              }
-             
+
              if let maxWidth = contentProperties.maxWidth, size.width > maxWidth {
              intrinsicSize.width = maxWidth
              }
-             
+
              /*
               var newWidth: CGFloat? = nil
               var newHeight: CGFloat? = nil
               if let maxWidth = contentProperties.maxWidth, size.width > maxWidth {
               newWidth = maxWidth
               }
-              
+
               if let maxHeight = contentProperties.maxHeight, size.height > maxHeight {
               newHeight = maxHeight
               }
-              
+
               if newWidth != width || newHeight != height {
               width = newWidth
               height = newHeight
@@ -170,7 +172,7 @@ extension NSItemContentView {
         }
 
         func layoutBadges() {
-            let badges = configuration.badges.filter({$0.isVisible}).sorted(by: \.position.rawValue)
+            let badges = configuration.badges.filter(\.isVisible).sorted(by: \.position.rawValue)
             guard configuration.hasBadges, badges.count == badgeViews.count else { return }
             let badgeViews = badgeViews.sorted(by: \.properties.position.rawValue)
             for value in zip(badges, badgeViews) {
@@ -220,17 +222,17 @@ extension NSItemContentView {
             }
             if let imageSize = image?.size, contentProperties.imageProperties.scaling.shouldResize {
                 switch (contentProperties.maximumSize.width, contentProperties.maximumSize.height) {
-                case (.some(let maxWidth), .some(let maxHeight)):
+                case let (.some(maxWidth), .some(maxHeight)):
                     let width = min(maxWidth, size.width)
                     let height = min(maxHeight, size.height)
                     let imagesize = imageSize.scaled(toFit: CGSize(width, height))
                     intrinsicContentSize.width = imagesize.width
-                    intrinsicContentSize.height =  imagesize.height
+                    intrinsicContentSize.height = imagesize.height
                 case (.some(let maxWidth), nil):
                     let imagesize = imageSize.scaled(toWidth: min(maxWidth, size.width))
                     intrinsicContentSize.width = imagesize.width
                     intrinsicContentSize.height = imagesize.height
-                case (nil, .some(let maxHeight)):
+                case (nil, let .some(maxHeight)):
                     let imagesize = imageSize.scaled(toHeight: min(maxHeight, size.height))
                     intrinsicContentSize.width = imagesize.width
                     intrinsicContentSize.height = imagesize.height
@@ -241,7 +243,6 @@ extension NSItemContentView {
                 return intrinsicContentSize
             } else {
                 if let imageSize = image?.size, configuration.contentProperties.imageProperties.scaling == .none {
-
                     if imageSize.width < size.width {
                         intrinsicContentSize.width = imageSize.width
                     }
@@ -335,7 +336,8 @@ extension NSItemContentView {
             updateConfiguration()
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

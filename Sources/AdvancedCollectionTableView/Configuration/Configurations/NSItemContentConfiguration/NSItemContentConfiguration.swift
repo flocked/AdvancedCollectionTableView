@@ -1,6 +1,6 @@
 //
 //  NSItemContentConfiguration.swift
-//  
+//
 //
 //  Created by Florian Zand on 07.08.23.
 //
@@ -11,20 +11,20 @@ import FZUIKit
 
 /**
  A content configuration for a collection-based content view.
- 
+
  An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view item's via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own custom content view (``NSItemContentView``).
- 
+
  ```swift
  var content = NSItemContentConfiguration()
- 
+
  // Configure content.
  content.image = NSImage(named: "Mozart")
  content.text = "Mozart"
  content.secondaryText = "A genius composer"
- 
+
  // Customize appearance.
  content.textProperties.font = .body
- 
+
  collectionViewItem.contentConfiguration = content
  ```
  */
@@ -32,9 +32,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     // MARK: Creating item configurations
 
     /// Creates an item content configuration.
-    public init() {
-
-    }
+    public init() {}
 
     /// Creates an image item content configuration.
     public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
@@ -82,7 +80,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      The primary text.
-     
+
      If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
      */
     public var text: String? {
@@ -95,7 +93,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      An attributed variant of the primary text.
-     
+
      If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
      */
     public var attributedText: AttributedString? {
@@ -108,7 +106,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      The primary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
      */
     public var placeholderText: String? {
@@ -121,7 +119,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      An attributed variant of the primary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
      */
     public var attributedPlaceholderText: AttributedString? {
@@ -134,7 +132,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      The secondary text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
     public var secondaryText: String? {
@@ -147,7 +145,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      An attributed variant of the secondary text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
     public var secondaryAttributedText: AttributedString? {
@@ -160,7 +158,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      The secondary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
      */
     public var secondaryPlaceholderText: String? {
@@ -173,7 +171,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      An attributed variant of the secondary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
@@ -214,28 +212,28 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      Properties for configuring the content view that displays the `view` and `image`.
-     
+
      The properties only applies when there’s a `view` and/or `image`.
      */
-    public var contentProperties: ContentProperties = ContentProperties()
+    public var contentProperties: ContentProperties = .init()
 
     /**
      The padding between the content view that displays  the`image` and/or `view`  and text.
-     
+
      This value only applies when there’s both content (`image` and/or `view`) and text.
      */
     public var contentToTextPadding: CGFloat = 6.0
 
     /**
      The padding between the primary and secondary text.
-     
+
      This value only applies when there’s both a text and secondary text.
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
 
     /**
      The position of the content view that displays  the`image` and/or `view` next to the text.
-     
+
      This value only applies when there’s both content and text.
      */
     public var contentPosition: ContentPosition = .top
@@ -245,16 +243,16 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /**
      The scaling of the item.
-     
+
      The default is 1.0, which displays the item at it's original scale. A larger value will display the item at a larger, a smaller value at a smaller size.
      */
-    public var scaleTransform: CGPoint = CGPoint(x: 1.0, y: 1.0)
+    public var scaleTransform: CGPoint = .init(x: 1.0, y: 1.0)
 
     // MARK: Creating a content view
 
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & FZUIKit.NSContentView {
-        return NSItemContentView(configuration: self)
+        NSItemContentView(configuration: self)
     }
 
     // MARK: Updating the configuration
@@ -331,7 +329,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         }
 
         var orientation: NSUserInterfaceLayoutOrientation {
-            return (self == .top || self == .bottom) ? .vertical : .horizontal
+            (self == .top || self == .bottom) ? .vertical : .horizontal
         }
     }
 }
@@ -339,7 +337,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 /*
  func shouldRecalculateContentView(_ previous: Self) {
  let keyPaths: [PartialKeyPath<Self>] = [\.contentProperties.imageScaling.shouldResize, \.image, \.view, \.contentProperties.maxWidth, \.contentProperties.maxHeight]
- 
+
  contentProperties.imageScaling.shouldResize != previous.contentProperties.imageScaling.shouldResize ||
  image != previous.image
  }

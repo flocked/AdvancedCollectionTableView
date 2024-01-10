@@ -10,20 +10,19 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSTableRowView {
-
     // MARK: Configuring the content
 
     /**
      The current content configuration of the row.
-     
+
      Using a content configuration, you can obtain system default content styling for a variety of different row states. Create a content configuration with one of the default system styles, customize the configuration to match your row’s style as necessary, and assign the configuration to this property.
-     
+
      ```swift
      var contentConfiguration = NSBackgroundConfiguration()
-     
+
      // Set a nil background color to use the view's tint color.
      contentConfiguration.backgroundColor = nil
-     
+
      rowView.contentConfiguration = contentConfiguration
      ```
      */
@@ -38,9 +37,9 @@ extension NSTableRowView {
 
     /**
      A Boolean value that determines whether the row automatically updates its content configuration when its state changes.
-     
+
      When this value is true, the row automatically calls  `updated(for:)` on its ``contentConfiguration`` when the row’s ``configurationState`` changes, and applies the updated configuration back to the row. The default value is true.
-     
+
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
@@ -79,7 +78,7 @@ extension NSTableRowView {
 
     /**
      The type of block for handling updates to the row’s configuration using the current state.
-     
+
      - Parameters:
         - row: The table view row to configure.
         - state: The new state to use for updating the row’s configuration.
@@ -88,9 +87,9 @@ extension NSTableRowView {
 
     /**
      A block for handling updates to the row’s configuration using the current state.
-     
+
      A configuration update handler provides an alternative approach to overriding ``updateConfiguration(using:)`` in a subclass. Set a configuration update handler to update the cell’s configuration using the new state in response to a configuration state change:
-     
+
      ```swift
      rowView.configurationUpdateHandler = { rowView, state in
      var content = NSTableRowContentConfiguration.default().updated(for: state)
@@ -101,7 +100,7 @@ extension NSTableRowView {
      rowView.contentConfiguration = content
      }
      ```
-     
+
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
@@ -117,7 +116,7 @@ extension NSTableRowView {
 
     /**
      The current configuration state of the row.
-     
+
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
@@ -127,9 +126,9 @@ extension NSTableRowView {
 
     /**
      Informs the row to update its configuration for its current state.
-     
+
      You call this method when you need the row to update its configuration according to the current configuration state. The system calls this method automatically when the row’s ``configurationState`` changes, as well as in other circumstances that may require an update. The system might combine multiple requests into a single update.
-     
+
      If you add custom states to the row’s configuration state, make sure to call this method every time those custom states change.
      */
     @objc open func setNeedsUpdateConfiguration() {
@@ -147,21 +146,21 @@ extension NSTableRowView {
 
     /**
      Updates the row’s configuration using the current state.
-     
+
      Avoid calling this method directly. Instead, use ``setNeedsUpdateConfiguration()`` to request an update.
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = self.contentConfiguration, let contentView = contentView {
+        if let contentConfiguration = contentConfiguration, let contentView = contentView {
             contentView.configuration = contentConfiguration.updated(for: state)
         }
-        cellViews.forEach({$0.setNeedsUpdateConfiguration()})
+        cellViews.forEach { $0.setNeedsUpdateConfiguration() }
         configurationUpdateHandler?(self, state)
     }
 
     /**
      A Boolean value that specifies whether the row view is hovered.
-     
+
      A hovered row view has the mouse pointer on it.
      */
     @objc var isHovered: Bool {
@@ -184,7 +183,7 @@ extension NSTableRowView {
     }
 
     func setCellViewsNeedAutomaticUpdateConfiguration() {
-        cellViews.forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
+        cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
     }
 
     var rowObserver: KeyValueObserver<NSTableRowView>? {
@@ -198,22 +197,22 @@ extension NSTableRowView {
     }
 
     func observeTableRowView() {
-            guard rowObserver == nil else { return }
-            rowObserver = KeyValueObserver(self)
-            rowObserver?.add(\.isSelected) { old, new in
-                guard old != new else { return }
-                self.configurateContentView()
-                self.setNeedsAutomaticUpdateConfiguration()
-                self.setCellViewsNeedAutomaticUpdateConfiguration()
+        guard rowObserver == nil else { return }
+        rowObserver = KeyValueObserver(self)
+        rowObserver?.add(\.isSelected) { old, new in
+            guard old != new else { return }
+            self.configurateContentView()
+            self.setNeedsAutomaticUpdateConfiguration()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
+        }
+        rowObserver?.add(\.superview) { _, _ in
+            if self.needsAutomaticRowHeights {
+                self.tableView?.usesAutomaticRowHeights = true
             }
-            rowObserver?.add(\.superview) { _, _ in
-                if self.needsAutomaticRowHeights {
-                    self.tableView?.usesAutomaticRowHeights = true
-                }
-                self.tableView?.setupObservation()
-                self.setCellViewsNeedAutomaticUpdateConfiguration()
-            }
-            setNeedsUpdateConfiguration()
-            setCellViewsNeedAutomaticUpdateConfiguration()
+            self.tableView?.setupObservation()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
+        }
+        setNeedsUpdateConfiguration()
+        setCellViewsNeedAutomaticUpdateConfiguration()
     }
 }

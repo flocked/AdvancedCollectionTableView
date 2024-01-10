@@ -1,18 +1,16 @@
 //
-//  NSListContentConfiguration+AccessoryView.swift
-//  
+//  NSListContentView+AccessoryView.swift
+//
 //
 //  Created by Florian Zand on 18.08.23.
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
-class AccessoryView: NSView {
-
-}
+class AccessoryView: NSView {}
 
 extension AccessoryView {
     struct ContentView: View {
@@ -74,7 +72,6 @@ extension AccessoryView {
                     items
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-
             }
         }
 
@@ -130,6 +127,7 @@ struct ContentView_Previews: PreviewProvider {
         accessory.trailing.secondaryText = "Secondary"
         return accessory
     }
+
     static var previews: some View {
         AccessoryView.ContentView(accessory: accessory1)
             .frame(width: 300)
@@ -138,11 +136,10 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 @available(macOS 11.0, iOS 15.0, tvOS 15.0, watchOS 6.0, *)
- extension Text {
+extension Text {
     @ViewBuilder
     func configurateAlt(using properties: TextProperties) -> some View {
-        self
-            .font(Font(properties.font))
+        font(Font(properties.font))
             .foregroundColor(Color(properties.resolvedColor()))
             .lineLimit(properties.numberOfLines == 0 ? nil : properties.numberOfLines)
             .multilineTextAlignment(properties.alignment.swiftUIMultiline)

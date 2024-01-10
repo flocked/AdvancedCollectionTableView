@@ -1,6 +1,6 @@
 //
 //  TableViewDiffableDataSource+Delegate.swift
-//  
+//
 //
 //  Created by Florian Zand on 31.08.23.
 //
@@ -10,7 +10,6 @@ import FZUIKit
 
 extension TableViewDiffableDataSource {
     class DelegateBridge: NSObject, NSTableViewDelegate {
-
         weak var dataSource: TableViewDiffableDataSource!
 
         init(_ dataSource: TableViewDiffableDataSource) {
@@ -20,7 +19,7 @@ extension TableViewDiffableDataSource {
         }
 
         var previousSelectedIDs: [Item.ID] = []
-        public func tableViewSelectionDidChange(_ notification: Notification) {
+        public func tableViewSelectionDidChange(_: Notification) {
             guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
                 previousSelectedIDs = dataSource.selectedItems.ids
                 return
@@ -42,18 +41,18 @@ extension TableViewDiffableDataSource {
             previousSelectedIDs = selectedIDs
         }
 
-        public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+        public func tableView(_: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
             var proposedSelectionIndexes = proposedSelectionIndexes
-            dataSource.sectionRowIndexes.forEach({ proposedSelectionIndexes.remove($0) })
-            guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil  else {
+            dataSource.sectionRowIndexes.forEach { proposedSelectionIndexes.remove($0) }
+            guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil else {
                 return proposedSelectionIndexes
             }
             let selectedRows = Array(dataSource.tableView.selectedRowIndexes)
             let proposedRows = Array(proposedSelectionIndexes)
 
             let diff = selectedRows.difference(to: proposedRows)
-            let selectedItems = diff.added.compactMap({dataSource.item(forRow: $0)})
-            let deselectedItems = diff.removed.compactMap({dataSource.item(forRow: $0)})
+            let selectedItems = diff.added.compactMap { dataSource.item(forRow: $0) }
+            let deselectedItems = diff.removed.compactMap { dataSource.item(forRow: $0) }
 
             var selections: [Item] = []
             if !selectedItems.isEmpty {
@@ -64,7 +63,7 @@ extension TableViewDiffableDataSource {
                 selections += dataSource.selectionHandlers.shouldDeselect?(deselectedItems) ?? deselectedItems
             }
 
-            return IndexSet(selections.compactMap({dataSource.row(for: $0)}))
+            return IndexSet(selections.compactMap { dataSource.row(for: $0) })
         }
 
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -79,7 +78,7 @@ extension TableViewDiffableDataSource {
             dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
 
-        public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
+        public func tableView(_: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
             if let rowActionProvider = dataSource.rowActionProvider, let item = dataSource.item(forRow: row) {
                 return rowActionProvider(item, edge)
             }
@@ -100,7 +99,7 @@ extension TableViewDiffableDataSource {
             didResize(tableColumn, oldWidth)
         }
 
-        public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
+        public func tableView(_: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
             guard let tableColumn = dataSource.tableView.tableColumns[safe: columnIndex] else { return true }
             return dataSource.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
         }

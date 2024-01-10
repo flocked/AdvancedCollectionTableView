@@ -21,14 +21,14 @@ extension NSItemContentView {
 
         func updateText(_ text: String?, _ attributedText: AttributedString?) {
             if let attributedText = attributedText {
-                self.isHidden = false
-                self.attributedStringValue = NSAttributedString(attributedText)
+                isHidden = false
+                attributedStringValue = NSAttributedString(attributedText)
             } else if let text = text {
-                self.stringValue = text
-                self.isHidden = false
+                stringValue = text
+                isHidden = false
             } else {
-                self.stringValue = ""
-                self.isHidden = true
+                stringValue = ""
+                isHidden = true
             }
         }
 
@@ -89,19 +89,19 @@ extension NSItemContentView {
 
         override public func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
-            if isEditable && canBecome {
+            if isEditable, canBecome {
                 itemContentView?.isEditing = true
                 previousStringValue = stringValue
             }
             return canBecome
         }
 
-        public override func textDidBeginEditing(_ notification: Notification) {
+        override public func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
             itemContentView?.isEditing = true
         }
 
-        public override func textDidEndEditing(_ notification: Notification) {
+        override public func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
             previousStringValue = stringValue
             itemContentView?.isEditing = false
@@ -125,7 +125,8 @@ extension NSItemContentView {
             return false
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

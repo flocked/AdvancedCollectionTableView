@@ -5,51 +5,50 @@
 //  Created by Florian Zand on 28.12.23.
 //
 
+import AdvancedCollectionTableViewObjc
 import AppKit
 import FZSwiftUtils
 import FZUIKit
-import AdvancedCollectionTableViewObjc
 
 /**
  A structure that encapsulates a state for an individual element that appears in a list.
-    
+
  A list configuration state encompasses the common states that affect the appearance of the list element — states like selected, emphasized, or enabled. You can use it to update the appearance.
- 
+
  The configuration state is used with `NSTableCellView`, `NSTableRowView` and `NSTableSectionHeaderView`.
- 
+
  Typically, you don’t create a configuration state yourself. To obtain a configuration state either use the list element's `configurationUpdateHandler` or override its `updateConfiguration(using:)` method in a subclass and use the state parameter. Outside of this method, you can get the configuration state by using its `configurationState` property.
- 
+
  You can create your own custom states to add to a list configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSListConfigurationState: NSConfigurationState, Hashable {
-
     /// A Boolean value that indicates whether the list element is selected.
     public var isSelected: Bool = false
 
     /**
      A Boolean value that indicates whether the list element is enabled.
-     
+
      The value of this property is `true`, if it's table view `isEnabled` is `true`.
      */
     public var isEnabled: Bool = true
 
     /**
      A Boolean value that indicates whether the list element is in a hovered state.
-     
+
      The value of this property is `true`, if the mouse is hovering the element.
      */
     public var isHovered: Bool = false
 
     /**
      A Boolean value that indicates whether the list element is in an editing state.
-     
+
      The value of this property is `true`, if the text of a list or item content configuration is being edited.
      */
     public var isEditing: Bool = false
 
     /**
      A Boolean value that indicates whether the list element is in an emphasized state.
-     
+
      The value of this property is `true`, if it's window is key.
      */
     public var isEmphasized: Bool = false
@@ -70,7 +69,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
-        get { return customStates[key] }
+        get { customStates[key] }
         set { customStates[key] = newValue }
     }
 
@@ -80,7 +79,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
                 isEditing: Bool = false,
                 isEmphasized: Bool = false,
                 isNextSelected: Bool = false,
-                isPreviousSelected: Bool = false) {
+                isPreviousSelected: Bool = false)
+    {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isHovered = isHovered
@@ -97,8 +97,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          isEmphasized: Bool,
          isNextSelected: Bool,
          isPreviousSelected: Bool,
-         customStates: [NSConfigurationStateCustomKey: AnyHashable]
-    ) {
+         customStates: [NSConfigurationStateCustomKey: AnyHashable])
+    {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isHovered = isHovered
@@ -111,36 +111,35 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSListConfigurationState: ReferenceConvertible {
-
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSListConfigurationStateObjc
 
     public var description: String {
-                """
-                NSListConfigurationState(
-                    isSelected: \(isSelected)
-                    isEnabled: \(isEnabled)
-                    isHovered: \(isHovered)
-                    isEditing: \(isEditing)
-                    isEmphasized: \(isEmphasized)
-                    isNextSelected: \(isNextSelected)
-                    isPreviousSelected: \(isPreviousSelected)
-                    customStates: \(customStates)
-                )
-                """
+        """
+        NSListConfigurationState(
+            isSelected: \(isSelected)
+            isEnabled: \(isEnabled)
+            isHovered: \(isHovered)
+            isEditing: \(isEditing)
+            isEmphasized: \(isEmphasized)
+            isNextSelected: \(isNextSelected)
+            isPreviousSelected: \(isPreviousSelected)
+            customStates: \(customStates)
+        )
+        """
     }
 
     public var debugDescription: String {
-        return description
+        description
     }
 
     public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
-        let customStates = self.customStates.mapKeys({ $0.rawValue })
-        return NSListConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
+        let customStates = customStates.mapKeys { $0.rawValue }
+        return NSListConfigurationStateObjc(isSelected: isSelected, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc, result: inout NSListConfigurationState?) {
-        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys { NSConfigurationStateCustomKey(rawValue: $0) }
         result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, customStates: customStates)
     }
 

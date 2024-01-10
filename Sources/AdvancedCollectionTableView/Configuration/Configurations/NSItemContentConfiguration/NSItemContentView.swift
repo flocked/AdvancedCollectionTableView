@@ -1,6 +1,6 @@
 //
 //  NSItemContentView.swift
-//  
+//
 //
 //  Created by Florian Zand on 07.08.23.
 //
@@ -32,7 +32,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     ///
     /**
      Determines whether the view is compatible with the provided configuration.
-     
+
      Returns `true` if the configuration is ``NSItemContentConfiguration``, or `false` if not.
      */
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
@@ -62,7 +62,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     var stackviewConstraints: [NSLayoutConstraint] = []
 
     @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -76,11 +76,11 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     var isEditing: Bool = false {
         didSet {
             guard oldValue != isEditing else { return }
-            if let tableCellView = self.tableCellView, tableCellView.contentView == self {
+            if let tableCellView = tableCellView, tableCellView.contentView == self {
                 tableCellView.setNeedsAutomaticUpdateConfiguration()
-            } else if let tableRowView = self.tableRowView, tableRowView.contentView == self {
+            } else if let tableRowView = tableRowView, tableRowView.contentView == self {
                 tableRowView.setNeedsAutomaticUpdateConfiguration()
-            } else if let collectionViewItem = self.collectionViewItem, collectionViewItem.view == self {
+            } else if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
                 collectionViewItem.setNeedsAutomaticUpdateConfiguration()
             }
         }
@@ -212,7 +212,7 @@ extension NSItemContentView {
                 contentRect.size = imageSize.scaled(toHeight: remainingRegion.height)
                 contentRect.center = remainingRegion.center
             } else {
-               // let contentRect = remainingRegion
+                // let contentRect = remainingRegion
             }
         }
     }

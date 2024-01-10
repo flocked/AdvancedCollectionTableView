@@ -5,16 +5,15 @@
 //  Created by Florian Zand on 19.01.23.
 //
 
-import AppKit
 import AdvancedCollectionTableView
+import AppKit
 
 class SidebarViewController: NSViewController {
-
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
 
-    @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet var tableView: NSTableView!
 
     lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
 
@@ -51,15 +50,17 @@ class SidebarViewController: NSViewController {
             if edge == .leading {
                 return [NSTableViewRowAction(
                     style: .regular, title: "",
-                    symbolName: item.isFavorite ?  "star" : "star.fill",
-                    color: item.isFavorite ? .systemGray : .systemYellow) { _, _ in
+                    symbolName: item.isFavorite ? "star" : "star.fill",
+                    color: item.isFavorite ? .systemGray : .systemYellow
+                ) { _, _ in
                     item.isFavorite = !item.isFavorite
                     self.dataSource.reloadItems([item])
                     self.tableView.rowActionsVisible = false
-                 }]
+                }]
             } else {
                 return [NSTableViewRowAction(
-                    style: .destructive, title: "", symbolName: "trash.fill") { _, _ in
+                    style: .destructive, title: "", symbolName: "trash.fill"
+                ) { _, _ in
                     var currentSnapshot = self.dataSource.snapshot()
                     currentSnapshot.deleteItems([item])
                     self.dataSource.apply(currentSnapshot, .animated)

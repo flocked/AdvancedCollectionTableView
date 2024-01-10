@@ -1,24 +1,24 @@
 //
 //  NSTableViewDiffableDataSource+.swift
-//  
+//
 //
 //  Created by Florian Zand on 23.07.23.
 //
 
 import AppKit
 
-extension NSTableViewDiffableDataSource {
+public extension NSTableViewDiffableDataSource {
     /**
      Asks the datasource for a view to display the specified row and column.
-     
+
      - Parameters:
         - tableView: The table view that sent the message.
         - tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
         - row: The row index.
-     
+
      - Returns: The view to display the specified column and row.
      */
-    public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -32,14 +32,14 @@ extension NSTableViewDiffableDataSource {
 
     /**
      Asks the delegate for a view to display the specified row.
-     
+
      - Parameters:
         - tableView: The table view that sent the message.
         - row: The row index.
-     
+
      - Returns: An instance or subclass of NSTableRowView. If nil is returned, an NSTableRowView instance will be created and used.
      */
-    public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         let selector = NSSelectorFromString("_tableView:rowViewForRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -53,14 +53,14 @@ extension NSTableViewDiffableDataSource {
 
     /**
      Returns whether the specified row is a group row.
-     
+
      - Parameters:
         - tableView: The table view that sent the message.
         - row: The row index.
-     
+
      - Returns: `true` if the specified row should have the group row style drawn, `false otherwise.
      */
-    public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+    func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
         let selector = NSSelectorFromString("_tableView:isGroupRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)

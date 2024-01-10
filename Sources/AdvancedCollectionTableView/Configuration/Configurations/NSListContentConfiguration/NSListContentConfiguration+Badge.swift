@@ -6,9 +6,9 @@
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
 public extension NSListContentConfiguration {
     /// Properties for a list badge.
@@ -31,18 +31,20 @@ public extension NSListContentConfiguration {
         public var image: NSImage?
 
         /// Properties for configuring the image.
-        public var imageProperties: ImageProperties = ImageProperties()
+        public var imageProperties: ImageProperties = .init()
 
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
 
         /// The color of the badge text and symbol/template image.
         public var color: NSColor = .white {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer of the border color.
         public var colorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color,, using the border color and border color transformer.
         public func resolvedColor() -> NSColor {
@@ -51,11 +53,13 @@ public extension NSListContentConfiguration {
 
         /// The background color of the badge.
         public var backgroundColor: NSColor? = .controlAccentColor {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -70,11 +74,13 @@ public extension NSListContentConfiguration {
 
         /// The border color of the badge.
         public var borderColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer of the border color.
         public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -103,13 +109,11 @@ public extension NSListContentConfiguration {
         public var imageToTextPadding: CGFloat = 2.0
 
         /// Creates a badge.
-        public init() {
-
-        }
+        public init() {}
 
         /**
          A badge displaying a text.
-         
+
          - Parameters:
             - text: The text of the badge.
             - font: The font of the text. The default value is `body`.
@@ -127,7 +131,7 @@ public extension NSListContentConfiguration {
 
         /**
          A badge displaying an image.
-         
+
          - Parameters:
             - image: The image of the badge.
             - backgroundColor: The background color of the badge. The default value is `controlAccentColor`.
@@ -141,7 +145,7 @@ public extension NSListContentConfiguration {
 
         /**
          A badge displaying a symbol image.
-         
+
          - Parameters:
             - symbolName: The name of the symbol image.
             - textStyle: The text style for the symbol image. The default value is `caption1`.
@@ -180,7 +184,6 @@ public extension NSListContentConfiguration {
 public extension NSListContentConfiguration.Badge {
     /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
-
         /// The position of the badge image.
         enum Position: Int, Hashable {
             /// The image is leading.
@@ -205,11 +208,13 @@ public extension NSListContentConfiguration.Badge {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {

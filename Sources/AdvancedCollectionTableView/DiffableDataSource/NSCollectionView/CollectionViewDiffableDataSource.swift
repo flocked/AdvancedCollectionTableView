@@ -1,27 +1,27 @@
 //
 //  CollectionViewDiffableDataSource.swift
-//  
+//
 //
 //  Created by Florian Zand on 02.11.22.
 //
 
 import AppKit
+import FZQuicklook
 import FZSwiftUtils
 import FZUIKit
-import FZQuicklook
 import QuickLookUI
 
 /**
  A  `NSCollectionViewDiffableDataSource` with additional functionality.
- 
+
  The diffable data source provides:
  - Reordering elements by enabling ``allowsReordering``.
  - Deleting elements by enabling  ``allowsDeleting``.
  - Quicklook previews of elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - A right click menu for selected elements via ``menuProvider``.
- 
+
  __It includes handlers for:__
- 
+
  - Prefetching elements via ``prefetchHandlers-swift.property``.
  - Reordering elements via ``reorderingHandlers-swift.property``.
  - Deleting elements via ``deletionHandlers-swift.property``.
@@ -32,19 +32,18 @@ import QuickLookUI
  - Pinching of the collection view via ``pinchHandler``.
 
  ### Configurating the data source
-  
+
  To connect a diffable data source to a collection view, you create the diffable data source using its ``init(collectionView:itemProvider:)`` or ``init(collectionView:itemRegistration:)`` initializer, passing in the collection view you want to associate with that data source.
- 
+
  ```swift
  collectionView.dataSource = CollectionViewDiffableDataSource<Section, Element>(collectionView: collectionView, itemRegistration: itemRegistration)
  ```
- 
+
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
- 
- - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source. 
+
+ - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
-
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
     var delegateBridge: DelegateBridge!
@@ -58,12 +57,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var supplementaryViewProvider: SupplementaryViewProvider?
     /**
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
-     
+
      - Parameters:
         - collectionView: The collection view to configure this supplementary view for.
         -  itemKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
         - indexpath: The index path that specifies the location of the supplementary view in the collection view.
-     
+
      - Returns: A non-`nil` configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
      */
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ itemKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
@@ -72,33 +71,35 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      A Boolean value that indicates whether users can delete elements via backspace keyboard shortcut.
 
      If the value of this property is `true`, users can delete elements using the backspace. The default value is `false`.
-     
+
      ``deletionHandlers`` provides additional handlers.
      */
     public var allowsDeleting: Bool = false {
         didSet { observeKeyDown() }
     }
+
     /**
      A Boolean value that indicates whether users can reorder elements in the collection view by dragging them via mouse.
-     
+
      If the value of this property is `true`, users can reorder elements. The default value is `false`.
-     
+
      ``reorderingHandlers`` provides additional handlers.
      */
     public var allowsReordering: Bool = false
 
     /**
      Right click menu provider.
-     
+
      The provided menu is used when right clicking the collection view.
-     
+
      `elements` provides:
      - if right-click on a selected element, all selected elements,
      - else if right-click on a non selected element, that element,
      - else an empty array.
      */
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
-        didSet { observeRightMouseDown() } }
+        didSet { observeRightMouseDown() }
+    }
 
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
@@ -154,15 +155,15 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     func setupMenu(for location: CGPoint) {
         if let menuProvider = menuProvider {
-            if let item = self.element(at: location) {
+            if let item = element(at: location) {
                 var menuItems: [Element] = [item]
-                let selectedItems = self.selectedElements
+                let selectedItems = selectedElements
                 if selectedItems.contains(item) {
                     menuItems = selectedItems
                 }
-                self.collectionView.menu = menuProvider(menuItems)
+                collectionView.menu = menuProvider(menuItems)
             } else {
-                self.collectionView.menu = menuProvider([])
+                collectionView.menu = menuProvider([])
             }
         }
     }
@@ -201,10 +202,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     @objc func scrollViewContentBoundsDidChange(_ notification: Notification) {
         guard (notification.object as? NSClipView) != nil else { return }
-        let displayingItems = self.displayingElements.ids
+        let displayingItems = displayingElements.ids
 
         if let isDisplaying = displayHandlers.isDisplaying {
-            let added = displayingItems.filter({previousDisplayingItems.contains($0) == false})
+            let added = displayingItems.filter { previousDisplayingItems.contains($0) == false }
             let addedElements = elements[ids: added]
             if addedElements.isEmpty == false {
                 isDisplaying(addedElements)
@@ -212,7 +213,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         }
 
         if let didEndDisplaying = displayHandlers.didEndDisplaying {
-            let removed = previousDisplayingItems.filter({displayingItems.contains($0) == false})
+            let removed = previousDisplayingItems.filter { displayingItems.contains($0) == false }
             let removedElements = elements[ids: removed]
             if removedElements.isEmpty == false {
                 didEndDisplaying(removedElements)
@@ -229,7 +230,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                 keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
                     guard let self = self, self.collectionView.isFirstResponder else { return event }
                     if allowsDeleting, event.keyCode == 51 {
-                        let elementsToDelete =  deletionHandlers.canDelete?(self.selectedElements) ?? self.selectedElements
+                        let elementsToDelete = deletionHandlers.canDelete?(self.selectedElements) ?? self.selectedElements
                         if elementsToDelete.isEmpty == false {
                             let transaction = self.deletionTransaction(elementsToDelete)
                             self.deletionHandlers.willDelete?(elementsToDelete, transaction)
@@ -256,23 +257,23 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      Returns a representation of the current state of the data in the collection view.
-     
+
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
     public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
-        return currentSnapshot
+        currentSnapshot
     }
 
     /// Returns an empty snapshot.
     public func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
-        return .init()
+        .init()
     }
 
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
-     
+
      The system interrupts any ongoing item animations and immediately reloads the collection view’s content.
-     
+
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
         - option: Option how to apply the snapshot to the collection view. The default value is `animated`.
@@ -288,16 +289,16 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      Creates a diffable data source with the specified item provider, and connects it to the specified collection view.
-     
+
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item provider, where you configure each of your elements to determine how to display your data in the UI.
-     
+
      ```swift
      dataSource = CollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemProvider: {
      (collectionView, indexPath, item) in
      // configure and return item
      })
      ```
-     
+
      - Parameters:
         - collectionView: The initialized collection view object to connect to the diffable data source.
         - itemProvider: A closure that creates and returns each of the elements for the collection view from the data the diffable data source provides.
@@ -314,8 +315,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         })
 
         dataSource.supplementaryViewProvider = { [weak self] collectionView, itemKind, indePath in
-               guard let self = self else { return nil }
-               return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
+            guard let self = self else { return nil }
+            return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
 
         delegateBridge = DelegateBridge(self)
@@ -327,34 +328,35 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      A closure that configures and returns an item for a collection view from its diffable data source.
-     
+
      A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
-     
+
      - Parameters:
         - collectionView: The collection view to configure this cell for.
         -  indexpath: The index path that specifies the location of the item in the collection view.
         - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
-     
+
      - Returns: A non-`nil` configured collection view item object. The item provider must return a valid item object to the collection view.
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
 
     /**
      Creates a diffable data source with the specified item registration, and connects it to the specified collection view.
-     
+
      To connect a diffable data source to a collection view, you create the diffable data source using this initializer, passing in the collection view you want to associate with that data source. You also pass in a item registration, where each of your elements gets determine how to display your data in the UI.
-     
+
      ```swift
      dataSource = CollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
-     
+
      - Parameters:
         - collectionView: The initialized collection view object to connect to the diffable data source.
         - itemRegistration: A item registration which returns each of the elements for the collection view from the data the diffable data source provides.
      */
     public convenience init<Item: NSCollectionViewItem>(collectionView: NSCollectionView, itemRegistration: NSCollectionView.ItemRegistration<Item, Element>) {
         self.init(collectionView: collectionView, itemProvider: { collectionView, indePath, item in
-            return collectionView.makeItem(using: itemRegistration, for: indePath, element: item) })
+            collectionView.makeItem(using: itemRegistration, for: indePath, element: item)
+        })
     }
 
     // MARK: - DataSource implementation
@@ -384,12 +386,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// The selected elements.
     public var selectedElements: [Element] {
-        collectionView.selectionIndexPaths.compactMap({element(for: $0)})
+        collectionView.selectionIndexPaths.compactMap { element(for: $0) }
     }
 
     /**
      Returns the element at the specified index path in the collection view.
-     
+
      - Parameter indexPath: The index path.
      - Returns: The element at the index path or nil if there isn't any element at the index path.
      */
@@ -407,7 +409,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      Returns the element at the specified point.
-     
+
      - Parameter point: The point in the collection view’s bounds that you want to test.
      - Returns: The element at the specified point or `nil` if no element was found at that point.
      */
@@ -420,7 +422,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
     public func reconfigureElements(_ elements: [Element]) {
-        let indexPaths = elements.compactMap({indexPath(for: $0)})
+        let indexPaths = elements.compactMap { indexPath(for: $0) }
         collectionView.reconfigureItems(at: indexPaths)
     }
 
@@ -428,18 +430,18 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public func reloadElements(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
-        dataSource.apply(snapshot, animated ? .animated: .withoutAnimation)
+        dataSource.apply(snapshot, animated ? .animated : .withoutAnimation)
     }
 
     /// Selects the specified elements.
-    public func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing: CGFloat? = nil) {
-        let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
+    public func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing _: CGFloat? = nil) {
+        let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
         collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
 
     /// Deselects the specified elements.
     public func deselectElements(_ elements: [Element]) {
-        let indexPaths = Set(elements.compactMap({indexPath(for: $0)}))
+        let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
         collectionView.deselectItems(at: indexPaths)
     }
 
@@ -450,8 +452,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     /// Deselects all elementsin the specified sections.
-    public func deselectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
-        let elementIndexPaths = Set(sections.flatMap({indexPaths(for: $0)}))
+    public func deselectElements(in sections: [Section], scrollPosition _: NSCollectionView.ScrollPosition) {
+        let elementIndexPaths = Set(sections.flatMap { indexPaths(for: $0) })
         collectionView.deselectItems(at: elementIndexPaths)
     }
 
@@ -463,7 +465,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// An array of elements that are displaying (currently visible).
     var displayingElements: [Element] {
-        collectionView.displayingIndexPaths().compactMap({element(for: $0)})
+        collectionView.displayingIndexPaths().compactMap { element(for: $0) }
     }
 
     /// The collection view item for the specified item.
@@ -483,7 +485,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     func indexPaths(for elements: [Element]) -> [IndexPath] {
-        elements.compactMap({indexPath(for: $0)})
+        elements.compactMap { indexPath(for: $0) }
     }
 
     func indexPaths(for section: Section) -> [IndexPath] {
@@ -492,12 +494,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     func indexPaths(for sections: [Section]) -> [IndexPath] {
-        sections.flatMap({indexPaths(for: $0)})
+        sections.flatMap { indexPaths(for: $0) }
     }
 
     func elements(for sections: [Section]) -> [Element] {
         let currentSnapshot = currentSnapshot
-        return sections.flatMap({currentSnapshot.itemIdentifiers(inSection: $0)})
+        return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
     }
 
     func isSelected(at indexPath: IndexPath) -> Bool {
@@ -511,7 +513,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         return false
     }
 
-    func removeItems( _ elements: [Element]) {
+    func removeItems(_ elements: [Element]) {
         var snapshot = snapshot()
         snapshot.deleteItems(elements)
         apply(snapshot, .animated)
@@ -525,7 +527,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Element>? {
         var newSnapshot = snapshot()
-        let newItems = indexPaths.compactMap({element(for: $0)})
+        let newItems = indexPaths.compactMap { element(for: $0) }
         if let item = element(for: toIndexPath) {
             newSnapshot.insertItems(newItems, beforeItem: item)
         } else if let section = section(at: toIndexPath) {
@@ -551,12 +553,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Returns the index for the section in the collection view.
     public func index(for section: Section) -> Int? {
-        return sections.firstIndex(of: section)
+        sections.firstIndex(of: section)
     }
 
     /// Returns the section at the index in the collection view.
     public func section(for index: Int) -> Section? {
-        return sections[safe: index]
+        sections[safe: index]
     }
 
     /// Scrolls the collection view to the specified section.
@@ -567,11 +569,11 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     func section(for element: Element) -> Section? {
-        return currentSnapshot.sectionIdentifier(containingItem: element)
+        currentSnapshot.sectionIdentifier(containingItem: element)
     }
 
     func section(at indexPath: IndexPath) -> Section? {
-        if indexPath.section <= sections.count-1 {
+        if indexPath.section <= sections.count - 1 {
             return sections[indexPath.section]
         }
         return nil
@@ -581,7 +583,8 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// The handlers for hovering elements with the mouse.
     public var hoverHandlers = HoverHandlers() {
-        didSet { observeHoveredItem() } }
+        didSet { observeHoveredItem() }
+    }
 
     /// The handlers for selecting elements.
     public var selectionHandlers = SelectionHandlers()
@@ -594,11 +597,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      The handlers for the displaying elements.
-     
+
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
     public var displayHandlers = DisplayHandlers() {
-        didSet {  observeDisplayingItems() } }
+        didSet { observeDisplayingItems() }
+    }
 
     /// The handlers for prefetching elements.
     public var prefetchHandlers = PrefetchHandlers()
@@ -611,7 +615,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {
-
         /// The handler that tells you to begin preparing data for the elements.
         public var willPrefetch: ((_ elements: [Element]) -> Void)?
 
@@ -621,7 +624,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for selecting elements.
     public struct SelectionHandlers {
-
         /// The handler that determines whether elements should get selected. The default value is `nil` which indicates that all elements should be selected.
         public var shouldSelect: ((_ elements: [Element]) -> [Element])?
 
@@ -637,7 +639,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for deleting elements.
     public struct DeletionHandlers {
-
         /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
         public var canDelete: ((_ elements: [Element]) -> [Element])?
 
@@ -650,7 +651,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for reordering elements.
     public struct ReorderingHandlers {
-
         /// The handler that determines if elements can be reordered. The default value is `nil` which indicates that the elements can be reordered.
         public var canReorder: ((_ elements: [Element]) -> Bool)?
 
@@ -663,7 +663,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for the highlight state of elements.
     public struct HighlightHandlers {
-
         /// The handler that determines which elements should change to a new highlight state. The default value is `nil` which indicates that all elements should change.
         public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])?
 
@@ -673,11 +672,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /**
      Handlers for displaying elements.
-     
+
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
     public struct DisplayHandlers {
-
         /// The handler that gets called whenever elements start getting displayed.
         public var isDisplaying: ((_ elements: [Element]) -> Void)?
 
@@ -691,7 +689,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for hovering elements with the mouse.
     public struct HoverHandlers {
-
         /// The handler that gets called whenever the mouse is hovering an element.
         public var isHovering: ((_ element: Element) -> Void)?
 
@@ -705,7 +702,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     /// Handlers for drag and drop of files from and to the collection view.
     struct DragDropHandlers {
-
         public struct DropHandlers {
             public var fileURLs: ((_ urls: [URL]) -> [Element])?
             public var urls: ((_ urls: [URL]) -> [Element])?
@@ -756,24 +752,24 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
 // MARK: - Quicklook
 
-extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
+public extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
     /// A Boolean value that indicates whether the user can quicklook selected elements by pressing space bar.
-    public var isQuicklookPreviewable: Bool {
+    var isQuicklookPreviewable: Bool {
         get { collectionView.isQuicklookPreviewable }
         set { collectionView.isQuicklookPreviewable = newValue }
     }
 
     /**
      Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
-     
+
      To quicklook the selected elements, use collection view's `quicklookSelectedItems()`.
-     
+
      - Parameters:
         - elements: The elements to preview.
         - current: The element that starts the preview. The default value is `nil`.
      */
-    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
-        let indexPaths = elements.compactMap({indexPath(for: $0)}).sorted()
+    func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
+        let indexPaths = elements.compactMap { indexPath(for: $0) }.sorted()
         if let current = current, let currentIndexPath = indexPath(for: current) {
             collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)
         } else {

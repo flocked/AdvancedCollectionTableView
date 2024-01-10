@@ -1,40 +1,40 @@
 //
 //  NSCollectionViewDiffableDataSource+Delete.swift
-//  
+//
 //
 //  Created by Florian Zand on 23.07.23.
 //
 
 import AppKit
+import FZQuicklook
 import FZSwiftUtils
 import FZUIKit
-import FZQuicklook
 
- extension NSCollectionViewDiffableDataSource {
+public extension NSCollectionViewDiffableDataSource {
     /**
      A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
 
      If the value of this property is `true`, users can delete items using the backspace. The default value is `false`.
-     
+
      ``deletionHandlers`` provides additional handlers.
      */
-    public var allowsDeleting: Bool {
+    var allowsDeleting: Bool {
         get { getAssociatedValue(key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
         set {
             guard newValue != allowsDeleting else { return }
             set(associatedValue: newValue, key: "NSCollectionViewDiffableDataSource_allowsDeleting", object: self)
-            self.setupKeyDownMonitor()
+            setupKeyDownMonitor()
         }
     }
 
     /// The handlers for deleting of items.
-    public var deletionHandlers: DeletionHandlers {
+    var deletionHandlers: DeletionHandlers {
         get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
-        set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self)  }
+        set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self) }
     }
 
     /// Handlers for deleting of items.
-    public struct DeletionHandlers {
+    struct DeletionHandlers {
         /// The handler that determines whether items should get deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
         /// The handler that that gets called before deleting items.
@@ -43,20 +43,20 @@ import FZQuicklook
         public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
     }
 
-    var keyDownMonitor: Any? {
+    internal var keyDownMonitor: Any? {
         get { getAssociatedValue(key: "diffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "diffableDataSource_keyDownMonitor", object: self)  }
+        set { set(associatedValue: newValue, key: "diffableDataSource_keyDownMonitor", object: self) }
     }
 
-    func setupKeyDownMonitor() {
-        if self.allowsDeleting {
+    internal func setupKeyDownMonitor() {
+        if allowsDeleting {
             if keyDownMonitor == nil {
-                keyDownMonitor =  NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
+                keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self else { return event }
-                    guard event.keyCode ==  51 else { return event }
-                    if allowsDeleting, let collectionView =  (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
-                        let selectionIndexPaths = collectionView.selectionIndexPaths.map({$0})
-                        var elementsToDelete = selectionIndexPaths.compactMap({self.itemIdentifier(for: $0)})
+                    guard event.keyCode == 51 else { return event }
+                    if allowsDeleting, let collectionView = (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
+                        let selectionIndexPaths = collectionView.selectionIndexPaths.map { $0 }
+                        var elementsToDelete = selectionIndexPaths.compactMap { self.itemIdentifier(for: $0) }
                         if !elementsToDelete.isEmpty, let canDelete = self.deletionHandlers.canDelete {
                             elementsToDelete = canDelete(elementsToDelete)
                         }
@@ -68,7 +68,7 @@ import FZQuicklook
                             finalSnapshot.deleteItems(elementsToDelete)
 
                             func getTransaction() -> NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> {
-                                return NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
+                                NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
                             }
 
                             var transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>?
@@ -93,7 +93,6 @@ import FZQuicklook
                                         collectionView.deselectItems(at: Set([IndexPath(item: 0, section: 0)]))
                                     }
                                 }
-
                             }
                             return nil
                         }
@@ -102,7 +101,7 @@ import FZQuicklook
                 })
             }
         } else {
-            if let keyDownMonitor = self.keyDownMonitor {
+            if let keyDownMonitor = keyDownMonitor {
                 NSEvent.removeMonitor(keyDownMonitor)
             }
             keyDownMonitor = nil

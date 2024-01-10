@@ -1,6 +1,6 @@
 //
 //  NSItemContentView+Badge.swift
-//  
+//
 //
 //  Created by Florian Zand on 18.08.23.
 //
@@ -94,7 +94,8 @@ extension NSItemContentView {
             return stackView
         }()
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -139,7 +140,8 @@ extension NSItemContentView {
             updateProperties()
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }
@@ -151,6 +153,7 @@ extension NSItemContentView {
                 updateProperties()
             }
         }
+
         init(properties: NSItemContentConfiguration.Badge.ImageProperties) {
             self.properties = properties
             super.init(frame: .zero)
@@ -185,7 +188,8 @@ extension NSItemContentView {
             invalidateIntrinsicContentSize()
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

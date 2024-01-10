@@ -6,28 +6,32 @@ import PackageDescription
 let package = Package(
     name: "AdvancedCollectionTableView",
     platforms: [
-        .macOS("12.0")
+        .macOS("12.0"),
     ],
     products: [
         .library(
             name: "AdvancedCollectionTableView",
-            targets: ["AdvancedCollectionTableView"]),
+            targets: ["AdvancedCollectionTableView"]
+        ),
         .library(
             name: "AdvancedCollectionTableViewObjC",
             type: .static,
-            targets: ["AdvancedCollectionTableViewObjC"])
+            targets: ["AdvancedCollectionTableViewObjC"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/flocked/FZSwiftUtils.git", branch: "main"),
         .package(url: "https://github.com/flocked/FZUIKit.git", branch: "main"),
-        .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main")
+        .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "AdvancedCollectionTableViewObjC"], path: "Sources/AdvancedCollectionTableView"),
+            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "AdvancedCollectionTableViewObjC"], path: "Sources/AdvancedCollectionTableView"
+        ),
         .target(
             name: "AdvancedCollectionTableViewObjC",
-            path: "Sources/AdvancedCollectionTableViewObjC")
+            path: "Sources/AdvancedCollectionTableViewObjC"
+        ),
     ]
 )

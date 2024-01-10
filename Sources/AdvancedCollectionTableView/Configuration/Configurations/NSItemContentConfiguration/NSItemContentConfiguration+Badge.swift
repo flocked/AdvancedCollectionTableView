@@ -6,9 +6,9 @@
 //
 
 import AppKit
-import SwiftUI
 import FZSwiftUtils
 import FZUIKit
+import SwiftUI
 
 public extension NSItemContentConfiguration {
     /// Properties for a badge.
@@ -25,7 +25,7 @@ public extension NSItemContentConfiguration {
 
             var spacing: CGFloat? {
                 switch self {
-                case .overlay(spacing: let spacing): return spacing
+                case let .overlay(spacing: spacing): return spacing
                 case .attachment: return nil
                 }
             }
@@ -65,18 +65,20 @@ public extension NSItemContentConfiguration {
         public var view: NSView?
 
         /// Properties for configuring the text.
-        public var textProperties: TextProperties = TextProperties()
+        public var textProperties: TextProperties = .init()
 
         /// Properties for configuring the image.
-        public var imageProperties: ImageProperties = ImageProperties()
+        public var imageProperties: ImageProperties = .init()
 
         /// The background color of the badge.
         public var backgroundColor: NSColor? = .controlAccentColor {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
@@ -88,22 +90,25 @@ public extension NSItemContentConfiguration {
 
         /**
          The visual effect of the badge.
-         
+
          If the badge has a visual effect, it's background color will be ignored.
          */
         public var visualEffect: VisualEffectConfiguration? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The border width of the badge.
         public var borderWidth: CGFloat = 0.0
 
         /// The border color of the badge.
         public var borderColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer of the border color.
         public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
@@ -138,9 +143,7 @@ public extension NSItemContentConfiguration {
         public var spacing: CGFloat = 3.0
 
         /// Creates a badge.
-        public init() {
-
-        }
+        public init() {}
 
         /// A text badge.
         public static func text(_ text: String, font: NSFont = .caption, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
@@ -202,7 +205,7 @@ public extension NSItemContentConfiguration {
              if visualEffect?.appearance?.isDark == true, _resolvedTextColor == .white {
              _resolvedTextColor = .labelColor
              } else if visualEffect?.appearance?.isLight == true, _resolvedTextColor == .labelColor {
-             
+
              }
              */
         }
@@ -212,26 +215,25 @@ public extension NSItemContentConfiguration {
 public extension NSItemContentConfiguration.Badge {
     /// Properties that affect the text of a badge.
     struct TextProperties: Hashable {
-
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
 
         /// The border color of the badge.
         public var textColor: NSColor = .white {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer of the border color.
         public var textColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved border color,, using the border color and border color transformer.
         public func resolvedTextColor() -> NSColor {
             textColorTransform?(textColor) ?? textColor
         }
 
-        init() {
-
-        }
+        init() {}
 
         var _resolvedTextColor: NSColor = .white
         mutating func updateResolvedColors() {
@@ -241,7 +243,6 @@ public extension NSItemContentConfiguration.Badge {
 
     /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
-
         /// The position of the badge image.
         enum Position: Int, Hashable {
             /// The image is leading.
@@ -267,11 +268,13 @@ public extension NSItemContentConfiguration.Badge {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() } }
+            didSet { updateResolvedColors() }
+        }
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {

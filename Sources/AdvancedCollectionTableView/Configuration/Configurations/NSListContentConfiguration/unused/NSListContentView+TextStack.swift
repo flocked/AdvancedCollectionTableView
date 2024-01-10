@@ -1,6 +1,6 @@
 //
 //  NSListContentView+TextStack.swift
-//  
+//
 //
 //  Created by Florian Zand on 30.08.23.
 //
@@ -19,9 +19,7 @@ extension NSListContentView {
             }
         }
 
-        func update() {
-
-        }
+        func update() {}
 
         var previousWidth: CGFloat = -1
         override func layout() {
@@ -40,7 +38,8 @@ extension NSListContentView {
         lazy var textField = ListTextField(properties: configuration.textProperties)
         lazy var secondaryTextField = ListTextField(properties: configuration.secondaryTextProperties)
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

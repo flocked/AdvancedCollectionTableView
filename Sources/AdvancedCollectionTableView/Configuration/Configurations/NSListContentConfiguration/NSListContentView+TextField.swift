@@ -51,7 +51,7 @@ extension NSListContentView {
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
             // Swift.print("needsRowHeightUpdate", needsRowHeightUpdate, listContentView != nil)
             if needsRowHeightUpdate {
-              //  listContentView?.updateTableRowHeight()
+                //  listContentView?.updateTableRowHeight()
             }
         }
 
@@ -83,7 +83,7 @@ extension NSListContentView {
 
         override func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
-            if isEditable && canBecome {
+            if isEditable, canBecome {
                 listContentView?.isEditing = true
                 previousStringValue = stringValue
             }
@@ -113,7 +113,8 @@ extension NSListContentView {
             }
 
             guard let fieldEditor = window?.fieldEditor(false, for: self) as? NSTextView else {
-                return intrinsicContentSize }
+                return intrinsicContentSize
+            }
             if let textContainer = fieldEditor.textContainer, let layoutManager = fieldEditor.layoutManager {
                 layoutManager.ensureLayout(for: textContainer)
                 let fieldEditorSize = layoutManager.usedRect(for: textContainer).size
@@ -146,7 +147,7 @@ extension NSListContentView {
             properties.onEditEnd?(stringValue)
         }
 
-        override func textDidChange(_ notification: Notification) {
+        override func textDidChange(_: Notification) {
             invalidateIntrinsicContentSize()
         }
 
@@ -171,7 +172,8 @@ extension NSListContentView {
             return false
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

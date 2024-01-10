@@ -1,21 +1,20 @@
 //
 //  ViewController.swift
-//  
+//
 //
 //  Created by Florian Zand on 19.01.23.
 //
 
-import AppKit
 import AdvancedCollectionTableView
-import FZUIKit
+import AppKit
 import FZSwiftUtils
+import FZUIKit
 
 class ViewController: NSViewController {
-
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
 
-    @IBOutlet weak var collectionView: NSCollectionView!
+    @IBOutlet var collectionView: NSCollectionView!
 
     var galleryItems = GalleryItem.sampleItems
 
@@ -106,7 +105,7 @@ class ViewController: NSViewController {
     }
 }
 
-fileprivate extension NSView {
+private extension NSView {
     /// Creates a colored view.
     convenience init(color: NSUIColor, opacity: CGFloat) {
         self.init(frame: .zero)

@@ -12,13 +12,13 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
     typealias IdentifiableSnapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType.ID, ItemIdentifierType.ID>
     /// Creates a snapshot from the section and item identifiers.
     func toIdentifiableSnapshot() -> IdentifiableSnapshot {
-         var identifiableSnapshot = IdentifiableSnapshot()
-         let sections = self.sectionIdentifiers
-         identifiableSnapshot.appendSections(sections.ids)
-         for section in sections {
-             let items = self.itemIdentifiers(inSection: section)
+        var identifiableSnapshot = IdentifiableSnapshot()
+        let sections = sectionIdentifiers
+        identifiableSnapshot.appendSections(sections.ids)
+        for section in sections {
+            let items = itemIdentifiers(inSection: section)
             identifiableSnapshot.appendItems(items.ids, toSection: section.id)
-         }
-         return identifiableSnapshot
+        }
+        return identifiableSnapshot
     }
 }

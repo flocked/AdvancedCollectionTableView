@@ -10,19 +10,22 @@ import FZQuicklook
 import QuickLookUI
 
 // Used for Quicklook of selected collection items & table cells.
- class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
+class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
     var view: NSView?
 
     public var previewItemURL: URL? {
         preview.previewItemURL
     }
+
     public var previewItemFrame: CGRect? {
         view?.frameOnScreen ?? preview.previewItemFrame
     }
+
     public var previewItemTitle: String? {
         preview.previewItemTitle
     }
+
     public var previewItemTransitionImage: NSImage? {
         view?.renderedImage ?? preview.previewItemTransitionImage
     }

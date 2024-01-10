@@ -11,7 +11,6 @@ import FZUIKit
 
 /// A content view for displaying list-based content.
 open class NSListContentView: NSView, NSContentView, EdiitingContentView {
-
     /// Creates a list content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
         appliedConfiguration = configuration
@@ -32,7 +31,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
 
     /**
      Determines whether the view is compatible with the provided configuration.
-     
+
      Returns `true` if the configuration is ``NSListContentConfiguration``, or `false` if not.
      */
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
@@ -76,11 +75,11 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     var isEditing: Bool = false {
         didSet {
             guard oldValue != isEditing else { return }
-            if let tableCellView = self.tableCellView, tableCellView.contentView == self {
+            if let tableCellView = tableCellView, tableCellView.contentView == self {
                 tableCellView.setNeedsAutomaticUpdateConfiguration()
-            } else if let tableRowView = self.tableRowView, tableRowView.contentView == self {
+            } else if let tableRowView = tableRowView, tableRowView.contentView == self {
                 tableRowView.setNeedsAutomaticUpdateConfiguration()
-            } else if let collectionViewItem = self.collectionViewItem, collectionViewItem.view == self {
+            } else if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
                 collectionViewItem.setNeedsAutomaticUpdateConfiguration()
             }
         }
@@ -153,7 +152,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageView.calculatedSize = calculateImageViewSize()
 
         switch appliedConfiguration.imageProperties.position {
-        case .leading(let value), .trailing(let value):
+        case let .leading(value), let .trailing(value):
             switch value {
             case .bottom:
                 imageView.verticalConstraint = imageView.bottomAnchor.constraint(equalTo: textStackView.bottomAnchor).activate()
@@ -186,7 +185,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
 
     func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
         var textFieldsSize: CGSize = .zero
-        textFieldsSize.width = frame.size.width-appliedConfiguration.margins.width
+        textFieldsSize.width = frame.size.width - appliedConfiguration.margins.width
         if appliedConfiguration.imageProperties.position.orientation == .horizontal, let imageSize = imageSize {
             textFieldsSize.width = textFieldsSize.width - imageSize.width - appliedConfiguration.imageToTextPadding
         }
@@ -221,7 +220,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                     return imageSize
                 }
             case .totalTextHeight:
-                if appliedConfiguration.hasText && appliedConfiguration.hasSecondaryText {
+                if appliedConfiguration.hasText, appliedConfiguration.hasSecondaryText {
                     var size = textField.intrinsicContentSize
                     size.height += secondaryTextField.intrinsicContentSize.height
                     size.height += appliedConfiguration.textToSecondaryTextPadding
@@ -237,14 +236,14 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                     }
                     return imageSize
                 }
-            case .size(let size):
+            case let .size(size):
                 var size = size
                 let width = frame.size.width - appliedConfiguration.margins.width
                 if size.width > width {
                     size = size.scaled(toWidth: width)
                 }
                 return size
-            case .maxiumSize(width: let maxWidth, height: let maxHeight):
+            case let .maxiumSize(width: maxWidth, height: maxHeight):
                 if let maxWidth = maxWidth, imageSize.width > maxWidth, let maxHeight = maxHeight, imageSize.height > maxHeight {
                     imageSize = imageSize.scaled(toFit: CGSize(maxWidth, maxHeight))
                 } else if let maxWidth = maxWidth, imageSize.width > maxWidth {
@@ -257,7 +256,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                     imageSize = imageSize.scaled(toWidth: width)
                 }
                 return imageSize
-            case .maxiumSizeRelative(width: let relativeWidth, height: let relativeHeight):
+            case let .maxiumSizeRelative(width: relativeWidth, height: relativeHeight):
                 let width = bounds.width - appliedConfiguration.margins.width
                 if let relativeWidth = relativeWidth, let relativeHeight = relativeHeight {
                     imageSize = imageSize.scaled(toFit: CGSize(width * relativeWidth, bounds.width * relativeHeight))
@@ -280,29 +279,29 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
 
     func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
         switch appliedConfiguration.imageProperties.scaling {
-       // case .fill, .fit: return imageSize.scaled(toHeight: size.height)
+        // case .fill, .fit: return imageSize.scaled(toHeight: size.height)
         case .fit: return imageSize.scaled(toHeight: size.height)
         default: return CGSize(size.height, size.height)
         }
     }
 
     /// Perform layout in concert with the constraint-based layout system.
-    open override func layout() {
+    override open func layout() {
         super.layout()
         updateTableRowHeight()
     }
 
     var width: CGFloat = 0.0
     func updateTableRowHeight() {
-      guard bounds.width != width else { return }
-      width = bounds.width
+        guard bounds.width != width else { return }
+        width = bounds.width
         if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
             tableRowView.frame.size.height = fittingSize.height
         }
     }
 
     @available(*, unavailable)
-    required public init?(coder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

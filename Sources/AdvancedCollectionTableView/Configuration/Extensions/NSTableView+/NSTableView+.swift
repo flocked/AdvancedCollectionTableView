@@ -1,6 +1,6 @@
 //
 //  NSTableView+.swift
-//  
+//
 //
 //  Created by Florian Zand on 10.12.22.
 //
@@ -11,10 +11,10 @@ import FZUIKit
 
 extension NSTableView {
     func updateVisibleRowConfigurations() {
-        self.visibleRows().forEach({
+        visibleRows().forEach {
             $0.setNeedsAutomaticUpdateConfiguration()
             $0.setCellViewsNeedAutomaticUpdateConfiguration()
-        })
+        }
     }
 
     var tableViewObserver: KeyValueObserver<NSTableView>? {
@@ -33,7 +33,7 @@ extension NSTableView {
             }
             if observingView == nil {
                 observingView = ObserverView()
-                addSubview(withConstraint: self.observingView!)
+                addSubview(withConstraint: observingView!)
                 observingView!.sendToBack()
                 observingView?.windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
@@ -76,7 +76,7 @@ extension NSTableView {
     }
 
     var hoveredRowView: NSTableRowView? {
-        if let hoveredRow = hoveredRow, let rowView = self.rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
+        if let hoveredRow = hoveredRow, let rowView = rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
             return rowView
         }
         return nil
@@ -101,17 +101,17 @@ extension NSTableView {
 }
 
 /*
-var firstResponderObserver: NSKeyValueObservation? {
-    get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
-    set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
-}
+ var firstResponderObserver: NSKeyValueObservation? {
+     get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
+     set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
+ }
 
-func setupTableViewFirstResponderObserver() {
-    guard firstResponderObserver == nil else { return }
-    firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
-        guard let self = self, old != new else { return }
-        guard (old == self && new != self) || (old != self && new == self) else { return }
-        self.updateVisibleRowConfigurations()
-    })
-}
-*/
+ func setupTableViewFirstResponderObserver() {
+     guard firstResponderObserver == nil else { return }
+     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
+         guard let self = self, old != new else { return }
+         guard (old == self && new != self) || (old != self && new == self) else { return }
+         self.updateVisibleRowConfigurations()
+     })
+ }
+ */

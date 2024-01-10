@@ -21,8 +21,8 @@ public struct NSDiffableDataSourceTransaction<Section, Element> where Section: H
 
 extension NSDiffableDataSourceTransaction {
     init(initial: NSDiffableDataSourceSnapshot<Section, Element>, final: NSDiffableDataSourceSnapshot<Section, Element>) {
-        self.initialSnapshot = initial
-        self.finalSnapshot = final
-        self.difference = initial.itemIdentifiers.difference(from: final.itemIdentifiers)
+        initialSnapshot = initial
+        finalSnapshot = final
+        difference = initial.itemIdentifiers.difference(from: final.itemIdentifiers)
     }
 }

@@ -10,31 +10,30 @@ import FZUIKit
 
 /**
  A content configuration for a list-based content view.
- 
+
  A list content configuration describes the styling and content for an individual element that might appear in a list, like a cell, header, or footer. Using a list content configuration, you can obtain system default styling for a variety of different view states. You fill the configuration with your content, and then assign it directly to table cells via ``AppKit/NSTableCellView/contentConfiguration``, or to your own custom list content view (``NSListContentView``).
-  
+
  To get a list configuration that has preconfigured default styling based on the table view it is presented, use table cell's  ``AppKit/NSTableCellView/defaultContentConfiguration()``.
-  
+
  ```swift
  var content = tableCell.defaultContentConfiguration()
- 
+
  // Configure content.
  content.image = NSImage(systemSymbolName: "star")
  content.text = "Favorites"
- 
+
  // Customize appearance.
  content.imageProperties.tintColor = .purple
- 
+
  tableCell.contentConfiguration = content
  ```
  */
 public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
-
     // MARK: Customizing content
 
     /**
      The primary text.
-     
+
      If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
      */
     public var text: String? {
@@ -47,7 +46,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      An attributed variant of the primary text.
-     
+
      If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
      */
     public var attributedText: AttributedString? {
@@ -60,7 +59,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      The primary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
      */
     public var placeholderText: String? {
@@ -73,7 +72,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      An attributed variant of the primary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
      */
     public var attributedPlaceholderText: AttributedString? {
@@ -86,7 +85,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      The secondary text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
     public var secondaryText: String? {
@@ -99,7 +98,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      An attributed variant of the secondary text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
     public var secondaryAttributedText: AttributedString? {
@@ -112,7 +111,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      The secondary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
      */
     public var secondaryPlaceholderText: String? {
@@ -125,7 +124,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      An attributed variant of the secondary placeholder text.
-     
+
      If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
@@ -172,7 +171,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// Creates a list content configuration for a table view with plain style.
     /**
      Creates a list content configuration for a table view with plain style.
-     
+
      - parameter imageColor: The color of a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
           */
     public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
@@ -187,16 +186,16 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      Creates a list content configuration for a sidebar table view (source style).
-     
+
      - parameter imageColor: The color of a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
     public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
-        return sidebar(.body, color: imageColor)
+        sidebar(.body, color: imageColor)
     }
 
     /**
      Creates a header list content configuration for a sidebar table view (source style).
-     
+
      - parameter imageColor: The color of a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
     public static func sidebarHeader(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
@@ -207,15 +206,15 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.imageProperties.tintColor = .tertiaryLabelColor
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: imageColor)
+        configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.subheadline, weight: .bold), color: imageColor)
         configuration.margins = .init(top: 2.0, leading: 4.0, bottom: 2.0, trailing: 4.0)
-      //  configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
+        //  configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
 
     /**
      Creates a large list content configuration for a sidebar table view (source style).
-     
+
      - parameter imageColor: The color of a template or symbol image. The default value is `monochrome(.controlAccentColor)`.
      */
     public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
@@ -227,7 +226,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      Creates a plain list content configuration with text.
-     
+
      - Parameter text: The text.
      */
     public static func text(_ text: String) -> Self {
@@ -238,7 +237,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /**
      Creates a plain list content configuration with editable text.
-     
+
      - Parameters:
         - text: The text.
         - placeholderText: The placeholder text.
@@ -257,9 +256,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     }
 
     /// Creates a list content configuration.
-    public init() {
-
-    }
+    public init() {}
 
     var type: TableCellType?
     var tableViewStyle: NSTableView.Style?
@@ -269,6 +266,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
             case leading
             case trailing
         }
+
         case fullscreen(position: ContentPosition)
     }
 
@@ -303,7 +301,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
-        return NSListContentView(configuration: self)
+        NSListContentView(configuration: self)
     }
 
     // MARK: Updating the configuration
@@ -365,13 +363,13 @@ extension NSListContentConfiguration {
                 configuration.imageProperties.tintColor = .tertiaryLabelColor
                 configuration.imageProperties.position = .leading(.firstBaseline)
                 configuration.imageProperties.sizing = .firstTextHeight
-                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .subheadline, weight: .bold), color: .monochrome)
+                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.subheadline, weight: .bold), color: .monochrome)
                 configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
             } else {
                 configuration.textProperties.font = .body
                 configuration.secondaryTextProperties.font = .body
                 configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
+                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
                 configuration.imageToTextPadding = 3.0
                 configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
             }
@@ -379,7 +377,7 @@ extension NSListContentConfiguration {
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle( .body), color: .monochrome)
+            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
             configuration.imageToTextPadding = 8.0
             configuration.margins = .init(top: 6.0, leading: isHeader ? 2.0 : 4.0, bottom: 6.0, trailing: 4.0)
         }

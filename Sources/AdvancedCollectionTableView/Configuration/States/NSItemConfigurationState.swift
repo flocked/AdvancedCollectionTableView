@@ -1,28 +1,27 @@
 //
 //  NSItemConfigurationState.swift
-//  
+//
 //
 //  Created by Florian Zand on 02.09.22.
 //
 
-import Foundation
-import AppKit
-import FZUIKit
 import AdvancedCollectionTableViewObjc
+import AppKit
+import Foundation
+import FZUIKit
 
 /**
  A structure that encapsulates an collection-based item’s state.
- 
+
  Am item configuration encapsulates states like selected, highlighted, emphasized or hovered.
- 
+
  You can use a item configuration state with background and content configurations to obtain the default appearance for a specific state.
- 
+
  Typically, you don’t create a configuration state yourself. To obtain a configuration state, use `NSCollectionViewItems` ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property`` or override the ``AppKit/NSCollectionViewItem/updateConfiguration(using:)`` method in your item subclass and use the state parameter. Outside of this method, you can get a item’s configuration state by using its ``AppKit/NSCollectionViewItem/configurationState`` property.
- 
+
  You can create your own custom states to add to a item configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
-
     /// A Boolean value that indicates whether the item is selected.
     public var isSelected: Bool = false {
         didSet {
@@ -35,14 +34,14 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 
     /**
      A Boolean value that indicates whether the item is in an editing state.
-     
+
      The value of this property is `true`, if the text of a list or item content configuration is being edited.
      */
     public var isEditing: Bool = false
 
     /**
      A Boolean value that indicates whether the item is in an emphasized state.
-     
+
      The value of this property is `true`, if it's window is key.
      */
     public var isEmphasized: Bool = false {
@@ -53,7 +52,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 
     /**
      A Boolean value that indicates whether the item is in a hovered state.
-     
+
      The value of this property is `true`, if the mouse is hovering the item.
      */
     public var isHovered: Bool = false
@@ -71,7 +70,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
-        get { return customStates[key] }
+        get { customStates[key] }
         set { customStates[key] = newValue }
     }
 
@@ -93,14 +92,15 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     }
 
     init(isSelected: Bool,
-                isEnabled: Bool,
-                isFocused: Bool,
-                isHovered: Bool,
-                isEditing: Bool,
-                isExpanded: Bool,
-                highlight: NSCollectionViewItem.HighlightState,
-                isEmphasized: Bool,
-                customStates: [NSConfigurationStateCustomKey: AnyHashable] = [:]) {
+         isEnabled: Bool,
+         isFocused: Bool,
+         isHovered: Bool,
+         isEditing: Bool,
+         isExpanded: Bool,
+         highlight: NSCollectionViewItem.HighlightState,
+         isEmphasized: Bool,
+         customStates _: [NSConfigurationStateCustomKey: AnyHashable] = [:])
+    {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isFocused = isFocused
@@ -116,34 +116,33 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSItemConfigurationState: ReferenceConvertible {
-
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSItemConfigurationStateObjc
 
     public var description: String {
-                """
-                NSItemConfigurationState(
-                    isEnabled: \(isEnabled)
-                    isHovered: \(isHovered)
-                    isEditing: \(isEditing)
-                    highlight: \(highlight.rawValue)
-                    isEmphasized: \(isEmphasized)
-                    customStates: \(customStates)
-                )
-                """
+        """
+        NSItemConfigurationState(
+            isEnabled: \(isEnabled)
+            isHovered: \(isHovered)
+            isEditing: \(isEditing)
+            highlight: \(highlight.rawValue)
+            isEmphasized: \(isEmphasized)
+            customStates: \(customStates)
+        )
+        """
     }
 
     public var debugDescription: String {
-        return description
+        description
     }
 
     public func _bridgeToObjectiveC() -> NSItemConfigurationStateObjc {
-        let customStates = self.customStates.mapKeys({ $0.rawValue })
-        return NSItemConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: highlight.rawValue, customStates: customStates)
+        let customStates = customStates.mapKeys { $0.rawValue }
+        return NSItemConfigurationStateObjc(isSelected: isSelected, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, highlight: highlight.rawValue, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) {
-        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
+        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys { NSConfigurationStateCustomKey(rawValue: $0) }
         result = NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: .init(rawValue: source.highlight)!, isEmphasized: source.isEmphasized, customStates: customStates)
     }
 
@@ -170,13 +169,13 @@ extension NSItemConfigurationState: ReferenceConvertible {
  public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
  /// The collection view of the item is first responder.
  public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
- 
+
  /// Creates a units structure with the specified raw value.
  public init(rawValue: UInt) {
  self.rawValue = rawValue
  }
  }
- 
+
  /// The emphasized state.
  public var emphasizedState: EmphasizedState = []
  */
