@@ -17,11 +17,11 @@ extension NSListContentConfiguration.AccessoryProperties {
             case scaleToFill
             case resize
             case none
-            
+
             var isResizable: Bool {
                 self != .none
             }
-            
+
             var contentMode: ContentMode? {
                 switch self {
                 case .scaleToFit: return .fit
@@ -31,10 +31,10 @@ extension NSListContentConfiguration.AccessoryProperties {
             }
         }
         var scaling: ImageScaling = .scaleToFit
-        var tintColor: NSColor? = nil
-        var symbolConfiguration: ImageSymbolConfiguration? = nil
-        var maxWidth: CGFloat? = nil
-        var maxHeight: CGFloat? = nil
+        var tintColor: NSColor?
+        var symbolConfiguration: ImageSymbolConfiguration?
+        var maxWidth: CGFloat?
+        var maxHeight: CGFloat?
     }
 }
 

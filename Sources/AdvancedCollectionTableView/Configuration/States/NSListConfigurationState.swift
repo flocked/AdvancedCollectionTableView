@@ -22,58 +22,58 @@ import AdvancedCollectionTableViewObjc
  You can create your own custom states to add to a list configuration state by defining a custom state key using `NSConfigurationStateCustomKey`.
  */
 public struct NSListConfigurationState: NSConfigurationState, Hashable {
-    
+
     /// A Boolean value that indicates whether the list element is selected.
     public var isSelected: Bool = false
-    
+
     /**
      A Boolean value that indicates whether the list element is enabled.
      
      The value of this property is `true`, if it's table view `isEnabled` is `true`.
      */
     public var isEnabled: Bool = true
-    
+
     /**
      A Boolean value that indicates whether the list element is in a hovered state.
      
      The value of this property is `true`, if the mouse is hovering the element.
      */
     public var isHovered: Bool = false
-    
+
     /**
      A Boolean value that indicates whether the list element is in an editing state.
      
      The value of this property is `true`, if the text of a list or item content configuration is being edited.
      */
     public var isEditing: Bool = false
-    
+
     /**
      A Boolean value that indicates whether the list element is in an emphasized state.
      
      The value of this property is `true`, if it's window is key.
      */
     public var isEmphasized: Bool = false
-    
+
     /// A Boolean value that indicates whether the next list element is in a selected state.
     public var isNextSelected: Bool = false
-    
+
     /// A Boolean value that indicates whether the previous list element is in a selected state.
     public var isPreviousSelected: Bool = false
-    
+
     /// A Boolean value that indicates whether the list element is in a focused state.
     var isFocused: Bool = false
-    
+
     /// A Boolean value that indicates whether the list element is in an expanded state.
     var isExpanded: Bool = false
-    
-    var customStates = [NSConfigurationStateCustomKey:AnyHashable]()
-    
+
+    var customStates = [NSConfigurationStateCustomKey: AnyHashable]()
+
     /// Accesses custom states by key.
     public subscript(key: NSConfigurationStateCustomKey) -> AnyHashable? {
         get { return customStates[key] }
         set { customStates[key] = newValue }
     }
-    
+
     public init(isSelected: Bool = false,
                 isEnabled: Bool = true,
                 isHovered: Bool = false,
@@ -89,7 +89,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
     }
-    
+
     init(isSelected: Bool,
          isEnabled: Bool,
          isHovered: Bool,
@@ -97,7 +97,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          isEmphasized: Bool,
          isNextSelected: Bool,
          isPreviousSelected: Bool,
-         customStates: [NSConfigurationStateCustomKey:AnyHashable]
+         customStates: [NSConfigurationStateCustomKey: AnyHashable]
     ) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
@@ -111,10 +111,10 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 }
 
 extension NSListConfigurationState: ReferenceConvertible {
-    
+
     /// The Objective-C type for this state.
     public typealias ReferenceType = NSListConfigurationStateObjc
-    
+
     public var description: String {
                 """
                 NSListConfigurationState(
@@ -129,11 +129,11 @@ extension NSListConfigurationState: ReferenceConvertible {
                 )
                 """
     }
-    
+
     public var debugDescription: String {
         return description
     }
-    
+
     public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
         let customStates = self.customStates.mapKeys({ $0.rawValue })
         return NSListConfigurationStateObjc(isSelected: self.isSelected, isEditing: self.isEditing, isEmphasized: self.isEmphasized, isHovered: self.isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
@@ -143,12 +143,12 @@ extension NSListConfigurationState: ReferenceConvertible {
         let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys({ NSConfigurationStateCustomKey(rawValue: $0) })
         result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, customStates: customStates)
     }
-    
+
     public static func _conditionallyBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc, result: inout NSListConfigurationState?) -> Bool {
         _forceBridgeFromObjectiveC(source, result: &result)
         return true
     }
-    
+
     public static func _unconditionallyBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc?) -> NSListConfigurationState {
         if let source = source {
             var result: NSListConfigurationState?

@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 23.07.23.
 //
 
-
 import AppKit
 import FZSwiftUtils
 import FZUIKit
@@ -25,7 +24,7 @@ extension NSCollectionView {
         /// A mode that enables automatic self-sizing invalidation after Auto Layout changes.
         case enabledIncludingConstraints = 2
     }
-    
+
     /// The mode that the collection view uses for invalidating the size of self-sizing items.
     var selfSizingInvalidation: SelfSizingInvalidation {
         get { return getAssociatedValue(key: "selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.disabled) }
@@ -43,7 +42,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue(key: "didSwizzleCollectionViewItemLayoutAttributes", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "didSwizzleCollectionViewItemLayoutAttributes", object: self) }
     }
-    
+
     static func swizzleCollectionViewItemIfNeeded() {
         if didSwizzleCollectionViewItem == false {
             do {
@@ -58,14 +57,14 @@ extension NSCollectionViewItem {
             }
         }
     }
-    
+
     @objc func swizzled_apply(_ layoutAttributes: NSCollectionViewLayoutAttributes) {
         self.cachedLayoutAttributes = layoutAttributes
     }
-    
+
     @objc func swizzled_preferredLayoutAttributesFitting(_ layoutAttributes: NSCollectionViewLayoutAttributes) -> NSCollectionViewLayoutAttributes {
-        if (self.backgroundConfiguration != nil || self.contentConfiguration != nil) {
-            
+        if self.backgroundConfiguration != nil || self.contentConfiguration != nil {
+
             let width = layoutAttributes.size.width
             var fittingSize = self.view.sizeThatFits(CGSize(width: width, height: .infinity))
             fittingSize.width = width
@@ -74,12 +73,12 @@ extension NSCollectionViewItem {
         }
         return swizzled_preferredLayoutAttributesFitting(layoutAttributes)
     }
-    
+
     @objc func swizzled_viewDidLayout() {
         switch collectionView?.selfSizingInvalidation {
         case .enabled:
             if let cachedLayoutAttributes = cachedLayoutAttributes {
-                if (self.view.frame != cachedLayoutAttributes.frame) {
+                if self.view.frame != cachedLayoutAttributes.frame {
                     Swift.debugPrint("Not the same. InvalidateSelfSizing")
                     invalidateSelfSizing()
                 }
@@ -90,37 +89,37 @@ extension NSCollectionViewItem {
             break
         }
     }
-    
+
     var cachedLayoutAttributes: NSCollectionViewLayoutAttributes? {
         get { getAssociatedValue(key: "cachedLayoutAttributes", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "cachedLayoutAttributes", object: self) }
     }
-    
+
     var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {
         guard let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self) else { return nil }
-        
+
         let context = InvalidationContext(invalidateEverything: false)
         context.invalidateItems(at: [indexPath])
         return context
     }
-    
+
     func invalidateSelfSizing() {
         guard let invalidationContext = layoutInvalidationContext, let collectionView = collectionView, let collectionViewLayout = collectionView.collectionViewLayout else { return }
-        
+
         self.view.invalidateIntrinsicContentSize()
-        
+
         collectionViewLayout.invalidateLayout(with: invalidationContext)
         collectionView.layoutSubtreeIfNeeded()
     }
-    
+
     /// Invalidation of collection view items.
     class InvalidationContext: NSCollectionViewLayoutInvalidationContext {
         public override var invalidateEverything: Bool {
             return _invalidateEverything
         }
-        
+
         var _invalidateEverything: Bool
-        
+
         public init(invalidateEverything: Bool) {
             self._invalidateEverything = invalidateEverything
         }

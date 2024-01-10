@@ -29,144 +29,144 @@ import FZUIKit
  ```
  */
 public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
-    
+
     // MARK: Customizing content
-    
+
     /**
      The primary text.
      
      If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
      */
-    public var text: String? = nil {
+    public var text: String? {
         didSet {
             if text != nil {
                 attributedText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the primary text.
      
      If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
      */
-    public var attributedText: AttributedString? = nil {
+    public var attributedText: AttributedString? {
         didSet {
             if attributedText != nil {
                 text = nil
             }
         }
     }
-    
+
     /**
      The primary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
      */
-    public var placeholderText: String? = nil {
+    public var placeholderText: String? {
         didSet {
             if placeholderText != nil {
                 attributedPlaceholderText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the primary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
      */
-    public var attributedPlaceholderText: AttributedString? = nil {
+    public var attributedPlaceholderText: AttributedString? {
         didSet {
             if attributedPlaceholderText != nil {
                 placeholderText = nil
             }
         }
     }
-    
+
     /**
      The secondary text.
      
      If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
-    public var secondaryText: String? = nil {
+    public var secondaryText: String? {
         didSet {
             if secondaryText != nil {
                 secondaryAttributedText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the secondary text.
      
      If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
-    public var secondaryAttributedText: AttributedString? = nil {
+    public var secondaryAttributedText: AttributedString? {
         didSet {
             if secondaryAttributedText != nil {
                 secondaryText = nil
             }
         }
     }
-    
+
     /**
      The secondary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
      */
-    public var secondaryPlaceholderText: String? = nil {
+    public var secondaryPlaceholderText: String? {
         didSet {
             if secondaryPlaceholderText != nil {
                 secondaryAttributedPlaceholderText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the secondary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
      */
-    public var secondaryAttributedPlaceholderText: AttributedString? = nil {
+    public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
             if secondaryAttributedPlaceholderText != nil {
                 secondaryPlaceholderText = nil
             }
         }
     }
-    
+
     /// The image.
-    public var image: NSImage? = nil
-    
+    public var image: NSImage?
+
     /// The badge.
-    public var badge: Badge? = nil
-    
+    public var badge: Badge?
+
     // MARK: Customizing appearance
-    
+
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = .primary
-    
+
     /// Properties for configuring the secondary text.
     public var secondaryTextProperties: TextProperties = .secondary
-    
+
     /// Properties for configuring the image.
     public var imageProperties = ImageProperties()
-    
+
     // MARK: Customizing layout
-    
+
     /// The padding between the image and text.
     public var imageToTextPadding: CGFloat = 8.0
-    
+
     /// The padding between primary and secndary text.
     public var textToSecondaryTextPadding: CGFloat = 2.0
-    
+
     /// The padding between the text and badge.
     public var textToBadgePadding: CGFloat = 6.0
-    
+
     /// The margins between the content and the edges of the list view.
     public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
-    
+
     // MARK: Creating item configurations
 
     /// Creates a list content configuration for a table view with plain style.
@@ -184,7 +184,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.margins = NSDirectionalEdgeInsets(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
-    
+
     /**
      Creates a list content configuration for a sidebar table view (source style).
      
@@ -193,7 +193,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     public static func sidebar(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         return sidebar(.body, color: imageColor)
     }
-    
+
     /**
      Creates a header list content configuration for a sidebar table view (source style).
      
@@ -212,7 +212,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
       //  configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
         return configuration
     }
-    
+
     /**
      Creates a large list content configuration for a sidebar table view (source style).
      
@@ -224,7 +224,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.margins = .init(top: 8.0, leading: 4.0, bottom: 8.0, trailing: 4.0)
         return configuration
     }
-    
+
     /**
      Creates a plain list content configuration with text.
      
@@ -235,7 +235,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.text = text
         return configuration
     }
-    
+
     /**
      Creates a plain list content configuration with editable text.
      
@@ -245,7 +245,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         - onTextEditEnd: The handler that gets called when the text changes.
         - stringValidation: The Handler that determines whether the edited string is valid.
      */
-    public static func editableText(_ text: String?, placeholderText: String?, onTextEditEnd: @escaping (String)->(), stringValidation: ((String)->(Bool))? = nil) -> Self {
+    public static func editableText(_ text: String?, placeholderText: String?, onTextEditEnd: @escaping (String) -> Void, stringValidation: ((String) -> (Bool))? = nil) -> Self {
         var configuration: Self = .plain()
         configuration.text = text
         configuration.placeholderText = placeholderText
@@ -255,15 +255,15 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         configuration.textProperties.stringValidation = stringValidation
         return configuration
     }
-    
+
     /// Creates a list content configuration.
     public init() {
-        
+
     }
-    
-    var type: TableCellType? = nil
-    var tableViewStyle: NSTableView.Style? = nil
-    
+
+    var type: TableCellType?
+    var tableViewStyle: NSTableView.Style?
+
     enum ListStyle {
         enum ContentPosition {
             case leading
@@ -271,7 +271,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         }
         case fullscreen(position: ContentPosition)
     }
-    
+
     enum TableCellType: Int, Hashable {
         case automatic
         case automaticRow
@@ -280,34 +280,34 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         case sidebarLarge
         case sidebarHeader
     }
-    
+
     var hasText: Bool {
         text != nil || attributedText != nil
     }
-    
+
     var hasSecondaryText: Bool {
         secondaryText != nil || secondaryAttributedText != nil
     }
-    
+
     var hasContent: Bool {
         image != nil
     }
-    
+
     var hasBadge: Bool {
         badge?.isVisible == true
     }
-    
-    var state: NSListConfigurationState? = nil
-    
+
+    var state: NSListConfigurationState?
+
     // MARK: Creating a content view
-    
+
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & NSContentView {
         return NSListContentView(configuration: self)
     }
-    
+
     // MARK: Updating the configuration
-    
+
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSListContentConfiguration {
         var configuration = self
@@ -338,7 +338,7 @@ extension NSListContentConfiguration {
         configuration.imageProperties.sizing = .firstTextHeight
         return configuration
     }
-    
+
     static func automaticHeader() -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: .accentColor)
         configuration.type = .automaticRow
@@ -346,7 +346,7 @@ extension NSListContentConfiguration {
         configuration.imageProperties.sizing = .firstTextHeight
         return configuration
     }
-    
+
     func applyTableViewStyle(_ style: NSTableView.Style, isHeader: Bool = false) -> NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
@@ -385,7 +385,7 @@ extension NSListContentConfiguration {
         }
         return configuration
     }
-    
+
     static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
         configuration.type = .sidebar

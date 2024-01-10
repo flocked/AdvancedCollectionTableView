@@ -15,9 +15,9 @@ import FZUIKit
  `NSTableSectionHeaderView` is responsible for displaying attributes associated with the section header.
  */
 open class NSTableSectionHeaderView: NSView {
-    
+
     // MARK: Managing the content
-    
+
     /**
      The current content configuration of the section header view.
      
@@ -27,13 +27,13 @@ open class NSTableSectionHeaderView: NSView {
      
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
-    open var contentConfiguration: NSContentConfiguration? = nil  {
+    open var contentConfiguration: NSContentConfiguration? {
         didSet {
             observeSectionHeaderView()
             configurateContentView()
         }
     }
-    
+
     /**
      Retrieves a default content configuration for the section header view’s style. The system determines default values for the configuration according to the table view it is presented.
      
@@ -57,7 +57,7 @@ open class NSTableSectionHeaderView: NSView {
     open func defaultContentConfiguration() -> NSListContentConfiguration {
         NSListContentConfiguration.automaticHeader()
     }
-    
+
     /**
      A Boolean value that determines whether the section header view automatically updates its content configuration when its state changes.
      
@@ -70,7 +70,7 @@ open class NSTableSectionHeaderView: NSView {
             setNeedsUpdateConfiguration()
         }
     }
-    
+
     /**
      The current configuration state of the section header view.
      
@@ -80,7 +80,7 @@ open class NSTableSectionHeaderView: NSView {
         let state = NSListConfigurationState(isSelected: false, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: false, isPreviousSelected: false)
         return state
     }
-        
+
     /**
      Informs the section header view to update its configuration for its current state.
      
@@ -91,7 +91,7 @@ open class NSTableSectionHeaderView: NSView {
     @objc open func setNeedsUpdateConfiguration() {
         updateConfiguration(using: configurationState)
     }
-    
+
     func setNeedsAutomaticUpdateConfiguration() {
         if automaticallyUpdatesContentConfiguration {
             setNeedsUpdateConfiguration()
@@ -99,8 +99,7 @@ open class NSTableSectionHeaderView: NSView {
             configurationUpdateHandler?(self, configurationState)
         }
     }
-    
-    
+
     /**
      Updates the section header view’s configuration using the current state.
      
@@ -113,7 +112,7 @@ open class NSTableSectionHeaderView: NSView {
         }
         configurationUpdateHandler?(self, state)
     }
-    
+
     /**
      The type of block for handling updates to the section header view’s configuration using the current state.
      
@@ -122,7 +121,7 @@ open class NSTableSectionHeaderView: NSView {
      - state: The new state to use for updating the section header view’s configuration.
      */
     public typealias ConfigurationUpdateHandler = (_ sectionHeaderView: NSTableSectionHeaderView, _ state: NSListConfigurationState) -> Void
-    
+
     /**
      A block for handling updates to the section header view’s configuration using the current state.
      
@@ -136,13 +135,13 @@ open class NSTableSectionHeaderView: NSView {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
-    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? = nil {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
         didSet {
             observeSectionHeaderView()
             setNeedsUpdateConfiguration()
         }
     }
-    
+
     /**
      A Boolean value that indicates whether the section header view is in an editing state.
      
@@ -151,7 +150,7 @@ open class NSTableSectionHeaderView: NSView {
     @objc var isEditing: Bool {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
-    
+
     /**
      A Boolean value that specifies whether the section header view is hovered.
      
@@ -163,7 +162,7 @@ open class NSTableSectionHeaderView: NSView {
             setNeedsAutomaticUpdateConfiguration()
         }
     }
-    
+
     /**
      A Boolean value that specifies whether the section header view is emphasized.
      
@@ -175,7 +174,7 @@ open class NSTableSectionHeaderView: NSView {
             setNeedsAutomaticUpdateConfiguration()
         }
     }
-    
+
     /**
      A Boolean value that specifies whether the section header view is enabled.
      
@@ -184,9 +183,9 @@ open class NSTableSectionHeaderView: NSView {
     @objc var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
-    
-    var contentView: (NSView & NSContentView)?  = nil
-    
+
+    var contentView: (NSView & NSContentView)?
+
     func configurateContentView() {
         if var contentConfiguration = contentConfiguration {
             if automaticallyUpdatesContentConfiguration {
@@ -208,13 +207,13 @@ open class NSTableSectionHeaderView: NSView {
             self.contentView?.removeFromSuperview()
         }
     }
-    
+
     var tableView: NSTableView? {
         firstSuperview(for: NSTableView.self)
     }
-    
-    var observingView: ObserverView? = nil
-    var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>? = nil
+
+    var observingView: ObserverView?
+    var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>?
 
     func observeSectionHeaderView() {
         if contentConfiguration != nil || configurationUpdateHandler != nil {
@@ -224,21 +223,21 @@ open class NSTableSectionHeaderView: NSView {
             observingView.windowHandlers.isKey = { isKey in
                 self.isEmphasized = isKey
             }
-            
-            observingView.mouseHandlers.exited = { event in
+
+            observingView.mouseHandlers.exited = { _ in
                 self.isHovered = false
                 return true
             }
-            
-            observingView.mouseHandlers.entered = { event in
+
+            observingView.mouseHandlers.entered = { _ in
                 self.isHovered = true
                 return true
             }
             self.observingView = observingView
-            
+
             guard sectionHeaderObserver == nil else { return }
             sectionHeaderObserver = KeyValueObserver(self)
-            sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] old, new in
+            sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] _, _ in
                 guard let self = self, let tableViewStyle = self.tableView?.effectiveStyle, let contentConfiguration = self.contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automaticRow, contentConfiguration.tableViewStyle != tableViewStyle else {
                     return
                 }

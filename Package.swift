@@ -1,4 +1,4 @@
- // swift-tools-version: 5.5
+// swift-tools-version: 5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -15,12 +15,12 @@ let package = Package(
         .library(
             name: "AdvancedCollectionTableViewObjC",
             type: .static,
-            targets: ["AdvancedCollectionTableViewObjC"]),
+            targets: ["AdvancedCollectionTableViewObjC"])
     ],
     dependencies: [
         .package(url: "https://github.com/flocked/FZSwiftUtils.git", branch: "main"),
         .package(url: "https://github.com/flocked/FZUIKit.git", branch: "main"),
-        .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main"),
+        .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main")
     ],
     targets: [
         .target(
@@ -28,6 +28,6 @@ let package = Package(
             dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "AdvancedCollectionTableViewObjC"], path: "Sources/AdvancedCollectionTableView"),
         .target(
             name: "AdvancedCollectionTableViewObjC",
-            path: "Sources/AdvancedCollectionTableViewObjC"),
+            path: "Sources/AdvancedCollectionTableViewObjC")
     ]
 )

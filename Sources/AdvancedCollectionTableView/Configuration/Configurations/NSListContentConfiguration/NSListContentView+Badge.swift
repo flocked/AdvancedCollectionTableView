@@ -17,10 +17,10 @@ extension NSListContentView {
                 updateBadge()
             }
         }
-        
-        var verticalConstraint: NSLayoutConstraint? = nil
-        var widthConstraint: NSLayoutConstraint? = nil
-        
+
+        var verticalConstraint: NSLayoutConstraint?
+        var widthConstraint: NSLayoutConstraint?
+
         func updateBadge() {
             border.color = properties._resolvedBorderColor
             border.width = properties.borderWidth
@@ -38,7 +38,7 @@ extension NSListContentView {
                 textField.stringValue = properties.text ?? ""
             }
             textField.isHidden = (properties.text == nil && properties.attributedText == nil)
-            
+
             stackViewConstraints.constant(properties.margins)
             stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
@@ -48,9 +48,9 @@ extension NSListContentView {
                 stackView.removeArrangedSubview(imageView)
                 stackView.addArrangedSubview(imageView)
             }
-            
+
             textField.invalidateIntrinsicContentSize()
-            
+
             if let maxWidth = properties.maxWidth {
                 if widthConstraint == nil {
                     widthConstraint = widthAnchor.constraint(equalToConstant: maxWidth)
@@ -62,14 +62,14 @@ extension NSListContentView {
                 widthConstraint = nil
             }
         }
-        
+
         init(properties: NSListContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
             initalSetup()
             updateBadge()
         }
-        
+
         let textField = NSTextField(wrappingLabelWithString: "")
         lazy var imageView = BadgeImageView(properties: properties.imageProperties)
         lazy var stackView: NSStackView = {
@@ -78,11 +78,11 @@ extension NSListContentView {
             stackView.alignment = .firstBaseline
             return stackView
         }()
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         var stackViewConstraints: [NSLayoutConstraint] = []
         func initalSetup() {
             translatesAutoresizingMaskIntoConstraints = false
@@ -92,7 +92,7 @@ extension NSListContentView {
             stackViewConstraints = addSubview(withConstraint: stackView)
         }
     }
-    
+
     class BadgeImageView: NSImageView {
         var properties: NSListContentConfiguration.Badge.ImageProperties {
             didSet {
@@ -105,19 +105,19 @@ extension NSListContentView {
             super.init(frame: .zero)
             updateProperties()
         }
-        
+
         override var image: NSImage? {
             didSet {
                 isHidden = image == nil
             }
         }
-        
+
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
             if image?.isSymbolImage == true {
                 return intrinsicContentSize
             }
-            
+
             if let maxWidth = properties.maxWidth, intrinsicContentSize.width > maxWidth {
                 intrinsicContentSize.width = maxWidth
             }
@@ -126,14 +126,14 @@ extension NSListContentView {
             }
             return intrinsicContentSize
         }
-        
+
         func updateProperties() {
             contentTintColor = properties._resolvedTintColor
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             imageScaling = properties.scaling
             invalidateIntrinsicContentSize()
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

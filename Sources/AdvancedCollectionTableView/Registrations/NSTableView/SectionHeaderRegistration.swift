@@ -35,14 +35,14 @@ public extension NSTableView {
      }
      ```
      */
-    struct SectionHeaderRegistration<SectionHeader, Section> where SectionHeader: NSTableSectionHeaderView  {
-        
+    struct SectionHeaderRegistration<SectionHeader, Section> where SectionHeader: NSTableSectionHeaderView {
+
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
         let handler: Handler
-        
+
         // MARK: Creating a section view registration
-        
+
         /**
          Creates a section view registration with the specified registration handler.
          
@@ -56,7 +56,7 @@ public extension NSTableView {
             self.nib = nil
             self.identifier = .init(UUID().uuidString)
         }
-        
+
         /**
          Creates a section view registration with the specified registration handler and nib file.
          
@@ -69,10 +69,10 @@ public extension NSTableView {
             self.handler = handler
             self.identifier = .init(UUID().uuidString)
         }
-        
+
         /// A closure that handles the section view registration and configuration.
-        public typealias Handler = ((_ sectionHeaderView: SectionHeader, _ row: Int, _ section: Section)->(Void))
-        
+        public typealias Handler = ((_ sectionHeaderView: SectionHeader, _ row: Int, _ section: Section) -> Void)
+
         func makeView(_ tableView: NSTableView, _ row: Int, _ section: Section) -> SectionHeader {
             let sectionView = SectionHeader()
             self.handler(sectionView, row, section)

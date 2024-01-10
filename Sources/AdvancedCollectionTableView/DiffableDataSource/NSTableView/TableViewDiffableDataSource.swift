@@ -40,20 +40,20 @@ import FZSwiftUtils
  
  - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
-open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDataSource where Section : Hashable & Identifiable, Item : Hashable & Identifiable {
-        
+open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
+
     let tableView: NSTableView
-    var dataSource: NSTableViewDiffableDataSource<Section.ID,  Item.ID>!
-    var currentSnapshot = NSDiffableDataSourceSnapshot<Section,  Item>()
+    var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
+    var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
-    var keyDownMonitor: Any? = nil
-    var rightDownMonitor: NSEvent.Monitor? = nil
-    var hoveredRowObserver: NSKeyValueObservation? = nil
+    var keyDownMonitor: Any?
+    var rightDownMonitor: NSEvent.Monitor?
+    var hoveredRowObserver: NSKeyValueObservation?
     var delegateBridge: DelegateBridge!
-    
+
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    public var rowViewProvider: RowViewProvider? = nil {
+    public var rowViewProvider: RowViewProvider? {
         didSet {
             if let rowViewProvider = rowViewProvider {
                 dataSource.rowViewProvider = { tableview, row, identifier in
@@ -65,20 +65,19 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             }
         }
     }
-    
+
     /// A closure that configures and returns a row view for a table view from its diffable data source.
     public typealias RowViewProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
 
-    
     /// Applies the row view registration to configure and return table row views.
     public func applyRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, Item>) {
         rowViewProvider = { tableView, row, item in
             return registration.makeView(tableView, row, item)
         }
     }
-    
+
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
-    public var sectionHeaderViewProvider: SectionHeaderViewProvider? = nil {
+    public var sectionHeaderViewProvider: SectionHeaderViewProvider? {
         didSet {
             if let sectionHeaderViewProvider = sectionHeaderViewProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
@@ -89,11 +88,10 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             }
         }
     }
-        
+
     /// A closure that configures and returns a section header view for a table view from its diffable data source.
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableSectionHeaderView
-    
-    
+
     /// Applies the section header view registration to configure and return section header views.
     public func applySectionHeaderViewRegistration<HeaderView: NSTableSectionHeaderView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, Section>) {
         sectionHeaderViewProvider = { tableView, row, section in
@@ -111,12 +109,12 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
      - else if right-click on a non selected item, that item,
      - else an empty array.
      */
-    public var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
+    public var menuProvider: ((_ items: [Item]) -> NSMenu?)? {
         didSet { setupRightDownMonitor() } }
-    
+
     /// Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
-    public var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
-    
+    public var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])?
+
     /**
      A Boolean value that indicates whether users can reorder items in the table view by dragging them via mouse.
      
@@ -125,7 +123,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
      ``reorderingHandlers`` provides additional handlers.
      */
     public var allowsReordering: Bool = false
-        
+
     /**
      A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
 
@@ -136,7 +134,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public var allowsDeleting: Bool = false {
         didSet { setupKeyDownMonitor() }
     }
-    
+
     /**
      The default animation the UI uses to show differences between rows.
      
@@ -148,11 +146,11 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         get { dataSource.defaultRowAnimation }
         set { dataSource.defaultRowAnimation = newValue }
     }
-    
+
     @objc dynamic var _defaultRowAnimation: UInt {
         dataSource.defaultRowAnimation.rawValue
     }
-    
+
     func setupRightDownMonitor() {
         if menuProvider != nil, rightDownMonitor == nil {
             rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
@@ -172,7 +170,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             rightDownMonitor = nil
         }
     }
-    
+
     func setupMenu(for location: CGPoint) {
         if let menuProvider = menuProvider {
             if let item = self.item(at: location) {
@@ -187,19 +185,19 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             }
         }
     }
-    
+
     func setupHoverObserving() {
         if hoverHandlers.shouldSetup {
             tableView.setupObservation()
             if hoveredRowObserver == nil {
                 hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
                     guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering,  let oldRow = old?.item {
+                    if let didEndHovering = self.hoverHandlers.didEndHovering, let oldRow = old?.item {
                         if oldRow != -1, let item = self.item(forRow: oldRow) {
                             didEndHovering(item)
                         }
                     }
-                    if let isHovering = self.hoverHandlers.isHovering,  let newRow = new?.item {
+                    if let isHovering = self.hoverHandlers.isHovering, let newRow = new?.item {
                         if newRow != -1, let item = self.item(forRow: newRow) {
                             isHovering(item)
                         }
@@ -210,7 +208,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             hoveredRowObserver = nil
         }
     }
-    
+
     func setupKeyDownMonitor() {
         if allowsDeleting {
             if keyDownMonitor == nil {
@@ -218,7 +216,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
                     guard let self = self, self.tableView.isFirstResponder else { return event }
                     if allowsDeleting, event.keyCode == 51 {
                         let itemsToDelete = deletionHandlers.canDelete?(self.selectedItems) ?? self.selectedItems
-                        if (itemsToDelete.isEmpty == false) {
+                        if itemsToDelete.isEmpty == false {
                             let transaction = self.deletingTransaction(itemsToDelete)
                             self.deletionHandlers.willDelete?(itemsToDelete, transaction)
                             if QuicklookPanel.shared.isVisible {
@@ -239,23 +237,23 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             keyDownMonitor = nil
         }
     }
-    
+
     // MARK: - Snapshot
-    
+
     /**
      Returns a representation of the current state of the data in the table view.
      
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
-    public func snapshot() -> NSDiffableDataSourceSnapshot<Section,  Item> {
+    public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
         return currentSnapshot
     }
-    
+
     /// Returns an empty snapshot.
     public func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
         return .init()
     }
-    
+
     /**
      Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
      
@@ -266,13 +264,13 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         - option: Option how to apply the snapshot to the table view. The default value is `animated`.
         - completion: An optional completion handler which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         updateSectionRowIndexes()
         dataSource.apply(internalSnapshot, option, completion: completion)
     }
-        
+
     func updateSectionRowIndexes() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderViewProvider != nil else { return }
@@ -282,9 +280,9 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
             row = row + 1 + currentSnapshot.numberOfItems(inSection: section)
         }
     }
-    
+
     // MARK: - Init
-    
+
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified table view.
      
@@ -299,12 +297,12 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init<Cell: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<Cell, Item>) {
-        self.init(tableView: tableView, cellProvider:  {
+        self.init(tableView: tableView, cellProvider: {
             _tableView, column, row, item in
             return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
         })
     }
-    
+
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
@@ -319,15 +317,15 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
-        self.init(tableView: tableView, cellProvider:  {
-            _tableView, column, row, element in
+        self.init(tableView: tableView, cellProvider: {
+            _, column, row, element in
             if let cellRegistration = cellRegistrations.first(where: {$0.columnIdentifiers?.contains(column.identifier) == true}) ?? cellRegistrations.first(where: {$0.columnIdentifiers == nil }) {
                 return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
             }
             return NSTableCellView()
         })
     }
-    
+
     /**
      Creates a diffable data source with the specified cell provider, and connects it to the specified table view.
      
@@ -347,30 +345,29 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
         super.init()
-        
+
         self.dataSource = .init(tableView: self.tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
             return cellProvider(tableview, tablecolumn, row, item)
         })
-        
+
         delegateBridge = DelegateBridge(self)
         tableView.registerForDraggedTypes([.itemID])
         // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
     }
-    
+
     /// A closure that configures and returns a cell view for a table view from its diffable data source.
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
-    
-    
+
     // MARK: - DataSource conformance
-    
+
     public func numberOfRows(in tableView: NSTableView) -> Int {
         return dataSource.numberOfRows(in: tableView)
     }
-    
+
     public func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if dragingRowIndexes.isEmpty == false {
             if let transaction = movingTransaction(at: dragingRowIndexes, to: row) {
@@ -385,7 +382,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return true
     }
-    
+
     public func tableView( _ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
 
         guard dropOperation == .above else { return [] }
@@ -393,18 +390,18 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         if row >= (sectionHeaderViewProvider != nil ? 1 : 0) {
             return .move
         }
-        
+
         return []
     }
-    
+
     public func tableView( _ tableView: NSTableView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forRowIndexes rowIndexes: IndexSet) {
         dragingRowIndexes = rowIndexes
     }
-    
+
     public func tableView(_ tableView: NSTableView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
         dragingRowIndexes.removeAll()
     }
-    
+
     public func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
         if let element = item(forRow: row) {
             let item = NSPasteboardItem()
@@ -413,17 +410,17 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return nil
     }
-            
+
     // MARK: - Items
-    
+
     /// All current items in the collection view.
     public var items: [Item] { currentSnapshot.itemIdentifiers }
-    
+
     /// The selected items.
     public var selectedItems: [Item] {
         return tableView.selectedRowIndexes.compactMap({item(forRow: $0)})
     }
-    
+
     /**
      Returns the item at the specified row in the table view.
      
@@ -436,12 +433,12 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return nil
     }
-    
+
     /// Returns the row for the specified item.
     public func row(for item: Item) -> Int? {
         return dataSource.row(forItemIdentifier: item.id)
     }
-    
+
     /**
      Returns the section for the specified row in the table view.
      
@@ -454,7 +451,7 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return nil
     }
-    
+
     /**
      Returns the item of the specified index path.
      
@@ -468,90 +465,90 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return nil
     }
-    
+
     /// Selects all specified items.
     public func selectItems(_ items: [Item], byExtendingSelection: Bool = false) {
         selectItems(at: rows(for: items), byExtendingSelection: byExtendingSelection)
     }
-    
+
     /// Deselects all specified items.
     public func deselectItems(_ items: [Item]) {
         items.compactMap({row(for: $0)}).forEach({ tableView.deselectRow($0) })
         // sdeselectItems(at: rows(for: items))
     }
-    
+
     /// Selects all items in the specified sections.
     public func selectItems(in sections: [Section], byExtendingSelection: Bool = false) {
         let sectionRows = sections.flatMap({rows(for: $0)})
         selectItems(at: sectionRows, byExtendingSelection: byExtendingSelection)
     }
-    
+
     /// Deselects all items in the specified sections.
     public func deselectItems(in sections: [Section]) {
         let sectionRows = sections.flatMap({rows(for: $0)})
         deselectItems(at: sectionRows)
     }
-    
+
     /// Scrolls the table view to the specified item.
     public func scrollToItem(_ item: Item, scrollPosition: NSCollectionView.ScrollPosition = []) {
         if let row = row(for: item) {
             tableView.scrollRowToVisible(row)
         }
     }
-    
+
     /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
     public func reloadItems(_ items: [Item]) {
-        let rows = IndexSet(items.compactMap({row(for:$0)}))
+        let rows = IndexSet(items.compactMap({row(for: $0)}))
         let columns = IndexSet((0..<tableView.numberOfColumns).compactMap({$0}))
         tableView.reloadData(forRowIndexes: rows, columnIndexes: columns)
     }
-    
+
     /// An array of items that are visible.
     func visibleItems() -> [Item] {
         tableView.visibleRowIndexes().compactMap({ item(forRow: $0) })
     }
-    
+
     func rowView(for item: Item) -> NSTableRowView? {
         if let row = row(for: item) {
             return tableView.rowView(atRow: row, makeIfNecessary: false)
         }
         return nil
     }
-    
+
     func rows(for items: [Item]) -> [Int] {
         return items.compactMap({row(for: $0)})
     }
-    
+
     func isSelected(at row: Int) -> Bool {
         return tableView.selectedRowIndexes.contains(row)
     }
-    
+
     func isSelected(for item: Item) -> Bool {
         if let row = row(for: item) {
             return isSelected(at: row)
         }
         return false
     }
-    
+
     func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
         tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: byExtendingSelection)
     }
-    
+
     func deselectItems(at rows: [Int]) {
         rows.forEach({tableView.deselectRow($0)})
     }
-    
+
     @discardableResult
-    func removeItems( _ items: [Item]) -> NSDiffableDataSourceTransaction<Section, Item>  {
+    func removeItems( _ items: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
         deletingTransaction(items)
     }
-    
+
     func deletingTransaction(_ deletionItems: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
         var newNnapshot = snapshot()
         newNnapshot.deleteItems(deletionItems)
         return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newNnapshot)
     }
-    
+
     func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
         var newSnapshot = snapshot()
         let newItems = rowIndexes.compactMap({item(forRow: $0)})
@@ -568,92 +565,92 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
         }
         return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
-    
+
     // MARK: - Sections
 
     /// All current sections in the collection view.
     public var sections: [Section] { currentSnapshot.sectionIdentifiers }
-    
+
     /// Returns the row for the specified section.
     public func row(for section: Section) -> Int? {
         return dataSource.row(forSectionIdentifier: section.id)
     }
-    
+
     /// Returns the section at the index in the collection view.
     public func section(for index: Int) -> Section? {
         return sections[safe: index]
     }
-    
+
     /// Scrolls the table view to the specified section.
     public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
         if let row = row(for: section) {
             tableView.scrollRowToVisible(row)
         }
     }
-    
+
     func rows(for section: Section) -> [Int] {
         let items = currentSnapshot.itemIdentifiers(inSection: section)
         return rows(for: items)
     }
-    
+
     func rows(for sections: [Section]) -> [Int] {
         return sections.flatMap({rows(for: $0)})
     }
-    
+
     // MARK: - Handlers
-    
+
     /// The handlers for selecting items.
     public var selectionHandlers = SelectionHandlers()
-    
+
     /// The handlers for deleting items.
     public var deletionHandlers = DeletionHandlers()
-    
+
     /// The handlers for reordering items.
     public var reorderingHandlers = ReorderingHandlers()
-    
+
     /// The handlers for hovering items with the mouse.
     public var hoverHandlers = HoverHandlers() {
         didSet { setupHoverObserving()} }
-    
+
     /// The handlers for table columns.
     public var columnHandlers = ColumnHandlers()
-    
+
     /// The handlers for drag and drop of files from and to the table view.
     var dragDropHandlers = DragDropHandlers()
-    
+
     /// Handlers for selecting items.
     public struct SelectionHandlers {
-        
+
         /// The handler that determines which items should get selected. The default value is `nil` which indicates that all items should get selected.
         public var shouldSelect: (([Item]) -> [Item])?
-        
+
         /// The handler that gets called whenever items get selected.
         public var didSelect: (([Item]) -> Void)?
-        
+
         /// The handler that determines which items should get deselected. The default value is `nil` which indicates that all items should get deselected.
         public var shouldDeselect: (([Item]) -> [Item])?
-        
+
         /// The handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)?
-        
+
         var checkSelection: Bool {
             shouldSelect != nil || shouldDeselect != nil
         }
-        
+
         var reportSelection: Bool {
             didSelect != nil || didDeselect != nil
         }
     }
-    
+
     /// Handlers for reordering items.
     public struct ReorderingHandlers {
-        
+
         /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can be reordered.
         public var canReorder: (([Item]) -> Bool)?
-        
+
         /// The handler that that gets called before reordering items.
-        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
-        
+        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+
         /**
          The handler that that gets called after reordering items.
          
@@ -682,74 +679,74 @@ open class TableViewDiffableDataSource<Section, Item> : NSObject, NSTableViewDat
          }
          ```
          */
-        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
-    
+
     /// Handlers for deleting items.
     public struct DeletionHandlers {
-        
+
         /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])?
-        
+
         /// The handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())?
-        
+        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+
         /// The handler that gets called after deleting items.
-        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
-    
+
     /// Handlers for hovering items with the mouse.
     public struct HoverHandlers {
-        
+
         /// The handler that gets called whenever the mouse is hovering an item.
         public var isHovering: ((Item) -> Void)?
-        
+
         /// The handler that gets called whenever the mouse did end hovering an item.
         public var didEndHovering: ((Item) -> Void)?
-        
+
         var shouldSetup: Bool {
             isHovering != nil || didEndHovering != nil
         }
     }
-    
+
     /// Handlers for table view columns.
     public struct ColumnHandlers {
-        
+
         /// The handler that gets called whenever a column did resize.
-        public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> ())?
-        
+        public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> Void)?
+
         /// The handler that determines whenever a column can be reordered to a new index.
         public var shouldReorder: ((_ column: NSTableColumn, _ newIndex: Int) -> Bool)?
-        
+
         /// The handler that gets called whenever a column did reorder.
-        public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> ())?
+        public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> Void)?
     }
-    
+
     /// Handlers for drag and drop of files from and to the table view.
     struct DragDropHandlers {
-        
+
         /// The handler that determines which items can be dragged outside the collection view.
         public var canDragOutside: ((_ elements: [Item]) -> [Item])?
-        
+
         /// The handler that gets called whenever items did drag ouside the collection view.
-        public var didDragOutside: (([Item]) -> ())?
-        
+        public var didDragOutside: (([Item]) -> Void)?
+
         /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
         public var pasteboardValue: ((_ element: Item) -> PasteboardReadWriting)?
-        
+
         /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
         public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])?
-        
+
         /// The handler that gets called whenever pasteboard items did drag inside the collection view.
-        public var didDragInside: (([PasteboardReadWriting]) -> ())?
-        
+        public var didDragInside: (([PasteboardReadWriting]) -> Void)?
+
         /// The handler that determines the image when dragging items.
         public var draggingImage: ((_ elements: [Item], NSEvent, NSPointPointer) -> NSImage?)?
-        
+
         var acceptsDragInside: Bool {
             canDragInside != nil && didDragInside != nil
         }
-        
+
         var acceptsDragOutside: Bool {
             canDragOutside != nil
         }
@@ -764,7 +761,7 @@ extension TableViewDiffableDataSource where Item: QuicklookPreviewable {
         get { tableView.isQuicklookPreviewable }
         set { tableView.isQuicklookPreviewable = newValue }
     }
-    
+
     /**
      Opens `QuicklookPanel` that presents quicklook previews of the specified items.
      
@@ -866,7 +863,6 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
  }
  }
  */
-
 
 /*
 /**

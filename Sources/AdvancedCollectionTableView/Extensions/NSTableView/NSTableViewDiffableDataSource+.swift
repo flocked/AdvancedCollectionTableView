@@ -29,7 +29,7 @@ extension NSTableViewDiffableDataSource {
         }
         return nil
     }
-    
+
     /**
      Asks the delegate for a view to display the specified row.
      
@@ -50,7 +50,7 @@ extension NSTableViewDiffableDataSource {
         }
         return nil
     }
-    
+
     /**
      Returns whether the specified row is a group row.
      

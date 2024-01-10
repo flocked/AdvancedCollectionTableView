@@ -13,15 +13,15 @@ public class GalleryItem: NSObject, Identifiable {
     public var title: String
     public var detail: String
     public var imageName: String
-    public var badge: String? = nil
-    
+    public var badge: String?
+
     public init(title: String, detail: String, imageName: String, badge: String? = nil) {
         self.title = title
         self.detail = detail
         self.imageName = imageName
         self.badge = badge
     }
-    
+
     public static var sampleItems: [GalleryItem] {
         return [GalleryItem(title: "Astronaut Cat", detail: "Liquid ink", imageName: "astronaut cat"),
                 GalleryItem(title: "Cat", detail: "Painted by Vermeer", imageName: "cat vermeer"),
@@ -31,7 +31,7 @@ public class GalleryItem: NSObject, Identifiable {
                 GalleryItem(title: "Techno Club", detail: "Surrealist painting", imageName: "techno club surrealist"),
                 GalleryItem(title: "Techno Club", detail: "Oil painting", imageName: "techno club oil"),
                 GalleryItem(title: "Fireworker Monkey", detail: "Japanese manga", imageName: "monkey fireworkers manga"),
-                GalleryItem(title: "Dystopian City", detail: "Oil painting", imageName: "dystopian city science fiction"),
+                GalleryItem(title: "Dystopian City", detail: "Oil painting", imageName: "dystopian city science fiction")
         ]
     }
 }
@@ -45,7 +45,7 @@ extension GalleryItem: QuicklookPreviewable {
     public var previewItemURL: URL? {
         return Bundle.main.urlForImageResource(imageName)
     }
-    
+
     public var previewItemTitle: String? {
         return title
     }

@@ -9,11 +9,10 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-
 extension NSCollectionViewItem {
-    
+
     // MARK: Configuring the background
-    
+
     /**
      The current background configuration of the item.
      
@@ -28,7 +27,7 @@ extension NSCollectionViewItem {
      item.backgroundConfiguration = backgroundConfiguration
      ```
      */
-    public var backgroundConfiguration: NSContentConfiguration?   {
+    public var backgroundConfiguration: NSContentConfiguration? {
         get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "backgroundConfiguration", object: self)
@@ -36,7 +35,7 @@ extension NSCollectionViewItem {
             configurateBackgroundView()
         }
     }
-    
+
     /**
      Retrieves a default background content configuration.
      
@@ -60,7 +59,7 @@ extension NSCollectionViewItem {
         configuration.color = .unemphasizedSelectedContentBackgroundColor
         return configuration
     }
-    
+
     /**
      A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
      
@@ -73,14 +72,14 @@ extension NSCollectionViewItem {
         set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
         }
     }
-        
-    var backgroundView: (NSView & NSContentView)?   {
+
+    var backgroundView: (NSView & NSContentView)? {
         get { getAssociatedValue(key: "backgroundView", object: self, initialValue: nil) }
-        set { 
+        set {
             backgroundView?.removeFromSuperview()
             set(associatedValue: newValue, key: "backgroundView", object: self) }
     }
-    
+
     func configurateBackgroundView() {
         if var backgroundConfiguration = backgroundConfiguration {
             if automaticallyUpdatesBackgroundConfiguration {
@@ -98,9 +97,9 @@ extension NSCollectionViewItem {
             backgroundView = nil
         }
     }
-    
+
     // MARK: Managing the content
-    
+
     /**
      The current content configuration of the item.
      
@@ -110,7 +109,7 @@ extension NSCollectionViewItem {
      
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
-    public var contentConfiguration: NSContentConfiguration?   {
+    public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue(key: "contentConfiguration", object: self) }
         set {
             set(associatedValue: newValue, key: "contentConfiguration", object: self)
@@ -118,7 +117,7 @@ extension NSCollectionViewItem {
             configurateContentView()
         }
     }
-    
+
     /**
      A Boolean value that determines whether the item automatically updates its content configuration when its state changes.
      
@@ -131,11 +130,11 @@ extension NSCollectionViewItem {
         set { set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
         }
     }
-    
+
     var contentView: NSContentView? {
         self.view as? NSContentView
     }
-    
+
     func configurateContentView() {
         if var contentConfiguration = contentConfiguration {
             if automaticallyUpdatesContentConfiguration {
@@ -157,9 +156,9 @@ extension NSCollectionViewItem {
         }
         self.configurateBackgroundView()
     }
-    
+
     // MARK: Managing the state
-    
+
     /**
      The current configuration state of the item.
      
@@ -169,7 +168,7 @@ extension NSCollectionViewItem {
         let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered)
         return state
     }
-    
+
     /**
      Informs the item to update its configuration for its current state.
      
@@ -180,8 +179,7 @@ extension NSCollectionViewItem {
     @objc open func setNeedsUpdateConfiguration() {
         self.updateConfiguration(using: configurationState)
     }
-    
-    
+
     @objc func setNeedsAutomaticUpdateConfiguration() {
         let state = configurationState
         if automaticallyUpdatesBackgroundConfiguration, let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
@@ -192,7 +190,7 @@ extension NSCollectionViewItem {
         }
         configurationUpdateHandler?(self, state)
     }
-    
+
     /**
      Updates the item’s configuration using the current state.
      
@@ -209,7 +207,7 @@ extension NSCollectionViewItem {
         }
         configurationUpdateHandler?(self, state)
     }
-    
+
     /**
      The type of block for handling updates to the item’s configuration using the current state.
      
@@ -218,8 +216,7 @@ extension NSCollectionViewItem {
         - state: The new state to use for updating the item’s configuration.
      */
     public typealias ConfigurationUpdateHandler = (_ item: NSCollectionViewItem, _ state: NSItemConfigurationState) -> Void
-    
-    
+
     /**
      A block for handling updates to the item’s configuration using the current state.
      
@@ -243,7 +240,7 @@ extension NSCollectionViewItem {
      
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
-    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler?  {
+    @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
         get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
         set {
             observeCollectionItem()
@@ -251,7 +248,7 @@ extension NSCollectionViewItem {
             setNeedsUpdateConfiguration()
         }
     }
-    
+
     /**
      A Boolean value that specifies whether the item is hovered.
      
@@ -260,7 +257,7 @@ extension NSCollectionViewItem {
     @objc var isHovered: Bool {
         collectionView?.hoveredItem == self
     }
-    
+
     /**
      A Boolean value that indicates whether the item is in an editing state.
 
@@ -269,7 +266,7 @@ extension NSCollectionViewItem {
     @objc var isEditing: Bool {
         (view as? EdiitingContentView)?.isEditing ?? false
     }
-    
+
     /**
      A Boolean value that specifies whether the item is emphasized.
      
@@ -278,13 +275,12 @@ extension NSCollectionViewItem {
     @objc var isEmphasized: Bool {
         view.window?.isKeyWindow ?? false
     }
-    
+
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
         get { getAssociatedValue(key: "itemObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "itemObserver", object: self) }
     }
-    
-    
+
     func observeCollectionItem() {
         if contentConfiguration != nil || backgroundConfiguration != nil || configurationUpdateHandler != nil {
             guard itemObserver == nil else { return }
@@ -298,7 +294,7 @@ extension NSCollectionViewItem {
                 self.setNeedsAutomaticUpdateConfiguration()
             }
             if self._collectionView?.observingView == nil {
-                itemObserver?.add(\.view.superview) { old, new in
+                itemObserver?.add(\.view.superview) { _, _ in
                     guard self._collectionView != nil else { return }
                     // The collection view is observered to get the hovered (mouse over) collection item. It's much more performant instead of observing/installing a track area on each collection item view.
                     self._collectionView?.setupObservation()
@@ -309,7 +305,7 @@ extension NSCollectionViewItem {
             itemObserver = nil
         }
     }
-    
+
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     var _collectionView: NSCollectionView? {
         collectionView ?? view.firstSuperview(for: NSCollectionView.self)

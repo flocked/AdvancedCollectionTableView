@@ -30,12 +30,12 @@ import FZUIKit
  */
 public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     // MARK: Creating item configurations
-    
+
     /// Creates an item content configuration.
     public init() {
-        
+
     }
-    
+
     /// Creates an image item content configuration.
     public static func imageItem(_ image: NSImage, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
         var configuration = NSItemContentConfiguration()
@@ -49,7 +49,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         configuration.contentProperties.cornerRadius = cornerRadius
         return configuration
     }
-    
+
     /// Creates a view item content configuration.
     public static func viewItem(_ view: NSView, text: String? = nil, secondaryText: String? = nil, cornerRadius: CGFloat = 4.0) -> NSItemContentConfiguration {
         var configuration = NSItemContentConfiguration()
@@ -63,7 +63,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         configuration.contentProperties.cornerRadius = cornerRadius
         return configuration
     }
-    
+
     /// Creates a list item content configuration.
     public static func listItem(_ text: String, secondaryText: String? = nil, image: NSImage? = nil) -> NSItemContentConfiguration {
         var configuration = NSItemContentConfiguration()
@@ -77,188 +77,188 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         configuration.secondaryTextProperties.alignment = .left
         return configuration
     }
-    
+
     // MARK: Creating item configurations
-    
+
     /**
      The primary text.
      
      If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
      */
-    public var text: String? = nil {
+    public var text: String? {
         didSet {
             if text != nil {
                 attributedText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the primary text.
      
      If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
      */
-    public var attributedText: AttributedString? = nil {
+    public var attributedText: AttributedString? {
         didSet {
             if attributedText != nil {
                 text = nil
             }
         }
     }
-    
+
     /**
      The primary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
      */
-    public var placeholderText: String? = nil {
+    public var placeholderText: String? {
         didSet {
             if placeholderText != nil {
                 attributedPlaceholderText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the primary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
      */
-    public var attributedPlaceholderText: AttributedString? = nil {
+    public var attributedPlaceholderText: AttributedString? {
         didSet {
             if attributedPlaceholderText != nil {
                 placeholderText = nil
             }
         }
     }
-    
+
     /**
      The secondary text.
      
      If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
      */
-    public var secondaryText: String? = nil {
+    public var secondaryText: String? {
         didSet {
             if secondaryText != nil {
                 secondaryAttributedText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the secondary text.
      
      If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
      */
-    public var secondaryAttributedText: AttributedString? = nil {
+    public var secondaryAttributedText: AttributedString? {
         didSet {
             if secondaryAttributedText != nil {
                 secondaryText = nil
             }
         }
     }
-    
+
     /**
      The secondary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
      */
-    public var secondaryPlaceholderText: String? = nil {
+    public var secondaryPlaceholderText: String? {
         didSet {
             if secondaryPlaceholderText != nil {
                 secondaryAttributedPlaceholderText = nil
             }
         }
     }
-    
+
     /**
      An attributed variant of the secondary placeholder text.
      
      If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
      */
-    public var secondaryAttributedPlaceholderText: AttributedString? = nil {
+    public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
             if secondaryAttributedPlaceholderText != nil {
                 secondaryPlaceholderText = nil
             }
         }
     }
-    
+
     /// The image to display.
-    public var image: NSImage? = nil
-    
+    public var image: NSImage?
+
     /// The view to display.
-    public var view: NSView? = nil
-    
+    public var view: NSView?
+
     /// An overlay view the system places above the view and image and automatically resizes to fill the frame.
-    public var overlayView: NSView? = nil
-    
+    public var overlayView: NSView?
+
     /// The badges displayed either as overlay or attachment next to the image/view.
     public var badges: [Badge] = []
-    
+
     // MARK: Customizing appearance
-    
+
     /// Properties for configuring the primary text.
     public var textProperties: TextProperties = {
         var properties: TextProperties = .body
         properties.alignment = .center
         return properties
     }()
-    
+
     /// Properties for configuring the secondary text.
     public var secondaryTextProperties: TextProperties = {
         var properties: TextProperties = .caption1
         properties.alignment = .center
         return properties
     }()
-    
+
     /**
      Properties for configuring the content view that displays the `view` and `image`.
      
      The properties only applies when there’s a `view` and/or `image`.
      */
     public var contentProperties: ContentProperties = ContentProperties()
-    
+
     /**
      The padding between the content view that displays  the`image` and/or `view`  and text.
      
      This value only applies when there’s both content (`image` and/or `view`) and text.
      */
     public var contentToTextPadding: CGFloat = 6.0
-    
+
     /**
      The padding between the primary and secondary text.
      
      This value only applies when there’s both a text and secondary text.
      */
     public var textToSecondaryTextPadding: CGFloat = 4.0
-    
+
     /**
      The position of the content view that displays  the`image` and/or `view` next to the text.
      
      This value only applies when there’s both content and text.
      */
     public var contentPosition: ContentPosition = .top
-    
+
     /// The margins between the content and the edges of the content view.
     public var margins: NSDirectionalEdgeInsets = .init(6.0)
-    
+
     /**
      The scaling of the item.
      
      The default is 1.0, which displays the item at it's original scale. A larger value will display the item at a larger, a smaller value at a smaller size.
      */
     public var scaleTransform: CGPoint = CGPoint(x: 1.0, y: 1.0)
-    
+
     // MARK: Creating a content view
-    
+
     /// Creates a new instance of the content view using the configuration.
     public func makeContentView() -> NSView & FZUIKit.NSContentView {
         return NSItemContentView(configuration: self)
     }
-    
+
     // MARK: Updating the configuration
-    
+
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
         var configuration = self
@@ -266,7 +266,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
             if state.isSelected {
                 configuration.contentProperties.state.borderWidth = configuration.contentProperties.borderWidth != 0.0 ? configuration.contentProperties.borderWidth : 2.0
                 let isInvisible = configuration.contentProperties.shadow.color == nil || configuration.contentProperties.shadow.color?.alphaComponent == 0.0 || configuration.contentProperties.shadow.opacity == 0.0
-                
+
                 if state.isEmphasized {
                     configuration.contentProperties.state.borderColor = .controlAccentColor
                     configuration.contentProperties.state.shadowColor = isInvisible ? nil : .controlAccentColor
@@ -282,31 +282,31 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         }
         return configuration
     }
-    
-    var contentAlignment: NSLayoutConstraint.Attribute  {
+
+    var contentAlignment: NSLayoutConstraint.Attribute {
         switch contentPosition {
         case .bottom, .top: return .centerX
         case .leading, .trailing: return .centerY
         case .leadingFirstBaseline, .trailingFirstBaseline: return .firstBaseline
         }
     }
-    
+
     var hasText: Bool {
         text != nil || attributedText != nil
     }
-    
+
     var hasSecondaryText: Bool {
         secondaryText != nil || secondaryAttributedText != nil
     }
-    
+
     var hasContent: Bool {
         image != nil || contentProperties.backgroundColor != nil || view != nil
     }
-    
+
     var hasBadges: Bool {
         badges.isEmpty == false && hasContent
     }
-    
+
     /// The position of the content.
     public enum ContentPosition: Hashable {
         /// The content is displayed before the text.
@@ -321,15 +321,15 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         case top
         /// The content is displayed bellow the text.
         case bottom
-        
+
         var contentIsLeading: Bool {
             self == .leading || self == .leadingFirstBaseline || self == .top
         }
-        
+
         var isFirstBaseline: Bool {
             self == .trailingFirstBaseline || self == .leadingFirstBaseline
         }
-        
+
         var orientation: NSUserInterfaceLayoutOrientation {
             return (self == .top || self == .bottom) ? .vertical : .horizontal
         }

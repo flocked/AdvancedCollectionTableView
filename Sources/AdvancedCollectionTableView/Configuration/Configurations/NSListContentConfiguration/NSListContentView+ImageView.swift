@@ -18,35 +18,35 @@ extension NSListContentView {
                     update()
             }
         }
-   
+
         override var image: NSImage? {
             didSet {
                 isHidden = (image == nil)
             }
         }
-        
+
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
-            
+
             if image?.isSymbolImage == true, properties.position.orientation == .horizontal {
                 intrinsicContentSize.width = (intrinsicContentSize.height*2.5).rounded(.towardZero)
                 return intrinsicContentSize
             }
-            
+
             if let calculatedSize = calculatedSize {
                 return calculatedSize
             }
-            
+
             return intrinsicContentSize
         }
-                
+
         var calculatedSize: CGSize? {
             didSet {
                 invalidateIntrinsicContentSize()
             }
         }
-        var verticalConstraint: NSLayoutConstraint? = nil
-        
+        var verticalConstraint: NSLayoutConstraint?
+
         func update() {
             imageScaling = image?.isSymbolImage == true  ? .scaleNone : properties.scaling.imageScaling
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
@@ -66,7 +66,7 @@ extension NSListContentView {
             imageAlignment = .alignCenter
             update()
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

@@ -18,7 +18,7 @@ extension NSItemContentView {
                 }
             }
         }
-        
+
         func updateText(_ text: String?, _ attributedText: AttributedString?) {
             if let attributedText = attributedText {
                 self.isHidden = false
@@ -40,7 +40,7 @@ extension NSItemContentView {
             } else {
                 stringValue = ""
             }
-            
+
             if let attributedPlaceholder = attributedPlaceholder {
                 placeholderAttributedString = NSAttributedString(attributedPlaceholder)
             } else if let placeholder = placeholder {
@@ -50,7 +50,7 @@ extension NSItemContentView {
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
-        
+
         func update() {
             maximumNumberOfLines = properties.numberOfLines
             textColor = properties.resolvedColor()
@@ -61,7 +61,7 @@ extension NSItemContentView {
             isEditable = properties.isEditable
             formatter = properties.numberFormatter
         }
-        
+
         init(properties: TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
@@ -73,7 +73,7 @@ extension NSItemContentView {
             truncatesLastVisibleLine = true
             update()
         }
-        
+
         var nointrinsicWidth = true
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
@@ -82,11 +82,11 @@ extension NSItemContentView {
             }
             return intrinsicContentSize
         }
-        
+
         var itemContentView: NSItemContentView? {
             firstSuperview(for: NSItemContentView.self)
         }
-        
+
         override public func becomeFirstResponder() -> Bool {
             let canBecome = super.becomeFirstResponder()
             if isEditable && canBecome {
@@ -95,19 +95,19 @@ extension NSItemContentView {
             }
             return canBecome
         }
-        
+
         public override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
             itemContentView?.isEditing = true
         }
-        
+
         public override func textDidEndEditing(_ notification: Notification) {
             super.textDidEndEditing(notification)
             previousStringValue = stringValue
             itemContentView?.isEditing = false
             properties.onEditEnd?(stringValue)
         }
-        
+
         var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
@@ -124,7 +124,7 @@ extension NSItemContentView {
             }
             return false
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

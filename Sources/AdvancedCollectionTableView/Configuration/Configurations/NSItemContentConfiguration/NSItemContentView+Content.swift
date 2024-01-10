@@ -15,16 +15,16 @@ extension NSItemContentView {
         var configuration: NSItemContentConfiguration {
             didSet { if oldValue != configuration {
                 updateConfiguration() } } }
-        
+
         var contentProperties: NSItemContentConfiguration.ContentProperties {
             return configuration.contentProperties
         }
-        
+
         let imageView: ImageView = ImageView()
         let containerView = NSView(frame: .zero)
         var badgeViews: [BadgeView] = []
-        
-        var view: NSView? = nil {
+
+        var view: NSView? {
             didSet {
                 oldValue?.removeFromSuperview()
                 if let newView = view {
@@ -35,8 +35,8 @@ extension NSItemContentView {
                 }
             }
         }
-        
-        var overlayView: NSView? = nil {
+
+        var overlayView: NSView? {
             didSet {
                 guard oldValue != overlayView else { return }
                 oldValue?.removeFromSuperview()
@@ -48,7 +48,7 @@ extension NSItemContentView {
                 }
             }
         }
-        
+
         var image: NSImage? {
             get { imageView.image }
             set {
@@ -57,8 +57,7 @@ extension NSItemContentView {
                 imageView.isHidden = newValue == nil
             }
         }
-        
-        
+
         func updateBadges() {
             let badges = configuration.badges.filter({$0.isVisible})
             if configuration.hasContent {
@@ -85,14 +84,9 @@ extension NSItemContentView {
                 badgeViews.removeAll()
             }
         }
-        
-        override func layoutSubtreeIfNeeded() {
-            super.layoutSubtreeIfNeeded()
-            // Swift.debugPrint("layoutSubtreeIfNeeded", frame.size)
-        }
-        
+
         var previousFrameSize: CGSize = .zero
-        
+
         override func layout() {
             super.layout()
             invalidateIntrinsicContentSize()
@@ -166,7 +160,7 @@ extension NSItemContentView {
              }
              */
         }
-        
+
         func layoutBadges(elements: [(badge: Badge, badgeView: BadgeView)]) {
             var elements = elements
             let element = elements.removeFirst()
@@ -174,7 +168,7 @@ extension NSItemContentView {
             let firstBadgeView = element.badgeView
             layoutBadge(firstBadge, badgeView: firstBadgeView)
         }
-        
+
         func layoutBadges() {
             let badges = configuration.badges.filter({$0.isVisible}).sorted(by: \.position.rawValue)
             guard configuration.hasBadges, badges.count == badgeViews.count else { return }
@@ -183,15 +177,15 @@ extension NSItemContentView {
                 layoutBadge(value.0, badgeView: value.1)
             }
         }
-        
+
         func layoutBadge(_ badge: Badge, badgeView: BadgeView) {
             badgeView.horizontalConstraint?.activate(false)
             badgeView.verticalConstraint?.activate(false)
             badgeView.widthConstraint?.activate(false)
-            
+
             //   let constant = -(2*(badge.type.spacing ?? 0))
             //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: constant).activate()
-            
+
             let badgeSize = badgeView.fittingSize
             switch badge.position {
             case .topLeft, .top, .topRight:
@@ -201,24 +195,24 @@ extension NSItemContentView {
             case .bottomLeft, .bottom, .bottomRight:
                 badgeView.verticalConstraint = badgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: badge.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
             }
-            
+
             switch badge.position {
             case .topLeft, .centerLeft, .bottomLeft:
                 badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
             case .topRight, .centerRight, .bottomRight:
-                badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
+                badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
             case .top, .center, .bottom:
                 badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
             }
         }
-        
-        var centerYConstraint: NSLayoutConstraint? = nil
+
+        var centerYConstraint: NSLayoutConstraint?
         var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
         override var intrinsicContentSize: NSSize {
             if frame.size == .zero {
                 return CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
             }
-            
+
             var intrinsicContentSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
             var size = frame.size
             if let superviewWidth = superview?.frame.size.width {
@@ -247,16 +241,16 @@ extension NSItemContentView {
                 return intrinsicContentSize
             } else {
                 if let imageSize = image?.size, configuration.contentProperties.imageProperties.scaling == .none {
-                    
+
                     if imageSize.width < size.width {
                         intrinsicContentSize.width = imageSize.width
                     }
-                    
+
                     if imageSize.height < size.height {
                         intrinsicContentSize.height = imageSize.height
                     }
                 }
-                
+
                 if let maxWidth = contentProperties.maximumSize.width {
                     if intrinsicContentSize.width != -1 {
                         if intrinsicContentSize.width > maxWidth {
@@ -273,7 +267,7 @@ extension NSItemContentView {
                         }
                     }
                 }
-                
+
                 if let maxHeight = contentProperties.maximumSize.height {
                     if intrinsicContentSize.height != -1 {
                         if intrinsicContentSize.height > maxHeight {
@@ -290,46 +284,46 @@ extension NSItemContentView {
                         }
                     }
                 }
-                
+
                 return intrinsicContentSize
             }
         }
-        
+
         func updateConfiguration() {
             backgroundColor = contentProperties._resolvedBackgroundColor
             visualEffect = contentProperties.visualEffect
             containerView.border.color = contentProperties._resolvedBorderColor
             containerView.border.width = contentProperties.resolvedBorderWidth
-            
+
             cornerRadius = contentProperties.cornerRadius
             containerView.cornerRadius = contentProperties.cornerRadius
             imageView.cornerRadius = contentProperties.cornerRadius
             view?.cornerRadius = contentProperties.cornerRadius
             overlayView?.cornerRadius = contentProperties.cornerRadius
-            
+
             configurate(using: contentProperties.stateShadow, type: .outer)
-            
+
             imageView.tintColor = contentProperties._resolvedImageTintColor
             imageView.imageScaling = contentProperties.imageProperties.scaling.gravity
             imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image
-            
+
             if configuration.view != view {
                 view = configuration.view
             }
-            
+
             if configuration.overlayView != overlayView {
                 overlayView = configuration.overlayView
             }
-            
+
             isHidden = configuration.hasContent == false
             updateBadges()
-            
+
             anchorPoint = CGPoint(0.5, 0.5)
             layer?.scale = contentProperties.scaleTransform
             invalidateIntrinsicContentSize()
         }
-        
+
         init(configuration: NSItemContentConfiguration) {
             self.configuration = configuration
             super.init(frame: .zero)
@@ -340,7 +334,7 @@ extension NSItemContentView {
             containerView.addSubview(imageView)
             updateConfiguration()
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

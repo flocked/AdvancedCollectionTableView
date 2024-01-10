@@ -25,17 +25,16 @@ extension NSCollectionView {
         self.isReconfiguratingItems = true
         let visibleIndexPaths = self.indexPathsForVisibleItems()
         for indexPath in indexPaths {
-            if (visibleIndexPaths.contains(indexPath)) {
+            if visibleIndexPaths.contains(indexPath) {
                 self.dataSource?.collectionView(self, itemForRepresentedObjectAt: indexPath)
             }
         }
         self.isReconfiguratingItems = false
     }
-    
+
     var isReconfiguratingItems: Bool {
         get { getAssociatedValue(key: "isReconfiguratingItems", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "isReconfiguratingItems", object: self)
         }
     }
 }
-

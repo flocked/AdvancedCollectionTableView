@@ -13,7 +13,7 @@ import QuickLookUI
  class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
     var view: NSView?
-    
+
     public var previewItemURL: URL? {
         preview.previewItemURL
     }
@@ -26,7 +26,7 @@ import QuickLookUI
     public var previewItemTransitionImage: NSImage? {
         view?.renderedImage ?? preview.previewItemTransitionImage
     }
-    
+
     init(_ preview: QuicklookPreviewable, view: NSView? = nil) {
         self.preview = preview
         self.view = view

@@ -31,14 +31,14 @@ public extension NSTableView {
      }
      ```
      */
-    struct RowRegistration<RowView, Item> where RowView: NSTableRowView  {
-        
+    struct RowRegistration<RowView, Item> where RowView: NSTableRowView {
+
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
         let handler: Handler
-        
+
         // MARK: Creating a row registration
-        
+
         /**
          Creates a row registration with the specified registration handler.
          
@@ -51,7 +51,7 @@ public extension NSTableView {
             self.nib = nil
             self.identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
-        
+
         /**
          Creates a row registration with the specified registration handler and nib file.
          
@@ -65,10 +65,10 @@ public extension NSTableView {
             self.handler = handler
             self.identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
-        
+
         /// A closure that handles the row registration and configuration.
-        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ item: Item)->(Void))
-        
+        public typealias Handler = ((_ rowView: RowView, _ row: Int, _ item: Item) -> Void)
+
         func makeView(_ tableView: NSTableView, _ row: Int, _ item: Item) -> RowView {
             let rowView = (tableView.rowView(atRow: row, makeIfNecessary: false) as? RowView) ?? RowView(frame: .zero)
             rowView.identifier = identifier

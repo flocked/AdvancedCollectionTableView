@@ -19,7 +19,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         stackviewConstraints = addSubview(withConstraint: stackView)
         updateConfiguration()
     }
-    
+
     /// The current configuration of the view.
     public var configuration: NSContentConfiguration {
         get { appliedConfiguration }
@@ -28,7 +28,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
             appliedConfiguration = newValue
         }
     }
-    
+
     ///
     /**
      Determines whether the view is compatible with the provided configuration.
@@ -38,11 +38,11 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
-    
+
     lazy var textField = ItemTextField(properties: appliedConfiguration.textProperties)
     lazy var secondaryTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
     lazy var contentView = ItemContentView(configuration: appliedConfiguration)
-    
+
     lazy var textStackView: NSStackView = {
         let stackView = NSStackView(views: [textField, secondaryTextField])
         stackView.orientation = .vertical
@@ -50,7 +50,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         stackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         return stackView
     }()
-    
+
     lazy var stackView: NSStackView = {
         let stackView = NSStackView(views: [contentView, textStackView])
         stackView.orientation = appliedConfiguration.contentPosition.orientation
@@ -58,21 +58,21 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         stackView.spacing = appliedConfiguration.contentToTextPadding
         return stackView
     }()
-    
+
     var stackviewConstraints: [NSLayoutConstraint] = []
-    
+
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     var appliedConfiguration: NSItemContentConfiguration {
         didSet {
             guard oldValue != appliedConfiguration else { return }
             updateConfiguration()
         }
     }
-    
+
     var isEditing: Bool = false {
         didSet {
             guard oldValue != isEditing else { return }
@@ -85,27 +85,27 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
             }
         }
     }
-    
+
     var tableCellView: NSTableCellView? {
         firstSuperview(for: NSTableCellView.self)
     }
-    
+
     var tableRowView: NSTableRowView? {
         firstSuperview(for: NSTableRowView.self)
     }
-    
+
     var collectionViewItem: NSCollectionViewItem? {
         firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem
     }
-    
+
     func updateConfiguration() {
         contentView.centerYConstraint?.activate(false)
-                
+
         textField.properties = appliedConfiguration.textProperties
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        
+
         layer?.scale = appliedConfiguration.scaleTransform
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
@@ -130,7 +130,6 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         contentView.invalidateIntrinsicContentSize()
     }
 }
-
 
 extension NSItemContentView {
     func calculateContentViewFrame(remaining: CGRect) -> CGRect {
@@ -159,7 +158,7 @@ extension NSItemContentView {
                 maxHeight = _maxHeight * frame.height
             }
         }
-        
+
         if let maxWidth = maxWidth, let maxHeight = maxHeight, frame.width > maxWidth, frame.height > maxHeight {
             frame = frame.scaled(toFit: CGSize(maxWidth, maxHeight))
         } else if let maxWidth = maxWidth, frame.width > maxWidth {
@@ -167,10 +166,10 @@ extension NSItemContentView {
         } else if let maxHeight = maxHeight, frame.height > maxHeight {
             frame = frame.scaled(toHeight: maxHeight)
         }
-        
+
         return frame
     }
-    
+
     func horizontalTest() {
         let contentRegion = bounds.inset(by: appliedConfiguration.margins)
         var remainingRegion = contentRegion
@@ -187,7 +186,7 @@ extension NSItemContentView {
             }
         }
     }
-    
+
     func test() {
         let contentRegion = bounds.inset(by: appliedConfiguration.margins)
         var remainingRegion = contentRegion

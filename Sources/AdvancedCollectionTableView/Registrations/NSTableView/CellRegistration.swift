@@ -52,21 +52,21 @@ public extension NSTableView {
      
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
-    struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView  {
-        
+    struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView {
+
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
         let handler: Handler
-        
+
         /**
          The identifiers of the table columns, or `nil`, if the cell isn't restricted to specific columns.
          
          The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value isn't `nil`, the table cell is displayed for the columns with the same identifiers.
          */
         public let columnIdentifiers: [NSUserInterfaceItemIdentifier]?
-        
+
         // MARK: Creating a cell registration
-        
+
         /**
          Creates a cell registration with the specified registration handler.
          
@@ -80,7 +80,7 @@ public extension NSTableView {
             self.identifier = .init(UUID().uuidString)
             self.columnIdentifiers = columnIdentifiers
         }
-        
+
         /**
          Creates a cell registration with the specified registration handler and nib file.
          
@@ -95,10 +95,10 @@ public extension NSTableView {
             self.identifier = .init(UUID().uuidString)
             self.columnIdentifiers = columnIdentifiers
         }
-        
+
         /// A closure that handles the cell registration and configuration.
-        public typealias Handler = ((_ cellView: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item)->(Void))
-        
+        public typealias Handler = ((_ cellView: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Void)
+
         func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
             self.register(tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
@@ -114,14 +114,14 @@ public extension NSTableView {
             }
             return nil
         }
-        
-        func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) ->NSTableCellView? {
+
+        func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) -> NSTableCellView? {
             self.register(tableView)
             if let columnIdentifiers = self.columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
                 return nil
             }
             let item = item as! Item
-            
+
             if tableView.isReconfiguratingRows, let columnIndex = tableView.tableColumns.firstIndex(of: tableColumn), let existingCell = tableView.view(atColumn: columnIndex, row: row, makeIfNecessary: false) as? Cell {
                 self.handler(existingCell, tableColumn, row, item)
                 return existingCell
@@ -132,7 +132,7 @@ public extension NSTableView {
             }
             return nil
         }
-        
+
         func register(_ tableView: NSTableView) {
             if let nib = nib {
                 if tableView.registeredNibsByIdentifier?[self.identifier] != self.nib {
@@ -144,7 +144,7 @@ public extension NSTableView {
                 }
             }
         }
-        
+
         func unregister(_ tableView: NSTableView) {
             tableView.register(nil, forIdentifier: self.identifier)
         }
@@ -175,5 +175,5 @@ public protocol NSTableViewCellRegistration {
 }
 
 protocol _NSTableViewCellRegistration {
-    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) ->NSTableCellView?
+    func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) -> NSTableCellView?
 }

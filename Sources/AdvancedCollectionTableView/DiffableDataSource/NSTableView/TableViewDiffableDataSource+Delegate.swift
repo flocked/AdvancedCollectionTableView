@@ -10,15 +10,15 @@ import FZUIKit
 
 extension TableViewDiffableDataSource {
     class DelegateBridge: NSObject, NSTableViewDelegate {
-        
+
         weak var dataSource: TableViewDiffableDataSource!
-        
+
         init(_ dataSource: TableViewDiffableDataSource) {
             self.dataSource = dataSource
             super.init()
             dataSource.tableView.delegate = self
         }
-        
+
         var previousSelectedIDs: [Item.ID] = []
         public func tableViewSelectionDidChange(_ notification: Notification) {
             guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
@@ -27,12 +27,12 @@ extension TableViewDiffableDataSource {
             }
             let selectedIDs = dataSource.selectedItems.ids
             let diff = previousSelectedIDs.difference(to: selectedIDs)
-                        
+
             if diff.added.isEmpty == false, let didSelect = dataSource.selectionHandlers.didSelect {
                 let selectedItems = dataSource.items[ids: diff.added]
                 didSelect(selectedItems)
             }
-            
+
             if diff.removed.isEmpty == false, let didDeselect = dataSource.selectionHandlers.didDeselect {
                 let deselectedItems = dataSource.items[ids: diff.removed]
                 if deselectedItems.isEmpty == false {
@@ -41,7 +41,7 @@ extension TableViewDiffableDataSource {
             }
             previousSelectedIDs = selectedIDs
         }
-        
+
         public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
             var proposedSelectionIndexes = proposedSelectionIndexes
             dataSource.sectionRowIndexes.forEach({ proposedSelectionIndexes.remove($0) })
@@ -50,7 +50,7 @@ extension TableViewDiffableDataSource {
             }
             let selectedRows = Array(dataSource.tableView.selectedRowIndexes)
             let proposedRows = Array(proposedSelectionIndexes)
-        
+
             let diff = selectedRows.difference(to: proposedRows)
             let selectedItems = diff.added.compactMap({dataSource.item(forRow: $0)})
             let deselectedItems = diff.removed.compactMap({dataSource.item(forRow: $0)})
@@ -59,33 +59,33 @@ extension TableViewDiffableDataSource {
             if !selectedItems.isEmpty {
                 selections = dataSource.selectionHandlers.shouldSelect?(selectedItems) ?? selectedItems
             }
-            
+
             if !deselectedItems.isEmpty {
                 selections += dataSource.selectionHandlers.shouldDeselect?(deselectedItems) ?? deselectedItems
             }
-            
+
             return IndexSet(selections.compactMap({dataSource.row(for: $0)}))
         }
-        
+
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
             dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
         }
-        
+
         public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
             dataSource.dataSource.tableView(tableView, isGroupRow: row)
         }
-        
+
         public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
             dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
-        
+
         public func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
             if let rowActionProvider = dataSource.rowActionProvider, let item = dataSource.item(forRow: row) {
                 return rowActionProvider(item, edge)
             }
             return []
         }
-        
+
         public func tableViewColumnDidMove(_ notification: Notification) {
             guard let didReorder = dataSource.columnHandlers.didReorder else { return }
             guard let oldPos = notification.userInfo?["NSOldColumn"] as? Int,
@@ -93,13 +93,13 @@ extension TableViewDiffableDataSource {
                   let tableColumn = dataSource.tableView.tableColumns[safe: newPos] else { return }
             didReorder(tableColumn, oldPos, newPos)
         }
-        
+
         public func tableViewColumnDidResize(_ notification: Notification) {
             guard let didResize = dataSource.columnHandlers.didResize else { return }
             guard let tableColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn, let oldWidth = notification.userInfo?["NSOldWidth"] as? CGFloat else { return }
             didResize(tableColumn, oldWidth)
         }
-        
+
         public func tableView(_ tableView: NSTableView, shouldReorderColumn columnIndex: Int, toColumn newColumnIndex: Int) -> Bool {
             guard let tableColumn = dataSource.tableView.tableColumns[safe: columnIndex] else { return true }
             return dataSource.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true

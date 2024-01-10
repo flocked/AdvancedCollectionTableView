@@ -24,15 +24,15 @@ extension NSCollectionView {
             }
         }
     }
-    
+
     var hoveredItem: NSCollectionViewItem? {
         guard let indexPath = hoveredIndexPath else { return nil }
         return item(at: indexPath)
     }
-    
+
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            if (observingView == nil) {
+            if observingView == nil {
                 observingView = ObserverView()
                 addSubview(withConstraint: self.observingView!)
                 observingView!.sendToBack()
@@ -43,13 +43,13 @@ extension NSCollectionView {
                     }
                     self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
                 }
-                
-                observingView?.mouseHandlers.exited = { [weak self] event in
+
+                observingView?.mouseHandlers.exited = { [weak self] _ in
                     guard let self = self else { return true }
                     self.hoveredIndexPath = nil
                     return true
                 }
-                
+
                 observingView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return true }
                     let location = event.location(in: self)
@@ -64,7 +64,7 @@ extension NSCollectionView {
             observingView = nil
         }
     }
-    
+
     var observingView: ObserverView? {
         get { getAssociatedValue(key: "NSCollectionView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSCollectionView_observingView", object: self)

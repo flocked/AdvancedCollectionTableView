@@ -15,19 +15,19 @@ public struct TextProperties {
     /// The font of the text.
     public var font: NSUIFont = .body
     var swiftUIFont: Font? = .body
-    
+
     /// The line limit of the text, or 0 if no line limit applies.
     public var numberOfLines: Int = 0
-    
+
     /// The alignment of the text.
     public var alignment: NSTextAlignment = .left
-    
+
     /// The technique for wrapping and truncating the text.
     public var lineBreakMode: NSLineBreakMode = .byWordWrapping
-    
+
     /// The number formatter of the text.
-    public var numberFormatter: NumberFormatter? = nil
-    
+    public var numberFormatter: NumberFormatter?
+
     /// A Boolean value that determines whether the label reduces the text’s font size to fit the title string into the label’s bounding rectangle.
     public var adjustsFontSizeToFitWidth: Bool = false
 
@@ -36,7 +36,7 @@ public struct TextProperties {
 
     /// A Boolean value that determines whether the label tightens text before truncating.
     public var allowsDefaultTighteningForTruncation: Bool = false
-    
+
     /**
      A Boolean value that determines whether the user can select the content of the text field.
      
@@ -54,38 +54,38 @@ public struct TextProperties {
      
      It only gets called, if `isEditable` is true.
      */
-    public var onEditEnd: ((String)->())? = nil
-    
+    public var onEditEnd: ((String) -> Void)?
+
     /**
      The Handler that determines whether the edited string is valid.
      
      It only gets called, if `isEditable` is true.
      */
-    public var stringValidation: ((String)->(Bool))? = nil
-    
+    public var stringValidation: ((String) -> (Bool))?
+
     public var color: NSUIColor = .labelColor {
         didSet { updateResolvedTextColor() } }
-    
+
     /// The color transformer of the text color.
-    public var colorTansform: ColorTransformer? = nil {
+    public var colorTansform: ColorTransformer? {
         didSet { updateResolvedTextColor() } }
-    
+
     /// Generates the resolved text color, using the text color and color transformer.
     public func resolvedColor() -> NSUIColor {
         colorTansform?(color) ?? color
     }
-    
+
     var _resolvedTextColor: NSUIColor = .labelColor
-    
+
     mutating func updateResolvedTextColor() {
         _resolvedTextColor = resolvedColor()
     }
-    
+
     /// Initalizes a text configuration.
     init() {
-        
+
     }
-    
+
     /**
      A text configuration with a system font for the specified point size, weight and design.
 
@@ -94,13 +94,13 @@ public struct TextProperties {
         - weight: The weight of the font.
         - design: The design of the font.
      */
-    public static func system(size: CGFloat, weight: NSUIFont.Weight = .regular, design: NSUIFontDescriptor.SystemDesign = .default) -> Self  {
+    public static func system(size: CGFloat, weight: NSUIFont.Weight = .regular, design: NSUIFontDescriptor.SystemDesign = .default) -> Self {
         var properties = Self()
         properties.font = .systemFont(ofSize: size, weight: weight, design: design)
         properties.swiftUIFont = .system(size: size, design: design.swiftUI).weight(weight.swiftUI)
         return properties
     }
-    
+
     /**
      A text configuration with a system font for the specified text style, weight and design.
      
@@ -115,14 +115,14 @@ public struct TextProperties {
         properties.swiftUIFont = .system(style.swiftUI, design: design.swiftUI).weight(weight.swiftUI)
         return properties
     }
-    
+
     /// A text configuration for a primary text.
     public static var primary: Self {
         var text = Self()
         text.numberOfLines = 1
         return text
     }
-    
+
     /// A text configuration for a secondary text.
     public static var secondary: Self {
         var text = Self()
@@ -131,7 +131,7 @@ public struct TextProperties {
         text.swiftUIFont = .callout
         return text
     }
-    
+
     /// A text configuration for a tertiary text.
     public static var tertiary: Self {
         var text = Self()
@@ -140,14 +140,14 @@ public struct TextProperties {
         text.swiftUIFont = .callout
         return text
     }
-    
+
     /// A text configuration with a font for bodies.
     public static var body: Self {
         var text = Self.system(.body)
         text.swiftUIFont = .body
         return text
     }
-    
+
     /// A text configuration with a font for callouts.
     public static var callout: Self {
         var text = Self.system(.callout)
@@ -214,7 +214,7 @@ extension TextProperties: Hashable {
     public static func == (lhs: TextProperties, rhs: TextProperties) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(font)
         hasher.combine(numberOfLines)
@@ -256,7 +256,6 @@ extension NSTextView {
     }
 }
 
-
 extension NSTextField {
     /**
      Configurates the text field.
@@ -280,12 +279,12 @@ extension NSTextField {
             self.setupTextFieldObserver()
         }
     }
-    
+
     var observer: KeyValueObserver<NSTextField>? {
         get { getAssociatedValue(key: "observer", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "observer", object: self) }
     }
-    
+
     func setupTextFieldObserver() {
         if (adjustsFontSizeToFitWidth && minimumScaleFactor != 0.0) || allowsDefaultTighteningForTruncation {
             swizzleTextField()
@@ -325,47 +324,47 @@ extension NSTextField {
         }
         self.adjustFontSize()
     }
-    
+
     var _font: NSFont? {
         get { getAssociatedValue(key: "font", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "font", object: self) }
     }
-    
+
     var didSwizzleTextField: Bool {
         get { getAssociatedValue(key: "didSwizzleTextField", object: self, initialValue: false) }
         set {
             set(associatedValue: newValue, key: "didSwizzleTextField", object: self)
         }
     }
-    
+
     func swizzleTextField() {
         guard didSwizzleTextField == false else { return }
         didSwizzleTextField = true
         _font = self.font
-        
+
         do {
             try self.replaceMethod(
                 #selector(setter: font),
                 methodSignature: (@convention(c)  (AnyObject, Selector, NSFont?) -> Void).self,
-                hookSignature: (@convention(block)  (AnyObject, NSFont?) -> Void).self) { store in { object, font in
+                hookSignature: (@convention(block)  (AnyObject, NSFont?) -> Void).self) { _ in { object, font in
                     let textField = (object as? NSTextField)
                     textField?._font = font
                     textField?.adjustFontSize()
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(getter: font),
                 methodSignature: (@convention(c)  (AnyObject, Selector) -> NSFont?).self,
-                hookSignature: (@convention(block)  (AnyObject) -> NSFont?).self) { store in { object in
+                hookSignature: (@convention(block)  (AnyObject) -> NSFont?).self) { _ in { object in
                     return (object as! NSTextField)._font
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(layout),
-                methodSignature: (@convention(c)  (AnyObject, Selector) -> ()).self,
-                hookSignature: (@convention(block)  (AnyObject) -> ()).self) { store in { object in
+                methodSignature: (@convention(c)  (AnyObject, Selector) -> Void).self,
+                hookSignature: (@convention(block)  (AnyObject) -> Void).self) { store in { object in
                     store.original(object, #selector(NSView.layout))
                     if let textField = (object as? NSTextField), textField.bounds.size != textField._bounds.size {
                         textField.adjustFontSize()
@@ -373,7 +372,7 @@ extension NSTextField {
                     }
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(NSTextViewDelegate.textView(_:doCommandBy:)),
                 methodSignature: (@convention(c)  (AnyObject, Selector, NSTextView, Selector) -> (Bool)).self,
@@ -410,11 +409,11 @@ extension NSTextField {
                     return store.original(object, #selector(NSTextViewDelegate.textView(_:doCommandBy:)), textView, selector)
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(textDidEndEditing),
-                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> ()).self,
-                hookSignature: (@convention(block)  (AnyObject, Notification) -> ()).self) { store in { object, notification in
+                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> Void).self,
+                hookSignature: (@convention(block)  (AnyObject, Notification) -> Void).self) { store in { object, notification in
                     let textField = (object as? NSTextField)
                   //  textField?.editingState = .didEnd
                     textField?.adjustFontSize()
@@ -422,11 +421,11 @@ extension NSTextField {
                     store.original(object, #selector(NSTextField.textDidEndEditing), notification)
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(textDidBeginEditing),
-                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> ()).self,
-                hookSignature: (@convention(block)  (AnyObject, Notification) -> ()).self) { store in { object, notification in
+                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> Void).self,
+                hookSignature: (@convention(block)  (AnyObject, Notification) -> Void).self) { store in { object, notification in
                     store.original(object, #selector(NSTextField.textDidBeginEditing), notification)
                     if let textField = (object as? NSTextField) {
                         textField.editStartString = textField.stringValue
@@ -438,11 +437,11 @@ extension NSTextField {
                     }
                 }
                 }
-            
+
             try self.replaceMethod(
                 #selector(textDidChange),
-                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> ()).self,
-                hookSignature: (@convention(block)  (AnyObject, Notification) -> ()).self) { store in { object, notification in
+                methodSignature: (@convention(c)  (AnyObject, Selector, Notification) -> Void).self,
+                hookSignature: (@convention(block)  (AnyObject, Notification) -> Void).self) { store in { object, notification in
                     if let textField = (object as? NSTextField) {
                         textField.updateString()
                         /*
@@ -502,7 +501,7 @@ extension NSTextField {
             Swift.debugPrint(error)
         }
     }
-    
+
     func updateString() {
         let newString = self.allowedCharacters.trimString(self.stringValue)
         if let shouldEdit = self.editingHandlers.shouldEdit {
@@ -519,7 +518,7 @@ extension NSTextField {
                 self.stringValue = String(newString.prefix(maxCharCount))
             }
             self.editingHandlers.didEdit?()
-        } else if let minCharCount = self.minimumNumberOfCharacters, newString.count < minCharCount  {
+        } else if let minCharCount = self.minimumNumberOfCharacters, newString.count < minCharCount {
             if self.previousString.count >= minCharCount {
                 self.stringValue = self.previousString
                 self.currentEditor()?.selectedRange = self.editingRange
@@ -537,7 +536,7 @@ extension NSTextField {
         }
         self.adjustFontSize()
     }
-    
+
     func adjustFontSize(requiresSmallerScale: Bool = false) {
         guard let _font = _font else { return }
         self.isAdjustingFontSize = true
@@ -561,38 +560,38 @@ extension NSTextField {
         }
         self.isAdjustingFontSize = false
     }
-    
+
     var _bounds: CGRect {
         get { getAssociatedValue(key: "bounds", object: self, initialValue: .zero) }
         set { set(associatedValue: newValue, key: "bounds", object: self) }
     }
-    
+
     var lastFontScaleFactor: CGFloat {
         get { getAssociatedValue(key: "lastFontScaleFactor", object: self, initialValue: 1.0) }
         set { set(associatedValue: newValue, key: "lastFontScaleFactor", object: self) }
     }
-    
+
     var isAdjustingFontSize: Bool {
         get { getAssociatedValue(key: "isAdjustingFontSize", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "isAdjustingFontSize", object: self)
         }
     }
-    
+
     var editStartString: String {
         get { getAssociatedValue(key: "editStartString", object: self, initialValue: self.stringValue) }
         set { set(associatedValue: newValue, key: "editStartString", object: self) }
     }
-    
+
     var previousString: String {
         get { getAssociatedValue(key: "previousString", object: self, initialValue: self.stringValue) }
         set { set(associatedValue: newValue, key: "previousString", object: self) }
     }
-    
+
     var editingRange: NSRange {
         get { getAssociatedValue(key: "editingRange", object: self, initialValue: self.currentEditor()?.selectedRange ?? NSRange(location: 0, length: 0)) }
         set { set(associatedValue: newValue, key: "editingRange", object: self) }
     }
-    
+
     func adjustFontKerning() {
         guard let fontSize = _font?.pointSize else { return }
         var needsUpdate = !isFittingCurrentText
@@ -611,7 +610,7 @@ extension NSTextField {
             needsUpdate = !isFittingCurrentText
         }
     }
-    
+
     var isFittingCurrentText: Bool {
         let isFitting = !isTruncatingText
         if isFitting == true {

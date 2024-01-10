@@ -23,7 +23,7 @@ extension NSCollectionView {
     public func register<Item: NSCollectionViewItem>(_ itemClass: Item.Type) {
         self.register(itemClass.self, forItemWithIdentifier: .init(itemClass))
     }
-    
+
     /**
      Registers a nib file for use in creating new collection view items.
      
@@ -38,7 +38,7 @@ extension NSCollectionView {
     public func register<Item: NSCollectionViewItem>(_ itemClass: Item.Type, nib: NSNib) {
         self.register(nib, forItemWithIdentifier: .init(itemClass))
     }
-    
+
     /**
      Dequeues a reusable item object located by its type.
      
@@ -55,7 +55,7 @@ extension NSCollectionView {
     func makeItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, for indexPath: IndexPath) -> Item {
         return self.makeReconfigurableItem(Item.self, withIdentifier: .init(Item.self), for: indexPath)
     }
-    
+
     /**
      Creates or returns a reusable item of the specified type.
      
@@ -71,7 +71,7 @@ extension NSCollectionView {
     public func makeItem<Item: NSCollectionViewItem>(for indexPath: IndexPath) -> Item {
         return self.makeReconfigurableItem(Item.self, withIdentifier: .init(Item.self), for: indexPath)
     }
-    
+
     func makeReconfigurableItem<Item: NSCollectionViewItem>(_ itemClass: Item.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier, for indexPath: IndexPath) -> Item {
         if self.isReconfiguratingItems, let item = self.item(at: indexPath) as? Item {
             return item
@@ -98,7 +98,7 @@ extension NSCollectionView {
     public func register<Supplementary>(_ viewClass: Supplementary.Type, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where Supplementary: (NSView & NSCollectionViewElement) {
         self.register(Supplementary.self, forSupplementaryViewOfKind: kind, withIdentifier: .init(Supplementary.self))
     }
-    
+
     /**
      Registers a class to use when creating new supplementary views in the collection view.
           
@@ -116,7 +116,7 @@ extension NSCollectionView {
     public func register<Supplementary>(_ viewClass: Supplementary.Type, nib: NSNib, forSupplementaryKind kind: NSCollectionView.SupplementaryElementKind) where Supplementary: (NSView & NSCollectionViewElement) {
         self.register(nib, forSupplementaryViewOfKind: kind, withIdentifier: .init(Supplementary.self))
     }
-    
+
     /**
      Creates or returns a reusable supplementary view of the specified type.
      
@@ -133,7 +133,7 @@ extension NSCollectionView {
     public func makeSupplementaryView<Supplementary>(ofKind elementKind: NSCollectionView.SupplementaryElementKind, for indexPath: IndexPath) -> Supplementary where Supplementary: (NSView & NSCollectionViewElement) {
         return self.makeSupplementaryView(ofKind: elementKind, withIdentifier: .init(Supplementary.self), for: indexPath) as! Supplementary
     }
-    
+
     /**
      Creates or returns a reusable supplementary view of the specified type.
      

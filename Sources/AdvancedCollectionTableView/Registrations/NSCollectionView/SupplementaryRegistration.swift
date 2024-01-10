@@ -38,17 +38,17 @@ public extension NSCollectionView {
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
-    struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryRegistration, _NSCollectionViewSupplementaryRegistration where Supplementary: (NSView & NSCollectionViewElement)  {
-        
+    struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryRegistration, _NSCollectionViewSupplementaryRegistration where Supplementary: (NSView & NSCollectionViewElement) {
+
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
         let handler: Handler
-        
+
         /// The kind of the supplementary view.
         public let elementKind: SupplementaryElementKind
-        
+
         // MARK: Creating a supplementary registration
-        
+
         /**
          Creates a supplementary view registration with the specified registration handler
          
@@ -62,7 +62,7 @@ public extension NSCollectionView {
             self.nib = nil
             self.identifier = .init(String(describing: Supplementary.self) + elementKind)
         }
-        
+
         /**
          Creates a supplementary view registration with the specified registration handler and nib file.
          
@@ -77,24 +77,24 @@ public extension NSCollectionView {
             self.handler = handler
             self.identifier = .init(String(describing: Supplementary.self) + String(describing: nib.self) + elementKind)
         }
-        
+
         /// A closure that handles the supplementary registration and configuration.
-        public typealias Handler = ((_ supplementaryView: Supplementary, _ kind: SupplementaryElementKind, _ indexPath: IndexPath)->(Void))
-        
-        func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)   {
+        public typealias Handler = ((_ supplementaryView: Supplementary, _ kind: SupplementaryElementKind, _ indexPath: IndexPath) -> Void)
+
+        func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement) {
             if isRegistered(collectionView) == false {
                 register(collectionView)
             }
-            
+
             let view = collectionView.makeSupplementaryView(ofKind: self.elementKind, withIdentifier: self.identifier, for: indexPath) as! Supplementary
             self.handler(view, elementKind, indexPath)
             return view
         }
-        
+
         func isRegistered(_ collectionView: NSCollectionView) -> Bool {
             collectionView.registeredSupplementaryRegistrations.contains(identifier)
         }
-        
+
         func register(_ collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)
@@ -103,7 +103,7 @@ public extension NSCollectionView {
             }
             collectionView.registeredSupplementaryRegistrations.append(identifier)
         }
-        
+
         func unregister(_ collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)

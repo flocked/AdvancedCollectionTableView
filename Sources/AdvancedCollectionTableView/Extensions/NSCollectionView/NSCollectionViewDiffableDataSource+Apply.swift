@@ -18,22 +18,22 @@ public extension NSCollectionViewDiffableDataSource {
         - option: Option how to apply the snapshot to the table view. The default value is `animated`.
         - completion: An optional closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue. The default value is `nil`.
      */
-    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,_ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         switch option {
         case .usingReloadData:
             self.applySnapshotUsingReloadData(snapshot, completion: completion)
-        case .animated(_):
+        case .animated:
             self.apply(snapshot, animated: true, animationDuration: option.animationDuration, completion: completion)
         case .withoutAnimation:
             self.apply(snapshot, animated: false, completion: completion)
         }
     }
-    
+
     private func applySnapshotUsingReloadData(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
                                               completion: (() -> Void)? = nil) {
         self.apply(snapshot, animatingDifferences: false, completion: completion)
     }
-    
+
     private func apply(
         _ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
         animated: Bool = true,

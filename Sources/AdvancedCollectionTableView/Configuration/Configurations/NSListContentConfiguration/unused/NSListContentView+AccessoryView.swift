@@ -11,7 +11,7 @@ import FZSwiftUtils
 import FZUIKit
 
 class AccessoryView: NSView {
-    
+
 }
 
 extension AccessoryView {
@@ -19,7 +19,7 @@ extension AccessoryView {
         struct AccessoryItem: View {
             let properties: NSListContentConfiguration.AccessoryProperties
             let alignment: SwiftUI.Alignment
-            
+
             @ViewBuilder
             var text: some View {
                 if let text = properties.attributedText {
@@ -30,7 +30,7 @@ extension AccessoryView {
                         .configurate(using: properties.textProperties)
                 }
             }
-            
+
             @ViewBuilder
             var secondaryText: some View {
                 if let text = properties.secondaryAttributedText {
@@ -41,7 +41,7 @@ extension AccessoryView {
                         .configurate(using: properties.secondaryTextProperties)
                 }
             }
-            
+
             @ViewBuilder
             var image: some View {
                 if let image = properties.image {
@@ -49,7 +49,7 @@ extension AccessoryView {
                         .configurate(using: properties.imageProperties)
                 }
             }
-            
+
             @ViewBuilder
             var textItems: some View {
                 HStack(alignment: .firstTextBaseline, spacing: properties.textToSecondaryTextPadding) {
@@ -57,7 +57,7 @@ extension AccessoryView {
                     secondaryText
                 }
             }
-            
+
             @ViewBuilder
             var items: some View {
                 if properties.imagePosition == .leading {
@@ -68,18 +68,18 @@ extension AccessoryView {
                     textItems
                 }
             }
-            
+
             var body: some View {
                 HStack(alignment: .center, spacing: properties.imageToTextPadding) {
                     items
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-                
+
             }
         }
-        
+
         let accessory: NSListContentConfiguration.Accessory
-        
+
         @ViewBuilder
         var leading: some View {
             if accessory.leading.isVisible {
@@ -87,7 +87,7 @@ extension AccessoryView {
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
         }
-        
+
         @ViewBuilder
         var center: some View {
             if accessory.center.isVisible {
@@ -95,7 +95,7 @@ extension AccessoryView {
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
         }
-        
+
         @ViewBuilder
         var trailing: some View {
             if accessory.trailing.isVisible {
@@ -103,7 +103,7 @@ extension AccessoryView {
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
         }
-        
+
         var body: some View {
             HStack(alignment: .firstTextBaseline, spacing: accessory.padding) {
                 leading
@@ -159,7 +159,7 @@ extension NSTextAlignment {
         default: return .leading
         }
     }
-    
+
     var swiftUIMultiline: SwiftUI.TextAlignment {
         switch self {
         case .left: return .leading

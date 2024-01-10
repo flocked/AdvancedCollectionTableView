@@ -18,28 +18,28 @@ extension NSListContentView {
                 }
             }
         }
-        
+
         func update() {
-            
+
         }
-        
+
         var previousWidth: CGFloat = -1
         override func layout() {
             super.layout()
             guard bounds.size.width != previousWidth else { return }
             previousWidth = bounds.size.width
         }
-        
+
         init(configuration: NSListContentConfiguration) {
             self.configuration = configuration
             super.init(frame: .zero)
             addSubview(textField)
             addSubview(secondaryTextField)
         }
-        
+
         lazy var textField = ListTextField(properties: configuration.textProperties)
         lazy var secondaryTextField = ListTextField(properties: configuration.secondaryTextProperties)
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

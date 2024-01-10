@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 10.12.22.
 //
 
-
 import AppKit
 import FZSwiftUtils
 import FZUIKit
@@ -17,12 +16,12 @@ extension NSTableView {
             $0.setCellViewsNeedAutomaticUpdateConfiguration()
         })
     }
-    
+
     var tableViewObserver: KeyValueObserver<NSTableView>? {
         get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
-        
+
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if tableViewObserver == nil {
@@ -32,7 +31,7 @@ extension NSTableView {
                     self.updateVisibleRowConfigurations()
                 }
             }
-            if (observingView == nil) {
+            if observingView == nil {
                 observingView = ObserverView()
                 addSubview(withConstraint: self.observingView!)
                 observingView!.sendToBack()
@@ -43,13 +42,13 @@ extension NSTableView {
                     }
                     self.updateVisibleRowConfigurations()
                 }
-                
-                observingView?.mouseHandlers.exited = { [weak self] event in
+
+                observingView?.mouseHandlers.exited = { [weak self] _ in
                     guard let self = self else { return true }
                     self.hoveredRow = nil
                     return true
                 }
-                
+
                 observingView?.mouseHandlers.moved = { [weak self] event in
                     guard let self = self else { return true }
                     let location = event.location(in: self)
@@ -69,20 +68,20 @@ extension NSTableView {
             observingView = nil
         }
     }
-    
+
     var observingView: ObserverView? {
         get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
         set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
         }
     }
-    
+
     var hoveredRowView: NSTableRowView? {
         if let hoveredRow = hoveredRow, let rowView = self.rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
             return rowView
         }
         return nil
     }
-    
+
     @objc dynamic var hoveredRow: IndexPath? {
         get { getAssociatedValue(key: "NSTableView_hoveredRow", object: self, initialValue: nil) }
         set {

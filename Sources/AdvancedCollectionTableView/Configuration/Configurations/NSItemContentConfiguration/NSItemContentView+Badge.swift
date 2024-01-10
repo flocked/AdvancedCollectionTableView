@@ -17,21 +17,21 @@ extension NSItemContentView {
                 updateBadge()
             }
         }
-        
-        var verticalConstraint: NSLayoutConstraint? = nil
-        var horizontalConstraint: NSLayoutConstraint? = nil
-        var widthConstraint: NSLayoutConstraint? = nil
-        
+
+        var verticalConstraint: NSLayoutConstraint?
+        var horizontalConstraint: NSLayoutConstraint?
+        var widthConstraint: NSLayoutConstraint?
+
         func updateBadge() {
             border.color = properties._resolvedBorderColor
             border.width = properties.borderWidth
             cornerRadius = properties.cornerRadius
             backgroundColor = properties._resolvedBackgroundColor
             configurate(using: properties.shadow, type: .outer)
-            
+
             textField.properties = properties.textProperties
             textField.text(properties.text, attributedText: properties.attributedText)
-            
+
             if let view = properties.view {
                 if view != view {
                     self.view?.removeFromSuperview()
@@ -42,17 +42,17 @@ extension NSItemContentView {
                 view?.removeFromSuperview()
                 view = nil
             }
-            
+
             imageView.image = properties.image
             imageView.properties = properties.imageProperties
-            
+
             var visualEffect = properties.visualEffect
             visualEffect?.blendingMode = .withinWindow
             visualEffect?.material = .hudWindow
             visualEffect?.material = .popover
             visualEffect?.state = .active
             self.visualEffect = visualEffect
-            
+
             stackViewConstraints.constant(properties.margins)
             stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
@@ -62,9 +62,9 @@ extension NSItemContentView {
                 stackView.removeArrangedSubview(imageView)
                 stackView.addArrangedSubview(imageView)
             }
-            
+
             textField.invalidateIntrinsicContentSize()
-            
+
             if let maxWidth = properties.maxWidth {
                 if widthConstraint == nil {
                     widthConstraint = widthAnchor.constraint(equalToConstant: maxWidth)
@@ -76,35 +76,35 @@ extension NSItemContentView {
                 widthConstraint = nil
             }
         }
-        
+
         init(properties: NSItemContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
             initalSetup()
             updateBadge()
         }
-        
+
         lazy var textField = BadgeTextField(properties: properties.textProperties)
         lazy var imageView = BadgeImageView(properties: properties.imageProperties)
-        var view: NSView? = nil
+        var view: NSView?
         lazy var stackView: NSStackView = {
             let stackView = NSStackView(views: [imageView, textField])
             stackView.orientation = .horizontal
             stackView.alignment = .firstBaseline
             return stackView
         }()
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         var stackViewConstraints: [NSLayoutConstraint] = []
         func initalSetup() {
             translatesAutoresizingMaskIntoConstraints = false
             stackViewConstraints = addSubview(withConstraint: stackView)
         }
     }
-    
+
     class BadgeTextField: NSTextField {
         var properties: NSItemContentConfiguration.Badge.TextProperties {
             didSet {
@@ -112,7 +112,7 @@ extension NSItemContentView {
                 updateProperties()
             }
         }
-        
+
         func text(_ text: String?, attributedText: AttributedString?) {
             if let attributedText = attributedText {
                 attributedStringValue = NSAttributedString(attributedText)
@@ -121,12 +121,12 @@ extension NSItemContentView {
             }
             isHidden = text == nil && attributedText == nil
         }
-        
+
         func updateProperties() {
             font = properties.font
             textColor = properties._resolvedTextColor
         }
-        
+
         init(properties: NSItemContentConfiguration.Badge.TextProperties) {
             self.properties = properties
             super.init(frame: .zero)
@@ -138,12 +138,12 @@ extension NSItemContentView {
             maximumNumberOfLines = 1
             updateProperties()
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }
-    
+
     class BadgeImageView: NSImageView {
         var properties: NSItemContentConfiguration.Badge.ImageProperties {
             didSet {
@@ -156,19 +156,19 @@ extension NSItemContentView {
             super.init(frame: .zero)
             updateProperties()
         }
-        
+
         override var image: NSImage? {
             didSet {
                 isHidden = image == nil
             }
         }
-        
+
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
             if image?.isSymbolImage == true {
                 return intrinsicContentSize
             }
-            
+
             if let maxWidth = properties.maxWidth, intrinsicContentSize.width > maxWidth {
                 intrinsicContentSize.width = maxWidth
             }
@@ -177,14 +177,14 @@ extension NSItemContentView {
             }
             return intrinsicContentSize
         }
-        
+
         func updateProperties() {
             contentTintColor = properties._resolvedTintColor
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             imageScaling = properties.scaling
             invalidateIntrinsicContentSize()
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

@@ -37,14 +37,14 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
      The data source computes a diff of the previous and new state and applies the new state animated with a default animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     public static var animated: Self { return .animated(duration: Self.noAnimationDuration) }
-    
+
     /**
      The snapshot gets applied animiated with the specified animation duration.
      
      The data source computes a diff of the previous and new state and applies the new state animated with the specified animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     case animated(duration: TimeInterval)
-    
+
     /**
      The snapshot gets applied using `reloadData()`.
      
@@ -57,9 +57,9 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
      The data source computes a diff of the previous and new state and applies the new state non animated. Any ongoing item animations are interrupted and the content is reloaded immediately.
      */
     case withoutAnimation
-    
+
     static var noAnimationDuration: TimeInterval { 2344235 }
-    
+
     var animationDuration: TimeInterval? {
         switch self {
         case .animated(let duration):

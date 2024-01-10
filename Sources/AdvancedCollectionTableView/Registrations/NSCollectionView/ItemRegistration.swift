@@ -60,14 +60,14 @@ public extension NSCollectionView {
      
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
      */
-    struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem  {
-        
+    struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem {
+
         let identifier: NSUserInterfaceItemIdentifier
         let nib: NSNib?
         let handler: Handler
-        
+
         // MARK: Creating an item registration
-        
+
         /**
          Creates a item registration with the specified registration handler.
          
@@ -78,7 +78,7 @@ public extension NSCollectionView {
             self.nib = nil
             self.identifier = .init(UUID().uuidString)
         }
-        
+
         /**
          Creates a item registration with the specified registration handler and nib file.
          
@@ -91,10 +91,10 @@ public extension NSCollectionView {
             self.identifier = .init(UUID().uuidString)
             self.handler = handler
         }
-        
+
         /// A closure that handles the item registration and configuration.
-        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ element: Element)->(Void))
-        
+        public typealias Handler = ((_ item: Item, _ indexPath: IndexPath, _ element: Element) -> Void)
+
         func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
             if isRegistered(collectionView) == false {
                 self.register(collectionView)
@@ -108,11 +108,11 @@ public extension NSCollectionView {
             self.handler(item, indexPath, element)
             return item
         }
-        
+
         func isRegistered(_ collectionView: NSCollectionView) -> Bool {
             collectionView.registeredItemRegistrations.contains(self.identifier)
         }
-        
+
         func register(_ collectionView: NSCollectionView) {
             if let nib = self.nib {
                 collectionView.register(nib, forItemWithIdentifier: self.identifier)
@@ -121,7 +121,7 @@ public extension NSCollectionView {
             }
             collectionView.registeredItemRegistrations.append(self.identifier)
         }
-        
+
         func unregister(_ collectionView: NSCollectionView) {
             let any: AnyClass? = nil
             collectionView.register(any, forItemWithIdentifier: self.identifier)

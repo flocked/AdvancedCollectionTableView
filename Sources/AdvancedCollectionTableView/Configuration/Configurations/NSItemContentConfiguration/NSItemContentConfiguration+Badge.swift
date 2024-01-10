@@ -19,10 +19,10 @@ public extension NSItemContentConfiguration {
             case attachment
             /// The badge is displayed as overlay to the item's content (image/view) with a spacing to the content's edge.
             case overlay(spacing: CGFloat)
-            
+
             /// The badge is displayed as overlay to the item's content (image/view) with a spacing of `4.0` to the content's edge.
             static let overlay = BadgeType.overlay(spacing: 4.0)
-            
+
             var spacing: CGFloat? {
                 switch self {
                 case .overlay(spacing: let spacing): return spacing
@@ -30,7 +30,7 @@ public extension NSItemContentConfiguration {
                 }
             }
         }
-        
+
         /// The position of the badge.
         public enum Position: Int, Hashable, CaseIterable {
             /// The badge is positioned at the top left.
@@ -52,32 +52,32 @@ public extension NSItemContentConfiguration {
             /// The badge is positioned at the bottom right.
             case bottomRight
         }
-        
+
         /// The text of the badge.
-        public var text: String? = nil
+        public var text: String?
         /// An attributed variant of the text.
-        public var attributedText: AttributedString? = nil
-        
+        public var attributedText: AttributedString?
+
         /// The image of the badge.
-        public var image: NSImage? = nil
-        
+        public var image: NSImage?
+
         /// The view of the badge.
-        public var view: NSView? = nil
-        
+        public var view: NSView?
+
         /// Properties for configuring the text.
         public var textProperties: TextProperties = TextProperties()
-        
+
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = ImageProperties()
-        
+
         /// The background color of the badge.
         public var backgroundColor: NSColor? = .controlAccentColor {
             didSet { updateResolvedColors() } }
-        
+
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: ColorTransformer? = nil {
+        public var backgroundColorTransform: ColorTransformer? {
             didSet { updateResolvedColors() } }
-        
+
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {
@@ -85,26 +85,26 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
-        
+
         /**
          The visual effect of the badge.
          
          If the badge has a visual effect, it's background color will be ignored.
          */
-        public var visualEffect: VisualEffectConfiguration? = nil {
+        public var visualEffect: VisualEffectConfiguration? {
             didSet { updateResolvedColors() } }
-        
+
         /// The border width of the badge.
         public var borderWidth: CGFloat = 0.0
-        
+
         /// The border color of the badge.
-        public var borderColor: NSColor? = nil {
+        public var borderColor: NSColor? {
             didSet { updateResolvedColors() } }
-        
+
         /// The color transformer of the border color.
-        public var borderColorTransform: ColorTransformer? = nil {
+        public var borderColorTransform: ColorTransformer? {
             didSet { updateResolvedColors() } }
-        
+
         /// Generates the resolved border color, using the border color and border color transformer.
         public func resolvedBorderColor() -> NSColor? {
             if let borderColor = borderColor {
@@ -112,36 +112,36 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
-        
+
         /// The corner radius of the badge.
         public var cornerRadius: CGFloat = 6.0
-        
+
         /// The shadow of the badge.
         public var shadow: ShadowConfiguration = .none()
-        
+
         /// The margins between the text and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(width: 12, height: 4)
-        
+
         /// The maximum width of the badge. If the text is larger than the width, it will be truncated.
-        public var maxWidth: CGFloat? = nil
-        
+        public var maxWidth: CGFloat?
+
         /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0
-        
+
         /// The type of the badge.
         public var type: BadgeType = .attachment
-        
+
         /// The position of the badge.
         public var position: Position = .topRight
-        
+
         /// The spacing of the badge.
         public var spacing: CGFloat = 3.0
-        
+
         /// Creates a badge.
         public init() {
-            
+
         }
-        
+
         /// A text badge.
         public static func text(_ text: String, font: NSFont = .caption, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
@@ -152,7 +152,7 @@ public extension NSItemContentConfiguration {
             badge.position = position
             return badge
         }
-        
+
         /// A badge displaying an image.
         public static func image(_ image: NSImage, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
@@ -162,7 +162,7 @@ public extension NSItemContentConfiguration {
             badge.position = position
             return badge
         }
-        
+
         /// A badge displaying an image.
         public static func view(_ view: NSView, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
@@ -172,7 +172,7 @@ public extension NSItemContentConfiguration {
             badge.position = position
             return badge
         }
-        
+
         /// A badge displaying a symbol image.
         public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge? {
             guard let image = NSImage(systemSymbolName: symbolName) else { return nil }
@@ -184,12 +184,12 @@ public extension NSItemContentConfiguration {
             badge.position = position
             return badge
         }
-        
+
         var isVisible: Bool {
             text != nil || attributedText != nil || image != nil || view != nil
         }
-        
-        var _resolvedBorderColor: NSColor? = nil
+
+        var _resolvedBorderColor: NSColor?
         var _resolvedBackgroundColor: NSColor? = .controlAccentColor
         mutating func updateResolvedColors() {
             _resolvedBorderColor = resolvedBorderColor()
@@ -212,36 +212,36 @@ public extension NSItemContentConfiguration {
 public extension NSItemContentConfiguration.Badge {
     /// Properties that affect the text of a badge.
     struct TextProperties: Hashable {
-        
+
         /// The font of the text.
         public var font: NSFont = .systemFont(ofSize: 7)
-        
+
         /// The border color of the badge.
         public var textColor: NSColor = .white {
             didSet { updateResolvedColors() } }
-        
+
         /// The color transformer of the border color.
-        public var textColorTransform: ColorTransformer? = nil {
+        public var textColorTransform: ColorTransformer? {
             didSet { updateResolvedColors() } }
-        
+
         /// Generates the resolved border color,, using the border color and border color transformer.
         public func resolvedTextColor() -> NSColor {
             textColorTransform?(textColor) ?? textColor
         }
-        
+
         init() {
-            
+
         }
-        
+
         var _resolvedTextColor: NSColor = .white
         mutating func updateResolvedColors() {
             _resolvedTextColor = resolvedTextColor()
         }
     }
-    
+
     /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
-        
+
         /// The position of the badge image.
         enum Position: Int, Hashable {
             /// The image is leading.
@@ -249,30 +249,30 @@ public extension NSItemContentConfiguration.Badge {
             /// The image is trailing.
             case trailing
         }
-        
+
         /// The symbol configuration of the image.
-        var symbolConfiguration: ImageSymbolConfiguration? = nil
-        
+        var symbolConfiguration: ImageSymbolConfiguration?
+
         /// The maximum width of the image.
-        var maxWidth: CGFloat? = nil
-        
+        var maxWidth: CGFloat?
+
         /// The maximum height of the image.
-        var maxHeight: CGFloat? = nil
-        
+        var maxHeight: CGFloat?
+
         /// The image scaling.
         public var scaling: NSImageScaling = .scaleNone
-        
+
         /// The position of the image.
         var position: Position = .leading
-        
+
         /// The tint color for an image that is a template or symbol image.
-        public var tintColor: NSColor? = nil {
+        public var tintColor: NSColor? {
             didSet { updateResolvedColors() } }
-        
+
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: ColorTransformer? = nil {
+        public var tintColorTransform: ColorTransformer? {
             didSet { updateResolvedColors() } }
-        
+
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = tintColor {
@@ -280,8 +280,8 @@ public extension NSItemContentConfiguration.Badge {
             }
             return nil
         }
-        
-        var _resolvedTintColor: NSColor? = nil
+
+        var _resolvedTintColor: NSColor?
         mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
         }
