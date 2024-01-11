@@ -1,6 +1,6 @@
 # Advanced NSCollectionView & NSTableView
 
-A collection of classes and extensions for NSCollectionView and NSTableView, many of them being ports of UIKit.
+A framewor for `NSCollectionView` and `NSTableView. It provides classes and extensions, many of them being ports of missing `UIKit` APIs.
 
 **Take a look at the included sample app located at */Example/* which demonstrates most features.**
 
@@ -92,7 +92,7 @@ A content configuration for a collection view item.
  collectionViewItem.contentConfiguration = content
  ```
 
-## NSCollectionView reconfigure items
+## NSCollectionView Reconfigure Items
 
 Updates the data for the items without reloading and replacing them. It provides much better performance compared to reloading items. A port of `UICollectionView.reconfigureItems`.
 
@@ -102,7 +102,7 @@ Any item that has been registered via  `ItemRegistration`, or by class using `re
 collectionView.reconfigureItems(at: indexPaths)
 ```
 
- ## NSTableView cell registration by class
+ ## NSTableView Cell Registration by Class
 
 Apple only allows registering `NSTableCellView` using `NSNib`. This framework lets you register table cell class.
 
@@ -112,7 +112,7 @@ tableView.register(NSTableCellView.self)
 let dequeuedTableCell = tableView.makeView(for: NSTableCellView.self)
 ```
 
-## NSCollectionView- & NSTableViewDiffableDataSource item deletion
+## NSCollectionView- & NSTableViewDiffableDataSource Item Deletion
 
 Enable deleting items via backspace via `DeletingHandlers`:
 
@@ -128,7 +128,7 @@ dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
 }
 ```
  
-## NSDiffableDataSourceSnapshot apply options
+## NSDiffableDataSourceSnapshot Apply Options
 
  Apple's `apply(_:animatingDifferences:completion:)` provides two options for applying snapshots to a diffable data source depending on `animatingDifferences`:
  - `true` applies a diff of the old and new state and animates updates in the UI.
