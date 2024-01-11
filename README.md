@@ -102,7 +102,7 @@ Any item that has been registered via  `ItemRegistration`, or by class using `re
 collectionView.reconfigureItems(at: indexPaths)
 ```
 
- ## NSTableView register NSTableCellView by Class
+ ## NSTableView cell registration by class
 
 Apple only allows registering `NSTableCellView` using `NSNib`. This framework lets you register table cell class.
 
@@ -114,14 +114,14 @@ let dequeuedTableCell = tableView.makeView(for: NSTableCellView.self)
 
 ## NSCollectionView & NSTableViewDiffableDataSource item deletion
 
-Enable deleting items via backspace via `DeletionHandlers`:
+Enable deleting items via backspace via `DeletingHandlers`:
 
 ```swift
 // Allow every item to be deleted
-dataSource.deletionHandlers.canDelete = { items in return true }
+dataSource.deletingHandlers.canDelete = { items in return true }
 
 // Update the backing store from the final item identifiers
-dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
     guard let self = self else { return }
          
     self.backingStore = transaction.finalSnapshot.itemIdentifiers
@@ -171,45 +171,40 @@ An extended `NSCollectionViewDiffableDataSource that provides:
 
 NSCollectionView/NSTableView `isQuicklookPreviewable` enables quicklook of selected items/cells via spacebar.
 
-There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation on how to provide them): 
+There are several ways to provide quicklook previews (see [FZQuicklook](https://github.com/flocked/FZQuicklook) for an extended documentation): 
 
-- NSCollectionViewItems's & NSTableCellView's `var quicklookPreview: QuicklookPreviewable?`
+- Diffable collection view & table view datasource with an `ItemIdentifierType` conforming to `QuicklookPreviewable`:
 
-```swift
-collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
-```
-- NSCollectionView's datasource `collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath)` & NSTableView's datasource `tableView(_ tableView: NSTableView, quicklookPreviewForRow row: Int)`
-```swift
-func collectionView(_ collectionView: NSCollectionView, quicklookPreviewForItemAt indexPath: IndexPath) -> QuicklookPreviewable? {
-    let galleryItem = galleryItems[indexPath.item]
-    return galleryItem.fileURL
-}
-```
-- A NSCollectionViewDiffableDataSource & NSTableViewDiffableDataSource with an ItemIdentifierType conforming to `QuicklookPreviewable`
 ```swift
 struct GalleryItem: QuicklookPreviewable {
     let title: String
     let imageURL: URL
     
-    // The file url for quicklook preview.
+    // The file url for the quicklook preview.
     let previewItemURL: URL? {
-    return imageURL
+        return imageURL
     }
     
     // The quicklook preview title displayed on the top of the Quicklook panel.
     let previewItemTitle: String? {
-    return title
+        return title
     }
 }
 
-let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>() {
-    collectionViewItem, indexPath, galleryItem in 
-    // configurate collectionViewItem …
+let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>() { collectionItem, indexPath, galleryItem in 
+    // configurate …
 }
   
 collectionView.dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView, itemRegistration: ItemRegistration)
 
+collectionView.isQuicklookPreviewable = true
 collectionView.quicklookSelectedItems()
+```
+
+- `NSCollectionViewItems`s & `NSTableCellView`s `quicklookPreview: QuicklookPreviewable?` property:
+
+```swift
+collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 ```
 
 ## Installation
