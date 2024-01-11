@@ -150,20 +150,17 @@ diffableDataSource.apply(mySnapshot, .animated(3.0))
 ## CollectionViewDiffableDataSource
 
 An extended `NSCollectionViewDiffableDataSource that provides:
- - Reordering items by dragging them by enabling `allowsReordering`
- - Deleting items via backspace by enabling `allowsDeleting`
+ - Reordering items by dragging them via `reorderingHandlers`
+ - Deleting items via backspace via `deletingHandlers`
  - Quicklook previews of items via spacebar by providing items conforming to `QuicklookPreviewable`
  - Right click menu provider for selected items
  
  **It includes handlers for:**
  - Prefetching items
  - Selecting items
- - Reordering items
- - Deleting items
  - Highlighting items
  - Displaying items
  - Hovering items with the mouse.
- - Drag and drop of files from and to the collection view
  - Pinching of the collection view
   
  ## TableViewDiffableDataSource
