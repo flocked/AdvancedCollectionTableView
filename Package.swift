@@ -13,11 +13,6 @@ let package = Package(
             name: "AdvancedCollectionTableView",
             targets: ["AdvancedCollectionTableView"]
         ),
-        .library(
-            name: "AdvancedCollectionTableViewObjC",
-            type: .static,
-            targets: ["AdvancedCollectionTableViewObjC"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/flocked/FZSwiftUtils.git", branch: "main"),
@@ -27,11 +22,7 @@ let package = Package(
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook", "AdvancedCollectionTableViewObjC"], path: "Sources/AdvancedCollectionTableView"
-        ),
-        .target(
-            name: "AdvancedCollectionTableViewObjC",
-            path: "Sources/AdvancedCollectionTableViewObjC"
+            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook"], path: "Sources/AdvancedCollectionTableView"
         ),
     ]
 )

@@ -1,4 +1,0 @@
-module AdvancedCollectionTableViewObjc {
-    umbrella header "AdvancedCollectionTableViewObjc.h"
-    export *
-}

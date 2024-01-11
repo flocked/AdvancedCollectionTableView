@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 28.12.23.
 //
 
-import AdvancedCollectionTableViewObjc
 import AppKit
 import FZSwiftUtils
 import FZUIKit
@@ -112,7 +111,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 
 extension NSListConfigurationState: ReferenceConvertible {
     /// The Objective-C type for this state.
-    public typealias ReferenceType = NSListConfigurationStateObjc
+    public typealias ReferenceType = __NSListConfigurationStateObjcNew
 
     public var description: String {
         """
@@ -133,27 +132,83 @@ extension NSListConfigurationState: ReferenceConvertible {
         description
     }
 
-    public func _bridgeToObjectiveC() -> NSListConfigurationStateObjc {
-        let customStates = customStates.mapKeys { $0.rawValue }
-        return NSListConfigurationStateObjc(isSelected: isSelected, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled, isFocused: isFocused, isExpanded: isExpanded, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
+    public func _bridgeToObjectiveC() -> __NSListConfigurationStateObjcNew {
+        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isEmphasized, isPreviousSelected: isPreviousSelected, customStates: customStates)
     }
 
-    public static func _forceBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc, result: inout NSListConfigurationState?) {
-        let customStates = (source.customStates as? [String: AnyHashable] ?? [:]).mapKeys { NSConfigurationStateCustomKey(rawValue: $0) }
-        result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, customStates: customStates)
+    public static func _forceBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) {
+        result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, customStates: source.customStates)
     }
 
-    public static func _conditionallyBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc, result: inout NSListConfigurationState?) -> Bool {
+    public static func _conditionallyBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) -> Bool {
         _forceBridgeFromObjectiveC(source, result: &result)
         return true
     }
 
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSListConfigurationStateObjc?) -> NSListConfigurationState {
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew?) -> NSListConfigurationState {
         if let source = source {
             var result: NSListConfigurationState?
             _forceBridgeFromObjectiveC(source, result: &result)
             return result!
         }
         return NSListConfigurationState()
+    }
+}
+
+/**
+ The `Objective-C` class for ``NSListConfigurationState``.
+ 
+ Don't use this class. It's only used internally for bridging the state to `Objective-C`.  Use ``NSListConfigurationState`` instead.
+ */
+public class __NSListConfigurationStateObjcNew: NSObject, NSCopying {
+    var isSelected: Bool = false
+    var isEnabled: Bool = true
+    var isHovered: Bool = false
+    var isEditing: Bool = false
+    var isEmphasized: Bool = false
+    var isNextSelected: Bool = false
+    var isPreviousSelected: Bool = false
+    var isFocused: Bool = false
+    var isExpanded: Bool = false
+    var customStates = [NSConfigurationStateCustomKey: AnyHashable]()
+
+    public func copy(with zone: NSZone? = nil) -> Any {
+        __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
+    }
+
+    init(isSelected: Bool = false,
+                isEnabled: Bool = true,
+                isHovered: Bool = false,
+                isEditing: Bool = false,
+                isEmphasized: Bool = false,
+                isNextSelected: Bool = false,
+                isPreviousSelected: Bool = false)
+    {
+        self.isSelected = isSelected
+        self.isEnabled = isEnabled
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isEmphasized = isEmphasized
+        self.isNextSelected = isNextSelected
+        self.isPreviousSelected = isPreviousSelected
+    }
+
+    init(isSelected: Bool,
+         isEnabled: Bool,
+         isHovered: Bool,
+         isEditing: Bool,
+         isEmphasized: Bool,
+         isNextSelected: Bool,
+         isPreviousSelected: Bool,
+         customStates: [NSConfigurationStateCustomKey: AnyHashable])
+    {
+        self.isSelected = isSelected
+        self.isEnabled = isEnabled
+        self.isHovered = isHovered
+        self.isEditing = isEditing
+        self.isEmphasized = isEmphasized
+        self.isNextSelected = isNextSelected
+        self.isPreviousSelected = isPreviousSelected
+        self.customStates = customStates
     }
 }
