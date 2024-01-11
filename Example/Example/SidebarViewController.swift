@@ -41,10 +41,10 @@ class SidebarViewController: NSViewController {
         tableView.dataSource = dataSource
 
         // Enables reordering of rows via drag and drop.
-        dataSource.reorderingHandlers.canReorder = { items in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedSidebarItems in return true }
         
         // Deleting of every selected row via backspace.
-        dataSource.deletingHandlers.canDelete = { items in return items }
+        dataSource.deletingHandlers.canDelete = { selectedSidebarItems in return selectedSidebarItems }
 
         /// Swipe row actions for deleting and favoriting items.
         dataSource.rowActionProvider = { item, edge in

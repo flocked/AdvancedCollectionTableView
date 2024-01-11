@@ -68,10 +68,10 @@ class ViewController: NSViewController {
         collectionView.dataSource = dataSource
 
         // Enables deleting of every selected item via backspace keyboard shortcut.
-        dataSource.deletingHandlers.canDelete = { items in return items }
+        dataSource.deletingHandlers.canDelete = { selectedGalleryItems in return selectedGalleryItems }
 
         // Enables reordering of items by dragging them.
-        dataSource.reorderingHandlers.canReorder = { items in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedGalleryItems in return true }
 
         // Right click menu for deleting selected items.
         dataSource.menuProvider = { selectedItems in
