@@ -255,7 +255,16 @@ extension NSCollectionViewItem {
      A hovered item has the mouse pointer on it's view.
      */
     @objc var isHovered: Bool {
-        collectionView?.hoveredItem == self
+        if let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self), collectionView.hoveredIndexPath == indexPath {
+            if let view = view as? NSItemContentView {
+                let location = collectionView.convert(collectionView.hoveredLocation, to: view)
+                return view.checkHoverLocation(location)
+            }
+            
+            return true
+        }
+        // _collectionView?.indexPath(for: self)
+        return false
     }
 
     /**

@@ -10,6 +10,14 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionView {
+    @objc dynamic var hoveredLocation: CGPoint {
+        get { getAssociatedValue(key: "hoveredLocation", object: self, initialValue: .zero) }
+        set {
+            guard newValue != hoveredLocation else { return }
+            set(associatedValue: newValue, key: "hoveredLocation", object: self)
+        }
+    }
+    
     @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
         set {
@@ -17,9 +25,6 @@ extension NSCollectionView {
             let previousIndexPath = hoveredIndexPath
             set(associatedValue: newValue, key: "hoveredIndexPath", object: self)
             if let indexPath = previousIndexPath, let item = item(at: indexPath) {
-                item.setNeedsAutomaticUpdateConfiguration()
-            }
-            if let indexPath = hoveredIndexPath, let item = item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
         }
@@ -54,7 +59,11 @@ extension NSCollectionView {
                     guard let self = self else { return true }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
+                        self.hoveredLocation = location
                         self.hoveredIndexPath = self.indexPathForItem(at: location)
+                        if let indexPath = self.hoveredIndexPath, let item = self.item(at: indexPath) {
+                            item.setNeedsAutomaticUpdateConfiguration()
+                        }
                     }
                     return true
                 }

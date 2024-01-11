@@ -38,6 +38,24 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
     }
+    
+    func checkHoverLocation(_ location: CGPoint) -> Bool {
+        return (contentView.frame.contains(location) && contentView.isHidden == false) ||
+        CGRect(0, 0, max(textField.bounds.width, secondaryTextField.bounds.width), contentView.frame.y).contains(location)
+        /*
+        return contentView.frame.contains(location) ||
+        (textField.isHidden == false && textField.frame.contains(location)) ||
+        (secondaryTextField.isHidden == false && secondaryTextField.frame.contains(location))
+         */
+    }
+    
+    open override func hitTest(_ point: NSPoint) -> NSView? {
+        let view = super.hitTest(point)
+        if ((view == contentView || view?.isDescendant(of: contentView) == true) && contentView.isHidden == false) || (view == textField && textField.isHidden == false) || (view == secondaryTextField && secondaryTextField.isHidden == false) {
+            return view
+        }
+        return nil
+    }
 
     lazy var textField = ItemTextField(properties: appliedConfiguration.textProperties)
     lazy var secondaryTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
