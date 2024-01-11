@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import FZSwiftUtils
 
 class SidebarItem: NSObject, Identifiable {
-    public let id = UUID()
+
     public let title: String
     public let symbolName: String
     public var isFavorite: Bool = false

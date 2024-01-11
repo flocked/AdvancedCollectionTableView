@@ -5,21 +5,23 @@
 //  Created by Florian Zand on 24.01.23.
 //
 
-import Foundation
+import AppKit
 import FZQuicklook
 
 public class GalleryItem: NSObject, Identifiable {
-    public let id = UUID()
+    
     public var title: String
     public var detail: String
     public var imageName: String
     public var badge: String?
+    public var badgeColor: NSColor = .controlAccentColor
 
-    public init(title: String, detail: String, imageName: String, badge: String? = nil) {
+    public init(title: String, detail: String, imageName: String, badge: String? = nil, badgeColor: NSColor = .controlAccentColor) {
         self.title = title
         self.detail = detail
         self.imageName = imageName
         self.badge = badge
+        self.badgeColor = badgeColor
     }
 
     public static var sampleItems: [GalleryItem] {
@@ -27,7 +29,7 @@ public class GalleryItem: NSObject, Identifiable {
          GalleryItem(title: "Cat", detail: "Painted by Vermeer", imageName: "cat vermeer"),
          GalleryItem(title: "Cat", detail: "Vaporwave", imageName: "cat vaporwave", badge: "new"),
          GalleryItem(title: "Sea Creature", detail: "Oil on canvas", imageName: "sea creature oil"),
-         GalleryItem(title: "Sea Creature", detail: "Science fiction", imageName: "sea creature science fiction"),
+         GalleryItem(title: "Sea Creature", detail: "Science fiction", imageName: "sea creature science fiction", badge: "favorite", badgeColor: .systemPurple),
          GalleryItem(title: "Techno Club", detail: "Surrealist painting", imageName: "techno club surrealist"),
          GalleryItem(title: "Techno Club", detail: "Oil painting", imageName: "techno club oil"),
          GalleryItem(title: "Fireworker Monkey", detail: "Japanese manga", imageName: "monkey fireworkers manga"),
@@ -35,11 +37,7 @@ public class GalleryItem: NSObject, Identifiable {
     }
 }
 
-/**
- By conforming to `QuicklookPreviewable`the item can be quicklooked by providing it to `QuicklookPanel.shared`(simliar to Finders Quicklook Panel) or `QuicklookView`
-
- A NSCollectionView or NSTableView with a diffable data source can also quicklook the item by enabling their `isQuicklookPreviewable` property.
- */
+///  By conforming to `QuicklookPreviewable` and providing `previewItemURL` the item can be quicklooked by `QuicklookPanel` (simliar to Finder's Quicklook panel).
 extension GalleryItem: QuicklookPreviewable {
     public var previewItemURL: URL? {
         Bundle.main.urlForImageResource(imageName)

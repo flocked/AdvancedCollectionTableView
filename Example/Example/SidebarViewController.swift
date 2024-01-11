@@ -5,8 +5,8 @@
 //  Created by Florian Zand on 19.01.23.
 //
 
-import AdvancedCollectionTableView
 import AppKit
+import AdvancedCollectionTableView
 
 class SidebarViewController: NSViewController {
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
@@ -75,7 +75,7 @@ class SidebarViewController: NSViewController {
     }
 
     func applySnapshot() {
-        var snapshot = dataSource.emptySnapshot()
+        var snapshot: NSDiffableDataSourceSnapshot<Section, SidebarItem> = .init()
         snapshot.appendSections([.main, .section2, .section3])
         snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)

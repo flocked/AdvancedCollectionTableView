@@ -21,8 +21,8 @@ Extensions for `NSTableViewDiffableDataSource`.
 
 ### Supporting deleting
 
-- ``AppKit/NSTableViewDiffableDataSource/deletionHandlers-swift.property``
-- ``AppKit/NSTableViewDiffableDataSource/DeletionHandlers-swift.struct``
+- ``AppKit/NSTableViewDiffableDataSource/deletingHandlers-swift.property``
+- ``AppKit/NSTableViewDiffableDataSource/DeletingHandlers-swift.struct``
 
 ### Supporting protocol requirements
 

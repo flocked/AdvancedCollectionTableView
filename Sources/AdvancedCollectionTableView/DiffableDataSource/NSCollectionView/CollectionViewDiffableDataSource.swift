@@ -204,29 +204,47 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
-            if keyDownMonitor == nil {
-                keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
-                    guard let self = self, self.collectionView.isFirstResponder else { return event }
-                    if event.keyCode == 51 {
-                        let elementsToDelete = canDelete(self.selectedElements)
-                        if elementsToDelete.isEmpty == false {
-                            let transaction = self.deletionTransaction(elementsToDelete)
-                            self.deletingHandlers.willDelete?(elementsToDelete, transaction)
-                            if QuicklookPanel.shared.isVisible {
-                                QuicklookPanel.shared.close()
-                            }
-                            self.apply(transaction.finalSnapshot, .animated)
-                            deletingHandlers.didDelete?(elementsToDelete, transaction)
-                            return nil
+            keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
+                guard let self = self, self.collectionView.isFirstResponder else { return event }
+                if event.keyCode == 51 {
+                    let elementsToDelete = canDelete(self.selectedElements)
+                    var section: Section? = nil
+                    var selectionElement: Element? = nil
+                    if let element = elementsToDelete.first {
+                        if var indexPath = indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
+                            selectionElement = element
+                        } else {
+                            section = self.section(for: element)
                         }
                     }
-                    return event
-                })
-            }
+                    if elementsToDelete.isEmpty == false {
+                        let transaction = self.deletionTransaction(elementsToDelete)
+                        self.deletingHandlers.willDelete?(elementsToDelete, transaction)
+                        if QuicklookPanel.shared.isVisible {
+                            QuicklookPanel.shared.close()
+                        }
+                        self.apply(transaction.finalSnapshot, .animated)
+                        deletingHandlers.didDelete?(elementsToDelete, transaction)
+                        
+                        if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
+                            var selectionIndexPath: IndexPath?
+                            if let element = selectionElement, let indexPath = indexPath(for: element) {
+                                selectionIndexPath = indexPath
+                            } else if let section = section, let element = elements(for: section).first, let indexPath = indexPath(for: element) {
+                                selectionIndexPath = indexPath
+                            } else if let item = currentSnapshot.itemIdentifiers.first, let indexPath = indexPath(for: item) {
+                                selectionIndexPath = indexPath
+                            }
+                            if let indexPath = selectionIndexPath {
+                                collectionView.selectItems(at: [indexPath], scrollPosition: [])
+                            }
+                        }
+                        return nil
+                    }
+                }
+                return event
+            })
         } else {
-            if let keyDownMonitor = keyDownMonitor {
-                NSEvent.removeMonitor(keyDownMonitor)
-            }
             keyDownMonitor = nil
         }
     }
@@ -378,6 +396,10 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             return currentSnapshot.itemIdentifiers[id: itemId]
         }
         return nil
+    }
+    
+    public func elements(for section: Section) -> [Element] {
+        currentSnapshot.itemIdentifiers(inSection: section)
     }
 
     /// Returns the index path for the specified element in the collection view.
@@ -538,16 +560,16 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public func section(for index: Int) -> Section? {
         sections[safe: index]
     }
+    
+    public func section(for element: Element) -> Section? {
+        currentSnapshot.sectionIdentifier(containingItem: element)
+    }
 
     /// Scrolls the collection view to the specified section.
     public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
         guard let index = index(for: section) else { return }
         let indexPaths = Set([IndexPath(item: 0, section: index)])
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
-    }
-
-    func section(for element: Element) -> Section? {
-        currentSnapshot.sectionIdentifier(containingItem: element)
     }
 
     func section(at indexPath: IndexPath) -> Section? {
@@ -578,13 +600,21 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      // Allow every element to be deleted
      dataSource.deletingHandlers.canDelete = { elements in return elements }
 
+     // Option 1: Update the backing store from a CollectionDifference
+     dataSource.deletingHandlers.didDelete = { [weak self] elements, transaction in
+         guard let self = self else { return }
+         
+         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+             self.backingStore = updatedBackingStore
+         }
+     }
+     
      // Option 2: Update the backing store from the final elements
      dataSource.deletingHandlers.didDelete = { [weak self] elements, transaction in
          guard let self = self else { return }
          
-         self.backingStore = transaction.finalSnapshot.items
+         self.backingStore = transaction.finalSnapshot.itemIdentifiers
      }
-     
      ```
      */
     public var deletingHandlers = DeletingHandlers() {
@@ -601,14 +631,22 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      ```swift
      // Allow every element to be reordered
      dataSource.reorderingHandlers.canReorder = { elements in return true }
+     
+     // Option 1: Update the backing store from a CollectionDifference
+     dataSource.reorderingHandlers.didDelete = { [weak self] elements, transaction in
+         guard let self = self else { return }
+         
+         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+             self.backingStore = updatedBackingStore
+         }
+     }
 
      // Option 2: Update the backing store from the final elements
      dataSource.reorderingHandlers.didReorder = { [weak self] elements, transaction in
          guard let self = self else { return }
          
-         self.backingStore = transaction.finalSnapshot.items
+         self.backingStore = transaction.finalSnapshot.itemIdentifiers
      }
-     
      ```
      */
     public var reorderingHandlers = ReorderingHandlers()
@@ -658,7 +696,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      Handlers for deleting elements.
      
-     To support reordering items in your diffable data source take a look at ``deletingHandlers-swift.property``.
+     Take a look at ``deletingHandlers-swift.property`` how to support deleting elements.
      */
     public struct DeletingHandlers {
         /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
@@ -676,7 +714,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
          // Allow every element to be deleted
          dataSource.deletingHandlers.canDelete = { elements in return elements }
 
-
          // Option 1: Update the backing store from a CollectionDifference
          dataSource.deletingHandlers.didDelete = { [weak self] elements, transaction in
              guard let self = self else { return }
@@ -685,7 +722,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                  self.backingStore = updatedBackingStore
              }
          }
-
 
          // Option 2: Update the backing store from the final elements
          dataSource.deletingHandlers.didReorder = { [weak self] elements, transaction in
@@ -701,7 +737,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      Handlers for reordering elements.
      
-     To support reordering items in your diffable data source take a look at ``reorderingHandlers-swift.property``.
+     Take a look at ``reorderingHandlers-swift.property`` how to support reordering elements.
      */
     public struct ReorderingHandlers {
         /// The handler that determines if elements can be reordered. The default value is `nil` which indicates that the elements can be reordered.
@@ -719,7 +755,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
          // Allow every element to be reordered
          dataSource.reorderingHandlers.canDelete = { elements in return true }
 
-
          // Option 1: Update the backing store from a CollectionDifference
          dataSource.reorderingHandlers.didDelete = { [weak self] elements, transaction in
              guard let self = self else { return }
@@ -728,7 +763,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                  self.backingStore = updatedBackingStore
              }
          }
-
 
          // Option 2: Update the backing store from the final elements
          dataSource.reorderingHandlers.didReorder = { [weak self] elements, transaction in

@@ -31,7 +31,7 @@ class ViewController: NSViewController {
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
 
         if let badgeText = galleryItem.badge {
-            configuration.badges = [.text(badgeText, color: .controlAccentColor, type: .attachment, position: .topRight)]
+            configuration.badges = [.text(badgeText, color: galleryItem.badgeColor, type: .attachment, position: .topRight)]
         }
 
         // Apply the configuration

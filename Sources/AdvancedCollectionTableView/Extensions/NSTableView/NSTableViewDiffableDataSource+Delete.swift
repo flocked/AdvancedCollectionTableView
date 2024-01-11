@@ -14,14 +14,14 @@ extension NSTableViewDiffableDataSource {
     /**
      The diffable data source’s handlers for deleting items.
      
-     The system calls the ``DeletionHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``DeletingHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every item to be deleted
-     dataSource.deletionHandlers.canDelete = { items in return true }
+     dataSource.deletingHandlers.canDelete = { items in return true }
 
      // Option 1: Update the backing store from a CollectionDifference
-     dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+     dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
         guard let self = self else { return }
          
         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
@@ -30,32 +30,63 @@ extension NSTableViewDiffableDataSource {
      }
 
      // Option 2: Update the backing store from the final item identifiers
-     dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+     dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
         guard let self = self else { return }
          
         self.backingStore = transaction.finalSnapshot.itemIdentifiers
      }
      ```
      */
-    public var deletionHandlers: DeletionHandlers {
-        get { getAssociatedValue(key: "deletionHandlers", object: self, initialValue: .init()) }
+    public var deletingHandlers: DeletingHandlers {
+        get { getAssociatedValue(key: "deletingHandlers", object: self, initialValue: .init()) }
         set { 
-            set(associatedValue: newValue, key: "deletionHandlers", object: self)
+            set(associatedValue: newValue, key: "deletingHandlers", object: self)
             setupKeyDownMonitor()
         }
     }
 
-    /// Handlers for deleting items.
-    public struct DeletionHandlers {
+    /**
+     Handlers for deleting items.
+     
+     Take a look at ``deletingHandlers-swift.property`` how to support deleting items.
+     */
+    public struct DeletingHandlers {
         /// The handler that determines whether you can delete items.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
-        /// The handler that prepares the diffable data source for deleting its items.
+        /// The handler that that gets called before deleting items.
         public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
-        /// The handler that processes a deleting transaction.
+        /**
+         The handler that that gets called after deleting items.
+         
+         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Allow every item to be deleted
+         dataSource.deletingHandlers.canDelete = { items in return items }
+
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+
+         // Option 2: Update the backing store from the final items
+         dataSource.deletingHandlers.didReorder = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
         public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
     }
 
-    var keyDownMonitor: Any? {
+    var keyDownMonitor: NSEvent.Monitor? {
         get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
         set {
             set(associatedValue: newValue, key: "keyDownMonitor", object: self)
@@ -63,60 +94,59 @@ extension NSTableViewDiffableDataSource {
     }
 
     func setupKeyDownMonitor() {
-        if let canDelete = deletionHandlers.canDelete {
-            if keyDownMonitor == nil {
-                keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
-                    guard let self = self else { return event }
-                    guard event.keyCode == 51 else { return event }
-                    if let tableView = (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
-                        let selecedRowIndexes = tableView.selectedRowIndexes.map { $0 }
-
-                        var elementsToDelete = selecedRowIndexes.compactMap { self.itemIdentifier(forRow: $0) }
-                        elementsToDelete = canDelete(elementsToDelete)
-                        if elementsToDelete.isEmpty == false {
-                            if QuicklookPanel.shared.isVisible {
-                                QuicklookPanel.shared.close()
-                            }
-                            var finalSnapshot = self.snapshot()
-                            finalSnapshot.deleteItems(elementsToDelete)
-
-                            func getTransaction() -> NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> {
-                                NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
-                            }
-
-                            var transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>?
-
-                            if let willDelete = deletionHandlers.willDelete {
-                                transaction = getTransaction()
-                                willDelete(elementsToDelete, transaction!)
-                            }
-
-                            self.apply(finalSnapshot, .usingReloadData)
-
-                            if let didDelete = deletionHandlers.didDelete {
-                                didDelete(elementsToDelete, transaction ?? getTransaction())
-                            }
-
-                            if tableView.allowsEmptySelection == false {
-                                let row = (selecedRowIndexes.first ?? 0)
-                                tableView.selectRowIndexes(IndexSet([row]), byExtendingSelection: true)
-                                if tableView.allowsMultipleSelection {
-                                    let selectedRowIndexes = tableView.selectedRowIndexes
-                                    if selectedRowIndexes.count == 2, selectedRowIndexes.contains(0) {
-                                        tableView.deselectRow(0)
-                                    }
-                                }
-                            }
-                            return nil
+        if let canDelete = deletingHandlers.canDelete, let didDelete = deletingHandlers.didDelete {
+            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
+                guard let self = self else { return event }
+                guard event.keyCode == 51 else { return event }
+                if let tableView = (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
+                    let selecedRowIndexes = tableView.selectedRowIndexes.map { $0 }
+                    var section: SectionIdentifierType? = nil
+                    var selectionItem: ItemIdentifierType? = nil
+                    var elementsToDelete = selecedRowIndexes.compactMap { self.itemIdentifier(forRow: $0) }
+                    if var row = selecedRowIndexes.first, let item = itemIdentifier(forRow: row) {
+                        if row > 0,  let item = self.itemIdentifier(forRow: row - 1), !elementsToDelete.contains(item) {
+                            selectionItem = item
+                        } else {
+                            section = snapshot().sectionIdentifier(containingItem: item)
                         }
                     }
-                    return event
-                })
+                    elementsToDelete = canDelete(elementsToDelete)
+                    if elementsToDelete.isEmpty == false {
+                        if QuicklookPanel.shared.isVisible {
+                            QuicklookPanel.shared.close()
+                        }
+                        var finalSnapshot = self.snapshot()
+                        finalSnapshot.deleteItems(elementsToDelete)
+
+                        let transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> = NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
+
+                        deletingHandlers.willDelete?(elementsToDelete, transaction)
+                        if QuicklookPanel.shared.isVisible {
+                            QuicklookPanel.shared.close()
+                        }
+                        self.apply(finalSnapshot, .usingReloadData)
+                        didDelete(elementsToDelete, transaction)
+
+                        if tableView.allowsEmptySelection == false, tableView.selectedRowIndexes.isEmpty {
+                            var selectionRow: Int? = nil
+                            if let item = selectionItem, let row = row(forItemIdentifier: item) {
+                                selectionRow = row
+                            } else if let section = section, let item = finalSnapshot.itemIdentifiers(inSection: section).first, let row = row(forItemIdentifier: item) {
+                                selectionRow = row
+                                
+                            } else if let item = finalSnapshot.itemIdentifiers.first, let row = row(forItemIdentifier: item) {
+                                selectionRow = row
+                            }
+                            if let row = selectionRow {
+                                tableView.selectRowIndexes([row], byExtendingSelection: false)
+                            }
+                        }
+                        return nil
+                    }
+                }
+                return event
             }
         } else {
-            if let keyDownMonitor = keyDownMonitor {
-                NSEvent.removeMonitor(keyDownMonitor)
-            }
             keyDownMonitor = nil
         }
     }
