@@ -109,6 +109,9 @@ public extension NSItemContentConfiguration {
             badge.type = type
             badge.position = position
             badge.shape = shape
+            if shape == .circle {
+                badge.margins = .zero
+            }
             return badge
         }
         
@@ -120,6 +123,9 @@ public extension NSItemContentConfiguration {
             badge.type = type
             badge.position = position
             badge.shape = shape
+            if shape == .circle {
+                badge.margins = .zero
+            }
             return badge
         }
         
@@ -135,6 +141,9 @@ public extension NSItemContentConfiguration {
             badge.type = type
             badge.position = position
             badge.shape = shape
+            if shape == .circle {
+                badge.margins = .zero
+            }
             return badge
         }
         
@@ -148,6 +157,9 @@ public extension NSItemContentConfiguration {
             badge.type = type
             badge.position = position
             badge.shape = shape
+            if shape == .circle {
+                badge.margins = .zero
+            }
             return badge
         }
        

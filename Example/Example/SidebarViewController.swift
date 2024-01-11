@@ -81,6 +81,7 @@ class SidebarViewController: NSViewController {
         snapshot.appendSections([.main, .section2, .section3])
         snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)
+        snapshot.appendItems(SidebarItem.sampleItems3, toSection: .section3)
         dataSource.apply(snapshot, .usingReloadData)
     }
 }

@@ -35,9 +35,7 @@ class ViewController: NSViewController {
         }
         
         if galleryItem.isFavorite {
-            var badge: NSItemContentConfiguration.Badge = .text("􀋃", textStyle: .headline, color: .systemRed, type: .attachment, position: .topRight, shape: .circle)
-            badge.margins = .zero
-            configuration.badges = [badge]
+            configuration.badges = [.text("􀋃", textStyle: .headline, color: .systemRed, type: .attachment, position: .topRight, shape: .circle)]
         }
 
         // Apply the configuration

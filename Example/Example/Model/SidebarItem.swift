@@ -19,13 +19,16 @@ class SidebarItem: NSObject, Identifiable {
     }
 
     public static var sampleItems1: [SidebarItem] {
-        [SidebarItem(title: "Person", symbolName: "person"),
-         SidebarItem(title: "Photo", symbolName: "photo"),
-         SidebarItem(title: "Video", symbolName: "film")]
+        [SidebarItem(title: "Messages", symbolName: "message.fill"),
+         SidebarItem(title: "Photos", symbolName: "photo"),
+         SidebarItem(title: "Videos", symbolName: "film")]
     }
 
     public static var sampleItems2: [SidebarItem] {
-        [SidebarItem(title: "Table", symbolName: "table"),
-         SidebarItem(title: "Collection", symbolName: "square.grid.3x3")]
+        [SidebarItem(title: "Archive", symbolName: "tray.full")]
+    }
+    
+    public static var sampleItems3: [SidebarItem] {
+        [SidebarItem(title: "News", symbolName: "newspaper")]
     }
 }
