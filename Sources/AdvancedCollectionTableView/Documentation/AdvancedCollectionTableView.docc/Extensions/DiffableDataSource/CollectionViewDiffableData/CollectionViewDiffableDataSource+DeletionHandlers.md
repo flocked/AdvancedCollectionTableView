@@ -1,4 +1,4 @@
-# ``CollectionViewDiffableDataSource/DeletionHandlers-swift.struct``
+# ``CollectionViewDiffableDataSource/DeletingHandlers-swift.struct``
 
 ## Topics
 

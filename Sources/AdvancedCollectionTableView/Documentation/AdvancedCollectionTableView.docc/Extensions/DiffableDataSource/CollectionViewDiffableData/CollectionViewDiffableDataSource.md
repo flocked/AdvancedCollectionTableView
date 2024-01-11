@@ -58,15 +58,13 @@
 
 ### Supporting reordering elements
 
-- ``allowsReordering``
 - ``reorderingHandlers-swift.property``
 - ``ReorderingHandlers-swift.struct``
 
 ### Supporting deleting elements
 
-- ``allowsDeleting``
-- ``deletionHandlers-swift.property``
-- ``DeletionHandlers-swift.struct``
+- ``deletingHandlers-swift.property``
+- ``DeletingHandlers-swift.struct``
 
 ### Handling selecting elements
 

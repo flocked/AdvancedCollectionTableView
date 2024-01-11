@@ -14,17 +14,14 @@
 		727665FC2A55E61700F1FD9F /* sea creature oil.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F52A55E61700F1FD9F /* sea creature oil.png */; };
 		727665FD2A55E61700F1FD9F /* techno club surrealist.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F62A55E61700F1FD9F /* techno club surrealist.png */; };
 		728F108B2B43A27300EE2F2B /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 728F108A2B43A27300EE2F2B /* AdvancedCollectionTableView */; };
-		728F108D2B43A27300EE2F2B /* AdvancedCollectionTableViewObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 728F108C2B43A27300EE2F2B /* AdvancedCollectionTableViewObjC */; };
 		728F108F2B43A32600EE2F2B /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */; };
-		728F10912B43A32600EE2F2B /* AdvancedCollectionTableViewObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 728F10902B43A32600EE2F2B /* AdvancedCollectionTableViewObjC */; };
+		72A0C7D72B501EE600779BA0 /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72A0C7D62B501EE600779BA0 /* AdvancedCollectionTableView */; };
 		72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */; };
 		72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */; };
 		72DE39892979905C007EACAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE39882979905C007EACAF /* AppDelegate.swift */; };
 		72DE398B2979905C007EACAF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE398A2979905C007EACAF /* ViewController.swift */; };
 		72DE398D2979905D007EACAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398C2979905D007EACAF /* Assets.xcassets */; };
 		72DE39902979905D007EACAF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398E2979905D007EACAF /* Main.storyboard */; };
-		72DE753C2B43A355006CF93F /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72DE753B2B43A355006CF93F /* AdvancedCollectionTableView */; };
-		72DE753E2B43A355006CF93F /* AdvancedCollectionTableViewObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 72DE753D2B43A355006CF93F /* AdvancedCollectionTableViewObjC */; };
 		72F02E0E2AE117BC00D8D3D7 /* dystopian city science fiction.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0C2AE117BC00D8D3D7 /* dystopian city science fiction.png */; };
 		72F02E0F2AE117BC00D8D3D7 /* monkey fireworkers manga.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0D2AE117BC00D8D3D7 /* monkey fireworkers manga.png */; };
 		72F049452B4325F700A6871E /* astronaut cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F049442B4325F400A6871E /* astronaut cat.png */; };
@@ -59,11 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72DE753E2B43A355006CF93F /* AdvancedCollectionTableViewObjC in Frameworks */,
-				72DE753C2B43A355006CF93F /* AdvancedCollectionTableView in Frameworks */,
-				728F108D2B43A27300EE2F2B /* AdvancedCollectionTableViewObjC in Frameworks */,
+				72A0C7D72B501EE600779BA0 /* AdvancedCollectionTableView in Frameworks */,
 				728F108F2B43A32600EE2F2B /* AdvancedCollectionTableView in Frameworks */,
-				728F10912B43A32600EE2F2B /* AdvancedCollectionTableViewObjC in Frameworks */,
 				728F108B2B43A27300EE2F2B /* AdvancedCollectionTableView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,11 +140,8 @@
 			name = Example;
 			packageProductDependencies = (
 				728F108A2B43A27300EE2F2B /* AdvancedCollectionTableView */,
-				728F108C2B43A27300EE2F2B /* AdvancedCollectionTableViewObjC */,
 				728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */,
-				728F10902B43A32600EE2F2B /* AdvancedCollectionTableViewObjC */,
-				72DE753B2B43A355006CF93F /* AdvancedCollectionTableView */,
-				72DE753D2B43A355006CF93F /* AdvancedCollectionTableViewObjC */,
+				72A0C7D62B501EE600779BA0 /* AdvancedCollectionTableView */,
 			);
 			productName = CollectionViewTemplate;
 			productReference = 72DE39852979905C007EACAF /* Example.app */;
@@ -182,7 +173,7 @@
 			);
 			mainGroup = 72DE397C2979905C007EACAF;
 			packageReferences = (
-				728F10892B43A27300EE2F2B /* XCLocalSwiftPackageReference ".." */,
+				72A0C7D52B501EE600779BA0 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 72DE39862979905C007EACAF /* Products */;
 			projectDirPath = "";
@@ -438,7 +429,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		728F10892B43A27300EE2F2B /* XCLocalSwiftPackageReference ".." */ = {
+		72A0C7D52B501EE600779BA0 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ..;
 		};
@@ -449,25 +440,13 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AdvancedCollectionTableView;
 		};
-		728F108C2B43A27300EE2F2B /* AdvancedCollectionTableViewObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AdvancedCollectionTableViewObjC;
-		};
 		728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdvancedCollectionTableView;
 		};
-		728F10902B43A32600EE2F2B /* AdvancedCollectionTableViewObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AdvancedCollectionTableViewObjC;
-		};
-		72DE753B2B43A355006CF93F /* AdvancedCollectionTableView */ = {
+		72A0C7D62B501EE600779BA0 /* AdvancedCollectionTableView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdvancedCollectionTableView;
-		};
-		72DE753D2B43A355006CF93F /* AdvancedCollectionTableViewObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AdvancedCollectionTableViewObjC;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

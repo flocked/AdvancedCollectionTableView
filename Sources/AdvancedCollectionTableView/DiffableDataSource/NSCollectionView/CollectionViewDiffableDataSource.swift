@@ -15,16 +15,14 @@ import QuickLookUI
  A  `NSCollectionViewDiffableDataSource` with additional functionality.
 
  The diffable data source provides:
- - Reordering elements by enabling ``allowsReordering``.
- - Deleting elements by enabling  ``allowsDeleting``.
+ - Reordering elements via ``ReorderingHandlers-swift.struct``.
+ - Deleting elements via  ``DeletingHandlers-swift.struct``.
  - Quicklook previews of elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - A right click menu for selected elements via ``menuProvider``.
 
  __It includes handlers for:__
 
  - Prefetching elements via ``prefetchHandlers-swift.property``.
- - Reordering elements via ``reorderingHandlers-swift.property``.
- - Deleting elements via ``deletionHandlers-swift.property``.
  - Selecting elements via ``selectionHandlers-swift.property``.
  - Highlighting elements via ``highlightHandlers-swift.property``.
  - Displaying elements via ``displayHandlers-swift.property``.
@@ -66,26 +64,6 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      - Returns: A non-`nil` configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
      */
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ itemKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
-
-    /**
-     A Boolean value that indicates whether users can delete elements via backspace keyboard shortcut.
-
-     If the value of this property is `true`, users can delete elements using the backspace. The default value is `false`.
-
-     ``deletionHandlers`` provides additional handlers.
-     */
-    public var allowsDeleting: Bool = false {
-        didSet { observeKeyDown() }
-    }
-
-    /**
-     A Boolean value that indicates whether users can reorder elements in the collection view by dragging them via mouse.
-
-     If the value of this property is `true`, users can reorder elements. The default value is `false`.
-
-     ``reorderingHandlers`` provides additional handlers.
-     */
-    public var allowsReordering: Bool = false
 
     /**
      Right click menu provider.
@@ -225,20 +203,20 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var keyDownMonitor: NSEvent.Monitor?
 
     func observeKeyDown() {
-        if allowsDeleting {
+        if let canDelete = deletingHandlers.canDelete {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
                     guard let self = self, self.collectionView.isFirstResponder else { return event }
-                    if allowsDeleting, event.keyCode == 51 {
-                        let elementsToDelete = deletionHandlers.canDelete?(self.selectedElements) ?? self.selectedElements
+                    if event.keyCode == 51 {
+                        let elementsToDelete = canDelete(self.selectedElements)
                         if elementsToDelete.isEmpty == false {
                             let transaction = self.deletionTransaction(elementsToDelete)
-                            self.deletionHandlers.willDelete?(elementsToDelete, transaction)
+                            self.deletingHandlers.willDelete?(elementsToDelete, transaction)
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
                             self.apply(transaction.finalSnapshot, .animated)
-                            deletionHandlers.didDelete?(elementsToDelete, transaction)
+                            deletingHandlers.didDelete?(elementsToDelete, transaction)
                             return nil
                         }
                     }
@@ -589,10 +567,50 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /// The handlers for selecting elements.
     public var selectionHandlers = SelectionHandlers()
 
-    /// The handlers for deleting elements.
-    public var deletionHandlers = DeletionHandlers()
+    /**
+     The handlers for deleting elements.
+     
+     Provide ``DeletingHandlers-swift.struct/canDelete`` to support the deleting of elements in your collection view.
+     
+     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every element to be deleted
+     dataSource.deletingHandlers.canDelete = { elements in return elements }
 
-    /// The handlers for reordering elements.
+     // Option 2: Update the backing store from the final elements
+     dataSource.deletingHandlers.didDelete = { [weak self] elements, transaction in
+         guard let self = self else { return }
+         
+         self.backingStore = transaction.finalSnapshot.items
+     }
+     
+     ```
+     */
+    public var deletingHandlers = DeletingHandlers() {
+        didSet { observeKeyDown() }
+    }
+
+    /**
+     The handlers for reordering elements.
+     
+     Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your collection view.
+     
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every element to be reordered
+     dataSource.reorderingHandlers.canReorder = { elements in return true }
+
+     // Option 2: Update the backing store from the final elements
+     dataSource.reorderingHandlers.didReorder = { [weak self] elements, transaction in
+         guard let self = self else { return }
+         
+         self.backingStore = transaction.finalSnapshot.items
+     }
+     
+     ```
+     */
     public var reorderingHandlers = ReorderingHandlers()
 
     /**
@@ -637,19 +655,54 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         public var didDeselect: ((_ elements: [Element]) -> Void)?
     }
 
-    /// Handlers for deleting elements.
-    public struct DeletionHandlers {
+    /**
+     Handlers for deleting elements.
+     
+     To support reordering items in your diffable data source take a look at ``deletingHandlers-swift.property``.
+     */
+    public struct DeletingHandlers {
         /// The handler that determines which elements can be be deleted. The default value is `nil`, which indicates that all elements can be deleted.
         public var canDelete: ((_ elements: [Element]) -> [Element])?
 
         /// The handler that that gets called before deleting elements.
         public var willDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
 
-        /// The handler that that gets called after deleting elements.
+        /**
+         The handler that that gets called after deleting elements.
+         
+         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Allow every element to be deleted
+         dataSource.deletingHandlers.canDelete = { elements in return elements }
+
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.deletingHandlers.didDelete = { [weak self] elements, transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+
+         // Option 2: Update the backing store from the final elements
+         dataSource.deletingHandlers.didReorder = { [weak self] elements, transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
         public var didDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
     }
 
-    /// Handlers for reordering elements.
+    /**
+     Handlers for reordering elements.
+     
+     To support reordering items in your diffable data source take a look at ``reorderingHandlers-swift.property``.
+     */
     public struct ReorderingHandlers {
         /// The handler that determines if elements can be reordered. The default value is `nil` which indicates that the elements can be reordered.
         public var canReorder: ((_ elements: [Element]) -> Bool)?
@@ -657,7 +710,34 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         /// The handler that that gets called before reordering elements.
         public var willReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
 
-        /// The handler that that gets called after reordering elements.
+        /**
+         The handler that that gets called after reordering elements.
+
+         The system calls the `didReorder` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Allow every element to be reordered
+         dataSource.reorderingHandlers.canDelete = { elements in return true }
+
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.reorderingHandlers.didDelete = { [weak self] elements, transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+
+         // Option 2: Update the backing store from the final elements
+         dataSource.reorderingHandlers.didReorder = { [weak self] elements, transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
     }
 

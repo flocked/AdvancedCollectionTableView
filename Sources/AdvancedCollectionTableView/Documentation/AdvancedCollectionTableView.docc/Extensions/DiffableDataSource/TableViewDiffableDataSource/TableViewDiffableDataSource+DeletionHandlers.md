@@ -1,4 +1,4 @@
-# ``TableViewDiffableDataSource/DeletionHandlers-swift.struct``
+# ``TableViewDiffableDataSource/DeletingHandlers-swift.struct``
 
 ## Topics
 

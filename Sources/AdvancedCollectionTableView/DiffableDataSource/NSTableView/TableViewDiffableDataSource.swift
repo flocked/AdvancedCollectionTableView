@@ -14,16 +14,14 @@ import FZUIKit
  A `NSTableViewDiffableDataSource` with additional functionality.
 
  The diffable data source provides:
- - Reordering items by enabling ``allowsReordering``.
- - Deleting items by enabling  ``allowsDeleting``.
+ - Reordering items via ``ReorderingHandlers-swift.struct``.
+ - Deleting items via  ``DeletingHandlers-swift.struct``.
  - Quicklook previews of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
 
  __It includes handlers for:__
 
- - Reordering items via ``reorderingHandlers-swift.property``.
- - Deleting items via ``deletionHandlers-swift.property``.
  - Selecting items via ``selectionHandlers-swift.property``.
  - Hovering items by mouse via ``hoverHandlers-swift.property``.
  - Table column handlers via ``columnHandlers-swift.property``.
@@ -116,26 +114,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     public var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])?
 
     /**
-     A Boolean value that indicates whether users can reorder items in the table view by dragging them via mouse.
-
-     If the value of this property is `true`, users can reorder items. The default value is `false`.
-
-     ``reorderingHandlers`` provides additional handlers.
-     */
-    public var allowsReordering: Bool = false
-
-    /**
-     A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
-
-     If the value of this property is `true`, users can delete items using the backspace. The default value is `false`.
-
-     ``deletionHandlers`` provides additional handlers.
-     */
-    public var allowsDeleting: Bool = false {
-        didSet { setupKeyDownMonitor() }
-    }
-
-    /**
      The default animation the UI uses to show differences between rows.
 
      The default value of this property is `effectFade`.
@@ -210,20 +188,20 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
 
     func setupKeyDownMonitor() {
-        if allowsDeleting {
+        if let canDelete = deletingHandlers.canDelete {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self, self.tableView.isFirstResponder else { return event }
-                    if allowsDeleting, event.keyCode == 51 {
-                        let itemsToDelete = deletionHandlers.canDelete?(self.selectedItems) ?? self.selectedItems
+                    if event.keyCode == 51 {
+                        let itemsToDelete = canDelete(self.selectedItems)
                         if itemsToDelete.isEmpty == false {
                             let transaction = self.deletingTransaction(itemsToDelete)
-                            self.deletionHandlers.willDelete?(itemsToDelete, transaction)
+                            self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
                             }
                             self.apply(transaction.finalSnapshot, .animated)
-                            deletionHandlers.didDelete?(itemsToDelete, transaction)
+                            deletingHandlers.didDelete?(itemsToDelete, transaction)
                             return nil
                         }
                     }
@@ -394,7 +372,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
 
     public func tableView(_: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
-        dragingRowIndexes = rowIndexes
+        let items = dragingRowIndexes.compactMap({item(forRow: $0)})
+        if reorderingHandlers.canReorder?(items) == true {
+            dragingRowIndexes = rowIndexes
+        } else {
+            dragingRowIndexes.removeAll()
+        }
     }
 
     public func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, operation _: NSDragOperation) {
@@ -412,7 +395,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     // MARK: - Items
 
-    /// All current items in the collection view.
+    /// All current items in the table view.
     public var items: [Item] { currentSnapshot.itemIdentifiers }
 
     /// The selected items.
@@ -489,13 +472,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
 
     /// Scrolls the table view to the specified item.
-    public func scrollToItem(_ item: Item, scrollPosition _: NSCollectionView.ScrollPosition = []) {
+    public func scrollToItem(_ item: Item) {
         if let row = row(for: item) {
             tableView.scrollRowToVisible(row)
         }
     }
 
-    /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
+    /// Updates the data for the elements you specify, preserving the existing table view elements for the elements.
     public func reloadItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         let columns = IndexSet((0 ..< tableView.numberOfColumns).compactMap { $0 })
@@ -567,7 +550,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     // MARK: - Sections
 
-    /// All current sections in the collection view.
+    /// All current sections in the table view.
     public var sections: [Section] { currentSnapshot.sectionIdentifiers }
 
     /// Returns the row for the specified section.
@@ -575,13 +558,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource.row(forSectionIdentifier: section.id)
     }
 
-    /// Returns the section at the index in the collection view.
+    /// Returns the section at the index in the table view.
     public func section(for index: Int) -> Section? {
         sections[safe: index]
     }
 
     /// Scrolls the table view to the specified section.
-    public func scrollToSection(_ section: Section, scrollPosition _: NSCollectionView.ScrollPosition = []) {
+    public func scrollToSection(_ section: Section) {
         if let row = row(for: section) {
             tableView.scrollRowToVisible(row)
         }
@@ -601,10 +584,49 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /// The handlers for selecting items.
     public var selectionHandlers = SelectionHandlers()
 
-    /// The handlers for deleting items.
-    public var deletionHandlers = DeletionHandlers()
+    /**
+     The handlers for deleting items.
+     
+     Provide ``DeletingHandlers-swift.struct/canDelete`` to support the deleting of items in your table view.
+     
+     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every item to be deleted
+     dataSource.deletingHandlers.canDelete = { items in return items }
 
-    /// The handlers for reordering items.
+     // Option 2: Update the backing store from the final items
+     dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
+         guard let self = self else { return }
+         
+         self.backingStore = transaction.finalSnapshot.items
+     }
+     
+     ```
+     */
+    public var deletingHandlers = DeletingHandlers() {
+        didSet { setupKeyDownMonitor() }
+    }
+
+    /**
+     The handlers for reordering items.
+     
+     Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your table view.
+     
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every item to be reordered
+     dataSource.reorderingHandlers.canReorder = { items in return true }
+
+     // Option 2: Update the backing store from the final items
+     dataSource.reorderingHandlers.didReorder = { [weak self] items, transaction in
+         guard let self = self else { return }
+         
+         self.backingStore = transaction.finalSnapshot.items
+     }
+     ```
+     */
     public var reorderingHandlers = ReorderingHandlers()
 
     /// The handlers for hovering items with the mouse.
@@ -641,7 +663,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
 
-    /// Handlers for reordering items.
+    /**
+     Handlers for reordering items.
+     
+     To support reordering items in your diffable data source take a look at ``reorderingHandlers-swift.property``.
+     */
     public struct ReorderingHandlers {
         /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can be reordered.
         public var canReorder: (([Item]) -> Bool)?
@@ -652,25 +678,27 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         /**
          The handler that that gets called after reordering items.
 
-         The system calls the didReorder handler after a reordering transaction (NSDiffableDataSourceTransaction) occurs, so you can update your data backing store with information about the changes.
-
+         The system calls the `didReorder` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
          ```swift
-         // Enables reordering
-         dataSource.allowsReordering = true
+         // Allow every item to be reordered
+         dataSource.reorderingHandlers.canDelete = { items in return true }
+
 
          // Option 1: Update the backing store from a CollectionDifference
-         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+         dataSource.reorderingHandlers.didDelete = { [weak self] items, transaction in
              guard let self = self else { return }
-
+             
              if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
                  self.backingStore = updatedBackingStore
              }
          }
 
-         // Option 2: Update the backing store from the final item identifiers
-         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
-             guard let self = self else { return }
 
+         // Option 2: Update the backing store from the final items
+         dataSource.reorderingHandlers.didReorder = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
              self.backingStore = transaction.finalSnapshot.itemIdentifiers
          }
          ```
@@ -678,15 +706,46 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
 
-    /// Handlers for deleting items.
-    public struct DeletionHandlers {
+    /**
+     Handlers for deleting items.
+     
+     To support reordering items in your diffable data source take a look at ``deletingHandlers-swift.property``.
+     */
+    public struct DeletingHandlers {
         /// The handler that determines which items can be be deleted. The default value is `nil`, which indicates that all items can be deleted.
         public var canDelete: ((_ items: [Item]) -> [Item])?
 
         /// The handler that that gets called before deleting items.
         public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
 
-        /// The handler that gets called after deleting items.
+        /**
+         The handler that that gets called after deleting items.
+         
+         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Allow every item to be deleted
+         dataSource.deletingHandlers.canDelete = { items in return items }
+
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+
+         // Option 2: Update the backing store from the final items
+         dataSource.deletingHandlers.didReorder = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
         public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
 
@@ -717,19 +776,19 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     /// Handlers for drag and drop of files from and to the table view.
     struct DragDropHandlers {
-        /// The handler that determines which items can be dragged outside the collection view.
+        /// The handler that determines which items can be dragged outside the table view.
         public var canDragOutside: ((_ elements: [Item]) -> [Item])?
 
-        /// The handler that gets called whenever items did drag ouside the collection view.
+        /// The handler that gets called whenever items did drag ouside the table view.
         public var didDragOutside: (([Item]) -> Void)?
 
-        /// The handler that determines the pasteboard value of an item when dragged outside the collection view.
+        /// The handler that determines the pasteboard value of an item when dragged outside the table view.
         public var pasteboardValue: ((_ element: Item) -> PasteboardReadWriting)?
 
-        /// The handler that determines whenever pasteboard items can be dragged inside the collection view.
+        /// The handler that determines whenever pasteboard items can be dragged inside the table view.
         public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])?
 
-        /// The handler that gets called whenever pasteboard items did drag inside the collection view.
+        /// The handler that gets called whenever pasteboard items did drag inside the table view.
         public var didDragInside: (([PasteboardReadWriting]) -> Void)?
 
         /// The handler that determines the image when dragging items.

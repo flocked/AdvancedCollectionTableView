@@ -41,9 +41,8 @@ extension CollectionViewDiffableDataSource {
             if let canReorder = dataSource.reorderingHandlers.canReorder {
                 let items = indexPaths.compactMap { dataSource.element(for: $0) }
                 return canReorder(items)
-            } else {
-                return dataSource.allowsReordering
             }
+            return false
         }
 
         func collectionView(_: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {

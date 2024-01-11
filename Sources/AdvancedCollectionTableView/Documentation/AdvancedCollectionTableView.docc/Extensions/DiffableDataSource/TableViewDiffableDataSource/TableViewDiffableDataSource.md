@@ -34,14 +34,14 @@
 - ``selectItems(in:byExtendingSelection:)``
 - ``deselectItems(_:)``
 - ``deselectItems(in:)``
-- ``scrollToItem(_:scrollPosition:)``
+- ``scrollToItem(_:)``
 
 ### Identifying sections
 
 - ``sections``
 - ``section(forRow:)``
 - ``row(for:)-3rckc``
-- ``scrollToSection(_:scrollPosition:)``
+- ``scrollToSection(_:)``
 
 ### Updating data
 
@@ -62,15 +62,13 @@
 
 ### Supporting reordering items
 
-- ``allowsReordering``
 - ``reorderingHandlers-swift.property``
 - ``ReorderingHandlers-swift.struct``
 
 ### Supporting deleting items
 
-- ``allowsDeleting``
-- ``deletionHandlers-swift.property``
-- ``DeletionHandlers-swift.struct``
+- ``deletingHandlers-swift.property``
+- ``DeletingHandlers-swift.struct``
 
 ### Handling selecting items
 
