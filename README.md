@@ -1,6 +1,6 @@
 # Advanced NSCollectionView & NSTableView
 
-A framewor for `NSCollectionView` and `NSTableView. It provides classes and extensions, many of them being ports of missing `UIKit` APIs.
+A framewor for `NSCollectionView` and `NSTableView`. It provides classes and extensions, many of them being ports of missing UIKit APIs.
 
 **Take a look at the included sample app located at */Example/* which demonstrates most features.**
 
