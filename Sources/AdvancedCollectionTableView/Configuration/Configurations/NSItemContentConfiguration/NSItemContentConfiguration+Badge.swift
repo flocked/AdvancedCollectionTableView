@@ -52,6 +52,17 @@ public extension NSItemContentConfiguration {
             /// The badge is positioned at the bottom right.
             case bottomRight
         }
+        
+        /// The shape of the badge.
+        public enum Shape: Hashable {
+            /// A rounded badge with the specified corner radius.
+            case roundedRect(radius: CGFloat)
+            /// A circular badge.
+            case circle
+            
+            /// A rounded badge with a corner radius of `6.0`.
+            public static let roundedRect = Shape.roundedRect(radius: 6.0)
+        }
 
         /// The text of the badge.
         public var text: String?
@@ -87,7 +98,59 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
-
+        
+        /// A text badge.
+        public static func text(_ text: String, textStyle: NSFont.TextStyle = .body, textColor: NSColor = .white, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+            var badge = Badge()
+            badge.text = text
+            badge.textProperties.font = .systemFont(textStyle)
+            badge.textProperties.textColor = textColor
+            badge.backgroundColor = color
+            badge.type = type
+            badge.position = position
+            badge.shape = shape
+            return badge
+        }
+        
+        /// A badge displaying a view.
+        public static func view(_ view: NSView, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+            var badge = Badge()
+            badge.view = view
+            badge.backgroundColor = color
+            badge.type = type
+            badge.position = position
+            badge.shape = shape
+            return badge
+        }
+        
+        /// A symbol image badge.
+        public static func symbolImage(_ symbolName: String, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+            var badge = Badge()
+            badge.image = NSImage(systemSymbolName: symbolName)
+            badge.text = text
+            badge.textProperties.font = .systemFont(textStyle)
+            badge.textProperties.textColor = color
+            badge.imageProperties.tintColor = color
+            badge.backgroundColor = backgroundColor
+            badge.type = type
+            badge.position = position
+            badge.shape = shape
+            return badge
+        }
+        
+        /// An image badge.
+        public static func image(_ image: NSImage, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+            var badge = Badge()
+            badge.image = image
+            badge.text = text
+            badge.textProperties.font = .systemFont(textStyle)
+            badge.backgroundColor = color
+            badge.type = type
+            badge.position = position
+            badge.shape = shape
+            return badge
+        }
+       
         /**
          The visual effect of the badge.
 
@@ -118,14 +181,14 @@ public extension NSItemContentConfiguration {
             return nil
         }
 
-        /// The corner radius of the badge.
-        public var cornerRadius: CGFloat = 6.0
+        /// The shape of the badge.
+        public var shape: Shape = .roundedRect
 
         /// The shadow of the badge.
         public var shadow: ShadowConfiguration = .none()
 
         /// The margins between the text and the edges of the badge.
-        public var margins = NSDirectionalEdgeInsets(width: 12, height: 4)
+        public var margins = NSDirectionalEdgeInsets(width: 6, height: 4)
 
         /// The maximum width of the badge. If the text is larger than the width, it will be truncated.
         public var maxWidth: CGFloat?
@@ -141,43 +204,51 @@ public extension NSItemContentConfiguration {
 
         /// The spacing of the badge.
         public var spacing: CGFloat = 3.0
+        
+        var hasText: Bool {
+            text != nil || attributedText != nil
+        }
 
         /// Creates a badge.
         public init() {}
 
+        /*
         /// A text badge.
-        public static func text(_ text: String, font: NSFont = .caption, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
+        public static func text(_ text: String, font: NSFont = .caption, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.text = text
             badge.textProperties.font = font
             badge.backgroundColor = color
             badge.type = type
             badge.position = position
+            badge.shape = shape
             return badge
         }
 
         /// A badge displaying an image.
-        public static func image(_ image: NSImage, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
+        public static func image(_ image: NSImage, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.image = image
             badge.backgroundColor = color
             badge.type = type
             badge.position = position
+            badge.shape = shape
             return badge
         }
 
         /// A badge displaying an image.
-        public static func view(_ view: NSView, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge {
+        public static func view(_ view: NSView, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.view = view
             badge.backgroundColor = color
             badge.type = type
             badge.position = position
+            badge.shape = shape
             return badge
         }
 
         /// A badge displaying a symbol image.
-        public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor?, type: BadgeType, position: Position = .topRight) -> Badge? {
+        public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge? {
             guard let image = NSImage(systemSymbolName: symbolName) else { return nil }
             var badge = Badge()
             badge.image = image
@@ -185,8 +256,10 @@ public extension NSItemContentConfiguration {
             badge.backgroundColor = color
             badge.type = type
             badge.position = position
+            badge.shape = shape
             return badge
         }
+         */
 
         var isVisible: Bool {
             text != nil || attributedText != nil || image != nil || view != nil

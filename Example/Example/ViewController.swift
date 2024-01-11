@@ -33,6 +33,12 @@ class ViewController: NSViewController {
         if let badgeText = galleryItem.badge {
             configuration.badges = [.text(badgeText, color: galleryItem.badgeColor, type: .attachment, position: .topRight)]
         }
+        
+        if galleryItem.isFavorite {
+            var badge: NSItemContentConfiguration.Badge = .text("􀋃", textStyle: .headline, color: .systemRed, type: .attachment, position: .topRight, shape: .circle)
+            badge.margins = .zero
+            configuration.badges = [badge]
+        }
 
         // Apply the configuration
         collectionViewItem.contentConfiguration = configuration
@@ -51,15 +57,6 @@ class ViewController: NSViewController {
         }
     }
 
-    lazy var toolbar = Toolbar {
-        // Reconfigurates the collection view items without reloading them which provides much better performance compared to `reloadItems(at: )`.
-        ToolbarItem.Button(image: NSImage(systemSymbolName: "arrow.clockwise.circle")!)
-            .label("Reconfigurate")
-            .onAction {
-                self.dataSource.reconfigureElements(self.galleryItems.shuffledItems())
-            }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -68,22 +65,17 @@ class ViewController: NSViewController {
         collectionView.dataSource = dataSource
 
         // Enables deleting of every selected item via backspace keyboard shortcut.
-        dataSource.deletingHandlers.canDelete = { selectedGalleryItems in return selectedGalleryItems }
+        dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems }
 
         // Enables reordering of items by dragging them.
-        dataSource.reorderingHandlers.canReorder = { selectedGalleryItems in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedItems in return true }
 
-        // Right click menu for deleting selected items.
-        dataSource.menuProvider = { selectedItems in
-            guard !selectedItems.isEmpty else { return nil }
-            let deleteMenuItem = NSMenuItem("Delete…")
-            deleteMenuItem.actionBlock = { _ in
-                self.galleryItems.remove(selectedItems)
-                self.applySnapshot(using: self.galleryItems)
-            }
-            let menu = NSMenu()
-            menu.addItem(deleteMenuItem)
-            return menu
+        dataSource.rightClickHandler = { selectedItems in
+            selectedItems.forEach({ item in
+                item.isFavorite = true
+            })
+            // Reconfigurates items without reloading them by calling the item registration
+            self.dataSource.reconfigureElements(selectedItems)
         }
 
         applySnapshot(using: galleryItems)
@@ -92,7 +84,6 @@ class ViewController: NSViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
 
-        toolbar.attachedWindow = view.window
         view.window?.makeFirstResponder(collectionView)
         collectionView.selectItems(at: [.zero], scrollPosition: .top)
     }

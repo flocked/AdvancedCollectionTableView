@@ -21,11 +21,43 @@ extension NSItemContentView {
         var verticalConstraint: NSLayoutConstraint?
         var horizontalConstraint: NSLayoutConstraint?
         var widthConstraint: NSLayoutConstraint?
+        var heightConstraint: NSLayoutConstraint?
+        
+        func setupBadge() {
+            if properties.hasText {
+                textField.frame.origin = CGPoint(properties.margins.leading, properties.margins.bottom)
+                if properties.image != nil {
+                    imageView.frame.centerLeft = textField.frame.centerRight.offset(x: properties.imageToTextPadding)
+                    imageView.frame.size = imageView.fittingSize
+                    if let view = view {
+                        view.frame.centerLeft = imageView.frame.centerRight.offset(x: properties.imageToTextPadding)
+                        view.frame.size = view.fittingSize
+                    }
+                } else if let view = view {
+                    view.frame.centerLeft = textField.frame.centerRight.offset(x: properties.imageToTextPadding)
+                    view.frame.size = view.fittingSize
+                }
+            } else if properties.image != nil {
+                imageView.frame.origin = CGPoint(properties.margins.leading, properties.margins.bottom)
+                imageView.frame.size = imageView.fittingSize
+                if let view = view {
+                    view.frame.centerLeft = imageView.frame.centerRight.offset(x: properties.imageToTextPadding)
+                    view.frame.size = view.fittingSize
+                }
+            } else if let view = view {
+                view.frame.origin = CGPoint(properties.margins.leading, properties.margins.bottom)
+                view.frame.size = view.fittingSize
+            }
+        }
 
         func updateBadge() {
+            widthConstraint?.activate(false)
+            heightConstraint?.activate(false)
+            widthConstraint = nil
+            heightConstraint = nil
+
             border.color = properties._resolvedBorderColor
             border.width = properties.borderWidth
-            cornerRadius = properties.cornerRadius
             backgroundColor = properties._resolvedBackgroundColor
             configurate(using: properties.shadow, type: .outer)
 
@@ -75,6 +107,23 @@ extension NSItemContentView {
                 widthConstraint?.activate(false)
                 widthConstraint = nil
             }
+            
+            switch properties.shape {
+            case .roundedRect(let radius):
+                cornerRadius = radius
+            case .circle:
+              //  Swift.print("gg", stackView.fittingSize, stackView.intrinsicContentSize)
+                if let widthConstraint = widthConstraint {
+                    heightConstraint = heightAnchor.constraint(equalToConstant: widthConstraint.constant)
+                    heightConstraint?.activate()
+                } else {
+                    widthConstraint = widthAnchor.constraint(equalToConstant: textField.fittingSize.width + properties.margins.width).activate()
+                    heightConstraint = heightAnchor.constraint(equalToConstant: widthConstraint!.constant).activate()
+                    widthConstraint = widthAnchor.constraint(equalToConstant: textField.fittingSize.width + properties.margins.width).activate()
+                    heightConstraint = heightAnchor.constraint(equalToConstant: widthConstraint!.constant).activate()
+                    cornerRadius = widthConstraint!.constant * 0.5
+                }
+            }
         }
 
         init(properties: NSItemContentConfiguration.Badge) {
@@ -90,7 +139,11 @@ extension NSItemContentView {
         lazy var stackView: NSStackView = {
             let stackView = NSStackView(views: [imageView, textField])
             stackView.orientation = .horizontal
-            stackView.alignment = .firstBaseline
+            textField.alignment = .center
+            textField.backgroundColor = .systemYellow.withAlphaComponent(0.1)
+            textField.clipsToBounds = true
+            textField.drawsBackground = true
+            stackView.alignment = .centerY
             return stackView
         }()
 

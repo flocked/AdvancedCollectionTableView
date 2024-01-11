@@ -78,6 +78,21 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
         didSet { observeRightMouseDown() }
     }
+    
+    /**
+     Right click handler.
+     
+     The handler gets called whenever the user right clicks the collection view.
+
+     `elements` provides:
+     - if right-click on a selected element, all selected elements,
+     - else if right-click on a non selected element, that element,
+     - else an empty array.
+     */
+    public var rightClickHandler: ((_ elements: [Element]) -> ())? {
+        didSet { observeRightMouseDown() }
+    }
+
 
     /// A handler that gets called whenever collection view magnifies.
     public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
@@ -112,7 +127,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     func observeRightMouseDown() {
-        if menuProvider != nil, rightDownMonitor == nil {
+        if (menuProvider != nil || rightClickHandler != nil), rightDownMonitor == nil {
             rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
                 self.collectionView.menu = nil
                 if let contentView = self.collectionView.window?.contentView {
@@ -121,6 +136,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                         let location = event.location(in: self.collectionView)
                         if self.collectionView.bounds.contains(location) {
                             self.setupMenu(for: location)
+                            self.setupRightClick(for: location)
                         }
                     }
                 }
@@ -130,19 +146,32 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
             rightDownMonitor = nil
         }
     }
+    
+    func setupRightClick(for location: CGPoint) {
+        guard let rightClick = rightClickHandler else { return }
+        if let item = element(at: location) {
+            var items: [Element] = [item]
+            let selectedItems = selectedElements
+            if selectedItems.contains(item) {
+                items = selectedItems
+            }
+            rightClick(items)
+        } else {
+            rightClick([])
+        }
+    }
 
     func setupMenu(for location: CGPoint) {
-        if let menuProvider = menuProvider {
-            if let item = element(at: location) {
-                var menuItems: [Element] = [item]
-                let selectedItems = selectedElements
-                if selectedItems.contains(item) {
-                    menuItems = selectedItems
-                }
-                collectionView.menu = menuProvider(menuItems)
-            } else {
-                collectionView.menu = menuProvider([])
+        guard let menuProvider = menuProvider else { return }
+        if let item = element(at: location) {
+            var items: [Element] = [item]
+            let selectedItems = selectedElements
+            if selectedItems.contains(item) {
+                items = selectedItems
             }
+            collectionView.menu = menuProvider(items)
+        } else {
+            collectionView.menu = menuProvider([])
         }
     }
 

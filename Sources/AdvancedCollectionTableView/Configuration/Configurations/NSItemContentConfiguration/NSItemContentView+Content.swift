@@ -189,22 +189,28 @@ extension NSItemContentView {
             //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: constant).activate()
 
             let badgeSize = badgeView.fittingSize
-            switch badge.position {
-            case .topLeft, .top, .topRight:
+            
+            if badge.shape == .circle {
                 badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
-            case .centerLeft, .center, .centerRight:
-                badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
-            case .bottomLeft, .bottom, .bottomRight:
-                badgeView.verticalConstraint = badgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: badge.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
-            }
-
-            switch badge.position {
-            case .topLeft, .centerLeft, .bottomLeft:
-                badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
-            case .topRight, .centerRight, .bottomRight:
-                badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
-            case .top, .center, .bottom:
-                badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
+                badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: trailingAnchor, constant: -(badgeSize.width * 0.66)).activate()
+            } else {
+                switch badge.position {
+                case .topLeft, .top, .topRight:
+                    badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
+                case .centerLeft, .center, .centerRight:
+                    badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
+                case .bottomLeft, .bottom, .bottomRight:
+                    badgeView.verticalConstraint = badgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: badge.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
+                }
+                
+                switch badge.position {
+                case .topLeft, .centerLeft, .bottomLeft:
+                    badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
+                case .topRight, .centerRight, .bottomRight:
+                    badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
+                case .top, .center, .bottom:
+                    badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
+                }
             }
         }
 

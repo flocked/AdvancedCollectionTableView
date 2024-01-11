@@ -15,6 +15,7 @@ public class GalleryItem: NSObject, Identifiable {
     public var imageName: String
     public var badge: String?
     public var badgeColor: NSColor = .controlAccentColor
+    public var isFavorite: Bool = false
 
     public init(title: String, detail: String, imageName: String, badge: String? = nil, badgeColor: NSColor = .controlAccentColor) {
         self.title = title
