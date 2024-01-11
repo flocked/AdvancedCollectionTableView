@@ -75,8 +75,8 @@ extension NSCollectionView {
     }
 
     var observingView: ObserverView? {
-        get { getAssociatedValue(key: "NSCollectionView_observingView", object: self) }
-        set { set(associatedValue: newValue, key: "NSCollectionView_observingView", object: self)
+        get { getAssociatedValue(key: "collectionView_observingView", object: self) }
+        set { set(associatedValue: newValue, key: "collectionView_observingView", object: self)
         }
     }
 }

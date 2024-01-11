@@ -10,6 +10,13 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionViewItem {
+    /// Instantiates a view for the item.
+    override open func loadView() {
+        view = NSView()
+    }
+}
+
+extension NSCollectionViewItem {
     // MARK: Configuring the background
 
     /**
@@ -255,15 +262,13 @@ extension NSCollectionViewItem {
      A hovered item has the mouse pointer on it's view.
      */
     @objc var isHovered: Bool {
-        if let collectionView = collectionView, let indexPath = collectionView.indexPath(for: self), collectionView.hoveredIndexPath == indexPath {
+        if let collectionView = collectionView, collectionView.hoveredItem == self {
             if let view = view as? NSItemContentView {
                 let location = collectionView.convert(collectionView.hoveredLocation, to: view)
                 return view.checkHoverLocation(location)
             }
-            
             return true
         }
-        // _collectionView?.indexPath(for: self)
         return false
     }
 
@@ -318,12 +323,5 @@ extension NSCollectionViewItem {
     // The `collectionView` property isn't always returning the collection view. This checks all superviews for a `NSCollectionView` object.
     var _collectionView: NSCollectionView? {
         collectionView ?? view.firstSuperview(for: NSCollectionView.self)
-    }
-}
-
-extension NSCollectionViewItem {
-    /// Instantiates a view for the item.
-    override open func loadView() {
-        view = NSView()
     }
 }

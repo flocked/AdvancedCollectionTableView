@@ -70,8 +70,8 @@ extension NSTableView {
     }
 
     var observingView: ObserverView? {
-        get { getAssociatedValue(key: "NSTableView_observingView", object: self) }
-        set { set(associatedValue: newValue, key: "NSTableView_observingView", object: self)
+        get { getAssociatedValue(key: "tableView_observingView", object: self) }
+        set { set(associatedValue: newValue, key: "tableView_observingView", object: self)
         }
     }
 
@@ -83,11 +83,11 @@ extension NSTableView {
     }
 
     @objc dynamic var hoveredRow: IndexPath? {
-        get { getAssociatedValue(key: "NSTableView_hoveredRow", object: self, initialValue: nil) }
+        get { getAssociatedValue(key: "hoveredRow", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredRow else { return }
             let previousHoveredRowView = hoveredRowView
-            set(associatedValue: newValue, key: "NSTableView_hoveredRow", object: self)
+            set(associatedValue: newValue, key: "hoveredRow", object: self)
             if let rowView = previousHoveredRowView {
                 rowView.setNeedsAutomaticUpdateConfiguration()
                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()

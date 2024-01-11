@@ -133,7 +133,7 @@ extension NSListConfigurationState: ReferenceConvertible {
     }
 
     public func _bridgeToObjectiveC() -> __NSListConfigurationStateObjcNew {
-        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isEmphasized, isPreviousSelected: isPreviousSelected, customStates: customStates)
+        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isEmphasized, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) {
@@ -155,35 +155,20 @@ extension NSListConfigurationState: ReferenceConvertible {
     }
 }
 
-/**
- The `Objective-C` class for ``NSListConfigurationState``.
- 
- Don't use this class. It's only used internally for bridging the state to `Objective-C`.  Use ``NSListConfigurationState`` instead.
- */
+/// The `Objective-C` class for ``NSListConfigurationState``.
 public class __NSListConfigurationStateObjcNew: NSObject, NSCopying {
-    var isSelected: Bool = false
-    var isEnabled: Bool = true
-    var isHovered: Bool = false
-    var isEditing: Bool = false
-    var isEmphasized: Bool = false
-    var isNextSelected: Bool = false
-    var isPreviousSelected: Bool = false
-    var isFocused: Bool = false
-    var isExpanded: Bool = false
-    var customStates = [NSConfigurationStateCustomKey: AnyHashable]()
+    var isSelected: Bool
+    var isEnabled: Bool
+    var isHovered: Bool
+    var isEditing: Bool
+    var isEmphasized: Bool
+    var isNextSelected: Bool
+    var isPreviousSelected: Bool
+    var isFocused: Bool
+    var isExpanded: Bool
+    var customStates:[NSConfigurationStateCustomKey: AnyHashable]
 
-    public func copy(with zone: NSZone? = nil) -> Any {
-        __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, customStates: customStates)
-    }
-
-    init(isSelected: Bool = false,
-                isEnabled: Bool = true,
-                isHovered: Bool = false,
-                isEditing: Bool = false,
-                isEmphasized: Bool = false,
-                isNextSelected: Bool = false,
-                isPreviousSelected: Bool = false)
-    {
+    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, isEmphasized: Bool, isNextSelected: Bool, isPreviousSelected: Bool, isFocused: Bool, isExpanded: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable]) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isHovered = isHovered
@@ -191,24 +176,13 @@ public class __NSListConfigurationStateObjcNew: NSObject, NSCopying {
         self.isEmphasized = isEmphasized
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
-    }
-
-    init(isSelected: Bool,
-         isEnabled: Bool,
-         isHovered: Bool,
-         isEditing: Bool,
-         isEmphasized: Bool,
-         isNextSelected: Bool,
-         isPreviousSelected: Bool,
-         customStates: [NSConfigurationStateCustomKey: AnyHashable])
-    {
-        self.isSelected = isSelected
-        self.isEnabled = isEnabled
-        self.isHovered = isHovered
-        self.isEditing = isEditing
-        self.isEmphasized = isEmphasized
-        self.isNextSelected = isNextSelected
-        self.isPreviousSelected = isPreviousSelected
+        self.isFocused = isFocused
+        self.isExpanded = isExpanded
         self.customStates = customStates
+        super.init()
+    }
+    
+    public func copy(with zone: NSZone? = nil) -> Any {
+        __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
     }
 }
