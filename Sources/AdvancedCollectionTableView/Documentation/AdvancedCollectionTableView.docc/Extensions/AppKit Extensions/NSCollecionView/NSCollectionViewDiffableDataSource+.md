@@ -19,6 +19,5 @@ Extensions for `NSCollectionViewDiffableDataSource`.
 
 ### Supporting deleting
 
-- ``AppKit/NSCollectionViewDiffableDataSource/allowsDeleting``
 - ``AppKit/NSCollectionViewDiffableDataSource/deletionHandlers-swift.property``
 - ``AppKit/NSCollectionViewDiffableDataSource/DeletionHandlers-swift.struct``

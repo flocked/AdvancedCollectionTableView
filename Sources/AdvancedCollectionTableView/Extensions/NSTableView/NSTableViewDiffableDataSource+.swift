@@ -7,13 +7,14 @@
 
 import AppKit
 
+// NSTableViewDiffableDataSource hides these tableview delegate functions
 public extension NSTableViewDiffableDataSource {
     /**
      Asks the datasource for a view to display the specified row and column.
 
      - Parameters:
         - tableView: The table view that sent the message.
-        - tableColumn: The table column. (If the row is a group row, tableColumn is nil.)
+        - tableColumn: The table column. If the row is a group row, `tableColumn` is `nil`.
         - row: The row index.
 
      - Returns: The view to display the specified column and row.
@@ -37,7 +38,7 @@ public extension NSTableViewDiffableDataSource {
         - tableView: The table view that sent the message.
         - row: The row index.
 
-     - Returns: An instance or subclass of NSTableRowView. If nil is returned, an NSTableRowView instance will be created and used.
+     - Returns: An instance or subclass of `NSTableRowView`. If `nil` is returned, an `NSTableRowView` instance will be created and used.
      */
     func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         let selector = NSSelectorFromString("_tableView:rowViewForRow:")
@@ -58,7 +59,7 @@ public extension NSTableViewDiffableDataSource {
         - tableView: The table view that sent the message.
         - row: The row index.
 
-     - Returns: `true` if the specified row should have the group row style drawn, `false otherwise.
+     - Returns: `true` if the specified row should have the group row style drawn, `false` otherwise.
      */
     func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
         let selector = NSSelectorFromString("_tableView:isGroupRow:")

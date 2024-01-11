@@ -112,13 +112,21 @@ tableView.register(NSTableCellView.self)
 let dequeuedTableCell = tableView.makeView(for: NSTableCellView.self)
 ```
 
-## NSCollectionView & NSTableViewDiffableDataSource allowsDeleting
+## NSCollectionView & NSTableViewDiffableDataSource item deletion
 
-`allowsDeleting` enables deleting of items and rows via backspace.
+Enable deleting items via backspace via `DeletionHandlers`:
 
- ```swift
- diffableDataSource.allowsDeleting = true
- ```
+```swift
+// Allow every item to be deleted
+dataSource.deletionHandlers.canDelete = { items in return true }
+
+// Update the backing store from the final item identifiers
+dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+    guard let self = self else { return }
+         
+    self.backingStore = transaction.finalSnapshot.itemIdentifiers
+}
+```
  
 ## NSDiffableDataSourceSnapshot Apply Options
 

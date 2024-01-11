@@ -7,9 +7,7 @@ Extensions for `NSTableView`.
 ### Creating table cell views
 
 - ``AppKit/NSTableView/register(_:)``
-- ``AppKit/NSTableView/register(_:forIdentifier:)``
 - ``AppKit/NSTableView/makeView(for:)``
-- ``AppKit/NSTableView/makeView(for:withIdentifier:)``
 
 ### Creating table cell views using cell registration
 

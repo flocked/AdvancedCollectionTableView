@@ -10,57 +10,69 @@ import FZQuicklook
 import FZSwiftUtils
 import FZUIKit
 
-public extension NSTableViewDiffableDataSource {
+extension NSTableViewDiffableDataSource {
     /**
-     A Boolean value that indicates whether users can delete items via backspace keyboard shortcut.
+     The diffable data source’s handlers for deleting items.
+     
+     The system calls the ``DeletionHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every item to be deleted
+     dataSource.deletionHandlers.canDelete = { items in return true }
 
-     If the value of this property is `true`, users can delete items using the backspace. The default value is `false`.
+     // Option 1: Update the backing store from a CollectionDifference
+     dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+        guard let self = self else { return }
+         
+        if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+            self.backingStore = updatedBackingStore
+        }
+     }
 
-     ``deletionHandlers`` provides additional handlers.
+     // Option 2: Update the backing store from the final item identifiers
+     dataSource.deletionHandlers.didDelete = { [weak self] items, transaction in
+        guard let self = self else { return }
+         
+        self.backingStore = transaction.finalSnapshot.itemIdentifiers
+     }
+     ```
      */
-    var allowsDeleting: Bool {
-        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_allowsDeleting", object: self, initialValue: false) }
-        set {
-            guard newValue != allowsDeleting else { return }
-            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_allowsDeleting", object: self)
+    public var deletionHandlers: DeletionHandlers {
+        get { getAssociatedValue(key: "deletionHandlers", object: self, initialValue: .init()) }
+        set { 
+            set(associatedValue: newValue, key: "deletionHandlers", object: self)
             setupKeyDownMonitor()
         }
     }
 
-    /// The handlers for deleting of items.
-    var deletionHandlers: DeletionHandlers {
-        get { getAssociatedValue(key: "diffableDataSource_deletionHandlers", object: self, initialValue: .init()) }
-        set { set(associatedValue: newValue, key: "diffableDataSource_deletionHandlers", object: self) }
-    }
-
-    /// Handlers for deleting of items.
-    struct DeletionHandlers {
-        /// The handler that determines whether items should get deleted. The default value is `nil`, which indicates that all items can be deleted.
+    /// Handlers for deleting items.
+    public struct DeletionHandlers {
+        /// The handler that determines whether you can delete items.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
-        /// The handler that that gets called before deleting items.
+        /// The handler that prepares the diffable data source for deleting its items.
         public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
-        /// The handler that that gets called after deleting items.
+        /// The handler that processes a deleting transaction.
         public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
     }
 
-    internal var keyDownMonitor: Any? {
-        get { getAssociatedValue(key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self, initialValue: nil) }
+    var keyDownMonitor: Any? {
+        get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
         set {
-            set(associatedValue: newValue, key: "NSTableViewDiffableDataSource_keyDownMonitor", object: self)
+            set(associatedValue: newValue, key: "keyDownMonitor", object: self)
         }
     }
 
-    internal func setupKeyDownMonitor() {
-        if allowsDeleting {
+    func setupKeyDownMonitor() {
+        if let canDelete = deletionHandlers.canDelete {
             if keyDownMonitor == nil {
                 keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { [weak self] event in
                     guard let self = self else { return event }
                     guard event.keyCode == 51 else { return event }
-                    if allowsDeleting, let tableView = (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
+                    if let tableView = (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {
                         let selecedRowIndexes = tableView.selectedRowIndexes.map { $0 }
 
                         var elementsToDelete = selecedRowIndexes.compactMap { self.itemIdentifier(forRow: $0) }
-                        elementsToDelete = self.deletionHandlers.canDelete?(elementsToDelete) ?? elementsToDelete
+                        elementsToDelete = canDelete(elementsToDelete)
                         if elementsToDelete.isEmpty == false {
                             if QuicklookPanel.shared.isVisible {
                                 QuicklookPanel.shared.close()
