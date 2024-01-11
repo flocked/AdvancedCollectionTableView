@@ -37,33 +37,35 @@ class SidebarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.floatsGroupRows = false
         tableView.dataSource = dataSource
+        tableView.floatsGroupRows = false
 
-        // Enables reordering of rows via drag and drop.
+        // Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { selectedItem in return true }
         
-        // Deleting of every selected row via backspace.
+        // Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItem in return selectedItem }
 
-        /// Swipe row actions for deleting and favoriting items.
-        dataSource.rowActionProvider = { item, edge in
+        // Swipe row actions for deleting and favoriting an item.
+        dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {
+                // Left swipe
                 return [NSTableViewRowAction(
                     style: .regular, title: "",
-                    symbolName: item.isFavorite ? "star" : "star.fill",
-                    color: item.isFavorite ? .systemGray : .systemYellow
+                    symbolName: swippedItem.isFavorite ? "star" : "star.fill",
+                    color: swippedItem.isFavorite ? .systemGray : .systemYellow
                 ) { _, _ in
-                    item.isFavorite = !item.isFavorite
-                    self.dataSource.reloadItems([item])
+                    swippedItem.isFavorite = !swippedItem.isFavorite
+                    self.dataSource.reloadItems([swippedItem])
                     self.tableView.rowActionsVisible = false
                 }]
             } else {
+                // Right swipe
                 return [NSTableViewRowAction(
                     style: .destructive, title: "", symbolName: "trash.fill"
                 ) { _, _ in
                     var currentSnapshot = self.dataSource.snapshot()
-                    currentSnapshot.deleteItems([item])
+                    currentSnapshot.deleteItems([swippedItem])
                     self.dataSource.apply(currentSnapshot, .animated)
                 }]
             }
