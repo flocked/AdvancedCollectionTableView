@@ -362,7 +362,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
 
     public func tableView(_: NSTableView, validateDrop _: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        guard dropOperation == .above else { return [] }
+        guard dragingRowIndexes.isEmpty == false, dropOperation == .above else { return [] }
 
         if row >= (sectionHeaderViewProvider != nil ? 1 : 0) {
             return .move
