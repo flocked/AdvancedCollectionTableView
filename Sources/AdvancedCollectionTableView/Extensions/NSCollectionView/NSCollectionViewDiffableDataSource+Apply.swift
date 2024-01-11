@@ -7,7 +7,7 @@
 
 import AppKit
 
-public extension NSCollectionViewDiffableDataSource {
+extension NSCollectionViewDiffableDataSource {
     /**
      Updates the UI to reflect the state of the data in the specified snapshot, optionally animating the UI changes and executing a completion handler.
 
@@ -18,7 +18,7 @@ public extension NSCollectionViewDiffableDataSource {
         - option: Option how to apply the snapshot to the table view. The default value is `animated`.
         - completion: An optional closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue. The default value is `nil`.
      */
-    func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         switch option {
         case .usingReloadData:
             applySnapshotUsingReloadData(snapshot, completion: completion)

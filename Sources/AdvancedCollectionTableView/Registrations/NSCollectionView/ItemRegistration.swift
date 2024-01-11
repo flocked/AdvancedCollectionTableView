@@ -129,7 +129,7 @@ public extension NSCollectionView {
     }
 }
 
-public extension NSCollectionView {
+extension NSCollectionView {
     // MARK: Creating items
 
     /**
@@ -142,7 +142,7 @@ public extension NSCollectionView {
 
      - Returns: A configured reusable item object.
      */
-    func makeItem<Item, Element>(using registration: ItemRegistration<Item, Element>, for indexPath: IndexPath, element: Element) -> Item where Item: NSCollectionViewItem {
+    public func makeItem<Item, Element>(using registration: ItemRegistration<Item, Element>, for indexPath: IndexPath, element: Element) -> Item where Item: NSCollectionViewItem {
         registration.makeItem(self, indexPath, element)
     }
 }

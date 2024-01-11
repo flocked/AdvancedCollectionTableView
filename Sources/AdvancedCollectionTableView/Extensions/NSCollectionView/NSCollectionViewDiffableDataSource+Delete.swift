@@ -14,6 +14,8 @@ extension NSCollectionViewDiffableDataSource {
     /**
      The diffable data source’s handlers for deleting items.
      
+     Provide deleting handlers to support the deleting of elements in your collection view.
+     
      The system calls the ``DeletingHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
@@ -52,7 +54,7 @@ extension NSCollectionViewDiffableDataSource {
     public struct DeletingHandlers {
         /// The handler that determines whether you can delete items.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
-        /// The handler that prepares the diffable data source for deleting its items.
+        /// The handler that that gets called before deleting items.
         public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
         /**
          The handler that that gets called after deleting items.
@@ -100,7 +102,7 @@ extension NSCollectionViewDiffableDataSource {
                     var selectionItem: ItemIdentifierType? = nil
                     let selectionIndexPaths = collectionView.selectionIndexPaths.map { $0 }
                     var elementsToDelete = selectionIndexPaths.compactMap { self.itemIdentifier(for: $0) }
-                    if var indexPath = selectionIndexPaths.first, let item = itemIdentifier(for: indexPath) {
+                    if let indexPath = selectionIndexPaths.first, let item = itemIdentifier(for: indexPath) {
                         if indexPath.item > 0,  let item = self.itemIdentifier(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(item) {
                             selectionItem = item
                         } else {

@@ -41,7 +41,7 @@ import QuickLookUI
 
  - Note: Don’t change the dataSource or delegate on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
+open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
     var delegateBridge: DelegateBridge!
@@ -52,7 +52,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     var hoveredItemObserver: NSKeyValueObservation?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
-    public var supplementaryViewProvider: SupplementaryViewProvider?
+    open var supplementaryViewProvider: SupplementaryViewProvider?
     /**
      A closure that configures and returns a collection view’s supplementary view, such as a header or footer, from a diffable data source.
 
@@ -68,34 +68,32 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     /**
      Right click menu provider.
 
-     The provided menu is used when right clicking the collection view.
+     The provided menu is displayed when the user right-clicks the collection view. If you don't want to display a menu, return `nil`.
 
      `elements` provides:
-     - if right-click on a selected element, all selected elements,
-     - else if right-click on a non selected element, that element,
+     - if right-click on a **selected element**, all selected elements,
+     - else if right-click on a **non-selected element**, that element,
      - else an empty array.
      */
-    public var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
+    open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
         didSet { observeRightMouseDown() }
     }
     
     /**
-     Right click handler.
-     
-     The handler gets called whenever the user right clicks the collection view.
+     The handler that gets called when the user right-clicks the collection view.
 
      `elements` provides:
-     - if right-click on a selected element, all selected elements,
-     - else if right-click on a non selected element, that element,
+     - if right-click on a **selected element**, all selected elements,
+     - else if right-click on a **non-selected element**, that element,
      - else an empty array.
      */
-    public var rightClickHandler: ((_ elements: [Element]) -> ())? {
+    open var rightClickHandler: ((_ elements: [Element]) -> ())? {
         didSet { observeRightMouseDown() }
     }
 
 
     /// A handler that gets called whenever collection view magnifies.
-    public var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
+    open var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
 
     func observeMagnificationGesture() {
         if pinchHandler != nil {
@@ -142,7 +140,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                 }
                 return event
             }
-        } else if menuProvider == nil, rightDownMonitor != nil {
+        } else if menuProvider == nil && rightClickHandler == nil {
             rightDownMonitor = nil
         }
     }
@@ -240,7 +238,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
                     var section: Section? = nil
                     var selectionElement: Element? = nil
                     if let element = elementsToDelete.first {
-                        if var indexPath = indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
+                        if let indexPath = indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
                             selectionElement = element
                         } else {
                             section = self.section(for: element)
@@ -285,12 +283,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
      A snapshot containing section and item identifiers in the order that they appear in the UI.
      */
-    public func snapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
+    open func snapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
         currentSnapshot
     }
 
     /// Returns an empty snapshot.
-    public func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
+    open func emptySnapshot() -> NSDiffableDataSourceSnapshot<Section, Element> {
         .init()
     }
 
@@ -304,7 +302,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
         - option: Option how to apply the snapshot to the collection view. The default value is `animated`.
         - completion: An optional completion handler which gets called after applying the snapshot.
      */
-    public func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
@@ -386,31 +384,31 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
     // MARK: - DataSource implementation
 
-    public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         dataSource.collectionView(collectionView, numberOfItemsInSection: section)
     }
 
-    public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+    open func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
     }
 
-    public func numberOfSections(in collectionView: NSCollectionView) -> Int {
+    open func numberOfSections(in collectionView: NSCollectionView) -> Int {
         dataSource.numberOfSections(in: collectionView)
     }
 
-    public func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+    open func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
         dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
 
     // MARK: - Elements
 
     /// All current elements in the collection view.
-    public var elements: [Element] {
+    open var elements: [Element] {
         currentSnapshot.itemIdentifiers
     }
 
     /// The selected elements.
-    public var selectedElements: [Element] {
+    open var selectedElements: [Element] {
         collectionView.selectionIndexPaths.compactMap { element(for: $0) }
     }
 
@@ -420,19 +418,20 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      - Parameter indexPath: The index path.
      - Returns: The element at the index path or nil if there isn't any element at the index path.
      */
-    public func element(for indexPath: IndexPath) -> Element? {
+    open func element(for indexPath: IndexPath) -> Element? {
         if let itemId = dataSource.itemIdentifier(for: indexPath) {
             return currentSnapshot.itemIdentifiers[id: itemId]
         }
         return nil
     }
     
-    public func elements(for section: Section) -> [Element] {
+    /// Returns the elements for the specified section.
+    open func elements(for section: Section) -> [Element] {
         currentSnapshot.itemIdentifiers(inSection: section)
     }
 
     /// Returns the index path for the specified element in the collection view.
-    public func indexPath(for element: Element) -> IndexPath? {
+    open func indexPath(for element: Element) -> IndexPath? {
         dataSource.indexPath(for: element.id)
     }
 
@@ -442,7 +441,7 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      - Parameter point: The point in the collection view’s bounds that you want to test.
      - Returns: The element at the specified point or `nil` if no element was found at that point.
      */
-    public func element(at point: CGPoint) -> Element? {
+    open func element(at point: CGPoint) -> Element? {
         if let indexPath = collectionView.indexPathForItem(at: point) {
             return element(for: indexPath)
         }
@@ -450,44 +449,44 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     }
 
     /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
-    public func reconfigureElements(_ elements: [Element]) {
+    open func reconfigureElements(_ elements: [Element]) {
         let indexPaths = elements.compactMap { indexPath(for: $0) }
         collectionView.reconfigureItems(at: indexPaths)
     }
 
     /// Reloads the specified elements.
-    public func reloadElements(_ elements: [Element], animated: Bool = false) {
+    open func reloadElements(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)
         dataSource.apply(snapshot, animated ? .animated : .withoutAnimation)
     }
 
     /// Selects the specified elements.
-    public func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing _: CGFloat? = nil) {
+    open func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing _: CGFloat? = nil) {
         let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
         collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
 
     /// Deselects the specified elements.
-    public func deselectElements(_ elements: [Element]) {
+    open func deselectElements(_ elements: [Element]) {
         let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
         collectionView.deselectItems(at: indexPaths)
     }
 
     /// Selects all elements in the specified sections.
-    public func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
+    open func selectElements(in sections: [Section], scrollPosition: NSCollectionView.ScrollPosition) {
         let elements = elements(for: sections)
         selectElements(elements, scrollPosition: scrollPosition)
     }
 
     /// Deselects all elementsin the specified sections.
-    public func deselectElements(in sections: [Section], scrollPosition _: NSCollectionView.ScrollPosition) {
+    open func deselectElements(in sections: [Section], scrollPosition _: NSCollectionView.ScrollPosition) {
         let elementIndexPaths = Set(sections.flatMap { indexPaths(for: $0) })
         collectionView.deselectItems(at: elementIndexPaths)
     }
 
     /// Scrolls the collection view to the specified elements.
-    public func scrollToElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition = []) {
+    open func scrollToElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition = []) {
         let indexPaths = Set(indexPaths(for: elements))
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
     }
@@ -576,26 +575,29 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Sections
 
     /// All current sections in the collection view.
-    public var sections: [Section] {
+    open var sections: [Section] {
         currentSnapshot.sectionIdentifiers
     }
 
     /// Returns the index for the section in the collection view.
-    public func index(for section: Section) -> Int? {
+    open func index(for section: Section) -> Int? {
         sections.firstIndex(of: section)
     }
 
+    /*
     /// Returns the section at the index in the collection view.
-    public func section(for index: Int) -> Section? {
+    open func section(for index: Int) -> Section? {
         sections[safe: index]
     }
+     */
     
-    public func section(for element: Element) -> Section? {
+    /// Returns the section for the specified element.
+    open func section(for element: Element) -> Section? {
         currentSnapshot.sectionIdentifier(containingItem: element)
     }
 
     /// Scrolls the collection view to the specified section.
-    public func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
+    open func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
         guard let index = index(for: section) else { return }
         let indexPaths = Set([IndexPath(item: 0, section: index)])
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
@@ -611,12 +613,12 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
     // MARK: - Handlers
 
     /// The handlers for hovering elements with the mouse.
-    public var hoverHandlers = HoverHandlers() {
+    open var hoverHandlers = HoverHandlers() {
         didSet { observeHoveredItem() }
     }
 
     /// The handlers for selecting elements.
-    public var selectionHandlers = SelectionHandlers()
+    open var selectionHandlers = SelectionHandlers()
 
     /**
      The handlers for deleting elements.
@@ -646,14 +648,14 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      }
      ```
      */
-    public var deletingHandlers = DeletingHandlers() {
+    open var deletingHandlers = DeletingHandlers() {
         didSet { observeKeyDown() }
     }
 
     /**
      The handlers for reordering elements.
      
-     Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your collection view.
+     Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of elements in your collection view.
      
      The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
@@ -678,22 +680,22 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
      }
      ```
      */
-    public var reorderingHandlers = ReorderingHandlers()
+    open var reorderingHandlers = ReorderingHandlers()
 
     /**
      The handlers for the displaying elements.
 
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
-    public var displayHandlers = DisplayHandlers() {
+    open var displayHandlers = DisplayHandlers() {
         didSet { observeDisplayingItems() }
     }
 
     /// The handlers for prefetching elements.
-    public var prefetchHandlers = PrefetchHandlers()
+    open var prefetchHandlers = PrefetchHandlers()
 
     /// The handlers highlighting elements.
-    public var highlightHandlers = HighlightHandlers()
+    open var highlightHandlers = HighlightHandlers()
 
     /// The handlers for drag and drop of files from and to the collection view.
     var dragDropHandlers = DragDropHandlers()
@@ -895,9 +897,9 @@ public class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, 
 
 // MARK: - Quicklook
 
-public extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
+extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
     /// A Boolean value that indicates whether the user can quicklook selected elements by pressing space bar.
-    var isQuicklookPreviewable: Bool {
+    public var isQuicklookPreviewable: Bool {
         get { collectionView.isQuicklookPreviewable }
         set { collectionView.isQuicklookPreviewable = newValue }
     }
@@ -911,7 +913,7 @@ public extension CollectionViewDiffableDataSource where Element: QuicklookPrevie
         - elements: The elements to preview.
         - current: The element that starts the preview. The default value is `nil`.
      */
-    func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
+    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
         let indexPaths = elements.compactMap { indexPath(for: $0) }.sorted()
         if let current = current, let currentIndexPath = indexPath(for: current) {
             collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)

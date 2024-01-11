@@ -10,6 +10,7 @@ import AppKit
 extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, SectionIdentifierType: Identifiable {
     /// A snapshot from the section and item identifiers.
     typealias IdentifiableSnapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType.ID, ItemIdentifierType.ID>
+    
     /// Creates a snapshot from the section and item identifiers.
     func toIdentifiableSnapshot() -> IdentifiableSnapshot {
         var identifiableSnapshot = IdentifiableSnapshot()

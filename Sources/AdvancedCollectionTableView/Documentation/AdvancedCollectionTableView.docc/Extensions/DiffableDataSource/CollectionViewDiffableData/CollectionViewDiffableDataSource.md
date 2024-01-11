@@ -19,6 +19,7 @@
 - ``selectedElements``
 - ``element(for:)``
 - ``element(at:)``
+- ``elements(for:)``
 - ``indexPath(for:)``
 - ``reconfigureElements(_:)``
 - ``reloadElements(_:animated:)``
@@ -44,6 +45,7 @@
 ### Configurating user interaction
 
 - ``menuProvider``
+- ``rightClickHandler``
 - ``pinchHandler``
 
 ### Previewing elements

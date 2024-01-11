@@ -20,7 +20,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     /// The current configuration of the view.
-    public var configuration: NSContentConfiguration {
+    open var configuration: NSContentConfiguration {
         get { appliedConfiguration }
         set {
             if let newValue = newValue as? NSListContentConfiguration {

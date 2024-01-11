@@ -53,6 +53,7 @@
 ### Configurating user interaction
 
 - ``menuProvider``
+- ``rightClickHandler``
 - ``rowActionProvider``
 
 ### Previewing items

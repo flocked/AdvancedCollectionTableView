@@ -111,7 +111,7 @@ public extension NSCollectionView {
     }
 }
 
-public extension NSCollectionView {
+extension NSCollectionView {
     /**
      Dequeues a configured reusable supplementary view object.
 
@@ -121,7 +121,7 @@ public extension NSCollectionView {
 
      - returns: A configured reusable supplementary view object.
      */
-    func makeSupplementaryView<Supplementary>(using registration: SupplementaryRegistration<Supplementary>, for indexPath: IndexPath) -> Supplementary {
+    public func makeSupplementaryView<Supplementary>(using registration: SupplementaryRegistration<Supplementary>, for indexPath: IndexPath) -> Supplementary {
         registration.makeSupplementaryView(self, indexPath) as! Supplementary
     }
 }

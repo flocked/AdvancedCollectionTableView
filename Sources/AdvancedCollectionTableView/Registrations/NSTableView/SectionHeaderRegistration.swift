@@ -80,7 +80,7 @@ public extension NSTableView {
     }
 }
 
-public extension NSTableView {
+extension NSTableView {
     /**
      Dequeues a configured reusable section view object.
 
@@ -91,7 +91,7 @@ public extension NSTableView {
 
      - Returns: A configured reusable section view object.
      */
-    func makeSectionHeaderView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
+    public func makeSectionHeaderView<SectionHeaderView, Section>(using registration: SectionHeaderRegistration<SectionHeaderView, Section>, row: Int, section: Section) -> SectionHeaderView {
         registration.makeView(self, row, section)
     }
 }

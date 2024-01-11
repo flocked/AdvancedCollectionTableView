@@ -150,7 +150,7 @@ public extension NSTableView {
     }
 }
 
-public extension NSTableView {
+extension NSTableView {
     /**
      Dequeues a configured reusable cell object.
 
@@ -162,7 +162,7 @@ public extension NSTableView {
 
      - Returns: A configured reusable cell object.
      */
-    func makeCellView<CellView, Item>(using registration: CellRegistration<CellView, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> CellView? where CellView: NSTableCellView {
+    public func makeCellView<CellView, Item>(using registration: CellRegistration<CellView, Item>, forColumn column: NSTableColumn, row: Int, item: Item) -> CellView? where CellView: NSTableCellView {
         registration.makeCellView(self, column, row, item)
     }
 }

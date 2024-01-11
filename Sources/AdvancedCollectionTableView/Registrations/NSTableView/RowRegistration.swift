@@ -77,7 +77,7 @@ public extension NSTableView {
     }
 }
 
-public extension NSTableView {
+extension NSTableView {
     /**
      Dequeues a configured reusable row view object.
 
@@ -88,7 +88,7 @@ public extension NSTableView {
 
      - Returns:A configured reusable row view object.
      */
-    func makeRowView<RowView, Item>(using registration: RowRegistration<RowView, Item>, forRow row: Int, item: Item) -> RowView where RowView: NSTableRowView {
+    public func makeRowView<RowView, Item>(using registration: RowRegistration<RowView, Item>, forRow row: Int, item: Item) -> RowView where RowView: NSTableRowView {
         registration.makeView(self, row, item)
     }
 }

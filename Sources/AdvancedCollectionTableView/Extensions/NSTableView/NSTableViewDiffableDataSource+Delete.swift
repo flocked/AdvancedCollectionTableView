@@ -14,6 +14,8 @@ extension NSTableViewDiffableDataSource {
     /**
      The diffable data source’s handlers for deleting items.
      
+     Provide deleting handlers to support the deleting of items in your table view.
+     
      The system calls the ``DeletingHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
@@ -103,7 +105,7 @@ extension NSTableViewDiffableDataSource {
                     var section: SectionIdentifierType? = nil
                     var selectionItem: ItemIdentifierType? = nil
                     var elementsToDelete = selecedRowIndexes.compactMap { self.itemIdentifier(forRow: $0) }
-                    if var row = selecedRowIndexes.first, let item = itemIdentifier(forRow: row) {
+                    if let row = selecedRowIndexes.first, let item = itemIdentifier(forRow: row) {
                         if row > 0,  let item = self.itemIdentifier(forRow: row - 1), !elementsToDelete.contains(item) {
                             selectionItem = item
                         } else {

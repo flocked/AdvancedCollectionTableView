@@ -21,7 +21,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     /// The current configuration of the view.
-    public var configuration: NSContentConfiguration {
+    open var configuration: NSContentConfiguration {
         get { appliedConfiguration }
         set {
             guard let newValue = newValue as? NSItemContentConfiguration else { return }

@@ -5,10 +5,10 @@
 ### Creating a badge
 
 - ``init()``
-- ``text(_:font:color:type:position:)``
-- ``image(_:color:type:position:)``
-- ``symbolImage(_:textStyle:color:type:position:)``
-- ``view(_:color:type:position:)``
+- ``text(_:textStyle:textColor:color:type:position:shape:)``
+- ``image(_:text:textStyle:color:type:position:shape:)``
+- ``symbolImage(_:text:textStyle:color:backgroundColor:type:position:shape:)``
+- ``view(_:color:type:position:shape:)``
 
 ### Configurating badge
 
@@ -38,9 +38,12 @@
 - ``resolvedBackgroundColor()``
 - ``visualEffect``
 
+### Customizing shape
+
+- ``shape``
+
 ### Customizing border
 
-- ``cornerRadius``
 - ``borderWidth``
 - ``borderColor``
 - ``borderColorTransform``
