@@ -23,10 +23,10 @@
 - ``indexPath(for:)``
 - ``reconfigureElements(_:)``
 - ``reloadElements(_:animated:)``
-- ``selectElements(_:scrollPosition:addSpacing:)``
+- ``selectElements(_:scrollPosition)``
 - ``selectElements(in:scrollPosition:)``
 - ``deselectElements(_:)``
-- ``deselectElements(in:scrollPosition:)``
+- ``deselectElements(in:)``
 - ``scrollToElements(_:scrollPosition:)``
 
 ### Identifying sections

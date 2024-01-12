@@ -39,7 +39,7 @@
 ### Identifying sections
 
 - ``sections``
-- ``section(forRow:)``
+- ``section(for:)``
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:)``
 

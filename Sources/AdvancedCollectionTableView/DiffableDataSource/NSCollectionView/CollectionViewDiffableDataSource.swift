@@ -462,7 +462,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     /// Selects the specified elements.
-    open func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition, addSpacing _: CGFloat? = nil) {
+    open func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition) {
         let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
         collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
     }
@@ -480,12 +480,18 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     /// Deselects all elementsin the specified sections.
-    open func deselectElements(in sections: [Section], scrollPosition _: NSCollectionView.ScrollPosition) {
+    open func deselectElements(in sections: [Section]) {
         let elementIndexPaths = Set(sections.flatMap { indexPaths(for: $0) })
         collectionView.deselectItems(at: elementIndexPaths)
     }
 
-    /// Scrolls the collection view to the specified elements.
+    /**
+     Scrolls the collection view to the specified elements.
+     
+     - Parameters:
+        - elements: The elements to scroll to.
+        - scrollPosition: The options for scrolling the bounding box of the specified elements into view. You may combine one vertical and one horizontal scrolling option when calling this method. Specifying more than one option for either the vertical or horizontal directions raises an exception.
+     */
     open func scrollToElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition = []) {
         let indexPaths = Set(indexPaths(for: elements))
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
@@ -591,13 +597,24 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
      */
     
-    /// Returns the section for the specified element.
+    /**
+     Returns the section for the specified element.
+     
+     - Parameter element: The element in your collection view.
+     - Returns: The section, or `nil` if the element isn't in any section.
+     */
     open func section(for element: Element) -> Section? {
         currentSnapshot.sectionIdentifier(containingItem: element)
     }
 
-    /// Scrolls the collection view to the specified section.
-    open func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition = []) {
+    /**
+     Scrolls the collection view to the specified section.
+     
+     - Parameters:
+        - section: The section to scroll to.
+        - scrollPosition: The options for scrolling the bounding box of the specified section into view. You may combine one vertical and one horizontal scrolling option when calling this method. Specifying more than one option for either the vertical or horizontal directions raises an exception.
+     */
+    open func scrollToSection(_ section: Section, scrollPosition: NSCollectionView.ScrollPosition) {
         guard let index = index(for: section) else { return }
         let indexPaths = Set([IndexPath(item: 0, section: index)])
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
@@ -808,10 +825,10 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     /// Handlers for the highlight state of elements.
     public struct HighlightHandlers {
-        /// The handler that determines which elements should change to a new highlight state. The default value is `nil` which indicates that all elements should change.
+        /// The handler that determines which elements should change to a new highlight state. The default value is `nil` which indicates that all elements should change the state.
         public var shouldChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> [Element])?
 
-        /// The handler that gets called whenever elements changed their highlight state.
+        /// The handler that gets called when elements changed their highlight state.
         public var didChange: ((_ elements: [Element], NSCollectionViewItem.HighlightState) -> Void)?
     }
 
@@ -821,7 +838,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
      */
     public struct DisplayHandlers {
-        /// The handler that gets called whenever elements start getting displayed.
+        /// The handler that gets called whenever elements start getting displayed. (e.g. when the enclosing scrollview scrolls to new elements).
         public var isDisplaying: ((_ elements: [Element]) -> Void)?
 
         /// The handler that gets called whenever elements end getting displayed.
@@ -832,7 +849,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
 
-    /// Handlers for hovering elements with the mouse.
+    /**
+     Handlers for hovering elements with the mouse.
+     
+     The handlers get called when the mouse is hovering collection view items.
+     */
     public struct HoverHandlers {
         /// The handler that gets called whenever the mouse is hovering an element.
         public var isHovering: ((_ element: Element) -> Void)?
@@ -898,7 +919,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 // MARK: - Quicklook
 
 extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
-    /// A Boolean value that indicates whether the user can quicklook selected elements by pressing space bar.
+    /**
+     A Boolean value that indicates whether the user can open a quicklook preview of selected elements by pressing space bar.
+     
+     Any element conforming to `QuicklookPreviewable` can be previewed by providing a preview file url.
+     */
     public var isQuicklookPreviewable: Bool {
         get { collectionView.isQuicklookPreviewable }
         set { collectionView.isQuicklookPreviewable = newValue }

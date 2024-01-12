@@ -487,25 +487,25 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /// Selects all specified items.
     open func selectItems(_ items: [Item], byExtendingSelection: Bool = false) {
-        selectItems(at: rows(for: items), byExtendingSelection: byExtendingSelection)
+        let rows = IndexSet(items.compactMap{row(for: $0)})
+        tableView.selectRowIndexes(rows, byExtendingSelection: byExtendingSelection)
     }
     
     /// Deselects all specified items.
     open func deselectItems(_ items: [Item]) {
-        items.compactMap { row(for: $0) }.forEach { tableView.deselectRow($0) }
-        // sdeselectItems(at: rows(for: items))
+        items.compactMap{row(for: $0)}.forEach { tableView.deselectRow($0) }
     }
     
     /// Selects all items in the specified sections.
     open func selectItems(in sections: [Section], byExtendingSelection: Bool = false) {
         let sectionRows = sections.flatMap { rows(for: $0) }
-        selectItems(at: sectionRows, byExtendingSelection: byExtendingSelection)
+        tableView.selectRowIndexes(IndexSet(sectionRows), byExtendingSelection: byExtendingSelection)
     }
     
     /// Deselects all items in the specified sections.
     open func deselectItems(in sections: [Section]) {
         let sectionRows = sections.flatMap { rows(for: $0) }
-        deselectItems(at: sectionRows)
+        sectionRows.forEach { tableView.deselectRow($0) }
     }
     
     /// Scrolls the table view to the specified item.
@@ -534,10 +534,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return nil
     }
     
-    func rows(for items: [Item]) -> [Int] {
-        items.compactMap { row(for: $0) }
-    }
-    
     func isSelected(at row: Int) -> Bool {
         tableView.selectedRowIndexes.contains(row)
     }
@@ -547,14 +543,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return isSelected(at: row)
         }
         return false
-    }
-    
-    func selectItems(at rows: [Int], byExtendingSelection: Bool = false) {
-        tableView.selectRowIndexes(IndexSet(rows), byExtendingSelection: byExtendingSelection)
-    }
-    
-    func deselectItems(at rows: [Int]) {
-        rows.forEach { tableView.deselectRow($0) }
     }
     
     @discardableResult
@@ -606,14 +594,20 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      - Parameter row: The row of the section in the table view.
      - Returns: The section, or `nil if the method doesn’t find the section for the row.
      */
-    open func section(forRow row: Int) -> Section? {
+    func section(forRow row: Int) -> Section? {
         if let sectionID = dataSource.sectionIdentifier(forRow: row) {
             return sections[id: sectionID]
         }
         return nil
     }
     
-    func section(for item: Item) -> Section? {
+    /**
+     Returns the section for the specified item.
+     
+     - Parameter item: The item in your table view.
+     - Returns: The section, or `nil` if the item isn't in any section.
+     */
+    open func section(for item: Item) -> Section? {
         currentSnapshot.sectionIdentifier(containingItem: item)
     }
 
@@ -626,7 +620,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     func rows(for section: Section) -> [Int] {
         let items = currentSnapshot.itemIdentifiers(inSection: section)
-        return rows(for: items)
+        return items.compactMap({row(for: $0)})
     }
 
     func rows(for sections: [Section]) -> [Int] {
@@ -883,7 +877,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 // MARK: - Quicklook
 
 extension TableViewDiffableDataSource where Item: QuicklookPreviewable {
-    /// A Boolean value that indicates whether the user can quicklook selected items by pressing space bar.
+    /**
+     A Boolean value that indicates whether the user can open a quicklook preview of selected items by pressing space bar.
+     
+     Any item conforming to `QuicklookPreviewable` can be previewed by providing a preview file url.
+     */
     public var isQuicklookPreviewable: Bool {
         get { tableView.isQuicklookPreviewable }
         set { tableView.isQuicklookPreviewable = newValue }
