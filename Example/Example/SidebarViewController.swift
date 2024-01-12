@@ -73,7 +73,7 @@ class SidebarViewController: NSViewController {
 
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
 
-        applySnapshot()
+        applySnapshot()        
     }
 
     func applySnapshot() {

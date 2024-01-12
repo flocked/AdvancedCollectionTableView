@@ -22,15 +22,12 @@ extension NSTableView {
         set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
 
+    var didSwizzleIsEnabled: Bool {
+        get { getAssociatedValue(key: "didSwizzleIsEnabled", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: self) }
+    }
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
-            if tableViewObserver == nil {
-                tableViewObserver = KeyValueObserver(self)
-                tableViewObserver?.add(\.isEnabled) { [weak self] old, new in
-                    guard let self = self, old != new else { return }
-                    self.updateVisibleRowConfigurations()
-                }
-            }
             if observingView == nil {
                 observingView = ObserverView()
                 addSubview(withConstraint: observingView!)
@@ -61,6 +58,26 @@ extension NSTableView {
                         }
                     }
                     return true
+                }
+            }
+            if didSwizzleIsEnabled == false {
+                didSwizzleIsEnabled = true
+                do {
+                    try replaceMethod(
+                        #selector(setter: NSTableView.isEnabled),
+                        methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
+                        hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
+                           object, isEnabled in
+                            let tableView = object as? NSTableView
+                            let oldIsEnabled = tableView?.isEnabled ?? false
+                           store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
+                            if oldIsEnabled != isEnabled {
+                                tableView?.updateVisibleRowConfigurations()
+                            }
+                        }
+                   }
+                } catch {
+                    Swift.debugPrint(error)
                 }
             }
         } else {

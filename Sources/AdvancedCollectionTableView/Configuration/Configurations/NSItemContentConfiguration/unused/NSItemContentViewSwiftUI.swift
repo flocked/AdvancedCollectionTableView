@@ -66,7 +66,7 @@
      }
 
      override var fittingSize: NSSize {
-         return hostingController.fittingSize
+         return hostingController.view.fittingSize
      }
 
      @available(*, unavailable)
@@ -119,7 +119,7 @@
 
          @ViewBuilder
          var contentItem: some View {
-             if properties.imageScaling == .fill {
+             if properties.imageProperties.scaling == .fill {
                  contentStack
              } else {
                  contentStack
@@ -132,12 +132,12 @@
                  .clipShape(RoundedRectangle(cornerRadius: properties.cornerRadius))
                  .background(
                      RoundedRectangle(cornerRadius: properties.cornerRadius)
-                         .shadow(properties.shadow)
+                        .shadow(color: properties.shadow.color?.withAlphaComponent(properties.shadow.opacity).swiftUI, radius: properties.shadow.radius, offset: properties.shadow.offset)
                  )
                  .overlay(
                      RoundedRectangle(cornerRadius: properties.cornerRadius)
                          .stroke(properties._resolvedBorderColor?.swiftUI ?? .clear, lineWidth: properties.borderWidth))
-                 .scaleEffect(properties.scaleTransform)
+                 .scaleEffect(x: properties.scaleTransform.x, y: properties.scaleTransform.y)
 
          }
      }
@@ -146,19 +146,23 @@
          let text: String?
          @State private var _text: String = ""
          let attributedText: AttributedString?
-         let properties: ConfigurationProperties.Text
+         let properties: TextProperties
 
-         init(text: String?, attributedText: AttributedString?, properties: ConfigurationProperties.Text) {
+         init(text: String?, attributedText: AttributedString?, properties: TextProperties) {
              self.text = text
              self.attributedText = attributedText
              self.properties = properties
              self._text = self.text ?? ""
-
          }
+         
          @ViewBuilder
          var item: some View {
              if (properties.isEditable && properties.isSelectable) {
-                 EditableText($_text, alignment: properties.alignment.swiftUI, onEditEnd: properties.onEditEnd ?? {_ in })
+                 if #available(macOS 15.0, *) {
+                     EditableText($_text, alignment: properties.alignment.swiftUI, onEditEnd: properties.onEditEnd ?? {_ in })
+                 } else {
+                     // Fallback on earlier versions
+                 }
              } else {
                  if let attributedText = attributedText {
                      Text(attributedText)
@@ -173,9 +177,10 @@
                  .frame(maxWidth: .infinity, alignment: properties.alignment.swiftUI)
                  .multilineTextAlignment(properties.alignment.swiftUIMultiline)
                  .font(properties.swiftUIFont ?? properties.font.swiftUI)
-                 .lineLimit(properties.maxNumberOfLines == 0 ? nil : properties.maxNumberOfLines)
+                 .lineLimit(properties.numberOfLines == 0 ? nil : properties.numberOfLines)
                  .foregroundColor(properties._resolvedTextColor.swiftUI)
                  .textSelection(properties.isSelectable)
+                 .minimumScaleFactor(properties.minimumScaleFactor)
          }
      }
 
@@ -186,21 +191,21 @@
          @ViewBuilder
          var textItems: some View {
              VStack(alignment: .center, spacing: configuration.textToSecondaryTextPadding) {
-                 NSItemContentViewSwiftUI.TextItem(text: configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
+                 TextItem(text: configuration.text, attributedText:  configuration.attributedText, properties: configuration.textProperties)
 
-                 NSItemContentViewSwiftUI.TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
+                 TextItem(text:  configuration.secondaryText, attributedText:  configuration.secondaryAttributedText, properties: configuration.secondaryTextProperties)
              }
 
          }
 
          @ViewBuilder
          var contentItem: some View {
-             NSItemContentViewSwiftUI.ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
+             ContentItem(view: configuration.view, image: configuration.image, overlayView: configuration.overlayView, contentPosition: configuration.contentPosition, properties: configuration.contentProperties)
          }
 
          @ViewBuilder
          var stackItem: some View {
-             if configuration.contentPosition.isVertical {
+             if configuration.contentPosition.orientation == .vertical {
                  VStack(spacing: configuration.contentToTextPadding) {
                      if configuration.contentPosition == .top {
                          contentItem
@@ -228,7 +233,7 @@
          var body: some View {
              stackItem
                  .padding(configuration.margins.edgeInsets)
-                 .scaleEffect(configuration.scaleTransform)
+                 .scaleEffect(x: configuration.scaleTransform.x, y: configuration.scaleTransform.y)
          }
      }
  }
@@ -300,4 +305,5 @@
          }
      }
  }
- */
+ 
+*/
