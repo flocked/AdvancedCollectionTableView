@@ -107,6 +107,11 @@ extension NSItemContentView {
             itemContentView?.isEditing = false
             properties.onEditEnd?(stringValue)
         }
+        
+        override func textDidChange(_ notification: Notification) {
+            super.textDidChange(notification)
+            invalidateIntrinsicContentSize()
+        }
 
         var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {

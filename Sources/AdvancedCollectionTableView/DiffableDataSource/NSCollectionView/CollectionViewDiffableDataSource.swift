@@ -384,18 +384,51 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     // MARK: - DataSource implementation
 
+    /**
+     Returns the number of items in the specified section.
+     
+     If you call this method with the index of a section that doesn’t exist in the collection view, the app throws an error.
+     
+     - Parameters:
+        - collectionView: The collection view requesting this information.
+        - section: An index number identifying a section in the collection view. This index value is 0-based.
+     - Returns: The number of items in the specified section. This method returns 0 if the section is empty.
+     */
     open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         dataSource.collectionView(collectionView, numberOfItemsInSection: section)
     }
 
+    /**
+     Returns the cell that corresponds to the item at the specified index path in the collection view.
+     
+     - Parameters:
+        - collectionView: The collection view requesting this information.
+        - indexPath: The index path that specifies the location of the item.
+     - Returns: A configured cell object.
+     */
     open func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
     }
 
+    /**
+     Returns the number of sections in the collection view.
+     
+     - Parameter collectionView: The collection view requesting this information.
+     - Returns: The number of sections in the collection view. This method returns 0 if the collection view is empty.
+     */
     open func numberOfSections(in collectionView: NSCollectionView) -> Int {
         dataSource.numberOfSections(in: collectionView)
     }
 
+    /**
+     Returns a supplementary view for the specified element kind to display in the collection view.
+     
+     - Parameters:
+        - collectionView: The collection view requesting this information.
+        - kind: The kind of supplementary view to provide. The value of this string is defined by the layout object that supports the supplementary view.
+        - indexPath: The index path that specifies the location of the new supplementary view.
+     - Returns: A configured supplementary view object.
+     */
     open func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
         dataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }

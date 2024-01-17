@@ -72,10 +72,9 @@ class SidebarViewController: NSViewController {
         }
 
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
-
-        applySnapshot()        
+        applySnapshot()
     }
-
+    
     func applySnapshot() {
         var snapshot: NSDiffableDataSourceSnapshot<Section, SidebarItem> = .init()
         snapshot.appendSections([.main, .section2, .section3])
