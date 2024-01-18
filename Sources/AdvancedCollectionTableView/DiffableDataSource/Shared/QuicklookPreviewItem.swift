@@ -12,14 +12,30 @@ import QuickLookUI
 // Used for Quicklook of selected collection items & table cells.
 class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
-    var view: NSView?
+    weak var view: NSView?
 
     public var previewItemURL: URL? {
         preview.previewItemURL
     }
 
     public var previewItemFrame: CGRect? {
-        view?.frameOnScreen ?? preview.previewItemFrame
+        if let view = self.view {
+            if let parentController = view.parentController as? NSCollectionViewItem {
+                let offset = parentController._collectionView?.enclosingScrollView?.contentOffset ?? .zero
+                let frame = view.frame.offsetBy(dx: -offset.x, dy: -offset.y)
+                if parentController._collectionView?.enclosingScrollView?.bounds.intersects(frame) == true {
+                    return view.frameOnScreen
+                }
+            } else if let view = view as? NSTableRowView {
+                if view.tableView?.bounds.intersects(view.frame) == true {
+                    return view.frameOnScreen
+                }
+            } else {
+                return view.frameOnScreen
+            }
+            return .zero
+        }
+        return preview.previewItemFrame
     }
 
     public var previewItemTitle: String? {

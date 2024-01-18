@@ -47,13 +47,12 @@ extension NSCollectionView {
                 }
 
                 mouseHandlers.exited = { [weak self] _ in
-                    guard let self = self else { return true }
+                    guard let self = self else { return }
                     self.hoveredIndexPath = nil
-                    return true
                 }
 
                 mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return true }
+                    guard let self = self else { return }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         self.hoveredLocation = location
@@ -62,7 +61,6 @@ extension NSCollectionView {
                             item.setNeedsAutomaticUpdateConfiguration()
                         }
                     }
-                    return true
                 }
             }
         } else {

@@ -690,7 +690,7 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="245" y="301" width="820" height="550"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1025"/>
-                        <value key="minSize" type="size" width="820" height="550"/>
+                        <value key="minSize" type="size" width="820" height="200"/>
                         <view key="contentView" id="xXo-yx-tmu">
                             <rect key="frame" x="0.0" y="0.0" width="820" height="550"/>
                             <autoresizingMask key="autoresizingMask"/>

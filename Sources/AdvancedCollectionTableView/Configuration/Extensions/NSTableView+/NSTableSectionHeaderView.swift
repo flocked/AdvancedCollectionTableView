@@ -222,12 +222,10 @@ open class NSTableSectionHeaderView: NSView {
 
             mouseHandlers.exited = { _ in
                 self.isHovered = false
-                return true
             }
 
             mouseHandlers.entered = { _ in
                 self.isHovered = true
-                return true
             }
             
             guard sectionHeaderObserver == nil else { return }

@@ -38,13 +38,12 @@ extension NSTableView {
                 }
 
                 mouseHandlers.exited = { [weak self] _ in
-                    guard let self = self else { return true }
+                    guard let self = self else { return }
                     self.hoveredRow = nil
-                    return true
                 }
 
                 mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return true }
+                    guard let self = self else { return }
                     let location = event.location(in: self)
                     if self.bounds.contains(location) {
                         let row = self.row(at: location)
@@ -54,7 +53,6 @@ extension NSTableView {
                             self.hoveredRow = nil
                         }
                     }
-                    return true
                 }
             }
             if didSwizzleIsEnabled == false {

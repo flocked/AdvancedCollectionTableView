@@ -112,7 +112,6 @@ extension NSItemContentView {
             case .roundedRect(let radius):
                 cornerRadius = radius
             case .circle:
-              //  Swift.print("gg", stackView.fittingSize, stackView.intrinsicContentSize)
                 if let widthConstraint = widthConstraint {
                     heightConstraint = heightAnchor.constraint(equalToConstant: widthConstraint.constant)
                     heightConstraint?.activate()
