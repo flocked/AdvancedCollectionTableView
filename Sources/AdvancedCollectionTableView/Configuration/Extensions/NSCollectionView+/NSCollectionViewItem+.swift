@@ -307,7 +307,7 @@ extension NSCollectionViewItem {
                 guard old != new else { return }
                 self.setNeedsAutomaticUpdateConfiguration()
             }
-            if _collectionView?.observingView == nil {
+            if _collectionView?.windowHandlers.isKey == nil {
                 itemObserver?.add(\.view.superview) { _, _ in
                     guard self._collectionView != nil else { return }
                     // The collection view is observered to get the hovered (mouse over) collection item. It's much more performant instead of observing/installing a track area on each collection item view.

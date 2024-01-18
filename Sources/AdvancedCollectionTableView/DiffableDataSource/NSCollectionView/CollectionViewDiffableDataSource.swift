@@ -49,7 +49,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var previousDisplayingItems = [Element.ID]()
     var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     var rightDownMonitor: NSEvent.Monitor?
+    var keyDownMonitor: NSEvent.Monitor?
     var hoveredItemObserver: NSKeyValueObservation?
+    var pinchItem: Element?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
     open var supplementaryViewProvider: SupplementaryViewProvider?
@@ -93,7 +95,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
 
     /// A handler that gets called whenever collection view magnifies.
-    open var pinchHandler: ((_ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
+    open var pinchHandler: ((_ element: Element?, _ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
 
     func observeMagnificationGesture() {
         if pinchHandler != nil {
@@ -109,24 +111,25 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
 
-    var pinchItem: Element?
     @objc func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
+        guard let pinchHandler = self.pinchHandler else { return }
         let pinchLocation = gesture.location(in: collectionView)
         switch gesture.state {
         case .began:
             //    let center = CGPoint(x: collectionView.frame.midX, y: collectionView.frame.midY)
             pinchItem = element(at: pinchLocation)
+            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
         case .ended, .cancelled, .failed:
+            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
             pinchItem = nil
         default:
-            break
+            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
         }
-        pinchHandler?(pinchLocation, gesture.magnification, gesture.state)
     }
 
     func observeRightMouseDown() {
         if (menuProvider != nil || rightClickHandler != nil), rightDownMonitor == nil {
-            rightDownMonitor = NSEvent.localMonitor(for: [.rightMouseDown]) { event in
+            rightDownMonitor = NSEvent.localMonitor(for: .rightMouseDown) { event in
                 self.collectionView.menu = nil
                 if let contentView = self.collectionView.window?.contentView {
                     let location = event.location(in: contentView)
@@ -226,8 +229,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
         previousDisplayingItems = displayingItems
     }
-
-    var keyDownMonitor: NSEvent.Monitor?
 
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
@@ -956,6 +957,8 @@ extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
      A Boolean value that indicates whether the user can open a quicklook preview of selected elements by pressing space bar.
      
      Any element conforming to `QuicklookPreviewable` can be previewed by providing a preview file url.
+     
+     For more information on how to provide previews, take a look at the `FZQuicklook` documentation.
      */
     public var isQuicklookPreviewable: Bool {
         get { collectionView.isQuicklookPreviewable }
@@ -966,6 +969,8 @@ extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
      Opens `QuicklookPanel` that presents quicklook previews of the specified elements.
 
      To quicklook the selected elements, use collection view's `quicklookSelectedItems()`.
+     
+     For more information on how to provide previews, take a look at the `FZQuicklook` documentation.
 
      - Parameters:
         - elements: The elements to preview.

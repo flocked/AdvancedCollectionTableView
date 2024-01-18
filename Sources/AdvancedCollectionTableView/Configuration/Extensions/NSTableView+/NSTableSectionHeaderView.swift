@@ -211,29 +211,25 @@ open class NSTableSectionHeaderView: NSView {
         firstSuperview(for: NSTableView.self)
     }
 
-    var observingView: ObserverView?
     var sectionHeaderObserver: KeyValueObserver<NSTableSectionHeaderView>?
 
     func observeSectionHeaderView() {
         if contentConfiguration != nil || configurationUpdateHandler != nil {
-            guard observingView == nil else { return }
-            let observingView = ObserverView(frame: .zero)
-            addSubview(withConstraint: observingView)
-            observingView.windowHandlers.isKey = { isKey in
+            guard windowHandlers.isKey == nil else { return }
+            windowHandlers.isKey = { isKey in
                 self.isEmphasized = isKey
             }
 
-            observingView.mouseHandlers.exited = { _ in
+            mouseHandlers.exited = { _ in
                 self.isHovered = false
                 return true
             }
 
-            observingView.mouseHandlers.entered = { _ in
+            mouseHandlers.entered = { _ in
                 self.isHovered = true
                 return true
             }
-            self.observingView = observingView
-
+            
             guard sectionHeaderObserver == nil else { return }
             sectionHeaderObserver = KeyValueObserver(self)
             sectionHeaderObserver?.add(\.superview?.superview, handler: { [weak self] _, _ in
@@ -243,8 +239,9 @@ open class NSTableSectionHeaderView: NSView {
                 self.contentConfiguration = contentConfiguration.applyTableViewStyle(tableViewStyle, isHeader: true)
             })
         } else {
-            observingView?.removeFromSuperview()
-            observingView = nil
+            windowHandlers.isKey = nil
+            mouseHandlers.exited = nil
+            mouseHandlers.entered = nil
             sectionHeaderObserver = nil
         }
     }
