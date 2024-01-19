@@ -188,8 +188,7 @@ extension NSItemContentView {
             //   let constant = -(2*(badge.type.spacing ?? 0))
             //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: constant).activate()
 
-            let badgeSize = badgeView.fittingSize
-            
+            let badgeSize = badgeView.hostingView.fittingSize
             if badge.shape == .circle {
                 badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
                 badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: trailingAnchor, constant: -(badgeSize.width * 0.66)).activate()
@@ -207,7 +206,7 @@ extension NSItemContentView {
                 case .topLeft, .centerLeft, .bottomLeft:
                     badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
                 case .topRight, .centerRight, .bottomRight:
-                    badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 1.33).activate()
+                    badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 0.33).activate()
                 case .top, .center, .bottom:
                     badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
                 }
@@ -327,7 +326,7 @@ extension NSItemContentView {
             updateBadges()
 
             anchorPoint = CGPoint(0.5, 0.5)
-            layer?.scale = contentProperties.scaleTransform
+            layer?.scale = contentProperties.scaleTransform.point
             invalidateIntrinsicContentSize()
         }
 

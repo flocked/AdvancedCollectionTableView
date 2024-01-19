@@ -31,11 +31,11 @@ class ViewController: NSViewController {
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
 
         if let badgeText = galleryItem.badge {
-            configuration.badges = [.text(badgeText, color: galleryItem.badgeColor, type: .attachment, position: .topRight)]
+            configuration.badges = [.textBadge(badgeText, color: galleryItem.badgeColor, type: .attachment)]
         }
         
         if galleryItem.isFavorite {
-            configuration.badges = [.text("􀋃", textStyle: .headline, color: .systemRed, type: .attachment, position: .topRight, shape: .circle)]
+            configuration.badges = [.textBadge("􀋃", color: .systemRed, type: .attachment, shape: .circle)]
         }
 
         // Apply the configuration
@@ -47,7 +47,7 @@ class ViewController: NSViewController {
             configuration = configuration.updated(for: state)
 
             // Updates the configuration based on whether the mouse is hovering the item
-            configuration.contentProperties.scaleTransform = state.isHovered ? CGPoint(x: 1.03, y: 1.03) : CGPoint(x: 1, y: 1)
+            configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white, opacity: 0.25) : nil
 
             // Apply the updated configuration
@@ -70,7 +70,7 @@ class ViewController: NSViewController {
 
         dataSource.rightClickHandler = { selectedItems in
             selectedItems.forEach({ item in
-                item.isFavorite = true
+                item.isFavorite = !item.isFavorite
             })
             // Reconfigurates items without reloading them by calling the item registration
             self.dataSource.reconfigureElements(selectedItems)

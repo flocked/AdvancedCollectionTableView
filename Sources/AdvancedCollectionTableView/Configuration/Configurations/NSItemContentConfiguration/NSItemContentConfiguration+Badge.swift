@@ -20,8 +20,8 @@ public extension NSItemContentConfiguration {
             /// The badge is displayed as overlay to the item's content (image/view) with a spacing to the content's edge.
             case overlay(spacing: CGFloat)
 
-            /// The badge is displayed as overlay to the item's content (image/view) with a spacing of `4.0` to the content's edge.
-            static let overlay = BadgeType.overlay(spacing: 4.0)
+            /// The badge is displayed as overlay to the item's content (image/view) with a spacing of `3.0` to the content's edge.
+            public static let overlay = BadgeType.overlay(spacing: 3.0)
 
             var spacing: CGFloat? {
                 switch self {
@@ -62,17 +62,19 @@ public extension NSItemContentConfiguration {
             
             /// A rounded badge with a corner radius of `6.0`.
             public static let roundedRect = Shape.roundedRect(radius: 6.0)
+            
         }
 
         /// The text of the badge.
         public var text: String?
+        
         /// An attributed variant of the text.
         public var attributedText: AttributedString?
 
         /// The image of the badge.
         public var image: NSImage?
 
-        /// The view of the badge.
+        /// The view of the badge. **Currently not working.**
         public var view: NSView?
 
         /// Properties for configuring the text.
@@ -98,75 +100,11 @@ public extension NSItemContentConfiguration {
             }
             return nil
         }
-        
-        /// A text badge.
-        public static func text(_ text: String, textStyle: NSFont.TextStyle = .body, textColor: NSColor = .white, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
-            var badge = Badge()
-            badge.text = text
-            badge.textProperties.font = .systemFont(textStyle)
-            badge.textProperties.textColor = textColor
-            badge.backgroundColor = color
-            badge.type = type
-            badge.position = position
-            badge.shape = shape
-            if shape == .circle {
-                badge.margins = .zero
-            }
-            return badge
-        }
-        
-        /// A badge displaying a view.
-        public static func view(_ view: NSView, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
-            var badge = Badge()
-            badge.view = view
-            badge.backgroundColor = color
-            badge.type = type
-            badge.position = position
-            badge.shape = shape
-            if shape == .circle {
-                badge.margins = .zero
-            }
-            return badge
-        }
-        
-        /// A symbol image badge.
-        public static func symbolImage(_ symbolName: String, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
-            var badge = Badge()
-            badge.image = NSImage(systemSymbolName: symbolName)
-            badge.text = text
-            badge.textProperties.font = .systemFont(textStyle)
-            badge.textProperties.textColor = color
-            badge.imageProperties.tintColor = color
-            badge.backgroundColor = backgroundColor
-            badge.type = type
-            badge.position = position
-            badge.shape = shape
-            if shape == .circle {
-                badge.margins = .zero
-            }
-            return badge
-        }
-        
-        /// An image badge.
-        public static func image(_ image: NSImage, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
-            var badge = Badge()
-            badge.image = image
-            badge.text = text
-            badge.textProperties.font = .systemFont(textStyle)
-            badge.backgroundColor = color
-            badge.type = type
-            badge.position = position
-            badge.shape = shape
-            if shape == .circle {
-                badge.margins = .zero
-            }
-            return badge
-        }
-       
+               
         /**
          The visual effect of the badge.
 
-         If the badge has a visual effect, it's background color will be ignored.
+         If the badge has a visual effect, the background color is ignored.
          */
         public var visualEffect: VisualEffectConfiguration? {
             didSet { updateResolvedColors() }
@@ -193,9 +131,6 @@ public extension NSItemContentConfiguration {
             return nil
         }
 
-        /// The shape of the badge.
-        public var shape: Shape = .roundedRect
-
         /// The shadow of the badge.
         public var shadow: ShadowConfiguration = .none()
 
@@ -207,71 +142,84 @@ public extension NSItemContentConfiguration {
 
         /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0
+        
+        /// The shape of the badge.
+        public var shape: Shape = .roundedRect
 
         /// The type of the badge.
         public var type: BadgeType = .attachment
 
         /// The position of the badge.
         public var position: Position = .topRight
-
-        /// The spacing of the badge.
-        public var spacing: CGFloat = 3.0
         
-        var hasText: Bool {
-            text != nil || attributedText != nil
-        }
-
         /// Creates a badge.
         public init() {}
 
-        /*
         /// A text badge.
-        public static func text(_ text: String, font: NSFont = .caption, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        public static func textBadge(_ text: String, textStyle: NSFont.TextStyle = .body, textColor: NSColor = .white, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.text = text
-            badge.textProperties.font = font
+            badge.textProperties.font = .systemFont(textStyle)
+            badge.textProperties.textColor = textColor
             badge.backgroundColor = color
+            badge.shape = shape
             badge.type = type
             badge.position = position
-            badge.shape = shape
+            if shape == .circle {
+                badge.margins = .init(5)
+            }
             return badge
         }
-
-        /// A badge displaying an image.
-        public static func image(_ image: NSImage, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
-            var badge = Badge()
-            badge.image = image
-            badge.backgroundColor = color
-            badge.type = type
-            badge.position = position
-            badge.shape = shape
-            return badge
-        }
-
-        /// A badge displaying an image.
-        public static func view(_ view: NSView, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        
+        /// A badge displaying a view.
+        public static func viewBadge(_ view: NSView, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.view = view
             badge.backgroundColor = color
+            badge.shape = shape
             badge.type = type
             badge.position = position
-            badge.shape = shape
+            if shape == .circle {
+                badge.margins = .init(5)
+            }
             return badge
         }
-
-        /// A badge displaying a symbol image.
-        public static func symbolImage(_ symbolName: String, textStyle: NSFont.TextStyle = .caption1, color: NSColor?, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge? {
-            guard let image = NSImage(systemSymbolName: symbolName) else { return nil }
+        
+        /// A symbol image badge.
+        public static func symbolImageBadge(_ symbolName: String, text: String? = nil, size: NSFont.TextStyle = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+            var badge = Badge()
+            badge.text = text
+            badge.image = NSImage(systemSymbolName: symbolName)
+            badge.textProperties.font = .systemFont(size)
+            badge.textProperties.textColor = color
+            badge.imageProperties.symbolConfiguration = .font(size)
+            badge.imageProperties.tintColor = color
+            badge.imageProperties.scaling = .none
+            badge.backgroundColor = backgroundColor
+            badge.shape = shape
+            badge.type = type
+            badge.position = position
+            if shape == .circle {
+                badge.margins = .init(5)
+            }
+            return badge
+        }
+        
+        /// An image badge.
+        public static func imageBadge(_ image: NSImage, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
             var badge = Badge()
             badge.image = image
-            badge.imageProperties.symbolConfiguration = .font(textStyle)
+            badge.text = text
+            badge.textProperties.font = .systemFont(textStyle)
             badge.backgroundColor = color
+            badge.shape = shape
             badge.type = type
             badge.position = position
-            badge.shape = shape
+            if shape == .circle {
+                badge.margins = .init(5)
+            }
             return badge
         }
-         */
 
         var isVisible: Bool {
             text != nil || attributedText != nil || image != nil || view != nil
@@ -286,13 +234,6 @@ public extension NSItemContentConfiguration {
             } else {
                 _resolvedBackgroundColor = nil
             }
-            /*
-             if visualEffect?.appearance?.isDark == true, _resolvedTextColor == .white {
-             _resolvedTextColor = .labelColor
-             } else if visualEffect?.appearance?.isLight == true, _resolvedTextColor == .labelColor {
-
-             }
-             */
         }
     }
 }
@@ -329,27 +270,46 @@ public extension NSItemContentConfiguration.Badge {
     /// Properties that affect the image of a badge.
     struct ImageProperties: Hashable {
         /// The position of the badge image.
-        enum Position: Int, Hashable {
-            /// The image is leading.
+        public enum Position: Int, Hashable {
+            /// The image is leading the text.
             case leading
-            /// The image is trailing.
+            /// The image is trailing the text.
             case trailing
         }
 
         /// The symbol configuration of the image.
-        var symbolConfiguration: ImageSymbolConfiguration?
-
-        /// The maximum width of the image.
-        var maxWidth: CGFloat?
-
-        /// The maximum height of the image.
-        var maxHeight: CGFloat?
-
+        public var symbolConfiguration: ImageSymbolConfiguration?
+        
+        /**
+         The maximum size for the image.
+         
+         The default value is `0`. A width or height of `0` means that the system doesn’t constrain the size for that dimension.
+         
+         If the image exceeds this size on either dimension, the system reduces the size proportionately, maintaining the aspect ratio.
+         */
+        public var maxSize: CGSize = .zero
+                
         /// The image scaling.
-        public var scaling: NSImageScaling = .scaleNone
+        public var scaling: Scaling = .scaleToFit
+        
+        /// The image scaling.
+        public enum Scaling: Int, Hashable {
+            /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
+            case scaleToFit
+            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect of the image.
+            case scaleToFill
+            /// The image is resized to fit the entire bounds rectangle.
+            case resize
+            /// The image isn't resized.
+            case none
+            
+            var swiftUI: SwiftUI.Image.ImageScaling {
+                return .init(rawValue: rawValue)!
+            }
+        }
 
         /// The position of the image.
-        var position: Position = .leading
+        public var position: Position = .leading
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
@@ -372,6 +332,14 @@ public extension NSItemContentConfiguration.Badge {
         var _resolvedTintColor: NSColor?
         mutating func updateResolvedColors() {
             _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
+        }
+        
+        var maxWidth: CGFloat? {
+            maxSize.width == 0 ? nil : maxSize.width
+        }
+
+        var maxHeight: CGFloat? {
+            maxSize.height == 0 ? nil : maxSize.height
         }
     }
 }

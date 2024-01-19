@@ -39,9 +39,9 @@ public extension NSItemContentConfiguration {
         /**
          The scaling of the content view.
 
-         The default is 1.0, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
+         The default is `1.0`, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
          */
-        public var scaleTransform: CGPoint = .init(x: 1, y: 1)
+        public var scaleTransform: ScaleTransform = 1.0
 
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {

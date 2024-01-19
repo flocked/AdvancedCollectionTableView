@@ -124,7 +124,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
 
-        layer?.scale = appliedConfiguration.scaleTransform
+        layer?.scale = appliedConfiguration.scaleTransform.point
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.contentToTextPadding
