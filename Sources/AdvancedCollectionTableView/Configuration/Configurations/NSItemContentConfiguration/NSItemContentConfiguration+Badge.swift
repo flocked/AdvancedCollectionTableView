@@ -11,7 +11,7 @@ import FZUIKit
 import SwiftUI
 
 public extension NSItemContentConfiguration {
-    /// Properties for a badge.
+    /// Properties for a item badge.
     struct Badge: Hashable {
         /// The type of the badge.
         public enum BadgeType: Hashable {
