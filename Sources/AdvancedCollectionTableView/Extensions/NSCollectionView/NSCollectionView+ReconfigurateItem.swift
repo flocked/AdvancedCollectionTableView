@@ -19,7 +19,7 @@ extension NSCollectionView {
      - Important: You can only reconfigurate items that have been registered via  ``ItemRegistration``, or by their class using ``register(_:)`` or ``register(_:nib:)``.
 
      - Parameters:
-        - indexPaths: An array of IndexPath objects identifying the items you want to update.
+        - indexPaths: An array of `IndexPath` objects identifying the items you want to update.
      */
     public func reconfigureItems(at indexPaths: [IndexPath]) {
         isReconfiguratingItems = true
