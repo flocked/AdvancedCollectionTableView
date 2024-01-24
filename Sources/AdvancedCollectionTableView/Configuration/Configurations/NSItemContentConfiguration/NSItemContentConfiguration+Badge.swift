@@ -276,21 +276,6 @@ public extension NSItemContentConfiguration.Badge {
             /// The image is trailing the text.
             case trailing
         }
-
-        /// The symbol configuration of the image.
-        public var symbolConfiguration: ImageSymbolConfiguration?
-        
-        /**
-         The maximum size for the image.
-         
-         The default value is `0`. A width or height of `0` means that the system doesn’t constrain the size for that dimension.
-         
-         If the image exceeds this size on either dimension, the system reduces the size proportionately, maintaining the aspect ratio.
-         */
-        public var maxSize: CGSize = .zero
-                
-        /// The image scaling.
-        public var scaling: Scaling = .scaleToFit
         
         /// The image scaling.
         public enum Scaling: Int, Hashable {
@@ -307,6 +292,21 @@ public extension NSItemContentConfiguration.Badge {
                 return .init(rawValue: rawValue)!
             }
         }
+
+        /// The symbol configuration of the image.
+        public var symbolConfiguration: ImageSymbolConfiguration?
+        
+        /**
+         The maximum size for the image.
+         
+         The default value is `0`. A width or height of `0` means that the system doesn’t constrain the size for that dimension.
+         
+         If the image exceeds this size on either dimension, the system reduces the size proportionately, maintaining the aspect ratio.
+         */
+        public var maxSize: CGSize = .zero
+                
+        /// The image scaling.
+        public var scaling: Scaling = .scaleToFit
 
         /// The position of the image.
         public var position: Position = .leading

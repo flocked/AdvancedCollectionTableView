@@ -16,7 +16,7 @@ import FZUIKit
  The diffable data source provides:
  - Reordering items via ``ReorderingHandlers-swift.struct``.
  - Deleting items via  ``DeletingHandlers-swift.struct``.
- - Quicklook previews of items via spacebar by providing elements conforming to `QuicklookPreviewable`.
+ - Quicklook previews of items via spacebar by providing items conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
  - Row action provider via ``rowActionProvider``.
 
@@ -31,12 +31,14 @@ import FZUIKit
  To connect a diffable data source to a table view, you create the diffable data source using its ``init(tableView:cellProvider:)`` or ``init(tableView:cellRegistration:)`` initializer, passing in the table view you want to associate with that data source.
 
  ```swift
- tableView.dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration)
+ tableView.dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistration: cellRegistration)
  ```
 
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
+ 
+ - Note: Each of your sections and items must have unique identifiers.
 
- - Note: Don’t change the dataSource or delegate on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
+ - Note: Don’t change the `dataSource` or `delegate` on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
     let tableView: NSTableView
@@ -113,7 +115,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      The handler that gets called when the user right-clicks the table view.
 
-     `elements` provides:
+     `items` provides:
      - if right-click on a **selected item**, all selected items,
      - else if right-click on a **non-selected item**, that item,
      - else an empty array.
@@ -313,7 +315,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
      
      ```swift
-     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration)
+     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistration: cellRegistration)
      ```
      
      - Parameters:
@@ -333,7 +335,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
      
      ```swift
-     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistrations: cellRegistrations)
+     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistrations: cellRegistrations)
      ```
      
      - Parameters:
@@ -342,9 +344,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider: {
-            _, column, row, element in
+            _, column, row, item in
             if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers?.contains(column.identifier) == true }) ?? cellRegistrations.first(where: { $0.columnIdentifiers == nil }) {
-                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, item)!
             }
             return NSTableCellView()
         })
@@ -356,8 +358,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a item provider, where you configure each of your cells to determine how to display your data in the UI.
      
      ```swift
-     dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, itemProvider: {
-     (tableView, tableColumn, row, element) in
+     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, itemProvider: {
+     (tableView, tableColumn, row, item) in
      // configure and return cell
      })
      ```
@@ -431,10 +433,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     open func tableView(_: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
-        if let element = item(forRow: row) {
-            let item = NSPasteboardItem()
-            item.setString(String(element.id.hashValue), forType: .itemID)
-            return item
+        if let itemId = item(forRow: row)?.id.hashValue {
+            let pasteboardItem = NSPasteboardItem()
+            pasteboardItem.setString(String(itemId), forType: .itemID)
+            return pasteboardItem
         }
         return nil
     }
@@ -515,7 +517,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// Updates the data for the elements you specify, preserving the existing table view elements for the elements.
+    /// Updates the data for the items you specify, preserving the existing table view cells for the items.
     open func reloadItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         let columns = IndexSet((0 ..< tableView.numberOfColumns).compactMap { $0 })
@@ -847,13 +849,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /// Handlers for drag and drop of files from and to the table view.
     struct DragDropHandlers {
         /// The handler that determines which items can be dragged outside the table view.
-        public var canDragOutside: ((_ elements: [Item]) -> [Item])?
+        public var canDragOutside: ((_ items: [Item]) -> [Item])?
 
         /// The handler that gets called whenever items did drag ouside the table view.
         public var didDragOutside: (([Item]) -> Void)?
 
         /// The handler that determines the pasteboard value of an item when dragged outside the table view.
-        public var pasteboardValue: ((_ element: Item) -> PasteboardReadWriting)?
+        public var pasteboardValue: ((_ item: Item) -> PasteboardReadWriting)?
 
         /// The handler that determines whenever pasteboard items can be dragged inside the table view.
         public var canDragInside: (([PasteboardReadWriting]) -> [PasteboardReadWriting])?
@@ -862,7 +864,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var didDragInside: (([PasteboardReadWriting]) -> Void)?
 
         /// The handler that determines the image when dragging items.
-        public var draggingImage: ((_ elements: [Item], NSEvent, NSPointPointer) -> NSImage?)?
+        public var draggingImage: ((_ items: [Item], NSEvent, NSPointPointer) -> NSImage?)?
 
         var acceptsDragInside: Bool {
             canDragInside != nil && didDragInside != nil
@@ -890,7 +892,7 @@ extension TableViewDiffableDataSource where Item: QuicklookPreviewable {
     /**
      Opens `QuicklookPanel` that presents quicklook previews of the specified items.
 
-     To quicklook the selected elements, use table view's `quicklookSelectedRows()`.
+     To quicklook the selected items, use table view's `quicklookSelectedRows()`.
 
      - Parameters:
         - items: The items to preview.
@@ -996,7 +998,7 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
   To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
 
   ```swift
-  dataSource = TableViewDiffableDataSource<Section, Element>(tableView: tableView, cellRegistration: cellRegistration, rowRegistration: rowRegistration)
+  dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistration: cellRegistration, rowRegistration: rowRegistration)
   ```
 
   - Parameters:
