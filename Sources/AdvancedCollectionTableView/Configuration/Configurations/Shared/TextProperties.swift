@@ -16,7 +16,7 @@ public struct TextProperties {
     public var font: NSUIFont = .body
     var swiftUIFont: Font? = .body
 
-    /// The line limit of the text, or 0 if no line limit applies.
+    /// The line limit of the text, or `0` if no line limit applies.
     public var numberOfLines: Int = 0
 
     /// The alignment of the text.
