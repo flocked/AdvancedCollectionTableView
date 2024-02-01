@@ -40,7 +40,22 @@ extension CollectionViewDiffableDataSource {
         var canReorderItems = false
         var canDragOutside = false
         
+        /*
         func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
+            canReorderItems = false
+            canDragOutside = false
+            draggingIndexPaths = indexPaths
+            Swift.print("willBeginAt", indexPaths.count)
+            if dataSource.dragDropHandlers.outside.canDrag != nil || dataSource.reorderingHandlers.canReorder != nil {
+                let items = indexPaths.compactMap { dataSource.element(for: $0) }
+                canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
+                canDragOutside = dataSource.dragDropHandlers.outside.canDrag?(items) == true
+                Swift.print("canReorderItems", canReorderItems)
+            }
+        }
+        */
+        
+        func collectionView(_: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
             canReorderItems = false
             canDragOutside = false
             draggingIndexPaths = indexPaths
@@ -49,9 +64,6 @@ extension CollectionViewDiffableDataSource {
                 canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
                 canDragOutside = dataSource.dragDropHandlers.outside.canDrag?(items) == true
             }
-        }
-        
-        func collectionView(_: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
             return canReorderItems || canDragOutside
         }
 
