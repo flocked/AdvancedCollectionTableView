@@ -49,6 +49,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
          */
     }
     
+    /// Returns the farthest descendant of the view in the view hierarchy (including itself) that contains a specified point, or nil if that point lies completely outside the view.
     open override func hitTest(_ point: NSPoint) -> NSView? {
         let view = super.hitTest(point)
         if ((view == contentView || view?.isDescendant(of: contentView) == true) && contentView.isHidden == false) || (view == textField && textField.isHidden == false) || (view == secondaryTextField && secondaryTextField.isHidden == false) {

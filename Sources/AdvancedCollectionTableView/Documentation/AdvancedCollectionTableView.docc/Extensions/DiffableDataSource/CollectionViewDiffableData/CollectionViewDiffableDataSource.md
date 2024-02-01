@@ -21,9 +21,9 @@
 - ``element(at:)``
 - ``elements(for:)``
 - ``indexPath(for:)``
-- ``reconfigureElements(_:)``
 - ``reloadElements(_:animated:)``
-- ``selectElements(_:scrollPosition)``
+- ``reconfigureElements(_:)``
+- ``selectElements(_:scrollPosition:)``
 - ``selectElements(in:scrollPosition:)``
 - ``deselectElements(_:)``
 - ``deselectElements(in:)``

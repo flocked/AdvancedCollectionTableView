@@ -396,6 +396,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - Parameters:
         - collectionView: The collection view requesting this information.
         - section: An index number identifying a section in the collection view. This index value is 0-based.
+     
      - Returns: The number of items in the specified section. This method returns 0 if the section is empty.
      */
     open func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -403,12 +404,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     /**
-     Returns the cell that corresponds to the item at the specified index path in the collection view.
+     Returns the item at the specified index path in the collection view.
      
      - Parameters:
         - collectionView: The collection view requesting this information.
         - indexPath: The index path that specifies the location of the item.
-     - Returns: A configured cell object.
+     
+     - Returns: A configured item object.
      */
     open func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         dataSource.collectionView(collectionView, itemForRepresentedObjectAt: indexPath)
@@ -431,6 +433,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         - collectionView: The collection view requesting this information.
         - kind: The kind of supplementary view to provide. The value of this string is defined by the layout object that supports the supplementary view.
         - indexPath: The index path that specifies the location of the new supplementary view.
+     
      - Returns: A configured supplementary view object.
      */
     open func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {

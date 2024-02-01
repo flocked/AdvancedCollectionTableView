@@ -37,8 +37,9 @@
 - ``secondaryTextProperties``
 - ``contentProperties-swift.property``
 - ``scaleTransform``
-- ``ContentProperties-swift.struct``
 - ``TextProperties``
+- ``ContentProperties-swift.struct``
+- ``ScaleTransform-swift.struct``
 
 ### Customizing layout
 

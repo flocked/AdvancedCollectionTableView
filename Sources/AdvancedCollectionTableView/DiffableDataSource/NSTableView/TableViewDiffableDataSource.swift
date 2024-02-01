@@ -518,10 +518,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     /// Reloads the table view cells for the specified items.
-    open func reloadItems(_ items: [Item]) {
-        let rows = IndexSet(items.compactMap { row(for: $0) })
-        let columns = IndexSet((0 ..< tableView.numberOfColumns).compactMap { $0 })
-        tableView.reloadData(forRowIndexes: rows, columnIndexes: columns)
+    open func reloadItems(_ items: [Item], animated: Bool = false) {
+        var snapshot = snapshot()
+        snapshot.reloadItems(items)
+        apply(snapshot, animated ? .animated : .withoutAnimation)
     }
     
     /// Updates the data for the specified items, preserving the existing table view cells for the items.
@@ -591,10 +591,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource.row(forSectionIdentifier: section.id)
     }
     
+    /*
     /// Returns the section at the index in the table view.
     open func section(for index: Int) -> Section? {
         sections[safe: index]
     }
+     */
     
     /**
      Returns the section for the specified row in the table view.

@@ -13,3 +13,7 @@
 ### Determining configuration support
 
 - ``supports(_:)``
+
+### Handling events
+
+- ``hitTest(_:)``

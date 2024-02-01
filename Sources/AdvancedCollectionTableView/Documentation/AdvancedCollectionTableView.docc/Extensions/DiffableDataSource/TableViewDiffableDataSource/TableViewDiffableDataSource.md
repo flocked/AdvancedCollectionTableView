@@ -30,6 +30,8 @@
 - ``item(forRow:)``
 - ``row(for:)-3ouhk``
 - ``item(at:)``
+- ``reloadItems(_:animated:)``
+- ``reconfigureItems(_:)``
 - ``selectItems(_:byExtendingSelection:)``
 - ``selectItems(in:byExtendingSelection:)``
 - ``deselectItems(_:)``
