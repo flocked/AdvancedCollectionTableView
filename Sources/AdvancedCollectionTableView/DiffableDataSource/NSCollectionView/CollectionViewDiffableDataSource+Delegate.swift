@@ -94,6 +94,13 @@ extension CollectionViewDiffableDataSource {
                         acceptsDrop = true
                     }
                 }
+                if let handler = dataSource.dragDropHandlers.inside.urls, let urls = draggingInfo.urls {
+                    let elements = handler(urls)
+                    if !elements.isEmpty {
+                        snapshot.moveItems(elements, beforeItem: insertElement)
+                        acceptsDrop = true
+                    }
+                }
                 if let handler = dataSource.dragDropHandlers.inside.images, let images = draggingInfo.images {
                     let elements = handler(images)
                     if !elements.isEmpty {
@@ -101,17 +108,17 @@ extension CollectionViewDiffableDataSource {
                         acceptsDrop = true
                     }
                 }
-                if let handler = dataSource.dragDropHandlers.inside.string, let string = draggingInfo.string {
-                    let element = handler(string)
-                    if let element = element {
-                        snapshot.moveItems([element], beforeItem: insertElement)
+                if let handler = dataSource.dragDropHandlers.inside.strings, let strings = draggingInfo.strings {
+                    let elements = handler(strings)
+                    if elements.isEmpty == false {
+                        snapshot.moveItems(elements, beforeItem: insertElement)
                         acceptsDrop = true
                     }
                 }
-                if let handler = dataSource.dragDropHandlers.inside.color, let color = draggingInfo.color {
-                    let element = handler(color)
-                    if let element = element {
-                        snapshot.moveItems([element], beforeItem: insertElement)
+                if let handler = dataSource.dragDropHandlers.inside.colors, let colors = draggingInfo.colors {
+                    let elements = handler(colors)
+                    if elements.isEmpty == false {
+                        snapshot.moveItems(elements, beforeItem: insertElement)
                         acceptsDrop = true
                     }
                 }

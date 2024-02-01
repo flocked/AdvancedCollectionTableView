@@ -915,8 +915,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             public var fileURLs: ((_ urls: [URL]) -> [Element])?
             public var urls: ((_ urls: [URL]) -> [Element])?
             public var images: ((_ images: [NSImage]) -> [Element])?
-            public var string: ((_ string: String) -> Element?)?
-            public var color: ((_ string: NSColor) -> Element?)?
+            public var strings: ((_ strings: [String]) -> [Element])?
+            public var colors: ((_ colors: [NSColor]) -> [Element])?
             public var item: ((_ item: NSPasteboardItem) -> Element?)?
         }
 
