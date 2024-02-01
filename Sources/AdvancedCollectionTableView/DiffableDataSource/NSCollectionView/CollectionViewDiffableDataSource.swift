@@ -485,13 +485,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         return nil
     }
 
-    /// Updates the data for the elements you specify, preserving the existing collection view elements for the elements.
+    /// Updates the data for the specified elements, preserving the existing collection view items for the elements.
     open func reconfigureElements(_ elements: [Element]) {
         let indexPaths = elements.compactMap { indexPath(for: $0) }
         collectionView.reconfigureItems(at: indexPaths)
     }
 
-    /// Reloads the specified elements.
+    /// Reloads the collection view items for the specified elements.
     open func reloadElements(_ elements: [Element], animated: Bool = false) {
         var snapshot = dataSource.snapshot()
         snapshot.reloadItems(elements.ids)

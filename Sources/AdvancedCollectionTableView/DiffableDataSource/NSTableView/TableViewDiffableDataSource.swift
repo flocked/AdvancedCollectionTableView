@@ -517,7 +517,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// Reloads the data for the specified items.
+    /// Reloads the table view cells for the specified items.
     open func reloadItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         let columns = IndexSet((0 ..< tableView.numberOfColumns).compactMap { $0 })
