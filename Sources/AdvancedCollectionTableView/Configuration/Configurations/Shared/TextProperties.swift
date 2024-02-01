@@ -396,22 +396,19 @@ extension NSTextField {
                     switch selector {
                     case #selector(NSControl.cancelOperation(_:)):
                         switch textField.actionOnEscapeKeyDown {
-                        case let .endEditingAndReset(handler: handler):
+                        case .endEditingAndReset:
                             textField.stringValue = textField.editStartString
                             textField.adjustFontSize()
-                            handler?()
                             return true
-                        case let .endEditing(handler: handler):
+                        case .endEditing:
                             textField.window?.makeFirstResponder(nil)
-                            handler?()
                             return true
                         case .none:
                             break
                         }
                     case #selector(NSControl.insertNewline(_:)):
                         switch textField.actionOnEnterKeyDown {
-                        case let .endEditing(handler: handler):
-                            handler?()
+                        case .endEditing:
                             return true
                         case .none: break
                         }
