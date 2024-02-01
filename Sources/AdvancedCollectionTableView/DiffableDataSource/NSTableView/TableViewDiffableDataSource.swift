@@ -594,7 +594,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      Returns the section for the specified row in the table view.
      
      - Parameter row: The row of the section in the table view.
-     - Returns: The section, or `nil if the method doesn’t find the section for the row.
+     - Returns: The section, or `nil` if the method doesn’t find the section for the row.
      */
     func section(forRow row: Int) -> Section? {
         if let sectionID = dataSource.sectionIdentifier(forRow: row) {
