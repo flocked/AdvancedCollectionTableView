@@ -525,7 +525,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     /// Updates the data for the specified items, preserving the existing table view cells for the items.
-    open func reconfigurateItems(_ items: [Item]) {
+    open func reconfigureRows(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         tableView.reconfigureRows(at: rows)
     }
