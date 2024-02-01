@@ -347,9 +347,10 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
         delegateBridge = DelegateBridge(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
-        collectionView.registerForDraggedTypes([.itemID])
+        collectionView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
+        
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
-        // collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
+         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
     }
 
     /**
@@ -907,15 +908,15 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         /// The handlers for dragging elements outside the collection view.
         public struct OutsideHandlers {
             /// The strings for the specified elements to write to the pasteboard.
-            public var strings: ((_ elements: [Element]) -> [String])?
+            public var string: ((_ element: Element) -> String?)?
             /// The urls for the specified elements to write to the pasteboard.
-            public var urls: ((_ elements: [Element]) -> [URL])?
+            public var url: ((_ element: Element) -> URL?)?
             /// The images for the specified elements to write to the pasteboard.
-            public var images: ((_ elements: [Element]) -> [NSImage])?
+            public var image: ((_ element: Element) -> NSImage?)?
             /// The colors for the specified elements to write to the pasteboard.
-            public var colors: ((_ elements: [Element]) -> [NSColor])?
+            public var color: ((_ element: Element) -> NSColor?)?
             /// The pasteboard items for the specified elements to write to the pasteboard.
-            public var pasteboardItems: ((_ elements: [Element]) -> [NSPasteboardItem])?
+            public var pasteboardItem: ((_ element: Element) -> [NSPasteboardItem])?
 
             /// The handler that determines whenever elements can be dragged outside the collection view.
             public var canDrag: (([Element]) -> Bool)?

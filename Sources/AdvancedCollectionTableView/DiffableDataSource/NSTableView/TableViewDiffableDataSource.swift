@@ -517,11 +517,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// Updates the data for the items you specify, preserving the existing table view cells for the items.
+    /// Reloads the data for the specified items.
     open func reloadItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         let columns = IndexSet((0 ..< tableView.numberOfColumns).compactMap { $0 })
         tableView.reloadData(forRowIndexes: rows, columnIndexes: columns)
+    }
+    
+    /// Updates the data for the specified items, preserving the existing table view cells for the items.
+    open func reconfigurateItems(_ items: [Item]) {
+        let rows = IndexSet(items.compactMap { row(for: $0) })
+        tableView.reconfigureRows(at: rows)
     }
     
     /// An array of items that are visible.
