@@ -4,3 +4,4 @@
 .swiftpm/xcode/xcuserdata/florianzand.xcuserdatad/xcschemes/xcschememanagement.plist
 *.xcuserstate
 *.xcuserstate
+*.resolved
