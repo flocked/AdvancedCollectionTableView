@@ -22,7 +22,7 @@ extension NSTableView {
     }
 
     func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        Self.swizzleTableViewCellRegister()
+        Self.swizzleCellRegistration()
         registeredCellsByIdentifier[identifier] = cellClass
         registeredCellsByIdentifier = registeredCellsByIdentifier
     }
@@ -71,6 +71,9 @@ extension NSTableView {
     }
 
     @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
+        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
+            return cell
+        }
         if let registeredCellClass = registeredCellsByIdentifier[identifier] {
             if let tableCellView = swizzled_makeView(withIdentifier: identifier, owner: owner) {
                 return tableCellView
@@ -83,19 +86,19 @@ extension NSTableView {
         return swizzled_makeView(withIdentifier: identifier, owner: owner)
     }
 
-    static var didSwizzleTableViewCellRegister: Bool {
-        get { getAssociatedValue(key: "didSwizzleTableViewCellRegister", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleTableViewCellRegister", object: self) }
+    static var didSwizzleCellRegistration: Bool {
+        get { getAssociatedValue(key: "didSwizzleCellRegistration", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: self) }
     }
 
-    @objc static func swizzleTableViewCellRegister() {
-        guard didSwizzleTableViewCellRegister == false else { return }
+    @objc static func swizzleCellRegistration() {
+        guard didSwizzleCellRegistration == false else { return }
         do {
             try Swizzle(NSTableView.self) {
                 #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
                 #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(self.swizzled_register(_:forIdentifier:))
             }
-            didSwizzleTableViewCellRegister = true
+            didSwizzleCellRegistration = true
         } catch {
             Swift.debugPrint(error)
         }

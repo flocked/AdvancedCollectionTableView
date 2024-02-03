@@ -16,12 +16,11 @@ extension NSCollectionView {
 
      Your item provider must dequeue the same type of item for the provided index path, and must return the same existing item for a given index path. Because this method reconfigures existing items, the collection view doesn’t item `prepareForReuse()` for each item dequeued. If you need to return a different type of item for an index path, use reloadItems(at:) instead.
 
-     - Important: You can only reconfigurate items that have been registered via  ``ItemRegistration``, or by their class using ``register(_:)`` or ``register(_:nib:)``.
-
      - Parameters:
         - indexPaths: An array of `IndexPath` objects identifying the items you want to update.
      */
     public func reconfigureItems(at indexPaths: [IndexPath]) {
+        Self.swizzleMakeItem()
         isReconfiguratingItems = true
         let visibleIndexPaths = indexPathsForVisibleItems()
         for indexPath in indexPaths {
@@ -36,5 +35,29 @@ extension NSCollectionView {
         get { getAssociatedValue(key: "isReconfiguratingItems", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "isReconfiguratingItems", object: self)
         }
+    }
+    
+    static var didSwizzleMakeItem: Bool {
+        get { getAssociatedValue(key: "didSwizzleMakeItem", object: self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleMakeItem", object: self) }
+    }
+
+    @objc static func swizzleMakeItem() {
+        guard didSwizzleMakeItem == false else { return }
+        do {
+            try Swizzle(NSCollectionView.self) {
+                #selector(self.makeItem(withIdentifier:for:)) <-> #selector(self.swizzled_makeItem(withIdentifier:for:))
+            }
+            didSwizzleMakeItem = true
+        } catch {
+            Swift.debugPrint(error)
+        }
+    }
+    
+    @objc func swizzled_makeItem(withIdentifier identifier: NSUserInterfaceItemIdentifier, for indexPath: IndexPath) -> NSCollectionViewItem {
+        if isReconfiguratingItems, let item = self.item(at: indexPath) {
+            return item
+        }
+        return self.swizzled_makeItem(withIdentifier: identifier, for: indexPath)
     }
 }

@@ -554,17 +554,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     @discardableResult
-    func removeItems(_ items: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
+    func removeItems(_ items: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
         deletingTransaction(items)
     }
     
-    func deletingTransaction(_ deletionItems: [Item]) -> NSDiffableDataSourceTransaction<Section, Item> {
+    func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
         var newNnapshot = snapshot()
         newNnapshot.deleteItems(deletionItems)
-        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newNnapshot)
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newNnapshot)
     }
     
-    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> NSDiffableDataSourceTransaction<Section, Item>? {
+    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
         var newSnapshot = snapshot()
         let newItems = rowIndexes.compactMap { item(forRow: $0) }
         if let item = item(forRow: row) {
@@ -578,7 +578,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         } else if let section = sections.last {
             newSnapshot.appendItems(newItems, toSection: section)
         }
-        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
     
     // MARK: - Sections
@@ -647,7 +647,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      Provide ``DeletingHandlers-swift.struct/canDelete`` to support the deleting of items in your table view.
      
-     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every item to be deleted
@@ -679,7 +679,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your table view.
      
-     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every item to be reordered
@@ -737,14 +737,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
         /// The handler that gets called whenever items get deselected.
         public var didDeselect: (([Item]) -> Void)?
-
-        var checkSelection: Bool {
-            shouldSelect != nil || shouldDeselect != nil
-        }
-
-        var reportSelection: Bool {
-            didSelect != nil || didDeselect != nil
-        }
     }
 
     /**
@@ -757,12 +749,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var canReorder: (([Item]) -> Bool)?
 
         /// The handler that that gets called before reordering items.
-        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
 
         /**
          The handler that that gets called after reordering items.
 
-         The system calls the `didReorder` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didReorder` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every item to be reordered
@@ -785,7 +777,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          }
          ```
          */
-        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
 
     /**
@@ -798,12 +790,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var canDelete: ((_ items: [Item]) -> [Item])?
 
         /// The handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var willDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
 
         /**
          The handler that that gets called after deleting items.
          
-         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didDelete` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every item to be deleted
@@ -826,7 +818,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          }
          ```
          */
-        public var didDelete: ((_ items: [Item], _ transaction: NSDiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
     }
 
     /// Handlers for hovering items with the mouse.

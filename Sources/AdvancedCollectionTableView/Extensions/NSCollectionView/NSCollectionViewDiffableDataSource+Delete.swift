@@ -14,9 +14,9 @@ extension NSCollectionViewDiffableDataSource {
     /**
      The diffable data source’s handlers for deleting items.
      
-     Provide deleting handlers to support the deleting of elements in your collection view.
+     Provide the ``DeletingHandlers/canDelete`` and ``DeletingHandlers/didDelete`` handlers to support the deleting of elements in your collection view.
      
-     The system calls the ``DeletingHandlers/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``DeletingHandlers/didDelete`` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every item to be deleted
@@ -55,11 +55,11 @@ extension NSCollectionViewDiffableDataSource {
         /// The handler that determines whether you can delete items.
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
         /// The handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
+        public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
         /**
          The handler that that gets called after deleting items.
          
-         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didDelete` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every item to be deleted
@@ -84,7 +84,7 @@ extension NSCollectionViewDiffableDataSource {
          }
          ```
          */
-        public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
+        public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
     }
     
     var keyDownMonitor: NSEvent.Monitor? {
@@ -119,7 +119,7 @@ extension NSCollectionViewDiffableDataSource {
                         var finalSnapshot = self.snapshot()
                         finalSnapshot.deleteItems(elementsToDelete)
 
-                        let transaction: NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> = NSDiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
+                        let transaction: DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType> = DiffableDataSourceTransaction(initial: self.snapshot(), final: finalSnapshot)
 
                         deletingHandlers.willDelete?(elementsToDelete, transaction)
                         if QuicklookPanel.shared.isVisible {

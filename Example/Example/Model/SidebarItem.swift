@@ -18,17 +18,9 @@ class SidebarItem: NSObject, Identifiable {
         self.symbolName = symbolName
     }
 
-    public static var sampleItems1: [SidebarItem] {
-        [SidebarItem(title: "Messages", symbolName: "message.fill"),
-         SidebarItem(title: "Photos", symbolName: "photo"),
-         SidebarItem(title: "Videos", symbolName: "film")]
-    }
-
-    public static var sampleItems2: [SidebarItem] {
-        [SidebarItem(title: "Archive", symbolName: "tray.full")]
-    }
-    
-    public static var sampleItems3: [SidebarItem] {
-        [SidebarItem(title: "News", symbolName: "newspaper")]
-    }
+    static let sampleItems1 = [SidebarItem(title: "Messages", symbolName: "message.fill"),
+                                      SidebarItem(title: "Photos", symbolName: "photo"),
+                                      SidebarItem(title: "Videos", symbolName: "film")]
+    static let sampleItems2 = [SidebarItem(title: "Archive", symbolName: "tray.full")]
+    static let sampleItems3 = [SidebarItem(title: "News", symbolName: "newspaper")]
 }

@@ -42,7 +42,7 @@ extension CollectionViewDiffableDataSource {
         
         
         func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
-            Swift.print("willBeginAt", indexPaths.count)
+            // Swift.debugPrint("willBeginAt", indexPaths.count)
         }
         
         
@@ -50,35 +50,35 @@ extension CollectionViewDiffableDataSource {
             canReorderItems = false
             canDragOutside = false
             draggingIndexPaths = indexPaths
-            if dataSource.dragDropHandlers.outside.canDrag != nil || dataSource.reorderingHandlers.canReorder != nil {
+            if dataSource.droppingHandlers.outside.canDrag != nil || dataSource.reorderingHandlers.canReorder != nil {
                 let items = indexPaths.compactMap { dataSource.element(for: $0) }
                 canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
-                canDragOutside = dataSource.dragDropHandlers.outside.canDrag?(items) == true
+                canDragOutside = dataSource.droppingHandlers.outside.canDrag?(items) == true
             }
-            Swift.print("canDragItemsAt", canReorderItems || canDragOutside)
+            // Swift.debugPrint("canDragItemsAt", canReorderItems || canDragOutside)
             return canReorderItems || canDragOutside
         }
 
         func collectionView(_: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-            Swift.print("pasteboardWriterForItemAt")
+            // Swift.debugPrint("pasteboardWriterForItemAt")
             if let item = dataSource.element(for: indexPath) {
-                if let writing = dataSource.dragDropHandlers.pasteboardValue?(item).nsPasteboardReadWriting {
+                if let writing = dataSource.droppingHandlers.pasteboardValue?(item).nsPasteboardReadWriting {
                     return writing
                 }
 
                 let pasteboardItem = NSPasteboardItem()
                 pasteboardItem.setString(String(item.id.hashValue), forType: .itemID)
                 if canDragOutside {
-                    if let image = dataSource.dragDropHandlers.outside.image?(item) {
+                    if let image = dataSource.droppingHandlers.outside.image?(item) {
                         pasteboardItem.tiffImage = image
                     }
-                    if let url = dataSource.dragDropHandlers.outside.url?(item) {
+                    if let url = dataSource.droppingHandlers.outside.url?(item) {
                         pasteboardItem.url = url
                     }
-                    if let color = dataSource.dragDropHandlers.outside.color?(item) {
+                    if let color = dataSource.droppingHandlers.outside.color?(item) {
                         pasteboardItem.color = color
                     }
-                    if let string = dataSource.dragDropHandlers.outside.string?(item) {
+                    if let string = dataSource.droppingHandlers.outside.string?(item) {
                         pasteboardItem.string = string
                     }
                 }
@@ -89,7 +89,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-            Swift.print("validateDrop")
+            // Swift.debugPrint("validateDrop")
             if proposedDropOperation.pointee == NSCollectionView.DropOperation.on {
                 proposedDropOperation.pointee = NSCollectionView.DropOperation.before
             }
@@ -109,26 +109,26 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
-            Swift.print("acceptDrop")
+            // Swift.debugPrint("acceptDrop")
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
                 if reorderingDrag(collectionView, draggingInfo: draggingInfo, indexPath: indexPath) {
                     return true
                 }
             }
             
-            Swift.print("images", draggingInfo.images?.count ?? "nil", "fileURLs", draggingInfo.fileURLs?.count ?? "nil", "urls", draggingInfo.urls?.count ?? "nil")
+            // Swift.debugPrintpriont("images", draggingInfo.images?.count ?? "nil", "fileURLs", draggingInfo.fileURLs?.count ?? "nil", "urls", draggingInfo.urls?.count ?? "nil")
             
             var elements: [Element] = []
-            if let fileURLs = draggingInfo.fileURLs, let handler = dataSource.dragDropHandlers.inside.fileURLs {
+            if let fileURLs = draggingInfo.fileURLs, let handler = dataSource.droppingHandlers.inside.fileURLs {
                 elements.append(contentsOf: handler(fileURLs))
             }
-            if let urls = draggingInfo.urls, let handler = dataSource.dragDropHandlers.inside.urls {
+            if let urls = draggingInfo.urls, let handler = dataSource.droppingHandlers.inside.urls {
                 elements.append(contentsOf: handler(urls))
             }
-            if let images = draggingInfo.images, let handler = dataSource.dragDropHandlers.inside.images {
+            if let images = draggingInfo.images, let handler = dataSource.droppingHandlers.inside.images {
                 elements.append(contentsOf: handler(images))
             }
-            if let strings = draggingInfo.strings, let handler = dataSource.dragDropHandlers.inside.strings {
+            if let strings = draggingInfo.strings, let handler = dataSource.droppingHandlers.inside.strings {
                 elements.append(contentsOf: handler(strings))
             }
             
@@ -151,22 +151,22 @@ extension CollectionViewDiffableDataSource {
                         }
                     }
                 }
-                setupHandler(dataSource.dragDropHandlers.inside.strings, \.strings)
-                setupHandler(dataSource.dragDropHandlers.inside.fileURLs, \.fileURLs)
-                setupHandler(dataSource.dragDropHandlers.inside.urls, \.urls)
-                setupHandler(dataSource.dragDropHandlers.inside.images, \.images)
-                setupHandler(dataSource.dragDropHandlers.inside.colors, \.colors)
+                setupHandler(dataSource.droppingHandlers.inside.strings, \.strings)
+                setupHandler(dataSource.droppingHandlers.inside.fileURLs, \.fileURLs)
+                setupHandler(dataSource.droppingHandlers.inside.urls, \.urls)
+                setupHandler(dataSource.droppingHandlers.inside.images, \.images)
+                setupHandler(dataSource.droppingHandlers.inside.colors, \.colors)
 
                 if acceptsDrop {
-                    var transaction: NSDiffableDataSourceTransaction<Section, Element>?
-                    if dataSource.dragDropHandlers.inside.needsTransaction {
+                    var transaction: DiffableDataSourceTransaction<Section, Element>?
+                    if dataSource.droppingHandlers.inside.needsTransaction {
                         transaction = .init(initial: dataSource.snapshot(), final: snapshot)
-                        dataSource.dragDropHandlers.inside.willDrag?(transaction!)
+                        dataSource.droppingHandlers.inside.willDrag?(transaction!)
                     }
                     let selectedItems = dataSource.selectedElements
                     dataSource.apply(snapshot, .animated)
                     dataSource.selectElements(selectedItems, scrollPosition: [])
-                    if let didDrag = dataSource.dragDropHandlers.inside.didDrag {
+                    if let didDrag = dataSource.droppingHandlers.inside.didDrag {
                         didDrag(transaction!)
                     }
                 }
@@ -219,7 +219,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, draggingImageForItemsAt indexPaths: Set<IndexPath>, with event: NSEvent, offset dragImageOffset: NSPointPointer) -> NSImage {
-            if let draggingImage = dataSource.dragDropHandlers.draggingImage {
+            if let draggingImage = dataSource.droppingHandlers.draggingImage {
                 let items = indexPaths.compactMap { self.dataSource.element(for: $0) }
                 if let image = draggingImage(items, event, dragImageOffset.pointee) {
                     return image

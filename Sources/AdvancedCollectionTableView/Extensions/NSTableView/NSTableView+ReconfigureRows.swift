@@ -16,12 +16,11 @@ extension NSTableView {
 
      Your cell provider must dequeue the same type of cell for the provided index path, and must return the same existing cell for a given index path. Because this method reconfigures existing cells, the table view doesn’t call `prepareForReuse()` for each cell dequeued. If you need to return a different type of cell for an index path, use `reloadData(forRowIndexes:columnIndexes:)` instead.
 
-     - Important: You can only reconfigurate cells that have been registered via  ``CellRegistration``, or by their class using ``register(_:)`.
-
      - Parameters:
         - indexes: The indexes you want to update.
      */
     public func reconfigureRows(at indexes: IndexSet) {
+        Self.swizzleCellRegistration()
         guard let delegate = delegate else { return }
         isReconfiguratingRows = true
         let columns = tableColumns

@@ -593,13 +593,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         apply(snapshot, .animated)
     }
 
-    func deletionTransaction(_ elements: [Element]) -> NSDiffableDataSourceTransaction<Section, Element> {
+    func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
         var finalSnapshot = snapshot()
         finalSnapshot.deleteItems(elements)
-        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: finalSnapshot)
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: finalSnapshot)
     }
 
-    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> NSDiffableDataSourceTransaction<Section, Element>? {
+    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         var newSnapshot = snapshot()
         let newItems = indexPaths.compactMap { element(for: $0) }
         if let item = element(for: toIndexPath) {
@@ -615,7 +615,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         } else if let section = sections.last {
             newSnapshot.appendItems(newItems, toSection: section)
         }
-        return NSDiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
 
     // MARK: - Sections
@@ -682,7 +682,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      
      Provide ``DeletingHandlers-swift.struct/canDelete`` to support the deleting of elements in your collection view.
      
-     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``DeletingHandlers-swift.struct/didDelete`` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every element to be deleted
@@ -714,7 +714,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      
      Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of elements in your collection view.
      
-     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every element to be reordered
@@ -743,6 +743,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      The handlers for the displaying elements.
 
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
+     
+     Using these handlers can cost performance as the collection view is constantly observed for scrolling.
      */
     open var displayHandlers = DisplayHandlers() {
         didSet { observeDisplayingItems() }
@@ -754,8 +756,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /// The handlers highlighting elements.
     open var highlightHandlers = HighlightHandlers()
 
-    /// The handlers for drag and drop of files from and to the collection view.
-    var dragDropHandlers = DragDropHandlers()
+    /// The handlers for dropping files inside the collection view and elements outside the collection view.
+    public var droppingHandlers = DroppingHandlers()
 
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {
@@ -791,12 +793,12 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var canDelete: ((_ elements: [Element]) -> [Element])?
 
         /// The handler that that gets called before deleting elements.
-        public var willDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var willDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
 
         /**
          The handler that that gets called after deleting elements.
          
-         The system calls the `didDelete` handler after a deleting transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didDelete` handler after a deleting transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every element to be deleted
@@ -819,7 +821,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          }
          ```
          */
-        public var didDelete: ((_ elements: [Element], _ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var didDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
     }
 
     /**
@@ -832,12 +834,12 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var canReorder: ((_ elements: [Element]) -> Bool)?
 
         /// The handler that that gets called before reordering elements.
-        public var willReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var willReorder: ((DiffableDataSourceTransaction<Section, Element>) -> Void)?
 
         /**
          The handler that that gets called after reordering elements.
 
-         The system calls the `didReorder` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didReorder` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every element to be reordered
@@ -860,7 +862,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          }
          ```
          */
-        public var didReorder: ((NSDiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var didReorder: ((DiffableDataSourceTransaction<Section, Element>) -> Void)?
     }
 
     /// Handlers for the highlight state of elements.
@@ -876,6 +878,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      Handlers for displaying elements.
 
      The handlers get called whenever the collection view is displaying new elements (e.g. when the enclosing scrollview scrolls to new elements).
+     
+     Using these handlers can cost performance as the collection view is constantly observed for scrolling.
      */
     public struct DisplayHandlers {
         /// The handler that gets called whenever elements start getting displayed. (e.g. when the enclosing scrollview scrolls to new elements).
@@ -906,8 +910,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
 
-    /// Handlers for drag and drop of files from and to the collection view.
-    struct DragDropHandlers {
+    /// Handlers dropping files inside the collection view and elements outside the collection view.
+    public struct DroppingHandlers {
+        
         /// The handlers for dragging elements outside the collection view.
         public struct OutsideHandlers {
             /// The strings for the specified elements to write to the pasteboard.
@@ -947,9 +952,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
             public var canDrag: (([PasteboardReadWriting]) -> Bool)?
             /// The handler that gets called when the handler will drag elements inside the collection view.
-            public var willDrag: ((_ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())?
+            public var willDrag: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
             /// The handler that gets called when the handler did drag elements inside the collection view.
-            public var didDrag: ((_ transaction: NSDiffableDataSourceTransaction<Section, Element>) -> ())?
+            public var didDrag: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
             var needsTransaction: Bool {
                 willDrag != nil || didDrag != nil
             }

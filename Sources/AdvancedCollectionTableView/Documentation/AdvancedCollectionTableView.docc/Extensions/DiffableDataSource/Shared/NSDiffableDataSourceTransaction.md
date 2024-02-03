@@ -1,4 +1,4 @@
-# ``NSDiffableDataSourceTransaction``
+# ``DiffableDataSourceTransaction``
 
 ## Topics
 

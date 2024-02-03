@@ -56,7 +56,7 @@ class SidebarViewController: NSViewController {
                     color: swippedItem.isFavorite ? .systemGray : .systemYellow
                 ) { _, _ in
                     swippedItem.isFavorite = !swippedItem.isFavorite
-                    self.dataSource.reloadItems([swippedItem])
+                    self.dataSource.reconfigureItems([swippedItem])
                     self.tableView.rowActionsVisible = false
                 }]
             } else {
@@ -64,9 +64,9 @@ class SidebarViewController: NSViewController {
                 return [NSTableViewRowAction(
                     style: .destructive, title: "", symbolName: "trash.fill"
                 ) { _, _ in
-                    var currentSnapshot = self.dataSource.snapshot()
-                    currentSnapshot.deleteItems([swippedItem])
-                    self.dataSource.apply(currentSnapshot, .animated)
+                    var snapshot = self.dataSource.snapshot()
+                    snapshot.deleteItems([swippedItem])
+                    self.dataSource.apply(snapshot)
                 }]
             }
         }

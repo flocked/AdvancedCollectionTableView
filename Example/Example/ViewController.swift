@@ -11,16 +11,13 @@ import FZSwiftUtils
 import FZUIKit
 
 class ViewController: NSViewController {
-    typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
-    typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
-
     @IBOutlet var collectionView: NSCollectionView!
 
     var galleryItems = GalleryItem.sampleItems
 
-    lazy var dataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
+    lazy var dataSource = CollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView, itemRegistration: itemRegistration)
 
-    lazy var itemRegistration = ItemRegistration { collectionViewItem, _, galleryItem in
+    let itemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>() { collectionViewItem, _, galleryItem in
 
         // Configurate the item
         var configuration = NSItemContentConfiguration()
@@ -30,12 +27,12 @@ class ViewController: NSViewController {
         configuration.image = NSImage(named: galleryItem.imageName)
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
 
-        if let badgeText = galleryItem.badge {
+        if let badgeText = galleryItem.badgeText {
             configuration.badges = [.textBadge(badgeText, color: galleryItem.badgeColor, type: .attachment)]
         }
         
         if galleryItem.isFavorite {
-            configuration.badges = [.textBadge("􀋃", color: .systemRed, type: .attachment, shape: .circle)]
+            configuration.badges = [.textBadge("􀋃", color: .systemRed, shape: .circle, type: .attachment)]
         }
 
         // Apply the configuration
@@ -75,7 +72,7 @@ class ViewController: NSViewController {
             // Reconfigurates items without reloading them by calling the item registration
             self.dataSource.reconfigureElements(selectedItems)
         }
-
+                
         applySnapshot(using: galleryItems)
     }
 
@@ -83,14 +80,14 @@ class ViewController: NSViewController {
         super.viewDidAppear()
 
         view.window?.makeFirstResponder(collectionView)
-        collectionView.selectItems(at: [.zero], scrollPosition: .top)
+        collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
     }
 
     func applySnapshot(using items: [GalleryItem]) {
         var snapshot = dataSource.emptySnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items, toSection: .main)
-        dataSource.apply(snapshot, .animated)
+        dataSource.apply(snapshot, .withoutAnimation)
     }
 }
 

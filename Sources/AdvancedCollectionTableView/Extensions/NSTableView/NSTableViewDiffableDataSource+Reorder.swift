@@ -14,7 +14,7 @@ extension NSTableViewDiffableDataSource {
 
      Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your table view.
      
-     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
      
      ```swift
      // Allow every item to be reordered
@@ -45,12 +45,12 @@ extension NSTableViewDiffableDataSource {
         public var canReorder: (([ItemIdentifierType]) -> Bool)?
 
         /// The handler that that gets called before reordering items.
-        public var willReorder: ((NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
+        public var willReorder: ((DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
 
         /**
          The handler that that gets called after reordering items.
 
-         The system calls the `didReorder` handler after a reordering transaction (``NSDiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         The system calls the `didReorder` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
          
          ```swift
          // Allow every item to be reordered
@@ -75,6 +75,6 @@ extension NSTableViewDiffableDataSource {
          }
          ```
          */
-        public var didReorder: ((NSDiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
+        public var didReorder: ((DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>) -> Void)?
     }
 }

@@ -12,18 +12,16 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 
 - ``CollectionViewDiffableDataSource``
 - ``TableViewDiffableDataSource``
-- ``NSDiffableDataSourceTransaction``
+- ``DiffableDataSourceTransaction``
 - ``NSDiffableDataSourceSnapshotApplyOption``
 
 ### CollectionView Registration
 
-- <doc:Registering-Collection-Items>
 - ``AppKit/NSCollectionView/ItemRegistration``
 - ``AppKit/NSCollectionView/SupplementaryRegistration``
 
 ### TableView Registration
 
-- <doc:Registering-Table-Cells>
 - ``AppKit/NSTableView/CellRegistration``
 - ``AppKit/NSTableView/RowRegistration``
 - ``AppKit/NSTableView/SectionHeaderRegistration``

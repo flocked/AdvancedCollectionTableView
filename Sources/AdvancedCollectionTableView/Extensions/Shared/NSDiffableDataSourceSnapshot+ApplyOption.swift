@@ -19,7 +19,7 @@ import AppKit
  `NSDiffableDataSourceSnapshotApplyOption`  lets you perform a diff even without animations using `withoutAnimation` for much better performance compared to using Apple's `reloadData()`.
 
  ```swift
- collectionViewDatasource.apply(snapshot, .withoutAnimation)
+ diffableDatasource.apply(snapshot, .withoutAnimation)
  ```
 
  **Animation duration**
@@ -27,7 +27,7 @@ import AppKit
  When you want to apply the snapshot animated, you can also change the animation duration  using `animated(duration:)`.
 
  ```swift
- collectionViewDatasource.apply(snapshot, .animated(duration: 1.0))
+ diffableDatasource.apply(snapshot, .animated(duration: 1.0))
  ```
  */
 public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {

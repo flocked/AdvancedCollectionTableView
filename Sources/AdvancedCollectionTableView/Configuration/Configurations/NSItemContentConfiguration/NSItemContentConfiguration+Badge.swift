@@ -156,7 +156,7 @@ public extension NSItemContentConfiguration {
         public init() {}
 
         /// A text badge.
-        public static func textBadge(_ text: String, textStyle: NSFont.TextStyle = .body, textColor: NSColor = .white, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        public static func textBadge(_ text: String, textStyle: NSFont.TextStyle = .body, textColor: NSColor = .white, color: NSColor? = .controlAccentColor, shape: Shape = .roundedRect, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
             badge.text = text
             badge.textProperties.font = .systemFont(textStyle)
@@ -172,7 +172,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// A badge displaying a view.
-        public static func viewBadge(_ view: NSView, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        public static func viewBadge(_ view: NSView, color: NSColor? = .controlAccentColor, shape: Shape = .roundedRect, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
             badge.view = view
             badge.backgroundColor = color
@@ -186,7 +186,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// A symbol image badge.
-        public static func symbolImageBadge(_ symbolName: String, text: String? = nil, size: NSFont.TextStyle = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        public static func symbolImageBadge(_ symbolName: String, text: String? = nil, size: NSFont.TextStyle = .body, color: NSColor = .white, backgroundColor: NSColor? = .controlAccentColor, shape: Shape = .roundedRect, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
             badge.text = text
             badge.image = NSImage(systemSymbolName: symbolName)
@@ -206,7 +206,7 @@ public extension NSItemContentConfiguration {
         }
         
         /// An image badge.
-        public static func imageBadge(_ image: NSImage, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor? = .controlAccentColor, type: BadgeType, position: Position = .topRight, shape: Shape = .roundedRect) -> Badge {
+        public static func imageBadge(_ image: NSImage, text: String? = nil, textStyle: NSFont.TextStyle = .body, color: NSColor? = .controlAccentColor, shape: Shape = .roundedRect, type: BadgeType, position: Position = .topRight) -> Badge {
             var badge = Badge()
             badge.image = image
             badge.text = text

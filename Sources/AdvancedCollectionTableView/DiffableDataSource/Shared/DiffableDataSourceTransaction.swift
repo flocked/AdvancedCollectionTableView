@@ -1,5 +1,5 @@
 //
-//  NSDiffableDataSourceTransaction.swift
+//  DiffableDataSourceTransaction.swift
 //
 //
 //  Created by Florian Zand on 16.09.23.
@@ -8,7 +8,7 @@
 import AppKit
 
 /// A transaction that describes the changes after reordering the items in the view.
-public struct NSDiffableDataSourceTransaction<Section, Item> where Section: Hashable, Item: Hashable {
+public struct DiffableDataSourceTransaction<Section, Item> where Section: Hashable, Item: Hashable {
     /// The snapshot before the transaction occured.
     public let initialSnapshot: NSDiffableDataSourceSnapshot<Section, Item>
 
@@ -19,7 +19,7 @@ public struct NSDiffableDataSourceTransaction<Section, Item> where Section: Hash
     public let difference: CollectionDifference<Item>
 }
 
-extension NSDiffableDataSourceTransaction {
+extension DiffableDataSourceTransaction {
     init(initial: NSDiffableDataSourceSnapshot<Section, Item>, final: NSDiffableDataSourceSnapshot<Section, Item>) {
         initialSnapshot = initial
         finalSnapshot = final
