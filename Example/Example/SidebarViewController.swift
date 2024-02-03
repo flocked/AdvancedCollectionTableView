@@ -50,20 +50,14 @@ class SidebarViewController: NSViewController {
         dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {
                 /// Left swipe
-                return [NSTableViewRowAction(
-                    style: .regular, title: "",
-                    symbolName: swippedItem.isFavorite ? "star" : "star.fill",
-                    color: swippedItem.isFavorite ? .systemGray : .systemYellow
-                ) { _, _ in
-                    swippedItem.isFavorite = !swippedItem.isFavorite
-                    self.dataSource.reconfigureItems([swippedItem])
-                    self.tableView.rowActionsVisible = false
-                }]
+                return [NSTableViewRowAction.regular(symbolName: swippedItem.isFavorite ? "star" : "star.fill") { _,_ in
+                        swippedItem.isFavorite = !swippedItem.isFavorite
+                        self.dataSource.reconfigureItems([swippedItem])
+                        self.tableView.rowActionsVisible = false
+                    }]
             } else {
                 /// Right swipe
-                return [NSTableViewRowAction(
-                    style: .destructive, title: "", symbolName: "trash.fill"
-                ) { _, _ in
+                return [NSTableViewRowAction.destructive(symbolName: "trash.fill") { _,_ in
                     var snapshot = self.dataSource.snapshot()
                     snapshot.deleteItems([swippedItem])
                     self.dataSource.apply(snapshot)

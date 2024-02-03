@@ -135,7 +135,7 @@ public extension NSItemContentConfiguration {
         public var shadow: ShadowConfiguration = .none()
 
         /// The margins between the text and the edges of the badge.
-        public var margins = NSDirectionalEdgeInsets(width: 6, height: 4)
+        public var margins = NSDirectionalEdgeInsets(width: 8, height: 4)
 
         /// The maximum width of the badge. If the text is larger than the width, it will be truncated.
         public var maxWidth: CGFloat?

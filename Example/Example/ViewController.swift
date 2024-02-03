@@ -5,10 +5,9 @@
 //  Created by Florian Zand on 19.01.23.
 //
 
-import AdvancedCollectionTableView
 import AppKit
-import FZSwiftUtils
 import FZUIKit
+import AdvancedCollectionTableView
 
 class ViewController: NSViewController {
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
@@ -54,7 +53,7 @@ class ViewController: NSViewController {
             item.contentConfiguration = configuration
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -78,14 +77,14 @@ class ViewController: NSViewController {
             selectedItems.forEach({ item in
                 item.isFavorite = !item.isFavorite
             })
-            /// Reconfigurates items without reloading them by calling the item registration's handler.
+            /// Reconfigurates items without reloading them by calling the item registration handler.
             self.dataSource.reconfigureElements(selectedItems)
         }
                 
         applySnapshot(using: galleryItems)
         
-        view.window?.makeFirstResponder(collectionView)
-        collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
+        dataSource.selectElements([galleryItems.first!], scrollPosition: .top)
+        collectionView.becomeFirstResponder()
     }
 
     func applySnapshot(using items: [GalleryItem]) {
