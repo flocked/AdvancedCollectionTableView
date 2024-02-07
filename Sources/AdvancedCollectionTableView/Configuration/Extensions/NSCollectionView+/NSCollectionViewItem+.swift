@@ -289,7 +289,12 @@ extension NSCollectionViewItem {
     @objc var isEmphasized: Bool {
         view.window?.isKeyWindow ?? false
     }
-
+    
+    /// A Boolean value that specifies whether the collection view and it's items are focused.
+    @objc var isFocused: Bool {
+        _collectionView?.isFirstResponder ?? false
+    }
+    
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
         get { getAssociatedValue(key: "itemObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "itemObserver", object: self) }

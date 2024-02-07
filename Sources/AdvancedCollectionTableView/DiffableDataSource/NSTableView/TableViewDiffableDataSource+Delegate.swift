@@ -84,6 +84,14 @@ extension TableViewDiffableDataSource {
             }
             return []
         }
+        
+        func tableView(_ tableView: NSTableView, userCanChangeVisibilityOf column: NSTableColumn) -> Bool {
+            dataSource.columnHandlers.userCanChangeVisibility?(column) ?? false
+        }
+        
+        func tableView(_ tableView: NSTableView, userDidChangeVisibilityOf columns: [NSTableColumn]) {
+            dataSource.columnHandlers.userDidChangeVisibility?(columns)
+        }
 
         public func tableViewColumnDidMove(_ notification: Notification) {
             guard let didReorder = dataSource.columnHandlers.didReorder else { return }

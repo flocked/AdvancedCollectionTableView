@@ -52,7 +52,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var delegateBridge: DelegateBridge!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
-    open var rowViewProvider: RowViewProvider? {
+    open var rowViewProvider: RowProvider? {
         didSet {
             if let rowViewProvider = rowViewProvider {
                 dataSource.rowViewProvider = { tableview, row, identifier in
@@ -65,8 +65,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// A closure that configures and returns a row view for a table view from its diffable data source.
-    public typealias RowViewProvider = (_ tableView: NSTableView, _ row: Int, _ identifier: Item) -> NSTableRowView
+    /**
+     A closure that configures and returns a row view for a table view from its diffable data source.
+     
+     - Parameters
+        - tableView: The table view to configure this row view for.
+        - row: The row of the row view in the table view.
+        - item: The item for this row view.
+     
+     - Returns: A configured row view object.
+     */
+    public typealias RowProvider = (_ tableView: NSTableView, _ row: Int, _ item: Item) -> NSTableRowView
     
     /// Applies the row view registration to configure and return table row views.
     open func applyRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, Item>) {
@@ -88,7 +97,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// A closure that configures and returns a section header view for a table view from its diffable data source.
+    /**
+     A closure that configures and returns a section header view for a table view from its diffable data source.
+     
+     - Parameters
+        - tableView: The table view to configure this section header view for.
+        - row: The row of the view in the table view.
+        - section: The section for this section header view.
+        - item: The item for this section header view.
+     
+     - Returns: A configured section header view object.
+     */
     public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableSectionHeaderView
     
     /// Applies the section header view registration to configure and return section header views.
@@ -385,8 +404,18 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
     }
     
-    /// A closure that configures and returns a cell view for a table view from its diffable data source.
-    public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Item) -> NSView
+    /**
+     A closure that configures and returns a cell view for a table view from its diffable data source.
+     
+     - Parameters
+        - tableView: The table view to configure this cell for.
+        - tableColumn: The table column of the cell.
+        - row: The row of the cell in the table view.
+        - item: The item for this cell.
+     
+     - Returns: A non-`nil` configured cell object. The cell provider must return a valid cell object to the table view.
+     */
+    public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> NSView
     
     // MARK: - DataSource conformance
     
@@ -844,6 +873,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
         /// The handler that gets called whenever a column did reorder.
         public var didReorder: ((_ column: NSTableColumn, _ oldIndex: Int, _ newIndex: Int) -> Void)?
+        
+        /// The handler that determines whenever the user can change the given column’s visibility.
+        public var userCanChangeVisibility: ((_ column: NSTableColumn) -> Bool)?
+        
+        /// The handler that gets called whenever the user did change the visibility of the given columns.
+        public var userDidChangeVisibility: ((_ columns: [NSTableColumn]) -> Void)?
+
     }
 
     /// Handlers for drag and drop of files from and to the table view.

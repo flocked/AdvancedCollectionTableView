@@ -53,10 +53,10 @@ class ViewController: NSViewController {
             item.contentConfiguration = configuration
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.collectionViewLayout = .grid(columns: 3)
 
         collectionView.dataSource = dataSource

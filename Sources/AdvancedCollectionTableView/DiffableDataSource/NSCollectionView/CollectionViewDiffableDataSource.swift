@@ -356,12 +356,12 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /**
      A closure that configures and returns an item for a collection view from its diffable data source.
 
-     A non-`nil` configured item object. The item provider must return a valid item object to the collection view.
+     You use this closure to configure and return collection view items when creating a diffable data source using ``init(collectionView:itemProvider:)``.
 
      - Parameters:
         - collectionView: The collection view to configure this cell for.
         -  indexpath: The index path that specifies the location of the item in the collection view.
-        - element: An object, with a type that implements the Hashable protocol, the data source uses to uniquely identify the item for this cell.
+        - element: The element for the collection view item.
 
      - Returns: A non-`nil` configured collection view item object. The item provider must return a valid item object to the collection view.
      */
