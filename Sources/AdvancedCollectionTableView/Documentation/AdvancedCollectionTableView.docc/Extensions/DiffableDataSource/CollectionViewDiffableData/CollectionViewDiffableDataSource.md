@@ -48,6 +48,10 @@
 - ``rightClickHandler``
 - ``pinchHandler``
 
+### Displaying empty collection view
+
+- ``emptyCollectionView``
+
 ### Previewing elements
 
 - ``isQuicklookPreviewable``

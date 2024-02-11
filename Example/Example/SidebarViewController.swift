@@ -41,7 +41,7 @@ class SidebarViewController: NSViewController {
         tableView.floatsGroupRows = false
 
         /// Enables reordering selected rows by dragging them.
-        dataSource.reorderingHandlers.canReorder = { selectedItem in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedItem in return selectedItem }
         
         /// Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItem in return selectedItem }
@@ -68,6 +68,8 @@ class SidebarViewController: NSViewController {
         dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
         applySnapshot()
     }
+    
+    var obs: NSKeyValueObservation?
     
     func applySnapshot() {
         var snapshot: NSDiffableDataSourceSnapshot<Section, SidebarItem> = .init()

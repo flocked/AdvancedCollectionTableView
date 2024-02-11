@@ -309,6 +309,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
+        updateEmptyCollectionView()
     }
 
     // MARK: - Init
@@ -665,6 +666,24 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             return sections[indexPath.section]
         }
         return nil
+    }
+    
+    // MARK: - Empty Collection View
+    
+    /// The view that is displayed when the datasource doesn't contain any elements.
+    open var emptyCollectionView: NSView? = nil {
+        didSet {
+            guard oldValue != emptyCollectionView else { return }
+            updateEmptyCollectionView()
+        }
+    }
+    
+    func updateEmptyCollectionView() {
+        if !currentSnapshot.itemIdentifiers.isEmpty && !currentSnapshot.sectionIdentifiers.isEmpty {
+            emptyCollectionView?.removeFromSuperview()
+        } else if let emptyCollectionView = self.emptyCollectionView {
+            collectionView.addSubview(withConstraint: emptyCollectionView)
+        }
     }
 
     // MARK: - Handlers

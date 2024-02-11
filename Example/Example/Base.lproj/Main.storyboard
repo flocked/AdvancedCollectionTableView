@@ -838,21 +838,19 @@
                                 </scroller>
                             </scrollView>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="in1-NF-Ong">
-                                <rect key="frame" x="20" y="247" width="180" height="5"/>
+                                <rect key="frame" x="20" y="219" width="180" height="5"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             </box>
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" id="q8m-Nl-wlU">
-                                <rect key="frame" x="18" y="28" width="184" height="208"/>
+                                <rect key="frame" x="18" y="28" width="184" height="176"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" id="yZT-g7-awv">
                                     <font key="font" textStyle="body" name=".SFNS-Regular"/>
                                     <string key="title">Reorder items and table cells by dragging them and delete them via backspace.
 
-Quicklook collection items via spacebar.
+Quicklook collection items via spacebar and favorite them by right-clicking them.
 
-Favorite table cells by swiping left and delete them by swiping right.
-
-Favorite items by right-clicking them.</string>
+Favorite table cells by swiping left and delete them by swiping right.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

@@ -314,6 +314,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         currentSnapshot = snapshot
         updateSectionRowIndexes()
         dataSource.apply(internalSnapshot, option, completion: completion)
+        updateEmptyCollectionView()
     }
     
     func updateSectionRowIndexes() {
@@ -449,12 +450,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
-        let items = dragingRowIndexes.compactMap({item(forRow: $0)})
-        if reorderingHandlers.canReorder?(items) == true {
-            dragingRowIndexes = rowIndexes
-        } else {
-            dragingRowIndexes.removeAll()
-        }
+        var items = dragingRowIndexes.compactMap({item(forRow: $0)})
+        items = reorderingHandlers.canReorder?(items) ?? []
+        dragingRowIndexes = .init(items.compactMap({row(for: $0)}))
     }
     
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, operation _: NSDragOperation) {
@@ -469,7 +467,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         return nil
     }
-    
+        
     // MARK: - Items
     
     /// All current items in the table view.
@@ -665,6 +663,24 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     func rows(for sections: [Section]) -> [Int] {
         sections.flatMap { rows(for: $0) }
     }
+    
+    // MARK: - Empty Collection View
+    
+    /// The view that is displayed when the datasource doesn't contain any items.
+    open var emptyCollectionView: NSView? = nil {
+        didSet {
+            guard oldValue != emptyCollectionView else { return }
+            updateEmptyCollectionView()
+        }
+    }
+    
+    func updateEmptyCollectionView() {
+        if !currentSnapshot.itemIdentifiers.isEmpty && !currentSnapshot.sectionIdentifiers.isEmpty {
+            emptyCollectionView?.removeFromSuperview()
+        } else if let emptyCollectionView = self.emptyCollectionView {
+            tableView.addSubview(withConstraint: emptyCollectionView)
+        }
+    }
 
     // MARK: - Handlers
 
@@ -774,8 +790,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      Take a look at ``reorderingHandlers-swift.property`` how to support reordering items.
      */
     public struct ReorderingHandlers {
-        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can be reordered.
-        public var canReorder: (([Item]) -> Bool)?
+        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can't be reordered.
+        public var canReorder: (([Item]) -> [Item])?
 
         /// The handler that that gets called before reordering items.
         public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?

@@ -69,18 +69,10 @@ extension CollectionViewDiffableDataSource {
                 let pasteboardItem = NSPasteboardItem()
                 pasteboardItem.setString(String(item.id.hashValue), forType: .itemID)
                 if canDragOutside {
-                    if let image = dataSource.droppingHandlers.outside.image?(item) {
-                        pasteboardItem.tiffImage = image
-                    }
-                    if let url = dataSource.droppingHandlers.outside.url?(item) {
-                        pasteboardItem.url = url
-                    }
-                    if let color = dataSource.droppingHandlers.outside.color?(item) {
-                        pasteboardItem.color = color
-                    }
-                    if let string = dataSource.droppingHandlers.outside.string?(item) {
-                        pasteboardItem.string = string
-                    }
+                    pasteboardItem.tiffImage = dataSource.droppingHandlers.outside.image?(item)
+                    pasteboardItem.url = dataSource.droppingHandlers.outside.url?(item)
+                    pasteboardItem.color = dataSource.droppingHandlers.outside.color?(item)
+                    pasteboardItem.string = dataSource.droppingHandlers.outside.string?(item)
                 }
                 
                 return pasteboardItem

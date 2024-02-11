@@ -18,6 +18,12 @@ extension NSItemContentView {
                 }
             }
         }
+        
+        var previousStringValue: String = ""
+
+        var itemContentView: NSItemContentView? {
+            firstSuperview(for: NSItemContentView.self)
+        }
 
         func updateText(_ text: String?, _ attributedText: AttributedString?) {
             if let attributedText = attributedText {
@@ -60,6 +66,9 @@ extension NSItemContentView {
             isSelectable = properties.isSelectable
             isEditable = properties.isEditable
             formatter = properties.numberFormatter
+            adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
+            minimumScaleFactor = properties.minimumScaleFactor
+            allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
         }
 
         init(properties: TextProperties) {
@@ -81,10 +90,6 @@ extension NSItemContentView {
                 intrinsicContentSize.width = NSView.noIntrinsicMetric
             }
             return intrinsicContentSize
-        }
-
-        var itemContentView: NSItemContentView? {
-            firstSuperview(for: NSItemContentView.self)
         }
 
         override public func becomeFirstResponder() -> Bool {
@@ -113,7 +118,6 @@ extension NSItemContentView {
             invalidateIntrinsicContentSize()
         }
 
-        var previousStringValue: String = ""
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 if properties.stringValidation?(stringValue) ?? true {

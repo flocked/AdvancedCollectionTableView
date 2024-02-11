@@ -18,6 +18,17 @@ extension NSListContentView {
                 }
             }
         }
+        
+        var previousStringValue: String = ""
+        var isEditing: Bool = false
+        
+        var tableView: NSTableView? {
+            firstSuperview(for: NSTableView.self)
+        }
+        
+        var listContentView: NSListContentView? {
+            firstSuperview(for: NSListContentView.self)
+        }
 
         func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
             var needsRowHeightUpdate = false
@@ -64,10 +75,10 @@ extension NSListContentView {
             alignment = properties.alignment
             isSelectable = properties.isSelectable
             isEditable = properties.isEditable
-
-            drawsBackground = false
-            backgroundColor = nil
-            isBordered = false
+            formatter = properties.numberFormatter
+            adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
+            minimumScaleFactor = properties.minimumScaleFactor
+            allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
         }
 
         init(properties: TextProperties) {
@@ -75,6 +86,7 @@ extension NSListContentView {
             super.init(frame: .zero)
             drawsBackground = false
             backgroundColor = nil
+            isBordered = false
             delegate = self
             textLayout = .wraps
             truncatesLastVisibleLine = true
@@ -88,10 +100,6 @@ extension NSListContentView {
                 previousStringValue = stringValue
             }
             return canBecome
-        }
-
-        var listContentView: NSListContentView? {
-            firstSuperview(for: NSListContentView.self)
         }
 
         override func layout() {
@@ -123,16 +131,6 @@ extension NSListContentView {
             return intrinsicContentSize
         }
 
-        var lastContentSize = NSSize() { didSet {
-            lastContentSize = NSSize(width: ceil(lastContentSize.width), height: ceil(lastContentSize.height))
-        }}
-
-        func stringValueSize() -> CGSize {
-            let stringSize = attributedStringValue.size()
-            return CGSize(width: stringSize.width, height: super.intrinsicContentSize.height)
-        }
-
-        var isEditing: Bool = false
         override func textDidBeginEditing(_ notification: Notification) {
             super.textDidBeginEditing(notification)
             isEditing = true
@@ -151,11 +149,6 @@ extension NSListContentView {
             invalidateIntrinsicContentSize()
         }
 
-        var tableView: NSTableView? {
-            firstSuperview(for: NSTableView.self)
-        }
-
-        var previousStringValue: String = ""
         func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 if properties.stringValidation?(stringValue) ?? true {

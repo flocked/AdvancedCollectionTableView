@@ -58,6 +58,10 @@
 - ``rightClickHandler``
 - ``rowActionProvider``
 
+### Displaying empty collection view
+
+- ``emptyCollectionView``
+
 ### Previewing items
 
 - ``isQuicklookPreviewable``
