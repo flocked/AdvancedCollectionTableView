@@ -62,7 +62,7 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
             // Swift.debugPrint("pasteboardWriterForItemAt")
             if let item = dataSource.element(for: indexPath) {
-                if let writing = dataSource.droppingHandlers.pasteboardValue?(item).nsPasteboardReadWriting {
+                if let writing = dataSource.droppingHandlers.pasteboardValue?(item).nsPasteboardContent {
                     return writing
                 }
 
@@ -233,8 +233,8 @@ extension NSPasteboardItem {
     }
 }
 
-extension PasteboardReadWriting {
-    var nsPasteboardReadWriting: NSPasteboardWriting? {
+extension PasteboardContent {
+    var nsPasteboardContent: NSPasteboardWriting? {
         (self as? NSPasteboardWriting) ?? (self as? NSURL)
     }
 }

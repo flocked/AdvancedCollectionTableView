@@ -80,7 +80,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - else an empty array.
      */
     open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
-        didSet { observeRightMouseDown() }
+        didSet { setupMenuProvider() }
     }
     
     /**
@@ -92,7 +92,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - else an empty array.
      */
     open var rightClickHandler: ((_ elements: [Element]) -> ())? {
-        didSet { observeRightMouseDown() }
+        didSet { setupRightDownHandler() }
     }
 
 
@@ -128,54 +128,51 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
         }
     }
-
-    func observeRightMouseDown() {
-        if (menuProvider != nil || rightClickHandler != nil), rightDownMonitor == nil {
-            rightDownMonitor = NSEvent.localMonitor(for: .rightMouseDown) { event in
-                self.collectionView.menu = nil
-                if let contentView = self.collectionView.window?.contentView {
-                    let location = event.location(in: contentView)
-                    if let view = contentView.hitTest(location), view.isDescendant(of: self.collectionView) {
-                        let location = event.location(in: self.collectionView)
-                        if self.collectionView.bounds.contains(location) {
-                            self.setupMenu(for: location)
-                            self.setupRightClick(for: location)
-                        }
-                    }
-                }
-                return event
+    
+    func setupMenuProvider() {
+        if menuProvider != nil  {
+            collectionView.menuProvider = { [weak self] location in
+                guard let self = self else { return nil }
+                return self.menuProvider?(self.elements(for: location))
             }
-        } else if menuProvider == nil && rightClickHandler == nil {
-            rightDownMonitor = nil
+        } else {
+            collectionView.menuProvider = nil
+        }
+    }
+
+    func setupRightDownHandler() {
+        if rightClickHandler != nil {
+            collectionView.mouseHandlers.rightDown = { [weak self] event in
+                guard let self = self, let handler = self.rightClickHandler else { return }
+                let location = event.location(in: self.collectionView)
+                handler(self.elements(for: location))
+            }
+        } else {
+            collectionView.mouseHandlers.rightDown = nil
         }
     }
     
     func setupRightClick(for location: CGPoint) {
         guard let rightClick = rightClickHandler else { return }
+        rightClick(elements(for: location))
+    }
+    
+    func elements(for location: CGPoint) -> [Element] {
         if let item = element(at: location) {
             var items: [Element] = [item]
             let selectedItems = selectedElements
             if selectedItems.contains(item) {
                 items = selectedItems
             }
-            rightClick(items)
-        } else {
-            rightClick([])
+            return items
         }
+        return []
     }
 
     func setupMenu(for location: CGPoint) {
         guard let menuProvider = menuProvider else { return }
-        if let item = element(at: location) {
-            var items: [Element] = [item]
-            let selectedItems = selectedElements
-            if selectedItems.contains(item) {
-                items = selectedItems
-            }
-            collectionView.menu = menuProvider(items)
-        } else {
-            collectionView.menu = menuProvider([])
-        }
+        let items = elements(for: location)
+        collectionView.menu = menuProvider(items)
     }
 
     func observeHoveredItem() {
@@ -969,7 +966,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             public var pasteboardItems: ((_ items: [NSPasteboardItem]) -> [Element])?
             
             /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
-            public var canDrag: (([PasteboardReadWriting]) -> Bool)?
+            public var canDrag: (([PasteboardContent]) -> Bool)?
             /// The handler that gets called when the handler will drag elements inside the collection view.
             public var willDrag: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
             /// The handler that gets called when the handler did drag elements inside the collection view.
@@ -986,7 +983,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var outside = OutsideHandlers()
 
         /// The handler that determines the pasteboard value of an element when dragged outside the collection view.
-        public var pasteboardValue: ((_ element: Element) -> PasteboardReadWriting)?
+        public var pasteboardValue: ((_ element: Element) -> PasteboardContent)?
         
         /// The handler that determines the image when dragging elements.
         public var draggingImage: ((_ elements: [Element], _ event: NSEvent, _ screenLocation: CGPoint) -> NSImage?)?
