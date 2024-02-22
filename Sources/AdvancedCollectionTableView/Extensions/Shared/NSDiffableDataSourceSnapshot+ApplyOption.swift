@@ -11,8 +11,8 @@ import AppKit
  Options for applying a snapshot to a diffable data source.
 
  Apple's `apply(_:animatingDifferences:completion:)` provides two options for applying snapshots to a diffable data source depending on `animatingDifferences`:
- - `true` applies a diff of the old and new state and animates updates in the UI.
- - `false`  is equivalent to calling `reloadData()`. It reloads every item.
+ - `true` applies a diff of the old and new state and applies the updates to the receiver animated.
+ - `false`  is equivalent to calling `reloadData()`. It reloads every item/cell of the receiver.
 
  **Non-animated diff**
 
@@ -34,14 +34,14 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     /**
      The snapshot gets applied animated.
 
-     The data source computes a diff of the previous and new state and applies the new state animated with a default animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
+     The data source computes a diff of the previous and new state and applies the updates to the receiver animated with a default animation duration.
      */
     public static var animated: Self { .animated(duration: noAnimationDuration) }
 
     /**
      The snapshot gets applied animiated with the specified animation duration.
 
-     The data source computes a diff of the previous and new state and applies the new state animated with the specified animation duration. Any ongoing item animations are interrupted and the content is reloaded immediately.
+     The data source computes a diff of the previous and new state and applies the updates to the receiver animated with the specified animation duration.
      */
     case animated(duration: TimeInterval)
 
@@ -54,7 +54,7 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
     /**
      The snapshot gets applied without any animation.
 
-     The data source computes a diff of the previous and new state and applies the new state non animated. Any ongoing item animations are interrupted and the content is reloaded immediately.
+     The data source computes a diff of the previous and new state and applies the updates to the receiver without any animation.
      */
     case withoutAnimation
 
