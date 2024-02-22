@@ -303,10 +303,14 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         - completion: An optional completion handler which gets called after applying the snapshot.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        var previousIsEmpty: Bool?
+        if emptyHandler != nil {
+            previousIsEmpty = currentSnapshot.isEmpty
+        }
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
-        updateEmptyCollectionView()
+        updateEmptyView(snapshot, previousIsEmpty: previousIsEmpty)
     }
 
     // MARK: - Init
@@ -668,20 +672,68 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     // MARK: - Empty Collection View
     
     /// The view that is displayed when the datasource doesn't contain any elements.
-    open var emptyCollectionView: NSView? = nil {
+    open var emptyView: NSView? = nil {
         didSet {
-            guard oldValue != emptyCollectionView else { return }
-            updateEmptyCollectionView()
+            guard oldValue != emptyView else { return }
+            oldValue?.removeFromSuperview()
+            if emptyView != nil {
+                emptyContentConfiguration = nil
+                updateEmptyView(snapshot())
+            }
         }
     }
     
-    func updateEmptyCollectionView() {
-        if !currentSnapshot.itemIdentifiers.isEmpty && !currentSnapshot.sectionIdentifiers.isEmpty {
-            emptyCollectionView?.removeFromSuperview()
-        } else if let emptyCollectionView = self.emptyCollectionView {
-            collectionView.addSubview(withConstraint: emptyCollectionView)
+    /**
+     The content configuration that content view is displayed when the datasource doesn't contain any items.
+     
+     When using this property, ``emptyView`` is set to `nil`.
+     */
+    open var emptyContentConfiguration: NSContentConfiguration? = nil {
+        didSet {
+            if let configuration = emptyContentConfiguration {
+                emptyView = nil
+                if let emptyContentView = self.emptyContentView {
+                    emptyContentView.contentConfiguration = configuration
+                } else {
+                    emptyContentView = .init(configuration: configuration)
+                }
+                updateEmptyView(snapshot())
+            } else {
+                emptyContentView?.removeFromSuperview()
+                emptyContentView = nil
+            }
         }
     }
+    
+    /**
+     The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
+
+     You can use this handler e.g. if you want to update your empty view or content configuration.
+     */
+    open var emptyHandler: ((_ isEmpty: Bool)->())? {
+        didSet {
+            self.emptyHandler?(snapshot().isEmpty)
+        }
+    }
+    
+    var emptyContentView: ContentConfigurationView?
+    
+     func updateEmptyView(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, previousIsEmpty: Bool? = nil) {
+         if !snapshot.isEmpty {
+             emptyView?.removeFromSuperview()
+             emptyContentView?.removeFromSuperview()
+         } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
+             collectionView?.addSubview(withConstraint: emptyView)
+         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
+             collectionView?.addSubview(withConstraint: emptyContentView)
+         }
+         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
+             let isEmpty = snapshot.isEmpty
+             if previousIsEmpty != isEmpty {
+                 emptyHandler(isEmpty)
+             }
+         }
+     }
 
     // MARK: - Handlers
 

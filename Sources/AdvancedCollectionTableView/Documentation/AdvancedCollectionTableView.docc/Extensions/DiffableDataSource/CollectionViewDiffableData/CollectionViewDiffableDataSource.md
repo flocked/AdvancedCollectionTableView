@@ -48,9 +48,11 @@
 - ``rightClickHandler``
 - ``pinchHandler``
 
-### Displaying empty collection view
+### Displaying empty view
 
-- ``emptyCollectionView``
+- ``emptyView``
+- ``emptyContentConfiguration``
+- ``emptyHandler``
 
 ### Previewing elements
 

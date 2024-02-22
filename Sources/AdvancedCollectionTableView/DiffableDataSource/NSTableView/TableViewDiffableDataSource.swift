@@ -295,11 +295,15 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      - completion: An optional completion handler which gets called after applying the snapshot.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        var previousIsEmpty: Bool?
+        if emptyHandler != nil {
+            previousIsEmpty = currentSnapshot.isEmpty
+        }
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         updateSectionRowIndexes()
         dataSource.apply(internalSnapshot, option, completion: completion)
-        updateEmptyCollectionView()
+        updateEmptyView(snapshot, previousIsEmpty: previousIsEmpty)
     }
     
     func updateSectionRowIndexes() {
@@ -652,20 +656,68 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: - Empty Collection View
     
     /// The view that is displayed when the datasource doesn't contain any items.
-    open var emptyCollectionView: NSView? = nil {
+    open var emptyView: NSView? = nil {
         didSet {
-            guard oldValue != emptyCollectionView else { return }
-            updateEmptyCollectionView()
+            guard oldValue != emptyView else { return }
+            oldValue?.removeFromSuperview()
+            if emptyView != nil {
+                emptyContentConfiguration = nil
+                updateEmptyView(snapshot())
+            }
+        }
+    }
+
+    /**
+     The content configuration that content view is displayed when the datasource doesn't contain any items.
+     
+     When using this property, ``emptyView`` is set to `nil`.
+     */
+    open var emptyContentConfiguration: NSContentConfiguration? = nil {
+        didSet {
+            if let configuration = emptyContentConfiguration {
+                emptyView = nil
+                if let emptyContentView = self.emptyContentView {
+                    emptyContentView.contentConfiguration = configuration
+                } else {
+                    emptyContentView = .init(configuration: configuration)
+                }
+                updateEmptyView(snapshot())
+            } else {
+                emptyContentView?.removeFromSuperview()
+                emptyContentView = nil
+            }
         }
     }
     
-    func updateEmptyCollectionView() {
-        if !currentSnapshot.itemIdentifiers.isEmpty && !currentSnapshot.sectionIdentifiers.isEmpty {
-            emptyCollectionView?.removeFromSuperview()
-        } else if let emptyCollectionView = self.emptyCollectionView {
-            tableView.addSubview(withConstraint: emptyCollectionView)
+    /**
+     The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
+     
+     You can use this handler e.g. if you want to update your empty view or content configuration.
+     */
+    open var emptyHandler: ((_ isEmpty: Bool)->())? {
+        didSet {
+            self.emptyHandler?(snapshot().isEmpty)
         }
     }
+    
+    var emptyContentView: ContentConfigurationView?
+    
+     func updateEmptyView(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, previousIsEmpty: Bool? = nil) {
+         if !snapshot.isEmpty {
+             emptyView?.removeFromSuperview()
+             emptyContentView?.removeFromSuperview()
+         } else if let emptyView = self.emptyView, emptyView.superview != tableView {
+             tableView.addSubview(withConstraint: emptyView)
+         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != tableView {
+             tableView.addSubview(withConstraint: emptyContentView)
+         }
+         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
+             let isEmpty = snapshot.isEmpty
+             if previousIsEmpty != isEmpty {
+                 emptyHandler(isEmpty)
+             }
+         }
+     }
 
     // MARK: - Handlers
 

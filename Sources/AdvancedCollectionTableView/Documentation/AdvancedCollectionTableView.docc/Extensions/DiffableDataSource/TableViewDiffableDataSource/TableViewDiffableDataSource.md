@@ -58,9 +58,11 @@
 - ``rightClickHandler``
 - ``rowActionProvider``
 
-### Displaying empty collection view
+### Displaying empty view
 
-- ``emptyCollectionView``
+- ``emptyView``
+- ``emptyContentConfiguration``
+- ``emptyHandler``
 
 ### Previewing items
 
