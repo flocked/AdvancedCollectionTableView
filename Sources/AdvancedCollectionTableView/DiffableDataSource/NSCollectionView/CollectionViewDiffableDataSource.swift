@@ -671,7 +671,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     // MARK: - Empty Collection View
     
-    /// The view that is displayed when the datasource doesn't contain any elements.
+    /**
+     The view that is displayed when the datasource doesn't contain any elements.
+     
+     When using this property, ``emptyContentConfiguration`` is set to `nil`.
+     */
     open var emptyView: NSView? = nil {
         didSet {
             guard oldValue != emptyView else { return }
@@ -684,7 +688,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
     
     /**
-     The content configuration that content view is displayed when the datasource doesn't contain any items.
+     The content configuration that content view is displayed when the datasource doesn't contain any elements.
      
      When using this property, ``emptyView`` is set to `nil`.
      */

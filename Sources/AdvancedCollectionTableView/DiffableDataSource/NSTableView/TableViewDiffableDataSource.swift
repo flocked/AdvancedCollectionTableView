@@ -655,7 +655,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     // MARK: - Empty Collection View
     
-    /// The view that is displayed when the datasource doesn't contain any items.
+    /**
+     The view that is displayed when the datasource doesn't contain any items.
+     
+     When using this property, ``emptyContentConfiguration`` is set to `nil`.
+     */
     open var emptyView: NSView? = nil {
         didSet {
             guard oldValue != emptyView else { return }
