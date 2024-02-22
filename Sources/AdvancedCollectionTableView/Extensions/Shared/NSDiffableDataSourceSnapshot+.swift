@@ -8,7 +8,7 @@
 import AppKit
 
 extension NSDiffableDataSourceSnapshot {
-    /// A Boolean value indicating whether the snapshot doesn.
+    /// A Boolean value indicating whether the snapshot is empty.
     var isEmpty: Bool {
         if numberOfItems > 0 {
             return numberOfSections == 0
