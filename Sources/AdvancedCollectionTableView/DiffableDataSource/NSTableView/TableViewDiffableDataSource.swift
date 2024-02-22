@@ -695,12 +695,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
-     
+          
      You can use this handler e.g. if you want to update your empty view or content configuration.
+     
+     - Parameter isEmpty: A Boolean value indicating whether the current snapshot is empty.
      */
     open var emptyHandler: ((_ isEmpty: Bool)->())? {
         didSet {
-            self.emptyHandler?(snapshot().isEmpty)
+            emptyHandler?(snapshot().isEmpty)
         }
     }
     
