@@ -7,6 +7,16 @@
 
 import AppKit
 
+extension NSDiffableDataSourceSnapshot {
+    /// A Boolean value indicating whether the snapshot doesn.
+    var isEmpty: Bool {
+        if numberOfItems > 0 {
+            return numberOfSections == 0
+        }
+        return true
+    }
+}
+
 extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, SectionIdentifierType: Identifiable {
     /// A snapshot from the section and item identifiers.
     typealias IdentifiableSnapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType.ID, ItemIdentifierType.ID>
@@ -21,12 +31,5 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
             identifiableSnapshot.appendItems(items.ids, toSection: section.id)
         }
         return identifiableSnapshot
-    }
-}
-
-extension NSDiffableDataSourceSnapshot {
-    /// A Boolean value indicating whether the snapshot is empty.
-    var isEmpty: Bool {
-        numberOfItems == 0 && numberOfSections == 0
     }
 }
