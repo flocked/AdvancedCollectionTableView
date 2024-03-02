@@ -84,7 +84,7 @@ class ViewController: NSViewController {
         applySnapshot(using: galleryItems)
         
         dataSource.selectElements([galleryItems.first!], scrollPosition: .top)
-        collectionView.becomeFirstResponder()
+        collectionView.makeFirstResponder()
     }
 
     func applySnapshot(using items: [GalleryItem]) {
