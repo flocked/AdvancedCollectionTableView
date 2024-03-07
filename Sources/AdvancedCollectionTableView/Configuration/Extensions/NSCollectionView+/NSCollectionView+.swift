@@ -113,7 +113,7 @@ extension NSCollectionView {
 
  func setupCollectionViewFirstResponderObserver() {
      guard firstResponderObserver == nil else { return }
-     firstResponderObserver = self.observe(\.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
+     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { old, new in
          guard old != new else { return }
          guard (old == self && new != self) || (old != self && new == self) else { return }
    //      self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration() })

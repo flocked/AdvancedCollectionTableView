@@ -179,7 +179,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         if hoverHandlers.shouldObserve {
             collectionView.setupObservation()
             if hoveredItemObserver == nil {
-                hoveredItemObserver = collectionView.observe(\.hoveredIndexPath, handler: { old, new in
+                hoveredItemObserver = collectionView.observeChanges(for: \.hoveredIndexPath, handler: { old, new in
                     guard old != new else { return }
                     if let didEndHovering = self.hoverHandlers.didEndHovering, let old = old, let item = self.element(for: old) {
                         didEndHovering(item)
