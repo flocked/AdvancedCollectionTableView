@@ -201,7 +201,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         if hoverHandlers.shouldSetup {
             tableView.setupObservation()
             if hoveredRowObserver == nil {
-                hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
+                hoveredRowObserver = tableView.observe(\.hoveredRow, handler: { old, new in
                     guard old != new else { return }
                     if let didEndHovering = self.hoverHandlers.didEndHovering, let oldRow = old?.item {
                         if oldRow != -1, let item = self.item(forRow: oldRow) {

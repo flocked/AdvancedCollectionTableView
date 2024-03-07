@@ -115,7 +115,7 @@ extension NSTableView {
 
  func setupTableViewFirstResponderObserver() {
      guard firstResponderObserver == nil else { return }
-     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
+     firstResponderObserver = self.observe(\.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
          guard let self = self, old != new else { return }
          guard (old == self && new != self) || (old != self && new == self) else { return }
          self.updateVisibleRowConfigurations()
