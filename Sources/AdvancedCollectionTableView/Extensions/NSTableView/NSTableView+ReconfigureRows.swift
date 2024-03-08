@@ -22,8 +22,10 @@ extension NSTableView {
     public func reconfigureRows(at indexes: IndexSet) {
         Self.swizzleCellRegistration()
         guard let delegate = delegate else { return }
+        let indexes = indexes.filter({$0 < numberOfRows})
         isReconfiguratingRows = true
         let columns = tableColumns
+        
         for row in indexes {
             for (index, column) in columns.enumerated() {
                 if view(atColumn: index, row: row, makeIfNecessary: false) != nil {
