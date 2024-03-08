@@ -5,6 +5,7 @@
 //  Created by Florian Zand on 23.07.23.
 //
 
+/*
 import AppKit
 import FZSwiftUtils
 import FZUIKit
@@ -124,3 +125,4 @@ extension NSCollectionViewItem {
         }
     }
 }
+*/
