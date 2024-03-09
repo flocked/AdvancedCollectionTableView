@@ -52,7 +52,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     var rightDownMonitor: NSEvent.Monitor?
     var keyDownMonitor: NSEvent.Monitor?
-    var hoveredItemObserver: NSKeyValueObservation?
+    var hoveredItemObserver: KeyValueObservation?
     var pinchItem: Element?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.

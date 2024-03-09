@@ -106,7 +106,7 @@ extension NSCollectionView {
          }
  }
 
- var firstResponderObserver: NSKeyValueObservation? {
+ var firstResponderObserver: KeyValueObservation? {
      get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
      set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
  }

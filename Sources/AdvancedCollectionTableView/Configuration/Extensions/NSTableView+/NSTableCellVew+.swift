@@ -217,7 +217,7 @@ extension NSTableCellView {
         rowView?.isPreviousRowSelected ?? false
     }
 
-    var tableCellObserver: NSKeyValueObservation? {
+    var tableCellObserver: KeyValueObservation? {
         get { getAssociatedValue(key: "tableCellObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "tableCellObserver", object: self) }
     }

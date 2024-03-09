@@ -48,7 +48,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var sectionRowIndexes: [Int] = []
     var keyDownMonitor: NSEvent.Monitor?
     var rightDownMonitor: NSEvent.Monitor?
-    var hoveredRowObserver: NSKeyValueObservation?
+    var hoveredRowObserver: KeyValueObservation?
     var delegateBridge: DelegateBridge!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
