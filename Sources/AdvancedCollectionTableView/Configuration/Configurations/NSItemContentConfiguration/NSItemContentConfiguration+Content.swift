@@ -168,6 +168,15 @@ public extension NSItemContentConfiguration.ContentProperties {
             var shouldResize: Bool {
                 self == .fit
             }
+            
+            var imageScaling: ImageView.ImageScaling {
+                switch self {
+                case .fit: return .scaleToFit
+                case .fill: return .scaleToFill
+                case .resize: return .resize
+                case .none: return .none
+                }
+            }
         }
 
         /// The symbol configuration for the image.

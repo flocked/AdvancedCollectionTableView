@@ -44,7 +44,7 @@ import QuickLookUI
  - Note: Don’t change the `dataSource` or `delegate` on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
 open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
-    weak var collectionView: NSCollectionView!
+    unowned let collectionView: NSCollectionView
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
     var delegateBridge: DelegateBridge!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
@@ -729,9 +729,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-             collectionView?.addSubview(withConstraint: emptyView)
+             collectionView.addSubview(withConstraint: emptyView)
          } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-             collectionView?.addSubview(withConstraint: emptyContentView)
+             collectionView.addSubview(withConstraint: emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
              let isEmpty = snapshot.isEmpty
