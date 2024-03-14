@@ -155,6 +155,15 @@ public extension NSItemContentConfiguration.ContentProperties {
                 case .none: return .center
                 }
             }
+            
+            var scaling: ImageView.ImageScaling {
+                switch self {
+                case .fit: return .scaleToFit
+                case .fill: return .scaleToFill
+                case .resize: return .resize
+                case .none: return .none
+                }
+            }
 
             var swiftui: ContentMode {
                 switch self {
