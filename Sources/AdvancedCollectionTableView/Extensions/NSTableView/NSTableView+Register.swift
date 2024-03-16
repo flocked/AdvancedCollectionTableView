@@ -87,8 +87,8 @@ extension NSTableView {
     }
 
     static var didSwizzleCellRegistration: Bool {
-        get { getAssociatedValue(key: "didSwizzleCellRegistration", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: self) }
+        get { getAssociatedValue(key: "didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
     }
 
     @objc static func swizzleCellRegistration() {
