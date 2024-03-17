@@ -428,7 +428,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
-        var items = dragingRowIndexes.compactMap({item(forRow: $0)})
+        var items = rowIndexes.compactMap({item(forRow: $0)})
         items = reorderingHandlers.canReorder?(items) ?? []
         dragingRowIndexes = .init(items.compactMap({row(for: $0)}))
     }
