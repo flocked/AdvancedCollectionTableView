@@ -17,26 +17,9 @@ extension NSTableView {
         }
     }
 
-    var tableViewObserver: KeyValueObserver<NSTableView>? {
-        get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
-    }
-
-    static var didSwizzleIsEnabled: Bool {
-        get { getAssociatedValue(key: "didSwizzleIsEnabled", object: NSTableView.self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: NSTableView.self) }
-    }
-    
-    @objc var swizzled_isEnabled: Bool {
-        get { isEnabled }
-        set {
-            Swift.print("swizzled_isEnabled", newValue, isEnabled)
-            let valueChanged = newValue != isEnabled
-            self.swizzled_isEnabled = newValue
-            if valueChanged, windowHandlers.isKey != nil {
-                updateVisibleRowConfigurations()
-            }
-        }
+    var isEnabledObservation: KeyValueObservation? {
+        get { getAssociatedValue(key: "isEnabledObservation", object: self, initialValue: nil) }
+        set { set(associatedValue: newValue, key: "isEnabledObservation", object: self) }
     }
     
     func setupObservation(shouldObserve: Bool = true) {
@@ -67,21 +50,17 @@ extension NSTableView {
                         }
                     }
                 }
-            }
-            if NSTableView.didSwizzleIsEnabled == false {
-                NSTableView.didSwizzleIsEnabled = true
-                do {
-                    try Swizzle(NSTableView.self) {
-                        #selector(setter: NSTableView.isEnabled) <-> #selector(setter: NSTableView.swizzled_isEnabled)
-                    }
-                } catch {
-                    Swift.debugPrint(error)
+                
+                isEnabledObservation = observeChanges(for: \.isEnabled) { [weak self] old, new in
+                    guard let self = self, old != new else { return }
+                    self.updateVisibleRowConfigurations()
                 }
             }
         } else {
             windowHandlers.isKey = nil
             mouseHandlers.exited = nil
             mouseHandlers.moved = nil
+            isEnabledObservation = nil
         }
     }
 
@@ -109,19 +88,3 @@ extension NSTableView {
         }
     }
 }
-
-/*
- var firstResponderObserver: KeyValueObservation? {
-     get { getAssociatedValue(key: "NSTableView_firstResponderObserver", object: self, initialValue: nil) }
-     set { set(associatedValue: newValue, key: "NSTableView_firstResponderObserver", object: self) }
- }
-
- func setupTableViewFirstResponderObserver() {
-     guard firstResponderObserver == nil else { return }
-     firstResponderObserver = self.observeChanges(for: \.superview?.window?.firstResponder, sendInitalValue: true, handler: { [weak self] old, new in
-         guard let self = self, old != new else { return }
-         guard (old == self && new != self) || (old != self && new == self) else { return }
-         self.updateVisibleRowConfigurations()
-     })
- }
- */
