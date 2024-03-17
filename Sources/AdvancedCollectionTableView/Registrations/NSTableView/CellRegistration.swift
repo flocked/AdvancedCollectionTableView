@@ -120,11 +120,12 @@ public extension NSTableView {
                 return nil
             }
             let item = item as! Item
-
+/*
             if tableView.isReconfiguratingRows, let columnIndex = tableView.tableColumns.firstIndex(of: tableColumn), let existingCell = tableView.view(atColumn: columnIndex, row: row, makeIfNecessary: false) as? Cell {
                 handler(existingCell, tableColumn, row, item)
                 return existingCell
             }
+            */
             if let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell {
                 handler(cell, tableColumn, row, item)
                 return cell
