@@ -22,14 +22,15 @@ extension NSTableView {
         set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
     }
 
-    var didSwizzleIsEnabled: Bool {
-        get { getAssociatedValue(key: "didSwizzleIsEnabled", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: self) }
+    static var didSwizzleIsEnabled: Bool {
+        get { getAssociatedValue(key: "didSwizzleIsEnabled", object: NSTableView.self, initialValue: false) }
+        set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: NSTableView.self) }
     }
     
     @objc var swizzled_isEnabled: Bool {
         get { isEnabled }
         set {
+            Swift.print("swizzled_isEnabled", newValue, isEnabled)
             let valueChanged = newValue != isEnabled
             self.swizzled_isEnabled = newValue
             if valueChanged, windowHandlers.isKey != nil {
@@ -39,7 +40,6 @@ extension NSTableView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
-        Swift.print("setupObservation", NSTableView.isMethodReplaced(#selector(setter: NSTableView.isEnabled)))
         if shouldObserve {
             if windowHandlers.isKey == nil {
                 windowHandlers.isKey = { [weak self] windowIsKey in
@@ -68,26 +68,12 @@ extension NSTableView {
                     }
                 }
             }
-            if !NSTableView.isMethodReplaced(#selector(setter: NSTableView.isEnabled)) {
+            if NSTableView.didSwizzleIsEnabled == false {
+                NSTableView.didSwizzleIsEnabled = true
                 do {
                     try Swizzle(NSTableView.self) {
                         #selector(setter: NSTableView.isEnabled) <-> #selector(setter: NSTableView.swizzled_isEnabled)
                     }
-                                        
-                    try NSTableView.replaceMethod(
-                        #selector(setter: NSTableView.isEnabled),
-                        methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
-                        hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
-                           object, isEnabled in
-                            Swift.print("isEnabled", isEnabled)
-                            let tableView = object as? NSTableView
-                            let oldIsEnabled = tableView?.isEnabled ?? false
-                           store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
-                            if let tableView = tableView, oldIsEnabled != isEnabled, tableView.windowHandlers.isKey != nil {
-                                tableView.updateVisibleRowConfigurations()
-                            }
-                        }
-                   }
                 } catch {
                     Swift.debugPrint(error)
                 }
