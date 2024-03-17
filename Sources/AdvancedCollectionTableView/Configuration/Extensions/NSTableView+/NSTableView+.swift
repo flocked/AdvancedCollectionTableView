@@ -23,7 +23,10 @@ extension NSTableView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
+        Swift.print("setupObservation", shouldObserve, windowHandlers.isKey == nil, isEnabledObservation == nil)
+
         if shouldObserve {
+            
             if windowHandlers.isKey == nil {
                 windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
@@ -52,6 +55,7 @@ extension NSTableView {
                 }
                 
                 isEnabledObservation = observeChanges(for: \.isEnabled) { [weak self] old, new in
+                    Swift.print("isEnabled changed", new)
                     guard let self = self, old != new else { return }
                     self.updateVisibleRowConfigurations()
                 }
