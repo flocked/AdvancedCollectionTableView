@@ -15,7 +15,7 @@
       "location" : "https://github.com/flocked/FZSwiftUtils.git",
       "state" : {
         "branch" : "main",
-        "revision" : "ad7cb6e3d8501adf84fa43c0b2b8425fd6f5824b"
+        "revision" : "03b80b546e8d66b6f83236ddb2406b0ac07c9f8b"
       }
     },
     {
@@ -24,7 +24,7 @@
       "location" : "https://github.com/flocked/FZUIKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "b052e6ee7aef792f9858a95ca68b6fab07b5f71b"
+        "revision" : "53c0d949a8cc7603b3a64915d51e3bba08a96302"
       }
     }
   ],
