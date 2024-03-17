@@ -453,7 +453,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /// The selected items.
     open var selectedItems: [Item] {
-        tableView.selectedRowIndexes.compactMap { item(forRow: $0) }
+        get { tableView.selectedRowIndexes.compactMap { item(forRow: $0) } }
+        set {
+            guard newValue != selectedItems else { return }
+            selectItems(newValue)
+        }
     }
     
     /**
@@ -546,18 +550,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         return nil
     }
-    
-    func isSelected(at row: Int) -> Bool {
-        tableView.selectedRowIndexes.contains(row)
-    }
-    
-    func isSelected(for item: Item) -> Bool {
-        if let row = row(for: item) {
-            return isSelected(at: row)
-        }
-        return false
-    }
-    
+        
     @discardableResult
     func removeItems(_ items: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
         deletingTransaction(items)

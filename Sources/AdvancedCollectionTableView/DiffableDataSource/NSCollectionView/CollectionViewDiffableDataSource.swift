@@ -484,7 +484,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     /// The selected elements.
     open var selectedElements: [Element] {
-        collectionView.selectionIndexPaths.compactMap { element(for: $0) }
+        get { collectionView.selectionIndexPaths.compactMap { element(for: $0) } }
+        set {
+            guard newValue != selectedElements else { return }
+            selectElements(newValue, scrollPosition: [])
+        }
     }
 
     /**
@@ -609,17 +613,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     func elements(for sections: [Section]) -> [Element] {
         let currentSnapshot = currentSnapshot
         return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
-    }
-
-    func isSelected(at indexPath: IndexPath) -> Bool {
-        collectionView.selectionIndexPaths.contains(indexPath)
-    }
-
-    func isSelected(for element: Element) -> Bool {
-        if let indexPath = indexPath(for: element) {
-            return isSelected(at: indexPath)
-        }
-        return false
     }
 
     func removeItems(_ elements: [Element]) {
