@@ -23,10 +23,9 @@ extension NSCollectionView {
         Self.swizzleMakeItem()
         isReconfiguratingItems = true
         let visibleIndexPaths = indexPathsForVisibleItems()
+        let indexPaths = indexPaths.filter({visibleIndexPaths.contains($0)})
         for indexPath in indexPaths {
-            if visibleIndexPaths.contains(indexPath) {
-                dataSource?.collectionView(self, itemForRepresentedObjectAt: indexPath)
-            }
+            dataSource?.collectionView(self, itemForRepresentedObjectAt: indexPath)
         }
         isReconfiguratingItems = false
     }

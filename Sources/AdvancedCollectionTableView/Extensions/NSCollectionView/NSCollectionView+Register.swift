@@ -73,11 +73,7 @@ extension NSCollectionView {
     }
 
     func makeReconfigurableItem<Item: NSCollectionViewItem>(_: Item.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier, for indexPath: IndexPath) -> Item {
-        if isReconfiguratingItems, let item = self.item(at: indexPath) as? Item {
-            return item
-        }
-        let item = makeItem(withIdentifier: identifier, for: indexPath)
-        return item as! Item
+        makeItem(withIdentifier: identifier, for: indexPath) as! Item
     }
 }
 

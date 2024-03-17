@@ -98,12 +98,7 @@ public extension NSCollectionView {
             if isRegistered(collectionView) == false {
                 register(collectionView)
             }
-            let item: Item
-            if collectionView.isReconfiguratingItems, let existingItem = collectionView.item(at: indexPath) as? Item {
-                item = existingItem
-            } else {
-                item = collectionView.makeItem(withIdentifier: identifier, for: indexPath) as! Item
-            }
+            let item = collectionView.makeItem(withIdentifier: identifier, for: indexPath) as! Item
             handler(item, indexPath, element)
             return item
         }
