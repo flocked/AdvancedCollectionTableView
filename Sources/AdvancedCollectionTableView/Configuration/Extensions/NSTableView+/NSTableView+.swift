@@ -39,6 +39,7 @@ extension NSTableView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
+        Swift.print("setupObservation", NSTableView.isMethodReplaced(#selector(setter: NSTableView.isEnabled)))
         if shouldObserve {
             if windowHandlers.isKey == nil {
                 windowHandlers.isKey = { [weak self] windowIsKey in
