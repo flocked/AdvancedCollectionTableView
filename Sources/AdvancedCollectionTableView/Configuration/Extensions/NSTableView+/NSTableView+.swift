@@ -78,6 +78,7 @@ extension NSTableView {
                         methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
                         hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
                            object, isEnabled in
+                            Swift.print("isEnabled", isEnabled)
                             let tableView = object as? NSTableView
                             let oldIsEnabled = tableView?.isEnabled ?? false
                            store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
