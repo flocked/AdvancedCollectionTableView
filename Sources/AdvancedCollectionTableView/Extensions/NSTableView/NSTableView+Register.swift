@@ -47,17 +47,15 @@ extension NSTableView {
     }
 
     func makeView<TableCellView: NSTableCellView>(for _: TableCellView.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> TableCellView? {
-        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) as? TableCellView {
+        /*
+        if let cell = reconfiguratingTableCell as? TableCellView {
             return cell
         }
+         */
         return makeView(withIdentifier: identifier, owner: nil) as? TableCellView
     }
-
-    /**
-     The dictionary of all registered cells for view-based table view identifiers.
-
-     Each key in the dictionary is the identifier string (given by `NSUserInterfaceItemIdentifier`) used to register the cell view in the ``register(_:forIdentifier:)`` method. The value of each key is the corresponding `NSTableCellView` class.
-     */
+    
+    /// The dictionary of all registered cells for view-based table view identifiers.
     var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier: NSTableCellView.Type] {
         get { getAssociatedValue(key: "registeredCellsByIdentifier", object: self, initialValue: [:]) }
         set { set(associatedValue: newValue, key: "registeredCellsByIdentifier", object: self) }
@@ -71,8 +69,10 @@ extension NSTableView {
     }
 
     @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
-        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
-            return cell
+        
+        if let reconfiguratingTableCell = reconfiguratingTableCell {
+            Swift.print("reconfiguratingTableCell")
+            return reconfiguratingTableCell
         }
         if let registeredCellClass = registeredCellsByIdentifier[identifier] {
             if let tableCellView = swizzled_makeView(withIdentifier: identifier, owner: owner) {
@@ -84,6 +84,13 @@ extension NSTableView {
             }
         }
         return swizzled_makeView(withIdentifier: identifier, owner: owner)
+    }
+    
+    var reconfiguratingTableCell: NSView? {
+        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
+            return cell
+        }
+        return nil
     }
 
     static var didSwizzleCellRegistration: Bool {
