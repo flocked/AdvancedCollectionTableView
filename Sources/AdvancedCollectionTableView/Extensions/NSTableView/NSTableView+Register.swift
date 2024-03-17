@@ -52,8 +52,8 @@ extension NSTableView {
     
     /// The dictionary of all registered cells for view-based table view identifiers.
     var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier: NSTableCellView.Type] {
-        get { getAssociatedValue(key: "registeredCellsByIdentifier", object: self, initialValue: [:]) }
-        set { set(associatedValue: newValue, key: "registeredCellsByIdentifier", object: self) }
+        get { getAssociatedValue("registeredCellsByIdentifier", initialValue: [:]) }
+        set { setAssociatedValue(newValue, key: "registeredCellsByIdentifier") }
     }
 
     @objc func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
@@ -80,8 +80,8 @@ extension NSTableView {
     }
     
     static var didSwizzleCellRegistration: Bool {
-        get { getAssociatedValue(key: "didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
+        get { FZSwiftUtils.getAssociatedValue(key: "didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
+        set { FZSwiftUtils.set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
     }
 
     @objc static func swizzleCellRegistration() {

@@ -40,9 +40,9 @@ extension NSTableViewDiffableDataSource {
      ```
      */
     public var deletingHandlers: DeletingHandlers {
-        get { getAssociatedValue(key: "deletingHandlers", object: self, initialValue: .init()) }
+        get { getAssociatedValue("deletingHandlers", initialValue: .init()) }
         set { 
-            set(associatedValue: newValue, key: "deletingHandlers", object: self)
+            setAssociatedValue(newValue, key: "deletingHandlers")
             setupKeyDownMonitor()
         }
     }
@@ -89,9 +89,9 @@ extension NSTableViewDiffableDataSource {
     }
 
     var keyDownMonitor: NSEvent.Monitor? {
-        get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
+        get { getAssociatedValue("keyDownMonitor", initialValue: nil) }
         set {
-            set(associatedValue: newValue, key: "keyDownMonitor", object: self)
+            setAssociatedValue(newValue, key: "keyDownMonitor")
         }
     }
 

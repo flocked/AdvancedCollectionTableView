@@ -224,8 +224,8 @@ extension CollectionViewDiffableDataSource {
 
 extension NSPasteboardItem {
     var itemID: (any Hashable)? {
-        get { getAssociatedValue(key: "itemID", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "itemID", object: self)
+        get { getAssociatedValue("itemID", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "itemID")
             if let newValue = newValue, let data = String(newValue.hashValue).data(using: .utf8) {
                 self.setData(data, forType: .itemID)
             }

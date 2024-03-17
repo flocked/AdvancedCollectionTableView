@@ -18,8 +18,8 @@ extension NSTableView {
     }
 
     var isEnabledObservation: KeyValueObservation? {
-        get { getAssociatedValue(key: "isEnabledObservation", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "isEnabledObservation", object: self) }
+        get { getAssociatedValue("isEnabledObservation", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "isEnabledObservation") }
     }
     
     func setupObservation(shouldObserve: Bool = true) {
@@ -68,11 +68,11 @@ extension NSTableView {
     }
 
     @objc dynamic var hoveredRow: IndexPath? {
-        get { getAssociatedValue(key: "hoveredRow", object: self, initialValue: nil) }
+        get { getAssociatedValue("hoveredRow", initialValue: nil) }
         set {
             guard newValue != hoveredRow else { return }
             let previousHoveredRowView = hoveredRowView
-            set(associatedValue: newValue, key: "hoveredRow", object: self)
+            setAssociatedValue(newValue, key: "hoveredRow")
             if let rowView = previousHoveredRowView {
                 rowView.setNeedsAutomaticUpdateConfiguration()
                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()

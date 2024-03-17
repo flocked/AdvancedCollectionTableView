@@ -29,9 +29,9 @@ extension NSTableViewDiffableDataSource {
      ```
      */
     var reorderingHandlers: ReorderingHandlers {
-        get { getAssociatedValue(key: "reorderingHandlers", object: self, initialValue: .init()) }
+        get { getAssociatedValue("reorderingHandlers", initialValue: .init()) }
         set {
-            set(associatedValue: newValue, key: "reorderingHandlers", object: self)
+            setAssociatedValue(newValue, key: "reorderingHandlers")
             setupReording()
         }
     }

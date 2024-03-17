@@ -39,14 +39,14 @@ extension NSTableView {
     }
 
     var reconfigureIndexPath: IndexPath? {
-        get { getAssociatedValue(key: "reconfigureIndexPath", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "reconfigureIndexPath", object: self)
+        get { getAssociatedValue("reconfigureIndexPath", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "reconfigureIndexPath")
         }
     }
 
     var isReconfiguratingRows: Bool {
-        get { getAssociatedValue(key: "isReconfiguratingRows", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "isReconfiguratingRows", object: self)
+        get { getAssociatedValue("isReconfiguratingRows", initialValue: false) }
+        set { setAssociatedValue(newValue, key: "isReconfiguratingRows")
         }
     }
 }

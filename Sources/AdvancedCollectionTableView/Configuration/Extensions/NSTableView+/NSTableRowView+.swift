@@ -27,9 +27,9 @@ extension NSTableRowView {
      ```
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue(key: "contentConfiguration", object: self) }
+        get { getAssociatedValue("contentConfiguration") }
         set {
-            set(associatedValue: newValue, key: "contentConfiguration", object: self)
+            setAssociatedValue(newValue, key: "contentConfiguration")
             observeTableRowView()
             configurateContentView()
         }
@@ -43,16 +43,16 @@ extension NSTableRowView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
+        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
+        set { setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
         }
     }
 
     var contentView: (NSView & NSContentView)? {
-        get { getAssociatedValue(key: "contentView", object: self) }
+        get { getAssociatedValue("contentView") }
         set {
             contentView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "contentView", object: self)
+            setAssociatedValue(newValue, key: "contentView")
         }
     }
 
@@ -104,9 +104,9 @@ extension NSTableRowView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
+        get { getAssociatedValue("configurationUpdateHandler") }
         set {
-            set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
+            setAssociatedValue(newValue, key: "configurationUpdateHandler")
             observeTableRowView()
             setNeedsUpdateConfiguration()
         }
@@ -187,13 +187,13 @@ extension NSTableRowView {
     }
 
     var rowObserver: KeyValueObserver<NSTableRowView>? {
-        get { getAssociatedValue(key: "rowObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "rowObserver", object: self) }
+        get { getAssociatedValue("rowObserver", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "rowObserver") }
     }
 
     var needsAutomaticRowHeights: Bool {
-        get { getAssociatedValue(key: "needsAutomaticRowHeights", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "needsAutomaticRowHeights", object: self) }
+        get { getAssociatedValue("needsAutomaticRowHeights", initialValue: false) }
+        set { setAssociatedValue(newValue, key: "needsAutomaticRowHeights") }
     }
 
     func observeTableRowView() {

@@ -40,8 +40,8 @@ extension NSCollectionViewDiffableDataSource {
      ```
      */
     public var deletingHandlers: DeletingHandlers {
-        get { getAssociatedValue(key: "deletingHandlers", object: self, initialValue: .init()) }
-        set { set(associatedValue: newValue, key: "deletingHandlers", object: self)
+        get { getAssociatedValue("deletingHandlers", initialValue: .init()) }
+        set { setAssociatedValue(newValue, key: "deletingHandlers")
             setupKeyDownMonitor()
         }
     }
@@ -88,8 +88,8 @@ extension NSCollectionViewDiffableDataSource {
     }
     
     var keyDownMonitor: NSEvent.Monitor? {
-        get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "keyDownMonitor", object: self) }
+        get { getAssociatedValue("keyDownMonitor", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "keyDownMonitor") }
     }
 
     func setupKeyDownMonitor() {

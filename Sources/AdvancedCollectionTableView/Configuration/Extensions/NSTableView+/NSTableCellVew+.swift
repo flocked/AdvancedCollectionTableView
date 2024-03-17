@@ -22,9 +22,9 @@ extension NSTableCellView {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue(key: "contentConfiguration", object: self) }
+        get { getAssociatedValue("contentConfiguration") }
         set {
-            set(associatedValue: newValue, key: "contentConfiguration", object: self)
+            setAssociatedValue(newValue, key: "contentConfiguration")
             observeTableCellView()
             configurateContentView()
         }
@@ -62,16 +62,16 @@ extension NSTableCellView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
+        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
         set {
-            set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
+            setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
             setNeedsUpdateConfiguration()
         }
     }
 
     var contentView: (NSView & NSContentView)? {
-        get { getAssociatedValue(key: "_contentView", object: self) }
-        set { set(associatedValue: newValue, key: "_contentView", object: self)
+        get { getAssociatedValue("_contentView") }
+        set { setAssociatedValue(newValue, key: "_contentView")
         }
     }
 
@@ -177,9 +177,9 @@ extension NSTableCellView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
+        get { getAssociatedValue("configurationUpdateHandler") }
         set {
-            set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
+            setAssociatedValue(newValue, key: "configurationUpdateHandler")
             observeTableCellView()
             setNeedsUpdateConfiguration()
         }
@@ -218,8 +218,8 @@ extension NSTableCellView {
     }
 
     var tableCellObserver: KeyValueObservation? {
-        get { getAssociatedValue(key: "tableCellObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "tableCellObserver", object: self) }
+        get { getAssociatedValue("tableCellObserver", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "tableCellObserver") }
     }
 
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.

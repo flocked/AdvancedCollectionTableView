@@ -34,9 +34,9 @@ extension NSCollectionViewItem {
      ```
      */
     public var backgroundConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue(key: "backgroundConfiguration", object: self) }
+        get { getAssociatedValue("backgroundConfiguration") }
         set {
-            set(associatedValue: newValue, key: "backgroundConfiguration", object: self)
+            setAssociatedValue(newValue, key: "backgroundConfiguration")
             observeCollectionItem()
             configurateBackgroundView()
         }
@@ -74,16 +74,16 @@ extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue(key: "automaticallyUpdatesBackgroundConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "automaticallyUpdatesBackgroundConfiguration", object: self)
+        get { getAssociatedValue("automaticallyUpdatesBackgroundConfiguration", initialValue: true) }
+        set { setAssociatedValue(newValue, key: "automaticallyUpdatesBackgroundConfiguration")
         }
     }
 
     var backgroundView: (NSView & NSContentView)? {
-        get { getAssociatedValue(key: "backgroundView", object: self, initialValue: nil) }
+        get { getAssociatedValue("backgroundView", initialValue: nil) }
         set {
             backgroundView?.removeFromSuperview()
-            set(associatedValue: newValue, key: "backgroundView", object: self)
+            setAssociatedValue(newValue, key: "backgroundView")
         }
     }
 
@@ -117,9 +117,9 @@ extension NSCollectionViewItem {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue(key: "contentConfiguration", object: self) }
+        get { getAssociatedValue("contentConfiguration") }
         set {
-            set(associatedValue: newValue, key: "contentConfiguration", object: self)
+            setAssociatedValue(newValue, key: "contentConfiguration")
             observeCollectionItem()
             configurateContentView()
         }
@@ -133,8 +133,8 @@ extension NSCollectionViewItem {
      If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue(key: "automaticallyUpdatesContentConfiguration", object: self, initialValue: true) }
-        set { set(associatedValue: newValue, key: "automaticallyUpdatesContentConfiguration", object: self)
+        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
+        set { setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
         }
     }
 
@@ -248,10 +248,10 @@ extension NSCollectionViewItem {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue(key: "configurationUpdateHandler", object: self) }
+        get { getAssociatedValue("configurationUpdateHandler") }
         set {
             observeCollectionItem()
-            set(associatedValue: newValue, key: "configurationUpdateHandler", object: self)
+            setAssociatedValue(newValue, key: "configurationUpdateHandler")
             setNeedsUpdateConfiguration()
         }
     }
@@ -296,8 +296,8 @@ extension NSCollectionViewItem {
     }
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
-        get { getAssociatedValue(key: "itemObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "itemObserver", object: self) }
+        get { getAssociatedValue("itemObserver", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "itemObserver") }
     }
 
     func observeCollectionItem() {

@@ -28,9 +28,9 @@ extension NSCollectionView {
 
     /// The mode that the collection view uses for invalidating the size of self-sizing items.
     var selfSizingInvalidation: SelfSizingInvalidation {
-        get { getAssociatedValue(key: "selfSizingInvalidation", object: self, initialValue: SelfSizingInvalidation.disabled) }
+        get { getAssociatedValue("selfSizingInvalidation", initialValue: SelfSizingInvalidation.disabled) }
         set {
-            set(associatedValue: newValue, key: "selfSizingInvalidation", object: self)
+            setAssociatedValue(newValue, key: "selfSizingInvalidation")
             if newValue != .disabled {
                 NSCollectionViewItem.swizzleCollectionViewItemIfNeeded()
             }
@@ -40,8 +40,8 @@ extension NSCollectionView {
 
 extension NSCollectionViewItem {
     static var didSwizzleCollectionViewItem: Bool {
-        get { getAssociatedValue(key: "didSwizzleCollectionViewItemLayoutAttributes", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleCollectionViewItemLayoutAttributes", object: self) }
+        get { getAssociatedValue("didSwizzleCollectionViewItemLayoutAttributes", initialValue: false) }
+        set { setAssociatedValue(newValue, key: "didSwizzleCollectionViewItemLayoutAttributes") }
     }
 
     static func swizzleCollectionViewItemIfNeeded() {
@@ -91,8 +91,8 @@ extension NSCollectionViewItem {
     }
 
     var cachedLayoutAttributes: NSCollectionViewLayoutAttributes? {
-        get { getAssociatedValue(key: "cachedLayoutAttributes", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "cachedLayoutAttributes", object: self) }
+        get { getAssociatedValue("cachedLayoutAttributes", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "cachedLayoutAttributes") }
     }
 
     var layoutInvalidationContext: NSCollectionViewLayoutInvalidationContext? {

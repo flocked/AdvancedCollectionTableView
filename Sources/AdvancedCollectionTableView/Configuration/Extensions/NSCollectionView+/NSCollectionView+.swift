@@ -11,19 +11,19 @@ import FZUIKit
 
 extension NSCollectionView {
     @objc dynamic var hoveredLocation: CGPoint {
-        get { getAssociatedValue(key: "hoveredLocation", object: self, initialValue: .zero) }
+        get { getAssociatedValue("hoveredLocation", initialValue: .zero) }
         set {
             guard newValue != hoveredLocation else { return }
-            set(associatedValue: newValue, key: "hoveredLocation", object: self)
+            setAssociatedValue(newValue, key: "hoveredLocation")
         }
     }
     
     @objc dynamic var hoveredIndexPath: IndexPath? {
-        get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
+        get { getAssociatedValue("hoveredIndexPath", initialValue: nil) }
         set {
             guard newValue != hoveredIndexPath else { return }
             let previousIndexPath = hoveredIndexPath
-            set(associatedValue: newValue, key: "hoveredIndexPath", object: self)
+            setAssociatedValue(newValue, key: "hoveredIndexPath")
             if let indexPath = previousIndexPath, let item = item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
@@ -73,8 +73,8 @@ extension NSCollectionView {
 
 /*
  var keyDownMonitor: NSEvent.Monitor? {
-     get { getAssociatedValue(key: "keyDownMonitor", object: self, initialValue: nil) }
-     set { set(associatedValue: newValue, key: "keyDownMonitor", object: self) }
+     get { getAssociatedValue("keyDownMonitor", initialValue: nil) }
+     set { setAssociatedValue(newValue, key: "keyDownMonitor") }
  }
 
  /**
@@ -83,10 +83,10 @@ extension NSCollectionView {
   The value of this property is `true` if the receiver responds to mouse events; otherwise, `false`.
   */
  public var isEnabled: Bool {
-     get { getAssociatedValue(key: "isEnabled", object: self, initialValue: false) }
+     get { getAssociatedValue("isEnabled", initialValue: false) }
      set {
          guard newValue != isEnabled else { return }
-         set(associatedValue: newValue, key: "isEnabled", object: self)
+         setAssociatedValue(newValue, key: "isEnabled")
          if isEnabled {
              if keyDownMonitor == nil {
                  keyDownMonitor = NSEvent.localMonitor(for: [.leftMouseDown]) { event in
@@ -107,8 +107,8 @@ extension NSCollectionView {
  }
 
  var firstResponderObserver: KeyValueObservation? {
-     get { getAssociatedValue(key: "NSCollectionView_firstResponderObserver", object: self, initialValue: nil) }
-     set { set(associatedValue: newValue, key: "NSCollectionView_firstResponderObserver", object: self) }
+     get { getAssociatedValue("NSCollectionView_firstResponderObserver", initialValue: nil) }
+     set { setAssociatedValue(newValue, key: "NSCollectionView_firstResponderObserver") }
  }
 
  func setupCollectionViewFirstResponderObserver() {
