@@ -46,8 +46,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
-    var keyDownMonitor: NSEvent.Monitor?
-    var rightDownMonitor: NSEvent.Monitor?
     var hoveredRowObserver: KeyValueObservation?
     var delegateBridge: DelegateBridge!
     
@@ -222,49 +220,40 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
-                guard let self = self, self.tableView.isFirstResponder else { return event }
-                if event.keyCode == 51 {
-                    let itemsToDelete = canDelete(self.selectedItems)
-                    if itemsToDelete.isEmpty == false {
-                        var section: Section? = nil
-                        var selectionItem: Item? = nil
-                        if let item = itemsToDelete.first {
-                            if let row = row(for: item), self.section(forRow: row - 1) == nil, let item = self.item(forRow: row - 1), !itemsToDelete.contains(item) {
-                                selectionItem = item
-                            } else {
-                                section = self.section(for: item)
-                            }
-                        }
-                        let transaction = self.deletingTransaction(itemsToDelete)
-                        self.deletingHandlers.willDelete?(itemsToDelete, transaction)
-                        if QuicklookPanel.shared.isVisible {
-                            QuicklookPanel.shared.close()
-                        }
-                        self.apply(transaction.finalSnapshot, .animated)
-                        deletingHandlers.didDelete?(itemsToDelete, transaction)
-                        
-                        if tableView.allowsEmptySelection == false, tableView.selectedRowIndexes.isEmpty {
-                            var selectionRow: Int? = nil
-                            if let item = selectionItem, let row = row(for: item) {
-                                selectionRow = row
-                            } else if let section = section, let item = items(for: section).first, let row = row(for: item) {
-                                selectionRow = row
-                            } else if let item = currentSnapshot.itemIdentifiers.first,  let row = row(for: item) {
-                                selectionRow = row
-                            }
-                            if let row = selectionRow {
-                                tableView.selectRowIndexes([row], byExtendingSelection: false)
-                            }
-                        }
-                        
-                        return nil
+            tableView.keyHandlers.keyDown = { [weak self] event in
+                guard let self = self, event.keyCode == 51 else { return }
+                let itemsToDelete = canDelete(self.selectedItems)
+                guard !itemsToDelete.isEmpty else { return }
+                var section: Section? = nil
+                var selectionItem: Item? = nil
+                if let item = itemsToDelete.first {
+                    if let row = self.row(for: item), self.section(forRow: row - 1) == nil, let item = self.item(forRow: row - 1), !itemsToDelete.contains(item) {
+                        selectionItem = item
+                    } else {
+                        section = self.section(for: item)
                     }
                 }
-                return event
+                let transaction = self.deletingTransaction(itemsToDelete)
+                self.deletingHandlers.willDelete?(itemsToDelete, transaction)
+                QuicklookPanel.shared.close()
+                self.apply(transaction.finalSnapshot, .animated)
+                deletingHandlers.didDelete?(itemsToDelete, transaction)
+                if self.tableView.allowsEmptySelection == false, self.tableView.selectedRowIndexes.isEmpty {
+                    var selectionRow: Int? = nil
+                    if let item = selectionItem, let row = self.row(for: item) {
+                        selectionRow = row
+                    } else if let section = section, let item = self.items(for: section).first, let row = self.row(for: item) {
+                        selectionRow = row
+                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let row = self.row(for: item) {
+                        selectionRow = row
+                    }
+                    if let row = selectionRow {
+                        self.tableView.selectRowIndexes([row], byExtendingSelection: false)
+                    }
+                }
             }
         } else {
-            keyDownMonitor = nil
+            tableView.keyHandlers.keyDown = nil
         }
     }
     

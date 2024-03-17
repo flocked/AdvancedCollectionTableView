@@ -231,7 +231,40 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
+            /*
+            collectionView.keyHandlers.keyDown = { [weak self] event in
+                guard let self = self, event.keyCode == 51 else { return }
+                let elementsToDelete = canDelete(self.selectedElements)
+                guard let element = elementsToDelete.first  else { return }
+                var section: Section? = nil
+                var selectionElement: Element? = nil
+                if let indexPath = self.indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
+                    selectionElement = element
+                } else {
+                    section = self.section(for: element)
+                }
+                let transaction = self.deletionTransaction(elementsToDelete)
+                self.deletingHandlers.willDelete?(elementsToDelete, transaction)
+                QuicklookPanel.shared.close()
+                self.apply(transaction.finalSnapshot, .animated)
+                self.deletingHandlers.didDelete?(elementsToDelete, transaction)
+                if self.collectionView.allowsEmptySelection == false, self.collectionView.selectionIndexPaths.isEmpty {
+                    var selectionIndexPath: IndexPath?
+                    if let element = selectionElement, let indexPath = self.indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let section = section, let element = self.elements(for: section).first, let indexPath = self.indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let indexPath = self.indexPath(for: item) {
+                        selectionIndexPath = indexPath
+                    }
+                    if let indexPath = selectionIndexPath {
+                        self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
+                    }
+                }
+            }
+            */
+            
+            keyDownMonitor = NSEvent.monitor(.keyDown) { [weak self] event in
                 guard let self = self, self.collectionView.isFirstResponder else { return event }
                 if event.keyCode == 51 {
                     let elementsToDelete = canDelete(self.selectedElements)
@@ -270,7 +303,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                     }
                 }
                 return event
-            })
+            }
         } else {
             keyDownMonitor = nil
         }
