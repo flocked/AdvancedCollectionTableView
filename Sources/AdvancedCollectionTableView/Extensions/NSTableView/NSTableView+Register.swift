@@ -47,6 +47,8 @@ extension NSTableView {
     }
 
     func makeView<TableCellView: NSTableCellView>(for _: TableCellView.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> TableCellView? {
+        Swift.print("makeView TableCellView.Type")
+
         /*
         if let cell = reconfiguratingTableCell as? TableCellView {
             return cell
@@ -69,7 +71,7 @@ extension NSTableView {
     }
 
     @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
-        
+        Swift.print("swizzled_makeView")
         if let reconfiguratingTableCell = reconfiguratingTableCell {
             Swift.print("reconfiguratingTableCell")
             return reconfiguratingTableCell
