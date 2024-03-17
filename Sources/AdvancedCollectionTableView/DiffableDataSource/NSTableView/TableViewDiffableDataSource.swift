@@ -40,15 +40,12 @@ import FZUIKit
 
  - Note: Don’t change the `dataSource` or `delegate` on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
-open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
+open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource, DiffableDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
     let tableView: NSTableView
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
-    var keyDownMonitor: NSEvent.Monitor?
-    var rightDownMonitor: NSEvent.Monitor?
-    var hoveredRowObserver: KeyValueObservation?
     var delegateBridge: DelegateBridge!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
@@ -197,74 +194,53 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return []
     }
     
-    func setupHoverObserving() {
-        if hoverHandlers.shouldSetup {
-            tableView.setupObservation()
-            if hoveredRowObserver == nil {
-                hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
-                    guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering, let oldRow = old?.item {
-                        if oldRow != -1, let item = self.item(forRow: oldRow) {
-                            didEndHovering(item)
-                        }
-                    }
-                    if let isHovering = self.hoverHandlers.isHovering, let newRow = new?.item {
-                        if newRow != -1, let item = self.item(forRow: newRow) {
-                            isHovering(item)
-                        }
-                    }
-                })
-            }
-        } else {
-            hoveredRowObserver = nil
+    func hoveredIndexPathChanged(old: IndexPath?, new: IndexPath?) {
+        if let didEndHovering = self.hoverHandlers.didEndHovering, let old = old?.item, old != -1, let item = self.item(forRow: old) {
+            didEndHovering(item)
+        }
+        if let isHovering = self.hoverHandlers.isHovering, let newRow = new?.item, newRow != -1, let item = self.item(forRow: newRow) {
+            isHovering(item)
         }
     }
-    
+        
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
-                guard let self = self, self.tableView.isFirstResponder else { return event }
-                if event.keyCode == 51 {
-                    let itemsToDelete = canDelete(self.selectedItems)
-                    if itemsToDelete.isEmpty == false {
-                        var section: Section? = nil
-                        var selectionItem: Item? = nil
-                        if let item = itemsToDelete.first {
-                            if let row = row(for: item), self.section(forRow: row - 1) == nil, let item = self.item(forRow: row - 1), !itemsToDelete.contains(item) {
-                                selectionItem = item
-                            } else {
-                                section = self.section(for: item)
-                            }
-                        }
-                        let transaction = self.deletingTransaction(itemsToDelete)
-                        self.deletingHandlers.willDelete?(itemsToDelete, transaction)
-                        if QuicklookPanel.shared.isVisible {
-                            QuicklookPanel.shared.close()
-                        }
-                        self.apply(transaction.finalSnapshot, .animated)
-                        deletingHandlers.didDelete?(itemsToDelete, transaction)
-                        
-                        if tableView.allowsEmptySelection == false, tableView.selectedRowIndexes.isEmpty {
-                            var selectionRow: Int? = nil
-                            if let item = selectionItem, let row = row(for: item) {
-                                selectionRow = row
-                            } else if let section = section, let item = items(for: section).first, let row = row(for: item) {
-                                selectionRow = row
-                            } else if let item = currentSnapshot.itemIdentifiers.first,  let row = row(for: item) {
-                                selectionRow = row
-                            }
-                            if let row = selectionRow {
-                                tableView.selectRowIndexes([row], byExtendingSelection: false)
-                            }
-                        }
-                        
-                        return nil
+            tableView.keyHandlers.keyDown = { [weak self] event in
+                guard let self = self, event.keyCode == 51 else { return }
+                let itemsToDelete = canDelete(self.selectedItems)
+                guard !itemsToDelete.isEmpty else { return }
+                var section: Section? = nil
+                var selectionItem: Item? = nil
+                if let item = itemsToDelete.first {
+                    if let row = self.row(for: item), self.section(forRow: row - 1) == nil, let item = self.item(forRow: row - 1), !itemsToDelete.contains(item) {
+                        selectionItem = item
+                    } else {
+                        section = self.section(for: item)
                     }
                 }
-                return event
+                let transaction = self.deletingTransaction(itemsToDelete)
+                self.deletingHandlers.willDelete?(itemsToDelete, transaction)
+                if QuicklookPanel.shared.isVisible {
+                    QuicklookPanel.shared.close()
+                }
+                self.apply(transaction.finalSnapshot, .animated)
+                deletingHandlers.didDelete?(itemsToDelete, transaction)
+                if self.tableView.allowsEmptySelection == false, self.tableView.selectedRowIndexes.isEmpty {
+                    var selectionRow: Int? = nil
+                    if let item = selectionItem, let row = self.row(for: item) {
+                        selectionRow = row
+                    } else if let section = section, let item = self.items(for: section).first, let row = self.row(for: item) {
+                        selectionRow = row
+                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let row = self.row(for: item) {
+                        selectionRow = row
+                    }
+                    if let row = selectionRow {
+                        self.tableView.selectRowIndexes([row], byExtendingSelection: false)
+                    }
+                }
             }
         } else {
-            keyDownMonitor = nil
+            tableView.keyHandlers.keyDown = nil
         }
     }
     
@@ -784,7 +760,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      // Option 1: Update the backing store from a CollectionDifference
      dataSource.reorderingHandlers.didDelete = { [weak self] items, transaction in
-         guard let self = self else { return }
+         guard
+     let self = self else { return }
          
          if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
              self.backingStore = updatedBackingStore
@@ -803,7 +780,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     /// The handlers for hovering items with the mouse.
     open var hoverHandlers = HoverHandlers() {
-        didSet { setupHoverObserving() }
+        didSet {
+            if hoverHandlers.shouldSetup {
+                tableView.setupObservation()
+            }
+        }
     }
 
     /// The handlers for table columns.

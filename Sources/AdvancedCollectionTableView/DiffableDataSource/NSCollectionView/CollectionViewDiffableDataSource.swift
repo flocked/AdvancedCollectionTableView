@@ -43,16 +43,13 @@ import QuickLookUI
 
  - Note: Don’t change the `dataSource` or `delegate` on the collection view after you configure it with a diffable data source. If the collection view needs a new data source after you configure it initially, create and configure a new collection view and diffable data source.
  */
-open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
+open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource, DiffableDataSource {
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
     var delegateBridge: DelegateBridge!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
     var previousDisplayingItems = [Element.ID]()
     var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
-    var rightDownMonitor: NSEvent.Monitor?
-    var keyDownMonitor: NSEvent.Monitor?
-    var hoveredItemObserver: KeyValueObservation?
     var pinchItem: Element?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
@@ -174,23 +171,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         let items = elements(for: location)
         collectionView.menu = menuProvider(items)
     }
-
-    func observeHoveredItem() {
-        if hoverHandlers.shouldObserve {
-            collectionView.setupObservation()
-            if hoveredItemObserver == nil {
-                hoveredItemObserver = collectionView.observeChanges(for: \.hoveredIndexPath, handler: { old, new in
-                    guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering, let old = old, let item = self.element(for: old) {
-                        didEndHovering(item)
-                    }
-                    if let isHovering = self.hoverHandlers.isHovering, let new = new, let item = self.element(for: new) {
-                        isHovering(item)
-                    }
-                })
-            }
-        } else {
-            hoveredItemObserver = nil
+    
+    func hoveredIndexPathChanged(old: IndexPath?, new: IndexPath?) {
+        if let didEndHovering = self.hoverHandlers.didEndHovering, let old = old, let item = self.element(for: old) {
+            didEndHovering(item)
+        }
+        if let isHovering = self.hoverHandlers.isHovering, let new = new, let item = self.element(for: new) {
+            isHovering(item)
         }
     }
 
@@ -231,48 +218,38 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown, handler: { [weak self] event in
-                guard let self = self, self.collectionView.isFirstResponder else { return event }
-                if event.keyCode == 51 {
-                    let elementsToDelete = canDelete(self.selectedElements)
-                    var section: Section? = nil
-                    var selectionElement: Element? = nil
-                    if let element = elementsToDelete.first {
-                        if let indexPath = indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
-                            selectionElement = element
-                        } else {
-                            section = self.section(for: element)
-                        }
+            collectionView.keyHandlers.keyDown = { [weak self] event in
+                guard let self = self, event.keyCode == 51 else { return }
+                let elementsToDelete = canDelete(self.selectedElements)
+                guard let element = elementsToDelete.first  else { return }
+                var section: Section? = nil
+                var selectionElement: Element? = nil
+                if let indexPath = self.indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
+                    selectionElement = element
+                } else {
+                    section = self.section(for: element)
+                }
+                let transaction = self.deletionTransaction(elementsToDelete)
+                self.deletingHandlers.willDelete?(elementsToDelete, transaction)
+                QuicklookPanel.shared.close()
+                self.apply(transaction.finalSnapshot, .animated)
+                self.deletingHandlers.didDelete?(elementsToDelete, transaction)
+                if self.collectionView.allowsEmptySelection == false, self.collectionView.selectionIndexPaths.isEmpty {
+                    var selectionIndexPath: IndexPath?
+                    if let element = selectionElement, let indexPath = self.indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let section = section, let element = self.elements(for: section).first, let indexPath = self.indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let indexPath = self.indexPath(for: item) {
+                        selectionIndexPath = indexPath
                     }
-                    if elementsToDelete.isEmpty == false {
-                        let transaction = self.deletionTransaction(elementsToDelete)
-                        self.deletingHandlers.willDelete?(elementsToDelete, transaction)
-                        if QuicklookPanel.shared.isVisible {
-                            QuicklookPanel.shared.close()
-                        }
-                        self.apply(transaction.finalSnapshot, .animated)
-                        deletingHandlers.didDelete?(elementsToDelete, transaction)
-                        
-                        if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
-                            var selectionIndexPath: IndexPath?
-                            if let element = selectionElement, let indexPath = indexPath(for: element) {
-                                selectionIndexPath = indexPath
-                            } else if let section = section, let element = elements(for: section).first, let indexPath = indexPath(for: element) {
-                                selectionIndexPath = indexPath
-                            } else if let item = currentSnapshot.itemIdentifiers.first, let indexPath = indexPath(for: item) {
-                                selectionIndexPath = indexPath
-                            }
-                            if let indexPath = selectionIndexPath {
-                                collectionView.selectItems(at: [indexPath], scrollPosition: [])
-                            }
-                        }
-                        return nil
+                    if let indexPath = selectionIndexPath {
+                        self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
                     }
                 }
-                return event
-            })
+            }
         } else {
-            keyDownMonitor = nil
+            collectionView.keyHandlers.keyDown = nil
         }
     }
 
@@ -745,7 +722,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     /// The handlers for hovering elements with the mouse.
     open var hoverHandlers = HoverHandlers() {
-        didSet { observeHoveredItem() }
+        didSet { 
+            if hoverHandlers.shouldObserve {
+                collectionView.setupObservation()
+            }
+        }
     }
 
     /// The handlers for selecting elements.
@@ -1093,4 +1074,8 @@ extension CollectionViewDiffableDataSource: NSCollectionViewQuicklookProvider {
         }
         return nil
     }
+}
+
+protocol DiffableDataSource {
+    func hoveredIndexPathChanged(old: IndexPath?, new: IndexPath?)
 }

@@ -10,11 +10,12 @@ import FZUIKit
 import AdvancedCollectionTableView
 
 class ViewController: NSViewController {
+    /*
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
-    
+    */
     @IBOutlet var collectionView: NSCollectionView!
-
+/*
     var galleryItems = GalleryItem.sampleItems
 
     lazy var dataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
@@ -93,6 +94,7 @@ class ViewController: NSViewController {
         snapshot.appendItems(items, toSection: .main)
         dataSource.apply(snapshot, .withoutAnimation)
     }
+ */
 }
 
 private extension NSView {

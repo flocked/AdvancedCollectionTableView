@@ -18,7 +18,7 @@ extension NSCollectionView {
         }
     }
     
-    @objc dynamic var hoveredIndexPath: IndexPath? {
+    var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue(key: "hoveredIndexPath", object: self, initialValue: nil) }
         set {
             guard newValue != hoveredIndexPath else { return }
@@ -27,6 +27,7 @@ extension NSCollectionView {
             if let indexPath = previousIndexPath, let item = item(at: indexPath) {
                 item.setNeedsAutomaticUpdateConfiguration()
             }
+            (dataSource as? DiffableDataSource)?.hoveredIndexPathChanged(old: previousIndexPath, new: newValue)
         }
     }
 

@@ -17,29 +17,20 @@ extension NSTableView {
         }
     }
 
-    var tableViewObserver: KeyValueObserver<NSTableView>? {
-        get { getAssociatedValue(key: "tableViewObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "tableViewObserver", object: self) }
-    }
-
-    var didSwizzleIsEnabled: Bool {
-        get { getAssociatedValue(key: "didSwizzleIsEnabled", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: self) }
-    }
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if windowHandlers.isKey == nil {
                 windowHandlers.isKey = { [weak self] windowIsKey in
                     guard let self = self else { return }
                     if windowIsKey == false {
-                        self.hoveredRow = nil
+                        self.hoveredRowIndex = nil
                     }
                     self.updateVisibleRowConfigurations()
                 }
 
                 mouseHandlers.exited = { [weak self] _ in
                     guard let self = self else { return }
-                    self.hoveredRow = nil
+                    self.hoveredRowIndex = nil
                 }
 
                 mouseHandlers.moved = { [weak self] event in
@@ -48,53 +39,52 @@ extension NSTableView {
                     if self.bounds.contains(location) {
                         let row = self.row(at: location)
                         if row != -1 {
-                            self.hoveredRow = IndexPath(item: row, section: 0)
+                            self.hoveredRowIndex = IndexPath(item: row, section: 0)
                         } else {
-                            self.hoveredRow = nil
+                            self.hoveredRowIndex = nil
                         }
                     }
                 }
             }
-            if didSwizzleIsEnabled == false {
-                didSwizzleIsEnabled = true
-                do {
-                    try replaceMethod(
-                        #selector(setter: NSTableView.isEnabled),
-                        methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
-                        hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
-                           object, isEnabled in
-                            let tableView = object as? NSTableView
-                            let oldIsEnabled = tableView?.isEnabled ?? false
-                           store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
-                            if oldIsEnabled != isEnabled {
-                                tableView?.updateVisibleRowConfigurations()
-                            }
+            do {
+                try replaceMethod(
+                    #selector(setter: NSTableView.isEnabled),
+                    methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
+                    hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
+                       object, isEnabled in
+                        let tableView = object as? NSTableView
+                        let oldIsEnabled = tableView?.isEnabled ?? false
+                       store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
+                        if oldIsEnabled != isEnabled {
+                            tableView?.updateVisibleRowConfigurations()
                         }
-                   }
-                } catch {
-                    Swift.debugPrint(error)
-                }
+                    }
+               }
+            } catch {
+                Swift.debugPrint(error)
             }
         } else {
             windowHandlers.isKey = nil
             mouseHandlers.exited = nil
             mouseHandlers.moved = nil
+            resetMethod(#selector(setter: NSTableView.isEnabled))
         }
     }
 
     var hoveredRowView: NSTableRowView? {
-        if let hoveredRow = hoveredRow, let rowView = rowView(atRow: hoveredRow.item, makeIfNecessary: false) {
+        if let index = hoveredRowIndex?.item, let rowView = rowView(atRow: index, makeIfNecessary: false) {
             return rowView
         }
         return nil
     }
 
-    @objc dynamic var hoveredRow: IndexPath? {
-        get { getAssociatedValue(key: "hoveredRow", object: self, initialValue: nil) }
+    var hoveredRowIndex: IndexPath? {
+        get { getAssociatedValue(key: "hoveredRowIndex", object: self, initialValue: nil) }
         set {
-            guard newValue != hoveredRow else { return }
+            guard newValue != hoveredRowIndex else { return }
+            let oldIndex = hoveredRowIndex
             let previousHoveredRowView = hoveredRowView
-            set(associatedValue: newValue, key: "hoveredRow", object: self)
+            set(associatedValue: newValue, key: "hoveredRowIndex", object: self)
             if let rowView = previousHoveredRowView {
                 rowView.setNeedsAutomaticUpdateConfiguration()
                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
@@ -103,6 +93,7 @@ extension NSTableView {
                 rowView.setNeedsAutomaticUpdateConfiguration()
                 rowView.setCellViewsNeedAutomaticUpdateConfiguration()
             }
+            (dataSource as? DiffableDataSource)?.hoveredIndexPathChanged(old: oldIndex, new: newValue)
         }
     }
 }

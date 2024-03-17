@@ -12,9 +12,7 @@ class SidebarViewController: NSViewController {
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
-
     @IBOutlet var tableView: NSTableView!
-
     lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
 
     let cellRegistration = CellRegistration { tableCell, _, _, sidebarItem in
