@@ -26,6 +26,18 @@ extension NSTableView {
         get { getAssociatedValue(key: "didSwizzleIsEnabled", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "didSwizzleIsEnabled", object: self) }
     }
+    
+    @objc var swizzled_isEnabled: Bool {
+        get { isEnabled }
+        set {
+            let valueChanged = newValue != isEnabled
+            self.swizzled_isEnabled = newValue
+            if valueChanged, windowHandlers.isKey != nil {
+                updateVisibleRowConfigurations()
+            }
+        }
+    }
+    
     func setupObservation(shouldObserve: Bool = true) {
         if shouldObserve {
             if windowHandlers.isKey == nil {
@@ -55,10 +67,13 @@ extension NSTableView {
                     }
                 }
             }
-            if didSwizzleIsEnabled == false {
-                didSwizzleIsEnabled = true
+            if !NSTableView.isMethodReplaced(#selector(setter: NSTableView.isEnabled)) {
                 do {
-                    try replaceMethod(
+                    try Swizzle(NSTableView.self) {
+                        #selector(setter: NSTableView.isEnabled) <-> #selector(setter: NSTableView.swizzled_isEnabled)
+                    }
+                                        
+                    try NSTableView.replaceMethod(
                         #selector(setter: NSTableView.isEnabled),
                         methodSignature: (@convention(c)  (AnyObject, Selector, Bool) -> ()).self,
                         hookSignature: (@convention(block)  (AnyObject, Bool) -> ()).self) { store in {
@@ -66,8 +81,8 @@ extension NSTableView {
                             let tableView = object as? NSTableView
                             let oldIsEnabled = tableView?.isEnabled ?? false
                            store.original(object, #selector(setter: NSTableView.isEnabled), isEnabled)
-                            if oldIsEnabled != isEnabled {
-                                tableView?.updateVisibleRowConfigurations()
+                            if let tableView = tableView, oldIsEnabled != isEnabled, tableView.windowHandlers.isKey != nil {
+                                tableView.updateVisibleRowConfigurations()
                             }
                         }
                    }
