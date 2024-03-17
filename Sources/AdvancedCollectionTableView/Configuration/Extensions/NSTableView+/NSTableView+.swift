@@ -23,41 +23,33 @@ extension NSTableView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
-        Swift.print("setupObservation", shouldObserve, windowHandlers.isKey == nil, isEnabledObservation == nil)
-
         if shouldObserve {
-            
-            if windowHandlers.isKey == nil {
-                windowHandlers.isKey = { [weak self] windowIsKey in
-                    guard let self = self else { return }
-                    if windowIsKey == false {
-                        self.hoveredRow = nil
-                    }
-                    self.updateVisibleRowConfigurations()
-                }
-
-                mouseHandlers.exited = { [weak self] _ in
-                    guard let self = self else { return }
+            guard isEnabledObservation == nil else { return }
+            isEnabledObservation = observeChanges(for: \.isEnabled) { [weak self] old, new in
+                guard let self = self, old != new else { return }
+                self.updateVisibleRowConfigurations()
+            }
+            windowHandlers.isKey = { [weak self] windowIsKey in
+                guard let self = self else { return }
+                if windowIsKey == false {
                     self.hoveredRow = nil
                 }
-
-                mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return }
-                    let location = event.location(in: self)
-                    if self.bounds.contains(location) {
-                        let row = self.row(at: location)
-                        if row != -1 {
-                            self.hoveredRow = IndexPath(item: row, section: 0)
-                        } else {
-                            self.hoveredRow = nil
-                        }
+                self.updateVisibleRowConfigurations()
+            }
+            mouseHandlers.exited = { [weak self] _ in
+                guard let self = self else { return }
+                self.hoveredRow = nil
+            }
+            mouseHandlers.moved = { [weak self] event in
+                guard let self = self else { return }
+                let location = event.location(in: self)
+                if self.bounds.contains(location) {
+                    let row = self.row(at: location)
+                    if row != -1 {
+                        self.hoveredRow = IndexPath(item: row, section: 0)
+                    } else {
+                        self.hoveredRow = nil
                     }
-                }
-                
-                isEnabledObservation = observeChanges(for: \.isEnabled) { [weak self] old, new in
-                    Swift.print("isEnabled changed", new)
-                    guard let self = self, old != new else { return }
-                    self.updateVisibleRowConfigurations()
                 }
             }
         } else {
