@@ -33,7 +33,7 @@ class SidebarViewController: NSViewController {
         configuration.text = section.rawValue
         sectionHeaderView.contentConfiguration = configuration
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

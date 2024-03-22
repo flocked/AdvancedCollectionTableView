@@ -21,11 +21,12 @@ extension NSCollectionView {
      */
     public func reconfigureItems(at indexPaths: [IndexPath]) {
         Self.swizzleMakeItem()
+        guard let dataSource = dataSource else { return }
         isReconfiguratingItems = true
         let visibleIndexPaths = indexPathsForVisibleItems()
         let indexPaths = indexPaths.filter({visibleIndexPaths.contains($0)})
         for indexPath in indexPaths {
-            dataSource?.collectionView(self, itemForRepresentedObjectAt: indexPath)
+            dataSource.collectionView(self, itemForRepresentedObjectAt: indexPath)
         }
         isReconfiguratingItems = false
     }
@@ -45,7 +46,7 @@ extension NSCollectionView {
         guard didSwizzleMakeItem == false else { return }
         do {
             try Swizzle(NSCollectionView.self) {
-                #selector(self.makeItem(withIdentifier:for:)) <-> #selector(self.swizzled_makeItem(withIdentifier:for:))
+                #selector(makeItem(withIdentifier:for:)) <-> #selector(swizzled_makeItem(withIdentifier:for:))
             }
             didSwizzleMakeItem = true
         } catch {

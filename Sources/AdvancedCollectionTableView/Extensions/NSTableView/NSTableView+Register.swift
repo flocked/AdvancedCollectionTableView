@@ -64,7 +64,7 @@ extension NSTableView {
     }
 
     @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
-        if isReconfiguratingRows, let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
+        if let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
             return cell
         }
         if let registeredCellClass = registeredCellsByIdentifier[identifier] {
@@ -80,16 +80,16 @@ extension NSTableView {
     }
     
     static var didSwizzleCellRegistration: Bool {
-        get { FZSwiftUtils.getAssociatedValue(key: "didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
-        set { FZSwiftUtils.set(associatedValue: newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
+        get { FZSwiftUtils.getAssociatedValue("didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
+        set { FZSwiftUtils.setAssociatedValue(newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
     }
 
     @objc static func swizzleCellRegistration() {
         guard didSwizzleCellRegistration == false else { return }
         do {
             try Swizzle(NSTableView.self) {
-                #selector(self.makeView(withIdentifier:owner:)) <-> #selector(self.swizzled_makeView(withIdentifier:owner:))
-                #selector((self.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(self.swizzled_register(_:forIdentifier:))
+                #selector(makeView(withIdentifier:owner:)) <-> #selector(swizzled_makeView(withIdentifier:owner:))
+                #selector((register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(swizzled_register(_:forIdentifier:))
             }
             didSwizzleCellRegistration = true
         } catch {

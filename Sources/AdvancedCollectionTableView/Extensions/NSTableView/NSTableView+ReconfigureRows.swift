@@ -23,7 +23,6 @@ extension NSTableView {
         Self.swizzleCellRegistration()
         guard let delegate = delegate else { return }
         let indexes = indexes.filter({$0 < numberOfRows})
-        isReconfiguratingRows = true
         let columns = tableColumns
         
         for row in indexes {
@@ -35,18 +34,11 @@ extension NSTableView {
             }
         }
         reconfigureIndexPath = nil
-        isReconfiguratingRows = false
     }
 
     var reconfigureIndexPath: IndexPath? {
         get { getAssociatedValue("reconfigureIndexPath", initialValue: nil) }
         set { setAssociatedValue(newValue, key: "reconfigureIndexPath")
-        }
-    }
-
-    var isReconfiguratingRows: Bool {
-        get { getAssociatedValue("isReconfiguratingRows", initialValue: false) }
-        set { setAssociatedValue(newValue, key: "isReconfiguratingRows")
         }
     }
 }
