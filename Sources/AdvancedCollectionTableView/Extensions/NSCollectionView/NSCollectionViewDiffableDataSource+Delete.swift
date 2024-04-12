@@ -94,7 +94,7 @@ extension NSCollectionViewDiffableDataSource {
 
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete, let didDelete = deletingHandlers.didDelete {
-            keyDownMonitor = NSEvent.monitor(.keyDown) { [weak self] event in
+            keyDownMonitor = NSEvent.monitorLocal(.keyDown) { [weak self] event in
                 guard let self = self else { return event }
                 guard event.keyCode == 51 else { return event }
                 if let collectionView = (NSApp.keyWindow?.firstResponder as? NSCollectionView), collectionView.dataSource === self {
