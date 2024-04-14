@@ -302,6 +302,7 @@ extension NSItemContentView {
             containerView.border.width = contentProperties.resolvedBorderWidth
 
             cornerRadius = contentProperties.cornerRadius
+            clipsToBounds = false
             containerView.cornerRadius = contentProperties.cornerRadius
             imageView.cornerRadius = contentProperties.cornerRadius
             view?.cornerRadius = contentProperties.cornerRadius
