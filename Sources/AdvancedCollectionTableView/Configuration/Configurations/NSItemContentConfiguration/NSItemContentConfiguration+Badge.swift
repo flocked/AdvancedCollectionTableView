@@ -152,6 +152,13 @@ public extension NSItemContentConfiguration {
         /// The position of the badge.
         public var position: Position = .topRight
         
+        /**
+         The tooltip of the text. If set to "", the text is automatically used.
+
+         It only gets called, if `isEditable` is true.
+         */
+        public var toolTip: String? = nil
+        
         /// Creates a badge.
         public init() {}
 

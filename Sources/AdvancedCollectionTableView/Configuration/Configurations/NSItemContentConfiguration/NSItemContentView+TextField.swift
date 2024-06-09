@@ -69,6 +69,7 @@ extension NSItemContentView {
             adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
             minimumScaleFactor = properties.minimumScaleFactor
             allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
+            toolTip = properties.toolTip == "" ? stringValue : properties.toolTip
         }
 
         init(properties: TextProperties) {

@@ -114,6 +114,9 @@ public extension NSItemContentConfiguration {
 
         /// The shadow properties.
         public var shadow: ShadowConfiguration = .black()
+        
+        /// The text for the tooltip of the content.
+        public var toolTip: String? = nil
 
         /// Resets the  border width to 0 when the item state isSelected is false.
         var needsBorderWidthReset: Bool = false

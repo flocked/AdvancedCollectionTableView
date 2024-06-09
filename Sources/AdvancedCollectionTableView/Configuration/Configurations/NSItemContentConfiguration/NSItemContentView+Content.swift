@@ -328,6 +328,7 @@ extension NSItemContentView {
 
             anchorPoint = CGPoint(0.5, 0.5)
             layer?.scale = contentProperties.scaleTransform.point
+            toolTip = contentProperties.toolTip
             invalidateIntrinsicContentSize()
         }
 

@@ -107,6 +107,13 @@ public extension NSListContentConfiguration {
 
         /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0
+        
+        /**
+         The tooltip of the text. If set to "", the text is automatically used.
+
+         It only gets called, if `isEditable` is true.
+         */
+        public var toolTip: String? = nil
 
         /// Creates a badge.
         public init() {}

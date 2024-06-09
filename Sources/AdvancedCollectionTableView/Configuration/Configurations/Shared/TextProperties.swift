@@ -57,11 +57,18 @@ public struct TextProperties {
     public var onEditEnd: ((String) -> Void)?
 
     /**
-     The Handler that determines whether the edited string is valid.
+     The handler that determines whether the edited string is valid.
 
      It only gets called, if `isEditable` is true.
      */
     public var stringValidation: ((String) -> (Bool))?
+    
+    /**
+     The tooltip of the text. If set to "", the text is automatically used.
+
+     It only gets called, if `isEditable` is true.
+     */
+    public var toolTip: String? = ""
 
     public var color: NSUIColor = .labelColor {
         didSet { updateResolvedTextColor() }

@@ -57,6 +57,7 @@ extension NSListContentView {
             contentTintColor = properties._resolvedTintColor
             cornerRadius = properties.cornerRadius
             configurate(using: properties.shadow, type: .outer)
+            toolTip = properties.toolTip
             invalidateIntrinsicContentSize()
         }
 

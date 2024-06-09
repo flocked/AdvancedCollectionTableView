@@ -61,6 +61,8 @@ extension NSListContentView {
                 widthConstraint?.activate(false)
                 widthConstraint = nil
             }
+            
+            toolTip = properties.toolTip
         }
 
         init(properties: NSListContentConfiguration.Badge) {

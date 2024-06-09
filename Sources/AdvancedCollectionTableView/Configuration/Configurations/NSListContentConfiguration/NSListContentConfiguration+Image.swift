@@ -219,6 +219,9 @@ public extension NSListContentConfiguration {
 
         /// The position of the image.
         public var position: Position = .leading(.center)
+        
+        /// The text for the tooltip of the image.
+        public var toolTip: String? = nil
 
         init() {}
 

@@ -98,12 +98,22 @@ extension NSItemContentView {
             }
         }
         
+        @ViewBuilder
+        var appliedStackItem: some View {
+            stackItem
+                .padding(badge.margins.edgeInsets)
+                .background(backgroundView)
+                .shape(badge.shape, borderColor: badge.borderColor, borderWidth: badge.borderWidth)
+                .shadow(badge.shadow)
+        }
+        
         var body: some View {
             stackItem
                 .padding(badge.margins.edgeInsets)
                 .background(backgroundView)
                 .shape(badge.shape, borderColor: badge.borderColor, borderWidth: badge.borderWidth)
                 .shadow(badge.shadow)
+                .help(badge.toolTip != nil ? "\(badge.toolTip!)" : nil)
         }
     }
 }
