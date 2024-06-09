@@ -101,8 +101,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
 
-        textField.isEnabled = appliedConfiguration.state?.isEnabled != false
-        secondaryTextField.isEnabled = appliedConfiguration.state?.isEnabled != false
+        textField.isEnabled = appliedConfiguration.state.isEnabled != false
+        secondaryTextField.isEnabled = appliedConfiguration.state.isEnabled != false
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         imageView.image = appliedConfiguration.image

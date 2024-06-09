@@ -258,7 +258,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// Creates a list content configuration.
     public init() {}
 
-    var type: TableCellType?
+    public var type: TableCellType?
     var tableViewStyle: NSTableView.Style?
 
     enum ListStyle {
@@ -270,13 +270,16 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         case fullscreen(position: ContentPosition)
     }
 
-    enum TableCellType: Int, Hashable {
+    public enum TableCellType: Int, Hashable {
         case automatic
-        case automaticRow
+        case automaticHeader
         case plain
         case sidebar
         case sidebarLarge
         case sidebarHeader
+        var isAutomatic: Bool {
+            self == .automatic || self == .automaticHeader
+        }
     }
 
     var hasText: Bool {
@@ -295,7 +298,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         badge?.isVisible == true
     }
 
-    var state: NSListConfigurationState?
+    var state: NSListConfigurationState = NSListConfigurationState(isEnabled: true)
 
     // MARK: Creating a content view
 
@@ -309,53 +312,46 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSListContentConfiguration {
         var configuration = self
-        configuration.state = state as? NSListConfigurationState
+        if let state = state as? NSListConfigurationState {
+            configuration.state = state
+        }
         return configuration
-        /*
-         guard let state = state as? NSTableCellConfigurationState else { return self }
-         var configuration = self
-         /*
-          if state.isSelected, let isSelectedTextColor = self.cellType?.isSelectedTextColor {
-          configuration.textProperties.textColorTansform = .color(isSelectedTextColor)
-          configuration.secondaryTextProperties.textColorTansform = .color(isSelectedTextColor)
-          } else {
-          configuration.textProperties.textColorTansform = nil
-          configuration.secondaryTextProperties.textColorTansform = nil
-          }
-          */
-         return configuration
-         */
+    }
+    
+    func needsUpdate(for state: NSListConfigurationState) -> Bool {
+        self.state.isEnabled != state.isEnabled
     }
 }
 
 extension NSListContentConfiguration {
     static func automatic() -> NSListContentConfiguration {
-        var configuration = sidebar(.body, color: .accentColor)
+        var configuration = sidebar(.body, color: .monochrome(.controlAccentColor))
         configuration.type = .automatic
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         return configuration
     }
 
-    static func automaticHeader() -> NSListContentConfiguration {
-        var configuration = sidebar(.body, color: .accentColor)
-        configuration.type = .automaticRow
+    public static func automaticHeader() -> NSListContentConfiguration {
+        var configuration = sidebar(.body, color: .monochrome(.controlAccentColor))
+        configuration.type = .automaticHeader
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         return configuration
     }
+    
+    mutating func applyTableViewStyle(from configuration: NSListContentConfiguration) -> NSListContentConfiguration {
+        guard type?.isAutomatic == true, configuration.type?.isAutomatic == true, let tableViewStyle = configuration.tableViewStyle else { return self }
+        type = configuration.type
+        return applyTableViewStyle(tableViewStyle)
+    }
 
-    func applyTableViewStyle(_ style: NSTableView.Style, isHeader: Bool = false) -> NSListContentConfiguration {
+    func applyTableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
+        let isHeader = type == .automaticHeader
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
-        case .automatic:
-            return configuration
-        case .fullWidth, .plain, .inset:
-            configuration.textProperties.font = .body
-            configuration.secondaryTextProperties.font = .body
-            configuration.imageToTextPadding = 6.0
-            configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
+        case .automatic: break
         case .sourceList:
             if isHeader {
                 configuration.textProperties.font = .subheadline.weight(.bold)
@@ -373,13 +369,13 @@ extension NSListContentConfiguration {
                 configuration.imageToTextPadding = 3.0
                 configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
             }
-        @unknown default:
+        default:
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
+            configuration.imageToTextPadding = 6.0
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
-            configuration.imageToTextPadding = 8.0
-            configuration.margins = .init(top: 6.0, leading: isHeader ? 2.0 : 4.0, bottom: 6.0, trailing: 4.0)
+            configuration.margins = .init(top: 2.0, leading: isHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
         }
         return configuration
     }

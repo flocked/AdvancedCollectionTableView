@@ -11,11 +11,11 @@ import AdvancedCollectionTableView
 class SidebarViewController: NSViewController {
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
-    typealias SectionHeaderRegistration = NSTableView.SectionHeaderRegistration<NSTableSectionHeaderView, Section>
+    typealias SectionHeaderRegistration = NSTableView.CellRegistration<NSTableCellView, Section>
 
     @IBOutlet var tableView: NSTableView!
-
-    lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
+    
+    lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration, sectionHeaderRegistration: sectionHeaderRegistration)
 
     let cellRegistration = CellRegistration { tableCell, _, _, sidebarItem in
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
@@ -27,24 +27,23 @@ class SidebarViewController: NSViewController {
         }
         tableCell.contentConfiguration = configuration
     }
-
-    let sectionHeaderRegistration = SectionHeaderRegistration { sectionHeaderView, _, section in
-        var configuration = sectionHeaderView.defaultContentConfiguration()
-        configuration.text = section.rawValue
-        sectionHeaderView.contentConfiguration = configuration
-    }
     
+    let sectionHeaderRegistration = SectionHeaderRegistration { sectionHeaderCell, _, _, section in
+        var configuration = sectionHeaderCell.defaultContentConfiguration()
+        configuration.text = section.title
+        sectionHeaderCell.contentConfiguration = configuration
+    }
+            
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.dataSource = dataSource
-        tableView.floatsGroupRows = false
 
         /// Enables reordering selected rows by dragging them.
-        dataSource.reorderingHandlers.canReorder = { selectedItem in return selectedItem }
+        dataSource.reorderingHandlers.canReorder = { selectedItems in return selectedItems }
         
         /// Enables deleting selected rows via backspace key.
-        dataSource.deletingHandlers.canDelete = { selectedItem in return selectedItem }
+        dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems  }
 
         /// Swipe row actions for deleting and favoriting an item.
         dataSource.rowActionProvider = { swippedItem, edge in
@@ -64,8 +63,7 @@ class SidebarViewController: NSViewController {
                 }]
             }
         }
-
-        dataSource.applySectionHeaderViewRegistration(sectionHeaderRegistration)
+        
         applySnapshot()
     }
         

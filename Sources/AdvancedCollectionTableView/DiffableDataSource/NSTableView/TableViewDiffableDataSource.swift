@@ -83,11 +83,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     /// The closure that configures and returns the table view’s section header views from the diffable data source.
-    open var sectionHeaderViewProvider: SectionHeaderViewProvider? {
+    open var sectionHeaderCellProvider: SectionHeaderCellProvider? {
         didSet {
-            if let sectionHeaderViewProvider = sectionHeaderViewProvider {
+            if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
-                    sectionHeaderViewProvider(tableView, row, self.sections[id: sectionID]!)
+                    let cellView = sectionHeaderCellProvider(tableView, row, self.sections[id: sectionID]!)
+                    return NSTableSectionHeaderView(cellView: cellView)
                 }
             } else {
                 dataSource.sectionHeaderViewProvider = nil
@@ -96,7 +97,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     /**
-     A closure that configures and returns a section header view for a table view from its diffable data source.
+     A closure that configures and returns a section header cell for a table view from its diffable data source.
      
      - Parameters
         - tableView: The table view to configure this section header view for.
@@ -106,15 +107,18 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      - Returns: A configured section header view object.
      */
-    public typealias SectionHeaderViewProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableSectionHeaderView
+    public typealias SectionHeaderCellProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableCellView
     
-    /// Applies the section header view registration to configure and return section header views.
-    open func applySectionHeaderViewRegistration<HeaderView: NSTableSectionHeaderView>(_ registration: NSTableView.SectionHeaderRegistration<HeaderView, Section>) {
-        sectionHeaderViewProvider = { tableView, row, section in
-            registration.makeView(tableView, row, section)
+    /// Uses the specified cell registration to configure and return section header views.
+    open func applySectionHeaderRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, Section>) {
+        sectionHeaderCellProvider = { tableView, row, section in
+            if let column = tableView.tableColumns.first, let cellView = registration.makeCellView(tableView, column, row, section) {
+                return cellView
+            }
+            return NSTableCellView()
         }
     }
-    
+        
     /**
      The right click menu provider.
      
@@ -297,7 +301,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func updateSectionRowIndexes() {
         sectionRowIndexes.removeAll()
-        guard sectionHeaderViewProvider != nil else { return }
+        guard sectionHeaderCellProvider != nil else { return }
         var row = 0
         for section in sections {
             sectionRowIndexes.append(row)
@@ -317,16 +321,37 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistration: A rell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A cell registration which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init<Cell: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<Cell, Item>) {
         self.init(tableView: tableView, cellProvider: {
-            _tableView, column, row, item in
-            _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
+            tableView, column, row, item in
+            return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
         })
     }
     
+    /**
+     Creates a diffable data source with the specified cell registration, and connects it to the specified table view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistration: cellRegistration)
+     ```
+     
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistration: A cell registration which returns each of the cells for the table view from the data the diffable data source provides.
+        - sectionRegistration: A cell registration which returns each of the table view’s section header views from the data the diffable data source provides.
+     */
+    public convenience init<Cell: NSTableCellView, SectionCell: NSTableCellView>(tableView: NSTableView, cellRegistration: NSTableView.CellRegistration<Cell, Item>, sectionHeaderRegistration: NSTableView.CellRegistration<SectionCell, Section>) {
+        self.init(tableView: tableView, cellProvider: {
+            tableView, column, row, item in
+            return tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, item: item)!
+        })
+        applySectionHeaderRegistration(sectionHeaderRegistration)
+        }
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
@@ -337,8 +362,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider: {
@@ -363,8 +388,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      ```
      
      - Parameters:
-     - tableView: The initialized table view object to connect to the diffable data source.
-     - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
      */
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
@@ -420,7 +445,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open func tableView(_: NSTableView, validateDrop _: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
         guard dragingRowIndexes.isEmpty == false, dropOperation == .above else { return [] }
         
-        if row >= (sectionHeaderViewProvider != nil ? 1 : 0) {
+        if row >= (sectionHeaderCellProvider != nil ? 1 : 0) {
             return .move
         }
         
@@ -444,6 +469,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return pasteboardItem
         }
         return nil
+    }
+    
+    open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
+        columnHandlers.sortDescriptorsChanged?(oldDescriptors, tableView.sortDescriptors)
     }
         
     // MARK: - Items
@@ -920,6 +949,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         
         /// The handler that gets called whenever the user did change the visibility of the given columns.
         public var userDidChangeVisibility: ((_ columns: [NSTableColumn]) -> Void)?
+        
+        /// The handler that gets called whenever the sort descriptors of the columns changed.
+        public var sortDescriptorsChanged: ((_ old: [NSSortDescriptor], _ new: [NSSortDescriptor]) -> Void)?
 
     }
 
@@ -1110,7 +1142,7 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
          _tableView, column, row, element in
          return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)!
      })
-     self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
+     self.applyNSTableSectionHeaderViewRegistration(sectionHeaderRegistration)
  }
 
  /**
@@ -1133,7 +1165,7 @@ extension TableViewDiffableDataSource: NSTableViewQuicklookProvider {
          _tableView, column, row, element in
          return _tableView.makeCellView(using: cellRegistration, forColumn: column, row: row, element: element)!
      })
-     self.applySectionHeaderViewRegistration(sectionHeaderRegistration)
+     self.applyNSTableSectionHeaderViewRegistration(sectionHeaderRegistration)
      self.applyRowViewRegistration(rowRegistration)
  }
 

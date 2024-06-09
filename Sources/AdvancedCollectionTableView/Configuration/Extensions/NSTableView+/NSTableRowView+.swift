@@ -154,8 +154,15 @@ extension NSTableRowView {
         if let contentConfiguration = contentConfiguration, let contentView = contentView {
             contentView.configuration = contentConfiguration.updated(for: state)
         }
-        cellViews.forEach { $0.setNeedsUpdateConfiguration() }
+        _cellViews.forEach { $0.setNeedsUpdateConfiguration() }
         configurationUpdateHandler?(self, state)
+    }
+    
+    var _cellViews: [NSTableCellView] {
+        if numberOfColumns > 0, let cellView = (view(atColumn: 0) as? NSTableSectionHeaderView)?.cellView {
+            return [cellView]
+        }
+        return cellViews
     }
 
     /**
@@ -183,17 +190,17 @@ extension NSTableRowView {
     }
 
     func setCellViewsNeedAutomaticUpdateConfiguration() {
-        cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
-    }
-
-    var rowObserver: KeyValueObserver<NSTableRowView>? {
-        get { getAssociatedValue("rowObserver", initialValue: nil) }
-        set { setAssociatedValue(newValue, key: "rowObserver") }
+        _cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
     }
 
     var needsAutomaticRowHeights: Bool {
         get { getAssociatedValue("needsAutomaticRowHeights", initialValue: false) }
         set { setAssociatedValue(newValue, key: "needsAutomaticRowHeights") }
+    }
+    
+    var rowObserver: KeyValueObserver<NSTableRowView>? {
+        get { getAssociatedValue("rowObserver", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "rowObserver") }
     }
 
     func observeTableRowView() {

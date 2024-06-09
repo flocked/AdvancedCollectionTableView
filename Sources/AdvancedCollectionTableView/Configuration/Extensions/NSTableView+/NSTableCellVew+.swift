@@ -24,14 +24,19 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            setAssociatedValue(newValue, key: "contentConfiguration")
+            if let configuration = contentConfiguration as? NSListContentConfiguration, var newValue = newValue as? NSListContentConfiguration {
+                newValue = newValue.applyTableViewStyle(from: configuration)
+                setAssociatedValue(newValue, key: "contentConfiguration")
+            } else {
+                setAssociatedValue(newValue, key: "contentConfiguration")
+            }
             observeTableCellView()
             configurateContentView()
         }
     }
 
     /**
-     Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view it is presented.
+     Retrieves a default content configuration for the cell’s style. The system determines default values for the configuration according to the table view it is presented and if it is used as table row cell or section header cell.
 
      The default content configuration has preconfigured default styling depending on the table view `style` it gets displayed in, but doesn’t contain any content. After you get the default configuration, you assign your content to it, customize any other properties, and assign it to the cell as the current content configuration.
 
@@ -121,7 +126,7 @@ extension NSTableCellView {
     }
 
     func updateContentConfigurationStyle() {
-        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type == .automatic, let tableViewStyle = tableView?.effectiveStyle, contentConfiguration.tableViewStyle != tableViewStyle {
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration, contentConfiguration.type?.isAutomatic == true, let tableViewStyle = tableView?.effectiveStyle,  contentConfiguration.tableViewStyle != tableViewStyle, tableViewStyle != .automatic {
             self.contentConfiguration = contentConfiguration.applyTableViewStyle(tableViewStyle)
         }
     }
@@ -143,10 +148,17 @@ extension NSTableCellView {
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = contentConfiguration, let contentView = contentView {
+        if let contentConfiguration = contentConfiguration, let contentView = contentView, checkIfContentConfigurationNeedsUpdate(for: state) {
             contentView.configuration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
+    }
+    
+    func checkIfContentConfigurationNeedsUpdate(for state: NSListConfigurationState) -> Bool {
+        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration {
+            return contentConfiguration.needsUpdate(for: state)
+        }
+        return true
     }
 
     /**
