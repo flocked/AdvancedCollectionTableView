@@ -225,8 +225,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
             tableView.keyHandlers.keyDown = { [weak self] event in
-                guard let self = self, event.keyCode == 51 else { return }
-                guard self.tableView.isFirstResponder else { return }
+                guard let self = self, event.keyCode == 51, self.tableView.isFirstResponder else { return }
                 let itemsToDelete = canDelete(self.selectedItems)
                 guard !itemsToDelete.isEmpty else { return }
                 var section: Section? = nil
