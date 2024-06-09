@@ -146,6 +146,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
                 contentView.centerYConstraint = contentView.centerYAnchor.constraint(equalTo: secondaryTextField.firstBaselineAnchor).activate()
             }
         }
+        toolTip = appliedConfiguration.toolTip
         contentView.invalidateIntrinsicContentSize()
     }
 }

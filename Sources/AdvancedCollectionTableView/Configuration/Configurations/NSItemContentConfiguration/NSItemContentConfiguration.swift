@@ -193,6 +193,9 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /// The badges displayed either as overlay or attachment next to the image/view.
     public var badges: [Badge] = []
+    
+    /// The text for the tooltip.
+    public var toolTip: String? = nil
 
     // MARK: Customizing appearance
 

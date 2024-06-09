@@ -111,5 +111,13 @@ extension TableViewDiffableDataSource {
             guard let tableColumn = dataSource.tableView.tableColumns[safe: columnIndex] else { return true }
             return dataSource.columnHandlers.shouldReorder?(tableColumn, newColumnIndex) ?? true
         }
+        
+        func tableView(_ tableView: NSTableView, didClick tableColumn: NSTableColumn) {
+            dataSource.columnHandlers.didClick?(tableColumn)
+        }
+        
+        func tableView(_ tableView: NSTableView, mouseDownInHeaderOf tableColumn: NSTableColumn) {
+            dataSource.columnHandlers.didClickHeader?(tableColumn)
+        }
     }
 }

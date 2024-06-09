@@ -935,6 +935,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     /// Handlers for table view columns.
     public struct ColumnHandlers {
+        /// The handler that gets called whenever the  mouse button was clicked in the specified table column, but the column was not dragged.
+        public var didClick: ((_ column: NSTableColumn) -> Void)?
+        
+        /// The handler that gets called whenever the mouse button was clicked in the specified table column’s header.
+        public var didClickHeader: ((_ column: NSTableColumn) -> Void)?
+        
         /// The handler that gets called whenever a column did resize.
         public var didResize: ((_ column: NSTableColumn, _ oldWidth: CGFloat) -> Void)?
 
