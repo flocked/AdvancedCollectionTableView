@@ -140,6 +140,9 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /// The badge.
     public var badge: Badge?
+    
+    /// The text for the tooltip.
+    public var toolTip: String? = nil
 
     // MARK: Customizing appearance
 

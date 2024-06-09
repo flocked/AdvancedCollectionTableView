@@ -98,6 +98,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     func updateConfiguration() {
+        toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
         badgeView?.verticalConstraint?.activate(false)
 
