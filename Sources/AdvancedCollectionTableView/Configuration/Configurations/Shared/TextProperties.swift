@@ -63,12 +63,8 @@ public struct TextProperties {
      */
     public var stringValidation: ((String) -> (Bool))?
     
-    /**
-     The tooltip of the text. If set to "", the text is automatically used.
-
-     It only gets called, if `isEditable` is true.
-     */
-    public var toolTip: String? = ""
+    /// The tooltip of the text. If set to "", the text is automatically used.
+    public var toolTip: String? = nil
 
     public var color: NSUIColor = .labelColor {
         didSet { updateResolvedTextColor() }

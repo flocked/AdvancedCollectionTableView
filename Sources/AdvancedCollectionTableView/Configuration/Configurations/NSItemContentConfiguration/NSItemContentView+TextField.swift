@@ -54,6 +54,7 @@ extension NSItemContentView {
             } else {
                 placeholderString = ""
             }
+            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
 
@@ -69,7 +70,7 @@ extension NSItemContentView {
             adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
             minimumScaleFactor = properties.minimumScaleFactor
             allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-            toolTip = properties.toolTip == "" ? stringValue : properties.toolTip
+            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
         }
 
         init(properties: TextProperties) {

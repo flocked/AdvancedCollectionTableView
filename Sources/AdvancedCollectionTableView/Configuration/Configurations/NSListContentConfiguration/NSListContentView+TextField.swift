@@ -42,7 +42,7 @@ extension NSListContentView {
                 needsRowHeightUpdate = stringValue != ""
                 stringValue = ""
             }
-
+            
             if let attributedPlaceholder = attributedPlaceholder {
                 placeholderAttributedString = NSAttributedString(attributedPlaceholder)
                 if stringValue == "" {
@@ -60,6 +60,7 @@ extension NSListContentView {
                 }
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
             // Swift.print("needsRowHeightUpdate", needsRowHeightUpdate, listContentView != nil)
             if needsRowHeightUpdate {
                 //  listContentView?.updateTableRowHeight()
@@ -79,7 +80,7 @@ extension NSListContentView {
             adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
             minimumScaleFactor = properties.minimumScaleFactor
             allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-            toolTip = properties.toolTip == "" ? stringValue : properties.toolTip
+            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
         }
 
         init(properties: TextProperties) {
