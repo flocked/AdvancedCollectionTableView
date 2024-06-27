@@ -133,7 +133,7 @@ extension NSListConfigurationState: ReferenceConvertible {
     }
 
     public func _bridgeToObjectiveC() -> __NSListConfigurationStateObjcNew {
-        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isEmphasized, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
+        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) {
