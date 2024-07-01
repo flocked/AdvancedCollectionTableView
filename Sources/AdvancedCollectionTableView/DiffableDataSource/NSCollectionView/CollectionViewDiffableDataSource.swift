@@ -575,7 +575,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     /// An array of elements that are displaying (currently visible).
-    var displayingElements: [Element] {
+    open var displayingElements: [Element] {
         collectionView.displayingIndexPaths().compactMap { element(for: $0) }
     }
 
