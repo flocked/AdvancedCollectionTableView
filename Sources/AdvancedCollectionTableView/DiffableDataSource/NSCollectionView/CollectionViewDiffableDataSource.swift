@@ -79,7 +79,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - else if right-click on a **non-selected element**, that element,
      - else an empty array.
      */
-    open var menuProvider: ((_ elements: [Element], _ modifierFlags: NSEvent.ModifierFlags) -> NSMenu?)? {
+    open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
         didSet { setupMenuProvider() }
     }
     
@@ -131,9 +131,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     func setupMenuProvider() {
         if menuProvider != nil  {
-            collectionView.menuProvider = { [weak self] location, modifierFlags in
+            collectionView.menuProvider = { [weak self] location in
                 guard let self = self else { return nil }
-                return self.menuProvider?(self.elements(for: location), modifierFlags)
+                return self.menuProvider?(self.elements(for: location))
             }
         } else {
             collectionView.menuProvider = nil
