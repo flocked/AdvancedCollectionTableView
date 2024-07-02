@@ -749,13 +749,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var emptyContentView: ContentConfigurationView?
     
      func updateEmptyView(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, previousIsEmpty: Bool? = nil) {
-         Swift.print("updateEmptyView", snapshot.isEmpty, self.emptyView != nil, self.emptyView?.superview != collectionView, self.emptyContentView != nil, emptyContentView?.superview != collectionView )
          if !snapshot.isEmpty {
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
              collectionView?.addSubview(withConstraint: emptyView)
          } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
+             collectionView.frame.size = collectionView.enclosingScrollView?.frame.size ?? .zero
              collectionView?.addSubview(withConstraint: emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
