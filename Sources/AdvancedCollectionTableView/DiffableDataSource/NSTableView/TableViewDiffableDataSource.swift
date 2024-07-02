@@ -568,8 +568,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         tableView.reconfigureRows(at: rows)
     }
     
-    /// An array of items that are visible.
-    func visibleItems() -> [Item] {
+    /// The items that are visible.
+    open var visibleItems: [Item] {
         tableView.visibleRowIndexes().compactMap { item(forRow: $0) }
     }
     
