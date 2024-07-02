@@ -755,8 +755,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
              collectionView?.addSubview(withConstraint: emptyView)
          } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-             emptyContentView.frame.size = collectionView.enclosingScrollView?.frame.size ?? .zero
-             collectionView?.addSubview(emptyContentView)
+             collectionView?.addSubview(withConstraint: emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
              let isEmpty = snapshot.isEmpty
