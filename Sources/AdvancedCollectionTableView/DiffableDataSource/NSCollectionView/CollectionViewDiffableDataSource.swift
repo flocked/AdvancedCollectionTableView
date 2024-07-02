@@ -749,6 +749,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var emptyContentView: ContentConfigurationView?
     
      func updateEmptyView(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, previousIsEmpty: Bool? = nil) {
+         Swift.print("updateEmptyView", snapshot.isEmpty, self.emptyView != nil, self.emptyView?.superview != collectionView, self.emptyContentView != nil, emptyContentView?.superview != collectionView )
          if !snapshot.isEmpty {
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
