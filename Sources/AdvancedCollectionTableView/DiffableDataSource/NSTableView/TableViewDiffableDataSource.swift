@@ -129,7 +129,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      - else if right-click on a **non-selected item**, that item,
      - else an empty array.
      */
-    open var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
+    open var menuProvider: ((_ items: [Item], _ event: NSEvent) -> NSMenu?)? = nil {
         didSet { setupMenuProvider() }
     }
     
@@ -166,9 +166,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func setupMenuProvider() {
         if menuProvider != nil {
-            tableView.menuProvider = { [weak self] location in
+            tableView.menuProvider = { [weak self] location, event in
                 guard let self = self else { return nil }
-                return self.menuProvider?(self.items(for: location))
+                return self.menuProvider?(self.items(for: location), event)
             }
         } else {
             tableView.menuProvider = nil
