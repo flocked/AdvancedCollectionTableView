@@ -1042,7 +1042,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var pasteboardItems: ((_ items: [NSPasteboardItem]) -> [Element])?
         
         /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
-        public var canDrop: ((_ content: [PasteboardContent], _ items: [NSPasteboardItem]) -> ([Element]))?
+        public var canDrop: ((_ contents: [PasteboardContent]) -> ([Element]))?
         /// The handler that gets called when the handler will drag elements inside the collection view.
         public var willDrag: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         /// The handler that gets called when the handler did drag elements inside the collection view.

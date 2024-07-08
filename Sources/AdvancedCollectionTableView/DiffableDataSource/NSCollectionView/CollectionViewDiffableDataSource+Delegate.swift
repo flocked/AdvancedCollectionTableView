@@ -38,18 +38,7 @@ extension CollectionViewDiffableDataSource {
             let items = indexPaths.compactMap { self.dataSource.element(for: $0) }
             didCancelPrefetching(items)
         }
-        
-        func collectionView(_: NSCollectionView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, dragOperation _: NSDragOperation) {
-            draggingIndexPaths = []
-        }
-        
-        func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
-            Swift.debugPrint("willBeginAt", indexPaths.count)
-            if !draggingElements.isEmpty {
-                dataSource.draggingHandlers.didDrag?(draggingElements)
-            }
-        }
-        
+                
         // MARK: Dragging
         
         func collectionView(_: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
@@ -88,6 +77,21 @@ extension CollectionViewDiffableDataSource {
             }
             return collectionView.draggingImageForItems(at: indexPaths, with: event, offset: dragImageOffset)
         }
+        
+        func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
+            Swift.debugPrint("draggingSession willBeginAt", indexPaths.count)
+        }
+        
+        func collectionView(_: NSCollectionView, draggingSession _: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation _: NSDragOperation) {
+            Swift.debugPrint("draggingSession endedAt", screenPoint)
+            if !draggingElements.isEmpty {
+                dataSource.draggingHandlers.didDrag?(draggingElements)
+            }
+            draggingElements = []
+            draggingIndexPaths = []
+        }
+        
+        // MARK: Dropping
 
         func collectionView(_: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
             Swift.debugPrint("validateDrop")
@@ -96,79 +100,42 @@ extension CollectionViewDiffableDataSource {
             }
             return NSDragOperation.move
         }
-        
-        // MARK: Reordering
-
-        func reorderingDrag(_: NSCollectionView, draggingInfo: NSDraggingInfo, indexPath: IndexPath) -> Bool {
-            if canReorderItems, !draggingIndexPaths.isEmpty, let transaction = dataSource.movingTransaction(at: Array(draggingIndexPaths), to: indexPath) {
-                let selectedItems = dataSource.selectedElements
-                dataSource.reorderingHandlers.willReorder?(transaction)
-                dataSource.apply(transaction.finalSnapshot, .animated)
-                dataSource.selectElements(selectedItems, scrollPosition: [])
-                dataSource.reorderingHandlers.didReorder?(transaction)
-                return true
-            }
-            return false
-        }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
             debugPrint("acceptDrop")
+            // Reordering Elements
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
-                if reorderingDrag(collectionView, draggingInfo: draggingInfo, indexPath: indexPath) {
+                if canReorderItems, !draggingIndexPaths.isEmpty, let transaction = dataSource.movingTransaction(at: Array(draggingIndexPaths), to: indexPath) {
+                    let selectedItems = dataSource.selectedElements
+                    dataSource.reorderingHandlers.willReorder?(transaction)
+                    dataSource.apply(transaction.finalSnapshot, .animated)
+                    dataSource.selectElements(selectedItems, scrollPosition: [])
+                    dataSource.reorderingHandlers.didReorder?(transaction)
                     return true
                 }
             }
             
-            var elements: [Element] = []
-            if let fileURLs = draggingInfo.fileURLs, let handler = dataSource.droppingHandlers.fileURLs {
-                elements.append(contentsOf: handler(fileURLs))
-            }
-            if let urls = draggingInfo.urls, let handler = dataSource.droppingHandlers.urls {
-                elements.append(contentsOf: handler(urls))
-            }
-            if let images = draggingInfo.images, let handler = dataSource.droppingHandlers.images {
-                elements.append(contentsOf: handler(images))
-            }
-            if let strings = draggingInfo.strings, let handler = dataSource.droppingHandlers.strings {
-                elements.append(contentsOf: handler(strings))
-            }
-            
-            if canDragOutside, let insertElement = dataSource.element(for: indexPath) {
-                var acceptsDrop = false
+            // Dropping Files
+            var elements = dataSource.droppingHandlers.canDrop?(draggingInfo.contents) ?? []
+            if !elements.isEmpty, let insertElement = dataSource.element(for: indexPath) {
                 var snapshot = dataSource.snapshot()
                 
-                func setupHandler<Value>(_ handler: ((_ values: [Value]) -> [Element])?, _ keyPath: KeyPath<NSDraggingInfo, [Value]?>) {
-                    if let handler = handler, let values = draggingInfo[keyPath: keyPath] {
-                        let elements = handler(values)
-                        if !elements.isEmpty {
-                            for element in elements.reversed() {
-                                if snapshot.itemIdentifiers.contains(element) {
-                                    snapshot.moveItems([element], beforeItem: insertElement)
-                                } else {
-                                    snapshot.insertItems([element], beforeItem: insertElement)
-                                }
-                            }
-                            acceptsDrop = true
-                        }
+                for element in elements.reversed() {
+                    if snapshot.itemIdentifiers.contains(element) {
+                        snapshot.moveItems([element], beforeItem: insertElement)
+                    } else {
+                        snapshot.insertItems([element], beforeItem: insertElement)
                     }
                 }
-                setupHandler(dataSource.droppingHandlers.strings, \.strings)
-                setupHandler(dataSource.droppingHandlers.fileURLs, \.fileURLs)
-                setupHandler(dataSource.droppingHandlers.urls, \.urls)
-                setupHandler(dataSource.droppingHandlers.images, \.images)
-                setupHandler(dataSource.droppingHandlers.colors, \.colors)
-
-                if acceptsDrop {
-                    var transaction: DiffableDataSourceTransaction<Section, Element>?
-                    if dataSource.droppingHandlers.needsTransaction {
-                        transaction = .init(initial: dataSource.snapshot(), final: snapshot)
-                        dataSource.droppingHandlers.willDrag?(transaction!)
-                    }
-                    let selectedItems = dataSource.selectedElements
-                    dataSource.apply(snapshot, .animated)
-                    dataSource.selectElements(selectedItems, scrollPosition: [])
-                    dataSource.droppingHandlers.didDrag?(transaction!)
+                var transaction: DiffableDataSourceTransaction<Section, Element>?
+                if dataSource.droppingHandlers.needsTransaction {
+                    transaction = .init(initial: dataSource.snapshot(), final: snapshot)
+                    dataSource.droppingHandlers.willDrag?(transaction!)
                 }
+                let selectedItems = dataSource.selectedElements
+                dataSource.apply(snapshot, .animated)
+                dataSource.selectElements(selectedItems, scrollPosition: [])
+                dataSource.droppingHandlers.didDrag?(transaction!)
                 return true
             }
             return false
@@ -191,6 +158,7 @@ extension CollectionViewDiffableDataSource {
                 didDeselect(items)
             }
         }
+        
 
         func collectionView(_: NSCollectionView, shouldSelectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
             guard let shouldSelect = dataSource.selectionHandlers.shouldSelect else { return indexPaths }
@@ -240,5 +208,25 @@ extension NSPasteboardItem {
         fileURL = contents.fileURLs.first
         color = contents.colors.first
         string = contents.strings.first
+    }
+}
+
+extension NSDraggingInfo {
+    var contents: [PasteboardContent] {
+        var contents: [PasteboardContent] = []
+        contents.append(contentsOf: fileURLs ?? [])
+        contents.append(contentsOf: urls ?? [])
+        contents.append(contentsOf: images ?? [])
+        contents.append(contentsOf: colors ?? [])
+        contents.append(contentsOf: strings ?? [])
+        contents.append(contentsOf: draggingPasteboard.pasteboardItems ?? [])
+        return contents
+    }
+}
+
+extension NSPasteboardItem {
+    var contents: [PasteboardContent] {
+        var contents: [PasteboardContent?] = [fileURL, url, tiffImage, color, string]
+        return contents.compactMap({ $0 })
     }
 }
