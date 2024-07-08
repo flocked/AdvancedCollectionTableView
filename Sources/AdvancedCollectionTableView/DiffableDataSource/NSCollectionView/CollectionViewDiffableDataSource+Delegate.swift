@@ -130,12 +130,12 @@ extension CollectionViewDiffableDataSource {
                 var transaction: DiffableDataSourceTransaction<Section, Element>?
                 if dataSource.droppingHandlers.needsTransaction {
                     transaction = .init(initial: dataSource.snapshot(), final: snapshot)
-                    dataSource.droppingHandlers.willDrag?(transaction!)
+                    dataSource.droppingHandlers.willDrop?(transaction!)
                 }
                 let selectedItems = dataSource.selectedElements
                 dataSource.apply(snapshot, .animated)
                 dataSource.selectElements(selectedItems, scrollPosition: [])
-                dataSource.droppingHandlers.didDrag?(transaction!)
+                dataSource.droppingHandlers.didDrop?(transaction!)
                 return true
             }
             return false
