@@ -43,7 +43,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
-            // Swift.debugPrint("willBeginAt", indexPaths.count)
+            Swift.debugPrint("willBeginAt", indexPaths.count)
         }
         
         // MARK: Dragging
@@ -57,12 +57,12 @@ extension CollectionViewDiffableDataSource {
                 canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
                 canDragOutside = dataSource.draggingHandlers.canDrag?(items) == true
             }
-            // Swift.debugPrint("canDragItemsAt", canReorderItems || canDragOutside)
+            Swift.debugPrint("canDragItemsAt", canReorderItems || canDragOutside)
             return canReorderItems || canDragOutside
         }
 
         func collectionView(_: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-            // Swift.debugPrint("pasteboardWriterForItemAt")
+            Swift.debugPrint("pasteboardWriterForItemAt")
             if canDragOutside, let item = dataSource.element(for: indexPath), let contents = dataSource.draggingHandlers.pasteboardContent?(item) {
                 let pasteboardItem = NSPasteboardItem(contents: contents)
                 pasteboardItem.setString(String(item.id.hashValue), forType: .itemID)
@@ -82,7 +82,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-            // Swift.debugPrint("validateDrop")
+            Swift.debugPrint("validateDrop")
             if proposedDropOperation.pointee == NSCollectionView.DropOperation.on {
                 proposedDropOperation.pointee = NSCollectionView.DropOperation.before
             }
@@ -104,7 +104,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
-            // Swift.debugPrint("acceptDrop")
+            debugPrint("acceptDrop")
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
                 if reorderingDrag(collectionView, draggingInfo: draggingInfo, indexPath: indexPath) {
                     return true
@@ -159,21 +159,19 @@ extension CollectionViewDiffableDataSource {
                     let selectedItems = dataSource.selectedElements
                     dataSource.apply(snapshot, .animated)
                     dataSource.selectElements(selectedItems, scrollPosition: [])
-                    if let didDrag = dataSource.droppingHandlers.didDrag {
-                        didDrag(transaction!)
-                    }
+                    dataSource.droppingHandlers.didDrag?(transaction!)
                 }
                 return true
             }
             return false
         }
-
+        
         // MARK: Selecting
         
         func collectionView(_: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
             guard let didSelect = dataSource.selectionHandlers.didSelect else { return }
             let items = indexPaths.compactMap { self.dataSource.element(for: $0) }
-            if items.isEmpty == false {
+            if !items.isEmpty {
                 didSelect(items)
             }
         }
@@ -181,7 +179,7 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
             guard let didDeselect = dataSource.selectionHandlers.didDeselect else { return }
             let items = indexPaths.compactMap { self.dataSource.element(for: $0) }
-            if items.isEmpty == false {
+            if !items.isEmpty {
                 didDeselect(items)
             }
         }

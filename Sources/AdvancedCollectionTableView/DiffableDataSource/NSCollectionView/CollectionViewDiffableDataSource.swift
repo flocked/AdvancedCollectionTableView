@@ -849,7 +849,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /// The handlers for dropping files inside the collection view.
     public var droppingHandlers = DroppingHandlers()
     
-    /// The handlers for dragging items outside the collection view.
+    /// The handlers for dragging elements outside the collection view.
     public var draggingHandlers = DraggingHandlers()
     
     /// The handlers for dropping files inside the collection view.
@@ -1006,23 +1006,21 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    /// The handlers for dragging elements outside the collection view.
+    /// Handlers for dragging elements outside the collection view.
     public struct DraggingHandlers {
         /// The handler that determines whenever elements can be dragged outside the collection view.
         public var canDrag: ((_ elements: [Element])->(Bool))?
-        
-        /// The handler that determines whenever elements can be dragged outside the collection view.
-        public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
-        
         /// The handler that gets called when the handler will drag elements outside the collection view.
         public var willDrag: (() -> ())?
         /// The handler that gets called when the handler did drag elements outside the collection view.
         public var didDrag: (() -> ())?
+        /// The handler that determines whenever elements can be dragged outside the collection view.
+        public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
         /// The handler that determines the image when dragging elements outside the collection view.
         public var draggingImage: ((_ elements: [Element], _ event: NSEvent, _ screenLocation: CGPoint) -> NSImage?)?
     }
     
-    /// The handlers for dragging files outside the collection view.
+    /// Handlers for dragging files outside the collection view.
     public struct DroppingHandlers {
         /// The handler that specifies the elements for strings dragged inside the collection view..
         public var strings: ((_ strings: [String]) -> [Element])?
