@@ -711,15 +711,16 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      
      When using this property, ``emptyView`` is set to `nil`.
      */
-    open var emptyContentConfiguration: NSContentConfiguration? = nil {
-        didSet {
-            if let configuration = emptyContentConfiguration {
-                emptyView = nil
+    open var emptyContentConfiguration: NSContentConfiguration? {
+        get { emptyContentView?.contentConfiguration }
+        set {
+            if let configuration = newValue {
                 if let emptyContentView = self.emptyContentView {
                     emptyContentView.contentConfiguration = configuration
                 } else {
                     emptyContentView = .init(configuration: configuration)
                 }
+                emptyView = nil
                 updateEmptyView()
             } else {
                 scrollViewContentViewObservation = nil
@@ -727,6 +728,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             }
         }
     }
+    
+    var emptyContentView: ContentConfigurationView?
     
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
@@ -741,7 +744,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    var emptyContentView: ContentConfigurationView?
     var scrollViewContentViewObservation: KeyValueObservation?
     
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
