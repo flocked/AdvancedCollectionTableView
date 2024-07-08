@@ -724,22 +724,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var scrollViewContentViewObservation: KeyValueObservation?
     
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-        func addEmptyView(_ emptyView: NSView) {
-            (tableView?.enclosingScrollView?.contentView ?? tableView)?.addSubview(withConstraint: emptyView)
-            guard scrollViewContentViewObservation == nil else { return }
-            scrollViewContentViewObservation = tableView?.observeChanges(for: \.enclosingScrollView?.contentView) { [weak self] old, new in
-                guard let self = self, old != new else { return }
-                self.updateEmptyView()
-            }
-        }
         if !currentSnapshot.isEmpty {
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
             scrollViewContentViewObservation = nil
         } else if let emptyView = self.emptyView, emptyView.superview != tableView {
-            addEmptyView(emptyView)
+            tableView?.addSubview(withConstraint: emptyView)
         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != tableView {
-            addEmptyView(emptyContentView)
+            tableView?.addSubview(withConstraint: emptyContentView)
         }
         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
             if previousIsEmpty != currentSnapshot.isEmpty {

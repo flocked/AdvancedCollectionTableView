@@ -747,22 +747,14 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var scrollViewContentViewObservation: KeyValueObservation?
     
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-        func addEmptyView(_ emptyView: NSView) {
-            (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyView)
-            guard scrollViewContentViewObservation == nil else { return }
-            scrollViewContentViewObservation = collectionView?.observeChanges(for: \.enclosingScrollView?.contentView) { [weak self] old, new in
-                guard let self = self, old != new else { return }
-                self.updateEmptyView()
-            }
-        }
         if !currentSnapshot.isEmpty {
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
             scrollViewContentViewObservation = nil
         } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-            addEmptyView(emptyView)
+            collectionView?.addSubview(withConstraint: emptyView)
         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-            addEmptyView(emptyContentView)
+            collectionView?.addSubview(withConstraint: emptyContentView)
         }
         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
             if previousIsEmpty != currentSnapshot.isEmpty {
