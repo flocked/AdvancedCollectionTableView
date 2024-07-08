@@ -98,7 +98,12 @@ extension CollectionViewDiffableDataSource {
             if proposedDropOperation.pointee == NSCollectionView.DropOperation.on {
                 proposedDropOperation.pointee = NSCollectionView.DropOperation.before
             }
-            return NSDragOperation.move
+            if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == dataSource.collectionView {
+                return NSDragOperation.move
+            } else if !draggingInfo.contents.isEmpty {
+                return NSDragOperation.copy
+            }
+            return []
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
