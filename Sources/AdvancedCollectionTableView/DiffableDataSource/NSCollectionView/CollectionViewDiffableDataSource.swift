@@ -335,7 +335,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
-        updateEmptyView(snapshot, previousIsEmpty: previousIsEmpty)
+        updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
 
     // MARK: - Init
@@ -700,7 +700,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             oldValue?.removeFromSuperview()
             if emptyView != nil {
                 emptyContentConfiguration = nil
-                updateEmptyView(snapshot())
+                updateEmptyView()
             }
         }
     }
@@ -719,7 +719,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 } else {
                     emptyContentView = .init(configuration: configuration)
                 }
-                updateEmptyView(snapshot())
+                updateEmptyView()
             } else {
                 emptyContentView?.removeFromSuperview()
                 emptyContentView = nil
@@ -742,8 +742,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     var emptyContentView: ContentConfigurationView?
     
-     func updateEmptyView(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, previousIsEmpty: Bool? = nil) {
-         if !snapshot.isEmpty {
+     func updateEmptyView(previousIsEmpty: Bool? = nil) {
+         if !currentSnapshot.isEmpty {
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
@@ -756,7 +756,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
              collectionView?.addSubview(emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-             let isEmpty = snapshot.isEmpty
+             let isEmpty = currentSnapshot.isEmpty
              if previousIsEmpty != isEmpty {
                  emptyHandler(isEmpty)
              }
