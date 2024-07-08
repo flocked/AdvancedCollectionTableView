@@ -675,6 +675,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         didSet {
             guard oldValue != emptyView else { return }
             oldValue?.removeFromSuperview()
+            scrollViewContentViewObservation = nil
             if emptyView != nil {
                 emptyContentConfiguration = nil
                 updateEmptyView()
@@ -698,6 +699,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 }
                 updateEmptyView()
             } else {
+                scrollViewContentViewObservation = nil
                 emptyContentView = nil
             }
         }
@@ -717,21 +719,31 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     var emptyContentView: ContentConfigurationView?
+    var scrollViewContentViewObservation: KeyValueObservation?
     
-     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-         if !currentSnapshot.isEmpty {
-             emptyView?.removeFromSuperview()
-             emptyContentView?.removeFromSuperview()
-         } else if let emptyView = self.emptyView, emptyView.superview != tableView {
-             tableView.addSubview(withConstraint: emptyView)
-         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != tableView {
-             tableView.addSubview(withConstraint: emptyContentView)
-         }
-         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-             if previousIsEmpty != currentSnapshot.isEmpty {
-                 emptyHandler(currentSnapshot.isEmpty)
-             }
-         }
+    func updateEmptyView(previousIsEmpty: Bool? = nil) {
+        func addEmptyView(_ emptyView: NSView) {
+            (tableView?.enclosingScrollView?.contentView ?? tableView)?.addSubview(withConstraint: emptyView)
+            guard scrollViewContentViewObservation == nil else { return }
+            scrollViewContentViewObservation = tableView?.observeChanges(for: \.enclosingScrollView?.contentView) { [weak self] old, new in
+                guard let self = self, old != new else { return }
+                self.updateEmptyView()
+            }
+        }
+        if !currentSnapshot.isEmpty {
+            emptyView?.removeFromSuperview()
+            emptyContentView?.removeFromSuperview()
+            scrollViewContentViewObservation = nil
+        } else if let emptyView = self.emptyView, emptyView.superview != tableView {
+            addEmptyView(emptyView)
+        } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != tableView {
+            addEmptyView(emptyContentView)
+        }
+        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
+            if previousIsEmpty != currentSnapshot.isEmpty {
+                emptyHandler(currentSnapshot.isEmpty)
+            }
+        }
      }
 
     // MARK: - Handlers

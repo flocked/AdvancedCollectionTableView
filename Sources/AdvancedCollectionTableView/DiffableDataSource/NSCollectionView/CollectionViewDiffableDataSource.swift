@@ -698,7 +698,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         didSet {
             guard oldValue != emptyView else { return }
             oldValue?.removeFromSuperview()
-            emptyViewBoundsObservation = nil
+            scrollViewContentViewObservation = nil
             if emptyView != nil {
                 emptyContentConfiguration = nil
                 updateEmptyView()
@@ -722,7 +722,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 }
                 updateEmptyView()
             } else {
-                emptyViewBoundsObservation = nil
+                scrollViewContentViewObservation = nil
                 emptyContentView = nil
             }
         }
@@ -742,34 +742,31 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
     
     var emptyContentView: ContentConfigurationView?
-    var emptyViewBoundsObservation: KeyValueObservation?
+    var scrollViewContentViewObservation: KeyValueObservation?
+    
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-        /*
-        func setupBoundsObservation(for view: NSView) {
-            emptyViewBoundsObservation = collectionView?.observeChanges(for: \.enclosingScrollView?.contentView.bounds) { old, new in
-                guard old != new, let new = new else { return }
-                view.frame = new
+        func addEmptyView(_ emptyView: NSView) {
+            (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyView)
+            guard scrollViewContentViewObservation == nil else { return }
+            scrollViewContentViewObservation = collectionView?.observeChanges(for: \.enclosingScrollView?.contentView) { [weak self] old, new in
+                guard let self = self, old != new else { return }
+                self.updateEmptyView()
             }
-            view.frame = collectionView?.enclosingScrollView?.contentView.bounds ?? .zero
-            collectionView?.addSubview(view)
         }
-         */
-        
-         if !currentSnapshot.isEmpty {
-             emptyView?.removeFromSuperview()
-             emptyContentView?.removeFromSuperview()
-             emptyViewBoundsObservation = nil
-         } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-             (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyView)
-         } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-             (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyContentView)
-
-         }
-         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-             if previousIsEmpty != currentSnapshot.isEmpty {
-                 emptyHandler(currentSnapshot.isEmpty)
-             }
-         }
+        if !currentSnapshot.isEmpty {
+            emptyView?.removeFromSuperview()
+            emptyContentView?.removeFromSuperview()
+            scrollViewContentViewObservation = nil
+        } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
+            addEmptyView(emptyView)
+        } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
+            addEmptyView(emptyContentView)
+        }
+        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
+            if previousIsEmpty != currentSnapshot.isEmpty {
+                emptyHandler(currentSnapshot.isEmpty)
+            }
+        }
      }
 
     // MARK: - Handlers
