@@ -16,6 +16,7 @@ extension CollectionViewDiffableDataSource {
         var draggingIndexPaths: Set<IndexPath> = []
         var canReorderItems = false
         var canDragOutside = false
+        var draggingElements: [Element] = []
         
         init(_ dataSource: CollectionViewDiffableDataSource) {
             self.dataSource = dataSource
@@ -44,6 +45,9 @@ extension CollectionViewDiffableDataSource {
         
         func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
             Swift.debugPrint("willBeginAt", indexPaths.count)
+            if !draggingElements.isEmpty {
+                dataSource.draggingHandlers.didDrag?(draggingElements)
+            }
         }
         
         // MARK: Dragging
@@ -51,6 +55,7 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
             canReorderItems = false
             canDragOutside = false
+            draggingElements = []
             draggingIndexPaths = indexPaths
             if dataSource.draggingHandlers.canDrag != nil || dataSource.reorderingHandlers.canReorder != nil {
                 let items = indexPaths.compactMap { dataSource.element(for: $0) }
@@ -63,9 +68,12 @@ extension CollectionViewDiffableDataSource {
 
         func collectionView(_: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
             Swift.debugPrint("pasteboardWriterForItemAt")
-            if canDragOutside, let item = dataSource.element(for: indexPath), let contents = dataSource.draggingHandlers.pasteboardContent?(item) {
+            if canDragOutside, let element = dataSource.element(for: indexPath), let contents = dataSource.draggingHandlers.pasteboardContent?(element) {
+                if !contents.isEmpty {
+                    draggingElements.append(element)
+                }
                 let pasteboardItem = NSPasteboardItem(contents: contents)
-                pasteboardItem.setString(String(item.id.hashValue), forType: .itemID)
+                pasteboardItem.setString(String(element.id.hashValue), forType: .itemID)
                 return pasteboardItem
             }
             return nil

@@ -698,6 +698,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         didSet {
             guard oldValue != emptyView else { return }
             oldValue?.removeFromSuperview()
+            emptyViewBoundsObservation = nil
             if emptyView != nil {
                 emptyContentConfiguration = nil
                 updateEmptyView()
@@ -721,6 +722,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 }
                 updateEmptyView()
             } else {
+                emptyViewBoundsObservation = nil
                 emptyContentView = nil
             }
         }
@@ -740,15 +742,28 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
     
     var emptyContentView: ContentConfigurationView?
-    
+    var emptyViewBoundsObservation: KeyValueObservation?
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
+        /*
+        func setupBoundsObservation(for view: NSView) {
+            emptyViewBoundsObservation = collectionView?.observeChanges(for: \.enclosingScrollView?.contentView.bounds) { old, new in
+                guard old != new, let new = new else { return }
+                view.frame = new
+            }
+            view.frame = collectionView?.enclosingScrollView?.contentView.bounds ?? .zero
+            collectionView?.addSubview(view)
+        }
+         */
+        
          if !currentSnapshot.isEmpty {
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
+             emptyViewBoundsObservation = nil
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-             collectionView?.addSubview(withConstraint: emptyView)
+             (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyView)
          } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-             collectionView?.addSubview(withConstraint: emptyContentView)
+             (collectionView?.enclosingScrollView?.contentView ?? collectionView)?.addSubview(withConstraint: emptyContentView)
+
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
              if previousIsEmpty != currentSnapshot.isEmpty {
@@ -1013,7 +1028,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         /// The handler that gets called when the handler will drag elements outside the collection view.
         public var willDrag: (() -> ())?
         /// The handler that gets called when the handler did drag elements outside the collection view.
-        public var didDrag: (() -> ())?
+        public var didDrag: (([Element]) -> ())?
         /// The handler that determines whenever elements can be dragged outside the collection view.
         public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
         /// The handler that determines the image when dragging elements outside the collection view.
