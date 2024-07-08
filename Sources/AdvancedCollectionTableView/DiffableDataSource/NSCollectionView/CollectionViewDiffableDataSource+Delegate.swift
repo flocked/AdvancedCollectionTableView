@@ -51,7 +51,7 @@ extension CollectionViewDiffableDataSource {
                 canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
                 canDragOutside = dataSource.draggingHandlers.canDrag?(items) == true
             }
-            Swift.debugPrint("canDragItemsAt", canReorderItems || canDragOutside)
+            Swift.debugPrint("canDragItemsAt", canReorderItems, canDragOutside)
             return canReorderItems || canDragOutside
         }
 
@@ -116,7 +116,7 @@ extension CollectionViewDiffableDataSource {
             }
             
             // Dropping Files
-            var elements = dataSource.droppingHandlers.canDrop?(draggingInfo.contents) ?? []
+            let elements = dataSource.droppingHandlers.canDrop?(draggingInfo.contents) ?? []
             if !elements.isEmpty, let insertElement = dataSource.element(for: indexPath) {
                 var snapshot = dataSource.snapshot()
                 

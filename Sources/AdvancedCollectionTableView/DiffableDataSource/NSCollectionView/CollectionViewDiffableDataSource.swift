@@ -857,9 +857,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     /// The handlers for dragging elements outside the collection view.
     public var draggingHandlers = DraggingHandlers()
-    
-    /// The handlers for dropping files inside the collection view.
-    var droppingHandlersAlt = DroppingHandlersAlt()
 
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {
@@ -1016,8 +1013,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     public struct DraggingHandlers {
         /// The handler that determines whenever elements can be dragged outside the collection view.
         public var canDrag: ((_ elements: [Element])->(Bool))?
-        /// The handler that gets called when the handler will drag elements outside the collection view.
-        public var willDrag: (() -> ())?
         /// The handler that gets called when the handler did drag elements outside the collection view.
         public var didDrag: (([Element]) -> ())?
         /// The handler that determines whenever elements can be dragged outside the collection view.
@@ -1051,34 +1046,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         var needsTransaction: Bool {
             willDrop != nil || didDrop != nil
         }
-    }
-
-    /// Handlers dropping files inside the collection view and elements outside the collection view.
-    public struct DroppingHandlersAlt {
-        
-        /// The handlers for dragging elements outside the collection view.
-        public struct OutsideHandlers {
-            /// The strings for the specified elements to write to the pasteboard.
-            public var string: ((_ element: Element) -> String?)?
-            /// The urls for the specified elements to write to the pasteboard.
-            public var url: ((_ element: Element) -> URL?)?
-            /// The images for the specified elements to write to the pasteboard.
-            public var image: ((_ element: Element) -> NSImage?)?
-            /// The colors for the specified elements to write to the pasteboard.
-            public var color: ((_ element: Element) -> NSColor?)?
-            /// The pasteboard items for the specified elements to write to the pasteboard.
-            public var pasteboardItem: ((_ element: Element) -> [NSPasteboardItem])?
-
-            /// The handler that determines whenever elements can be dragged outside the collection view.
-            public var canDrag: (([Element]) -> Bool)?
-            /// The handler that gets called when the handler will drag elements outside the collection view.
-            public var willDrag: (() -> ())?
-            /// The handler that gets called when the handler did drag elements outside the collection view.
-            public var didDrag: (() -> ())?
-        }
-
-        /// The handlers for dragging elements outside the collection view.
-        public var outside = OutsideHandlers()
     }
 }
 
