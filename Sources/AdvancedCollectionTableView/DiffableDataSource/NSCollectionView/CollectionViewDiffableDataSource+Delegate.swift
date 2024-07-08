@@ -53,7 +53,9 @@ extension CollectionViewDiffableDataSource {
             if dataSource.draggingHandlers.canDrag != nil || dataSource.reorderingHandlers.canReorder != nil {
                 let items = indexPaths.compactMap { dataSource.element(for: $0) }
                 canReorderItems = dataSource.reorderingHandlers.canReorder?(items) == true
-                canDragOutside = dataSource.droppingHandlersAlt.outside.canDrag?(items) == true
+                if let canDrag = dataSource.draggingHandlers.canDrag {
+                    canDragOutside = !items.compactMap({ canDrag($0) }).isEmpty
+                }
             }
             // Swift.debugPrint("canDragItemsAt", canReorderItems || canDragOutside)
             return canReorderItems || canDragOutside
@@ -67,7 +69,6 @@ extension CollectionViewDiffableDataSource {
                 if canDragOutside {
                     if let contents = dataSource.draggingHandlers.canDrag?(item) {
                         pasteboardItem = NSPasteboardItem(contents: contents)
-                        Swift.print("check", pasteboardItem.tiffImage != nil)
                         pasteboardItem[.itemID] = String(item.id.hashValue)
                     } else {
                         pasteboardItem.tiffImage = dataSource.droppingHandlersAlt.outside.image?(item)
