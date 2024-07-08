@@ -67,6 +67,7 @@ extension CollectionViewDiffableDataSource {
                 if canDragOutside {
                     if let contents = dataSource.draggingHandlers.canDrag?(item) {
                         pasteboardItem = NSPasteboardItem(contents: contents)
+                        Swift.print("check", pasteboardItem.tiffImage != nil)
                         pasteboardItem[.itemID] = String(item.id.hashValue)
                     } else {
                         pasteboardItem.tiffImage = dataSource.droppingHandlersAlt.outside.image?(item)
