@@ -819,9 +819,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     /// The handlers for table columns.
     open var columnHandlers = ColumnHandlers()
-
-    /// The handlers for drag and drop of files from and to the table view.
-    var dragDropHandlers = DragDropHandlers()
+    
+    /// The handlers for dragging items outside the table view.
+    var draggingHandlers = DraggingHandlers()
+    
+    /// The handlers for dropping files inside the table view.
+    var droppingHandlers = DroppingHandlers()
 
     /// Handlers for selecting items.
     public struct SelectionHandlers {
@@ -960,33 +963,27 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var sortDescriptorsChanged: ((_ old: [NSSortDescriptor], _ new: [NSSortDescriptor]) -> Void)?
 
     }
-
-    /// Handlers for drag and drop of files from and to the table view.
-    struct DragDropHandlers {
+    
+    struct DraggingHandlers {
         /// The handler that determines which items can be dragged outside the table view.
-        public var canDragOutside: ((_ items: [Item]) -> [Item])?
+        public var canDrag: ((_ items: [Item]) -> [Item])?
 
         /// The handler that gets called whenever items did drag ouside the table view.
-        public var didDragOutside: (([Item]) -> Void)?
-
-        /// The handler that determines the pasteboard value of an item when dragged outside the table view.
-        public var pasteboardValue: ((_ item: Item) -> PasteboardContent)?
-
+        public var didDrag: (([Item]) -> Void)?
+        
+        /// The handler that determines the image when dragging items outside the table view.
+        public var draggingImage: ((_ items: [Item], NSEvent, NSPointPointer) -> NSImage?)?
+    }
+    
+    struct DroppingHandlers {
         /// The handler that determines whenever pasteboard items can be dragged inside the table view.
-        public var canDragInside: (([PasteboardContent]) -> [PasteboardContent])?
+        public var canDrop: (([PasteboardContent]) -> [PasteboardContent])?
 
         /// The handler that gets called whenever pasteboard items did drag inside the table view.
-        public var didDragInside: (([PasteboardContent]) -> Void)?
+        public var didDrop: (([PasteboardContent]) -> Void)?
 
-        /// The handler that determines the image when dragging items.
-        public var draggingImage: ((_ items: [Item], NSEvent, NSPointPointer) -> NSImage?)?
-
-        var acceptsDragInside: Bool {
-            canDragInside != nil && didDragInside != nil
-        }
-
-        var acceptsDragOutside: Bool {
-            canDragOutside != nil
+        var acceptsDrop: Bool {
+            canDrop != nil && didDrop != nil
         }
     }
 }
