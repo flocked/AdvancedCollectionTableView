@@ -94,15 +94,17 @@ extension CollectionViewDiffableDataSource {
         // MARK: Dropping
 
         func collectionView(_: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-            Swift.debugPrint("validateDrop")
             if proposedDropOperation.pointee == NSCollectionView.DropOperation.on {
                 proposedDropOperation.pointee = NSCollectionView.DropOperation.before
             }
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == dataSource.collectionView {
+                Swift.debugPrint("validateDrop move")
                 return NSDragOperation.move
             } else if !draggingInfo.contents.isEmpty {
+                Swift.debugPrint("validateDrop copy")
                 return NSDragOperation.copy
             }
+            Swift.debugPrint("validateDrop []")
             return []
         }
 
