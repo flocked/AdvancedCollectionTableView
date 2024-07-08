@@ -721,7 +721,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 }
                 updateEmptyView()
             } else {
-                emptyContentView?.removeFromSuperview()
                 emptyContentView = nil
             }
         }
@@ -730,35 +729,30 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
 
-     You can use this handler e.g. if you want to update your empty view or content configuration.
-     
+     You can use this handler e.g. if you want to update your empty content configuration or view.
+
      - Parameter isEmpty: A Boolean value indicating whether the current snapshot is empty.
      */
     open var emptyHandler: ((_ isEmpty: Bool)->())? {
         didSet {
-            emptyHandler?(snapshot().isEmpty)
+            emptyHandler?(currentSnapshot.isEmpty)
         }
     }
     
     var emptyContentView: ContentConfigurationView?
     
-     func updateEmptyView(previousIsEmpty: Bool? = nil) {
+    func updateEmptyView(previousIsEmpty: Bool? = nil) {
          if !currentSnapshot.isEmpty {
              emptyView?.removeFromSuperview()
              emptyContentView?.removeFromSuperview()
          } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-             emptyView.autoresizingMask = .all
-             emptyView.frame = collectionView?.bounds ?? .zero
-             collectionView?.addSubview(emptyView)
+             collectionView?.addSubview(withConstraint: emptyView)
          } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-             emptyContentView.autoresizingMask = .all
-             emptyContentView.frame = collectionView?.bounds ?? .zero
-             collectionView?.addSubview(emptyContentView)
+             collectionView?.addSubview(withConstraint: emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-             let isEmpty = currentSnapshot.isEmpty
-             if previousIsEmpty != isEmpty {
-                 emptyHandler(isEmpty)
+             if previousIsEmpty != currentSnapshot.isEmpty {
+                 emptyHandler(currentSnapshot.isEmpty)
              }
          }
      }
@@ -859,7 +853,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     public var draggingHandlers = DraggingHandlers()
     
     /// The handlers for dropping files inside the collection view.
-    public var droppingHandlersAlt = DroppingHandlersAlt()
+    var droppingHandlersAlt = DroppingHandlersAlt()
 
     /// Handlers for prefetching elements.
     public struct PrefetchHandlers {

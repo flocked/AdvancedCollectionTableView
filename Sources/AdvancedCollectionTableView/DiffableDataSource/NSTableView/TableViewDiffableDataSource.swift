@@ -698,7 +698,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 }
                 updateEmptyView()
             } else {
-                emptyContentView?.removeFromSuperview()
                 emptyContentView = nil
             }
         }
@@ -707,13 +706,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
           
-     You can use this handler e.g. if you want to update your empty view or content configuration.
+     You can use this handler e.g. if you want to update your empty content configuration or view.
      
      - Parameter isEmpty: A Boolean value indicating whether the current snapshot is empty.
      */
     open var emptyHandler: ((_ isEmpty: Bool)->())? {
         didSet {
-            emptyHandler?(snapshot().isEmpty)
+            emptyHandler?(currentSnapshot.isEmpty)
         }
     }
     
@@ -729,9 +728,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
              tableView.addSubview(withConstraint: emptyContentView)
          }
          if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-             let isEmpty = currentSnapshot.isEmpty
-             if previousIsEmpty != isEmpty {
-                 emptyHandler(isEmpty)
+             if previousIsEmpty != currentSnapshot.isEmpty {
+                 emptyHandler(currentSnapshot.isEmpty)
              }
          }
      }
