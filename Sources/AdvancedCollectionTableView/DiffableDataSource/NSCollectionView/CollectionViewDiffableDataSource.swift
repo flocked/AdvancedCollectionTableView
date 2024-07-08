@@ -46,7 +46,7 @@ import QuickLookUI
 open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
-    var delegateBridge: DelegateBridge!
+    var delegateBridge: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
     var previousDisplayingItems = [Element.ID]()
     var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
@@ -372,7 +372,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
 
-        delegateBridge = DelegateBridge(self)
+        delegateBridge = Delegate(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         collectionView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         
@@ -1015,7 +1015,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /// The handlers for dragging elements outside the collection view.
     public struct DraggingHandlers {
         /// The handler that determines whenever elements can be dragged outside the collection view.
-        public var canDrag: ((_ element: Element)->([PasteboardContent]))?
+        public var canDrag: ((_ elements: [Element])->(Bool))?
+        
+        /// The handler that determines whenever elements can be dragged outside the collection view.
+        public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
+        
         /// The handler that gets called when the handler will drag elements outside the collection view.
         public var willDrag: (() -> ())?
         /// The handler that gets called when the handler did drag elements outside the collection view.

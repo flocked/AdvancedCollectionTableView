@@ -47,7 +47,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
-    var delegateBridge: DelegateBridge!
+    var delegateBridge: Delegate!
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider? {
@@ -401,7 +401,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return cellProvider(tableview, tablecolumn, row, item)
         })
         
-        delegateBridge = DelegateBridge(self)
+        delegateBridge = Delegate(self)
         tableView.registerForDraggedTypes([.itemID])
         // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         // tableView.setDraggingSourceOperationMask(.move, forLocal: true)

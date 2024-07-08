@@ -9,8 +9,9 @@ import AppKit
 import FZUIKit
 
 extension TableViewDiffableDataSource {
-    class DelegateBridge: NSObject, NSTableViewDelegate {
+    class Delegate: NSObject, NSTableViewDelegate {
         weak var dataSource: TableViewDiffableDataSource!
+        var previousSelectedIDs: [Item.ID] = []
 
         init(_ dataSource: TableViewDiffableDataSource) {
             self.dataSource = dataSource
@@ -18,7 +19,8 @@ extension TableViewDiffableDataSource {
             dataSource.tableView.delegate = self
         }
 
-        var previousSelectedIDs: [Item.ID] = []
+        // MARK: - Selecting
+        
         public func tableViewSelectionDidChange(_: Notification) {
             guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
                 previousSelectedIDs = dataSource.selectedItems.ids
@@ -65,6 +67,8 @@ extension TableViewDiffableDataSource {
 
             return IndexSet(selections.compactMap { dataSource.row(for: $0) })
         }
+        
+        // MARK: - View
 
         public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
             dataSource.dataSource.tableView(tableView, viewFor: tableColumn, row: row)
@@ -77,6 +81,8 @@ extension TableViewDiffableDataSource {
         public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
             dataSource.dataSource.tableView(tableView, rowViewForRow: row)
         }
+        
+        // MARK: - Row Action
 
         public func tableView(_: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
             if let rowActionProvider = dataSource.rowActionProvider, let item = dataSource.item(forRow: row) {
@@ -84,6 +90,8 @@ extension TableViewDiffableDataSource {
             }
             return []
         }
+        
+        // MARK: - Column
         
         func tableView(_ tableView: NSTableView, userCanChangeVisibilityOf column: NSTableColumn) -> Bool {
             dataSource.columnHandlers.userCanChangeVisibility?(column) ?? false
