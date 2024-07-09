@@ -618,7 +618,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         finalSnapshot.deleteItems(elements)
         return DiffableDataSourceTransaction(initial: currentSnapshot, final: finalSnapshot)
     }
-
+    
     func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
         var newSnapshot = snapshot()
         let newItems = indexPaths.compactMap { element(for: $0) }
@@ -852,7 +852,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     /// The handlers highlighting elements.
     open var highlightHandlers = HighlightHandlers()
 
-    /// The handlers for dropping files inside the collection view.
+    /// The handlers for dragging pasteboard items inside the collection view.
     public var droppingHandlers = DroppingHandlers()
     
     /// The handlers for dragging elements outside the collection view.
@@ -1014,33 +1014,20 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         /// The handler that determines whenever elements can be dragged outside the collection view.
         public var canDrag: ((_ elements: [Element])->(Bool))?
         /// The handler that gets called when the handler did drag elements outside the collection view.
-        public var didDrag: (([Element]) -> ())?
-        /// The handler that determines whenever elements can be dragged outside the collection view.
+        public var didDrag: ((_ elements: [Element]) -> ())?
+        /// The handler that provides the pasteboard content for an element that can be dragged outside the collection view.
         public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
         /// The handler that determines the image when dragging elements outside the collection view.
         public var draggingImage: ((_ elements: [Element], _ event: NSEvent, _ screenLocation: CGPoint) -> NSImage?)?
     }
     
-    /// Handlers for dragging files outside the collection view.
+    /// Handlers for dragging pasteboard items inside the collection view.
     public struct DroppingHandlers {
-        /// The handler that specifies the elements for strings dragged inside the collection view..
-        public var strings: ((_ strings: [String]) -> [Element])?
-        /// The handler that specifies the elements for the file urls dragged inside the collection view..
-        public var fileURLs: ((_ fileURLs: [URL]) -> [Element])?
-        /// The handler that specifies the elements for the urls dragged inside the collection view..
-        public var urls: ((_ urls: [URL]) -> [Element])?
-        /// The handler that specifies the elements for the images dragged inside the collection view..
-        public var images: ((_ images: [NSImage]) -> [Element])?
-        /// The handler that specifies the elements for the colors dragged inside the collection view..
-        public var colors: ((_ colors: [NSColor]) -> [Element])?
-        /// The handler that specifies the elements for the pasteboard items dragged inside the collection view..
-        public var pasteboardItems: ((_ items: [NSPasteboardItem]) -> [Element])?
-        
         /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
         public var canDrop: ((_ contents: [PasteboardContent]) -> ([Element]))?
-        /// The handler that gets called when the handler will drag elements inside the collection view.
+        /// The handler that gets called when the handler will drag pasteboard items inside the collection view.
         public var willDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
-        /// The handler that gets called when the handler did drag elements inside the collection view.
+        /// The handler that gets called when the handler did drag pasteboard items inside the collection view.
         public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         
         var needsTransaction: Bool {
