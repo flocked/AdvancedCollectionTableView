@@ -38,9 +38,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var text: String? {
         didSet {
-            if text != nil {
-                attributedText = nil
-            }
+            guard text != nil else { return }
+            attributedText = nil
         }
     }
 
@@ -51,9 +50,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var attributedText: AttributedString? {
         didSet {
-            if attributedText != nil {
-                text = nil
-            }
+            guard attributedText != nil else { return }
+            text = nil
         }
     }
 
@@ -64,9 +62,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var placeholderText: String? {
         didSet {
-            if placeholderText != nil {
-                attributedPlaceholderText = nil
-            }
+            guard placeholderText != nil else { return }
+            attributedPlaceholderText = nil
         }
     }
 
@@ -77,9 +74,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var attributedPlaceholderText: AttributedString? {
         didSet {
-            if attributedPlaceholderText != nil {
-                placeholderText = nil
-            }
+            guard attributedPlaceholderText != nil else { return }
+            placeholderText = nil
         }
     }
 
@@ -90,9 +86,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var secondaryText: String? {
         didSet {
-            if secondaryText != nil {
-                secondaryAttributedText = nil
-            }
+            guard secondaryText != nil else { return }
+            secondaryAttributedText = nil
         }
     }
 
@@ -103,9 +98,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var secondaryAttributedText: AttributedString? {
         didSet {
-            if secondaryAttributedText != nil {
-                secondaryText = nil
-            }
+            guard secondaryAttributedText != nil else { return }
+            secondaryText = nil
         }
     }
 
@@ -116,9 +110,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var secondaryPlaceholderText: String? {
         didSet {
-            if secondaryPlaceholderText != nil {
-                secondaryAttributedPlaceholderText = nil
-            }
+            guard secondaryPlaceholderText != nil else { return }
+            secondaryAttributedPlaceholderText = nil
         }
     }
 
@@ -129,9 +122,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
-            if secondaryAttributedPlaceholderText != nil {
-                secondaryPlaceholderText = nil
-            }
+            guard secondaryAttributedPlaceholderText != nil else { return }
+            secondaryPlaceholderText = nil
         }
     }
 
@@ -350,13 +342,12 @@ extension NSListContentConfiguration {
     }
 
     func applyTableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
-        let isHeader = type == .automaticHeader
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
         case .automatic: break
         case .sourceList:
-            if isHeader {
+            if type == .automaticHeader {
                 configuration.textProperties.font = .subheadline.weight(.bold)
                 configuration.textProperties.color = .tertiaryLabelColor
                 configuration.imageProperties.tintColor = .tertiaryLabelColor
@@ -367,7 +358,6 @@ extension NSListContentConfiguration {
             } else {
                 configuration.textProperties.font = .body
                 configuration.secondaryTextProperties.font = .body
-                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
                 configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
                 configuration.imageToTextPadding = 3.0
                 configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
@@ -378,7 +368,7 @@ extension NSListContentConfiguration {
             configuration.imageToTextPadding = 6.0
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
-            configuration.margins = .init(top: 2.0, leading: isHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
+            configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
         }
         return configuration
     }
@@ -400,6 +390,7 @@ extension NSListContentConfiguration {
     }
 }
 
+
 extension NSFont.Weight {
     var symbolWeight: NSUIImage.SymbolWeight {
         switch self {
@@ -416,3 +407,4 @@ extension NSFont.Weight {
         }
     }
 }
+

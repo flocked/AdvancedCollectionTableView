@@ -48,6 +48,25 @@ public struct TextProperties {
      If `true`, the user can select and edit text. If `false`, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of `isSelectable`.
      */
     public var isEditable: Bool = false
+    
+    /**
+     The action to perform when the user presses the enter key while editing.
+     
+     The default value is `endEditing`.
+     
+     The property is only used, if `isEditable` is `true`.
+     */
+    public var editingActionOnEnterKeyDown: NSTextField.EnterKeyAction = .endEditing
+    
+    /**
+     The action to perform when the user presses the escape key while editing.
+     
+     The default value is `endEditingAndReset`.
+     
+     The property is only used, if `isEditable` is `true`.
+     */
+    public var editingActionOnEscapeKeyDown: NSTextField.EscapeKeyAction = .endEditingAndReset
+    
     /**
      The handler that gets called when editing of the text ended.
 
@@ -77,7 +96,7 @@ public struct TextProperties {
         colorTansform?(color) ?? color
     }
     
-    /// The tooltip of the text. If set to "", the text is automatically used.
+    /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
     public var toolTip: String? = nil
 
     var _resolvedTextColor: NSUIColor = .labelColor

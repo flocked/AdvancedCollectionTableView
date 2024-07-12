@@ -54,7 +54,7 @@ extension NSItemContentView {
             } else {
                 placeholderString = ""
             }
-            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
+            toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         }
 
@@ -70,7 +70,7 @@ extension NSItemContentView {
             adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
             minimumScaleFactor = properties.minimumScaleFactor
             allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
+            toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
         }
 
         init(properties: TextProperties) {
@@ -122,16 +122,27 @@ extension NSItemContentView {
 
         public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                if properties.stringValidation?(stringValue) ?? true {
-                    window?.makeFirstResponder(nil)
-                    return true
-                } else {
-                    NSSound.beep()
+                if properties.editingActionOnEnterKeyDown == .endEditing {
+                    if properties.stringValidation?(stringValue) ?? true {
+                        window?.makeFirstResponder(nil)
+                        return true
+                    } else {
+                        NSSound.beep()
+                    }
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
-                stringValue = previousStringValue
-                window?.makeFirstResponder(nil)
-                return true
+                if properties.editingActionOnEscapeKeyDown == .endEditingAndReset {
+                    stringValue = previousStringValue
+                    window?.makeFirstResponder(nil)
+                    return true
+                } else if properties.editingActionOnEscapeKeyDown == .endEditing {
+                    if properties.stringValidation?(stringValue) ?? true {
+                        window?.makeFirstResponder(nil)
+                        return true
+                    } else {
+                        NSSound.beep()
+                    }
+                }
             }
             return false
         }

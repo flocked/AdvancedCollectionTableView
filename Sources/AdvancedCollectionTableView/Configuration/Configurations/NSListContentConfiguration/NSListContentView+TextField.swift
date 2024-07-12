@@ -31,40 +31,23 @@ extension NSListContentView {
         }
 
         func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
-            var needsRowHeightUpdate = false
             if let attributedString = attributedString {
                 attributedStringValue = NSAttributedString(attributedString)
-                listContentView?.updateTableRowHeight()
             } else if let text = text {
-                needsRowHeightUpdate = text != stringValue
                 stringValue = text
             } else {
-                needsRowHeightUpdate = stringValue != ""
                 stringValue = ""
             }
-            
             if let attributedPlaceholder = attributedPlaceholder {
                 placeholderAttributedString = NSAttributedString(attributedPlaceholder)
-                if stringValue == "" {
-                    needsRowHeightUpdate = true
-                }
             } else if let placeholder = placeholder {
                 placeholderString = placeholder
-                if stringValue == "" {
-                    needsRowHeightUpdate = true
-                }
             } else {
                 placeholderString = ""
-                if stringValue == "" {
-                    needsRowHeightUpdate = true
-                }
             }
             isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
-            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
-            // Swift.print("needsRowHeightUpdate", needsRowHeightUpdate, listContentView != nil)
-            if needsRowHeightUpdate {
-                //  listContentView?.updateTableRowHeight()
-            }
+            toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
+            listContentView?.updateTableRowHeight()
         }
 
         func update() {
@@ -80,7 +63,7 @@ extension NSListContentView {
             adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
             minimumScaleFactor = properties.minimumScaleFactor
             allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-            toolTip = properties.toolTip == "" ? (stringValue != "" ? stringValue : nil) : properties.toolTip
+            toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
         }
 
         init(properties: TextProperties) {
@@ -153,16 +136,27 @@ extension NSListContentView {
 
         func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                if properties.stringValidation?(stringValue) ?? true {
-                    window?.makeFirstResponder(tableView)
-                    return true
-                } else {
-                    NSSound.beep()
+                if properties.editingActionOnEnterKeyDown == .endEditing {
+                    if properties.stringValidation?(stringValue) ?? true {
+                        window?.makeFirstResponder(tableView)
+                        return true
+                    } else {
+                        NSSound.beep()
+                    }
                 }
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
-                stringValue = previousStringValue
-                window?.makeFirstResponder(tableView)
-                return true
+                if properties.editingActionOnEscapeKeyDown == .endEditingAndReset {
+                    stringValue = previousStringValue
+                    window?.makeFirstResponder(tableView)
+                    return true
+                } else if properties.editingActionOnEscapeKeyDown == .endEditing {
+                    if properties.stringValidation?(stringValue) ?? true {
+                        window?.makeFirstResponder(tableView)
+                        return true
+                    } else {
+                        NSSound.beep()
+                    }
+                }
             }
             return false
         }
