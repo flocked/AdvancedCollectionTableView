@@ -58,19 +58,9 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
 
-    lazy var textStackView: NSStackView = {
-        var stackView = NSStackView(views: [textField, secondaryTextField])
-        stackView.orientation = .vertical
-        stackView.alignment = .leading
-        return stackView
-    }()
+    lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading)
 
-    lazy var stackView: NSStackView = {
-        var stackView = NSStackView(views: [imageView, textStackView])
-        stackView.orientation = .horizontal
-        stackView.distribution = .fill
-        return stackView
-    }()
+    lazy var stackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
 
     var isEditing: Bool = false {
         didSet {

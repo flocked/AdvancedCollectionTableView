@@ -74,12 +74,7 @@ extension NSListContentView {
 
         let textField = NSTextField(wrappingLabelWithString: "")
         lazy var imageView = BadgeImageView(properties: properties.imageProperties)
-        lazy var stackView: NSStackView = {
-            let stackView = NSStackView(views: [imageView, textField])
-            stackView.orientation = .horizontal
-            stackView.alignment = .firstBaseline
-            return stackView
-        }()
+        lazy var stackView = NSStackView(views: [imageView, textField]).orientation(.horizontal).alignment(.firstBaseline)
 
         @available(*, unavailable)
         required init?(coder _: NSCoder) {
