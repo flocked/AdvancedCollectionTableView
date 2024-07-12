@@ -26,7 +26,7 @@ extension NSListContentView {
             border.width = properties.borderWidth
             cornerRadius = properties.cornerRadius
             backgroundColor = properties._resolvedBackgroundColor
-            configurate(using: properties.shadow, type: .outer)
+            outerShadow = properties.shadow
             textField.font = properties.font
             textField.textColor = properties._resolvedColor
             imageView.image = properties.image

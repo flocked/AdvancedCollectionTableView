@@ -51,12 +51,11 @@ extension NSListContentView {
         func update() {
             imageScaling = image?.isSymbolImage == true ? .scaleNone : properties.scaling.imageScaling
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
-            border.color = properties._resolvedBorderColor
-            border.width = properties.borderWidth
+            border = properties.border
             backgroundColor = properties._resolvedBackgroundColor
             contentTintColor = properties._resolvedTintColor
             cornerRadius = properties.cornerRadius
-            configurate(using: properties.shadow, type: .outer)
+            outerShadow = properties.shadow
             toolTip = properties.toolTip
             invalidateIntrinsicContentSize()
         }

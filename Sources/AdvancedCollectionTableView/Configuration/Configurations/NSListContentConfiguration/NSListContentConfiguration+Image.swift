@@ -147,12 +147,12 @@ public extension NSListContentConfiguration {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
         }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
         }
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
@@ -165,12 +165,12 @@ public extension NSListContentConfiguration {
 
         /// The background color.
         public var backgroundColor: NSColor? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
@@ -181,26 +181,8 @@ public extension NSListContentConfiguration {
             return nil
         }
 
-        /// The border width of the image.
-        public var borderWidth: CGFloat = 0.0
-
-        /// The border color of the image.
-        public var borderColor: NSColor? {
-            didSet { updateResolvedColors() }
-        }
-
-        /// The color transformer of the border color.
-        public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
-        }
-
-        /// Generates the resolved border color for the specified border color, using the border color and border color transformer.
-        public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = borderColor {
-                return borderColorTransform?(borderColor) ?? borderColor
-            }
-            return nil
-        }
+        /// The border of the image.
+        public var border: BorderConfiguration = .none()
 
         /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
@@ -226,12 +208,6 @@ public extension NSListContentConfiguration {
         init() {}
 
         var _resolvedTintColor: NSColor?
-        var _resolvedBorderColor: NSColor?
         var _resolvedBackgroundColor: NSColor?
-        mutating func updateResolvedColors() {
-            _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
-            _resolvedBorderColor = resolvedBorderColor()
-            _resolvedBackgroundColor = resolvedBackgroundColor()
-        }
     }
 }
