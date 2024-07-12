@@ -67,35 +67,40 @@ public extension NSItemContentConfiguration {
         /// The border of the content.
         public var border: BorderConfiguration = .none() {
             didSet { 
-                updateResolvedColors()
+                updateState()
             }
         }
         
         struct ContentConfiguration: Hashable {
             var isSelected: Bool = false
             var isEmphasized: Bool = false
-            var resolvedBorder: BorderConfiguration? = nil
-            var resolvedShadow: ShadowConfiguration? = nil
+        }
+        
+        var resolvedBorder: BorderConfiguration? = nil
+        var resolvedShadow: ShadowConfiguration? = nil
+        
+        func updateState() {
+            
         }
         
         var state = ContentConfiguration() {
             didSet {
                 guard state != oldValue else { return }
                 if state.isSelected {
-                    state.resolvedBorder = border
-                    state.resolvedBorder?.width = border.width > 3.0 ? border.width : 3.0
+                    resolvedBorder = border
+                    resolvedBorder?.width = border.width > 3.0 ? border.width : 3.0
                     let isInvisible = shadow.color == nil || shadow.color?.alphaComponent == 0.0 || shadow.opacity == 0.0
                     if state.isEmphasized {
-                        state.resolvedBorder?.color = .controlAccentColor
-                        state.resolvedShadow = shadow
-                        state.resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor
+                        resolvedBorder?.color = .controlAccentColor
+                        resolvedShadow = shadow
+                        resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor
                     } else {
-                        state.resolvedBorder?.color = .controlAccentColor.withAlphaComponent(0.7)
-                        state.resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor.withAlphaComponent(0.7)
+                        resolvedBorder?.color = .controlAccentColor.withAlphaComponent(0.7)
+                        resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor.withAlphaComponent(0.7)
                     }
                 } else {
-                    state.resolvedBorder = nil
-                    state.resolvedShadow = nil
+                    resolvedBorder = nil
+                    resolvedShadow = nil
                 }
             }
         }
@@ -104,21 +109,17 @@ public extension NSItemContentConfiguration {
         public var imageProperties: ImageProperties = .init()
 
         /// The shadow properties.
-        public var shadow: ShadowConfiguration = .black()
+        public var shadow: ShadowConfiguration = .black() {
+            didSet {
+                updateState()
+            }
+        }
         
         /// The text for the tooltip of the content.
         public var toolTip: String? = nil
 
-        /// Resets the  border width to 0 when the item state isSelected is false.
-        var needsBorderWidthReset: Bool = false
-        /// Resets the  border width to 0 when the item state isSelected is false.
-        var needsBorderColorReset: Bool = false
-        var _resolvedImageTintColor: NSColor?
-        var _resolvedBorderColor: NSColor?
         var _resolvedBackgroundColor: NSColor?
         mutating func updateResolvedColors() {
-            //  imageSymbolConfiguration?.updateResolvedColors()
-            _resolvedImageTintColor = imageProperties.symbolConfiguration?.resolvedPrimaryColor() ?? imageProperties.resolvedTintColor()
             _resolvedBackgroundColor = resolvedBackgroundColor()
         }
 

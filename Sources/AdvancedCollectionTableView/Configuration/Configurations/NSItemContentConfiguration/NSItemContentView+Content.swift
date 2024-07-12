@@ -299,7 +299,7 @@ extension NSItemContentView {
             backgroundColor = contentProperties._resolvedBackgroundColor
             visualEffect = contentProperties.visualEffect
             
-            containerView.border = contentProperties.state.resolvedBorder ?? contentProperties.border
+            containerView.border = contentProperties.resolvedBorder ?? contentProperties.border
             
             cornerRadius = contentProperties.cornerRadius
             clipsToBounds = false
@@ -308,9 +308,9 @@ extension NSItemContentView {
             view?.cornerRadius = contentProperties.cornerRadius
             overlayView?.cornerRadius = contentProperties.cornerRadius
 
-            outerShadow = contentProperties.state.resolvedShadow ?? contentProperties.shadow
+            outerShadow = contentProperties.resolvedShadow ?? contentProperties.shadow
 
-            imageView.tintColor = contentProperties._resolvedImageTintColor
+            imageView.tintColor = contentProperties.imageProperties.resolvedTintColor()
             imageView.imageScaling = contentProperties.imageProperties.scaling.scaling
             imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image
