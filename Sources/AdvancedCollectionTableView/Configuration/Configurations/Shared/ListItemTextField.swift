@@ -12,9 +12,8 @@ import FZUIKit
 class ListItemTextField: NSTextField, NSTextFieldDelegate {
     var properties: TextProperties {
         didSet {
-            if oldValue != properties {
-                update()
-            }
+            guard oldValue != properties else { return }
+            update()
         }
     }
         
@@ -69,6 +68,9 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         font = properties.font
         alignment = properties.alignment
         isSelectable = properties.isSelectable
+        if isFirstResponder, !properties.isEditable {
+            editingContentView?.isEditing = false
+        }
         isEditable = properties.isEditable
         formatter = properties.numberFormatter
         adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
