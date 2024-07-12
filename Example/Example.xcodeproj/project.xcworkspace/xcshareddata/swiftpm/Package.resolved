@@ -6,7 +6,7 @@
       "location" : "https://github.com/flocked/FZQuicklook.git",
       "state" : {
         "branch" : "main",
-        "revision" : "cd31f6667cadcef8bd3875d91b62417b80c5d0ba"
+        "revision" : "d8a257ab836612d11c4e5b9673ce8a8638d8207f"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/flocked/FZSwiftUtils.git",
       "state" : {
         "branch" : "main",
-        "revision" : "544180525d5c98770a9d5f0ac7f7287cf6767d68"
+        "revision" : "68f4aded4102c5d12b84e8db0404ded42ec31591"
       }
     },
     {
@@ -24,7 +24,7 @@
       "location" : "https://github.com/flocked/FZUIKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "ba0011bd7217c0995387f27e23e596695dc1a8e3"
+        "revision" : "de6a49b6c559e04f01d757a879a5e79e666dfc29"
       }
     }
   ],

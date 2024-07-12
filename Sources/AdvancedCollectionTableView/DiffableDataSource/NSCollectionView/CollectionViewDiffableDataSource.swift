@@ -1062,7 +1062,7 @@ extension CollectionViewDiffableDataSource where Element: QuicklookPreviewable {
         - elements: The elements to preview.
         - current: The element that starts the preview. The default value is `nil`.
      */
-    public func quicklookElements(_ elements: [Element], current: Element? = nil) where Element: QuicklookPreviewable {
+    public func quicklookElements(_ elements: [Element], current: Element? = nil) {
         let indexPaths = elements.compactMap { indexPath(for: $0) }.sorted()
         if let current = current, let currentIndexPath = indexPath(for: current) {
             collectionView.quicklookItems(at: indexPaths, current: currentIndexPath)
