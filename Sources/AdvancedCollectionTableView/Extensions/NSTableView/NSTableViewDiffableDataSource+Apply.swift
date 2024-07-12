@@ -16,7 +16,7 @@ extension NSTableViewDiffableDataSource {
      - Parameters:
         - snapshot: The snapshot reflecting the new state of the data in the table view.
         - option: Option how to apply the snapshot to the table view. The default value is `animated`.
-        - completion: An optional closure to be executed when the animations are complete. This closure has no return value and takes no parameters. The system calls this closure from the main queue. The default value is `nil`.
+        - completion: An optional closure to be executed when the animations are complete. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         switch option {

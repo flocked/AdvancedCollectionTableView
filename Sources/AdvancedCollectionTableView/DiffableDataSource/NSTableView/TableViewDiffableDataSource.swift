@@ -283,9 +283,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      The system interrupts any ongoing item animations and immediately reloads the table view’s content.
      
      - Parameters:
-     - snapshot: The snapshot that reflects the new state of the data in the table view.
-     - option: Option how to apply the snapshot to the table view. The default value is `animated`.
-     - completion: An optional completion handler which gets called after applying the snapshot.
+        - snapshot: The snapshot that reflects the new state of the data in the table view.
+        - option: Option how to apply the snapshot to the table view. The default value is `animated`.
+        - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         var previousIsEmpty: Bool?

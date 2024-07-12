@@ -325,7 +325,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - Parameters:
         - snapshot: The snapshot that reflects the new state of the data in the collection view.
         - option: Option how to apply the snapshot to the collection view. The default value is `animated`.
-        - completion: An optional completion handler which gets called after applying the snapshot.
+        - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         var previousIsEmpty: Bool?
