@@ -53,8 +53,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
 
-    lazy var textField = ListTextField(properties: appliedConfiguration.textProperties)
-    lazy var secondaryTextField = ListTextField(properties: appliedConfiguration.secondaryTextProperties)
+    lazy var textField = ListItemTextField(properties: appliedConfiguration.textProperties)
+    lazy var secondaryTextField = ListItemTextField(properties: appliedConfiguration.secondaryTextProperties)
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
 

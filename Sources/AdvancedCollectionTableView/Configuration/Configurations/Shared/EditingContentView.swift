@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import AppKit
 
-protocol EdiitingContentView {
-    var isEditing: Bool { get }
-}
+protocol EdiitingContentView: NSView {
+     var isEditing: Bool { get set }
+ }
+ 

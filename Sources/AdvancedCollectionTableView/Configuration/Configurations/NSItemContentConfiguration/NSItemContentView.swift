@@ -58,8 +58,8 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         return nil
     }
 
-    lazy var textField = ItemTextField(properties: appliedConfiguration.textProperties)
-    lazy var secondaryTextField = ItemTextField(properties: appliedConfiguration.secondaryTextProperties)
+    lazy var textField = ListItemTextField(properties: appliedConfiguration.textProperties)
+    lazy var secondaryTextField = ListItemTextField(properties: appliedConfiguration.secondaryTextProperties)
     lazy var contentView = ItemContentView(configuration: appliedConfiguration)
 
     lazy var textStackView: NSStackView = {
