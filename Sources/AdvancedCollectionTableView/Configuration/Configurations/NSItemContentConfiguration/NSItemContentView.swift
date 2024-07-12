@@ -95,12 +95,12 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     var isEditing: Bool = false {
         didSet {
             guard oldValue != isEditing else { return }
-            if let tableCellView = tableCellView, tableCellView.contentView == self {
+            if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
+                collectionViewItem.setNeedsAutomaticUpdateConfiguration()
+            } else if let tableCellView = tableCellView, tableCellView.contentView == self {
                 tableCellView.setNeedsAutomaticUpdateConfiguration()
             } else if let tableRowView = tableRowView, tableRowView.contentView == self {
                 tableRowView.setNeedsAutomaticUpdateConfiguration()
-            } else if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
-                collectionViewItem.setNeedsAutomaticUpdateConfiguration()
             }
         }
     }
