@@ -18,7 +18,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     }
         
     var previousStringValue: String = ""
-    var isEditing: Bool = false
     
     var editingContentView: EdiitingContentView? {
         firstSuperview(where: { $0 is EdiitingContentView }) as? EdiitingContentView
@@ -71,7 +70,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         isSelectable = properties.isSelectable
         if isFirstResponder, !properties.isEditable {
             editingContentView?.isEditing = false
-            isEditing = false
         }
         isEditable = properties.isEditable
         formatter = properties.numberFormatter
@@ -106,7 +104,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         let canBecome = super.becomeFirstResponder()
         if isEditable, canBecome {
             editingContentView?.isEditing = true
-            isEditing = true
             previousStringValue = stringValue
         }
         return canBecome
@@ -115,14 +112,12 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     override public func textDidBeginEditing(_ notification: Notification) {
         super.textDidBeginEditing(notification)
         editingContentView?.isEditing = true
-        isEditing = true
     }
 
     override public func textDidEndEditing(_ notification: Notification) {
         super.textDidEndEditing(notification)
         previousStringValue = stringValue
         editingContentView?.isEditing = false
-        isEditing = false
         properties.onEditEnd?(stringValue)
     }
     

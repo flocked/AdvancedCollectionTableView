@@ -124,7 +124,6 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        isEditing = textField.isEditing || secondaryTextField.isEditing
 
         scale = appliedConfiguration.scaleTransform.point
         contentView.configuration = appliedConfiguration

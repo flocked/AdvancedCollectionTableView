@@ -108,7 +108,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         secondaryTextField.isEnabled = appliedConfiguration.state.isEnabled != false
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        isEditing = textField.isEditing || secondaryTextField.isEditing
         
         imageView.image = appliedConfiguration.image
         imageView.properties = appliedConfiguration.imageProperties
