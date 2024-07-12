@@ -483,6 +483,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     open func tableView(_: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        if !dragingRowIndexes.isEmpty, dropOperation == .on {
+            return []
+        }
         if !dragingRowIndexes.isEmpty, dropOperation == .above {
             if row >= (sectionHeaderCellProvider != nil ? 1 : 0) {
                 return .move

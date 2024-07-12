@@ -13,14 +13,14 @@ class SidebarItem: NSObject, Identifiable {
     public let symbolName: String
     public var isFavorite: Bool = false
 
-    public init(title: String, symbolName: String) {
+    public init(_ title: String, symbolName: String) {
         self.title = title
         self.symbolName = symbolName
     }
 
-    static let sampleItems1 = [SidebarItem(title: "Messages", symbolName: "message.fill"),
-                                      SidebarItem(title: "Photos", symbolName: "photo"),
-                                      SidebarItem(title: "Videos", symbolName: "film")]
-    static let sampleItems2 = [SidebarItem(title: "Archive", symbolName: "tray.full")]
-    static let sampleItems3 = [SidebarItem(title: "News", symbolName: "newspaper")]
+    static let sampleItems1 = [SidebarItem("Messages", symbolName: "message.fill"),
+                                      SidebarItem("Photos", symbolName: "photo"),
+                                      SidebarItem("Videos", symbolName: "film")]
+    static let sampleItems2 = [SidebarItem("Archive", symbolName: "tray.full")]
+    static let sampleItems3 = [SidebarItem("News", symbolName: "newspaper")]
 }

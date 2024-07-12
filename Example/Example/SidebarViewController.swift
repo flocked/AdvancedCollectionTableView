@@ -68,7 +68,7 @@ class SidebarViewController: NSViewController {
     }
         
     func applySnapshot() {
-        var snapshot: NSDiffableDataSourceSnapshot<Section, SidebarItem> = .init()
+        var snapshot = dataSource.emptySnapshot()
         snapshot.appendSections([.main, .section2, .section3])
         snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)
