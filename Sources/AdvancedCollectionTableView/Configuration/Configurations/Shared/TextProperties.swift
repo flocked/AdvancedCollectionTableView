@@ -27,13 +27,13 @@ public struct TextProperties {
     /// The number formatter of the text.
     public var numberFormatter: NumberFormatter?
 
-    /// A Boolean value that determines whether the label reduces the text’s font size to fit the title string into the label’s bounding rectangle.
+    /// A Boolean value that determines whether the text fields reduces the text’s font size to fit the title string into the text field’s bounding rectangle.
     public var adjustsFontSizeToFitWidth: Bool = false
 
-    /// The minimum scale factor for the label’s text.
+    /// The minimum scale factor for the text field’s text.
     public var minimumScaleFactor: CGFloat = 0.0
 
-    /// A Boolean value that determines whether the label tightens text before truncating.
+    /// A Boolean value that controls whether single-line text fields tighten intercharacter spacing before truncating the text.
     public var allowsDefaultTighteningForTruncation: Bool = false
 
     /**
@@ -63,7 +63,7 @@ public struct TextProperties {
      
      The default value is `endEditingAndReset`.
      
-     The property is only used, if `isEditable` is `true`.
+     The property is only used, if `isEditable` is `true.
      */
     public var editingActionOnEscapeKeyDown: NSTextField.EscapeKeyAction = .endEditingAndReset
     
@@ -81,12 +81,12 @@ public struct TextProperties {
      */
     public var stringValidation: ((String) -> (Bool))?
 
-    /// The text color.
+    /// The color of the text.
     public var color: NSUIColor = .labelColor {
         didSet { _resolvedTextColor = resolvedColor() }
     }
 
-    /// The color transformer of the text color.
+    /// The color transformer for resolving the text color.
     public var colorTansform: ColorTransformer? {
         didSet { _resolvedTextColor = resolvedColor() }
     }
