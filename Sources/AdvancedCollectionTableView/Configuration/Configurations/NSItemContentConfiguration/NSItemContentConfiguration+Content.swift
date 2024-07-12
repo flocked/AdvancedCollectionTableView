@@ -71,9 +71,6 @@ public extension NSItemContentConfiguration {
             }
         }
         
-        var resolvedBorder: BorderConfiguration? = nil
-        var resolvedShadow: ShadowConfiguration? = nil
-        
         var state = NSItemConfigurationState() {
             didSet {
                 updateState()
@@ -113,6 +110,8 @@ public extension NSItemContentConfiguration {
         public var toolTip: String? = nil
 
         var _resolvedBackgroundColor: NSColor?
+        var resolvedBorder: BorderConfiguration? = nil
+        var resolvedShadow: ShadowConfiguration? = nil
 
         init() {}
     }
@@ -180,8 +179,6 @@ public extension NSItemContentConfiguration.ContentProperties {
             didSet { _resolvedTintColor = resolvedTintColor() }
         }
         
-        var _resolvedTintColor: NSColor?
-
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = tintColor {
@@ -189,5 +186,7 @@ public extension NSItemContentConfiguration.ContentProperties {
             }
             return nil
         }
+        
+        var _resolvedTintColor: NSColor?
     }
 }
