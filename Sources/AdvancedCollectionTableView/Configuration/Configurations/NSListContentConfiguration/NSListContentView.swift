@@ -103,14 +103,15 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         badgeView?.verticalConstraint?.activate(false)
 
         textField.isEnabled = appliedConfiguration.state.isEnabled != false
-        secondaryTextField.isEnabled = appliedConfiguration.state.isEnabled != false
-        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
-        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        imageView.image = appliedConfiguration.image
-
-        imageView.properties = appliedConfiguration.imageProperties
         textField.properties = appliedConfiguration.textProperties
+        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
+        secondaryTextField.isEnabled = appliedConfiguration.state.isEnabled != false
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
+        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
+        isEditing = textField.isEditing || secondaryTextField.isEditing
+        
+        imageView.image = appliedConfiguration.image
+        imageView.properties = appliedConfiguration.imageProperties
 
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.imageToTextPadding
