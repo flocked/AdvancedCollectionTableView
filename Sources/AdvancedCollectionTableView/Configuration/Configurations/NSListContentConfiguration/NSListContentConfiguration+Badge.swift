@@ -38,12 +38,12 @@ public extension NSListContentConfiguration {
 
         /// The color of the badge text and symbol/template image.
         public var color: NSColor = .white {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedColor = resolvedColor() }
         }
 
         /// The color transformer of the border color.
         public var colorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedColor = resolvedColor() }
         }
 
         /// Generates the resolved border color,, using the border color and border color transformer.
@@ -53,12 +53,12 @@ public extension NSListContentConfiguration {
 
         /// The background color of the badge.
         public var backgroundColor: NSColor? = .controlAccentColor {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// Generates the resolved background color, using the background color and color transformer.
@@ -74,12 +74,12 @@ public extension NSListContentConfiguration {
 
         /// The border color of the badge.
         public var borderColor: NSColor? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBorderColor = resolvedBorderColor() }
         }
 
         /// The color transformer of the border color.
         public var borderColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedBorderColor = resolvedBorderColor() }
         }
 
         /// Generates the resolved border color, using the border color and border color transformer.
@@ -176,11 +176,6 @@ public extension NSListContentConfiguration {
         var _resolvedBorderColor: NSColor?
         var _resolvedBackgroundColor: NSColor? = .controlAccentColor
         var _resolvedColor: NSColor = .white
-        mutating func updateResolvedColors() {
-            _resolvedBorderColor = resolvedBorderColor()
-            _resolvedBackgroundColor = resolvedBackgroundColor()
-            _resolvedColor = resolvedColor()
-        }
     }
 }
 
@@ -211,12 +206,12 @@ public extension NSListContentConfiguration.Badge {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
         }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
         }
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
@@ -228,8 +223,5 @@ public extension NSListContentConfiguration.Badge {
         }
 
         var _resolvedTintColor: NSColor?
-        mutating func updateResolvedColors() {
-            _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor()
-        }
     }
 }
