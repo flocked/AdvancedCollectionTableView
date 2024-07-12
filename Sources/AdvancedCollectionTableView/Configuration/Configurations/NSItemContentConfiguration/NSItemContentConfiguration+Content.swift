@@ -71,20 +71,15 @@ public extension NSItemContentConfiguration {
             }
         }
         
-        struct ContentConfiguration: Hashable {
-            var isSelected: Bool = false
-            var isEmphasized: Bool = false
-        }
-        
         var resolvedBorder: BorderConfiguration? = nil
         var resolvedShadow: ShadowConfiguration? = nil
         
-        var state = ContentConfiguration() {
+        var state = NSItemConfigurationState() {
             didSet {
                 updateState()
             }
         }
-        
+                
         mutating func updateState() {
             if state.isSelected {
                 resolvedBorder = border
