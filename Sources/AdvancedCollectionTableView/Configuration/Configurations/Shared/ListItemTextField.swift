@@ -63,7 +63,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
 
     func update() {
         maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
-        textColor = properties.resolvedColor()
+        textColor = properties._resolvedTextColor
         lineBreakMode = properties.lineBreakMode
         font = properties.font
         alignment = properties.alignment
