@@ -310,7 +310,7 @@ extension NSItemContentView {
 
             outerShadow = contentProperties.resolvedShadow ?? contentProperties.shadow
 
-            imageView.tintColor = contentProperties.imageProperties.resolvedTintColor()
+            imageView.tintColor = contentProperties.imageProperties._resolvedTintColor
             imageView.imageScaling = contentProperties.imageProperties.scaling.scaling
             imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image

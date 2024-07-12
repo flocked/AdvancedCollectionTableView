@@ -180,10 +180,19 @@ public extension NSItemContentConfiguration.ContentProperties {
         public var scaling: ImageScaling = .fit
 
         /// The tint color for an image that is a template or symbol image.
-        public var tintColor: NSColor?
+        public var tintColor: NSColor? {
+            didSet { updateResolvedColors() }
+        }
 
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: ColorTransformer?
+        public var tintColorTransform: ColorTransformer? {
+            didSet { updateResolvedColors() }
+        }
+        
+        var _resolvedTintColor: NSColor?
+        mutating func updateResolvedColors() {
+            _resolvedTintColor = resolvedTintColor()
+        }
 
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
