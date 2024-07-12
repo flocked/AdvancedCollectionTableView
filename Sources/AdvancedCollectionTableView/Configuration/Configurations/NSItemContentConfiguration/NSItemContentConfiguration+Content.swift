@@ -45,12 +45,12 @@ public extension NSItemContentConfiguration {
 
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray {
-            didSet { updateResolvedColors() }
+            didSet {  _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet {  _resolvedBackgroundColor = resolvedBackgroundColor() }
         }
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
@@ -113,9 +113,6 @@ public extension NSItemContentConfiguration {
         public var toolTip: String? = nil
 
         var _resolvedBackgroundColor: NSColor?
-        mutating func updateResolvedColors() {
-            _resolvedBackgroundColor = resolvedBackgroundColor()
-        }
 
         init() {}
     }
@@ -175,18 +172,15 @@ public extension NSItemContentConfiguration.ContentProperties {
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = resolvedTintColor() }
         }
 
         /// The color transformer for resolving the image tint color.
         public var tintColorTransform: ColorTransformer? {
-            didSet { updateResolvedColors() }
+            didSet { _resolvedTintColor = resolvedTintColor() }
         }
         
         var _resolvedTintColor: NSColor?
-        mutating func updateResolvedColors() {
-            _resolvedTintColor = resolvedTintColor()
-        }
 
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
