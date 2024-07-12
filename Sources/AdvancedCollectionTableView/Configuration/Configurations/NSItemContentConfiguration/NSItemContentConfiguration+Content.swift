@@ -79,29 +79,28 @@ public extension NSItemContentConfiguration {
         var resolvedBorder: BorderConfiguration? = nil
         var resolvedShadow: ShadowConfiguration? = nil
         
-        func updateState() {
-            
-        }
-        
         var state = ContentConfiguration() {
             didSet {
-                guard state != oldValue else { return }
-                if state.isSelected {
-                    resolvedBorder = border
-                    resolvedBorder?.width = border.width > 3.0 ? border.width : 3.0
-                    let isInvisible = shadow.color == nil || shadow.color?.alphaComponent == 0.0 || shadow.opacity == 0.0
-                    if state.isEmphasized {
-                        resolvedBorder?.color = .controlAccentColor
-                        resolvedShadow = shadow
-                        resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor
-                    } else {
-                        resolvedBorder?.color = .controlAccentColor.withAlphaComponent(0.7)
-                        resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor.withAlphaComponent(0.7)
-                    }
+                updateState()
+            }
+        }
+        
+        mutating func updateState() {
+            if state.isSelected {
+                resolvedBorder = border
+                resolvedBorder?.width = border.width > 3.0 ? border.width : 3.0
+                let isInvisible = shadow.color == nil || shadow.color?.alphaComponent == 0.0 || shadow.opacity == 0.0
+                if state.isEmphasized {
+                    resolvedBorder?.color = .controlAccentColor
+                    resolvedShadow = shadow
+                    resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor
                 } else {
-                    resolvedBorder = nil
-                    resolvedShadow = nil
+                    resolvedBorder?.color = .controlAccentColor.withAlphaComponent(0.7)
+                    resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor.withAlphaComponent(0.7)
                 }
+            } else {
+                resolvedBorder = nil
+                resolvedShadow = nil
             }
         }
 
