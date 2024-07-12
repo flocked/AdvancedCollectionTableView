@@ -14,10 +14,9 @@ import SwiftUI
 public struct TextProperties {
     /// The font of the text.
     public var font: NSUIFont = .body
-    var swiftUIFont: Font? = .body
 
-    /// The line limit of the text, or `0` if no line limit applies.
-    public var numberOfLines: Int = 0
+    /// The line limit of the text, or `nil` if no line limit applies.
+    public var maximumNumberOfLines: Int? = nil
 
     /// The alignment of the text.
     public var alignment: NSTextAlignment = .left
@@ -40,19 +39,19 @@ public struct TextProperties {
     /**
      A Boolean value that determines whether the user can select the content of the text field.
 
-     If true, the text field becomes selectable but not editable. Use `isEditable` to make the text field selectable and editable. If false, the text is neither editable nor selectable.
+     If `true`, the text field becomes selectable but not editable. Use `isEditable` to make the text field selectable and editable. If `false`, the text is neither editable nor selectable.
      */
     public var isSelectable: Bool = false
     /**
      A Boolean value that controls whether the user can edit the value in the text field.
 
-     If true, the user can select and edit text. If false, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of `isSelectable`.
+     If `true`, the user can select and edit text. If `false`, the user can’t edit text, and the ability to select the text field’s content is dependent on the value of `isSelectable`.
      */
     public var isEditable: Bool = false
     /**
      The handler that gets called when editing of the text ended.
 
-     It only gets called, if `isEditable` is true.
+     It only gets called, if `isEditable` is `true`.
      */
     public var onEditEnd: ((String) -> Void)?
 
@@ -62,29 +61,26 @@ public struct TextProperties {
      It only gets called, if `isEditable` is true.
      */
     public var stringValidation: ((String) -> (Bool))?
-    
-    /// The tooltip of the text. If set to "", the text is automatically used.
-    public var toolTip: String? = nil
 
+    /// The text color.
     public var color: NSUIColor = .labelColor {
-        didSet { updateResolvedTextColor() }
+        didSet { _resolvedTextColor = resolvedColor() }
     }
 
     /// The color transformer of the text color.
     public var colorTansform: ColorTransformer? {
-        didSet { updateResolvedTextColor() }
+        didSet { _resolvedTextColor = resolvedColor() }
     }
 
     /// Generates the resolved text color, using the text color and color transformer.
     public func resolvedColor() -> NSUIColor {
         colorTansform?(color) ?? color
     }
+    
+    /// The tooltip of the text. If set to "", the text is automatically used.
+    public var toolTip: String? = nil
 
     var _resolvedTextColor: NSUIColor = .labelColor
-
-    mutating func updateResolvedTextColor() {
-        _resolvedTextColor = resolvedColor()
-    }
 
     /// Initalizes a text configuration.
     init() {}
@@ -100,7 +96,6 @@ public struct TextProperties {
     public static func system(size: CGFloat, weight: NSUIFont.Weight = .regular, design: NSUIFontDescriptor.SystemDesign = .default) -> Self {
         var properties = Self()
         properties.font = .systemFont(ofSize: size, weight: weight, design: design)
-        properties.swiftUIFont = .system(size: size, design: design.swiftUI).weight(weight.swiftUI)
         return properties
     }
 
@@ -115,110 +110,84 @@ public struct TextProperties {
     public static func system(_ style: NSUIFont.TextStyle = .body, weight: NSUIFont.Weight = .regular, design: NSUIFontDescriptor.SystemDesign = .default) -> Self {
         var properties = Self()
         properties.font = .systemFont(style, design: design).weight(weight)
-        properties.swiftUIFont = .system(style.swiftUI, design: design.swiftUI).weight(weight.swiftUI)
         return properties
     }
 
-    /// A text configuration for a primary text.
+    /// A text configuration for a text that contains primary content.
     public static var primary: Self {
-        var text = Self()
-        text.numberOfLines = 1
-        return text
+        var properties = Self()
+        properties.maximumNumberOfLines = 1
+        return properties
     }
 
-    /// A text configuration for a secondary text.
+    /// A text configuration for a text that contains secondary content.
     public static var secondary: Self {
-        var text = Self()
-        text.font = .callout
-        text.color = .secondaryLabelColor
-        text.swiftUIFont = .callout
-        return text
+        var properties = Self.primary
+        properties.font = .callout
+        properties.color = .secondaryLabelColor
+        return properties
     }
 
-    /// A text configuration for a tertiary text.
+    /// A text configuration for a text that contains tertiary content.
     public static var tertiary: Self {
-        var text = Self()
-        text.font = .callout
-        text.color = .secondaryLabelColor
-        text.swiftUIFont = .callout
-        return text
+        var properties = Self.primary
+        properties.color = .tertiaryLabelColor
+        return properties
     }
 
     /// A text configuration with a font for bodies.
     public static var body: Self {
-        var text = Self.system(.body)
-        text.swiftUIFont = .body
-        return text
+        Self.system(.body)
     }
 
     /// A text configuration with a font for callouts.
     public static var callout: Self {
-        var text = Self.system(.callout)
-        text.swiftUIFont = .callout
-        return text
+        Self.system(.callout)
     }
 
     /// A text configuration with a font for captions.
     public static var caption1: Self {
-        var text = Self.system(.caption1)
-        text.swiftUIFont = .caption
-        return text
+        Self.system(.caption1)
     }
 
     /// A text configuration with a font for alternate captions.
     public static var caption2: Self {
-        var text = Self.system(.caption2)
-        text.swiftUIFont = .caption2
-        return text
+        Self.system(.caption2)
     }
 
     /// A text configuration with a font for footnotes.
     public static var footnote: Self {
-        var text = Self.system(.footnote)
-        text.swiftUIFont = .footnote
-        return text
+        Self.system(.footnote)
     }
 
     /// A text configuration with a font for headlines.
     public static var headline: Self {
-        var text = Self.system(.headline)
-        text.swiftUIFont = .headline
-        return text
+        Self.system(.headline)
     }
 
     /// A text configuration with a font for subheadlines.
     public static var subheadline: Self {
-        var text = Self.system(.subheadline)
-        text.swiftUIFont = .subheadline
-        return text
+        Self.system(.subheadline)
     }
 
     /// A text configuration with a font for large titles.
     public static var largeTitle: Self {
-        var text = Self.system(.largeTitle)
-        text.swiftUIFont = .largeTitle
-        return text
+        Self.system(.largeTitle)
     }
 
     /// A text configuration with a font for titles.
     public static var title1: Self {
-        var text = Self.system(.title1)
-        text.swiftUIFont = .title
-        return text
+        Self.system(.title1)
     }
 
     /// A text configuration with a font for alternate titles.
     public static var title2: Self {
-        var text = Self.system(.title2)
-        text.swiftUIFont = .title2
-        return text
+        Self.system(.title2)
     }
 
     /// A text configuration with a font for alternate titles.
     public static var title3: Self {
-        var text = Self.system(.title3)
-        text.swiftUIFont = .title3
-        return text
+        Self.system(.title3)
     }
 }
 
@@ -229,12 +198,17 @@ extension TextProperties: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(font)
-        hasher.combine(numberOfLines)
+        hasher.combine(maximumNumberOfLines)
         hasher.combine(alignment)
         hasher.combine(isEditable)
         hasher.combine(isSelectable)
         hasher.combine(color)
         hasher.combine(colorTansform)
+        hasher.combine(numberFormatter)
+        hasher.combine(adjustsFontSizeToFitWidth)
+        hasher.combine(minimumScaleFactor)
+        hasher.combine(allowsDefaultTighteningForTruncation)
+        hasher.combine(toolTip)
     }
 }
 
@@ -243,7 +217,7 @@ extension Text {
     func configurate(using properties: TextProperties) -> some View {
         font(Font(properties.font))
             .foregroundColor(Color(properties._resolvedTextColor))
-            .lineLimit(properties.numberOfLines == 0 ? nil : properties.numberOfLines)
+            .lineLimit(properties.maximumNumberOfLines == 0 ? nil : properties.maximumNumberOfLines)
             .multilineTextAlignment(properties.alignment.swiftUIMultiline)
             .frame(alignment: properties.alignment.swiftUI)
     }
@@ -257,13 +231,14 @@ extension NSTextView {
         - configuration:The configuration for configurating the text view.
      */
     func configurate(using configuration: TextProperties) {
-        textContainer?.maximumNumberOfLines = configuration.numberOfLines
+        textContainer?.maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
         textContainer?.lineBreakMode = configuration.lineBreakMode
         textColor = configuration._resolvedTextColor
         font = configuration.font
         alignment = configuration.alignment
         isEditable = configuration.isEditable
         isSelectable = configuration.isSelectable
+        toolTip = configuration.toolTip
     }
 }
 
@@ -275,7 +250,7 @@ extension NSTextField {
         - configuration:The configuration for configurating the text field.
      */
     func configurate(using configuration: TextProperties) {
-        maximumNumberOfLines = configuration.numberOfLines
+        maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
         textColor = configuration._resolvedTextColor
         font = configuration.font
         alignment = configuration.alignment
@@ -286,5 +261,6 @@ extension NSTextField {
         adjustsFontSizeToFitWidth = configuration.adjustsFontSizeToFitWidth
         minimumScaleFactor = configuration.minimumScaleFactor
         allowsDefaultTighteningForTruncation = configuration.allowsDefaultTighteningForTruncation
+        toolTip = configuration.toolTip
     }
 }

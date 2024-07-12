@@ -34,7 +34,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The primary text.
 
-     If you configurate the value with a non-`nil` value, ``attributedText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``attributedText`` is set to `nil`.
      */
     public var text: String? {
         didSet {
@@ -47,7 +47,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the primary text.
 
-     If you configurate the value with a non-`nil` value, ``text`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``text`` is set to `nil`.
      */
     public var attributedText: AttributedString? {
         didSet {
@@ -60,7 +60,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` ist set to `nil`.
      */
     public var placeholderText: String? {
         didSet {
@@ -73,7 +73,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``placeholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``placeholderText`` is set to `nil`.
      */
     public var attributedPlaceholderText: AttributedString? {
         didSet {
@@ -86,7 +86,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` is set to `nil`.
      */
     public var secondaryText: String? {
         didSet {
@@ -99,7 +99,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryText`` is set to `nil`.
      */
     public var secondaryAttributedText: AttributedString? {
         didSet {
@@ -112,7 +112,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` is set to `nil`.
      */
     public var secondaryPlaceholderText: String? {
         didSet {
@@ -125,7 +125,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` will be `nil`.
+     If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` is set to `nil`.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
@@ -388,7 +388,7 @@ extension NSListContentConfiguration {
         configuration.type = .sidebar
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.textProperties.font = .systemFont(style).weight(weight)
-        configuration.textProperties.numberOfLines = 1
+        configuration.textProperties.maximumNumberOfLines = 1
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
         configuration.imageProperties.tintColor = color.primary

@@ -68,7 +68,7 @@ extension NSListContentView {
         }
 
         func update() {
-            maximumNumberOfLines = properties.numberOfLines
+            maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
             textColor = properties.resolvedColor()
             lineBreakMode = properties.lineBreakMode
             formatter = properties.numberFormatter
