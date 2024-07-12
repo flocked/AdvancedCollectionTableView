@@ -71,14 +71,14 @@ public extension NSItemContentConfiguration {
             }
         }
         
-        struct State: Hashable {
+        struct ContentConfiguration: Hashable {
             var isSelected: Bool = false
             var isEmphasized: Bool = false
             var resolvedBorder: BorderConfiguration? = nil
             var resolvedShadow: ShadowConfiguration? = nil
         }
         
-        var state = State() {
+        var state = ContentConfiguration() {
             didSet {
                 guard state != oldValue else { return }
                 if state.isSelected {
