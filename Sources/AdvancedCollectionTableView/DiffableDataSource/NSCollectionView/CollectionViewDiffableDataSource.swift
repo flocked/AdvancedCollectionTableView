@@ -225,42 +225,10 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
-            /*
-            collectionView.keyHandlers.keyDown = { [weak self] event in
-                guard let self = self, event.keyCode == 51 else { return }
-                let elementsToDelete = canDelete(self.selectedElements)
-                guard let element = elementsToDelete.first  else { return }
-                var section: Section? = nil
-                var selectionElement: Element? = nil
-                if let indexPath = self.indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
-                    selectionElement = element
-                } else {
-                    section = self.section(for: element)
-                }
-                let transaction = self.deletionTransaction(elementsToDelete)
-                self.deletingHandlers.willDelete?(elementsToDelete, transaction)
-                QuicklookPanel.shared.close()
-                self.apply(transaction.finalSnapshot, .animated)
-                self.deletingHandlers.didDelete?(elementsToDelete, transaction)
-                if self.collectionView.allowsEmptySelection == false, self.collectionView.selectionIndexPaths.isEmpty {
-                    var selectionIndexPath: IndexPath?
-                    if let element = selectionElement, let indexPath = self.indexPath(for: element) {
-                        selectionIndexPath = indexPath
-                    } else if let section = section, let element = self.elements(for: section).first, let indexPath = self.indexPath(for: element) {
-                        selectionIndexPath = indexPath
-                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let indexPath = self.indexPath(for: item) {
-                        selectionIndexPath = indexPath
-                    }
-                    if let indexPath = selectionIndexPath {
-                        self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
-                    }
-                }
-            }
-            */
-            
             keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
                 guard let self = self, event.keyCode == 51, self.collectionView.isFirstResponder else { return event }
                 let elementsToDelete = canDelete(self.selectedElements)
+                guard !elementsToDelete.isEmpty else { return event }
                 var section: Section? = nil
                 var selectionElement: Element? = nil
                 if let element = elementsToDelete.first {
@@ -270,29 +238,26 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                         section = self.section(for: element)
                     }
                 }
-                if elementsToDelete.isEmpty == false {
-                    let transaction = self.deletionTransaction(elementsToDelete)
-                    self.deletingHandlers.willDelete?(elementsToDelete, transaction)
-                    QuicklookPanel.shared.close()
-                    self.apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
-                    deletingHandlers.didDelete?(elementsToDelete, transaction)
-                    
-                    if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
-                        var selectionIndexPath: IndexPath?
-                        if let element = selectionElement, let indexPath = indexPath(for: element) {
-                            selectionIndexPath = indexPath
-                        } else if let section = section, let element = elements(for: section).first, let indexPath = indexPath(for: element) {
-                            selectionIndexPath = indexPath
-                        } else if let item = currentSnapshot.itemIdentifiers.first, let indexPath = indexPath(for: item) {
-                            selectionIndexPath = indexPath
-                        }
-                        if let indexPath = selectionIndexPath {
-                            collectionView.selectItems(at: [indexPath], scrollPosition: [])
-                        }
+                let transaction = self.deletionTransaction(elementsToDelete)
+                self.deletingHandlers.willDelete?(elementsToDelete, transaction)
+                QuicklookPanel.shared.close()
+                self.apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
+                deletingHandlers.didDelete?(elementsToDelete, transaction)
+                
+                if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
+                    var selectionIndexPath: IndexPath?
+                    if let element = selectionElement, let indexPath = indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let section = section, let element = elements(for: section).first, let indexPath = indexPath(for: element) {
+                        selectionIndexPath = indexPath
+                    } else if let item = currentSnapshot.itemIdentifiers.first, let indexPath = indexPath(for: item) {
+                        selectionIndexPath = indexPath
                     }
-                    return nil
+                    if let indexPath = selectionIndexPath {
+                        collectionView.selectItems(at: [indexPath], scrollPosition: [])
+                    }
                 }
-                return event
+                return nil
             }
         } else {
             keyDownMonitor = nil
