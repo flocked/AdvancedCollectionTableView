@@ -240,7 +240,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 let transaction = self.deletingTransaction(itemsToDelete)
                 self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                 QuicklookPanel.shared.close()
-                self.apply(transaction.finalSnapshot, .animated)
+                self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)
                 deletingHandlers.didDelete?(itemsToDelete, transaction)
                 if self.tableView.allowsEmptySelection == false, self.tableView.selectedRowIndexes.isEmpty {
                     var selectionRow: Int? = nil
@@ -447,7 +447,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let transaction = movingTransaction(at: dragingRowIndexes, to: row) {
                 let selectedItems = selectedItems
                 reorderingHandlers.willReorder?(transaction)
-                apply(transaction.finalSnapshot, .withoutAnimation)
+                apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
                 selectItems(selectedItems)
                 reorderingHandlers.didReorder?(transaction)
                 return true
@@ -474,7 +474,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 droppingHandlers.willDrop?(transaction!)
             }
             let selectedItems = selectedItems
-            apply(snapshot, .animated)
+            apply(snapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
             selectItems(selectedItems)
             droppingHandlers.didDrop?(transaction!)
             return true
@@ -932,6 +932,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          ```
          */
         public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        
+        /// A Boolean value that indicates whether reordering items is animated.
+        public var animates: Bool = false
     }
 
     /**
@@ -973,6 +976,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          ```
          */
         public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        
+        /// A Boolean value that indicates whether deleting items is animated.
+        public var animates: Bool = true
     }
 
     /// Handlers for hovering items with the mouse.
@@ -1036,6 +1042,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var willDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         /// The handler that gets called when the handler did drag pasteboard inside the table view.
         public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        /// A Boolean value that indicates whether dropping items is animated.
+        public var animates: Bool = true
         
         var needsTransaction: Bool {
             willDrop != nil || didDrop != nil

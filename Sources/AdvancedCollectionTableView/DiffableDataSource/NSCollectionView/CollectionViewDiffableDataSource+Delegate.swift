@@ -109,7 +109,7 @@ extension CollectionViewDiffableDataSource {
                 if canReorderItems, !draggingIndexPaths.isEmpty, let transaction = dataSource.movingTransaction(at: Array(draggingIndexPaths), to: indexPath) {
                     let selectedItems = dataSource.selectedElements
                     dataSource.reorderingHandlers.willReorder?(transaction)
-                    dataSource.apply(transaction.finalSnapshot, .animated)
+                    dataSource.apply(transaction.finalSnapshot, dataSource.reorderingHandlers.animates ? .animated : .withoutAnimation)
                     dataSource.selectElements(selectedItems, scrollPosition: [])
                     dataSource.reorderingHandlers.didReorder?(transaction)
                     return true
@@ -138,7 +138,7 @@ extension CollectionViewDiffableDataSource {
                     dataSource.droppingHandlers.willDrop?(transaction!)
                 }
                 let selectedItems = dataSource.selectedElements
-                dataSource.apply(snapshot, .animated)
+                dataSource.apply(snapshot, dataSource.droppingHandlers.animates ? .animated : .withoutAnimation)
                 dataSource.selectElements(selectedItems, scrollPosition: [])
                 dataSource.droppingHandlers.didDrop?(transaction!)
                 return true

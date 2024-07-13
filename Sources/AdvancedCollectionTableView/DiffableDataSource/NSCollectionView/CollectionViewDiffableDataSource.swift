@@ -276,7 +276,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                     if QuicklookPanel.shared.isVisible {
                         QuicklookPanel.shared.close()
                     }
-                    self.apply(transaction.finalSnapshot, .animated)
+                    self.apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
                     deletingHandlers.didDelete?(elementsToDelete, transaction)
                     
                     if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
@@ -607,12 +607,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
     }
 
-    func removeItems(_ elements: [Element]) {
-        var snapshot = snapshot()
-        snapshot.deleteItems(elements)
-        apply(snapshot, .animated)
-    }
-
     func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
         var finalSnapshot = snapshot()
         finalSnapshot.deleteItems(elements)
@@ -921,6 +915,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          ```
          */
         public var didDelete: ((_ elements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        
+        /// A Boolean value that indicates whether deleting elements is animated.
+        public var animates: Bool = true
     }
 
     /**
@@ -962,6 +959,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          ```
          */
         public var didReorder: ((DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        
+        /// A Boolean value that indicates whether reordering elements is animated.
+        public var animates: Bool = true
     }
 
     /// Handlers for the highlight state of elements.
@@ -1029,6 +1029,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var willDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         /// The handler that gets called when the handler did drag pasteboard items inside the collection view.
         public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        /// A Boolean value that indicates whether dropping elements is animated.
+        public var animates: Bool = true
         
         var needsTransaction: Bool {
             willDrop != nil || didDrop != nil
