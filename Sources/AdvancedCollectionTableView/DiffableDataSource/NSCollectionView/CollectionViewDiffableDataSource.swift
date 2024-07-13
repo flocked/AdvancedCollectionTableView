@@ -232,7 +232,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 var section: Section? = nil
                 var selectionElement: Element? = nil
                 if let element = elementsToDelete.first {
-                    if let indexPath = indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
+                    if let indexPath = self.indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
                         selectionElement = element
                     } else {
                         section = self.section(for: element)
@@ -241,20 +241,20 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 let transaction = self.deletionTransaction(elementsToDelete)
                 self.deletingHandlers.willDelete?(elementsToDelete, transaction)
                 QuicklookPanel.shared.close()
-                self.apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
-                deletingHandlers.didDelete?(elementsToDelete, transaction)
+                self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)
+                self.deletingHandlers.didDelete?(elementsToDelete, transaction)
                 
-                if collectionView.allowsEmptySelection == false, collectionView.selectionIndexPaths.isEmpty {
+                if !self.collectionView.allowsEmptySelection, self.collectionView.selectionIndexPaths.isEmpty {
                     var selectionIndexPath: IndexPath?
-                    if let element = selectionElement, let indexPath = indexPath(for: element) {
+                    if let element = selectionElement, let indexPath = self.indexPath(for: element) {
                         selectionIndexPath = indexPath
-                    } else if let section = section, let element = elements(for: section).first, let indexPath = indexPath(for: element) {
+                    } else if let section = section, let element = self.elements(for: section).first, let indexPath = self.indexPath(for: element) {
                         selectionIndexPath = indexPath
-                    } else if let item = currentSnapshot.itemIdentifiers.first, let indexPath = indexPath(for: item) {
+                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let indexPath = self.indexPath(for: item) {
                         selectionIndexPath = indexPath
                     }
                     if let indexPath = selectionIndexPath {
-                        collectionView.selectItems(at: [indexPath], scrollPosition: [])
+                        self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
                     }
                 }
                 return nil

@@ -243,8 +243,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                 QuicklookPanel.shared.close()
                 self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)
-                deletingHandlers.didDelete?(itemsToDelete, transaction)
-                if self.tableView.allowsEmptySelection == false, self.tableView.selectedRowIndexes.isEmpty {
+                self.deletingHandlers.didDelete?(itemsToDelete, transaction)
+                if !self.tableView.allowsEmptySelection, self.tableView.selectedRowIndexes.isEmpty {
                     var selectionRow: Int? = nil
                     if let item = selectionItem, let row = self.row(for: item) {
                         selectionRow = row
