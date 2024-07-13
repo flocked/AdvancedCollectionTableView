@@ -273,9 +273,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 if elementsToDelete.isEmpty == false {
                     let transaction = self.deletionTransaction(elementsToDelete)
                     self.deletingHandlers.willDelete?(elementsToDelete, transaction)
-                    if QuicklookPanel.shared.isVisible {
-                        QuicklookPanel.shared.close()
-                    }
+                    QuicklookPanel.shared.close()
                     self.apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
                     deletingHandlers.didDelete?(elementsToDelete, transaction)
                     

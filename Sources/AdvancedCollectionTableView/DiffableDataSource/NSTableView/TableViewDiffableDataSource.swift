@@ -48,6 +48,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
     var delegateBridge: Delegate!
+    var keyDownMonitor: NSEvent.Monitor?
+
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider? {
@@ -224,10 +226,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
-            tableView.keyHandlers.keyDown = { [weak self] event in
-                guard let self = self, event.keyCode == 51, self.tableView.isFirstResponder else { return }
+            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
+                guard let self = self, event.keyCode == 51, self.tableView.isFirstResponder else { return event }
                 let itemsToDelete = canDelete(self.selectedItems)
-                guard !itemsToDelete.isEmpty else { return }
+                guard !itemsToDelete.isEmpty else { return event }
                 var section: Section? = nil
                 var selectionItem: Item? = nil
                 if let item = itemsToDelete.first {
@@ -255,6 +257,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                         self.tableView.selectRowIndexes([row], byExtendingSelection: false)
                     }
                 }
+                return nil
             }
         } else {
             tableView.keyHandlers.keyDown = nil
