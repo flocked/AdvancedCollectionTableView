@@ -24,9 +24,6 @@ public struct TextProperties {
     /// The technique for wrapping and truncating the text.
     public var lineBreakMode: NSLineBreakMode = .byWordWrapping
 
-    /// The number formatter of the text.
-    public var numberFormatter: NumberFormatter?
-
     /// A Boolean value that determines whether the text fields reduces the text’s font size to fit the title string into the text field’s bounding rectangle.
     public var adjustsFontSizeToFitWidth: Bool = false
 
@@ -124,8 +121,11 @@ public struct TextProperties {
     /// The bezel of the text field.
     public var bezel: BezelType = .none
     
+    /// The number formatter of the text.
+    public var numberFormatter: NumberFormatter?
+    
     /// The text field bezel.
-    public enum BezelType {
+    public enum BezelType: Int, Hashable {
         /// Square bezel.
         case square
         /// Rounded bezel.
@@ -177,8 +177,7 @@ public struct TextProperties {
 
     /// A text configuration for a text that contains primary content.
     public static var primary: Self {
-        var properties = Self()
-        return properties
+        return Self()
     }
 
     /// A text configuration for a text that contains secondary content.
@@ -270,6 +269,9 @@ extension TextProperties: Hashable {
         hasher.combine(minimumScaleFactor)
         hasher.combine(allowsDefaultTighteningForTruncation)
         hasher.combine(toolTip)
+        hasher.combine(editingActionOnEnterKeyDown)
+        hasher.combine(editingActionOnEscapeKeyDown)
+        hasher.combine(bezel)
     }
 }
 
