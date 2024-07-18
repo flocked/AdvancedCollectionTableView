@@ -221,7 +221,6 @@ extension NSTableRowView {
         override func viewWillMove(toWindow newWindow: NSWindow?) {
             guard newWindow != nil, let tableView = firstSuperview(for: NSTableView.self) else { return }
             handler(tableView)
-            Swift.print("HANDLER")
         }
         
         var handler: ((NSTableView)->())
@@ -245,6 +244,7 @@ extension NSTableRowView {
                 tableView.setupObservation()
                 self.setCellViewsNeedAutomaticUpdateConfiguration()
             }
+            tableView?.setupObservation()
         }
         setNeedsUpdateConfiguration()
         setCellViewsNeedAutomaticUpdateConfiguration()
