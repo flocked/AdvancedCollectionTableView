@@ -56,7 +56,7 @@ public struct TextProperties {
      
      The property is only used, if `isEditable` is `true`.
      */
-    public var editingActionOnEnterKeyDown: NSTextField.EnterKeyAction = .endEditing
+    public var editingActionOnEnterKeyDown: EnterKeyAction = .endEditing
     
     /**
      The action to perform when the user presses the escape key while editing.
@@ -65,7 +65,33 @@ public struct TextProperties {
      
      The property is only used, if `isEditable` is `true.
      */
-    public var editingActionOnEscapeKeyDown: NSTextField.EscapeKeyAction = .endEditingAndReset
+    public var editingActionOnEscapeKeyDown: EscapeKeyAction = .endEditingAndReset
+    
+    /// The action to perform when the user presses the escape key.
+    public enum EscapeKeyAction: Int, Hashable {
+        /// No action.
+        case none
+        /// Ends editing the text.
+        case endEditing
+        /// Ends editing the text and resets it to the the state before editing.
+        case endEditingAndReset
+        
+        var action: NSTextField.EscapeKeyAction {
+            .init(rawValue: rawValue)!
+        }
+    }
+
+    /// The action to perform when the user presses the enter key.
+    public enum EnterKeyAction: Int, Hashable {
+        /// No action.
+        case none
+        /// Ends editing the text.
+        case endEditing
+        
+        var action: NSTextField.EnterKeyAction {
+            .init(rawValue: rawValue)!
+        }
+    }
     
     /**
      The handler that gets called when editing of the text ended.

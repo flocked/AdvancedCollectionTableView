@@ -80,6 +80,8 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         bezelStyle = properties.bezel.type
         isBezeled = properties.bezel.isBezeled
         isBordered = properties.bezel.isBezeled
+        actionOnEnterKeyDown = properties.editingActionOnEnterKeyDown.action
+        actionOnEscapeKeyDown = properties.editingActionOnEscapeKeyDown.action
         // drawsBackground = true
         // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
