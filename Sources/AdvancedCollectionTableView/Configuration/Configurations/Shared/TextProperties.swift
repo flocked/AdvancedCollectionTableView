@@ -58,6 +58,18 @@ public struct TextProperties {
      */
     public var editingActionOnEnterKeyDown: EnterKeyAction = .endEditing
     
+    /// The action to perform when the user presses the enter key.
+    public enum EnterKeyAction: Int, Hashable {
+        /// No action.
+        case none
+        /// Ends editing the text.
+        case endEditing
+        
+        var action: NSTextField.EnterKeyAction {
+            .init(rawValue: rawValue)!
+        }
+    }
+    
     /**
      The action to perform when the user presses the escape key while editing.
      
@@ -77,18 +89,6 @@ public struct TextProperties {
         case endEditingAndReset
         
         var action: NSTextField.EscapeKeyAction {
-            .init(rawValue: rawValue)!
-        }
-    }
-
-    /// The action to perform when the user presses the enter key.
-    public enum EnterKeyAction: Int, Hashable {
-        /// No action.
-        case none
-        /// Ends editing the text.
-        case endEditing
-        
-        var action: NSTextField.EnterKeyAction {
             .init(rawValue: rawValue)!
         }
     }
