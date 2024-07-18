@@ -44,19 +44,15 @@ public extension NSItemContentConfiguration {
         public var scaleTransform: ScaleTransform = 1.0
 
         /// The background color.
-        public var backgroundColor: NSColor? = .lightGray {
-            didSet {  _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColor: NSColor? = .lightGray
 
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: ColorTransformer? {
-            didSet {  _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColorTransformer: ColorTransformer?
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {
-                return backgroundColorTransform?(backgroundColor) ?? backgroundColor
+                return backgroundColorTransformer?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
@@ -65,53 +61,46 @@ public extension NSItemContentConfiguration {
         public var visualEffect: VisualEffectConfiguration?
         
         /// The border of the content.
-        public var border: BorderConfiguration = .none() {
-            didSet { 
-                updateState()
-            }
+        public var border: BorderConfiguration = .none()
+        
+        /// The border transformer for resolving the border.
+        public var borderTransformer: BorderTransformer? = nil
+                
+        /// Generates the resolved border, using the border and border transformer.
+        public func resolvedBorder() -> BorderConfiguration {
+            borderTransformer?(border) ?? border
         }
         
-        var state = NSItemConfigurationState() {
-            didSet {
-                updateState()
-            }
-        }
-                
-        mutating func updateState() {
-            if state.isSelected {
-                resolvedBorder = border
-                resolvedBorder?.width = border.width > 3.0 ? border.width : 3.0
-                let isInvisible = shadow.color == nil || shadow.color?.alphaComponent == 0.0 || shadow.opacity == 0.0
-                if state.isEmphasized {
-                    resolvedBorder?.color = .controlAccentColor
-                    resolvedShadow = shadow
-                    resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor
-                } else {
-                    resolvedBorder?.color = .controlAccentColor.withAlphaComponent(0.7)
-                    resolvedShadow?.color = isInvisible ? shadow.resolvedColor() : .controlAccentColor.withAlphaComponent(0.7)
-                }
-            } else {
-                resolvedBorder = nil
-                resolvedShadow = nil
-            }
+        var borderStateTransformer: BorderTransformer? = nil
+        
+        func _resolvedBorder() -> BorderConfiguration {
+            var border = borderTransformer?(border) ?? border
+            return borderStateTransformer?(border) ?? border
         }
 
         /// Properties for configuring the image.
         public var imageProperties: ImageProperties = .init()
 
         /// The shadow properties.
-        public var shadow: ShadowConfiguration = .black() {
-            didSet {
-                updateState()
-            }
+        public var shadow: ShadowConfiguration = .black()
+        
+        /// The shadow transformer for resolving the shadow.
+        public var shadowTransformer: ShadowTransformer? = nil
+        
+        /// Generates the resolved shadow, using the shadow and shadow transformer.
+        public func resolvedShadow() -> ShadowConfiguration {
+            shadowTransformer?(shadow) ?? shadow
+        }
+        
+        var shadowStateTransformer: ShadowTransformer? = nil
+        
+        func _resolvedShadow() -> ShadowConfiguration {
+            var shadow = shadowTransformer?(shadow) ?? shadow
+            return shadowStateTransformer?(shadow) ?? shadow
         }
         
         /// The text for the tooltip of the content.
         public var toolTip: String? = nil
-
-        var _resolvedBackgroundColor: NSColor?
-        var resolvedBorder: BorderConfiguration? = nil
-        var resolvedShadow: ShadowConfiguration? = nil
 
         init() {}
     }
@@ -170,23 +159,17 @@ public extension NSItemContentConfiguration.ContentProperties {
         public var scaling: ImageScaling = .fit
 
         /// The tint color for an image that is a template or symbol image.
-        public var tintColor: NSColor? {
-            didSet { _resolvedTintColor = resolvedTintColor() }
-        }
+        public var tintColor: NSColor?
 
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: ColorTransformer? {
-            didSet { _resolvedTintColor = resolvedTintColor() }
-        }
+        public var tintColorTransformer: ColorTransformer?
         
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = tintColor {
-                return tintColorTransform?(tintColor) ?? tintColor
+                return tintColorTransformer?(tintColor) ?? tintColor
             }
             return nil
         }
-        
-        var _resolvedTintColor: NSColor?
     }
 }

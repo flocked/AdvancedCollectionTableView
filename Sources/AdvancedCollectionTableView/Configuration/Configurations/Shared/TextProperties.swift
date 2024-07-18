@@ -82,14 +82,10 @@ public struct TextProperties {
     public var stringValidation: ((String) -> (Bool))?
 
     /// The color of the text.
-    public var color: NSUIColor = .labelColor {
-        didSet { _resolvedTextColor = resolvedColor() }
-    }
+    public var color: NSUIColor = .labelColor
 
     /// The color transformer for resolving the text color.
-    public var colorTansform: ColorTransformer? {
-        didSet { _resolvedTextColor = resolvedColor() }
-    }
+    public var colorTansform: ColorTransformer?
 
     /// Generates the resolved text color, using the text color and color transformer.
     public func resolvedColor() -> NSUIColor {
@@ -98,8 +94,6 @@ public struct TextProperties {
     
     /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
     public var toolTip: String? = nil
-
-    var _resolvedTextColor: NSUIColor = .labelColor
 
     /// Initalizes a text configuration.
     init() {}
@@ -135,7 +129,6 @@ public struct TextProperties {
     /// A text configuration for a text that contains primary content.
     public static var primary: Self {
         var properties = Self()
-        properties.maximumNumberOfLines = 1
         return properties
     }
 
@@ -235,7 +228,7 @@ extension Text {
     @ViewBuilder
     func configurate(using properties: TextProperties) -> some View {
         font(Font(properties.font))
-            .foregroundColor(Color(properties._resolvedTextColor))
+            .foregroundColor(Color(properties.resolvedColor()))
             .lineLimit(properties.maximumNumberOfLines == 0 ? nil : properties.maximumNumberOfLines)
             .multilineTextAlignment(properties.alignment.swiftUIMultiline)
             .frame(alignment: properties.alignment.swiftUI)
@@ -252,7 +245,7 @@ extension NSTextView {
     func configurate(using configuration: TextProperties) {
         textContainer?.maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
         textContainer?.lineBreakMode = configuration.lineBreakMode
-        textColor = configuration._resolvedTextColor
+        textColor = configuration.resolvedColor()
         font = configuration.font
         alignment = configuration.alignment
         isEditable = configuration.isEditable
@@ -270,7 +263,7 @@ extension NSTextField {
      */
     func configurate(using configuration: TextProperties) {
         maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
-        textColor = configuration._resolvedTextColor
+        textColor = configuration.resolvedColor()
         font = configuration.font
         alignment = configuration.alignment
         lineBreakMode = configuration.lineBreakMode

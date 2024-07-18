@@ -226,7 +226,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
             keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
-                guard let self = self, event.keyCode == 51, self.collectionView.isFirstResponder else { return event }
+                guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.collectionView.isFirstResponder else { return event }
                 let elementsToDelete = canDelete(self.selectedElements)
                 guard !elementsToDelete.isEmpty else { return event }
                 var section: Section? = nil

@@ -140,7 +140,7 @@ extension Text {
     @ViewBuilder
     func configurateAlt(using properties: TextProperties) -> some View {
         font(Font(properties.font))
-            .foregroundColor(Color(properties._resolvedTextColor))
+            .foregroundColor(Color(properties.resolvedColor()))
             .lineLimit(properties.maximumNumberOfLines == 0 ? nil : properties.maximumNumberOfLines)
             .multilineTextAlignment(properties.alignment.swiftUIMultiline)
             .frame(minWidth: 0, maxWidth: .infinity, alignment: properties.alignment.swiftUI)

@@ -30,11 +30,11 @@ class ViewController: NSViewController {
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
 
         if let badgeText = galleryItem.badgeText {
-            configuration.badges = [.textBadge(badgeText, color: galleryItem.badgeColor, type: .attachment)]
+            configuration.badges = [.text(badgeText, color: galleryItem.badgeColor, type: .attachment)]
         }
         
         if galleryItem.isFavorite {
-            configuration.badges = [.textBadge("􀋃", color: .systemRed, shape: .circle, type: .attachment)]
+            configuration.badges = [.text("􀋃", color: .systemRed, shape: .circle, type: .attachment)]
         }
 
         /// Apply the configuration
@@ -43,7 +43,7 @@ class ViewController: NSViewController {
         /// Gets called when the item state changes (on selection, mouse hover, etc.)
         collectionViewItem.configurationUpdateHandler = { item, state in
             /// Adds a selection border for state.isSelected
-            configuration = configuration.updated(for: state)
+         //   configuration = configuration.updated(for: state)
 
             /// Updates the configuration based on whether the mouse is hovering the item
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0

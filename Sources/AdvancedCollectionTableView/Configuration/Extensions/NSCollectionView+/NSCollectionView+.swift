@@ -10,22 +10,15 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionView {
-    @objc dynamic var hoveredLocation: CGPoint {
-        get { getAssociatedValue("hoveredLocation", initialValue: .zero) }
-        set {
-            guard newValue != hoveredLocation else { return }
-            setAssociatedValue(newValue, key: "hoveredLocation")
-        }
-    }
-    
     @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue("hoveredIndexPath", initialValue: nil) }
         set {
             guard newValue != hoveredIndexPath else { return }
             let previousIndexPath = hoveredIndexPath
             setAssociatedValue(newValue, key: "hoveredIndexPath")
-            if let indexPath = previousIndexPath, let item = item(at: indexPath) {
-                item.setNeedsAutomaticUpdateConfiguration()
+            if let indexPath = previousIndexPath, let previousItem = item(at: indexPath) {
+                previousItem.isHovered = false
+              //  previousItem.setNeedsAutomaticUpdateConfiguration()
             }
         }
     }
@@ -36,37 +29,102 @@ extension NSCollectionView {
     }
 
     func setupObservation(shouldObserve: Bool = true) {
-        if shouldObserve {
-            if windowHandlers.isKey == nil {
-                windowHandlers.isKey = { [weak self] windowIsKey in
-                    guard let self = self else { return }
-                    if windowIsKey == false {
-                        self.hoveredIndexPath = nil
-                    }
-                    self.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
-                }
+        if !shouldObserve {
+            observerView?.removeFromSuperview()
+            observerView = nil
+        } else if observerView == nil {
+            observerView = ObserverView(for: self)
+        }
+    }
+    
+    var observerView: ObserverView? {
+        get { getAssociatedValue("collectionViewObserverView", initialValue: nil) }
+        set { setAssociatedValue(newValue, key: "collectionViewObserverView") }
+    }
+}
 
-                mouseHandlers.exited = { [weak self] _ in
-                    guard let self = self else { return }
-                    self.hoveredIndexPath = nil
-                }
 
-                mouseHandlers.moved = { [weak self] event in
-                    guard let self = self else { return }
-                    let location = event.location(in: self)
-                    if self.bounds.contains(location) {
-                        self.hoveredLocation = location
-                        self.hoveredIndexPath = self.indexPathForItem(at: location)
-                        if let indexPath = self.hoveredIndexPath, let item = self.item(at: indexPath) {
-                            item.setNeedsAutomaticUpdateConfiguration()
-                        }
+extension NSCollectionView {
+    /*
+    @objc open var isEnabled: Bool {
+        get { getAssociatedValue("isEnabled", initialValue: false) }
+        set {
+            guard newValue != isEnabled else { return }
+            setAssociatedValue(newValue, key: "isEnabled")
+            subviews.forEach({$0.isEnabled = newValue})
+            if isEnabled {
+                if keyDownMonitor == nil {
+                    keyDownMonitor = NSEvent.localMonitor(for: [.leftMouseDown]) { event in
+                            if let contentView = NSApp.keyWindow?.contentView {
+                                let location = event.location(in: contentView)
+                                if contentView.hitTest(location)?.isDescendant(of: self) == true {
+                                    return nil
+                                }
+                            }
+                        return nil
                     }
+                } else {
+                    keyDownMonitor = nil
                 }
             }
-        } else {
-            windowHandlers.isKey = nil
-            mouseHandlers.exited = nil
-            mouseHandlers.moved = nil
+            self.visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
+            }
+    }
+     */
+    
+    class ObserverView: NSView {
+        var tokens: [NotificationToken] = []
+        lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
+        weak var collectionView: NSCollectionView?
+        
+        init(for collectionView: NSCollectionView) {
+            self.collectionView = collectionView
+            super.init(frame: .zero)
+            updateTrackingAreas()
+            collectionView.addSubview(withConstraint: self)
+            self.sendToBack()
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            trackingArea.update()
+        }
+        
+        override func mouseEntered(with event: NSEvent) {
+            super.mouseEntered(with: event)
+        }
+        
+        override func mouseMoved(with event: NSEvent) {
+            super.mouseMoved(with: event)
+            guard let collectionView = collectionView else { return }
+            let location = event.location(in: collectionView)
+            collectionView.hoveredIndexPath = collectionView.indexPathForItem(at: location)
+            if let item = collectionView.hoveredItem {
+                item.checkHoverLocation(convert(location, to: item.view))
+            }
+        }
+        
+        override func mouseExited(with event: NSEvent) {
+            super.mouseExited(with: event)
+            collectionView?.hoveredIndexPath = nil
+        }
+        
+        override func viewWillMove(toWindow newWindow: NSWindow?) {
+            tokens = []
+            if let newWindow = newWindow {
+                tokens = [NotificationCenter.default.observe(NSWindow.didBecomeKeyNotification, object: newWindow) { [weak self] _ in
+                    guard let self = self, let collectionView = self.collectionView else { return }
+                    collectionView.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+                }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, object: newWindow) { [weak self] _ in
+                    guard let self = self, let collectionView = self.collectionView else { return }
+                    collectionView.hoveredIndexPath = nil
+                    collectionView.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+                }]
+            }
         }
     }
 }

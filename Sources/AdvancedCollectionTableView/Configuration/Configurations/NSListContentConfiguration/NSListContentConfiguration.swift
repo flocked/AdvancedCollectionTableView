@@ -327,7 +327,7 @@ extension NSListContentConfiguration {
         return configuration
     }
 
-    public static func automaticHeader() -> NSListContentConfiguration {
+    static func automaticHeader() -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: .monochrome(.controlAccentColor))
         configuration.type = .automaticHeader
         configuration.imageProperties.position = .leading(.firstBaseline)
@@ -366,6 +366,8 @@ extension NSListContentConfiguration {
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageToTextPadding = 6.0
+            configuration.textProperties.maximumNumberOfLines = nil
+            configuration.secondaryTextProperties.maximumNumberOfLines = nil
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
             configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
@@ -379,6 +381,7 @@ extension NSListContentConfiguration {
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.textProperties.font = .systemFont(style).weight(weight)
         configuration.textProperties.maximumNumberOfLines = 1
+        configuration.secondaryTextProperties.maximumNumberOfLines = 1
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
         configuration.imageProperties.tintColor = color.primary

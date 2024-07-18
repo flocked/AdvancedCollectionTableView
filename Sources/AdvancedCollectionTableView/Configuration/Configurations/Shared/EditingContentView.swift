@@ -10,5 +10,5 @@ import AppKit
 
 protocol EdiitingContentView: NSView {
      var isEditing: Bool { get set }
- }
+}
  

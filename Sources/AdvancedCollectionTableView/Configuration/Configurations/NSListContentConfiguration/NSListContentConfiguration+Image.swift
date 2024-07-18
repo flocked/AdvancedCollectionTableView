@@ -93,7 +93,7 @@ public extension NSListContentConfiguration {
                     case .top: return .centerY
                     case .center: return .centerY
                     case .bottom: return .centerY
-                    case .firstBaseline: return .centerY
+                    case .firstBaseline: return .firstBaseline
                     }
                 }
             }
@@ -146,49 +146,57 @@ public extension NSListContentConfiguration {
         //    static let standardDimension: CGFloat = -CGFloat.greatestFiniteMagnitude
 
         /// The tint color for an image that is a template or symbol image.
-        public var tintColor: NSColor? {
-            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
-        }
+        public var tintColor: NSColor?
 
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: ColorTransformer? {
-            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
-        }
+        public var tintColorTransformer: ColorTransformer?
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = tintColor {
-                return tintColorTransform?(tintColor) ?? tintColor
+                return tintColorTransformer?(tintColor) ?? tintColor
             }
             return nil
         }
 
         /// The background color.
-        public var backgroundColor: NSColor? {
-            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColor: NSColor?
 
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: ColorTransformer? {
-            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColorTransformer: ColorTransformer?
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {
-                return backgroundColorTransform?(backgroundColor) ?? backgroundColor
+                return backgroundColorTransformer?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
-
-        /// The border of the image.
-        public var border: BorderConfiguration = .none()
-
+        
         /// The corner radius of the image.
         public var cornerRadius: CGFloat = 0.0
 
+        /// The border of the image.
+        public var border: BorderConfiguration = .none()
+        
+        /// The border transformer for resolving the border.
+        public var borderTransformer: BorderTransformer? = nil
+        
+        /// Generates the resolved border, using the border and border transformer.
+        public func resolvedBorder() -> BorderConfiguration {
+            borderTransformer?(border) ?? border
+        }
+
         /// The shadow of the image.
         public var shadow: ShadowConfiguration = .none()
+        
+        /// The shadow transformer for resolving the shadow.
+        public var shadowTransformer: ShadowTransformer? = nil
+        
+        /// Generates the resolved shadow, using the shadow and shadow transformer.
+        public func resolvedShadow() -> ShadowConfiguration {
+            shadowTransformer?(shadow) ?? shadow
+        }
 
         /// The symbol configuration of the image.
         public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
@@ -200,14 +208,11 @@ public extension NSListContentConfiguration {
         public var sizing: Sizing = .totalTextHeight
 
         /// The position of the image.
-        public var position: Position = .leading(.center)
+        public var position: Position = .leading(.firstBaseline)
         
         /// The text for the tooltip of the image.
         public var toolTip: String? = nil
 
         init() {}
-
-        var _resolvedTintColor: NSColor?
-        var _resolvedBackgroundColor: NSColor?
     }
 }

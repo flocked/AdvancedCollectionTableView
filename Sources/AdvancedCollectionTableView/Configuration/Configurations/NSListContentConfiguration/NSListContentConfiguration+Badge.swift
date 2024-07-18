@@ -37,58 +37,32 @@ public extension NSListContentConfiguration {
         public var font: NSFont = .systemFont(ofSize: 7)
 
         /// The color of the badge text and symbol/template image.
-        public var color: NSColor = .white {
-            didSet { _resolvedColor = resolvedColor() }
-        }
+        public var color: NSColor = .white
 
         /// The color transformer of the border color.
-        public var colorTransform: ColorTransformer? {
-            didSet { _resolvedColor = resolvedColor() }
-        }
+        public var colorTransformer: ColorTransformer?
 
         /// Generates the resolved border color,, using the border color and border color transformer.
         public func resolvedColor() -> NSColor {
-            colorTransform?(color) ?? color
+            colorTransformer?(color) ?? color
         }
 
         /// The background color of the badge.
-        public var backgroundColor: NSColor? = .controlAccentColor {
-            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColor: NSColor? = .controlAccentColor
 
         /// The color transformer for resolving the background color.
-        public var backgroundColorTransform: ColorTransformer? {
-            didSet { _resolvedBackgroundColor = resolvedBackgroundColor() }
-        }
+        public var backgroundColorTransformer: ColorTransformer?
 
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {
-                return backgroundColorTransform?(backgroundColor) ?? backgroundColor
+                return backgroundColorTransformer?(backgroundColor) ?? backgroundColor
             }
             return nil
         }
-
-        /// The border width of the badge.
-        public var borderWidth: CGFloat = 0.0
-
-        /// The border color of the badge.
-        public var borderColor: NSColor? {
-            didSet { _resolvedBorderColor = resolvedBorderColor() }
-        }
-
-        /// The color transformer of the border color.
-        public var borderColorTransform: ColorTransformer? {
-            didSet { _resolvedBorderColor = resolvedBorderColor() }
-        }
-
-        /// Generates the resolved border color, using the border color and border color transformer.
-        public func resolvedBorderColor() -> NSColor? {
-            if let borderColor = borderColor {
-                return borderColorTransform?(borderColor) ?? borderColor
-            }
-            return nil
-        }
+        
+        /// The border of the badge.
+        public var border: BorderConfiguration = .none()
 
         /// The corner radius of the badge.
         public var cornerRadius: CGFloat = 6.0
@@ -170,12 +144,11 @@ public extension NSListContentConfiguration {
         }
 
         var resolvedImageTintColor: NSColor {
-            imageProperties._resolvedTintColor ?? color
+            imageProperties.resolvedTintColor() ?? color
         }
 
-        var _resolvedBorderColor: NSColor?
-        var _resolvedBackgroundColor: NSColor? = .controlAccentColor
-        var _resolvedColor: NSColor = .white
+       // var _resolvedBackgroundColor: NSColor? = .controlAccentColor
+       // var _resolvedColor: NSColor = .white
     }
 }
 
@@ -205,23 +178,17 @@ public extension NSListContentConfiguration.Badge {
         var position: Position = .leading
 
         /// The tint color for an image that is a template or symbol image.
-        public var tintColor: NSColor? {
-            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
-        }
+        public var tintColor: NSColor?
 
         /// The color transformer for resolving the image tint color.
-        public var tintColorTransform: ColorTransformer? {
-            didSet { _resolvedTintColor = symbolConfiguration?.resolvedPrimaryColor() ?? resolvedTintColor() }
-        }
+        public var tintColorTransformer: ColorTransformer?
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
             if let tintColor = tintColor {
-                return tintColorTransform?(tintColor) ?? tintColor
+                return tintColorTransformer?(tintColor) ?? tintColor
             }
             return nil
         }
-
-        var _resolvedTintColor: NSColor?
     }
 }

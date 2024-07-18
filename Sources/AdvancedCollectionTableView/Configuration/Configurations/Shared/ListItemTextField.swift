@@ -63,7 +63,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
 
     func update() {
         maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
-        textColor = properties._resolvedTextColor
+        textColor = properties.resolvedColor()
         lineBreakMode = properties.lineBreakMode
         font = properties.font
         alignment = properties.alignment
@@ -77,6 +77,8 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         minimumScaleFactor = properties.minimumScaleFactor
         allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
         toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
+        // drawsBackground = true
+        // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
 
     init(properties: TextProperties) {

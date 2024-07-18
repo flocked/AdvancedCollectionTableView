@@ -296,10 +296,10 @@ extension NSItemContentView {
         }
 
         func updateConfiguration() {
-            backgroundColor = contentProperties._resolvedBackgroundColor
+            backgroundColor = contentProperties.resolvedBackgroundColor()
             visualEffect = contentProperties.visualEffect
             
-            containerView.border = contentProperties.resolvedBorder ?? contentProperties.border
+            containerView.border = contentProperties._resolvedBorder()
             
             cornerRadius = contentProperties.cornerRadius
             clipsToBounds = false
@@ -308,9 +308,9 @@ extension NSItemContentView {
             view?.cornerRadius = contentProperties.cornerRadius
             overlayView?.cornerRadius = contentProperties.cornerRadius
 
-            outerShadow = contentProperties.resolvedShadow ?? contentProperties.shadow
+            outerShadow = contentProperties._resolvedShadow()
 
-            imageView.tintColor = contentProperties.imageProperties._resolvedTintColor
+            imageView.tintColor = contentProperties.imageProperties.resolvedTintColor()
             imageView.imageScaling = contentProperties.imageProperties.scaling.scaling
             imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image

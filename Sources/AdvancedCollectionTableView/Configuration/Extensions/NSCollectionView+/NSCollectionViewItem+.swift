@@ -69,7 +69,7 @@ extension NSCollectionViewItem {
     /**
      A Boolean value that determines whether the item automatically updates its background configuration when its state changes.
 
-     When this value is true, the item automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is `true`, the item automatically calls  `updated(for:)` on its ``backgroundConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
 
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
@@ -128,9 +128,9 @@ extension NSCollectionViewItem {
     /**
      A Boolean value that determines whether the item automatically updates its content configuration when its state changes.
 
-     When this value is true, the item automatically calls `updated(for:)` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is true.
+     When this value is `true`, the item automatically calls `updated(for:)` on its ``contentConfiguration`` when the item’s ``configurationState`` changes, and applies the updated configuration back to the item. The default value is `true.
 
-     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to false.
+     If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
@@ -255,27 +255,29 @@ extension NSCollectionViewItem {
             setNeedsUpdateConfiguration()
         }
     }
-
-    /**
-     A Boolean value that specifies whether the item is hovered.
-
-     A hovered item has the mouse pointer on it's view.
-     */
-    @objc var isHovered: Bool {
-        if let collectionView = collectionView, collectionView.hoveredItem == self {
-            if let view = view as? NSItemContentView {
-                let location = collectionView.convert(collectionView.hoveredLocation, to: view)
-                return view.checkHoverLocation(location)
-            }
-            return true
+    
+    /// A Boolean value that indicates whether the item is hovered by the mouse pointer.
+    @objc internal(set) var isHovered: Bool {
+        get { getAssociatedValue("isHovered", initialValue: false) }
+        set {
+            guard newValue != isHovered else { return }
+            setAssociatedValue(newValue, key: "isHovered")
+            setNeedsAutomaticUpdateConfiguration()
         }
-        return false
+    }
+    
+    func checkHoverLocation(_ location: CGPoint) {
+        if let view = view as? NSItemContentView {
+            isHovered = view.checkHoverLocation(location)
+        } else {
+            isHovered = view.frame.contains(location)
+        }
     }
 
     /**
      A Boolean value that indicates whether the item is in an editing state.
 
-     The value of this property is `true` when the text of a list or item content configuration is currently edited.
+     The value of this property is `true` when the text of a list or item content configuration is being edited.
      */
     @objc var isEditing: Bool {
         (view as? EdiitingContentView)?.isEditing ?? false
@@ -304,18 +306,18 @@ extension NSCollectionViewItem {
         if contentConfiguration != nil || backgroundConfiguration != nil || configurationUpdateHandler != nil {
             guard itemObserver == nil else { return }
             itemObserver = KeyValueObserver(self)
-            itemObserver?.add(\.isSelected) { old, new in
-                guard old != new else { return }
+            itemObserver?.add(\.isSelected) { [weak self] old, new in
+                guard let self = self, old != new else { return }
                 self.setNeedsAutomaticUpdateConfiguration()
             }
-            itemObserver?.add(\.highlightState) { old, new in
-                guard old != new else { return }
+            itemObserver?.add(\.highlightState) { [weak self] old, new in
+                guard let self = self, old != new else { return }
                 self.setNeedsAutomaticUpdateConfiguration()
             }
             if _collectionView?.windowHandlers.isKey == nil {
-                itemObserver?.add(\.view.superview) { _, _ in
-                    guard self._collectionView != nil else { return }
-                    // The collection view is observered to get the hovered (mouse over) collection item. It's much more performant instead of observing/installing a track area on each collection item view.
+                itemObserver?.add(\.view.superview) { [weak self] _, _ in
+                    guard let self = self, self._collectionView != nil else { return }
+                    self.itemObserver?.remove(\.view.superview)
                     self._collectionView?.setupObservation()
                 }
             }
