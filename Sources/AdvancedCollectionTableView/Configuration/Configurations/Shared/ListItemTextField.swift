@@ -77,6 +77,9 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         minimumScaleFactor = properties.minimumScaleFactor
         allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
         toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
+        bezelStyle = properties.bezel.type
+        isBezeled = properties.bezel.isBezeled
+        isBordered = properties.bezel.isBezeled
         // drawsBackground = true
         // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }

@@ -94,6 +94,29 @@ public struct TextProperties {
     
     /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
     public var toolTip: String? = nil
+    
+    /// The text field bezel.
+    public enum BezelType {
+        /// Square bezel.
+        case square
+        /// Rounded bezel.
+        case rounded
+        /// No bezel.
+        case none
+        
+        var isBezeled: Bool {
+            self != .none
+        }
+        var type: NSTextField.BezelStyle {
+            switch self {
+            case .square: return .squareBezel
+            default: return .roundedBezel
+            }
+        }
+    }
+    
+    /// The text field bezel.
+    public var bezel: BezelType = .none
 
     /// Initalizes a text configuration.
     init() {}
