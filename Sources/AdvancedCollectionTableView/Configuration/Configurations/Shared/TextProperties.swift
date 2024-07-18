@@ -58,7 +58,7 @@ public struct TextProperties {
      */
     public var editingActionOnEnterKeyDown: EnterKeyAction = .endEditing
     
-    /// The action to perform when the user presses the enter key.
+    /// The action to perform when the user presses the enter key while editing.
     public enum EnterKeyAction: Int, Hashable {
         /// No action.
         case none
@@ -75,11 +75,11 @@ public struct TextProperties {
      
      The default value is `endEditingAndReset`.
      
-     The property is only used, if `isEditable` is `true.
+     The property is only used, if `isEditable` is `true`.
      */
     public var editingActionOnEscapeKeyDown: EscapeKeyAction = .endEditingAndReset
     
-    /// The action to perform when the user presses the escape key.
+    /// The action to perform when the user presses the escape key while editing.
     public enum EscapeKeyAction: Int, Hashable {
         /// No action.
         case none
@@ -103,7 +103,7 @@ public struct TextProperties {
     /**
      The handler that determines whether the edited string is valid.
 
-     It only gets called, if `isEditable` is true.
+     It only gets called, if `isEditable` is `true`.
      */
     public var stringValidation: ((String) -> (Bool))?
 
@@ -120,6 +120,9 @@ public struct TextProperties {
     
     /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
     public var toolTip: String? = nil
+    
+    /// The bezel of the text field.
+    public var bezel: BezelType = .none
     
     /// The text field bezel.
     public enum BezelType {
@@ -140,9 +143,6 @@ public struct TextProperties {
             }
         }
     }
-    
-    /// The text field bezel.
-    public var bezel: BezelType = .none
 
     /// Initalizes a text configuration.
     init() {}
