@@ -118,11 +118,11 @@ public struct TextProperties {
     /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
     public var toolTip: String? = nil
     
-    /// The bezel of the text field.
-    public var bezel: BezelType = .none
-    
     /// The number formatter of the text.
     public var numberFormatter: NumberFormatter?
+    
+    /// The bezel of the text field.
+    public var bezel: BezelType = .none
     
     /// The text field bezel.
     public enum BezelType: Int, Hashable {
@@ -275,6 +275,53 @@ extension TextProperties: Hashable {
     }
 }
 
+extension NSTextField {
+    /**
+     Configurates the text field.
+
+     - Parameter properties:The configuration for configurating the text field.
+     */
+    func configurate(using properties: TextProperties) {
+        maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
+        textColor = properties.resolvedColor()
+        lineBreakMode = properties.lineBreakMode
+        font = properties.font
+        alignment = properties.alignment
+        isEditable = properties.isEditable
+        isSelectable = properties.isSelectable
+        formatter = properties.numberFormatter
+        adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
+        minimumScaleFactor = properties.minimumScaleFactor
+        allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
+        toolTip = properties.toolTip
+        editingActionOnEnterKeyDown = properties.editingActionOnEnterKeyDown.action
+        editingActionOnEscapeKeyDown = properties.editingActionOnEscapeKeyDown.action
+        bezelStyle = properties.bezel.type
+        isBezeled = properties.bezel.isBezeled
+        isBordered = properties.bezel.isBezeled
+        editingActionOnEnterKeyDown = properties.editingActionOnEnterKeyDown.action
+        editingActionOnEscapeKeyDown = properties.editingActionOnEscapeKeyDown.action
+    }
+}
+
+extension NSTextView {
+    /**
+     Configurates the text view.
+
+     - Parameter properties:The configuration for configurating the text field.
+     */
+    func configurate(using properties: TextProperties) {
+        textContainer?.maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
+        textContainer?.lineBreakMode = properties.lineBreakMode
+        textColor = properties.resolvedColor()
+        font = properties.font
+        alignment = properties.alignment
+        isEditable = properties.isEditable
+        isSelectable = properties.isSelectable
+        toolTip = properties.toolTip
+    }
+}
+
 extension Text {
     @ViewBuilder
     func configurate(using properties: TextProperties) -> some View {
@@ -283,47 +330,5 @@ extension Text {
             .lineLimit(properties.maximumNumberOfLines == 0 ? nil : properties.maximumNumberOfLines)
             .multilineTextAlignment(properties.alignment.swiftUIMultiline)
             .frame(alignment: properties.alignment.swiftUI)
-    }
-}
-
-extension NSTextView {
-    /**
-     Configurates the text view.
-
-     - Parameters:
-        - configuration:The configuration for configurating the text view.
-     */
-    func configurate(using configuration: TextProperties) {
-        textContainer?.maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
-        textContainer?.lineBreakMode = configuration.lineBreakMode
-        textColor = configuration.resolvedColor()
-        font = configuration.font
-        alignment = configuration.alignment
-        isEditable = configuration.isEditable
-        isSelectable = configuration.isSelectable
-        toolTip = configuration.toolTip
-    }
-}
-
-extension NSTextField {
-    /**
-     Configurates the text field.
-
-     - Parameters:
-        - configuration:The configuration for configurating the text field.
-     */
-    func configurate(using configuration: TextProperties) {
-        maximumNumberOfLines = configuration.maximumNumberOfLines ?? 0
-        textColor = configuration.resolvedColor()
-        font = configuration.font
-        alignment = configuration.alignment
-        lineBreakMode = configuration.lineBreakMode
-        isEditable = configuration.isEditable
-        isSelectable = configuration.isSelectable
-        formatter = configuration.numberFormatter
-        adjustsFontSizeToFitWidth = configuration.adjustsFontSizeToFitWidth
-        minimumScaleFactor = configuration.minimumScaleFactor
-        allowsDefaultTighteningForTruncation = configuration.allowsDefaultTighteningForTruncation
-        toolTip = configuration.toolTip
     }
 }

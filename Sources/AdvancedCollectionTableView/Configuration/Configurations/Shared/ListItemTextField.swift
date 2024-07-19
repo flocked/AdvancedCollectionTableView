@@ -62,26 +62,10 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     }
 
     func update() {
-        maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
-        textColor = properties.resolvedColor()
-        lineBreakMode = properties.lineBreakMode
-        font = properties.font
-        alignment = properties.alignment
-        isSelectable = properties.isSelectable
+        configurate(using: properties)
         if isFirstResponder, !properties.isEditable {
             editingContentView?.isEditing = false
         }
-        isEditable = properties.isEditable
-        formatter = properties.numberFormatter
-        adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
-        minimumScaleFactor = properties.minimumScaleFactor
-        allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-        toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
-        bezelStyle = properties.bezel.type
-        isBezeled = properties.bezel.isBezeled
-        isBordered = properties.bezel.isBezeled
-        actionOnEnterKeyDown = properties.editingActionOnEnterKeyDown.action
-        actionOnEscapeKeyDown = properties.editingActionOnEscapeKeyDown.action
         // drawsBackground = true
         // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
