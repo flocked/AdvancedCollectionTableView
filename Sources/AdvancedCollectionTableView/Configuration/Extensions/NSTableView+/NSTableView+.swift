@@ -125,4 +125,22 @@ extension NSTableView {
             }
         }
     }
+    
+    class TableViewObserverView: NSView {
+        init(handler: @escaping ((NSTableView)->())) {
+            self.handler = handler
+            super.init(frame: .zero)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func viewWillMove(toWindow newWindow: NSWindow?) {
+            guard newWindow != nil, let tableView = firstSuperview(for: NSTableView.self) else { return }
+            handler(tableView)
+        }
+                
+        var handler: ((NSTableView)->())
+    }
 }

@@ -203,30 +203,7 @@ extension NSTableRowView {
         set { setAssociatedValue(newValue, key: "rowObserver") }
     }
     
-    var tableViewObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableViewObserverView", initialValue: nil) }
-        set { setAssociatedValue(newValue, key: "tableViewObserverView") }
-    }
-    
-    class TableViewObserverView: NSView {
-        init(handler: @escaping ((NSTableView)->())) {
-            self.handler = handler
-            super.init(frame: .zero)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        override func viewWillMove(toWindow newWindow: NSWindow?) {
-            guard newWindow != nil, let tableView = firstSuperview(for: NSTableView.self) else { return }
-            handler(tableView)
-        }
-        
-        var handler: ((NSTableView)->())
-    }
-
-    func observeTableRowView(includingTableView: Bool = true) {
+    func observeTableRowView() {
         guard rowObserver == nil else { return }
         rowObserver = KeyValueObserver(self)
         rowObserver?.add(\.isSelected) { [weak self] old, new in
@@ -235,16 +212,13 @@ extension NSTableRowView {
             self.setNeedsAutomaticUpdateConfiguration()
             self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
-        if includingTableView {
-            tableViewObserverView = TableViewObserverView() { [weak self] tableView in
-                guard let self = self else { return }
-                if self.needsAutomaticRowHeights {
-                    tableView.usesAutomaticRowHeights = true
-                }
-                tableView.setupObservation()
-                self.setCellViewsNeedAutomaticUpdateConfiguration()
+        rowObserver?.add(\.superview) { [weak self] _, _ in
+            guard let self = self else { return }
+            if self.needsAutomaticRowHeights {
+                self.tableView?.usesAutomaticRowHeights = true
             }
-            tableView?.setupObservation()
+            self.tableView?.setupObservation()
+            self.setCellViewsNeedAutomaticUpdateConfiguration()
         }
         setNeedsUpdateConfiguration()
         setCellViewsNeedAutomaticUpdateConfiguration()

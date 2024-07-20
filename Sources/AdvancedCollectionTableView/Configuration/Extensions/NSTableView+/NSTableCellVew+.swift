@@ -233,51 +233,23 @@ extension NSTableCellView {
         get { getAssociatedValue("tableCellObserver", initialValue: nil) }
         set { setAssociatedValue(newValue, key: "tableCellObserver") }
     }
-    
-    var tableViewObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableViewObserverView", initialValue: nil) }
-        set { setAssociatedValue(newValue, key: "tableViewObserverView") }
-    }
-    
-    class TableViewObserverView: NSView {
-        init(handler: @escaping ((NSTableView)->())) {
-            self.handler = handler
-            super.init(frame: .zero)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        override func viewWillMove(toWindow newWindow: NSWindow?) {
-            guard newWindow != nil, let tableView = firstSuperview(for: NSTableView.self) else { return }
-            handler(tableView)
-        }
-                
-        var handler: ((NSTableView)->())
-    }
 
     // Observe when the cell gets added to the row view. The row view has needs to be configurated to observe it's state like `isSelected` to update the configurationState and contentConfiguration.
     func observeTableCellView() {
         if contentConfiguration != nil || configurationUpdateHandler != nil {
-            guard tableViewObserverView == nil else { return }
-            tableCellObserver = observeChanges(for: \.superview?.superview) { [weak self] old, new in
-                guard let self = self, old != new, let tableView = tableView else { return }
-            }
-            tableViewObserverView = TableViewObserverView() { [weak self] tableView in
+            guard tableCellObserver == nil else { return }
+            tableCellObserver = observeChanges(for: \.superview, handler: { [weak self] _, _ in
                 guard let self = self else { return }
                 if self.contentConfiguration is NSListContentConfiguration {
-                    tableView.usesAutomaticRowHeights = true
+                    self.tableView?.usesAutomaticRowHeights = true
+                    self.rowView?.needsAutomaticRowHeights = true
                 }
-                tableView.setupObservation()
-                self.updateContentConfigurationStyle(tableView: tableView)
+                self.updateContentConfigurationStyle()
+                self.rowView?.observeTableRowView()
                 self.setNeedsUpdateConfiguration()
-                self.rowView?.observeTableRowView(includingTableView: false)
-            }
-            addSubview(tableViewObserverView!)
+            })
         } else {
-            tableViewObserverView?.removeFromSuperview()
-            tableViewObserverView = nil
+            tableCellObserver = nil
         }
     }
 }
