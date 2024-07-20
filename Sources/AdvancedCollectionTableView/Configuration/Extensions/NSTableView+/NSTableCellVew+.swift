@@ -240,12 +240,13 @@ extension NSTableCellView {
             guard tableCellObserver == nil else { return }
             tableCellObserver = observeChanges(for: \.superview, handler: { [weak self] _, _ in
                 guard let self = self else { return }
-                if self.contentConfiguration is NSListContentConfiguration {
+                let rowView = self.rowView
+                if self.contentConfiguration is AutomaticHeightSizable {
                     self.tableView?.usesAutomaticRowHeights = true
-                    self.rowView?.needsAutomaticRowHeights = true
+                    rowView?.needsAutomaticRowHeights = true
                 }
                 self.updateContentConfigurationStyle()
-                self.rowView?.observeTableRowView()
+                rowView?.observeTableRowView()
                 self.setNeedsUpdateConfiguration()
             })
         } else {
