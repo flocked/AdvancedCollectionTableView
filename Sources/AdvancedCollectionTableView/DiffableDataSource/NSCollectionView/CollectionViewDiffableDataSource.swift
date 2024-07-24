@@ -76,10 +76,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     public func useSupplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
         guard !registrations.isEmpty else { return }
         supplementaryViewProvider = { collectionView, itemKind, indexPath in
-            if let registration = registrations.first(where: { $0.elementKind == itemKind }) {
-                return (registration as! _NSCollectionViewSupplementaryRegistration).makeSupplementaryView(collectionView, indexPath)
-            }
-            return nil
+            (registrations.first(where: { $0.elementKind == itemKind }) as? _NSCollectionViewSupplementaryRegistration)?.makeSupplementaryView(collectionView, indexPath)
         }
     }
 
