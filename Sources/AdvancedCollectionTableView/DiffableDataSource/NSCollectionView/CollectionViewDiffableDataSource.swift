@@ -67,6 +67,21 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - Returns: A configured supplementary view object.
      */
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ itemKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
+    
+    /**
+     Uses the specified supplementary registrations to configure and return the collection view’s supplementary views.
+
+     - Parameter registrations: The supplementary registrations
+     */
+    public func useSupplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
+        guard !registrations.isEmpty else { return }
+        supplementaryViewProvider = { collectionView, itemKind, indexPath in
+            if let registration = registrations.first(where: { $0.elementKind == itemKind }) {
+                return (registration as! _NSCollectionViewSupplementaryRegistration).makeSupplementaryView(collectionView, indexPath)
+            }
+            return nil
+        }
+    }
 
     /**
      Right click menu provider.
