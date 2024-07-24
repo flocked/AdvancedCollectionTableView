@@ -239,7 +239,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The scaling of the item.
 
-     The default is `1.0`, which displays the item at it's original scale. A larger value will display the item at a larger, a smaller value at a smaller size.
+     The default is `1.0`, which displays the item at it's original scale. A larger value will display the item at a larger and a smaller value at a smaller size.
      */
     public var scaleTransform: ScaleTransform = 1.0
 

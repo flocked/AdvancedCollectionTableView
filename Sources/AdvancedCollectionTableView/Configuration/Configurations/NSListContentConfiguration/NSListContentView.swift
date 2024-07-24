@@ -45,7 +45,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         addSubview(stackView)
     }
 
-    var stackViewConstraints: [NSLayoutConstraint] = []
     var appliedConfiguration: NSListContentConfiguration {
         didSet {
             guard oldValue != appliedConfiguration else { return }
@@ -59,8 +58,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     var badgeView: BadgeView?
 
     lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading)
-
     lazy var stackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
+    var stackViewConstraints: [NSLayoutConstraint] = []
 
     var isEditing: Bool = false {
         didSet {

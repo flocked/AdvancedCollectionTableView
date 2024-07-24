@@ -15,8 +15,8 @@ public struct TextProperties {
     /// The font of the text.
     public var font: NSUIFont = .body
 
-    /// The line limit of the text, or `nil` if no line limit applies.
-    public var maximumNumberOfLines: Int? = nil
+    /// The line limit of the text, or `0` if no line limit applies.
+    public var maximumNumberOfLines: Int = 0
 
     /// The alignment of the text.
     public var alignment: NSTextAlignment = .left
@@ -122,7 +122,7 @@ public struct TextProperties {
     public var numberFormatter: NumberFormatter?
     
     /// The bezel of the text field.
-    public var bezel: BezelType = .none
+    var bezel: BezelType = .none
     
     /// The text field bezel.
     public enum BezelType: Int, Hashable {
@@ -282,7 +282,7 @@ extension NSTextField {
      - Parameter properties:The configuration for configurating the text field.
      */
     func configurate(using properties: TextProperties) {
-        maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
+        maximumNumberOfLines = properties.maximumNumberOfLines
         textColor = properties.resolvedColor()
         lineBreakMode = properties.lineBreakMode
         font = properties.font
@@ -311,7 +311,7 @@ extension NSTextView {
      - Parameter properties:The configuration for configurating the text field.
      */
     func configurate(using properties: TextProperties) {
-        textContainer?.maximumNumberOfLines = properties.maximumNumberOfLines ?? 0
+        textContainer?.maximumNumberOfLines = properties.maximumNumberOfLines
         textContainer?.lineBreakMode = properties.lineBreakMode
         textColor = properties.resolvedColor()
         font = properties.font

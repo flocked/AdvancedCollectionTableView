@@ -82,9 +82,9 @@ public extension NSTableViewDiffableDataSource {
     func useSectionHeaderViewRegistration<HeaderView: NSTableCellView>(_ registration: NSTableView.CellRegistration<HeaderView, SectionIdentifierType>) {
         sectionHeaderViewProvider = { tableView, row, section in
             if let column = tableView.tableColumns.first, let cellView = tableView.makeCellView(using: registration, forColumn: column, row: row, item: section) {
-                return NSTableSectionHeaderView(cellView: cellView)
+                return cellView
             }
-            return NSTableSectionHeaderView()
+            return NSTableCellView()
         }
     }
 }

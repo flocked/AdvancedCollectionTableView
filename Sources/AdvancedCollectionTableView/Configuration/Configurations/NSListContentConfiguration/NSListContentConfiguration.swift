@@ -172,7 +172,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     public static func plain(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.body, color: imageColor)
         configuration.imageToTextPadding = 6.0
-        configuration.type = .plain
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.imageProperties.sizing = .firstTextHeight
         configuration.margins = NSDirectionalEdgeInsets(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
@@ -195,7 +194,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public static func sidebarHeader(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
-        configuration.type = .sidebarHeader
         configuration.textProperties.font = .subheadline.weight(.bold)
         configuration.textProperties.color = .tertiaryLabelColor
         configuration.imageProperties.tintColor = .tertiaryLabelColor
@@ -214,7 +212,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
      */
     public static func sidebarLarge(imageColor: ImageSymbolConfiguration.ColorConfiguration = .monochrome(.controlAccentColor)) -> NSListContentConfiguration {
         var configuration = sidebar(.title3, color: imageColor)
-        configuration.type = .sidebarLarge
         configuration.margins = .init(top: 8.0, leading: 4.0, bottom: 8.0, trailing: 4.0)
         return configuration
     }
@@ -253,25 +250,14 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// Creates a list content configuration.
     public init() {}
 
-    public var type: TableCellType?
+    var type: ListItemType = .normal
     var tableViewStyle: NSTableView.Style?
 
-    enum ListStyle {
-        enum ContentPosition {
-            case leading
-            case trailing
-        }
-
-        case fullscreen(position: ContentPosition)
-    }
-
-    public enum TableCellType: Int, Hashable {
+    public enum ListItemType: Int, Hashable {
+        case normal
         case automatic
         case automaticHeader
-        case plain
-        case sidebar
-        case sidebarLarge
-        case sidebarHeader
+        
         var isAutomatic: Bool {
             self == .automatic || self == .automaticHeader
         }
@@ -335,13 +321,18 @@ extension NSListContentConfiguration {
         return configuration
     }
     
-    mutating func applyTableViewStyle(from configuration: NSListContentConfiguration) -> NSListContentConfiguration {
-        guard type?.isAutomatic == true, configuration.type?.isAutomatic == true, let tableViewStyle = configuration.tableViewStyle else { return self }
+    mutating func updated(from configuration: NSListContentConfiguration) -> NSListContentConfiguration {
+        guard type.isAutomatic, configuration.type.isAutomatic, let tableViewStyle = configuration.tableViewStyle, tableViewStyle != .automatic else { return self }
         type = configuration.type
-        return applyTableViewStyle(tableViewStyle)
+        return updated(for: tableViewStyle)
+    }
+    
+    func updated(for tableView: NSTableView?) -> NSListContentConfiguration? {
+        guard let tableView = tableView, type.isAutomatic, tableView.effectiveStyle != .automatic, tableView.effectiveStyle != tableViewStyle else { return nil }
+        return updated(for: tableView.effectiveStyle)
     }
 
-    func applyTableViewStyle(_ style: NSTableView.Style) -> NSListContentConfiguration {
+    func updated(for style: NSTableView.Style) -> NSListContentConfiguration {
         var configuration = self
         configuration.tableViewStyle = style
         switch style {
@@ -350,6 +341,7 @@ extension NSListContentConfiguration {
             if type == .automaticHeader {
                 configuration.textProperties.font = .subheadline.weight(.bold)
                 configuration.textProperties.color = .tertiaryLabelColor
+                // configuration.secondaryTextProperties = configuration.textProperties
                 configuration.imageProperties.tintColor = .tertiaryLabelColor
                 configuration.imageProperties.position = .leading(.firstBaseline)
                 configuration.imageProperties.sizing = .firstTextHeight
@@ -366,8 +358,8 @@ extension NSListContentConfiguration {
             configuration.textProperties.font = .body
             configuration.secondaryTextProperties.font = .body
             configuration.imageToTextPadding = 6.0
-            configuration.textProperties.maximumNumberOfLines = nil
-            configuration.secondaryTextProperties.maximumNumberOfLines = nil
+            configuration.textProperties.maximumNumberOfLines = 0
+            configuration.secondaryTextProperties.maximumNumberOfLines = 0
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
             configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
             configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
@@ -377,7 +369,6 @@ extension NSListContentConfiguration {
 
     static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
-        configuration.type = .sidebar
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.textProperties.font = .systemFont(style).weight(weight)
         configuration.textProperties.maximumNumberOfLines = 1

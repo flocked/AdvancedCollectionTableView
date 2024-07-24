@@ -74,7 +74,7 @@ public extension NSItemContentConfiguration {
         var borderStateTransformer: BorderTransformer? = nil
         
         func _resolvedBorder() -> BorderConfiguration {
-            var border = borderTransformer?(border) ?? border
+            let border = borderTransformer?(border) ?? border
             return borderStateTransformer?(border) ?? border
         }
 
@@ -95,7 +95,7 @@ public extension NSItemContentConfiguration {
         var shadowStateTransformer: ShadowTransformer? = nil
         
         func _resolvedShadow() -> ShadowConfiguration {
-            var shadow = shadowTransformer?(shadow) ?? shadow
+            let shadow = shadowTransformer?(shadow) ?? shadow
             return shadowStateTransformer?(shadow) ?? shadow
         }
         

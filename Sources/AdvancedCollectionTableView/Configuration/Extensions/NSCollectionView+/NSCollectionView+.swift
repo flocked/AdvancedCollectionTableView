@@ -14,12 +14,8 @@ extension NSCollectionView {
         get { getAssociatedValue("hoveredIndexPath", initialValue: nil) }
         set {
             guard newValue != hoveredIndexPath else { return }
-            let previousIndexPath = hoveredIndexPath
+            hoveredItem?.isHovered = false
             setAssociatedValue(newValue, key: "hoveredIndexPath")
-            if let indexPath = previousIndexPath, let previousItem = item(at: indexPath) {
-                previousItem.isHovered = false
-              //  previousItem.setNeedsAutomaticUpdateConfiguration()
-            }
         }
     }
 
@@ -96,15 +92,30 @@ extension NSCollectionView {
         
         override func mouseEntered(with event: NSEvent) {
             super.mouseEntered(with: event)
+            updateHoveredItem(for: event)
         }
         
         override func mouseMoved(with event: NSEvent) {
             super.mouseMoved(with: event)
+            updateHoveredItem(for: event)
+        }
+        
+        func updateHoveredItem(for event: NSEvent) {
             guard let collectionView = collectionView else { return }
             let location = event.location(in: collectionView)
             collectionView.hoveredIndexPath = collectionView.indexPathForItem(at: location)
+            /*
+             if let indexPath = collectionView.indexPathForItem(at: location), let item = collectionView.item(at: indexPath) {
+                 item.isHovered = (item.view as? NSItemContentView)?.checkHoverLocation(location) ?? true
+                 if let view = item.view as? NSItemContentView {
+                     item.isHovered = view.checkHoverLocation(location)
+                 } else {
+                     item.isHovered = item.view.frame.contains(location)
+                 }
+             }
+             */
             if let item = collectionView.hoveredItem {
-                item.checkHoverLocation(convert(location, to: item.view))
+                item.checkHoverLocation(collectionView.convert(location, to: item.view))
             }
         }
         

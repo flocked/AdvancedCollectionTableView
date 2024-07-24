@@ -268,6 +268,9 @@ extension NSCollectionViewItem {
     
     func checkHoverLocation(_ location: CGPoint) {
         if let view = view as? NSItemContentView {
+            view.hitTest(location)
+       //     location = _collectionView?.convert(location, to: view) ?? location
+          //  Swift.print("hover", view._hitTest(location) ?? "nil", location)
             isHovered = view.checkHoverLocation(location)
         } else {
             isHovered = view.frame.contains(location)

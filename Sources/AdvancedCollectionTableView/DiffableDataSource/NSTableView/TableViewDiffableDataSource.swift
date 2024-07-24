@@ -90,7 +90,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
                     let cellView = sectionHeaderCellProvider(tableView, row, self.sections[id: sectionID]!)
-                    return NSTableSectionHeaderView(cellView: cellView)
+                    if var configuration = cellView.contentConfiguration as? NSListContentConfiguration, configuration.type == .automatic {
+                        configuration.type = .automaticHeader
+                        cellView.contentConfiguration = configuration
+                    }
+                    return cellView
                 }
             } else {
                 dataSource.sectionHeaderViewProvider = nil

@@ -69,6 +69,24 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         // drawsBackground = true
         // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
+    
+    var textBounds: CGRect {
+        guard let cell = cell else { return .zero }
+        let rect = cell.drawingRect(forBounds: bounds)
+        let cellSize = cell.cellSize(forBounds: rect)
+        switch alignment {
+        case .center: return CGRect(CGPoint((bounds.width/2.0)-(cellSize.width/2.0), (bounds.height/2.0)-(cellSize.height/2.0)), cellSize)
+        case .right: CGRect(CGPoint(bounds.width-cellSize.width, bounds.height-cellSize.height), cellSize)
+        default: return CGRect(.zero, cellSize)
+        }
+        return .zero
+    }
+    
+    /*
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        textBounds.contains(point) ? self : nil
+    }
+     */
 
     init(properties: TextProperties) {
         self.properties = properties
