@@ -10,13 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSTableView {
-    func updateVisibleRowConfigurations() {
-        visibleRows().forEach {
-            $0.setNeedsAutomaticUpdateConfiguration()
-            $0.setCellViewsNeedAutomaticUpdateConfiguration()
-        }
-    }
-    
     func setupObservation(shouldObserve: Bool = true) {
         if !shouldObserve {
             observerView?.removeFromSuperview()
@@ -30,15 +23,9 @@ extension NSTableView {
         get { getAssociatedValue("hoveredRow", initialValue: nil) }
         set {
             guard newValue != hoveredRow else { return }
-            if let previousRowView = hoveredRowView {
-                previousRowView.setNeedsAutomaticUpdateConfiguration()
-                previousRowView.setCellViewsNeedAutomaticUpdateConfiguration()
-            }
+            hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
             setAssociatedValue(newValue, key: "hoveredRow")
-            if let rowView = hoveredRowView {
-                rowView.setNeedsAutomaticUpdateConfiguration()
-                rowView.setCellViewsNeedAutomaticUpdateConfiguration()
-            }
+            hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
         }
     }
     
@@ -69,11 +56,11 @@ extension NSTableView {
             self.sendToBack()
             styleObservation = tableView.observeChanges(for: \.effectiveStyle) { [weak self] old, new in
                 guard let self = self, old != new else { return }
-                self.tableView?.updateVisibleRowConfigurations()
+                self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
             }
             isEnabledObservation = tableView.observeChanges(for: \.isEnabled) { [weak self] old, new in
                 guard let self = self, old != new else { return }
-                self.tableView?.updateVisibleRowConfigurations()
+                self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
             }
         }
         
@@ -117,11 +104,12 @@ extension NSTableView {
             if let newWindow = newWindow {
                 tokens = [NotificationCenter.default.observe(NSWindow.didBecomeKeyNotification, object: newWindow) { [weak self] _ in
                     guard let self = self, let tableView = self.tableView else { return }
-                    tableView.updateVisibleRowConfigurations()
+                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
+
                 }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, object: newWindow) { [weak self] _ in
                     guard let self = self, let tableView = self.tableView else { return }
                     tableView.hoveredRow = nil
-                    tableView.updateVisibleRowConfigurations()
+                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
                 }]
             }
         }

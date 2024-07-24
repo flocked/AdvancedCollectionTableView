@@ -76,10 +76,9 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         let cellSize = cell.cellSize(forBounds: rect)
         switch alignment {
         case .center: return CGRect(CGPoint((bounds.width/2.0)-(cellSize.width/2.0), (bounds.height/2.0)-(cellSize.height/2.0)), cellSize)
-        case .right: CGRect(CGPoint(bounds.width-cellSize.width, bounds.height-cellSize.height), cellSize)
+        case .right: return CGRect(CGPoint(bounds.width-cellSize.width, bounds.height-cellSize.height), cellSize)
         default: return CGRect(.zero, cellSize)
         }
-        return .zero
     }
     
     /*

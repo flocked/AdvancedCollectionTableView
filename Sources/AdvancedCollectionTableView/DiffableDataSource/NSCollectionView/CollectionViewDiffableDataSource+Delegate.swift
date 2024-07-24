@@ -212,7 +212,7 @@ class IdentifiablePasteboardItem<Element: Identifiable & Hashable>: NSPasteboard
 extension NSPasteboardItem {
     var contents: [PasteboardContent] {
         get {
-            var contents: [PasteboardContent?] = [fileURL, url, tiffImage, color, string]
+            let contents: [PasteboardContent?] = [fileURL, url, tiffImage, color, string]
             return contents.compactMap({ $0 })
         }
         set {

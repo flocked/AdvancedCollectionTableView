@@ -257,7 +257,7 @@ extension NSCollectionViewItem {
     }
     
     /// A Boolean value that indicates whether the item is hovered by the mouse pointer.
-    @objc internal(set) var isHovered: Bool {
+    @objc var isHovered: Bool {
         get { getAssociatedValue("isHovered", initialValue: false) }
         set {
             guard newValue != isHovered else { return }
@@ -268,7 +268,7 @@ extension NSCollectionViewItem {
     
     func checkHoverLocation(_ location: CGPoint) {
         if let view = view as? NSItemContentView {
-            view.hitTest(location)
+           // view.hitTest(location)
        //     location = _collectionView?.convert(location, to: view) ?? location
           //  Swift.print("hover", view._hitTest(location) ?? "nil", location)
             isHovered = view.checkHoverLocation(location)

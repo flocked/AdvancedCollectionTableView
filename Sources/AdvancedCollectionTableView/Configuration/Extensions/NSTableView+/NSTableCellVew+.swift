@@ -24,8 +24,8 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            var newValue = newValue
             /*
+             var newValue = newValue
             if let updated = (newValue as? NSListContentConfiguration)?.updated(for: tableView) {
                 newValue = updated
             }

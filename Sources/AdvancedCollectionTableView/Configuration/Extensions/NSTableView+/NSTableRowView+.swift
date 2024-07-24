@@ -126,11 +126,14 @@ extension NSTableRowView {
         updateConfiguration(using: configurationState)
     }
 
-    func setNeedsAutomaticUpdateConfiguration() {
+    func setNeedsAutomaticUpdateConfiguration(updateCells: Bool = false) {
         if automaticallyUpdatesContentConfiguration {
             setNeedsUpdateConfiguration()
         } else {
             configurationUpdateHandler?(self, configurationState)
+        }
+        if updateCells {
+            setCellViewsNeedAutomaticUpdateConfiguration()
         }
     }
 
@@ -183,8 +186,7 @@ extension NSTableRowView {
         guard isSelectedObservation == nil else { return }
         isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in
             guard let self = self, old != new else { return }
-            self.setNeedsAutomaticUpdateConfiguration()
-            self.setCellViewsNeedAutomaticUpdateConfiguration()
+            self.setNeedsAutomaticUpdateConfiguration(updateCells: true)
         }
     }
     
