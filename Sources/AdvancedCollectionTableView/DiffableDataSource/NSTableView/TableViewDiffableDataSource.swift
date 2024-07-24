@@ -364,7 +364,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      - Parameters:
         - tableView: The initialized table view object to connect to the diffable data source.
-        - cellRegistrations: Cell registratiosn which returns each of the cells for the table view from the data the diffable data source provides.
+        - cellRegistrations: Cell registrations which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider: {
