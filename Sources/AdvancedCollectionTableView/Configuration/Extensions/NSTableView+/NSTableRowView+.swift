@@ -133,7 +133,7 @@ extension NSTableRowView {
             configurationUpdateHandler?(self, configurationState)
         }
         if updateCells {
-            setCellViewsNeedAutomaticUpdateConfiguration()
+            cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
         }
     }
 
@@ -176,10 +176,6 @@ extension NSTableRowView {
     /// A Boolean value that specifies whether the row view is emphasized (the window is key).
     @objc var isEmphasized: Bool {
         window?.isKeyWindow ?? false
-    }
-
-    func setCellViewsNeedAutomaticUpdateConfiguration() {
-        cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
     }
     
     func observeSelection() {

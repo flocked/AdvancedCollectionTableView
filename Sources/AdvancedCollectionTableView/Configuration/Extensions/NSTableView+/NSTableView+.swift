@@ -23,14 +23,15 @@ extension NSTableView {
         get { getAssociatedValue("hoveredRow", initialValue: -1) }
         set {
             guard newValue != hoveredRow else { return }
-            hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
+            let previousRow = hoveredRowView
             setAssociatedValue(newValue, key: "hoveredRow")
+            previousRow?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
             hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
         }
     }
     
     var hoveredRowView: NSTableRowView? {
-        if hoveredRow != -1, numberOfRows < hoveredRow {
+        if hoveredRow != -1, hoveredRow < numberOfRows {
             return rowView(atRow: hoveredRow, makeIfNecessary: false)
         }
         return nil
