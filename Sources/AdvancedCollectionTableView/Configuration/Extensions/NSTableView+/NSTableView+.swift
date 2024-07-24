@@ -30,7 +30,7 @@ extension NSTableView {
     }
     
     var hoveredRowView: NSTableRowView? {
-        if let hoveredRow = hoveredRow {
+        if let hoveredRow = hoveredRow, numberOfRows < hoveredRow {
             return rowView(atRow: hoveredRow.item, makeIfNecessary: false)
         }
         return nil
@@ -87,6 +87,7 @@ extension NSTableView {
             guard let tableView = tableView else { return }
             let location = event.location(in: tableView)
             let row = tableView.row(at: location)
+            Swift.print("updateHoveredRow", row)
             if row != -1 {
                 tableView.hoveredRow = IndexPath(item: row, section: 0)
             } else {
