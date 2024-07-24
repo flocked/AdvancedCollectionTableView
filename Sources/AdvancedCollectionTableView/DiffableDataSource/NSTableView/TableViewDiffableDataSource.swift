@@ -626,11 +626,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         return nil
     }
-        
-    @discardableResult
-    func removeItems(_ items: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
-        deletingTransaction(items)
-    }
     
     func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
         var newNnapshot = snapshot()
