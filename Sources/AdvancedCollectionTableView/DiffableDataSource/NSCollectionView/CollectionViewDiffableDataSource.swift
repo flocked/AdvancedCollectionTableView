@@ -291,10 +291,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Element>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        var previousIsEmpty: Bool?
-        if emptyHandler != nil {
-            previousIsEmpty = currentSnapshot.isEmpty
-        }
+        let previousIsEmpty = currentSnapshot.isEmpty
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         dataSource.apply(internalSnapshot, option, completion: completion)
@@ -338,9 +335,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         delegateBridge = Delegate(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         collectionView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
-        
+        collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
-         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
     }
 
     /**
@@ -711,10 +707,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         } else if let emptyView = emptyView ?? emptyContentView, emptyView.superview != collectionView?.enclosingScrollView ?? collectionView {
             (collectionView?.enclosingScrollView ?? collectionView)?.addSubview(withConstraint: emptyView)
         }
-        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-            if previousIsEmpty != currentSnapshot.isEmpty {
-                emptyHandler(currentSnapshot.isEmpty)
-            }
+        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty, previousIsEmpty != currentSnapshot.isEmpty {
+            emptyHandler(currentSnapshot.isEmpty)
         }
      }
 

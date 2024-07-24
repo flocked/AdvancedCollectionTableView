@@ -296,10 +296,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     open func apply(_ snapshot: NSDiffableDataSourceSnapshot<Section, Item>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        var previousIsEmpty: Bool?
-        if emptyHandler != nil {
-            previousIsEmpty = currentSnapshot.isEmpty
-        }
+        let previousIsEmpty = currentSnapshot.isEmpty
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         updateSectionRowIndexes()
@@ -411,10 +408,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         
         delegateBridge = Delegate(self)
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
-
-        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
-        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
+        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
     }
     
     /**
