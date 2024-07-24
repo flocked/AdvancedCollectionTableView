@@ -784,10 +784,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
             scrollViewContentViewObservation = nil
-        } else if let emptyView = self.emptyView, emptyView.superview != tableView {
-            tableView?.addSubview(withConstraint: emptyView)
-        } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != tableView {
-            tableView?.addSubview(withConstraint: emptyContentView)
+        } else if let emptyView = emptyView ?? emptyContentView, emptyView.superview != tableView?.enclosingScrollView ?? tableView {
+            (tableView?.enclosingScrollView ?? tableView)?.addSubview(withConstraint: emptyView)
         }
         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
             if previousIsEmpty != currentSnapshot.isEmpty {

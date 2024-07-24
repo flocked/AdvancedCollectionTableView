@@ -708,10 +708,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
             scrollViewContentViewObservation = nil
-        } else if let emptyView = self.emptyView, emptyView.superview != collectionView {
-            collectionView?.addSubview(withConstraint: emptyView)
-        } else if let emptyContentView = self.emptyContentView, emptyContentView.superview != collectionView {
-            collectionView?.addSubview(withConstraint: emptyContentView)
+        } else if let emptyView = emptyView ?? emptyContentView, emptyView.superview != collectionView?.enclosingScrollView ?? collectionView {
+            (collectionView?.enclosingScrollView ?? collectionView)?.addSubview(withConstraint: emptyView)
         }
         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
             if previousIsEmpty != currentSnapshot.isEmpty {

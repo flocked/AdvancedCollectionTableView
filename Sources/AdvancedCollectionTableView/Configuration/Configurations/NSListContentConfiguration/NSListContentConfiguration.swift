@@ -253,7 +253,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     var type: ListItemType = .normal
     var tableViewStyle: NSTableView.Style?
 
-    public enum ListItemType: Int, Hashable {
+    enum ListItemType: Int, Hashable {
         case normal
         case automatic
         case automaticHeader
