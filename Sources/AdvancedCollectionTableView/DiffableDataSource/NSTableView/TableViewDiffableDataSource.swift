@@ -55,8 +55,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open var rowViewProvider: RowProvider? {
         didSet {
             if let rowViewProvider = rowViewProvider {
-                dataSource.rowViewProvider = { tableview, row, identifier in
-                    let item = self.currentSnapshot.itemIdentifiers[id: identifier as! Item.ID]!
+                dataSource.rowViewProvider = { [weak self] tableview, row, identifier in
+                    guard let self = self, let item = self.currentSnapshot.itemIdentifiers[id: identifier as! Item.ID] else { return NSTableRowView() }
                     return rowViewProvider(tableview, row, item)
                 }
             } else {
@@ -70,8 +70,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      
      - Parameters
         - tableView: The table view to configure this row view for.
-        - row: The row of the row view in the table view.
-        - item: The item for this row view.
+        - row: The row of the row view.
+        - item: The item of the row.
      
      - Returns: A configured row view object.
      */
@@ -88,8 +88,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open var sectionHeaderCellProvider: SectionHeaderCellProvider? {
         didSet {
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
-                dataSource.sectionHeaderViewProvider = { tableView, row, sectionID in
-                    let cellView = sectionHeaderCellProvider(tableView, row, self.sections[id: sectionID]!)
+                dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
+                    guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
+                    let cellView = sectionHeaderCellProvider(tableView, row, section)
                     if var configuration = cellView.contentConfiguration as? NSListContentConfiguration, configuration.type == .automatic {
                         configuration.type = .automaticHeader
                         cellView.contentConfiguration = configuration
@@ -106,12 +107,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      A closure that configures and returns a section header cell for a table view from its diffable data source.
      
      - Parameters
-        - tableView: The table view to configure this section header view for.
-        - row: The row of the view in the table view.
-        - section: The section for this section header view.
-        - item: The item for this section header view.
+        - tableView: The table view to configure this section header cell view for.
+        - row: The row of the section.
+        - section: The section.
      
-     - Returns: A configured section header view object.
+     - Returns: A configured section header cell view object.
      */
     public typealias SectionHeaderCellProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableCellView
     
@@ -400,7 +400,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         self.tableView = tableView
         super.init()
         
-        dataSource = .init(tableView: self.tableView, cellProvider: {
+        dataSource = .init(tableView: tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
             return cellProvider(tableview, tablecolumn, row, item)

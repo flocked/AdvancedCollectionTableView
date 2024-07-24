@@ -75,9 +75,9 @@ public extension NSTableView {
          */
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
             self.handler = handler
-            nib = nil
-            identifier = .init(UUID().uuidString)
+            self.nib = nil
             self.columnIdentifiers = columnIdentifiers
+            identifier = .init(UUID().uuidString)
         }
 
         /**
@@ -89,10 +89,10 @@ public extension NSTableView {
             - handler: The handler to configurate the cell.
          */
         public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
-            self.nib = nib
             self.handler = handler
-            identifier = .init(UUID().uuidString)
+            self.nib = nib
             self.columnIdentifiers = columnIdentifiers
+            identifier = .init(UUID().uuidString)
         }
 
         /// A closure that handles the cell registration and configuration.

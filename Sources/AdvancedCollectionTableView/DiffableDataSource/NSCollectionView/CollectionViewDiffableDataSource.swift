@@ -320,9 +320,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         self.collectionView = collectionView
         super.init()
 
-        dataSource = .init(collectionView: self.collectionView, itemProvider: {
+        dataSource = .init(collectionView: collectionView, itemProvider: {
             [weak self] collectionView, indePath, itemID in
-
             guard let self = self, let item = self.elements[id: itemID] else { return nil }
             return itemProvider(collectionView, indePath, item)
         })

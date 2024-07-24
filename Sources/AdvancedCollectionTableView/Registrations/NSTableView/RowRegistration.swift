@@ -60,8 +60,8 @@ public extension NSTableView {
             - handler: The handler to configurate the row view.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
-            self.nib = nib
             self.handler = handler
+            self.nib = nib
             identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
 
