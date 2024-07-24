@@ -417,7 +417,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         - row: The row of the cell in the table view.
         - item: The item for this cell.
      
-     - Returns: A non-`nil` configured cell object. The cell provider must return a valid cell object to the table view.
+     - Returns: A configured cell object.
      */
     public typealias CellProvider = (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> NSView
     
