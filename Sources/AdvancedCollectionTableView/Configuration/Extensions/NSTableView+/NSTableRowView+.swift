@@ -157,10 +157,10 @@ extension NSTableRowView {
      A hovered row view has the mouse pointer on it.
      */
     @objc var isHovered: Bool {
-        if let tableView = tableView, let hoveredRow = tableView.hoveredRow {
-            return tableView.row(for: self) == hoveredRow.item
+        if let tableView = tableView, tableView.hoveredRow != -1 {
+            return tableView.row(for: self) == tableView.hoveredRow
         }
-        return tableView?.hoveredRowView == self
+        return false
     }
 
     /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).

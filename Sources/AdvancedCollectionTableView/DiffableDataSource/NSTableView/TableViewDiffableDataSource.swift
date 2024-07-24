@@ -43,11 +43,11 @@ import FZUIKit
 open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
     weak var tableView: NSTableView!
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
+    var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dragingRowIndexes = IndexSet()
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
-    var delegateBridge: Delegate!
     var keyDownMonitor: NSEvent.Monitor?
 
     
@@ -207,15 +207,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if hoveredRowObserver == nil {
                 hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
                     guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering, let oldRow = old?.item {
-                        if oldRow != -1, let item = self.item(forRow: oldRow) {
-                            didEndHovering(item)
-                        }
+                    if let didEndHovering = self.hoverHandlers.didEndHovering, old != -1, let item = self.item(forRow: old) {
+                        didEndHovering(item)
                     }
-                    if let isHovering = self.hoverHandlers.isHovering, let newRow = new?.item {
-                        if newRow != -1, let item = self.item(forRow: newRow) {
-                            isHovering(item)
-                        }
+                    if let isHovering = self.hoverHandlers.isHovering, new != -1, let item = self.item(forRow: new) {
+                        isHovering(item)
                     }
                 })
             }
@@ -402,7 +398,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return cellProvider(tableview, tablecolumn, row, item)
         })
         
-        delegateBridge = Delegate(self)
+        delegate = Delegate(self)
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
         // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
@@ -660,19 +656,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource.row(forSectionIdentifier: section.id)
     }
     
-    /*
-    /// Returns the section at the index in the table view.
-    open func section(for index: Int) -> Section? {
-        sections[safe: index]
-    }
-     */
-    
-    /**
-     Returns the section for the specified row in the table view.
-     
-     - Parameter row: The row of the section in the table view.
-     - Returns: The section, or `nil` if the method doesn’t find the section for the row.
-     */
     func section(forRow row: Int) -> Section? {
         if let sectionID = dataSource.sectionIdentifier(forRow: row) {
             return sections[id: sectionID]
@@ -680,13 +663,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return nil
     }
     
-    /**
-     Returns the section for the specified item.
-     
-     - Parameter item: The item in your table view.
-     - Returns: The section, or `nil` if the item isn't in any section.
-     */
-    open func section(for item: Item) -> Section? {
+    func section(for item: Item) -> Section? {
         currentSnapshot.sectionIdentifier(containingItem: item)
     }
 
@@ -700,10 +677,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     func rows(for section: Section) -> [Int] {
         let items = currentSnapshot.itemIdentifiers(inSection: section)
         return items.compactMap({row(for: $0)})
-    }
-
-    func rows(for sections: [Section]) -> [Int] {
-        sections.flatMap { rows(for: $0) }
     }
     
     // MARK: - Empty Collection View

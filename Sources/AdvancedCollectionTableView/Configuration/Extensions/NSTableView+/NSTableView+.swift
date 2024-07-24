@@ -19,8 +19,8 @@ extension NSTableView {
         }
     }
 
-    @objc dynamic var hoveredRow: IndexPath? {
-        get { getAssociatedValue("hoveredRow", initialValue: nil) }
+    @objc dynamic var hoveredRow: Int {
+        get { getAssociatedValue("hoveredRow", initialValue: -1) }
         set {
             guard newValue != hoveredRow else { return }
             hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
@@ -30,8 +30,8 @@ extension NSTableView {
     }
     
     var hoveredRowView: NSTableRowView? {
-        if let hoveredRow = hoveredRow, numberOfRows < hoveredRow {
-            return rowView(atRow: hoveredRow.item, makeIfNecessary: false)
+        if hoveredRow != -1, numberOfRows < hoveredRow {
+            return rowView(atRow: hoveredRow, makeIfNecessary: false)
         }
         return nil
     }
@@ -88,15 +88,15 @@ extension NSTableView {
             let location = event.location(in: tableView)
             let row = tableView.row(at: location)
             if row != -1 {
-                tableView.hoveredRow = IndexPath(item: row, section: 0)
+                tableView.hoveredRow = row
             } else {
-                tableView.hoveredRow = nil
+                tableView.hoveredRow = -1
             }
         }
         
         override func mouseExited(with event: NSEvent) {
             super.mouseExited(with: event)
-            tableView?.hoveredRow = nil
+            tableView?.hoveredRow = -1
         }
         
         override func viewWillMove(toWindow newWindow: NSWindow?) {
@@ -108,7 +108,7 @@ extension NSTableView {
 
                 }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, object: newWindow) { [weak self] _ in
                     guard let self = self, let tableView = self.tableView else { return }
-                    tableView.hoveredRow = nil
+                    tableView.hoveredRow = -1
                     tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
                 }]
             }

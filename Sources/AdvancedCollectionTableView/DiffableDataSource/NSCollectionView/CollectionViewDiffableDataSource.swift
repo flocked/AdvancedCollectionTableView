@@ -46,13 +46,12 @@ import QuickLookUI
 open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
-    var delegateBridge: Delegate!
+    var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
     var previousDisplayingItems = [Element.ID]()
     var rightDownMonitor: NSEvent.Monitor?
     var keyDownMonitor: NSEvent.Monitor?
     var hoveredItemObserver: KeyValueObservation?
-    var pinchItem: Element?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
     open var supplementaryViewProvider: SupplementaryViewProvider?
@@ -299,7 +298,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             return self.supplementaryViewProvider?(collectionView, itemKind, indePath)
         }
 
-        delegateBridge = Delegate(self)
+        delegate = Delegate(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         collectionView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
@@ -570,20 +569,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         sections.firstIndex(of: section)
     }
 
-    /*
-    /// Returns the section at the index in the collection view.
-    open func section(for index: Int) -> Section? {
-        sections[safe: index]
-    }
-     */
-    
-    /**
-     Returns the section for the specified element.
-     
-     - Parameter element: The element in your collection view.
-     - Returns: The section, or `nil` if the element isn't in any section.
-     */
-    open func section(for element: Element) -> Section? {
+    func section(for element: Element) -> Section? {
         currentSnapshot.sectionIdentifier(containingItem: element)
     }
 
