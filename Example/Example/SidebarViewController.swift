@@ -65,24 +65,6 @@ class SidebarViewController: NSViewController {
         }
         
         applySnapshot()
-        var rowViews: [(index: Int, rowView: NSTableRowView)] = []
-        rowViews = (0..<8).compactMap({
-            if let rowView = tableView.rowView(atRow: $0, makeIfNecessary: false) {
-                return ($0, rowView)
-            }
-            return nil
-        })
-        let filtered = rowViews.filter({ $0.rowView.isGroupRowStyle })
-        /*
-        filtered.forEach({ rowView in
-            Swift.print(self.tableView.delegate?.tableView?(self.tableView, isGroupRow: rowView.index) ?? "nil")
-        })
-         */
-        Swift.print(rowViews.count, filtered.count)
-        if let tableCell = tableView.rowView(atRow: 0, makeIfNecessary: false)?.subviews.first as? NSTableCellView {
-            Swift.print(tableView.row(for: tableCell))
-            
-        }
     }
         
     func applySnapshot() {
