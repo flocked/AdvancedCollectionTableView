@@ -87,7 +87,6 @@ extension NSTableView {
             guard let tableView = tableView else { return }
             let location = event.location(in: tableView)
             let row = tableView.row(at: location)
-            Swift.print("updateHoveredRow", row)
             if row != -1 {
                 tableView.hoveredRow = IndexPath(item: row, section: 0)
             } else {
