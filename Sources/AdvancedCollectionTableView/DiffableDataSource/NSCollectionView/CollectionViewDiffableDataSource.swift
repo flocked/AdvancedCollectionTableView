@@ -64,7 +64,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         -  itemKind: The kind of supplementary view to provide. The layout object that supports the supplementary view defines the value of this string.
         - indexpath: The index path that specifies the location of the supplementary view in the collection view.
 
-     - Returns: A non-`nil` configured supplementary view object. The supplementary view provider must return a valid view object to the collection view.
+     - Returns: A configured supplementary view object.
      */
     public typealias SupplementaryViewProvider = (_ collectionView: NSCollectionView, _ itemKind: String, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)?
 
@@ -304,7 +304,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         -  indexpath: The index path that specifies the location of the item in the collection view.
         - element: The element for the collection view item.
 
-     - Returns: A non-`nil` configured collection view item object. The item provider must return a valid item object to the collection view.
+     - Returns: A configured collection view item object.
      */
     public typealias ItemProvider = (_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> NSCollectionViewItem?
 
