@@ -49,7 +49,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     var delegateBridge: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
     var previousDisplayingItems = [Element.ID]()
-    var magnifyGestureRecognizer: NSMagnificationGestureRecognizer?
     var rightDownMonitor: NSEvent.Monitor?
     var keyDownMonitor: NSEvent.Monitor?
     var hoveredItemObserver: KeyValueObservation?
@@ -80,7 +79,16 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - else an empty array.
      */
     open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
-        didSet { setupMenuProvider() }
+        didSet {
+            if menuProvider != nil  {
+                collectionView.menuProvider = { [weak self] location in
+                    guard let self = self else { return nil }
+                    return self.menuProvider?(self.elements(for: location))
+                }
+            } else {
+                collectionView.menuProvider = nil
+            }
+        }
     }
     
     /**
@@ -92,69 +100,17 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      - else an empty array.
      */
     open var rightClickHandler: ((_ elements: [Element]) -> ())? {
-        didSet { setupRightDownHandler() }
-    }
-
-
-    /// A handler that gets called whenever collection view magnifies.
-    open var pinchHandler: ((_ element: Element?, _ mouseLocation: CGPoint, _ magnification: CGFloat, _ state: NSMagnificationGestureRecognizer.State) -> Void)? { didSet { observeMagnificationGesture() } }
-
-    func observeMagnificationGesture() {
-        if pinchHandler != nil {
-            if magnifyGestureRecognizer == nil {
-                magnifyGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(didMagnify(_:)))
-                collectionView.addGestureRecognizer(magnifyGestureRecognizer!)
+        didSet {
+            if rightClickHandler != nil {
+                collectionView.mouseHandlers.rightDown = { [weak self] event in
+                    guard let self = self, let handler = self.rightClickHandler else { return }
+                    let location = event.location(in: self.collectionView)
+                    handler(self.elements(for: location))
+                }
+            } else {
+                collectionView.mouseHandlers.rightDown = nil
             }
-        } else {
-            if let magnifyGestureRecognizer = magnifyGestureRecognizer {
-                collectionView.removeGestureRecognizer(magnifyGestureRecognizer)
-            }
-            magnifyGestureRecognizer = nil
         }
-    }
-
-    @objc func didMagnify(_ gesture: NSMagnificationGestureRecognizer) {
-        guard let pinchHandler = self.pinchHandler else { return }
-        let pinchLocation = gesture.location(in: collectionView)
-        switch gesture.state {
-        case .began:
-            //    let center = CGPoint(x: collectionView.frame.midX, y: collectionView.frame.midY)
-            pinchItem = element(at: pinchLocation)
-            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
-        case .ended, .cancelled, .failed:
-            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
-            pinchItem = nil
-        default:
-            pinchHandler(pinchItem, pinchLocation, gesture.magnification, gesture.state)
-        }
-    }
-    
-    func setupMenuProvider() {
-        if menuProvider != nil  {
-            collectionView.menuProvider = { [weak self] location in
-                guard let self = self else { return nil }
-                return self.menuProvider?(self.elements(for: location))
-            }
-        } else {
-            collectionView.menuProvider = nil
-        }
-    }
-
-    func setupRightDownHandler() {
-        if rightClickHandler != nil {
-            collectionView.mouseHandlers.rightDown = { [weak self] event in
-                guard let self = self, let handler = self.rightClickHandler else { return }
-                let location = event.location(in: self.collectionView)
-                handler(self.elements(for: location))
-            }
-        } else {
-            collectionView.mouseHandlers.rightDown = nil
-        }
-    }
-    
-    func setupRightClick(for location: CGPoint) {
-        guard let rightClick = rightClickHandler else { return }
-        rightClick(elements(for: location))
     }
     
     func elements(for location: CGPoint) -> [Element] {

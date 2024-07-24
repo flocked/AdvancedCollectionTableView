@@ -115,7 +115,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      */
     public typealias SectionHeaderCellProvider = (_ tableView: NSTableView, _ row: Int, _ section: Section) -> NSTableCellView
     
-    /// Uses the specified cell registration to configure and return section header views.
+    /// Uses the specified cell registration to configure and return section header cell views.
     open func applySectionHeaderRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, Section>) {
         sectionHeaderCellProvider = { tableView, row, section in
             if let column = tableView.tableColumns.first, let cellView = registration.makeCellView(tableView, column, row, section) {
@@ -136,7 +136,16 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      - else an empty array.
      */
     open var menuProvider: ((_ items: [Item]) -> NSMenu?)? = nil {
-        didSet { setupMenuProvider() }
+        didSet {
+            if menuProvider != nil {
+                tableView.menuProvider = { [weak self] location in
+                    guard let self = self else { return nil }
+                    return self.menuProvider?(self.items(for: location))
+                }
+            } else {
+                tableView.menuProvider = nil
+            }
+        }
     }
     
     /**
@@ -148,7 +157,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      - else an empty array.
      */
     open var rightClickHandler: ((_ items: [Item]) -> ())? = nil {
-        didSet { setupRightDownHandler() }
+        didSet {
+            if rightClickHandler != nil {
+                tableView.mouseHandlers.rightDown = { [weak self] event in
+                    guard let self = self, let handler = self.rightClickHandler else { return }
+                    let location = event.location(in: self.tableView)
+                    handler(self.items(for: location))
+                }
+            } else {
+                tableView.mouseHandlers.rightDown = nil
+            }
+        }
     }
     
     /// Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
@@ -168,29 +187,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     @objc dynamic var _defaultRowAnimation: UInt {
         dataSource.defaultRowAnimation.rawValue
-    }
-    
-    func setupMenuProvider() {
-        if menuProvider != nil {
-            tableView.menuProvider = { [weak self] location in
-                guard let self = self else { return nil }
-                return self.menuProvider?(self.items(for: location))
-            }
-        } else {
-            tableView.menuProvider = nil
-        }
-    }
-    
-    func setupRightDownHandler() {
-        if rightClickHandler != nil {
-            tableView.mouseHandlers.rightDown = { [weak self] event in
-                guard let self = self, let handler = self.rightClickHandler else { return }
-                let location = event.location(in: self.tableView)
-                handler(self.items(for: location))
-            }
-        } else {
-            tableView.mouseHandlers.rightDown = nil
-        }
     }
     
     func items(for location: CGPoint) -> [Item] {
