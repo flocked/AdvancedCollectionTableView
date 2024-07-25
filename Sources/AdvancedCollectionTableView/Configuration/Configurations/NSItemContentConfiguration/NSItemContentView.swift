@@ -123,10 +123,8 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         stackView.orientation = appliedConfiguration.contentPosition.orientation
         stackView.alignment = appliedConfiguration.contentAlignment
         if appliedConfiguration.contentPosition.contentIsLeading, stackView.arrangedSubviews.first != contentView {
-            stackView.removeArrangedSubview(textStackView)
             stackView.addArrangedSubview(textStackView)
         } else if appliedConfiguration.contentPosition.contentIsLeading == false, stackView.arrangedSubviews.last != contentView {
-            stackView.removeArrangedSubview(contentView)
             stackView.addArrangedSubview(contentView)
         }
         stackviewConstraints.constant(appliedConfiguration.margins)

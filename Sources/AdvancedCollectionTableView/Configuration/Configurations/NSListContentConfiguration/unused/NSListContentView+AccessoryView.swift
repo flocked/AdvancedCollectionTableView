@@ -67,10 +67,8 @@ extension NSListContentView.AccessoryView {
             stackView.orientation = accessory.imageProperties.position.orientation
             stackView.alignment = accessory.imageProperties.position.alignment
             if accessory.imageProperties.position.imageIsLeading {
-                stackView.removeArrangedSubview(textStackView)
                 stackView.addArrangedSubview(textStackView)
             } else {
-                stackView.removeArrangedSubview(imageView)
                 stackView.addArrangedSubview(imageView)
             }
             imageView.image = accessory.image

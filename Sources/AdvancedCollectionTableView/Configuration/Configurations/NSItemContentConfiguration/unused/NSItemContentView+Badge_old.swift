@@ -89,10 +89,8 @@ extension NSItemContentView {
             stackViewConstraints.constant(properties.margins)
             stackView.spacing = properties.imageToTextPadding
             if properties.imageProperties.position == .leading, stackView.arrangedSubviews.first != imageView {
-                stackView.removeArrangedSubview(textField)
                 stackView.addArrangedSubview(textField)
             } else if properties.imageProperties.position == .trailing, stackView.arrangedSubviews.last != imageView {
-                stackView.removeArrangedSubview(imageView)
                 stackView.addArrangedSubview(imageView)
             }
 

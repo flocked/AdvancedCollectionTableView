@@ -113,10 +113,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageTextStackView.alignment = appliedConfiguration.imageProperties.position.alignment
 
         if appliedConfiguration.imageProperties.position.imageIsLeading, imageTextStackView.arrangedSubviews.first != imageView {
-            imageTextStackView.removeArrangedSubview(textStackView)
             imageTextStackView.addArrangedSubview(textStackView)
         } else if appliedConfiguration.imageProperties.position.imageIsLeading == false, imageTextStackView.arrangedSubviews.last != imageView {
-            imageTextStackView.removeArrangedSubview(imageView)
             imageTextStackView.addArrangedSubview(imageView)
         }
 
@@ -131,10 +129,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             guard let badgeView = badgeView else { return }
             badgeView.properties = badge
             if badge.position == .leading, badgeStackView.arrangedSubviews.first != badgeView {
-                badgeView.removeFromSuperview()
                 badgeStackView.insertArrangedSubview(badgeView, at: 0)
             } else if badge.position == .trailing, badgeStackView.arrangedSubviews.last != badgeView {
-                badgeView.removeFromSuperview()
                 badgeStackView.addArrangedSubview(badgeView)
             }
         } else {
