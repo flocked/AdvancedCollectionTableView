@@ -9,7 +9,7 @@ import AppKit
 import FZQuicklook
 import QuickLookUI
 
-// Used for Quicklook of selected collection items & table cells.
+/// Quicklook item for selected collection view items and table view cells.
 class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     let preview: QuicklookPreviewable
     weak var view: NSView?
@@ -53,6 +53,6 @@ class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
 }
 
 extension NSPasteboard.PasteboardType {
-    // Used for drag & drop
+    /// Collection view and table view drag & drop type.
     static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
 }
