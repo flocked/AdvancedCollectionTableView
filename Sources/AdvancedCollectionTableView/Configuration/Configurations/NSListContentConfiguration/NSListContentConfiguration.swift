@@ -275,10 +275,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         image != nil
     }
 
-    var hasBadge: Bool {
-        badge?.isVisible == true
-    }
-
     var state: NSListConfigurationState = NSListConfigurationState(isEnabled: true)
 
     // MARK: Creating a content view

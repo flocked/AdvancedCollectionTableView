@@ -10,7 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 class ListItemTextField: NSTextField, NSTextFieldDelegate {
-    var properties: TextProperties {
+    var properties: TextProperties! {
         didSet {
             guard oldValue != properties else { return }
             update()
@@ -26,19 +26,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     var tableCollectionView: NSView? {
         guard let editingContentView = editingContentView else { return nil }
         return editingContentView is NSListContentView ? firstSuperview(for: NSTableView.self) : firstSuperview(for: NSCollectionView.self)
-    }
-    
-    func updateText(_ text: String?, _ attributedText: AttributedString?) {
-        if let attributedText = attributedText {
-            isHidden = false
-            attributedStringValue = NSAttributedString(attributedText)
-        } else if let text = text {
-            stringValue = text
-            isHidden = false
-        } else {
-            stringValue = ""
-            isHidden = true
-        }
     }
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
@@ -59,12 +46,14 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         }
         toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
         isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+        invalidateIntrinsicContentSize()
     }
 
     func update() {
         configurate(using: properties)
+        invalidateIntrinsicContentSize()
         if isFirstResponder, !properties.isEditable {
-            editingContentView?.isEditing = false
+            isEditing = false
         }
         // drawsBackground = true
         // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
@@ -81,57 +70,69 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         }
     }
     
-    /*
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        textBounds.contains(point) ? self : nil
-    }
-     */
-
-    init(properties: TextProperties) {
-        self.properties = properties
-        super.init(frame: .zero)
-        delegate = self
-        textLayout = .wraps
-        drawsBackground = false
-        backgroundColor = nil
-        isBordered = false
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
         truncatesLastVisibleLine = true
-        update()
+        delegate = self
     }
 
     var nointrinsicWidth = true
+    
+    static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     override var intrinsicContentSize: NSSize {
         var intrinsicContentSize = super.intrinsicContentSize
-        if nointrinsicWidth {
+        if preferredMaxLayoutWidth != 0 {
+            Self.textField.properties = properties
+            Self.textField.maximumNumberOfLines = isEditing ? 0 : Self.textField.maximumNumberOfLines
+            Self.textField.preferredMaxLayoutWidth = preferredMaxLayoutWidth
+            if isEditing, let string = currentEditor()?.string {
+                Self.textField.stringValue = string
+            } else {
+                Self.textField.attributedStringValue = attributedStringValue
+            }
+            intrinsicContentSize = Self.textField.intrinsicContentSize
+            if maximumNumberOfLines == 0 {
+                // Swift.print("intrinsic", intrinsicContentSize)
+            }
+        } else if nointrinsicWidth {
             intrinsicContentSize.width = NSView.noIntrinsicMetric
         }
         return intrinsicContentSize
     }
-
+    
     override public func becomeFirstResponder() -> Bool {
         let canBecome = super.becomeFirstResponder()
         if isEditable, canBecome {
-            editingContentView?.isEditing = true
+            isEditing = true
             previousStringValue = stringValue
         }
         return canBecome
     }
 
+    var isEditing = false {
+        didSet {
+            guard oldValue != isEditing else { return }
+            focusRingType = isEditing ? .none : .default
+            editingContentView?.isEditing = isEditing
+            invalidateIntrinsicContentSize()
+            editingContentView?.updateTableRowHeight()
+        }
+    }
     override public func textDidBeginEditing(_ notification: Notification) {
         super.textDidBeginEditing(notification)
-        editingContentView?.isEditing = true
+        isEditing = true
     }
 
     override public func textDidEndEditing(_ notification: Notification) {
         super.textDidEndEditing(notification)
-        previousStringValue = stringValue
-        editingContentView?.isEditing = false
+        isEditing = false
         properties.onEditEnd?(stringValue)
     }
     
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
         invalidateIntrinsicContentSize()
+        editingContentView?.updateTableRowHeight()
     }
 
     public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -164,5 +165,15 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    class WidthTextField: NSTextField {
+        var properties: TextProperties! {
+            didSet {
+                guard oldValue != properties else { return }
+                properties.isSelectable = false
+                configurate(using: properties)
+            }
+        }
     }
 }

@@ -35,8 +35,8 @@ extension NSListContentView {
             addSubview(secondaryTextField)
         }
 
-        lazy var textField = ListItemTextField(properties: configuration.textProperties)
-        lazy var secondaryTextField = ListItemTextField(properties: configuration.secondaryTextProperties)
+        let textField = ListItemTextField.wrapping()
+        let secondaryTextField = ListItemTextField.wrapping()
 
         @available(*, unavailable)
         required init?(coder _: NSCoder) {

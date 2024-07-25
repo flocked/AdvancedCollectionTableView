@@ -52,8 +52,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
 
-    lazy var textField = ListItemTextField(properties: appliedConfiguration.textProperties)
-    lazy var secondaryTextField = ListItemTextField(properties: appliedConfiguration.secondaryTextProperties)
+    let textField = ListItemTextField.wrapping()
+    let secondaryTextField = ListItemTextField.wrapping()
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
 
@@ -71,6 +71,9 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 tableRowView.setNeedsAutomaticUpdateConfiguration()
             } else if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
                 collectionViewItem.setNeedsAutomaticUpdateConfiguration()
+            }
+            if !isEditing {
+                updateTableRowHeight()
             }
         }
     }
@@ -117,7 +120,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
 
         stackViewConstraints.constant(appliedConfiguration.margins)
 
-        if appliedConfiguration.hasBadge, appliedConfiguration.imageProperties.position.orientation == .horizontal, let badge = appliedConfiguration.badge {
+        if let badge = appliedConfiguration.badge, appliedConfiguration.imageProperties.position.orientation == .horizontal {
             badgeStackView.spacing = appliedConfiguration.textToBadgePadding
             badgeStackView.alignment = badge.alignment.alignment
             if badgeView == nil {
@@ -170,6 +173,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
         default: break
         }
+        updateTableRowHeight()
     }
 
     func calculateTextFieldsSize(imageSize: CGSize?) -> CGSize {
@@ -277,15 +281,17 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     /// Perform layout in concert with the constraint-based layout system.
     override open func layout() {
         super.layout()
+        guard bounds.width != boundsWidth else { return }
+        boundsWidth = bounds.width
+        textField.preferredMaxLayoutWidth = (boundsWidth - 34).clamped(min: 0)
+        secondaryTextField.preferredMaxLayoutWidth = textField.preferredMaxLayoutWidth
         updateTableRowHeight()
     }
-
-    var width: CGFloat = 0.0
+    
+    var boundsWidth: CGFloat = 0.0
     func updateTableRowHeight() {
-        guard bounds.width != width else { return }
-        width = bounds.width
-        if let tableRowView = tableRowView, frame.size.height > fittingSize.height {
-            tableRowView.frame.size.height = fittingSize.height
+        if frame.size.height > fittingSize.height {
+            tableRowView?.frame.size.height = fittingSize.height
         }
     }
 

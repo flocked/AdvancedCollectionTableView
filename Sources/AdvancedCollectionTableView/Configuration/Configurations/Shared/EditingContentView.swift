@@ -9,6 +9,11 @@ import Foundation
 import AppKit
 
 protocol EdiitingContentView: NSView {
-     var isEditing: Bool { get set }
+    var isEditing: Bool { get set }
+    func updateTableRowHeight()
+}
+
+extension EdiitingContentView {
+    func updateTableRowHeight() { }
 }
  

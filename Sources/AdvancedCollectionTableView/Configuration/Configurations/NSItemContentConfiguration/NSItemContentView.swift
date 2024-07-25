@@ -58,8 +58,8 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         return nil
     }
 
-    lazy var textField = ListItemTextField(properties: appliedConfiguration.textProperties)
-    lazy var secondaryTextField = ListItemTextField(properties: appliedConfiguration.secondaryTextProperties)
+    let textField = ListItemTextField.wrapping()
+    let secondaryTextField = ListItemTextField.wrapping()
     lazy var contentView = ItemContentView(configuration: appliedConfiguration)
 
     lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading).spacing(appliedConfiguration.textToSecondaryTextPadding)

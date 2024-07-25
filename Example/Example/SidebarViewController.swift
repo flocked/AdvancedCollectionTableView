@@ -7,6 +7,7 @@
 
 import AppKit
 import AdvancedCollectionTableView
+import FZSwiftUtils
 
 class SidebarViewController: NSViewController {
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
