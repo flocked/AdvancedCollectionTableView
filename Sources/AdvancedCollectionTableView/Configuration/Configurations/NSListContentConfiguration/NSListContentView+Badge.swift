@@ -29,18 +29,12 @@ extension NSListContentView {
         init(properties: NSListContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
-            initalSetup()
-            updateBadge()
+            addSubview(withConstraint: hostingViiew)
         }
         
         @available(*, unavailable)
         required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
-        }
-        
-        func initalSetup() {
-            translatesAutoresizingMaskIntoConstraints = false
-            addSubview(withConstraint: hostingViiew)
         }
     }
     
@@ -92,6 +86,7 @@ extension NSListContentView {
         var body: some View {
             stackItem
                 .padding(badge.margins.edgeInsets)
+                .frame(maxWidth: badge.maxWidth)
                 .background(badge.resolvedBackgroundColor()?.swiftUI ?? .clear)
                 .badgeShape(badge)
                 .shadow(badge.shadow)

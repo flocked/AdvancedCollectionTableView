@@ -183,10 +183,18 @@ extension NSItemContentView {
         func layoutBadge(_ badge: Badge, badgeView: BadgeView) {
             badgeView.horizontalConstraint?.activate(false)
             badgeView.verticalConstraint?.activate(false)
-            badgeView.widthConstraint?.activate(false)
+           // badgeView.widthConstraint?.activate(false)
+            var badge = badge
+            if let maxWidth = badge.maxWidth {
+                badge.maxWidth = min(maxWidth, bounds.width)
+            } else {
+                badge.maxWidth = bounds.width
+            }
+            badgeView.properties = badge
 
             //   let constant = -(2*(badge.type.spacing ?? 0))
-            //   badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: constant).activate()
+              // badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: 0).activate()
+            
 
             let badgeSize = badgeView.hostingView.fittingSize
             if badge.shape == .circle {

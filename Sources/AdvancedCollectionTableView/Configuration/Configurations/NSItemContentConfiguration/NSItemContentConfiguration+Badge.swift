@@ -88,7 +88,7 @@ public extension NSItemContentConfiguration {
 
         /// The color transformer for resolving the background color.
         public var backgroundColorTransformer: ColorTransformer?
-
+        
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
             if let backgroundColor = backgroundColor {

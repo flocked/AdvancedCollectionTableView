@@ -12,19 +12,17 @@ import FZUIKit
 
 extension NSItemContentView {
     class BadgeView: NSView {
+        lazy var hostingView = NSHostingView(rootView: ContentView(badge: properties))
+        var verticalConstraint: NSLayoutConstraint?
+        var horizontalConstraint: NSLayoutConstraint?
+        
         var properties: NSItemContentConfiguration.Badge {
             didSet {
                 guard oldValue != properties else { return }
                 update()
             }
         }
-        
-        lazy var hostingView = NSHostingView(rootView: ContentView(badge: properties))
-        var verticalConstraint: NSLayoutConstraint?
-        var horizontalConstraint: NSLayoutConstraint?
-        var widthConstraint: NSLayoutConstraint?
-        var heightConstraint: NSLayoutConstraint?
-        
+
         init(properties: NSItemContentConfiguration.Badge) {
             self.properties = properties
             super.init(frame: .zero)
@@ -89,6 +87,7 @@ extension NSItemContentView {
             var body: some View {
                 stackItem
                     .padding(badge.margins.edgeInsets)
+                    .frame(maxWidth: badge.maxWidth)
                     .badgeBackground(badge)
                     .badgeShape(badge)
                     .shadow(badge.shadow)
