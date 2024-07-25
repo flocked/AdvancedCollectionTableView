@@ -11,7 +11,6 @@ import FZUIKit
 import SwiftUI
 
 extension NSListContentConfiguration {
-    
     /// Properties for a list accessory.
     struct Accessory: Hashable {
         
