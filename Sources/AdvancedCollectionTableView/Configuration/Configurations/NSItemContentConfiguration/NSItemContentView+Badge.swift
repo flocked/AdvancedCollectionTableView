@@ -65,7 +65,7 @@ extension NSItemContentView {
                 if let image = badge.image {
                     Image(image)
                         .imageScaling(badge.imageProperties.scaling.swiftUI)
-                        .foregroundStyle(badge.imageProperties.resolvedTintColor()?.swiftUI ?? badge.textProperties.textColor.swiftUI, nil, nil)
+                        .foregroundStyle(badge.imageProperties.resolvedTintColor()?.swiftUI ?? badge.textProperties.resolvedTextColor().swiftUI, nil, nil)
                         .symbolConfiguration(badge.imageProperties.symbolConfiguration)
                         .frame(maxWidth: badge.imageProperties.maxWidth, maxHeight: badge.imageProperties.maxHeight)
                 }

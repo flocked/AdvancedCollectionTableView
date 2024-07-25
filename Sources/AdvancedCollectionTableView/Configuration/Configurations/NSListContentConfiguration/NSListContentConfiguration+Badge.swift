@@ -166,13 +166,6 @@ public extension NSListContentConfiguration {
             badge.backgroundColor = backgroundColor
             return badge
         }
-
-        var resolvedImageTintColor: NSColor {
-            imageProperties.resolvedTintColor() ?? color
-        }
-
-       // var _resolvedBackgroundColor: NSColor? = .controlAccentColor
-       // var _resolvedColor: NSColor = .white
     }
 }
 
