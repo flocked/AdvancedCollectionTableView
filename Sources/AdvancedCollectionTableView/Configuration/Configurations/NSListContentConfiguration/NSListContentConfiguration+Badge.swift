@@ -13,12 +13,25 @@ import SwiftUI
 public extension NSListContentConfiguration {
     /// Properties for a list badge.
     struct Badge: Hashable {
+        
         /// The position of the badge.
         public enum Position {
             /// The badge is vertically centered to the text, or if it's `nil` to the secondary text.
             case leading
             /// The badge is vertically centered.
             case trailing
+        }
+        
+        /// The alignment of the badge.
+        public enum Alignment {
+            /// The badge is aligned to the center of the list item.
+            case center
+            /// The badge is aligned to the first baseline of the list item.
+            case firstBaseline
+            
+            var alignment: NSLayoutConstraint.Attribute {
+                self == .firstBaseline ? .firstBaseline : .centerY
+            }
         }
 
         /// The text of the badge.
@@ -78,6 +91,9 @@ public extension NSListContentConfiguration {
 
         /// The position of the badge.
         public var position: Position = .trailing
+        
+        /// The alignment of the badge.
+        public var alignment: Alignment = .center
 
         /// The padding between the image and text.
         public var imageToTextPadding: CGFloat = 2.0

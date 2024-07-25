@@ -49,11 +49,11 @@ class SidebarViewController: NSViewController {
         dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {
                 /// Left swipe
-                return [NSTableViewRowAction.regular(symbolName: swippedItem.isFavorite ? "star" : "star.fill") { _,_ in
+                return [NSTableViewRowAction.regular(symbolName: swippedItem.isFavorite ? "star" : "star.fill", color: .systemYellow) { _,_ in
                         swippedItem.isFavorite = !swippedItem.isFavorite
                         self.dataSource.reconfigureItems([swippedItem])
                         self.tableView.rowActionsVisible = false
-                    }]
+                    }, ]
             } else {
                 /// Right swipe
                 return [NSTableViewRowAction.destructive(symbolName: "trash.fill") { _,_ in
