@@ -167,10 +167,6 @@ public extension NSListContentConfiguration {
             return badge
         }
 
-        var isVisible: Bool {
-            text != nil || attributedText != nil || image != nil
-        }
-
         var resolvedImageTintColor: NSColor {
             imageProperties.resolvedTintColor() ?? color
         }
