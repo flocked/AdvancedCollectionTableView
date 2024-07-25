@@ -126,10 +126,10 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             guard let badgeView = badgeView else { return }
             badgeView.properties = badge
             if badge.position == .leading, stackView.arrangedSubviews.first != badgeView {
-                badgeStackView.removeArrangedSubview(badgeView)
+                badgeView.removeFromSuperview()
                 badgeStackView.insertArrangedSubview(badgeView, at: 0)
             } else if badge.position == .trailing, stackView.arrangedSubviews.last != badgeView {
-                badgeStackView.removeArrangedSubview(badgeView)
+                badgeView.removeFromSuperview()
                 badgeStackView.addArrangedSubview(badgeView)
             }
         } else {
