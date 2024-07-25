@@ -160,6 +160,17 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /// The margins between the content and the edges of the list view.
     public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+    
+    /// The accesories.
+    var accesories: [Accessory] = []
+    
+    var topAccesories: [Accessory] {
+        accesories.filter({ $0.position == .top })
+    }
+    
+    var bottomAccesories: [Accessory] {
+        accesories.filter({ $0.position == .bottom })
+    }
 
     // MARK: Creating item configurations
 

@@ -40,7 +40,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
 
     func initialSetup() {
         clipsToBounds = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        imageTextStackView.translatesAutoresizingMaskIntoConstraints = false
         badgeStackView.translatesAutoresizingMaskIntoConstraints = false
         stackViewConstraints = addSubview(withConstraint: badgeStackView)
     }
@@ -56,11 +56,14 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
+    var topAccesoryViews: [AccessoryView] = []
+    var bottomAccesoryViews: [AccessoryView] = []
 
     lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading)
-    lazy var stackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
+    lazy var imageTextStackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
+    // lazy var stackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
     var stackViewConstraints: [NSLayoutConstraint] = []
-    lazy var badgeStackView = NSStackView(views: [stackView]).orientation(.horizontal).distribution(.fill).alignment(.centerY)
+    lazy var badgeStackView = NSStackView(views: [imageTextStackView]).orientation(.horizontal).distribution(.fill).alignment(.centerY)
 
     var isEditing: Bool = false {
         didSet {
@@ -105,16 +108,16 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageView.properties = appliedConfiguration.imageProperties
 
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
-        stackView.spacing = appliedConfiguration.imageToTextPadding
-        stackView.orientation = appliedConfiguration.imageProperties.position.orientation
-        stackView.alignment = appliedConfiguration.imageProperties.position.alignment
+        imageTextStackView.spacing = appliedConfiguration.imageToTextPadding
+        imageTextStackView.orientation = appliedConfiguration.imageProperties.position.orientation
+        imageTextStackView.alignment = appliedConfiguration.imageProperties.position.alignment
 
-        if appliedConfiguration.imageProperties.position.imageIsLeading, stackView.arrangedSubviews.first != imageView {
-            stackView.removeArrangedSubview(textStackView)
-            stackView.addArrangedSubview(textStackView)
-        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false, stackView.arrangedSubviews.last != imageView {
-            stackView.removeArrangedSubview(imageView)
-            stackView.addArrangedSubview(imageView)
+        if appliedConfiguration.imageProperties.position.imageIsLeading, imageTextStackView.arrangedSubviews.first != imageView {
+            imageTextStackView.removeArrangedSubview(textStackView)
+            imageTextStackView.addArrangedSubview(textStackView)
+        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false, imageTextStackView.arrangedSubviews.last != imageView {
+            imageTextStackView.removeArrangedSubview(imageView)
+            imageTextStackView.addArrangedSubview(imageView)
         }
 
         stackViewConstraints.constant(appliedConfiguration.margins)
@@ -127,10 +130,10 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             guard let badgeView = badgeView else { return }
             badgeView.properties = badge
-            if badge.position == .leading, stackView.arrangedSubviews.first != badgeView {
+            if badge.position == .leading, badgeStackView.arrangedSubviews.first != badgeView {
                 badgeView.removeFromSuperview()
                 badgeStackView.insertArrangedSubview(badgeView, at: 0)
-            } else if badge.position == .trailing, stackView.arrangedSubviews.last != badgeView {
+            } else if badge.position == .trailing, badgeStackView.arrangedSubviews.last != badgeView {
                 badgeView.removeFromSuperview()
                 badgeStackView.addArrangedSubview(badgeView)
             }
@@ -171,6 +174,31 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 }
             }
         default: break
+        }
+
+        if topAccesoryViews.count != appliedConfiguration.topAccesories.count {
+            var count = appliedConfiguration.topAccesories.count - topAccesoryViews.count
+            if count > 0 {
+                let range = appliedConfiguration.topAccesories.count-count..<appliedConfiguration.topAccesories.count
+                topAccesoryViews.append(contentsOf: appliedConfiguration.topAccesories[range].compactMap({ AccessoryView(accessory: $0) }))
+            } else {
+                count = -count
+                let range = topAccesoryViews.count-count..<topAccesoryViews.count
+                topAccesoryViews[range].forEach({$0.removeFromSuperview()})
+                topAccesoryViews.remove(at: range)
+            }
+        }
+        if bottomAccesoryViews.count != appliedConfiguration.bottomAccesories.count {
+            var count = appliedConfiguration.bottomAccesories.count - bottomAccesoryViews.count
+            if count > 0 {
+                let range = appliedConfiguration.bottomAccesories.count-count..<appliedConfiguration.bottomAccesories.count
+                bottomAccesoryViews.append(contentsOf: appliedConfiguration.bottomAccesories[range].compactMap({ AccessoryView(accessory: $0) }))
+            } else {
+                count = -count
+                let range = bottomAccesoryViews.count-count..<bottomAccesoryViews.count
+                bottomAccesoryViews[range].forEach({$0.removeFromSuperview()})
+                bottomAccesoryViews.remove(at: range)
+            }
         }
         updateTableRowHeight()
     }

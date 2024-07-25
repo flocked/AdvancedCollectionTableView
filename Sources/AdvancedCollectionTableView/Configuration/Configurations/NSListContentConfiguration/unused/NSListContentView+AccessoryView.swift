@@ -10,56 +10,87 @@ import FZSwiftUtils
 import FZUIKit
 import SwiftUI
 
-class AccessoryView: NSView {
-}
-
-class AccessoryItemView: NSView {
-    let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
-    let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
-    lazy var imageView = AccessoryImageView(properties: accessory.imageProperties)
-    lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical)
-    lazy var stackView = NSStackView(views: [textStackView, imageView]).orientation(.vertical)
-    var stackViewConstraints: [NSLayoutConstraint] = []
-    
-    var accessory: NSListContentConfiguration.AccessoryProperties {
-        didSet {
-            guard oldValue != accessory else { return }
+extension NSListContentView {
+    class AccessoryView: NSView {
+        var accessory: NSListContentConfiguration.Accessory {
+            didSet {
+                update()
+            }
+        }
+        
+        func update() {
+            leadingAccessoryItemView.accessory = accessory.leading
+            trailingAccessoryItemView.accessory = accessory.trailing
+            isHidden = !accessory.leading.isVisible && !accessory.trailing.isVisible
+        }
+        
+        lazy var leadingAccessoryItemView = ItemView(accessory: accessory.leading)
+        lazy var trailingAccessoryItemView = ItemView(accessory: accessory.trailing)
+        lazy var stackView = NSStackView(views: [leadingAccessoryItemView, trailingAccessoryItemView]).orientation(.horizontal).spacing(2.0).distribution(.gravityAreas)
+        
+        init(accessory: NSListContentConfiguration.Accessory) {
+            self.accessory = accessory
+            super.init(frame: .zero)
+            addSubview(withConstraint: stackView)
             update()
         }
-    }
-    
-    func update() {
-        textField.updateText(accessory.text, accessory.attributedText)
-        secondaryTextField.updateText(accessory.secondaryText, accessory.secondaryAttributedText)
-        textField.properties = accessory.textProperties
-        secondaryTextField.properties = accessory.secondaryTextProperties
-        textStackView.spacing = accessory.textToSecondaryTextPadding
-        stackView.spacing = accessory.imageToTextPadding
-        stackView.orientation = accessory.imageProperties.position.orientation
-        stackView.alignment = accessory.imageProperties.position.alignment
-        if accessory.imageProperties.position.imageIsLeading {
-            stackView.removeArrangedSubview(textStackView)
-            stackView.addArrangedSubview(textStackView)
-        } else {
-            stackView.removeArrangedSubview(imageView)
-            stackView.addArrangedSubview(imageView)
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
-        imageView.image = accessory.image
-        imageView.properties = accessory.imageProperties
-    }
-    
-    init(accessory: NSListContentConfiguration.AccessoryProperties) {
-        self.accessory = accessory
-        super.init(frame: .zero)
-        stackViewConstraints = addSubview(withConstraint: stackView)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
-extension AccessoryItemView {
+extension NSListContentView.AccessoryView {
+    class ItemView: NSView {
+        let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+        let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+        lazy var imageView = AccessoryImageView(properties: accessory.imageProperties)
+        lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical)
+        lazy var stackView = NSStackView(views: [textStackView, imageView]).orientation(.vertical)
+        var stackViewConstraints: [NSLayoutConstraint] = []
+        
+        var accessory: NSListContentConfiguration.AccessoryProperties {
+            didSet {
+                guard oldValue != accessory else { return }
+                update()
+            }
+        }
+        
+        func update() {
+            textField.updateText(accessory.text, accessory.attributedText)
+            secondaryTextField.updateText(accessory.secondaryText, accessory.secondaryAttributedText)
+            textField.properties = accessory.textProperties
+            secondaryTextField.properties = accessory.secondaryTextProperties
+            textStackView.spacing = accessory.textToSecondaryTextPadding
+            stackView.spacing = accessory.imageToTextPadding
+            stackView.orientation = accessory.imageProperties.position.orientation
+            stackView.alignment = accessory.imageProperties.position.alignment
+            if accessory.imageProperties.position.imageIsLeading {
+                stackView.removeArrangedSubview(textStackView)
+                stackView.addArrangedSubview(textStackView)
+            } else {
+                stackView.removeArrangedSubview(imageView)
+                stackView.addArrangedSubview(imageView)
+            }
+            imageView.image = accessory.image
+            imageView.properties = accessory.imageProperties
+            isHidden = !accessory.isVisible
+        }
+        
+        init(accessory: NSListContentConfiguration.AccessoryProperties) {
+            self.accessory = accessory
+            super.init(frame: .zero)
+            stackViewConstraints = addSubview(withConstraint: stackView)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+}
+
+extension NSListContentView.AccessoryView.ItemView {
     class AccessoryImageView: NSImageView {
         var properties: NSListContentConfiguration.AccessoryProperties.ImageProperties {
             didSet {
