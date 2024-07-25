@@ -93,12 +93,11 @@ extension NSTableCellView {
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                let contentView = contentConfiguration.makeContentView()
-                self.contentView = contentView
+                contentView = contentConfiguration.makeContentView()
                 translatesAutoresizingMaskIntoConstraints = false
-                addSubview(withConstraint: contentView)
+                addSubview(withConstraint: contentView!)
                 setNeedsDisplay()
-                contentView.setNeedsDisplay()
+                contentView?.setNeedsDisplay()
             }
         } else {
             contentView = nil

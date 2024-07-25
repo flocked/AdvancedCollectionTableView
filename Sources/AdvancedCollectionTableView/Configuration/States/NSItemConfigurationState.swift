@@ -78,13 +78,15 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         highlight: NSCollectionViewItem.HighlightState = .none,
         isEditing: Bool = false,
         isEmphasized: Bool = false,
-        isHovered: Bool = false
+        isHovered: Bool = false,
+        isEnabled: Bool = true
     ) {
         self.isSelected = isSelected
         self.highlight = highlight
         self.isEditing = isEditing
         self.isEmphasized = isEmphasized
         self.isHovered = isHovered
+        self.isEnabled = isEnabled
         self["isSelected"] = isSelected
         self["isEmphasized"] = isEmphasized
         self["isItemState"] = true

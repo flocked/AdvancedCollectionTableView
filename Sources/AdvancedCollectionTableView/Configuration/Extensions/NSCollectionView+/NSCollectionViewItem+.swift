@@ -152,8 +152,6 @@ extension NSCollectionViewItem {
             } else {
                 let previousFrame = view.frame
                 view = contentConfiguration.makeContentView()
-                view.wantsLayer = true
-                view.clipsToBounds = false
                 view.frame = previousFrame
                 view.setNeedsLayout()
             }
@@ -172,7 +170,7 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
         return state
     }
 
@@ -264,6 +262,10 @@ extension NSCollectionViewItem {
             setAssociatedValue(newValue, key: "isHovered")
             setNeedsAutomaticUpdateConfiguration()
         }
+    }
+    
+    var isEnabled: Bool {
+        _collectionView?.isEnabled ?? true
     }
     
     func checkHoverLocation(_ location: CGPoint) {

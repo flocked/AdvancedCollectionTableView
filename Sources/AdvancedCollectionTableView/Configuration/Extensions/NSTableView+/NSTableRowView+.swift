@@ -57,10 +57,8 @@ extension NSTableRowView {
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                let contentView = contentConfiguration.makeContentView()
-                contentView.configuration = contentConfiguration
-                self.contentView = contentView
-                addSubview(withConstraint: contentView)
+                contentView = contentConfiguration.makeContentView()
+                addSubview(withConstraint: contentView!)
             }
         } else {
             contentView = nil
@@ -185,11 +183,10 @@ extension NSTableRowView {
             self.setNeedsAutomaticUpdateConfiguration(updateCells: true)
         }
     }
-    
+
     func observeTableRowView() {
-        if contentConfiguration != nil || configurationUpdateHandler != nil {
-            guard tableViewObserverView == nil else { return }
-            observeSelection()
+        observeSelection()
+        if configurationUpdateHandler != nil, tableViewObserverView == nil {
             tableViewObserverView = TableViewObserverView { [weak self] tableView in
                 guard let self = self else { return }
                 if self.contentConfiguration is AutomaticHeightSizable {
@@ -209,7 +206,7 @@ extension NSTableRowView {
              }
              }
              */
-        } else {
+        } else if configurationUpdateHandler == nil {
             tableViewObserverView?.removeFromSuperview()
             tableViewObserverView = nil
         }

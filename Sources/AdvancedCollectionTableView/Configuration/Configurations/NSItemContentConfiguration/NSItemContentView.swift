@@ -15,6 +15,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         appliedConfiguration = configuration
         super.init(frame: .zero)
         isOpaque = false
+        wantsLayer = true
         clipsToBounds = false
         stackviewConstraints = addSubview(withConstraint: stackView)
         updateConfiguration()
@@ -115,6 +116,8 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
+        textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
+        secondaryTextField.isEnabled = textField.isEnabled
 
         scale = appliedConfiguration.scaleTransform.point
         contentView.configuration = appliedConfiguration
