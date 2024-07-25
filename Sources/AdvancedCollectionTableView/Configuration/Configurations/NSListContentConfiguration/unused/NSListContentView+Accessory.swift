@@ -44,21 +44,6 @@ extension NSListContentConfiguration {
         
         /// The padding to the next accessory.
         public var padding: CGFloat = 4.0
-        
-        /*
-         /// The leading accessory item.
-         public var leading: NSListContentConfiguration? = nil
-         
-         /// The trailing accessory item.
-         public var trailing: NSListContentConfiguration? = nil
-
-        var center: AccessoryProperties = {
-            var properties = AccessoryProperties()
-            properties.textProperties.alignment = .center
-            properties.secondaryTextProperties.alignment = .center
-            return properties
-        }()
-         */
     }
 }
 
