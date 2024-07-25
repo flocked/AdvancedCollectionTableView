@@ -103,7 +103,7 @@ fileprivate extension View {
         if let effect = badge.visualEffect {
             self.visualEffect(effect)
         } else {
-            self.background(badge.resolvedBackgroundColor()?.swiftUI ?? .clear)
+            self.background(badge.resolvedBackgroundColor()?.swiftUI)
         }
     }
     

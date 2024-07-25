@@ -87,7 +87,7 @@ extension NSListContentView {
             stackItem
                 .padding(badge.margins.edgeInsets)
                 .frame(maxWidth: badge.maxWidth)
-                .background(badge.resolvedBackgroundColor()?.swiftUI ?? .clear)
+                .background(badge.resolvedBackgroundColor()?.swiftUI)
                 .badgeShape(badge)
                 .shadow(badge.shadow)
                 .frame(maxWidth: badge.maxWidth)
