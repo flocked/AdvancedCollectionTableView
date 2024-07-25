@@ -28,7 +28,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         return editingContentView is NSListContentView ? firstSuperview(for: NSTableView.self) : firstSuperview(for: NSCollectionView.self)
     }
 
-    func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String?, _ attributedPlaceholder: AttributedString?) {
+    func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {
         if let attributedString = attributedString {
             attributedStringValue = NSAttributedString(attributedString)
         } else if let text = text {

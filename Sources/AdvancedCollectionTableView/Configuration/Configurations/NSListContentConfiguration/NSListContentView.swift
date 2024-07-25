@@ -52,8 +52,8 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
 
-    let textField = ListItemTextField.wrapping()
-    let secondaryTextField = ListItemTextField.wrapping()
+    let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+    let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
 
