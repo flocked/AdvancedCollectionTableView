@@ -114,7 +114,7 @@ public extension NSListContentConfiguration {
         public var toolTip: String? = nil
 
         /// Creates a badge.
-        public init() {}
+        public init() { }
 
         /**
          A badge displaying a text.

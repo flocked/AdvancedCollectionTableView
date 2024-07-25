@@ -74,8 +74,8 @@ public extension NSItemContentConfiguration {
         /// The image of the badge.
         public var image: NSImage?
 
-        /// The view of the badge. **Currently not working.**
-        public var view: NSView?
+        /// The view of the badge.
+        var view: NSView?
 
         /// Properties for configuring the text.
         public var textProperties: TextProperties = .init()
