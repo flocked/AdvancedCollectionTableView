@@ -111,12 +111,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         imageTextStackView.spacing = appliedConfiguration.imageToTextPadding
         imageTextStackView.orientation = appliedConfiguration.imageProperties.position.orientation
         imageTextStackView.alignment = appliedConfiguration.imageProperties.position.alignment
-
-        if appliedConfiguration.imageProperties.position.imageIsLeading, imageTextStackView.arrangedSubviews.first != imageView {
-            imageTextStackView.addArrangedSubview(textStackView)
-        } else if appliedConfiguration.imageProperties.position.imageIsLeading == false, imageTextStackView.arrangedSubviews.last != imageView {
-            imageTextStackView.addArrangedSubview(imageView)
-        }
+        imageTextStackView.addArrangedSubview(appliedConfiguration.imageProperties.position.imageIsLeading ? textStackView : imageView)
 
         stackViewConstraints.constant(appliedConfiguration.margins)
 
@@ -128,11 +123,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             guard let badgeView = badgeView else { return }
             badgeView.properties = badge
-            if badge.position == .leading, badgeStackView.arrangedSubviews.first != badgeView {
-                badgeStackView.insertArrangedSubview(badgeView, at: 0)
-            } else if badge.position == .trailing, badgeStackView.arrangedSubviews.last != badgeView {
-                badgeStackView.addArrangedSubview(badgeView)
-            }
+            badgeStackView.arrangedViews = badge.position == .leading ? [badgeView, imageTextStackView] : [imageTextStackView, badgeView]
         } else {
             badgeView?.removeFromSuperview()
             badgeView = nil

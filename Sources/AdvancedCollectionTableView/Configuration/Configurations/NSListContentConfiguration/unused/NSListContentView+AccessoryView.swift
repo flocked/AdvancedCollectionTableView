@@ -66,11 +66,8 @@ extension NSListContentView.AccessoryView {
             stackView.spacing = accessory.imageToTextPadding
             stackView.orientation = accessory.imageProperties.position.orientation
             stackView.alignment = accessory.imageProperties.position.alignment
-            if accessory.imageProperties.position.imageIsLeading {
-                stackView.addArrangedSubview(textStackView)
-            } else {
-                stackView.addArrangedSubview(imageView)
-            }
+            stackView.addArrangedSubview(accessory.imageProperties.position.imageIsLeading ? textStackView : imageView)
+
             imageView.image = accessory.image
             imageView.properties = accessory.imageProperties
             isHidden = !accessory.isVisible

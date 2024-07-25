@@ -122,11 +122,8 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         stackView.spacing = appliedConfiguration.contentToTextPadding
         stackView.orientation = appliedConfiguration.contentPosition.orientation
         stackView.alignment = appliedConfiguration.contentAlignment
-        if appliedConfiguration.contentPosition.contentIsLeading, stackView.arrangedSubviews.first != contentView {
-            stackView.addArrangedSubview(textStackView)
-        } else if appliedConfiguration.contentPosition.contentIsLeading == false, stackView.arrangedSubviews.last != contentView {
-            stackView.addArrangedSubview(contentView)
-        }
+        stackView.arrangedViews = appliedConfiguration.contentPosition.contentIsLeading ? [contentView, textStackView] : [textStackView, contentView]
+        stackView.addArrangedSubview(appliedConfiguration.contentPosition.contentIsLeading ? textStackView : contentView)
         stackviewConstraints.constant(appliedConfiguration.margins)
         if appliedConfiguration.contentPosition.isFirstBaseline, appliedConfiguration.image?.isSymbolImage == false {
             if appliedConfiguration.hasText {
