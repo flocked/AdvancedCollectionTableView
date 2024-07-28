@@ -95,19 +95,14 @@ public extension NSCollectionView {
         public typealias Handler = (_ item: Item, _ indexPath: IndexPath, _ element: Element) -> Void
 
         func makeItem(_ collectionView: NSCollectionView, _ indexPath: IndexPath, _ element: Element) -> Item {
-            if isRegistered(collectionView) == false {
-                register(collectionView)
-            }
+            register(collectionView)
             let item = collectionView.makeItem(withIdentifier: identifier, for: indexPath) as! Item
             handler(item, indexPath, element)
             return item
         }
 
-        func isRegistered(_ collectionView: NSCollectionView) -> Bool {
-            collectionView.registeredItemRegistrations.contains(identifier)
-        }
-
         func register(_ collectionView: NSCollectionView) {
+            guard !collectionView.registeredItemRegistrations.contains(identifier) else { return }
             if let nib = nib {
                 collectionView.register(nib, forItemWithIdentifier: identifier)
             } else {

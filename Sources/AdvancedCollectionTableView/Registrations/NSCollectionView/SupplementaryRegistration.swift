@@ -81,20 +81,14 @@ public extension NSCollectionView {
         public typealias Handler = (_ supplementaryView: Supplementary, _ kind: SupplementaryElementKind, _ indexPath: IndexPath) -> Void
 
         func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement) {
-            if isRegistered(collectionView) == false {
-                register(collectionView)
-            }
-
-            let view = collectionView.makeSupplementaryView(ofKind: elementKind, withIdentifier: identifier, for: indexPath) as! Supplementary
+            register(collectionView)
+            let view = collectionView.makeSupplementaryView(ofKind: elementKind, withIdentifier: identifier, for: indexPath) as? Supplementary ?? Supplementary()
             handler(view, elementKind, indexPath)
             return view
         }
 
-        func isRegistered(_ collectionView: NSCollectionView) -> Bool {
-            collectionView.registeredSupplementaryRegistrations.contains(identifier)
-        }
-
         func register(_ collectionView: NSCollectionView) {
+            guard !collectionView.registeredSupplementaryRegistrations.contains(identifier) else { return }
             if let nib = nib {
                 collectionView.register(nib, forSupplementaryViewOfKind: elementKind, withIdentifier: identifier)
             } else {
@@ -134,13 +128,11 @@ private extension NSCollectionView {
     }
 }
 
-/// A supplementary view registration of a collection view.
+///  A registration for the collection view’s supplementary views.
 public protocol NSCollectionViewSupplementaryRegistration {
     /// The kind of the supplementary view.
     var elementKind: String { get }
 }
-
-extension NSCollectionViewSupplementaryRegistration {}
 
 protocol _NSCollectionViewSupplementaryRegistration {
     func makeSupplementaryView(_ collectionView: NSCollectionView, _ indexPath: IndexPath) -> (NSView & NSCollectionViewElement)

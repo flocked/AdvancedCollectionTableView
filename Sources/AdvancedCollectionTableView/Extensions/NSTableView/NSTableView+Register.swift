@@ -57,7 +57,7 @@ extension NSTableView {
     }
 
     @objc func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        if nib == nil, registeredCellsByIdentifier[identifier] != nil {
+        if nib == nil {
             registeredCellsByIdentifier[identifier] = nil
         }
         swizzled_register(nib, forIdentifier: identifier)

@@ -50,7 +50,7 @@ public extension NSTableViewDiffableDataSource {
     convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider: {
             _, column, row, element in
-            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers?.contains(column.identifier) == true }) ?? cellRegistrations.first(where: { $0.columnIdentifiers == nil }) {
+            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
                 return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
             }
             return NSTableCellView()
@@ -70,7 +70,7 @@ public extension NSTableViewDiffableDataSource {
     convenience init<S: NSTableCellView>(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration], sectionHeaderRegistration: NSTableView.CellRegistration<S, SectionIdentifierType>) {
         self.init(tableView: tableView, cellProvider: {
             _, column, row, element in
-            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers?.contains(column.identifier) == true }) ?? cellRegistrations.first(where: { $0.columnIdentifiers == nil }) {
+            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
                 return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
             }
             return NSTableCellView()

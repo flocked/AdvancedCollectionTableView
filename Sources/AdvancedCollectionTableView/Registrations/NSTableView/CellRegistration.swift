@@ -58,11 +58,13 @@ public extension NSTableView {
         let handler: Handler
 
         /**
-         The identifiers of the table columns, or `nil`, if the cell isn't restricted to specific columns.
+         The identifiers of the table columns,
+         
+         An empty array indicates that the cell isn't restricted to any specific columns.
 
          The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value isn't `nil`, the table cell is displayed for the columns with the same identifiers.
          */
-        public let columnIdentifiers: [NSUserInterfaceItemIdentifier]?
+        public let columnIdentifiers: [NSUserInterfaceItemIdentifier]
 
         // MARK: Creating a cell registration
 
@@ -70,10 +72,10 @@ public extension NSTableView {
          Creates a cell registration with the specified registration handler.
 
          - Parameters:
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, which indicates that the cell isn't restricted to specific columns when used with ``TableViewDiffableDataSource``.
+            - columnIdentifiers: The identifiers of the table columns. The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
-        public init(columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
+        public init(columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
             self.columnIdentifiers = columnIdentifiers
@@ -85,10 +87,10 @@ public extension NSTableView {
 
          - Parameters:
             - nib: The nib of the cell.
-            - columnIdentifiers: The identifiers of the table columns. The default value is `nil`, which indicates that the cell isn't restricted to specific columns when used with ``TableViewDiffableDataSource``.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
-        public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier]? = nil, handler: @escaping Handler) {
+        public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
             self.handler = handler
             self.nib = nib
             self.columnIdentifiers = columnIdentifiers
@@ -100,27 +102,16 @@ public extension NSTableView {
 
         func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
             register(tableView)
-            if let columnIdentifiers = columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
+            if !columnIdentifiers.isEmpty, !columnIdentifiers.contains(tableColumn.identifier) {
                 return nil
             }
-            if let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell {
-                handler(cell, tableColumn, row, item)
-                return cell
-            }
-            return nil
+            guard let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell else { return nil }
+            handler(cell, tableColumn, row, item)
+            return cell
         }
 
         func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) -> NSTableCellView? {
-            register(tableView)
-            if let columnIdentifiers = columnIdentifiers, columnIdentifiers.contains(tableColumn.identifier) == false {
-                return nil
-            }
-            let item = item as! Item
-            if let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell {
-                handler(cell, tableColumn, row, item)
-                return cell
-            }
-            return nil
+            makeCellView(tableView, tableColumn, row, item as! Item)
         }
 
         func register(_ tableView: NSTableView) {
@@ -158,10 +149,10 @@ extension NSTableView {
     }
 }
 
-/// A table view cell registration.
+/// A registration for the table view’s cells.
 public protocol NSTableViewCellRegistration {
-    /// The identifiers of the table columns, or `nil`, if the cell isn't restricted tospecific columns.
-    var columnIdentifiers: [NSUserInterfaceItemIdentifier]? { get }
+    /// The identifiers of the table columns.
+    var columnIdentifiers: [NSUserInterfaceItemIdentifier] { get }
 }
 
 protocol _NSTableViewCellRegistration {
