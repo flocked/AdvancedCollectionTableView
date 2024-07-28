@@ -448,7 +448,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 return true
             }
         }
-        let elements = droppingHandlers.canDrop?(draggingInfo.contents) ?? []
+        let elements = droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
         if !elements.isEmpty {
             var snapshot = snapshot()
             if let item = item(forRow: row) {
@@ -489,7 +489,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         if let draggingSource = draggingInfo.draggingSource as? NSTableView, draggingSource == tableView {
             return NSDragOperation.move
-        } else if !draggingInfo.contents.isEmpty {
+        } else if !draggingInfo.draggingPasteboard.content().isEmpty {
             return NSDragOperation.copy
         }
         return []

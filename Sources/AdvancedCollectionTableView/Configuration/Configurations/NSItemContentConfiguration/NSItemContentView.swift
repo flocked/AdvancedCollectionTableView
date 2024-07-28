@@ -40,7 +40,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
         configuration is NSItemContentConfiguration
     }
     
-    func checkHoverLocation(_ location: CGPoint) -> Bool {
+    func isHovering(at location: CGPoint) -> Bool {
         return (contentView.frame.contains(location) && contentView.isHidden == false) ||
         CGRect(0, 0, max(textField.bounds.width, secondaryTextField.bounds.width), contentView.frame.y).contains(location)
         /*
@@ -78,7 +78,7 @@ open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     var appliedConfiguration: NSItemContentConfiguration {
-        didSet {
+        didSet{
             guard oldValue != appliedConfiguration else { return }
             updateConfiguration()
         }

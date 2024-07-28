@@ -11,11 +11,11 @@ import FZUIKit
 
 extension NSItemContentView {
     class ItemContentView: NSView {
-        typealias Badge = NSItemContentConfiguration.Badge
         var configuration: NSItemContentConfiguration {
-            didSet { if oldValue != configuration {
+            didSet {
+                guard oldValue != configuration else { return }
                 updateConfiguration()
-            } }
+            }
         }
 
         var contentProperties: NSItemContentConfiguration.ContentProperties {
@@ -28,6 +28,7 @@ extension NSItemContentView {
 
         var view: NSView? {
             didSet {
+                guard oldValue != view else { return }
                 oldValue?.removeFromSuperview()
                 if let newView = view {
                     newView.frame.size = bounds.size
@@ -44,7 +45,6 @@ extension NSItemContentView {
                 oldValue?.removeFromSuperview()
                 if let newView = overlayView {
                     newView.clipsToBounds = true
-                    newView.cornerRadius = contentProperties.cornerRadius
                     newView.frame.size = bounds.size
                     containerView.addSubview(newView)
                 }
@@ -61,7 +61,7 @@ extension NSItemContentView {
         }
 
         func updateBadges() {
-            let badges = configuration.badges.filter(\.isVisible)
+            let badges = configuration.badges.filter(\.isVisible).sorted(by: \.position.rawValue)
             if configuration.hasContent {
                 let badgeViewsNeeded = badges.count - badgeViews.count
                 if badgeViewsNeeded > 0 {
@@ -77,20 +77,24 @@ extension NSItemContentView {
                     }
                 }
                 guard badges.count == badgeViews.count else { return }
-                for value in zip(badges, badgeViews) {
-                    value.1.properties = value.0
+                for (index, badgeView) in badgeViews.sorted(by: \.properties.position.rawValue).enumerated() {
+                    var badge = badges[index]
+                    badge.maxWidth = min(badge.maxWidth ?? bounds.width, bounds.width)
+                    badgeView.properties = badge
+                    badgeView.layoutBadge()
                 }
-                layoutBadges()
             } else {
                 badgeViews.forEach { $0.removeFromSuperview() }
                 badgeViews.removeAll()
             }
         }
 
-        var previousFrameSize: CGSize = .zero
+        var previousSize: CGSize = .zero
 
         override func layout() {
             super.layout()
+            guard previousSize != bounds.size else { return }
+            previousSize = bounds.size
             invalidateIntrinsicContentSize()
             containerView.frame.size = bounds.size
             imageView.frame.size = bounds.size
@@ -163,66 +167,9 @@ extension NSItemContentView {
              */
         }
 
-        func layoutBadges(elements: [(badge: Badge, badgeView: BadgeView)]) {
-            var elements = elements
-            let element = elements.removeFirst()
-            let firstBadge = element.badge
-            let firstBadgeView = element.badgeView
-            layoutBadge(firstBadge, badgeView: firstBadgeView)
-        }
-
-        func layoutBadges() {
-            let badges = configuration.badges.filter(\.isVisible).sorted(by: \.position.rawValue)
-            guard configuration.hasBadges, badges.count == badgeViews.count else { return }
-            let badgeViews = badgeViews.sorted(by: \.properties.position.rawValue)
-            for value in zip(badges, badgeViews) {
-                layoutBadge(value.0, badgeView: value.1)
-            }
-        }
-
-        func layoutBadge(_ badge: Badge, badgeView: BadgeView) {
-            badgeView.horizontalConstraint?.activate(false)
-            badgeView.verticalConstraint?.activate(false)
-           // badgeView.widthConstraint?.activate(false)
-            var badge = badge
-            if let maxWidth = badge.maxWidth {
-                badge.maxWidth = min(maxWidth, bounds.width)
-            } else {
-                badge.maxWidth = bounds.width
-            }
-            badgeView.properties = badge
-
-            //   let constant = -(2*(badge.type.spacing ?? 0))
-              // badgeView.widthConstraint = badgeView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, constant: 0).activate()
-            
-
-            let badgeSize = badgeView.hostingView.fittingSize
-            if badge.shape == .circle {
-                badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
-                badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: trailingAnchor, constant: -(badgeSize.width * 0.66)).activate()
-            } else {
-                switch badge.position {
-                case .topLeft, .top, .topRight:
-                    badgeView.verticalConstraint = badgeView.topAnchor.constraint(equalTo: topAnchor, constant: badge.type.spacing ?? -(badgeSize.height * 0.33)).activate()
-                case .centerLeft, .center, .centerRight:
-                    badgeView.verticalConstraint = badgeView.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
-                case .bottomLeft, .bottom, .bottomRight:
-                    badgeView.verticalConstraint = badgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: badge.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
-                }
-                
-                switch badge.position {
-                case .topLeft, .centerLeft, .bottomLeft:
-                    badgeView.horizontalConstraint = badgeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: badge.type.spacing ?? -(badgeSize.width * 1.33)).activate()
-                case .topRight, .centerRight, .bottomRight:
-                    badgeView.horizontalConstraint = badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: badge.type.spacing.reverse ?? badgeSize.width * 0.33).activate()
-                case .top, .center, .bottom:
-                    badgeView.horizontalConstraint = badgeView.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
-                }
-            }
-        }
-
         var centerYConstraint: NSLayoutConstraint?
         var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
+        
         override var intrinsicContentSize: NSSize {
             if frame.size == .zero {
                 return CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
@@ -308,13 +255,8 @@ extension NSItemContentView {
             visualEffect = contentProperties.visualEffect
             
             containerView.border = contentProperties._resolvedBorder()
-            
             cornerRadius = contentProperties.cornerRadius
-            clipsToBounds = false
             containerView.cornerRadius = contentProperties.cornerRadius
-            imageView.cornerRadius = contentProperties.cornerRadius
-            view?.cornerRadius = contentProperties.cornerRadius
-            overlayView?.cornerRadius = contentProperties.cornerRadius
 
             outerShadow = contentProperties._resolvedShadow()
 
@@ -322,21 +264,15 @@ extension NSItemContentView {
             imageView.imageScaling = contentProperties.imageProperties.scaling.scaling
             imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image
-
-            if configuration.view != view {
-                view = configuration.view
-            }
-
-            if configuration.overlayView != overlayView {
-                overlayView = configuration.overlayView
-            }
-
-            isHidden = configuration.hasContent == false
-            updateBadges()
+            view = configuration.view
+            overlayView = configuration.overlayView
 
             anchorPoint = CGPoint(0.5, 0.5)
-            layer?.scale = contentProperties.scaleTransform.point
+            scale = contentProperties.scaleTransform.point
             toolTip = contentProperties.toolTip
+            isHidden = !configuration.hasContent
+            updateBadges()
+            
             invalidateIntrinsicContentSize()
         }
 

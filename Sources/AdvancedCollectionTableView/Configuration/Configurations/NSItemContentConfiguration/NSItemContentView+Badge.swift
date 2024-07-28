@@ -12,14 +12,14 @@ import FZUIKit
 
 extension NSItemContentView {
     class BadgeView: NSView {
-        lazy var hostingView = NSHostingView(rootView: ContentView(badge: properties))
+        lazy var hostingView: NSHostingView<ContentView> = NSHostingView(rootView: ContentView(badge: properties))
         var verticalConstraint: NSLayoutConstraint?
         var horizontalConstraint: NSLayoutConstraint?
         
         var properties: NSItemContentConfiguration.Badge {
             didSet {
                 guard oldValue != properties else { return }
-                update()
+                hostingView.rootView = ContentView(badge: properties)
             }
         }
 
@@ -28,15 +28,41 @@ extension NSItemContentView {
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
             addSubview(withConstraint: hostingView)
-        }
-        
-        func update() {
-            hostingView.rootView = ContentView(badge: properties)
-            frame.size = hostingView.fittingSize
+           // frame.size = hostingView.fittingSize
         }
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        func layoutBadge() {
+            horizontalConstraint?.activate(false)
+            verticalConstraint?.activate(false)
+            guard let superview = superview else { return }
+            
+            let badgeSize = hostingView.fittingSize
+            if properties.shape == .circle {
+                verticalConstraint = topAnchor.constraint(equalTo: superview.topAnchor, constant: properties.type.spacing ?? -(badgeSize.height * 0.33)).activate()
+                horizontalConstraint = leadingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -(badgeSize.width * 0.66)).activate()
+            } else {
+                switch properties.position {
+                case .topLeft, .top, .topRight:
+                    verticalConstraint = topAnchor.constraint(equalTo: superview.topAnchor, constant: properties.type.spacing ?? -(badgeSize.height * 0.33)).activate()
+                case .centerLeft, .center, .centerRight:
+                    verticalConstraint = centerYAnchor.constraint(equalTo: superview.centerYAnchor).activate()
+                case .bottomLeft, .bottom, .bottomRight:
+                    verticalConstraint = bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: properties.type.spacing.reverse ?? (badgeSize.height * 0.33)).activate()
+                }
+                
+                switch properties.position {
+                case .topLeft, .centerLeft, .bottomLeft:
+                    horizontalConstraint = leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: properties.type.spacing ?? -(badgeSize.width * 1.33)).activate()
+                case .topRight, .centerRight, .bottomRight:
+                    horizontalConstraint = trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: properties.type.spacing.reverse ?? badgeSize.width * 0.33).activate()
+                case .top, .center, .bottom:
+                    horizontalConstraint = centerXAnchor.constraint(equalTo: superview.centerXAnchor).activate()
+                }
+            }
         }
         
         struct ContentView: View {

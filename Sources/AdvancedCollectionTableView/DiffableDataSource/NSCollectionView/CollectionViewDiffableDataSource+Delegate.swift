@@ -97,7 +97,7 @@ extension CollectionViewDiffableDataSource {
             }
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == dataSource.collectionView {
                 return NSDragOperation.move
-            } else if !draggingInfo.contents.isEmpty {
+            } else if !draggingInfo.draggingPasteboard.content().isEmpty {
                 return NSDragOperation.copy
             }
             return []
@@ -116,7 +116,7 @@ extension CollectionViewDiffableDataSource {
                 }
             }
             
-            let elements = dataSource.droppingHandlers.canDrop?(draggingInfo.contents) ?? []
+            let elements = dataSource.droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
             if !elements.isEmpty {
                 var snapshot = dataSource.snapshot()
                 if let item = dataSource.element(for: indexPath) {
@@ -221,19 +221,8 @@ extension NSPasteboardItem {
             fileURL = newValue.fileURLs.first
             color = newValue.colors.first
             string = newValue.strings.first
+            attributedString = newValue.attributedStrings.first
+            sound = newValue.sounds.first
         }
-    }
-}
-
-extension NSDraggingInfo {
-    var contents: [PasteboardContent] {
-        var contents: [PasteboardContent] = []
-        contents.append(contentsOf: fileURLs ?? [])
-        contents.append(contentsOf: urls ?? [])
-        contents.append(contentsOf: images ?? [])
-        contents.append(contentsOf: colors ?? [])
-        contents.append(contentsOf: strings ?? [])
-        contents.append(contentsOf: draggingPasteboard.pasteboardItems ?? [])
-        return contents
     }
 }

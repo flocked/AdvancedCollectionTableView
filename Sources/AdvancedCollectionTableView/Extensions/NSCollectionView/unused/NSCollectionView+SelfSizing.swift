@@ -91,7 +91,7 @@ extension NSCollectionViewItem {
     }
 
     var cachedLayoutAttributes: NSCollectionViewLayoutAttributes? {
-        get { getAssociatedValue("cachedLayoutAttributes", initialValue: nil) }
+        get { getAssociatedValue("cachedLayoutAttributes") }
         set { setAssociatedValue(newValue, key: "cachedLayoutAttributes") }
     }
 

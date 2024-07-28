@@ -89,7 +89,7 @@ extension NSTableViewDiffableDataSource {
     }
 
     var keyDownMonitor: NSEvent.Monitor? {
-        get { getAssociatedValue("keyDownMonitor", initialValue: nil) }
+        get { getAssociatedValue("keyDownMonitor") }
         set { setAssociatedValue(newValue, key: "keyDownMonitor") }
     }
 

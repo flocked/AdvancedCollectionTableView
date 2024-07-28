@@ -283,17 +283,17 @@ extension NSTableCellView {
     }
 
     var tableCellObserver: KeyValueObservation? {
-        get { getAssociatedValue("tableCellObserver", initialValue: nil) }
+        get { getAssociatedValue("tableCellObserver") }
         set { setAssociatedValue(newValue, key: "tableCellObserver") }
     }
     
     var tableCellObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableCellObserverView", initialValue: nil) }
+        get { getAssociatedValue("tableCellObserverView") }
         set { setAssociatedValue(newValue, key: "tableCellObserverView") }
     }
     
     var tableViewStyle: NSTableView.Style? {
-        get { getAssociatedValue("tableViewStyle", initialValue: nil) }
+        get { getAssociatedValue("tableViewStyle") }
         set { setAssociatedValue(newValue, key: "tableViewStyle") }
     }
 }

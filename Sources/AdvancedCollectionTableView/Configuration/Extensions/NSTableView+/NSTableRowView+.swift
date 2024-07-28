@@ -221,17 +221,17 @@ extension NSTableRowView {
     }
     
     var rowObserver: KeyValueObserver<NSTableRowView>? {
-        get { getAssociatedValue("rowObserver", initialValue: nil) }
+        get { getAssociatedValue("rowObserver") }
         set { setAssociatedValue(newValue, key: "rowObserver") }
     }
     
     var tableViewObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableViewObserverView", initialValue: nil) }
+        get { getAssociatedValue("tableViewObserverView") }
         set { setAssociatedValue(newValue, key: "tableViewObserverView") }
     }
     
     var isSelectedObservation: KeyValueObservation? {
-        get { getAssociatedValue("isSelectedObservation", initialValue: nil) }
+        get { getAssociatedValue("isSelectedObservation") }
         set { setAssociatedValue(newValue, key: "isSelectedObservation") }
     }
 }

@@ -20,14 +20,17 @@ class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
 
     public var previewItemFrame: CGRect? {
         if let view = self.view {
-            if let parentController = view.parentController as? NSCollectionViewItem {
-                let offset = parentController._collectionView?.enclosingScrollView?.contentOffset ?? .zero
-                let frame = view.frame.offsetBy(dx: -offset.x, dy: -offset.y)
-                if parentController._collectionView?.enclosingScrollView?.bounds.intersects(frame) == true {
+            if let collectionViewItem = view.parentController as? NSCollectionViewItem {
+                if let view = view as? NSItemContentView, view.appliedConfiguration.image != nil {
+                    let imageView = view.contentView.imageView
+                    if collectionViewItem.collectionView?.visibleRect.intersects(imageView.frame) == true {
+                        return imageView.frameOnScreen
+                    }
+                } else if collectionViewItem.collectionView?.visibleRect.intersects(view.frame) == true {
                     return view.frameOnScreen
                 }
             } else if let view = view as? NSTableRowView {
-                if view.tableView?.bounds.intersects(view.frame) == true {
+                if view.tableView?.visibleRect.intersects(view.frame) == true {
                     return view.frameOnScreen
                 }
             } else {
@@ -43,7 +46,10 @@ class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
     }
 
     public var previewItemTransitionImage: NSImage? {
-        view?.renderedImage ?? preview.previewItemTransitionImage
+        if let view = view as? NSItemContentView, view.appliedConfiguration.image != nil {
+            return view.contentView.imageView.renderedImage
+        }
+        return view?.renderedImage ?? preview.previewItemTransitionImage
     }
 
     init(_ preview: QuicklookPreviewable, view: NSView? = nil) {

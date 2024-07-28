@@ -20,7 +20,6 @@ class ViewController: NSViewController {
     lazy var dataSource = DataSource(collectionView: collectionView, itemRegistration: itemRegistration)
 
     let itemRegistration = ItemRegistration() { collectionViewItem, _, galleryItem in
-
         /// Configurate the item
         var configuration = NSItemContentConfiguration()
 
@@ -39,7 +38,7 @@ class ViewController: NSViewController {
 
         /// Apply the configuration
         collectionViewItem.contentConfiguration = configuration
-
+        
         /// Gets called when the item state changes (on selection, mouse hover, etc.)
         collectionViewItem.configurationUpdateHandler = { item, state in
             /// Updates the configuration based on whether the mouse is hovering the item

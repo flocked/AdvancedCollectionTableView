@@ -38,7 +38,7 @@ extension NSTableView {
     }
     
     var observerView: ObserverView? {
-        get { getAssociatedValue("tableViewObserverView", initialValue: nil) }
+        get { getAssociatedValue("tableViewObserverView") }
         set { setAssociatedValue(newValue, key: "tableViewObserverView") }
     }
     
