@@ -22,4 +22,12 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
         }
         return identifiableSnapshot
     }
+    
+    func nextItemForDeleting(_ items: [ItemIdentifierType]) -> ItemIdentifierType? {
+        guard let delete = items.first, let index = indexOfItem(delete), let item = itemIdentifiers[safe: index-1] else { return nil  }
+        if sectionIdentifier(containingItem: item) != sectionIdentifier(containingItem: delete), let section = sectionIdentifier(containingItem: delete), let item = itemIdentifiers(inSection: section).first(where: { !items.contains($0) }) {
+           return item
+        }
+        return item
+    }
 }

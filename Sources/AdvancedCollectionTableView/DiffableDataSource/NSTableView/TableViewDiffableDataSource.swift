@@ -226,15 +226,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.tableView.isFirstResponder else { return event }
                 let itemsToDelete = canDelete(self.selectedItems)
                 guard !itemsToDelete.isEmpty else { return event }
-                var section: Section? = nil
-                var selectionItem: Item? = nil
-                if let item = itemsToDelete.first {
-                    if let row = self.row(for: item), self.section(forRow: row - 1) == nil, let item = self.item(forRow: row - 1), !itemsToDelete.contains(item) {
-                        selectionItem = item
-                    } else {
-                        section = self.section(for: item)
-                    }
-                }
+                
                 let transaction = self.deletingTransaction(itemsToDelete)
                 self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                 QuicklookPanel.shared.close()
@@ -242,22 +234,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 self.deletingHandlers.didDelete?(itemsToDelete, transaction)
                 
                 if !self.tableView.allowsEmptySelection, self.tableView.selectedRowIndexes.isEmpty {
-                    var selectionRow: Int? = nil
-                    if let item = selectionItem, let row = self.row(for: item) {
-                        selectionRow = row
-                    } else if let section = section, let item = self.items(for: section).first, let row = self.row(for: item) {
-                        selectionRow = row
-                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let row = self.row(for: item) {
-                        selectionRow = row
-                    }
-                    if let row = selectionRow {
-                        self.tableView.selectRowIndexes([row], byExtendingSelection: false)
+                    if let item = transaction.initialSnapshot.nextItemForDeleting(itemsToDelete) ?? self.items.first {
+                        self.selectItems([item])
                     }
                 }
                 return nil
             }
         } else {
-            tableView.keyHandlers.keyDown = nil
+            keyDownMonitor = nil
         }
     }
     

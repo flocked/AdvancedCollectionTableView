@@ -74,8 +74,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      */
     public func useSupplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
         guard !registrations.isEmpty else { return }
-        supplementaryViewProvider = { collectionView, itemKind, indexPath in
-            (registrations.first(where: { $0.elementKind == itemKind }) as? _NSCollectionViewSupplementaryRegistration)?.makeSupplementaryView(collectionView, indexPath)
+        supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            (registrations.first(where: { $0.elementKind == elementKind }) as? _NSCollectionViewSupplementaryRegistration)?.makeSupplementaryView(collectionView, indexPath)
         }
     }
 
@@ -196,15 +196,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.collectionView.isFirstResponder else { return event }
                 let elementsToDelete = canDelete(self.selectedElements)
                 guard !elementsToDelete.isEmpty else { return event }
-                var section: Section? = nil
-                var selectionElement: Element? = nil
-                if let element = elementsToDelete.first {
-                    if let indexPath = self.indexPath(for: element), indexPath.item > 0,  let element = self.element(for: IndexPath(item: indexPath.item - 1, section: indexPath.section)), !elementsToDelete.contains(element) {
-                        selectionElement = element
-                    } else {
-                        section = self.section(for: element)
-                    }
-                }
+                
                 let transaction = self.deletionTransaction(elementsToDelete)
                 self.deletingHandlers.willDelete?(elementsToDelete, transaction)
                 QuicklookPanel.shared.close()
@@ -212,16 +204,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 self.deletingHandlers.didDelete?(elementsToDelete, transaction)
                 
                 if !self.collectionView.allowsEmptySelection, self.collectionView.selectionIndexPaths.isEmpty {
-                    var selectionIndexPath: IndexPath?
-                    if let element = selectionElement, let indexPath = self.indexPath(for: element) {
-                        selectionIndexPath = indexPath
-                    } else if let section = section, let element = self.elements(for: section).first, let indexPath = self.indexPath(for: element) {
-                        selectionIndexPath = indexPath
-                    } else if let item = self.currentSnapshot.itemIdentifiers.first, let indexPath = self.indexPath(for: item) {
-                        selectionIndexPath = indexPath
-                    }
-                    if let indexPath = selectionIndexPath {
-                        self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
+                    if let element = transaction.initialSnapshot.nextItemForDeleting(elementsToDelete) ?? self.elements.first {
+                        self.selectElements([element], scrollPosition: [])
                     }
                 }
                 return nil

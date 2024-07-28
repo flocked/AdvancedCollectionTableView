@@ -7,7 +7,7 @@
 
 import AppKit
 
-public extension NSTableViewDiffableDataSource {
+public extension NSTableViewDiffableDataSource {    
     /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified table view.
 
@@ -22,6 +22,25 @@ public extension NSTableViewDiffableDataSource {
         })
     }
 
+    /**
+     Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
+
+     - Parameters:
+        - tableView: The initialized table view object to connect to the diffable data source.
+        - cellRegistrations: Cell registrations that create, configurate and return each of the cells for the table view from the data the diffable data source provides.
+
+     - Important: Each of the cell registrations need to have a column identifier.
+     */
+    convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
+        self.init(tableView: tableView, cellProvider: {
+            _, column, row, element in
+            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
+                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
+            }
+            return NSTableCellView()
+        })
+    }
+    
     /**
      Creates a diffable data source with the specified cell and section view registration, and connects it to the specified table view.
 
@@ -44,25 +63,6 @@ public extension NSTableViewDiffableDataSource {
      - Parameters:
         - tableView: The initialized table view object to connect to the diffable data source.
         - cellRegistrations: Cell registrations that create, configurate and return each of the cells for the table view from the data the diffable data source provides.
-
-     - Important: Each of the cell registrations need to have a column identifier.
-     */
-    convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
-        self.init(tableView: tableView, cellProvider: {
-            _, column, row, element in
-            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
-                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, element)!
-            }
-            return NSTableCellView()
-        })
-    }
-
-    /**
-     Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
-
-     - Parameters:
-        - tableView: The initialized table view object to connect to the diffable data source.
-        - cellRegistrations: Cell registrations that create, configurate and return each of the cells for the table view from the data the diffable data source provides.
         - sectionHeaderRegistration: A section view registration that creates, configurates and returns each of the section header views for the table view from the data the diffable data source provides.
 
      - Important: Each of the cell registrations need to have a column identifier.
@@ -76,6 +76,16 @@ public extension NSTableViewDiffableDataSource {
             return NSTableCellView()
         })
         useSectionHeaderViewRegistration(sectionHeaderRegistration)
+    }
+    
+    /// Uses the specified row view registration to configure and return row views.
+    func useRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, ItemIdentifierType>) {
+        self.rowViewProvider = { tableview, row, item in
+            if let item = item as? ItemIdentifierType {
+                return tableview.makeRowView(using: registration, forRow: row, item: item)
+            }
+            return NSTableRowView()
+        }
     }
 
     /// Uses the specified cell registration to configure and return section header views.
