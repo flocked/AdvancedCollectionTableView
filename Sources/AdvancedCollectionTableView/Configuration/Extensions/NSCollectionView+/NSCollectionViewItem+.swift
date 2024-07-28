@@ -76,8 +76,12 @@ extension NSCollectionViewItem {
     @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
         get { getAssociatedValue("automaticallyUpdatesBackgroundConfiguration") ?? true }
         set {
+            guard newValue != automaticallyUpdatesBackgroundConfiguration else { return }
             setAssociatedValue(newValue, key: "automaticallyUpdatesBackgroundConfiguration")
             setupObservation()
+            if newValue, let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
+                backgroundView.configuration = backgroundConfiguration.updated(for: configurationState)
+            }
         }
     }
 
@@ -137,8 +141,12 @@ extension NSCollectionViewItem {
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue("automaticallyUpdatesContentConfiguration") ?? true }
         set {
+            guard newValue != automaticallyUpdatesContentConfiguration else { return }
             setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
             setupObservation()
+            if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
+                contentView.configuration = contentConfiguration.updated(for: configurationState)
+            }
         }
     }
 
@@ -174,7 +182,7 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isEnabled: isEnabled)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered)
         return state
     }
 
@@ -208,11 +216,11 @@ extension NSCollectionViewItem {
      Override this method in a subclass to update the item’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSItemConfigurationState) {
-        if let contentConfiguration = contentConfiguration {
-            self.contentConfiguration = contentConfiguration.updated(for: state)
+        if let contentConfiguration = contentConfiguration, let contentView = contentView {
+            contentView.configuration = contentConfiguration.updated(for: state)
         }
-        if let backgroundConfiguration = backgroundConfiguration {
-            self.backgroundConfiguration = backgroundConfiguration.updated(for: state)
+        if let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
+            backgroundView.configuration = backgroundConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
     }

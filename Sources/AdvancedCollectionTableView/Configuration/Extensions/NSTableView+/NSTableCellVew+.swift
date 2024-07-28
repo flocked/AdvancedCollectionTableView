@@ -24,17 +24,6 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            /*
-             var newValue = newValue
-            if let updated = (newValue as? NSListContentConfiguration)?.updated(for: tableView) {
-                newValue = updated
-            }
-             */
-            /*
-            if let configuration = contentConfiguration as? NSListContentConfiguration, var _newValue = newValue as? NSListContentConfiguration {
-                newValue = _newValue.updated(from: configuration)
-            }
-             */
             setAssociatedValue(newValue, key: "contentConfiguration")
             observeTableCellView()
             configurateContentView()
@@ -75,8 +64,11 @@ extension NSTableCellView {
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
         set {
+            guard newValue != automaticallyUpdatesContentConfiguration else { return }
             setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
-            setNeedsUpdateConfiguration()
+            if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
+                contentView.configuration = contentConfiguration.updated(for: configurationState)
+            }
         }
     }
 
@@ -154,17 +146,10 @@ extension NSTableCellView {
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = contentConfiguration, let contentView = contentView, checkIfContentConfigurationNeedsUpdate(for: state) {
+        if let contentConfiguration = contentConfiguration, let contentView = contentView {
             contentView.configuration = contentConfiguration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
-    }
-    
-    func checkIfContentConfigurationNeedsUpdate(for state: NSListConfigurationState) -> Bool {
-        if let contentConfiguration = contentConfiguration as? NSListContentConfiguration {
-            return contentConfiguration.needsUpdate(for: state)
-        }
-        return true
     }
 
     /**
@@ -272,6 +257,10 @@ extension NSTableCellView {
     
     var isGroupRowCell: Bool {
         rowView?.isGroupRowStyle == true
+    }
+    
+    var isReordering: Bool {
+        rowView?.isReordering ?? false
     }
     
     var contentView: (NSView & NSContentView)? {

@@ -45,7 +45,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-    var dragingRowIndexes = IndexSet()
+    var dragingRowIndexes:[Int] = []
+    var draggingSectionRow: Int?
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
     var keyDownMonitor: NSEvent.Monitor?
@@ -227,7 +228,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 let itemsToDelete = canDelete(self.selectedItems)
                 guard !itemsToDelete.isEmpty else { return event }
                 
-                let transaction = self.deletingTransaction(itemsToDelete)
+                let transaction = self.currentSnapshot.deleteTransaction(itemsToDelete)
                 self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                 QuicklookPanel.shared.close()
                 self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)
@@ -421,16 +422,21 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    open func tableView(_: NSTableView, acceptDrop draggingInfo: NSDraggingInfo, row: Int, dropOperation _: NSTableView.DropOperation) -> Bool {
+    open func tableView(_ tableView: NSTableView, acceptDrop draggingInfo: NSDraggingInfo, row: Int, dropOperation _: NSTableView.DropOperation) -> Bool {
         if !dragingRowIndexes.isEmpty {
-            if let transaction = movingTransaction(at: dragingRowIndexes, to: row) {
-                let selectedItems = selectedItems
-                reorderingHandlers.willReorder?(transaction)
-                apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
-                selectItems(selectedItems)
-                reorderingHandlers.didReorder?(transaction)
-                return true
-            }
+            let items = dragingRowIndexes.compactMap { item(forRow: $0) }
+            let transaction = movingTransaction(for: items, to: row)
+            reorderingHandlers.willReorder?(transaction)
+            apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
+            selectItems(items)
+            reorderingHandlers.didReorder?(transaction)
+            return true
+        }
+        if let transaction = moveSectionTransaction(to: row) {
+            reorderingHandlers.willReorder?(transaction)
+            apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
+            reorderingHandlers.didReorder?(transaction)
+            return true
         }
         let elements = droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
         if !elements.isEmpty {
@@ -461,15 +467,15 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return true
     }
     
-    open func tableView(_: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        if !dragingRowIndexes.isEmpty, dropOperation == .on {
-            return []
-        }
-        if !dragingRowIndexes.isEmpty, dropOperation == .above {
-            if row >= (sectionHeaderCellProvider != nil ? 1 : 0) {
+    open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        if !dragingRowIndexes.isEmpty {
+            if dropOperation == .above, row >= (sectionHeaderCellProvider != nil ? 1 : 0) {
                 return .move
             }
             return []
+        }
+        if draggingSectionRow != nil {
+            return moveSectionTransaction(to: row) != nil ? .move : []
         }
         if let draggingSource = draggingInfo.draggingSource as? NSTableView, draggingSource == tableView {
             return NSDragOperation.move
@@ -479,14 +485,19 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return []
     }
     
-    open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
-        var items = rowIndexes.compactMap({item(forRow: $0)})
-        items = reorderingHandlers.canReorder?(items) ?? []
-        dragingRowIndexes = .init(items.compactMap({row(for: $0)}))
+    open func tableView(_ tableView: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+        if sectionHeaderCellProvider != nil, let canReorderSection = reorderingHandlers.canReorderSection, rowIndexes.count == 1, let row = rowIndexes.first, let section = section(forRow: row) {
+            draggingSectionRow = canReorderSection(section) ? row : nil
+        } else {
+            var items = rowIndexes.compactMap({item(forRow: $0)})
+            items = reorderingHandlers.canReorder?(items) ?? []
+            dragingRowIndexes = items.compactMap({row(for: $0)})
+        }
     }
     
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, operation _: NSDragOperation) {
         dragingRowIndexes = []
+        draggingSectionRow = nil
     }
     
     open func tableView(_: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
@@ -494,12 +505,28 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             let pasteboardItem = IdentifiablePasteboardItem(item)
             pasteboardItem.contents = draggingHandlers.pasteboardContent?(item) ?? []
             return pasteboardItem
+        } else if reorderingHandlers.canReorderSection != nil, let section = section(forRow: row) {
+            return IdentifiablePasteboardItem(section)
         }
         return nil
     }
     
     open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
         columnHandlers.sortDescriptorsChanged?(oldDescriptors, tableView.sortDescriptors)
+    }
+    
+    func moveSectionTransaction(to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+        guard let sectionRow = draggingSectionRow, let _section = section(forRow: sectionRow) else { return nil }
+        if item(forRow: row) != nil, let section = section(forRow: row - 1), section != _section {
+            return currentSnapshot.moveTransaction(_section, after: section)
+        } else if let sec = section(forRow: row), let index = currentSnapshot.indexOfSection(sec), let section = sections[safe: index - 1], section != _section {
+            return currentSnapshot.moveTransaction(_section, before: section)
+        } else if row == 0, let section = sections.first {
+            return currentSnapshot.moveTransaction(_section, before: section)
+        } else if row == tableView.numberOfRows, let section = sections.last {
+            return currentSnapshot.moveTransaction(_section, after: section)
+        }
+        return nil
     }
         
     // MARK: - Items
@@ -607,25 +634,22 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return nil
     }
     
-    func deletingTransaction(_ deletionItems: [Item]) -> DiffableDataSourceTransaction<Section, Item> {
-        var newNnapshot = snapshot()
-        newNnapshot.deleteItems(deletionItems)
-        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newNnapshot)
-    }
-    
-    func movingTransaction(at rowIndexes: IndexSet, to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
+    func movingTransaction(for items: [Item], to row: Int) -> DiffableDataSourceTransaction<Section, Item> {
         var newSnapshot = snapshot()
-        let newItems = rowIndexes.compactMap { item(forRow: $0) }
         if let item = item(forRow: row) {
-            newSnapshot.insertItems(newItems, beforeItem: item)
+            newSnapshot.insertItems(items, beforeItem: item)
         } else if let section = section(forRow: row) {
             if let item = item(forRow: row - 1) {
-                newSnapshot.insertItems(newItems, afterItem: item)
+                newSnapshot.insertItems(items, afterItem: item)
             } else {
-                newSnapshot.appendItems(newItems, toSection: section)
+                if let section = self.section(forRow: row - 1) {
+                    newSnapshot.appendItems(items, toSection: section)
+                } else {
+                    newSnapshot.appendItems(items, toSection: section)
+                }
             }
         } else if let section = sections.last {
-            newSnapshot.appendItems(newItems, toSection: section)
+            newSnapshot.appendItems(items, toSection: section)
         }
         return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }
@@ -848,8 +872,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      Take a look at ``reorderingHandlers-swift.property`` how to support reordering items.
      */
     public struct ReorderingHandlers {
-        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that the items can't be reordered.
+        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that items can't be reordered.
         public var canReorder: (([Item]) -> [Item])?
+        
+        /// The handler that determines if a section can be reordered. The default value is `nil` which indicates that sections can't be reordered.
+        var canReorderSection: ((Section) -> Bool)?
 
         /// The handler that that gets called before reordering items.
         public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
@@ -884,6 +911,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         
         /// A Boolean value that indicates whether reordering items is animated.
         public var animates: Bool = false
+        
+        /// A Boolean value that indicates whether rows reorder immediately while the user drags them.
+        var reorderImmediately: Bool = true
     }
 
     /**

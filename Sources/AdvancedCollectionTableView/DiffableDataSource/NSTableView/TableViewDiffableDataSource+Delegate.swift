@@ -43,7 +43,7 @@ extension TableViewDiffableDataSource {
             previousSelectedIDs = selectedIDs
         }
 
-        public func tableView(_: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+        public func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
             var proposedSelectionIndexes = proposedSelectionIndexes
             dataSource.sectionRowIndexes.forEach { proposedSelectionIndexes.remove($0) }
             guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil else {

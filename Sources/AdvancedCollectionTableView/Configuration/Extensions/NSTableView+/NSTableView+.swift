@@ -56,8 +56,10 @@ extension NSTableView {
             tableView.addSubview(withConstraint: self)
             self.sendToBack()
             styleObservation = tableView.observeChanges(for: \.effectiveStyle) { [weak self] old, new in
-                guard let self = self, old != new else { return }
-                self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
+                guard let self = self, old != new, let tableView = self.tableView else { return }
+                tableView.visibleRows().flatMap({$0.cellViews}).forEach({
+                    $0.updateContentConfigurationStyle(tableView: tableView)
+                })
             }
             isEnabledObservation = tableView.observeChanges(for: \.isEnabled) { [weak self] old, new in
                 guard let self = self, old != new else { return }

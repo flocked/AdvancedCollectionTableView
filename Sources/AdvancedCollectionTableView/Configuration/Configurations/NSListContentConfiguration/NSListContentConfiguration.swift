@@ -263,6 +263,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     var type: ListItemType = .normal
     var tableViewStyle: NSTableView.Style?
+    var isEnabled: Bool = true
 
     enum ListItemType: Int, Hashable {
         case normal
@@ -286,8 +287,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         image != nil
     }
 
-    var state: NSListConfigurationState = NSListConfigurationState(isEnabled: true)
-
     // MARK: Creating a content view
 
     /// Creates a new instance of the content view using the configuration.
@@ -300,14 +299,8 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// Generates a configuration for the specified state by applying the configuration’s default values for that state to any properties that you don’t customize.
     public func updated(for state: NSConfigurationState) -> NSListContentConfiguration {
         var configuration = self
-        if let state = state as? NSListConfigurationState {
-            configuration.state = state
-        }
-        return configuration
-    }
-    
-    func needsUpdate(for state: NSListConfigurationState) -> Bool {
-        self.state.isEnabled != state.isEnabled
+        configuration.isEnabled = (state as? NSListConfigurationState)?.isEnabled ?? true
+        return self
     }
 }
 

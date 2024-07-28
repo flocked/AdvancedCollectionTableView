@@ -10,6 +10,7 @@ import AppKit
 extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, SectionIdentifierType: Identifiable {
     /// A snapshot from the section and item identifiers.
     typealias IdentifiableSnapshot = NSDiffableDataSourceSnapshot<SectionIdentifierType.ID, ItemIdentifierType.ID>
+    typealias Transaction = DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>
     
     /// Creates a snapshot from the section and item identifiers.
     func toIdentifiableSnapshot() -> IdentifiableSnapshot {
@@ -34,6 +35,44 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
         }
         return item
     }
+    
+    func moveTransaction(_ section: SectionIdentifierType, after afterSection: SectionIdentifierType) -> Transaction {
+        var snapshot = self
+        snapshot.moveSection(section, afterSection: afterSection)
+        return Transaction(initial: self, final: snapshot)
+    }
+    
+    func moveTransaction(_ section: SectionIdentifierType, before beforeSection: SectionIdentifierType) -> Transaction {
+        var snapshot = self
+        snapshot.moveSection(section, beforeSection: beforeSection)
+        return Transaction(initial: self, final: snapshot)
+    }
+    
+    func deleteTransaction(_ items: [ItemIdentifierType]) -> Transaction {
+        var finalSnapshot = Self()
+        finalSnapshot.deleteItems(items)
+        return DiffableDataSourceTransaction(initial: self, final: finalSnapshot)
+    }
+    
+    /*
+     func movingTransaction(_ items: [ItemIdentifierType], item: ItemIdentifierType?, section: SectionIdentifierType?) -> DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>? {
+         var newSnapshot = self
+         if let item = item {
+             newSnapshot.insertItems(items, beforeItem: item)
+         } else if let section = section {
+             item
+             if let item = item(forRow: row - 1) {
+                 newSnapshot.insertItems(newItems, afterItem: item)
+             } else {
+                 newSnapshot.appendItems(newItems, toSection: section)
+             }
+         } else if let section = sections.last {
+             newSnapshot.appendItems(newItems, toSection: section)
+         }
+         return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
+         
+     }
+     */
     
     /*
     func nextItemForDeleting(_ items: [ItemIdentifierType]) -> ItemIdentifierType? {

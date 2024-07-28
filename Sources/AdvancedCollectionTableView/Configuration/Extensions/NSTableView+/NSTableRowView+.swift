@@ -44,7 +44,12 @@ extension NSTableRowView {
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
         get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
-        set { setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
+        set { 
+            guard newValue != automaticallyUpdatesContentConfiguration else { return }
+            setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
+            if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
+                contentView.configuration = contentConfiguration.updated(for: configurationState)
+            }
         }
     }
 
@@ -174,6 +179,11 @@ extension NSTableRowView {
     /// A Boolean value that specifies whether the row view is emphasized (the window is key).
     @objc var isEmphasized: Bool {
         window?.isKeyWindow ?? false
+    }
+    
+    @objc var isReordering: Bool {
+        get { getAssociatedValue("isReordering") ?? false }
+        set { setAssociatedValue(newValue, key: "isReordering") }
     }
     
     func observeSelection() {

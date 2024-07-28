@@ -10,16 +10,6 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionView {
-    /// A Boolean value that indicates whether the collection view reacts to mouse events.
-    @objc open var isEnabled: Bool {
-        get { getAssociatedValue("isEnabled", initialValue: false) }
-        set {
-            guard newValue != isEnabled else { return }
-            setAssociatedValue(newValue, key: "isEnabled")
-            visibleItems().forEach({$0.setNeedsAutomaticUpdateConfiguration()})
-        }
-    }
-    
     @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue("hoveredIndexPath") }
         set {
@@ -47,6 +37,18 @@ extension NSCollectionView {
         get { getAssociatedValue("collectionViewObserverView") }
         set { setAssociatedValue(newValue, key: "collectionViewObserverView") }
     }
+    
+    /*
+    /// A Boolean value that indicates whether the collection view reacts to mouse events.
+    @objc open var isEnabled: Bool {
+        get { getAssociatedValue("isEnabled", initialValue: false) }
+        set {
+            guard newValue != isEnabled else { return }
+            setAssociatedValue(newValue, key: "isEnabled")
+            visibleItems().forEach({ $0.setNeedsAutomaticUpdateConfiguration() })
+        }
+    }
+     */
 
     class ObserverView: NSView {
         var tokens: [NotificationToken] = []

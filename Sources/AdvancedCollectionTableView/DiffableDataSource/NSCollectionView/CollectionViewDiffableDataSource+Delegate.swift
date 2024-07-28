@@ -106,11 +106,12 @@ extension CollectionViewDiffableDataSource {
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
             // debugPrint("acceptDrop")
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
-                if canReorderItems, !draggingIndexPaths.isEmpty, let transaction = dataSource.movingTransaction(at: Array(draggingIndexPaths), to: indexPath) {
-                    let selectedItems = dataSource.selectedElements
+                if canReorderItems, !draggingIndexPaths.isEmpty {
+                    let elements = draggingIndexPaths.compactMap { dataSource.element(for: $0) }
+                    let transaction = dataSource.movingTransaction(for: elements, to: indexPath)
                     dataSource.reorderingHandlers.willReorder?(transaction)
                     dataSource.apply(transaction.finalSnapshot, dataSource.reorderingHandlers.animates ? .animated : .withoutAnimation)
-                    dataSource.selectElements(selectedItems, scrollPosition: [])
+                    dataSource.selectElements(elements, scrollPosition: [])
                     dataSource.reorderingHandlers.didReorder?(transaction)
                     return true
                 }
@@ -197,9 +198,9 @@ extension CollectionViewDiffableDataSource {
 }
 
 class IdentifiablePasteboardItem<Element: Identifiable & Hashable>: NSPasteboardItem {
-    let element: Element
-    init(_ element: Element) {
-        self.element = element
+    let element: Element?
+    init(_ element: Element, saveElement: Bool = false) {
+        self.element = saveElement ? element : nil
         super.init()
         setString(String(element.id.hashValue), forType: .itemID)
     }

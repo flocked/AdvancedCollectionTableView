@@ -197,7 +197,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 let elementsToDelete = canDelete(self.selectedElements)
                 guard !elementsToDelete.isEmpty else { return event }
                 
-                let transaction = self.deletionTransaction(elementsToDelete)
+                let transaction = self.currentSnapshot.deleteTransaction(elementsToDelete)
                 self.deletingHandlers.willDelete?(elementsToDelete, transaction)
                 QuicklookPanel.shared.close()
                 self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)
@@ -515,28 +515,21 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         let currentSnapshot = currentSnapshot
         return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
     }
-
-    func deletionTransaction(_ elements: [Element]) -> DiffableDataSourceTransaction<Section, Element> {
-        var finalSnapshot = snapshot()
-        finalSnapshot.deleteItems(elements)
-        return DiffableDataSourceTransaction(initial: currentSnapshot, final: finalSnapshot)
-    }
     
-    func movingTransaction(at indexPaths: [IndexPath], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element>? {
+    func movingTransaction(for elements: [Element], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
         var newSnapshot = snapshot()
-        let newItems = indexPaths.compactMap { element(for: $0) }
         if let item = element(for: toIndexPath) {
-            newSnapshot.insertItems(newItems, beforeItem: item)
+            newSnapshot.insertItems(elements, beforeItem: item)
         } else if let section = section(at: toIndexPath) {
             var indexPath = toIndexPath
             indexPath.item -= 1
             if let item = element(for: indexPath) {
-                newSnapshot.insertItems(newItems, afterItem: item)
+                newSnapshot.insertItems(elements, afterItem: item)
             } else {
-                newSnapshot.appendItems(newItems, toSection: section)
+                newSnapshot.appendItems(elements, toSection: section)
             }
         } else if let section = sections.last {
-            newSnapshot.appendItems(newItems, toSection: section)
+            newSnapshot.appendItems(elements, toSection: section)
         }
         return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
     }

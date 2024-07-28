@@ -97,10 +97,10 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
 
-        textField.isEnabled = appliedConfiguration.state.isEnabled != false
+        textField.isEnabled = appliedConfiguration.isEnabled
         textField.properties = appliedConfiguration.textProperties
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
-        secondaryTextField.isEnabled = appliedConfiguration.state.isEnabled != false
+        secondaryTextField.isEnabled = appliedConfiguration.isEnabled
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         
