@@ -94,11 +94,20 @@ extension CollectionViewDiffableDataSource {
             }
 
             if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == dataSource.collectionView {
-                return NSDragOperation.move
+                var indexPaths = draggingIndexPaths.sorted()
+                if let last = indexPaths.last {
+                    indexPaths.append(IndexPath(item: last.item+1, section: last.section))
+                }
+                if indexPaths.contains(proposedIndexPath.pointee as IndexPath) {
+                    if draggingIndexPaths.sections.count == 1 {
+                        return []
+                    }
+                }
+                return .move
             } else {
                 let content = draggingInfo.draggingPasteboard.content()
                 if !content.isEmpty, dataSource.droppingHandlers.canDrop?(content) != nil {
-                    return NSDragOperation.copy
+                    return .copy
                 }
             }
             return []
@@ -122,7 +131,7 @@ extension CollectionViewDiffableDataSource {
                 var snapshot = dataSource.snapshot()
                 if let item = dataSource.element(for: indexPath) {
                     snapshot.insertItems(elements, beforeItem: item)
-                } else if let section = dataSource.section(at: indexPath) {
+                } else if let section = dataSource.sections[safe: indexPath.section] {
                     var indexPath = indexPath
                     indexPath.item -= 1
                     if let item = dataSource.element(for: indexPath) {

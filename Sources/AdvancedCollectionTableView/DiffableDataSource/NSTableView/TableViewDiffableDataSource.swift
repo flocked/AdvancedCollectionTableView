@@ -191,18 +191,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource.defaultRowAnimation.rawValue
     }
     
-    func items(for location: CGPoint) -> [Item] {
-        if let item = item(at: location) {
-            var items: [Item] = [item]
-            let selectedItems = selectedItems
-            if selectedItems.contains(item) {
-                items = selectedItems
-            }
-            return items
-        }
-        return []
-    }
-    
     func setupHoverObserving() {
         if hoverHandlers.shouldSetup {
             tableView.setupObservation()
@@ -471,6 +459,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
         if !dragingRowIndexes.isEmpty {
             guard dropOperation == .above, row >= (sectionHeaderCellProvider != nil ? 1 : 0) else { return [] }
+            
             var indexes = dragingRowIndexes
             if let last = dragingRowIndexes.last {
                 indexes.append(last+1)
@@ -497,6 +486,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return []
     }
     
+    var draggingRowViews: [NSTableRowView] = []
+    
     open func tableView(_ tableView: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
         
         if sectionHeaderCellProvider != nil, let canReorderSection = reorderingHandlers.canReorderSection, rowIndexes.count == 1, let row = rowIndexes.first, let section = section(forRow: row) {
@@ -506,6 +497,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             items = reorderingHandlers.canReorder?(items) ?? []
             canDragItems = draggingHandlers.canDrag?(items) ?? false
             dragingRowIndexes = items.compactMap({row(for: $0)})
+            draggingRowViews = dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) })
             // dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).forEach({ $0.isReordering = true })
         }
     }
@@ -547,21 +539,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /**
-     Returns the item at the specified row in the table view.
-     
-     - Parameter row: The row of the item in the table view.
-     - Returns: The item, or `nil` if the method doesn’t find an item at the provided row.
-     */
+    /// Returns the item at the specified row in the table view.
     open func item(forRow row: Int) -> Item? {
         if let itemID = dataSource.itemIdentifier(forRow: row) {
             return items[id: itemID]
         }
         return nil
-    }
-    
-    func items(for section: Section) -> [Item] {
-        currentSnapshot.itemIdentifiers(inSection: section)
     }
     
     /// Returns the row for the specified item.
@@ -570,10 +553,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     /**
-     Returns the item of the specified index path.
+     Returns the item of the specified point in the table view.
      
-     - Parameter indexPath: The indexPath
-     - Returns: The item at the index path or nil if there isn't any item at the index path.
+     - Parameter point: The point in in the table view.
+     - Returns: The item at the point or `nil` if there isn't any item.
      */
     open func item(at point: CGPoint) -> Item? {
         let row = tableView.row(at: point)
@@ -581,6 +564,18 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return item(forRow: row)
         }
         return nil
+    }
+    
+    func items(for location: CGPoint) -> [Item] {
+        if let item = item(at: location) {
+            var items: [Item] = [item]
+            let selectedItems = selectedItems
+            if selectedItems.contains(item) {
+                items = selectedItems
+            }
+            return items
+        }
+        return []
     }
     
     /// Selects all specified items.
@@ -638,6 +633,42 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return nil
     }
     
+    // MARK: - Sections
+    
+    /// All current sections in the table view.
+    open var sections: [Section] { currentSnapshot.sectionIdentifiers }
+    
+    /// Returns the row for the specified section.
+    open func row(for section: Section) -> Int? {
+        dataSource.row(forSectionIdentifier: section.id)
+    }
+    
+    /// Returns the section at the specified row in the table view.
+    func section(forRow row: Int) -> Section? {
+        if let sectionID = dataSource.sectionIdentifier(forRow: row) {
+            return sections[id: sectionID]
+        }
+        return nil
+    }
+    
+    func section(for item: Item) -> Section? {
+        currentSnapshot.sectionIdentifier(containingItem: item)
+    }
+
+    /// Scrolls the table view to the specified section.
+    open func scrollToSection(_ section: Section) {
+        if let row = row(for: section) {
+            tableView.scrollRowToVisible(row)
+        }
+    }
+
+    func rows(for section: Section) -> [Int] {
+        let items = currentSnapshot.itemIdentifiers(inSection: section)
+        return items.compactMap({row(for: $0)})
+    }
+    
+    // MARK: - Transactions
+    
     func movingTransaction(for items: [Item], to row: Int) -> DiffableDataSourceTransaction<Section, Item> {
         var newSnapshot = snapshot()
         if let item = item(forRow: row) {
@@ -664,39 +695,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return currentSnapshot.moveTransaction(_section, after: section)
         }
         return nil
-    }
-    
-    // MARK: - Sections
-    
-    /// All current sections in the table view.
-    open var sections: [Section] { currentSnapshot.sectionIdentifiers }
-    
-    /// Returns the row for the specified section.
-    open func row(for section: Section) -> Int? {
-        dataSource.row(forSectionIdentifier: section.id)
-    }
-    
-    func section(forRow row: Int) -> Section? {
-        if let sectionID = dataSource.sectionIdentifier(forRow: row) {
-            return sections[id: sectionID]
-        }
-        return nil
-    }
-    
-    func section(for item: Item) -> Section? {
-        currentSnapshot.sectionIdentifier(containingItem: item)
-    }
-
-    /// Scrolls the table view to the specified section.
-    open func scrollToSection(_ section: Section) {
-        if let row = row(for: section) {
-            tableView.scrollRowToVisible(row)
-        }
-    }
-
-    func rows(for section: Section) -> [Int] {
-        let items = currentSnapshot.itemIdentifiers(inSection: section)
-        return items.compactMap({row(for: $0)})
     }
     
     // MARK: - Empty Collection View
