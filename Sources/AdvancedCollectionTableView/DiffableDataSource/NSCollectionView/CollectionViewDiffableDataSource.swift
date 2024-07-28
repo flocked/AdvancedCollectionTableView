@@ -516,18 +516,17 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
     }
     
-    func movingTransaction(for elements: [Element], to toIndexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
+    func movingTransaction(for elements: [Element], to indexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
         var newSnapshot = snapshot()
-        if let item = element(for: toIndexPath) {
-            newSnapshot.insertItems(elements, beforeItem: item)
-        } else if let section = section(at: toIndexPath) {
-            var indexPath = toIndexPath
-            indexPath.item -= 1
-            if let item = element(for: indexPath) {
-                newSnapshot.insertItems(elements, afterItem: item)
-            } else {
-                newSnapshot.appendItems(elements, toSection: section)
-            }
+        if let item = element(for: indexPath) {
+            newSnapshot.insertItemsSaftly(elements, beforeItem: item)
+        } else if let item = element(for: IndexPath(item: indexPath.item-1, section: indexPath.section)) {
+            newSnapshot.insertItemsSaftly(elements, afterItem: item)
+        } else if indexPath.item == 0, let section = sections[safe: indexPath.section-1] {
+            sections[safe: indexPath.section-1]
+            newSnapshot.appendItems(elements, toSection: section)
+        } else if let section = section(at: indexPath) {
+            newSnapshot.appendItems(elements, toSection: section)
         } else if let section = sections.last {
             newSnapshot.appendItems(elements, toSection: section)
         }
@@ -564,10 +563,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     func section(at indexPath: IndexPath) -> Section? {
-        if indexPath.section <= sections.count - 1 {
-            return sections[indexPath.section]
-        }
-        return nil
+        sections[safe: indexPath.section]
     }
     
     // MARK: - Empty Collection View

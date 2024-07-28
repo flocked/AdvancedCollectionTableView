@@ -54,6 +54,28 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
         return DiffableDataSourceTransaction(initial: self, final: finalSnapshot)
     }
     
+    mutating func insertItemsSaftly(_ identifiers: [ItemIdentifierType], afterItem: ItemIdentifierType) {
+        if identifiers.contains(afterItem) {
+            if let section = sectionIdentifier(containingItem: afterItem) {
+               let identifiers = identifiers.filter({ sectionIdentifier(containingItem: $0) != section })
+                insertItems(identifiers, afterItem: afterItem)
+            }
+        } else {
+            insertItems(identifiers, afterItem: afterItem)
+        }
+    }
+    
+    mutating func insertItemsSaftly(_ identifiers: [ItemIdentifierType], beforeItem: ItemIdentifierType) {
+        if identifiers.contains(beforeItem) {
+            if let section = sectionIdentifier(containingItem: beforeItem) {
+               let identifiers = identifiers.filter({ sectionIdentifier(containingItem: $0) != section })
+                insertItems(identifiers, beforeItem: beforeItem)
+            }
+        } else {
+            insertItems(identifiers, beforeItem: beforeItem)
+        }
+    }
+    
     /*
      func movingTransaction(_ items: [ItemIdentifierType], item: ItemIdentifierType?, section: SectionIdentifierType?) -> DiffableDataSourceTransaction<SectionIdentifierType, ItemIdentifierType>? {
          var newSnapshot = self

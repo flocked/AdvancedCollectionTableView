@@ -183,7 +183,11 @@ extension NSTableRowView {
     
     @objc var isReordering: Bool {
         get { getAssociatedValue("isReordering") ?? false }
-        set { setAssociatedValue(newValue, key: "isReordering") }
+        set { 
+            guard newValue != isReordering else { return }
+            setAssociatedValue(newValue, key: "isReordering")
+            setNeedsAutomaticUpdateConfiguration(updateCells: true)
+        }
     }
     
     func observeSelection() {
