@@ -46,6 +46,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dragingRowIndexes:[Int] = []
+    var isInserting: Bool = false
     var draggingSectionRow: Int?
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
@@ -323,6 +324,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         })
         applySectionHeaderRegistration(sectionHeaderRegistration)
         }
+    
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
@@ -339,8 +341,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
         self.init(tableView: tableView, cellProvider: {
             _, column, row, item in
-            if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
-                return (cellRegistration as! _NSTableViewCellRegistration).makeView(tableView, column, row, item)!
+            if let cellRegistration = (cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty })) as? _NSTableViewCellRegistration {
+                return cellRegistration.makeView(tableView, column, row, item) ?? NSTableCellView()
             }
             return NSTableCellView()
         })
@@ -413,12 +415,16 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, acceptDrop draggingInfo: NSDraggingInfo, row: Int, dropOperation _: NSTableView.DropOperation) -> Bool {
         if !dragingRowIndexes.isEmpty {
-            let items = dragingRowIndexes.compactMap { item(forRow: $0) }
-            let transaction = movingTransaction(for: items, to: row)
-            reorderingHandlers.willReorder?(transaction)
-            apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
-            selectItems(items)
-            reorderingHandlers.didReorder?(transaction)
+            if isInserting, let didInsert = reorderingHandlers.didInsert, let target = item(forRow: row) {
+                didInsert(dragingRowIndexes.compactMap { item(forRow: $0) }, target)
+            } else {
+                let items = dragingRowIndexes.compactMap { item(forRow: $0) }
+                let transaction = movingTransaction(for: items, to: row)
+                reorderingHandlers.willReorder?(transaction)
+                apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
+                selectItems(items)
+                reorderingHandlers.didReorder?(transaction)
+            }
             return true
         }
         if let transaction = movingSectionTransaction(to: row) {
@@ -458,6 +464,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
         if !dragingRowIndexes.isEmpty {
+            if reorderingHandlers.insertable, let canInsert = reorderingHandlers.canInsert, dropOperation == .on {
+                if dragingRowIndexes.count == 1, dragingRowIndexes.first == row {
+                    return []
+                } else if let target = item(forRow: row) {
+                    isInserting = canInsert(dragingRowIndexes.compactMap({ item(forRow: $0) }), target)
+                    return isInserting ? .move : []
+                } else {
+                    return []
+                }
+            }
+            
             guard dropOperation == .above, row >= (sectionHeaderCellProvider != nil ? 1 : 0) else { return [] }
             
             var indexes = dragingRowIndexes
@@ -505,6 +522,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, operation _: NSDragOperation) {
         // dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).forEach({ $0.isReordering = false })
         dragingRowIndexes = []
+        isInserting = false
         draggingSectionRow = nil
     }
     
@@ -883,13 +901,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      */
     public struct ReorderingHandlers {
         /// The handler that determines if items can be reordered. The default value is `nil` which indicates that items can't be reordered.
-        public var canReorder: (([Item]) -> [Item])?
+        public var canReorder: ((_ items: [Item]) -> [Item])?
         
         /// The handler that determines if a section can be reordered. The default value is `nil` which indicates that sections can't be reordered.
-        public var canReorderSection: ((Section) -> Bool)?
+        public var canReorderSection: ((_ section: Section) -> Bool)?
 
         /// The handler that that gets called before reordering items.
-        public var willReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var willReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
 
         /**
          The handler that that gets called after reordering items.
@@ -917,13 +935,23 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          }
          ```
          */
-        public var didReorder: ((DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        public var didReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        
+        /// The handler that determines if items can be inserted to another item. The default value is `nil` which indicates that items can't be inserted.
+        public var canInsert: ((_ items: [Item], _ target: Item) -> Bool)?
+        
+        /// The handler that that gets called after inserting items.
+        public var didInsert: ((_ items: [Item], _ target: Item) -> ())?
         
         /// A Boolean value that indicates whether reordering items is animated.
         public var animates: Bool = false
         
         /// A Boolean value that indicates whether rows reorder immediately while the user drags them.
         var reorderImmediately: Bool = true
+        
+        var insertable: Bool {
+            canInsert != nil && didInsert != nil
+        }
     }
 
     /**

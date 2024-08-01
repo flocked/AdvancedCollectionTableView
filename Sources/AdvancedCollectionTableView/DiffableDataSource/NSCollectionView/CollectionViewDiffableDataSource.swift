@@ -790,7 +790,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var canReorder: ((_ elements: [Element]) -> Bool)?
 
         /// The handler that that gets called before reordering elements.
-        public var willReorder: ((DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var willReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
 
         /**
          The handler that that gets called after reordering elements.
@@ -818,10 +818,20 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          }
          ```
          */
-        public var didReorder: ((DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        public var didReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        
+        /// The handler that determines if elements can be inserted to another element. The default value is `nil` which indicates that elements can't be inserted.
+        public var canInsert: ((_ elements: [Element], _ target: Element) -> Bool)?
+        
+        /// The handler that that gets called after inserting elements.
+        public var didInsert: ((_ elements: [Element], _ target: Element) -> ())?
         
         /// A Boolean value that indicates whether reordering elements is animated.
         public var animates: Bool = true
+        
+        var insertable: Bool {
+            didReorder != nil && didInsert != nil
+        }
     }
 
     /// Handlers for the highlight state of elements.
