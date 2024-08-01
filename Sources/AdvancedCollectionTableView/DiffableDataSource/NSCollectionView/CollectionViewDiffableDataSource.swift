@@ -506,7 +506,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         } else if let item = element(for: IndexPath(item: indexPath.item-1, section: indexPath.section)) {
             newSnapshot.insertItemsSaftly(elements, afterItem: item)
         } else if indexPath.item == 0, let section = sections[safe: indexPath.section-1] {
-            sections[safe: indexPath.section-1]
             newSnapshot.appendItems(elements, toSection: section)
         } else if let section = sections[safe: indexPath.section] {
             newSnapshot.appendItems(elements, toSection: section)
