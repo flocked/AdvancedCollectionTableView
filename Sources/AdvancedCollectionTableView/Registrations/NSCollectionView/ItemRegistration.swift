@@ -41,7 +41,7 @@ public extension NSCollectionView {
      }
      ```
 
-     After you create a item registration, you pass it in to ``AppKit/NSCollectionView/makeItem(using:for:element:)``, which you call from your data source’s item provider.
+     After you create a item registration, you pass it in to ``makeItem(using:for:element:)``, which you call from your data source’s item provider.
 
      ```swift
      dataSource = NSCollectionViewDiffableDataSource<Section, GalleryItem>(collectionView: collectionView, handler: {
@@ -56,7 +56,7 @@ public extension NSCollectionView {
      dataSource = NSCollectionViewDiffableDataSource(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
 
-     You don’t need to call ``AppKit/NSCollectionView/register(_:)`` or ``AppKit/NSCollectionView/register(_:nib:)``. The collection view registers your item automatically when you pass the item registration to ``AppKit/NSCollectionView/makeItem(using:for:element:)``.
+     You don’t need to call ``register(_:forItemWithIdentifier:)``. The collection view registers your item automatically when you pass the item registration to ``makeItem(using:for:element:)``.
 
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
      */
@@ -112,8 +112,11 @@ public extension NSCollectionView {
         }
 
         func unregister(_ collectionView: NSCollectionView) {
-            let any: AnyClass? = nil
-            collectionView.register(any, forItemWithIdentifier: identifier)
+            if nib != nil {
+                collectionView.register(nil as NSNib?, forItemWithIdentifier: identifier)
+            } else {
+                collectionView.register(nil as AnyClass?, forItemWithIdentifier: identifier)
+            }
             collectionView.registeredItemRegistrations.remove(identifier)
         }
     }
@@ -126,7 +129,7 @@ extension NSCollectionView {
      Dequeues a configured reusable item object.
 
      - Parameters:
-        - registration: The item registration for configuring the cell object. See ``AppKit/NSCollectionView/ItemRegistration``.
+        - registration: The item registration for configuring the cell object. See ``ItemRegistration``.
         - indexPath: The index path specifying the location of the item. The data source receives this information when it is asked for the item and should just pass it along. This method uses the index path to perform additional configuration based on the item’s position in the collection view.
         - element: The element that provides data for the item.
 

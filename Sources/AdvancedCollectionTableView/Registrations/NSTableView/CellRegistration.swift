@@ -44,12 +44,20 @@ public extension NSTableView {
      dataSource = NSTableViewDiffableDataSource(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
 
-     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``AppKit/NSTableView/makeCellView(using:forColumn:row:item:)``.
+     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``makeCellView(using:forColumn:row:item:)``.
 
      ## Column Identifiers
 
      With `columnIdentifiers` you can restrict the cell to specific table columns when used with ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``. You only have to provide column identifiers when your table view has multiple columns and the columns should use different types of table cells. The data source will use the matching cell registration for each column.
-
+     
+     ## Section Header View
+     
+     You can use a cell registration to configurate and return the table view’s section header views in diffable data source using ``TableViewDiffableDataSource/applySectionHeaderRegistration(_:)``:
+          
+     ```swift
+     diffableDataSource.applySectionHeaderRegistration(cellRegistration)
+     ```
+     
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView {
@@ -111,7 +119,8 @@ public extension NSTableView {
         }
 
         func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) -> NSTableCellView? {
-            makeCellView(tableView, tableColumn, row, item as! Item)
+            guard let item = item as? Item else { return nil }
+            return makeCellView(tableView, tableColumn, row, item)
         }
 
         func register(_ tableView: NSTableView) {
@@ -137,7 +146,7 @@ extension NSTableView {
      Dequeues a configured reusable cell object.
 
      - Parameters:
-        - registration: The cell registration for configuring the cell object. See ``AppKit/NSTableView/CellRegistration``.
+        - registration: The cell registration for configuring the cell object. See ``CellRegistration``.
         - column: The table column in which the cell gets displayed in the table view.
         - row: The index path specifying the row of the cell. The data source receives this information when it is asked for the cell and should just pass it along. This method uses the row to perform additional configuration based on the cell’s position in the table view.
         - item: The item that provides data for the cell.

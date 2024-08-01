@@ -23,7 +23,7 @@ public extension NSTableView {
      }
      ```
 
-     After you create a row registration, you pass it in to ``AppKit/NSTableView/makeRowView(using:forRow:item:)``, which you call from your data source’s row provider.
+     After you create a row registration, you pass it in to ``makeRowView(using:forRow:item:)``, which you call from your data source’s row provider.
 
      ```swift
      dataSource.rowProvider = { tableView, row, item in
@@ -82,7 +82,7 @@ extension NSTableView {
      Dequeues a configured reusable row view object.
 
      - Parameters:
-        - registration: The row view registration for configuring the rowview object. See ``AppKit/NSTableView/RowRegistration``.
+        - registration: The row view registration for configuring the rowview object. See ``RowRegistration``.
         - row: The index path specifying the row of the row. The data source receives this information when it is asked for the row and should just pass it along. This method uses the row to perform additional configuration based on the row’s position in the table view.
         - item: The item that provides data for the row.
 

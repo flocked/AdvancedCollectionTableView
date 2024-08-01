@@ -37,6 +37,7 @@ public extension NSCollectionViewDiffableDataSource {
 
     /// Uses the supplementary registrations to return supplementary views to `supplementaryViewProvider`.
     func useSupplementaryRegistrations(_ registrations: [NSCollectionViewSupplementaryRegistration]) {
+        guard !registrations.isEmpty else { return }
         supplementaryViewProvider = { collectionView, elementKind, indexPath in
             (registrations.first(where: { $0.elementKind == elementKind }) as? _NSCollectionViewSupplementaryRegistration)?.makeSupplementaryView(collectionView, indexPath)
         }
