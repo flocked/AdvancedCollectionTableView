@@ -86,7 +86,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     var tableRowView: NSTableRowView? {
-        superview as? NSTableRowView
+        firstSuperview(for: NSTableRowView.self)
     }
 
     var collectionViewItem: NSCollectionViewItem? {
@@ -305,9 +305,9 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
     
     func updateTableRowHeight() {
-        let fittingHeight = fittingSize.height
-        if frame.size.height > fittingHeight {
-            tableRowView?.frame.size.height = fittingHeight
+        let fittingSize = fittingSize
+        if frame.size.height > fittingSize.height {
+            tableRowView?.frame.size.height = fittingSize.height
         }
     }
 
