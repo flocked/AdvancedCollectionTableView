@@ -53,17 +53,9 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collectionView.collectionViewLayout = .grid(columns: 3, isPinchable: true)
+        collectionView.collectionViewLayout = .grid(columns: 3)
 
         collectionView.dataSource = dataSource
-        
-        dataSource.reorderingHandlers.canDrop = { items, target in return true }
-        dataSource.reorderingHandlers.didDrop = { items, target in
-            var snapshot = self.dataSource.snapshot()
-            snapshot.deleteItems(items)
-            self.dataSource.apply(snapshot)
-        }
-
 
         /// Enables deleting selected items via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems }
@@ -71,13 +63,11 @@ class ViewController: NSViewController {
             self.galleryItems.remove(deletedItems)
         }
 
-        /*
         /// Enables reordering selected items by dragging them.
         dataSource.reorderingHandlers.canReorder = { selectedItems in return true }
         dataSource.reorderingHandlers.didReorder = { transaction in
             self.galleryItems = self.galleryItems.applying(transaction.difference)!
         }
-         */
 
         dataSource.rightClickHandler = { selectedItems in
             selectedItems.forEach({ item in

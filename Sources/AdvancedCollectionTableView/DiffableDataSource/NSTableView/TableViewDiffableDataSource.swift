@@ -65,7 +65,16 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
         }
     }
-    var draggingSectionRow: Int?
+    var reorderingSectionRow: Int? {
+        didSet {
+            if let row = oldValue {
+                tableView?.rowView(atRow: row, makeIfNecessary: false)?.isReordering = false
+            }
+            if let row = reorderingSectionRow {
+                tableView?.rowView(atRow: row, makeIfNecessary: false)?.isReordering = true
+            }
+        }
+    }
     var sectionRowIndexes: [Int] = []
     var hoveredRowObserver: KeyValueObservation?
     var keyDownMonitor: NSEvent.Monitor?
@@ -211,18 +220,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func setupHoverObserving() {
         if hoverHandlers.shouldSetup {
+            guard hoveredRowObserver == nil else { return }
             tableView.setupObservation()
-            if hoveredRowObserver == nil {
-                hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { old, new in
-                    guard old != new else { return }
-                    if let didEndHovering = self.hoverHandlers.didEndHovering, old != -1, let item = self.item(forRow: old) {
-                        didEndHovering(item)
-                    }
-                    if let isHovering = self.hoverHandlers.isHovering, new != -1, let item = self.item(forRow: new) {
-                        isHovering(item)
-                    }
-                })
-            }
+            hoveredRowObserver = tableView.observeChanges(for: \.hoveredRow, handler: { [weak self] old, new in
+                guard let self = self, old != new else { return }
+                if let didEndHovering = self.hoverHandlers.didEndHovering, old != -1, let item = self.item(forRow: old) {
+                    didEndHovering(item)
+                }
+                if let isHovering = self.hoverHandlers.isHovering, new != -1, let item = self.item(forRow: new) {
+                    isHovering(item)
+                }
+            })
         } else {
             hoveredRowObserver = nil
         }
@@ -451,7 +459,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 return .move
             }
         }
-        if draggingSectionRow != nil, dropOperation == .above {
+        if reorderingSectionRow != nil, dropOperation == .above {
             return moveSectionTransaction(to: row) != nil ? .move : []
         }
         if draggingInfo.draggingSource as? NSTableView != tableView {
@@ -498,7 +506,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
         if sectionHeaderCellProvider != nil, let canReorderSection = reorderingHandlers.canReorderSection, rowIndexes.count == 1, let row = rowIndexes.first, let section = section(forRow: row) {
-            draggingSectionRow = canReorderSection(section) ? row : nil
+            reorderingSectionRow = canReorderSection(section) ? row : nil
         } else {
             var items = rowIndexes.compactMap({item(forRow: $0)})
             canDragItems = draggingHandlers.canDrag?(items) ?? false
@@ -511,7 +519,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         // dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).forEach({ $0.isReordering = false })
         dragingRowIndexes = []
         dropTargetRow = nil
-        draggingSectionRow = nil
+        reorderingSectionRow = nil
         dropValidationRow = nil
         canDragItems = false
     }
@@ -708,7 +716,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     func moveSectionTransaction(to row: Int) -> DiffableDataSourceTransaction<Section, Item>? {
-        guard let sectionRow = draggingSectionRow, let _section = section(forRow: sectionRow) else { return nil }
+        guard let sectionRow = reorderingSectionRow, let _section = section(forRow: sectionRow) else { return nil }
         if let index = sectionRowIndexes.firstIndex(of: row), let section = sections[safe: index-1], section != _section {
             return currentSnapshot.moveTransaction(_section, after: section)
         } else if row == 0, let section = sections.first {

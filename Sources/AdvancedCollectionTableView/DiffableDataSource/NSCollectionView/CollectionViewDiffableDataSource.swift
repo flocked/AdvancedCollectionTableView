@@ -140,8 +140,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         if hoverHandlers.shouldObserve {
             collectionView.setupObservation()
             if hoveredItemObserver == nil {
-                hoveredItemObserver = collectionView.observeChanges(for: \.hoveredIndexPath, handler: { old, new in
-                    guard old != new else { return }
+                hoveredItemObserver = collectionView.observeChanges(for: \.hoveredIndexPath, handler: { [weak self] old, new in
+                    guard let self = self, old != new else { return }
                     if let didEndHovering = self.hoverHandlers.didEndHovering, let old = old, let item = self.element(for: old) {
                         didEndHovering(item)
                     }
@@ -157,6 +157,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     func observeDisplayingItems() {
         if displayHandlers.shouldObserve {
+            collectionView.displayingItemsHandlers
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(scrollViewContentBoundsDidChange(_:)),
@@ -164,26 +165,23 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                                                    object: collectionView.enclosingScrollView?.contentView)
         } else {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = false
-            NotificationCenter.default.removeObserver(self)
+            NotificationCenter.default.removeObserver(self, name: NSView.boundsDidChangeNotification, object: collectionView.enclosingScrollView?.contentView)
         }
     }
 
     @objc func scrollViewContentBoundsDidChange(_ notification: Notification) {
-        guard (notification.object as? NSClipView) != nil else { return }
         let displayingItems = displayingElements.ids
-
         if let isDisplaying = displayHandlers.isDisplaying {
-            let added = displayingItems.filter { previousDisplayingItems.contains($0) == false }
+            let added = displayingItems.filter { !previousDisplayingItems.contains($0) }
             let addedElements = elements[ids: added]
-            if addedElements.isEmpty == false {
+            if !addedElements.isEmpty {
                 isDisplaying(addedElements)
             }
         }
-
         if let didEndDisplaying = displayHandlers.didEndDisplaying {
-            let removed = previousDisplayingItems.filter { displayingItems.contains($0) == false }
+            let removed = previousDisplayingItems.filter { !displayingItems.contains($0) }
             let removedElements = elements[ids: removed]
-            if removedElements.isEmpty == false {
+            if !removedElements.isEmpty {
                 didEndDisplaying(removedElements)
             }
         }
