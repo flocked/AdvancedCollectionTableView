@@ -185,6 +185,7 @@ extension NSTableRowView {
         get { getAssociatedValue("isReordering") ?? false }
         set { 
             guard newValue != isReordering else { return }
+            cellViews.forEach({ $0.backgroundStyle = newValue ? .lowered : .emphasized })
             setAssociatedValue(newValue, key: "isReordering")
             setNeedsAutomaticUpdateConfiguration(updateCells: true)
         }

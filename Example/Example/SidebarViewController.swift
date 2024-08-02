@@ -27,8 +27,9 @@ class SidebarViewController: NSViewController {
         }
         tableCell.contentConfiguration = configuration
         tableCell.configurationUpdateHandler = { cell, state in
-            Swift.print("isDropTarget", state.isDropTarget)
-            
+            configuration.textProperties.color = state.isDropTarget ? .systemRed : .labelColor
+           // Swift.print("isDropTarget", state.isDropTarget)
+            cell.contentConfiguration = configuration
         }
     }
     
@@ -43,12 +44,15 @@ class SidebarViewController: NSViewController {
 
         tableView.dataSource = dataSource
         
+        /*
         dataSource.reorderingHandlers.canDrop = { items, target in return true }
         dataSource.reorderingHandlers.didDrop = { items, target in
+            Swift.print("didDrop")
             var snapshot = self.dataSource.snapshot()
             snapshot.deleteItems(items)
             self.dataSource.apply(snapshot)
         }
+         */
 
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { selectedItems in return selectedItems }

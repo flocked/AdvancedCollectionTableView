@@ -13,16 +13,9 @@ extension CollectionViewDiffableDataSource {
     class Delegate: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         weak var dataSource: CollectionViewDiffableDataSource!
         
-        var draggingIndexPaths: Set<IndexPath> = [] {
-            didSet {
-                guard draggingIndexPaths != oldValue else { return }
-                oldValue.forEach({ dataSource.collectionView?.item(at: $0)?.isReordering = false })
-                draggingIndexPaths.forEach({ dataSource.collectionView?.item(at: $0)?.isReordering = true })
-            }
-        }
         var canReorderItems = false
         var canDragOutside = false
-        var isInserting = false
+        var dropValidationIndexPath: IndexPath? = nil
         var dropTargetIndexPath: IndexPath? = nil {
             didSet {
                 guard oldValue != dropTargetIndexPath else { return }
@@ -32,6 +25,13 @@ extension CollectionViewDiffableDataSource {
                 if let indexPath = dropTargetIndexPath, let item = dataSource.collectionView?.item(at: indexPath) {
                     item.isDropTarget = true
                 }
+            }
+        }
+        var draggingIndexPaths: Set<IndexPath> = [] {
+            didSet {
+                guard draggingIndexPaths != oldValue else { return }
+                oldValue.forEach({ dataSource.collectionView?.item(at: $0)?.isReordering = false })
+                draggingIndexPaths.forEach({ dataSource.collectionView?.item(at: $0)?.isReordering = true })
             }
         }
         
@@ -100,44 +100,42 @@ extension CollectionViewDiffableDataSource {
             // Swift.debugPrint("draggingSession endedAt", screenPoint)
             draggingIndexPaths = []
             dropTargetIndexPath = nil
-            isInserting = false
+            dropValidationIndexPath = nil
+            canReorderItems = false
+            canDragOutside = false
         }
         
         
-        
         // MARK: Dropping
-
+                
         func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
+            let proposedIndexPath = proposedIndexPath.pointee as IndexPath
+            let previousIndexPath = dropValidationIndexPath
+            dropValidationIndexPath = proposedDropOperation.pointee == .before ? proposedIndexPath : nil
             if draggingInfo.draggingSource as? NSCollectionView == dataSource.collectionView,  dataSource.reorderingHandlers.droppable, let canDrop = dataSource.reorderingHandlers.canDrop, proposedDropOperation.pointee == .on {
-                if draggingIndexPaths.count == 1, let indexPath = draggingIndexPaths.sorted().first, indexPath == proposedIndexPath.pointee as IndexPath {
+                if draggingIndexPaths.count == 1, let indexPath = draggingIndexPaths.sorted().first, indexPath == proposedIndexPath {
                     dropTargetIndexPath = nil
                     return []
-                } else if let target = dataSource.element(for: proposedIndexPath.pointee as IndexPath) {
-                    isInserting = canDrop( draggingIndexPaths.compactMap { dataSource.element(for: $0) }, target)
-                    if isInserting {
-                        dropTargetIndexPath = proposedIndexPath.pointee as IndexPath
-                    } else {
-                        dropTargetIndexPath = nil
-                    }
-                    return isInserting ? .move : []
+                } else if let target = dataSource.element(for: proposedIndexPath), previousIndexPath != proposedIndexPath {
+                    dropTargetIndexPath = canDrop( draggingIndexPaths.compactMap { dataSource.element(for: $0) }, target) ? proposedIndexPath : nil
+                    return dropTargetIndexPath != nil ? .move : []
                 } else {
                     dropTargetIndexPath = nil
                     return []
                 }
-            } else {
-                dropTargetIndexPath = nil
             }
+            dropTargetIndexPath = nil
             
             if proposedDropOperation.pointee == .on {
                 proposedDropOperation.pointee = .before
             }
 
-            if draggingInfo.draggingSource as? NSCollectionView == dataSource.collectionView {
+            if draggingInfo.draggingSource as? NSCollectionView == dataSource.collectionView, dataSource.reorderingHandlers.canReorder != nil {
                 var indexPaths = draggingIndexPaths.sorted()
                 if let last = indexPaths.last {
                     indexPaths.append(IndexPath(item: last.item+1, section: last.section))
                 }
-                if indexPaths.contains(proposedIndexPath.pointee as IndexPath) {
+                if indexPaths.contains(proposedIndexPath) {
                     if draggingIndexPaths.sections.count == 1 {
                         return []
                     }
@@ -153,49 +151,31 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation _: NSCollectionView.DropOperation) -> Bool {
-            if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
+            if draggingInfo.draggingSource as? NSCollectionView == collectionView {
                 let elements = draggingIndexPaths.compactMap { dataSource.element(for: $0) }
-                draggingIndexPaths = []
-                dropTargetIndexPath = nil
                 if canReorderItems, !draggingIndexPaths.isEmpty {
-                    if isInserting, let didDrop = dataSource.reorderingHandlers.didDrop, let target = dataSource.element(for: indexPath) {
+                    draggingIndexPaths = []
+                    if dropTargetIndexPath != nil, let didDrop = dataSource.reorderingHandlers.didDrop, let target = dataSource.element(for: indexPath) {
+                        dropTargetIndexPath = nil
                         didDrop(elements, target)
                     } else {
-                        let transaction = dataSource.movingTransaction(for: elements, to: indexPath)
+                        let transaction = dataSource.moveTransaction(elements, to: indexPath)
                         dataSource.reorderingHandlers.willReorder?(transaction)
                         dataSource.apply(transaction.finalSnapshot, dataSource.reorderingHandlers.animates ? .animated : .withoutAnimation)
                         dataSource.selectElements(elements, scrollPosition: [])
                     }
                     return true
                 }
-            }
-            
-            let elements = dataSource.droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
-            if !elements.isEmpty {
-                var snapshot = dataSource.snapshot()
-                if let item = dataSource.element(for: indexPath) {
-                    snapshot.insertItems(elements, beforeItem: item)
-                } else if let section = dataSource.sections[safe: indexPath.section] {
-                    var indexPath = indexPath
-                    indexPath.item -= 1
-                    if let item = dataSource.element(for: indexPath) {
-                        snapshot.insertItems(elements, afterItem: item)
-                    } else {
-                        snapshot.appendItems(elements, toSection: section)
-                    }
-                } else if let section = dataSource.sections.last {
-                    snapshot.appendItems(elements, toSection: section)
+            } else {
+                let elements = dataSource.droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
+                if !elements.isEmpty {
+                    let transaction = dataSource.dropTransaction(elements, indexPath: indexPath)
+                    dataSource.droppingHandlers.willDrop?(transaction)
+                    dataSource.apply(transaction.finalSnapshot, dataSource.droppingHandlers.animates ? .animated : .withoutAnimation)
+                    dataSource.selectElements(elements, scrollPosition: [])
+                    dataSource.droppingHandlers.didDrop?(transaction)
+                    return true
                 }
-                var transaction: DiffableDataSourceTransaction<Section, Element>?
-                if dataSource.droppingHandlers.needsTransaction {
-                    transaction = .init(initial: dataSource.snapshot(), final: snapshot)
-                    dataSource.droppingHandlers.willDrop?(transaction!)
-                }
-                let selectedItems = dataSource.selectedElements
-                dataSource.apply(snapshot, dataSource.droppingHandlers.animates ? .animated : .withoutAnimation)
-                dataSource.selectElements(selectedItems, scrollPosition: [])
-                dataSource.droppingHandlers.didDrop?(transaction!)
-                return true
             }
             return false
         }

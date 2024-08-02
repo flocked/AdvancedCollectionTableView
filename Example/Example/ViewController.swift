@@ -71,11 +71,13 @@ class ViewController: NSViewController {
             self.galleryItems.remove(deletedItems)
         }
 
+        /*
         /// Enables reordering selected items by dragging them.
         dataSource.reorderingHandlers.canReorder = { selectedItems in return true }
         dataSource.reorderingHandlers.didReorder = { transaction in
             self.galleryItems = self.galleryItems.applying(transaction.difference)!
         }
+         */
 
         dataSource.rightClickHandler = { selectedItems in
             selectedItems.forEach({ item in

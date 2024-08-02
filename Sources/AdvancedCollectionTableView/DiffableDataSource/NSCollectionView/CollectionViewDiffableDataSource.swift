@@ -499,22 +499,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         return sections.flatMap { currentSnapshot.itemIdentifiers(inSection: $0) }
     }
     
-    func movingTransaction(for elements: [Element], to indexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
-        var newSnapshot = snapshot()
-        if let item = element(for: indexPath) {
-            newSnapshot.insertItemsSaftly(elements, beforeItem: item)
-        } else if let item = element(for: IndexPath(item: indexPath.item-1, section: indexPath.section)) {
-            newSnapshot.insertItemsSaftly(elements, afterItem: item)
-        } else if indexPath.item == 0, let section = sections[safe: indexPath.section-1] {
-            newSnapshot.appendItems(elements, toSection: section)
-        } else if let section = sections[safe: indexPath.section] {
-            newSnapshot.appendItems(elements, toSection: section)
-        } else if let section = sections.last {
-            newSnapshot.appendItems(elements, toSection: section)
-        }
-        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
-    }
-
     // MARK: - Sections
 
     /// All current sections in the collection view.
@@ -547,6 +531,42 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         guard let index = index(for: section) else { return }
         let indexPaths = Set([IndexPath(item: 0, section: index)])
         collectionView.scrollToItems(at: indexPaths, scrollPosition: scrollPosition)
+    }
+    
+    // MARK: - Transactions
+    
+    func moveTransaction(_ elements: [Element], to indexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
+        var newSnapshot = snapshot()
+        if let item = element(for: indexPath) {
+            newSnapshot.insertItemsSaftly(elements, beforeItem: item)
+        } else if let item = element(for: IndexPath(item: indexPath.item-1, section: indexPath.section)) {
+            newSnapshot.insertItemsSaftly(elements, afterItem: item)
+        } else if indexPath.item == 0, let section = sections[safe: indexPath.section-1] {
+            newSnapshot.appendItems(elements, toSection: section)
+        } else if let section = sections[safe: indexPath.section] {
+            newSnapshot.appendItems(elements, toSection: section)
+        } else if let section = sections.last {
+            newSnapshot.appendItems(elements, toSection: section)
+        }
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: newSnapshot)
+    }
+    
+    func dropTransaction(_ elements: [Element], indexPath: IndexPath) -> DiffableDataSourceTransaction<Section, Element> {
+        var snapshot = currentSnapshot
+        if let item = element(for: indexPath) {
+            snapshot.insertItems(elements, beforeItem: item)
+        } else if let section = sections[safe: indexPath.section] {
+            var indexPath = indexPath
+            indexPath.item -= 1
+            if let item = element(for: indexPath) {
+                snapshot.insertItems(elements, afterItem: item)
+            } else {
+                snapshot.appendItems(elements, toSection: section)
+            }
+        } else if let section = sections.last {
+            snapshot.appendItems(elements, toSection: section)
+        }
+        return DiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
     }
     
     // MARK: - Empty Collection View
@@ -819,7 +839,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          */
         public var didReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
         
-        /// The handler that determines if elements can be dropped to another element while reordering. The default value is `nil` which indicates that elements can't be inserted.
+        /**
+         The handler that determines if elements can be dropped to another element while reordering. The default value is `nil` which indicates that elements can't be inserted.
+         
+         To enable dropping of elements to another element while reordering, you also have  to provide ``didDrop``.
+         */
         public var canDrop: ((_ elements: [Element], _ target: Element) -> Bool)?
         
         /// The handler that that gets called after dropping elements.
@@ -900,10 +924,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         /// A Boolean value that indicates whether dropping elements is animated.
         public var animates: Bool = true
-        
-        var needsTransaction: Bool {
-            willDrop != nil || didDrop != nil
-        }
     }
 }
 
