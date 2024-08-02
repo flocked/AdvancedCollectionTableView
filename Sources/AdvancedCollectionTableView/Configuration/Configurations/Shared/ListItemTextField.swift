@@ -114,8 +114,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             guard oldValue != isEditing else { return }
             focusRingType = isEditing ? .none : .default
             editingContentView?.isEditing = isEditing
-            invalidateIntrinsicContentSize()
-            editingContentView?.updateTableRowHeight()
         }
     }
     override public func textDidBeginEditing(_ notification: Notification) {
