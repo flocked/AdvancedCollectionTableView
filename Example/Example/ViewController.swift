@@ -49,7 +49,7 @@ class ViewController: NSViewController {
             item.contentConfiguration = configuration
         }
     }
-            
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

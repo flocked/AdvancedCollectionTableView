@@ -256,10 +256,11 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
         var configuration = self
         if let state = state as? ConfigurationState {
-            if state.isSelected {
+            let isSelected = state.isSelected || (state as? NSItemConfigurationState)?.highlight == .asDropTarget
+            if isSelected {
                 configuration.contentProperties.borderStateTransformer = .init("StateTransform") { border in
                     var border = border
-                    if state.isSelected {
+                    if isSelected {
                         border.width = border.width > 3.0 ? border.width : 3.0
                         border.color = state.isEmphasized ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
                     } else {
@@ -270,7 +271,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                 }
                 configuration.contentProperties.shadowTransformer = .init("StateTransform") { shadow in
                     var shadow = shadow
-                    if state.isSelected {
+                    if isSelected {
                         if shadow.opacity != 0.0, let color = shadow.color, color.alphaComponent != 0.0 {
                             shadow.color = state.isEmphasized ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
                         }

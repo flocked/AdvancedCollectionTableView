@@ -829,7 +829,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var animates: Bool = true
         
         var insertable: Bool {
-            didReorder != nil && didInsert != nil
+            canInsert != nil && didInsert != nil
         }
     }
 
