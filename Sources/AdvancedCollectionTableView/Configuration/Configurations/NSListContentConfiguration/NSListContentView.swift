@@ -75,9 +75,9 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             } else if let collectionViewItem = collectionViewItem {
                 collectionViewItem.setNeedsAutomaticUpdateConfiguration()
             }
-            textField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
-            secondaryTextField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
-            updateTableRowHeight()
+            // textField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
+            // secondaryTextField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
+            // updateTableRowHeight()
         }
     }
 
@@ -295,10 +295,12 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     /// Perform layout in concert with the constraint-based layout system.
     override open func layout() {
         super.layout()
-        guard isEditing, bounds.width != boundsWidth else { return }
+        guard bounds.width != boundsWidth else { return }
         boundsWidth = bounds.width
-        textField.preferredMaxLayoutWidth = (boundsWidth - 34).clamped(min: 0)
-        secondaryTextField.preferredMaxLayoutWidth = textField.preferredMaxLayoutWidth
+        if isEditing {
+            // textField.preferredMaxLayoutWidth = (boundsWidth - 34).clamped(min: 0)
+            // secondaryTextField.preferredMaxLayoutWidth = textField.preferredMaxLayoutWidth
+        }
         updateTableRowHeight()
     }
     

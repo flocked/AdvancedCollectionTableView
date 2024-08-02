@@ -18,6 +18,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     }
         
     var previousStringValue: String = ""
+    let noIntrinsicWidth = true
     
     var editingContentView: EdiitingContentView? {
         firstSuperview(where: { $0 is EdiitingContentView }) as? EdiitingContentView
@@ -55,8 +56,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         if isFirstResponder, !properties.isEditable {
             isEditing = false
         }
-        // drawsBackground = true
-        // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
     
     var textBounds: CGRect {
@@ -74,9 +73,9 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         super.init(frame: frameRect)
         truncatesLastVisibleLine = true
         delegate = self
+        // drawsBackground = true
+        // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
-
-    var nointrinsicWidth = true
     
     static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     override var intrinsicContentSize: NSSize {
@@ -85,16 +84,10 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             Self.textField.properties = properties
             Self.textField.maximumNumberOfLines = isEditing ? 0 : Self.textField.maximumNumberOfLines
             Self.textField.preferredMaxLayoutWidth = preferredMaxLayoutWidth
-            if isEditing, let string = currentEditor()?.string {
-                Self.textField.stringValue = string
-            } else {
-                Self.textField.attributedStringValue = attributedStringValue
-            }
-            intrinsicContentSize = Self.textField.intrinsicContentSize
-            if maximumNumberOfLines == 0 {
-                // Swift.print("intrinsic", intrinsicContentSize)
-            }
-        } else if nointrinsicWidth {
+            Self.textField.attributedStringValue = attributedStringValue
+            intrinsicContentSize.width = NSView.noIntrinsicMetric
+            intrinsicContentSize.height = Self.textField.intrinsicContentSize.height
+        } else if noIntrinsicWidth {
             intrinsicContentSize.width = NSView.noIntrinsicMetric
         }
         return intrinsicContentSize
