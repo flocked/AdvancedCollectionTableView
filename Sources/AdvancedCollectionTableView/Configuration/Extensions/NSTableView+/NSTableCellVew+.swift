@@ -105,7 +105,7 @@ extension NSTableCellView {
      */
     @objc open var configurationState: NSListConfigurationState {
         let rowView = rowView
-        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
+        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isEmphasized: isEmphasized, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
     }
 
     /**
@@ -261,6 +261,10 @@ extension NSTableCellView {
     
     var isReordering: Bool {
         rowView?.isReordering ?? false
+    }
+    
+    var isDropTarget: Bool {
+        rowView?.isDropTarget ?? false
     }
     
     var contentView: (NSView & NSContentView)? {

@@ -57,15 +57,18 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 
     /// A Boolean value that indicates whether the previous list item is in a selected state.
     public var isPreviousSelected: Bool = false
+    
+    /// A Boolean value that indicates whether the list item is reordering.
+    public var isReordering: Bool = false
+    
+    /// A Boolean value that indicates whether the list item is the target of a drop operation.
+    public var isDropTarget: Bool = false
 
     /// A Boolean value that indicates whether the list item is in a focused state.
     var isFocused: Bool = false
 
     /// A Boolean value that indicates whether the list item is in an expanded state.
     var isExpanded: Bool = false
-    
-    /// A Boolean value that indicates whether the list item is reordering.
-    var isReordering: Bool = false
 
     var customStates = [NSConfigurationStateCustomKey: AnyHashable]()
 
@@ -80,6 +83,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
                 isHovered: Bool = false,
                 isEditing: Bool = false,
                 isEmphasized: Bool = false,
+                isReordering: Bool = false,
+                isDropTarget: Bool = false,
                 isNextSelected: Bool = false,
                 isPreviousSelected: Bool = false)
     {
@@ -88,6 +93,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isHovered = isHovered
         self.isEditing = isEditing
         self.isEmphasized = isEmphasized
+        self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
     }
@@ -100,6 +107,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          isNextSelected: Bool,
          isPreviousSelected: Bool,
          isReordering: Bool,
+         isDropTarget: Bool,
          customStates: [NSConfigurationStateCustomKey: AnyHashable])
     {
         self.isSelected = isSelected
@@ -110,6 +118,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
         self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self.customStates = customStates
     }
 }
@@ -138,11 +147,11 @@ extension NSListConfigurationState: ReferenceConvertible {
     }
 
     public func _bridgeToObjectiveC() -> __NSListConfigurationStateObjcNew {
-        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, customStates: customStates)
+        return __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) {
-        result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, isReordering: source.isReordering, customStates: source.customStates)
+        result = NSListConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isHovered: source.isHovered, isEditing: source.isEditing, isEmphasized: source.isEmphasized, isNextSelected: source.isNextSelected, isPreviousSelected: source.isPreviousSelected, isReordering: source.isReordering, isDropTarget: source.isDropTarget, customStates: source.customStates)
     }
 
     public static func _conditionallyBridgeFromObjectiveC(_ source: __NSListConfigurationStateObjcNew, result: inout NSListConfigurationState?) -> Bool {
@@ -162,19 +171,20 @@ extension NSListConfigurationState: ReferenceConvertible {
 
 /// The `Objective-C` class for ``NSListConfigurationState``.
 public class __NSListConfigurationStateObjcNew: NSObject, NSCopying {
-    var isSelected: Bool
-    var isEnabled: Bool
-    var isHovered: Bool
-    var isEditing: Bool
-    var isEmphasized: Bool
-    var isNextSelected: Bool
-    var isPreviousSelected: Bool
-    var isFocused: Bool
-    var isExpanded: Bool
-    var isReordering: Bool
-    var customStates:[NSConfigurationStateCustomKey: AnyHashable]
+    let isSelected: Bool
+    let isEnabled: Bool
+    let isHovered: Bool
+    let isEditing: Bool
+    let isEmphasized: Bool
+    let isNextSelected: Bool
+    let isPreviousSelected: Bool
+    let isFocused: Bool
+    let isExpanded: Bool
+    let isReordering: Bool
+    let isDropTarget: Bool
+    let customStates:[NSConfigurationStateCustomKey: AnyHashable]
 
-    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, isEmphasized: Bool, isNextSelected: Bool, isPreviousSelected: Bool, isFocused: Bool, isExpanded: Bool, isReordering: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable]) {
+    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, isEmphasized: Bool, isNextSelected: Bool, isPreviousSelected: Bool, isFocused: Bool, isExpanded: Bool, isReordering: Bool, isDropTarget: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable]) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isHovered = isHovered
@@ -185,11 +195,12 @@ public class __NSListConfigurationStateObjcNew: NSObject, NSCopying {
         self.isFocused = isFocused
         self.isExpanded = isExpanded
         self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self.customStates = customStates
         super.init()
     }
     
     public func copy(with zone: NSZone? = nil) -> Any {
-        __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, customStates: customStates)
+        __NSListConfigurationStateObjcNew(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextSelected, isPreviousSelected: isPreviousSelected, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
     }
 }

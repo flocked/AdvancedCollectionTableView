@@ -190,6 +190,15 @@ extension NSTableRowView {
         }
     }
     
+    @objc var isDropTarget: Bool {
+        get { getAssociatedValue("isDropTarget") ?? false }
+        set {
+            guard newValue != isDropTarget else { return }
+            setAssociatedValue(newValue, key: "isDropTarget")
+            setNeedsAutomaticUpdateConfiguration(updateCells: true)
+        }
+    }
+    
     func observeSelection() {
         guard isSelectedObservation == nil else { return }
         isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in

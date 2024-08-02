@@ -182,7 +182,7 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
         return state
     }
 
@@ -275,6 +275,27 @@ extension NSCollectionViewItem {
             setNeedsAutomaticUpdateConfiguration()
         }
     }
+    
+    /// A Boolean value that indicates whether the item is the target of a drop operation.
+    @objc var isDropTarget: Bool {
+        get { getAssociatedValue("isDropTarget", initialValue: false) }
+        set {
+            guard newValue != isDropTarget else { return }
+            setAssociatedValue(newValue, key: "isDropTarget")
+            setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
+    /// A Boolean value that indicates whether the item is reordering.
+    @objc var isReordering: Bool {
+        get { getAssociatedValue("isReordering", initialValue: false) }
+        set {
+            guard newValue != isReordering else { return }
+            setAssociatedValue(newValue, key: "isReordering")
+            setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
     
     /// A Boolean value that indicates whether the item is enabled.
     var isEnabled: Bool {

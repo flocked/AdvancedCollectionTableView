@@ -49,7 +49,7 @@ extension NSDiffableDataSourceSnapshot where ItemIdentifierType: Identifiable, S
     }
     
     func deleteTransaction(_ items: [ItemIdentifierType]) -> Transaction {
-        var finalSnapshot = Self()
+        var finalSnapshot = self
         finalSnapshot.deleteItems(items)
         return DiffableDataSourceTransaction(initial: self, final: finalSnapshot)
     }

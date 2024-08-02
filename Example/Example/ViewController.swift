@@ -56,6 +56,14 @@ class ViewController: NSViewController {
         collectionView.collectionViewLayout = .grid(columns: 3, isPinchable: true)
 
         collectionView.dataSource = dataSource
+        
+        dataSource.reorderingHandlers.canDrop = { items, target in return true }
+        dataSource.reorderingHandlers.didDrop = { items, target in
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems(items)
+            self.dataSource.apply(snapshot)
+        }
+
 
         /// Enables deleting selected items via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems }

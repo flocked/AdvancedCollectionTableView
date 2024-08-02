@@ -55,6 +55,12 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
      The value of this property is `true`, if the mouse is hovering the item.
      */
     public var isHovered: Bool = false
+    
+    /// A Boolean value that indicates whether the item is reordering.
+    public var isReordering: Bool = false
+    
+    /// A Boolean value that indicates whether the item is the target of a drop operation.
+    public var isDropTarget: Bool = false
 
     /// A Boolean value that indicates whether the item is in a enabled state.
     var isEnabled: Bool = true
@@ -78,13 +84,17 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         highlight: NSCollectionViewItem.HighlightState = .none,
         isEditing: Bool = false,
         isEmphasized: Bool = false,
-        isHovered: Bool = false
+        isHovered: Bool = false,
+        isReordering: Bool = false,
+        isDropTarget: Bool = false
     ) {
         self.isSelected = isSelected
         self.highlight = highlight
         self.isEditing = isEditing
         self.isEmphasized = isEmphasized
         self.isHovered = isHovered
+        self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self["isSelected"] = isSelected
         self["isEmphasized"] = isEmphasized
         self["isItemState"] = true
@@ -98,6 +108,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
          isExpanded: Bool,
          highlight: NSCollectionViewItem.HighlightState,
          isEmphasized: Bool,
+         isReordering: Bool,
+         isDropTarget: Bool,
          customStates _: [NSConfigurationStateCustomKey: AnyHashable] = [:])
     {
         self.isSelected = isSelected
@@ -108,6 +120,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isExpanded = isExpanded
         self.highlight = highlight
         self.isEmphasized = isEmphasized
+        self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self["isSelected"] = isSelected
         self["isEmphasized"] = isEmphasized
         self["isItemState"] = true
@@ -136,11 +150,11 @@ extension NSItemConfigurationState: ReferenceConvertible {
     }
 
     public func _bridgeToObjectiveC() -> __NSItemConfigurationStateObjc {
-        return __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isEmphasized: isEmphasized, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
+        return __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isEmphasized: isEmphasized, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: __NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) {
-        result = NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: source.highlight, isEmphasized: source.isEmphasized, customStates: source.customStates)
+        result = NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: source.highlight, isEmphasized: source.isEmphasized, isReordering: source.isReordering, isDropTarget: source.isDropTarget, customStates: source.customStates)
     }
 
     public static func _conditionallyBridgeFromObjectiveC(_ source: __NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) -> Bool {
@@ -160,17 +174,19 @@ extension NSItemConfigurationState: ReferenceConvertible {
 
 /// The `Objective-C` class for ``NSItemConfigurationState``.
 public class __NSItemConfigurationStateObjc: NSObject, NSCopying {
-    var isSelected: Bool
-    var highlight: NSCollectionViewItem.HighlightState
-    var isEditing: Bool
-    var isEmphasized: Bool
-    var isHovered: Bool
-    var isEnabled: Bool
-    var isFocused: Bool
-    var isExpanded: Bool
-    var customStates: [NSConfigurationStateCustomKey: AnyHashable]
+    let isSelected: Bool
+    let highlight: NSCollectionViewItem.HighlightState
+    let isEditing: Bool
+    let isEmphasized: Bool
+    let isHovered: Bool
+    let isEnabled: Bool
+    let isFocused: Bool
+    let isExpanded: Bool
+    let isReordering: Bool
+    let isDropTarget: Bool
+    let customStates: [NSConfigurationStateCustomKey: AnyHashable]
 
-    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, highlight: NSCollectionViewItem.HighlightState, isEmphasized: Bool, isFocused: Bool, isExpanded: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable] = [:]) {
+    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, highlight: NSCollectionViewItem.HighlightState, isEmphasized: Bool, isFocused: Bool, isExpanded: Bool, isReordering: Bool, isDropTarget: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable] = [:]) {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
         self.isHovered = isHovered
@@ -179,12 +195,14 @@ public class __NSItemConfigurationStateObjc: NSObject, NSCopying {
         self.isEmphasized = isEmphasized
         self.isFocused = isFocused
         self.isExpanded = isExpanded
+        self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
         self.customStates = customStates
         super.init()
     }
     
     public func copy(with zone: NSZone? = nil) -> Any {
-        __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isEmphasized: isEmphasized, isFocused: isFocused, isExpanded: isExpanded, customStates: customStates)
+        __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isEmphasized: isEmphasized, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
     }
 }
 

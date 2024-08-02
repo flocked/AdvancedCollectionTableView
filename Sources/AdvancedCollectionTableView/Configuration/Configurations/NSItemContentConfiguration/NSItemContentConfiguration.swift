@@ -256,7 +256,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
         var configuration = self
         if let state = state as? ConfigurationState {
-            let isSelected = state.isSelected || (state as? NSItemConfigurationState)?.highlight == .asDropTarget
+            let isSelected = state.isSelected || (state as? NSItemConfigurationState)?.isDropTarget == true
             if isSelected {
                 configuration.contentProperties.borderStateTransformer = .init("StateTransform") { border in
                     var border = border
