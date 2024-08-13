@@ -123,7 +123,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
         invalidateIntrinsicContentSize()
-        editingContentView?.updateTableRowHeight()
+        editingContentView?.updateTableRowHeight(reset: true)
     }
 
     public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {

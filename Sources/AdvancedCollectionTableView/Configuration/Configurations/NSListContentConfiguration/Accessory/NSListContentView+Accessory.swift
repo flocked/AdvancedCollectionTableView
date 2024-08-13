@@ -12,7 +12,11 @@ import SwiftUI
 
 // Currently unused. It allows to add additional information to a list configuration like an additional title. See the Mac Mail app and it's list of emails. Each entry displays the title and content of the email + the sender and date on top.
 extension NSListContentConfiguration {
-    /// Properties for a list accessory.
+    /**
+     Configuration for a list accessory.
+     
+     An accessory displays additional content at the bottom or top of a list item.
+     */
     struct Accessory: Hashable {
         
         /// Position of the accessory.

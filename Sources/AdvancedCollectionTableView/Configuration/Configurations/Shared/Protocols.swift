@@ -17,10 +17,10 @@ extension NSHostingConfiguration: AutomaticHeightSizable { }
 /// Content configuration views with editable text fields.
 protocol EdiitingContentView: NSView {
     var isEditing: Bool { get set }
-    func updateTableRowHeight()
+    func updateTableRowHeight(reset: Bool)
 }
 
 extension EdiitingContentView {
-    func updateTableRowHeight() { }
+    func updateTableRowHeight(reset: Bool = false) { }
 }
  

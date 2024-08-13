@@ -94,7 +94,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     func updateConfiguration() {
-        fittingSizes.removeAll()
+        cachedFittingSizes.removeAll()
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
 
@@ -307,15 +307,15 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    var fittingSizes: [CGFloat:CGSize] = [:]
-    func updateTableRowHeight() {
-        if let fittingSize = fittingSizes[frame.size.height] {
+    var cachedFittingSizes: [CGFloat:CGSize] = [:]
+    func updateTableRowHeight(reset: Bool = false) {
+        if !reset, let fittingSize = cachedFittingSizes[frame.size.height] {
             tableRowView?.frame.size.height = fittingSize.height
         } else {
             let fittingSize = fittingSize
             if frame.size.height > fittingSize.height {
                 tableRowView?.frame.size.height = fittingSize.height
-                fittingSizes[frame.size.height] = fittingSize
+                cachedFittingSizes[frame.size.height] = fittingSize
             }
         }
     }
