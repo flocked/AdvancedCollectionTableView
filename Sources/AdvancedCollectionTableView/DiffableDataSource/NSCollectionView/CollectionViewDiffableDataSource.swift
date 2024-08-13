@@ -591,23 +591,25 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      When using this property, ``emptyView`` is set to `nil`.
      */
     open var emptyContentConfiguration: NSContentConfiguration? {
-        get { emptyContentView?.contentConfiguration }
+        get { emptyContentView?.configuration }
         set {
             if let configuration = newValue {
-                if let emptyContentView = self.emptyContentView {
-                    emptyContentView.contentConfiguration = configuration
+                if let emptyContentView = emptyContentView, emptyContentView.supports(configuration) {
+                    emptyContentView.configuration = configuration
                 } else {
-                    emptyContentView = .init(configuration: configuration)
+                    emptyContentView?.removeFromSuperview()
+                    emptyContentView = configuration.makeContentView()
                 }
                 emptyView = nil
                 updateEmptyView()
             } else {
+                emptyContentView?.removeFromSuperview()
                 emptyContentView = nil
             }
         }
     }
     
-    var emptyContentView: ContentConfigurationView?
+    var emptyContentView: (NSView & NSContentView)?
     
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.

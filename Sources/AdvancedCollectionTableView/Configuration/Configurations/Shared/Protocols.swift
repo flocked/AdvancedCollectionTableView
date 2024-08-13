@@ -23,4 +23,3 @@ protocol EdiitingContentView: NSView {
 extension EdiitingContentView {
     func updateTableRowHeight(reset: Bool = false) { }
 }
- 
