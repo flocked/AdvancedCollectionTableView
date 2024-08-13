@@ -38,11 +38,11 @@ public extension NSListContentConfiguration {
         public enum Scaling: Hashable {
             /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
             case fit
-            //   case fill
             /// The image is resized to fit the entire bounds rectangle.
             case resize
             /// The image isn't resized.
             case none
+            //   case fill
 
             var imageScaling: NSImageScaling {
                 switch self {

@@ -18,6 +18,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     }
         
     var previousStringValue: String = ""
+    var editingString: String = ""
     let noIntrinsicWidth = true
     
     var editingContentView: EdiitingContentView? {
@@ -37,7 +38,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         } else {
             stringValue = ""
         }
-
         if let attributedPlaceholder = attributedPlaceholder {
             placeholderAttributedString = NSAttributedString(attributedPlaceholder)
         } else if let placeholder = placeholder {
@@ -45,7 +45,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         } else {
             placeholderString = ""
         }
-        toolTip = properties.toolTip == "" && stringValue != "" ? stringValue : toolTip
+        toolTip = properties.toolTip == "" ? stringValue != "" ? stringValue : nil : properties.toolTip
         isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         invalidateIntrinsicContentSize()
     }
@@ -53,11 +53,11 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     func update() {
         configurate(using: properties)
         invalidateIntrinsicContentSize()
-        if isFirstResponder, !properties.isEditable {
+        if isFirstResponder, !properties.isEditable || !properties.isSelectable {
             isEditing = false
         }
     }
-    
+
     var textBounds: CGRect {
         guard let cell = cell else { return .zero }
         let rect = cell.drawingRect(forBounds: bounds)
@@ -73,8 +73,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         super.init(frame: frameRect)
         truncatesLastVisibleLine = true
         delegate = self
-        // drawsBackground = true
-        // backgroundColor = .controlAccentColor.withAlphaComponent(0.3)
     }
     
     static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
@@ -95,9 +93,8 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     
     override public func becomeFirstResponder() -> Bool {
         let canBecome = super.becomeFirstResponder()
-        if isEditable, canBecome {
+        if isEditable, isSelectable, canBecome {
             isEditing = true
-            previousStringValue = stringValue
         }
         return canBecome
     }
@@ -105,6 +102,8 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     var isEditing = false {
         didSet {
             guard oldValue != isEditing else { return }
+            previousStringValue = isEditing ? stringValue : ""
+            editingString = previousStringValue
             focusRingType = isEditing ? .none : .default
             editingContentView?.isEditing = isEditing
         }
@@ -122,6 +121,10 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     
     override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
+        if properties.stringValidation?(stringValue) == false {
+            stringValue = editingString
+        }
+        editingString = stringValue
         invalidateIntrinsicContentSize()
         editingContentView?.updateTableRowHeight(reset: true)
     }
@@ -161,6 +164,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     class WidthTextField: NSTextField {
         var properties: TextProperties! {
             didSet {
+                maximumNumberOfCharacters
                 guard oldValue != properties else { return }
                 properties.isSelectable = false
                 configurate(using: properties)

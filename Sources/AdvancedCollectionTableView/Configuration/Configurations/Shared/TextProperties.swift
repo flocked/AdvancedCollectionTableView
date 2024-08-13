@@ -293,7 +293,7 @@ extension NSTextField {
         adjustsFontSizeToFitWidth = properties.adjustsFontSizeToFitWidth
         minimumScaleFactor = properties.minimumScaleFactor
         allowsDefaultTighteningForTruncation = properties.allowsDefaultTighteningForTruncation
-        toolTip = properties.toolTip
+        toolTip = properties.toolTip == "" ? stringValue != "" ? stringValue : nil : properties.toolTip
         bezelStyle = properties.bezel.type
         isBezeled = properties.bezel.isBezeled
         isBordered = properties.bezel.isBezeled

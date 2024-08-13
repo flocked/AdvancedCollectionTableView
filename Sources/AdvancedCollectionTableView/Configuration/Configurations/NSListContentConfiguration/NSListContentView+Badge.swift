@@ -18,12 +18,8 @@ extension NSListContentView {
         var properties: NSListContentConfiguration.Badge {
             didSet {
                 guard oldValue != properties else { return }
-                updateBadge()
+                hostingViiew.rootView = ContentView(badge: properties)
             }
-        }
-        
-        func updateBadge() {
-            hostingViiew.rootView = ContentView(badge: properties)
         }
         
         init(properties: NSListContentConfiguration.Badge) {
