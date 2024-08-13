@@ -553,6 +553,22 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
         columnHandlers.sortDescriptorsChanged?(oldDescriptors, tableView.sortDescriptors)
+        
+        guard let sortDescriptor = tableView.sortDescriptors.first as? ItemSortDescriptor else { return }
+        sortDescriptor.itemSortings.editEach({$0.ascending = sortDescriptor.ascending})
+        var sortingChanged = false
+        var snapshot = emptySnapshot()
+        snapshot.appendSections(sections)
+        for section in sections {
+            let items = currentSnapshot.itemIdentifiers(inSection: section)
+            let sorted = items.sorted(by: sortDescriptor.itemSortings.compactMap({$0.elementSorting}))
+            snapshot.appendItems(sorted, toSection: section)
+            if !sortingChanged, items != sorted {
+                sortingChanged = true
+            }
+        }
+        guard sortingChanged else { return }
+        apply(snapshot, .withoutAnimation)
     }
         
     // MARK: - Items

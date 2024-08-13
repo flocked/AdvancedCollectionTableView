@@ -94,6 +94,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
 
     func updateConfiguration() {
+        fittingSizes.removeAll()
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
 
@@ -296,18 +297,26 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     override open func layout() {
         super.layout()
         guard bounds.width != boundsWidth else { return }
+        if bounds.width > boundsWidth {
+            updateTableRowHeight()
+        }
         boundsWidth = bounds.width
         if isEditing {
             // textField.preferredMaxLayoutWidth = (boundsWidth - 34).clamped(min: 0)
             // secondaryTextField.preferredMaxLayoutWidth = textField.preferredMaxLayoutWidth
         }
-        updateTableRowHeight()
     }
     
+    var fittingSizes: [CGFloat:CGSize] = [:]
     func updateTableRowHeight() {
-        let fittingSize = fittingSize
-        if frame.size.height > fittingSize.height {
+        if let fittingSize = fittingSizes[frame.size.height] {
             tableRowView?.frame.size.height = fittingSize.height
+        } else {
+            let fittingSize = fittingSize
+            if frame.size.height > fittingSize.height {
+                tableRowView?.frame.size.height = fittingSize.height
+                fittingSizes[frame.size.height] = fittingSize
+            }
         }
     }
 
