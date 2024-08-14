@@ -198,6 +198,7 @@ extension NSTableCellView {
                     tableView.usesAutomaticRowHeights = true
                 }
                 self.updateContentConfigurationStyle(tableView: tableView)
+                self.rowView?.translatesAutoresizingMaskIntoConstraints = false
                 self.rowView?.observeSelection()
                 if self.automaticallyUpdatesContentConfiguration {
                     self.setNeedsUpdateConfiguration()

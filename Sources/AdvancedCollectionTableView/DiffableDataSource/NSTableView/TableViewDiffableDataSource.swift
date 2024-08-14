@@ -46,11 +46,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dropValidationRow: Int? = nil
+    enum ColumnItemSortingStrategy: Int, Hashable {
+        
+        case reset
+        /// Updates the item order
+        case update
+    }
     var dragingRowIndexes: [Int] = [] {
         didSet {
             guard oldValue != dragingRowIndexes else { return }
-            oldValue.compactMap({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = false })
-            dragingRowIndexes.compactMap({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = true })
+            oldValue.forEach({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = false })
+            dragingRowIndexes.forEach({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = true })
         }
     }
     var dropTargetRow: Int? = nil {

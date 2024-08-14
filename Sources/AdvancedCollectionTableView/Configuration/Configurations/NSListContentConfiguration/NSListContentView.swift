@@ -60,9 +60,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading)
     lazy var imageTextStackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
     lazy var badgeStackView = NSStackView(views: [imageTextStackView]).orientation(.horizontal).distribution(.fill).alignment(.centerY)
-    
-    var boundsWidth: CGFloat = 0.0
-    var cachedFittingSizes: [CGFloat:CGSize] = [:]
     var stackViewConstraints: [NSLayoutConstraint] = []
     
     var isEditing: Bool = false {
@@ -77,7 +74,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             // textField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
             // secondaryTextField.preferredMaxLayoutWidth = isEditing ? bounds.width-34 : 0
-            // updateTableRowHeight()
         }
     }
     
@@ -94,7 +90,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
     }
     
     func updateConfiguration() {
-        cachedFittingSizes.removeAll()
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
         
@@ -165,7 +160,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
         
         updateAccesoryViews()
-        updateTableRowHeight()
     }
     
     func updateAccesoryViews() {
@@ -265,7 +259,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             return imageSize
         }
-        return nil
     }
     
     func scaleImageSize(_ imageSize: CGSize, to size: CGSize) -> CGSize {
@@ -273,31 +266,6 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             // case .fill, .fit: return imageSize.scaled(toHeight: size.height)
         case .fit: return imageSize.scaled(toHeight: size.height)
         default: return CGSize(size.height, size.height)
-        }
-    }
-    
-    override open func layout() {
-        super.layout()
-        guard bounds.width != boundsWidth else { return }
-        if bounds.width > boundsWidth {
-            updateTableRowHeight()
-        }
-        boundsWidth = bounds.width
-        if isEditing {
-            // textField.preferredMaxLayoutWidth = (boundsWidth - 34).clamped(min: 0)
-            // secondaryTextField.preferredMaxLayoutWidth = textField.preferredMaxLayoutWidth
-        }
-    }
-    
-    func updateTableRowHeight(reset: Bool = false) {
-        if !reset, let fittingSize = cachedFittingSizes[frame.size.height] {
-            tableRowView?.frame.size.height = fittingSize.height
-        } else {
-            let fittingSize = fittingSize
-            if frame.size.height > fittingSize.height {
-                tableRowView?.frame.size.height = fittingSize.height
-                cachedFittingSizes[frame.size.height] = fittingSize
-            }
         }
     }
     

@@ -126,7 +126,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         }
         editingString = stringValue
         invalidateIntrinsicContentSize()
-        editingContentView?.updateTableRowHeight(reset: true)
     }
 
     public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -164,7 +163,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     class WidthTextField: NSTextField {
         var properties: TextProperties! {
             didSet {
-                maximumNumberOfCharacters
                 guard oldValue != properties else { return }
                 properties.isSelectable = false
                 configurate(using: properties)

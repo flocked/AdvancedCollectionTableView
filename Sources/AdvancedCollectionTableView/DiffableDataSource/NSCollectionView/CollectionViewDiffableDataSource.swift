@@ -157,7 +157,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
 
     func observeDisplayingItems() {
         if displayHandlers.shouldObserve {
-            collectionView.displayingItemsHandlers
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(scrollViewContentBoundsDidChange(_:)),

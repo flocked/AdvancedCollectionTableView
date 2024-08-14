@@ -215,6 +215,7 @@ extension NSTableRowView {
                 guard let self = self else { return }
                 if self.contentConfiguration is AutomaticHeightSizable {
                     tableView.usesAutomaticRowHeights = true
+                    translatesAutoresizingMaskIntoConstraints = false
                 }
                 tableView.setupObservation()
             }
