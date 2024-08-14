@@ -97,7 +97,6 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isDropTarget = isDropTarget
         self["isSelected"] = isSelected
         self["isEmphasized"] = isEmphasized
-        self["isItemState"] = true
     }
 
     init(isSelected: Bool,

@@ -45,7 +45,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-    
     var dropValidationRow: Int? = nil
     var dragingRowIndexes: [Int] = [] {
         didSet {
@@ -482,6 +481,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             } else {
                 let transaction = moveItemsTransaction(items, to: row)
                 reorderingHandlers.willReorder?(transaction)
+                tableView.sortDescriptors = []
                 apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
                 selectItems(items)
                 reorderingHandlers.didReorder?(transaction)
@@ -553,22 +553,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
         columnHandlers.sortDescriptorsChanged?(oldDescriptors, tableView.sortDescriptors)
-        
         guard let sortDescriptor = tableView.sortDescriptors.first as? ItemSortDescriptor else { return }
-        sortDescriptor.itemSortings.editEach({$0.ascending = sortDescriptor.ascending})
-        var sortingChanged = false
-        var snapshot = emptySnapshot()
-        snapshot.appendSections(sections)
-        for section in sections {
-            let items = currentSnapshot.itemIdentifiers(inSection: section)
-            let sorted = items.sorted(by: sortDescriptor.itemSortings.compactMap({$0.elementSorting}))
-            snapshot.appendItems(sorted, toSection: section)
-            if !sortingChanged, items != sorted {
-                sortingChanged = true
-            }
+
+        if let oldSortDescriptor = (oldDescriptors.first(where: {$0.key == sortDescriptor.key && $0 is ItemSortDescriptor}) as? ItemSortDescriptor) {
+            sortDescriptor.comparators = oldSortDescriptor.comparators
         }
-        guard sortingChanged else { return }
-        apply(snapshot, .withoutAnimation)
+        
+        if let transaction = sortTransaction() {
+            reorderingHandlers.willReorder?(transaction)
+            apply(transaction.finalSnapshot, .withoutAnimation)
+            reorderingHandlers.didReorder?(transaction)
+        }
     }
         
     // MARK: - Items
@@ -757,6 +752,25 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             snapshot.appendItems(items, toSection: section)
         }
         return DiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+    }
+    
+    func sortTransaction(snapshot: NSDiffableDataSourceSnapshot<Section, Item>? = nil) -> DiffableDataSourceTransaction<Section, Item>? {
+        guard let sortDescriptor = tableView.sortDescriptors.first as? ItemSortDescriptor else { return nil }
+        sortDescriptor.updateOrder()
+        let snapshot = snapshot ?? currentSnapshot
+        var newSnapshot = emptySnapshot()
+        var sortingChanged = false
+        newSnapshot.appendSections(sections)
+        for section in snapshot.sectionIdentifiers {
+            let items = snapshot.itemIdentifiers(inSection: section)
+            let sorted = items.sorted(by: sortDescriptor.comparators)
+            newSnapshot.appendItems(sorted, toSection: section)
+            if !sortingChanged, items != sorted {
+                sortingChanged = true
+            }
+        }
+        guard sortingChanged else { return nil }
+        return .init(initial: currentSnapshot, final: newSnapshot)
     }
     
     // MARK: - Empty Collection View
