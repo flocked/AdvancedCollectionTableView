@@ -11,6 +11,13 @@ import FZUIKit
 import AdvancedCollectionTableView
 
 extension TableViewDiffableDataSource {
+    /**
+     Sets the specified item sort comperator to the table column.
+     
+     - Parameters:
+        - comparator: The item sorting comperator, or `nil` to remove any sorting comperators from the table column.
+        - tableColumn: The table column.
+     */
     func setSortComparator(_ comparator: ElementSortComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
         if let comparator = comparator {
             tableColumn.sortDescriptorPrototype = ItemSortDescriptor([comparator])
@@ -19,39 +26,44 @@ extension TableViewDiffableDataSource {
         }
     }
     
+    /**
+     Sets the specified item sort comperators to the table column.
+     
+     - Parameters:
+        - comparators: The item sorting comperators.
+        - tableColumn: The table column.
+     */
     func setSortComparators(_ comparators: [ElementSortComparator<Item>], forColumn tableColumn: NSTableColumn) {
-        guard !comparators.isEmpty else { return }
-        tableColumn.sortDescriptorPrototype = ItemSortDescriptor(comparators)
-    }
-    
-    func setSortComparators(_ comparators: ElementSortComparator<Item>..., forColumn tableColumn: NSTableColumn) {
-        setSortComparators(comparators, forColumn: tableColumn)
+        if comparators.isEmpty {
+            setSortComparator(nil, forColumn: tableColumn)
+        } else {
+            tableColumn.sortDescriptorPrototype = ItemSortDescriptor(comparators)
+        }
     }
     
     class ItemSortDescriptor: NSSortDescriptor {
+        
         var comparators: [ElementSortComparator<Item>] = []
-        
-        override init(key: String?, ascending: Bool, selector: Selector?) {
-            super.init(key: key, ascending: ascending, selector: selector)
-        }
-        
-        public init(_ comparators: [ElementSortComparator<Item>]) {
-            super.init(key: UUID().uuidString, ascending: true, selector: nil)
-            self.comparators = comparators
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
         
         @discardableResult
         func comparators(_ comparators: [ElementSortComparator<Item>]) -> Self {
             self.comparators = comparators
             return self
         }
-                
-        func updateOrder() {
-            comparators.editEach({$0.order = ascending ? .forward : .reverse})
+        
+        init(_ comparators: [ElementSortComparator<Item>], ascending: Bool = true, key: String? = nil) {
+            super.init(key: key ?? UUID().uuidString, ascending: ascending, selector: nil)
+            self.comparators = comparators
+        }
+        
+        override var reversedSortDescriptor: Any {
+            var comparators = comparators
+            comparators.editEach({$0.order = $0.order == .forward ? .reverse : .forward})
+            return ItemSortDescriptor(comparators, ascending: !ascending, key: key)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
     }
 }

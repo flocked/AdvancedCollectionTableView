@@ -553,12 +553,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
         columnHandlers.sortDescriptorsChanged?(oldDescriptors, tableView.sortDescriptors)
-        guard let sortDescriptor = tableView.sortDescriptors.first as? ItemSortDescriptor else { return }
 
-        if let oldSortDescriptor = (oldDescriptors.first(where: {$0.key == sortDescriptor.key && $0 is ItemSortDescriptor}) as? ItemSortDescriptor) {
-            sortDescriptor.comparators = oldSortDescriptor.comparators
-        }
-        
         if let transaction = sortTransaction() {
             reorderingHandlers.willReorder?(transaction)
             apply(transaction.finalSnapshot, .withoutAnimation)
@@ -756,7 +751,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     func sortTransaction(snapshot: NSDiffableDataSourceSnapshot<Section, Item>? = nil) -> DiffableDataSourceTransaction<Section, Item>? {
         guard let sortDescriptor = tableView.sortDescriptors.first as? ItemSortDescriptor else { return nil }
-        sortDescriptor.updateOrder()
         let snapshot = snapshot ?? currentSnapshot
         var newSnapshot = emptySnapshot()
         var sortingChanged = false
