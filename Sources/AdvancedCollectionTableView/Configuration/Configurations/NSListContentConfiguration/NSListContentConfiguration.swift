@@ -372,7 +372,7 @@ extension NSListContentConfiguration {
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.textProperties.font = .systemFont(style).weight(weight)
         configuration.textProperties.maximumNumberOfLines = 1
-        configuration.secondaryTextProperties.maximumNumberOfLines = 1
+        configuration.secondaryTextProperties.maximumNumberOfLines = 0
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
         configuration.imageProperties.tintColor = color.primary
