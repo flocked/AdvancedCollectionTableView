@@ -4,13 +4,13 @@
 
 ### Creating list configuration states
 
-- ``init(isSelected:isEnabled:isHovered:isEditing:isEmphasized:isNextSelected:isPreviousSelected:)``
+- ``init(isSelected:isEnabled:isHovered:isEditing:isActive:isNextSelected:isPreviousSelected:)``
 
 ### Managing list configuration states
 
 - ``isSelected``
 - ``isEditing``
-- ``isEmphasized``
+- ``isActive``
 - ``isPreviousSelected``
 - ``isNextSelected``
 - ``isEnabled``

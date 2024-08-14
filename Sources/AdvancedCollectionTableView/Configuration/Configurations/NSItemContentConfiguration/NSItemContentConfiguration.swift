@@ -262,7 +262,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                     var border = border
                     if isSelected {
                         border.width = border.width > 3.0 ? border.width : 3.0
-                        border.color = state.isEmphasized ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
+                        border.color = state.isActive ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
                     } else {
                         border.width = 0.0
                         border.color = nil
@@ -273,7 +273,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                     var shadow = shadow
                     if isSelected {
                         if shadow.opacity != 0.0, let color = shadow.color, color.alphaComponent != 0.0 {
-                            shadow.color = state.isEmphasized ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
+                            shadow.color = state.isActive ? .controlAccentColor : .controlAccentColor.withAlphaComponent(0.7)
                         }
                     }
                     return shadow

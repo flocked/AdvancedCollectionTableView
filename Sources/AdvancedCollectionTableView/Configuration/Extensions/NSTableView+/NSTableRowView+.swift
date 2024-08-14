@@ -55,6 +55,7 @@ extension NSTableRowView {
 
     func configurateContentView() {
         if var contentConfiguration = contentConfiguration {
+            translatesAutoresizingMaskIntoConstraints = false
             if automaticallyUpdatesContentConfiguration {
                 contentConfiguration = contentConfiguration.updated(for: configurationState)
             }
@@ -114,7 +115,7 @@ extension NSTableRowView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
-        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
+        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isActive: isActive, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
         return state
     }
 
@@ -176,8 +177,8 @@ extension NSTableRowView {
         (contentView as? EdiitingContentView)?.isEditing ?? false
     }
 
-    /// A Boolean value that specifies whether the row view is emphasized (the window is key).
-    @objc var isEmphasized: Bool {
+    /// A Boolean value that specifies whether the row view is active (it's window is focused).
+    @objc var isActive: Bool {
         window?.isKeyWindow ?? false
     }
     
@@ -210,12 +211,12 @@ extension NSTableRowView {
 
     func observeTableRowView() {
         observeSelection()
-        if configurationUpdateHandler != nil, tableViewObserverView == nil {
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard tableViewObserverView == nil else { return }
             tableViewObserverView = TableViewObserverView { [weak self] tableView in
                 guard let self = self else { return }
                 if self.contentConfiguration is AutomaticHeightSizable {
                     tableView.usesAutomaticRowHeights = true
-                    translatesAutoresizingMaskIntoConstraints = false
                 }
                 tableView.setupObservation()
             }
@@ -231,7 +232,7 @@ extension NSTableRowView {
              }
              }
              */
-        } else if configurationUpdateHandler == nil {
+        } else {
             tableViewObserverView?.removeFromSuperview()
             tableViewObserverView = nil
         }

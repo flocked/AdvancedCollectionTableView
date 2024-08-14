@@ -10,7 +10,7 @@ import FZUIKit
 
 protocol ConfigurationState: NSConfigurationState {
     var isSelected: Bool { get }
-    var isEmphasized: Bool { get }
+    var isActive: Bool { get }
     var isHovered: Bool { get }
 }
 

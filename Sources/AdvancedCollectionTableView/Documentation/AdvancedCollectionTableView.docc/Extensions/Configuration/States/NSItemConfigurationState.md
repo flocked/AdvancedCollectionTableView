@@ -4,12 +4,12 @@
 
 ### Creating item configuration states
 
-- ``init(isSelected:highlight:isEditing:isEmphasized:isHovered:)``
+- ``init(isSelected:highlight:isEditing:isActive:isHovered:)``
 
 ### Managing item configuration states
 
 - ``isSelected``
-- ``isEmphasized``
+- ``isActive``
 - ``isEditing``
 - ``isHovered``
 - ``highlight``

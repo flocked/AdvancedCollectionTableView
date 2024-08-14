@@ -105,7 +105,7 @@ extension NSTableCellView {
      */
     @objc open var configurationState: NSListConfigurationState {
         let rowView = rowView
-        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isEmphasized: isEmphasized, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
+        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isActive: isActive, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
     }
 
     /**
@@ -233,8 +233,8 @@ extension NSTableCellView {
         rowView?.isHovered ?? false
     }
 
-    /// A Boolean value that specifies whether the cell view is emphasized (the cell window is key).
-    @objc var isEmphasized: Bool {
+    /// A Boolean value that specifies whether the cell view is active (it's window is focused).
+    @objc var isActive: Bool {
         window?.isKeyWindow ?? false
     }
 

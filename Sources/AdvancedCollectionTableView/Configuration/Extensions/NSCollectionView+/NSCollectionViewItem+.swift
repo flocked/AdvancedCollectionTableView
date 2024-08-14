@@ -182,7 +182,7 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isEmphasized: isEmphasized, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isActive: isActive, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
         return state
     }
 
@@ -311,12 +311,8 @@ extension NSCollectionViewItem {
         (view as? EdiitingContentView)?.isEditing ?? false
     }
 
-    /**
-     A Boolean value that indicates whether the item is emphasized.
-
-     The item is emphasized when it's window is key.
-     */
-    @objc var isEmphasized: Bool {
+    /// A Boolean value that indicates whether the item is active (it's window is focused).
+    @objc var isActive: Bool {
         view.window?.isKeyWindow ?? false
     }
     
