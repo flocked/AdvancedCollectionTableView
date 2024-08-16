@@ -374,7 +374,7 @@ extension NSListContentConfiguration {
         configuration.textProperties.maximumNumberOfLines = 1
         configuration.secondaryTextProperties.maximumNumberOfLines = 0
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
-        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight.symbolWeight)
+        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight)
         configuration.imageProperties.tintColor = color.primary
         configuration.imageProperties.sizing = .firstTextHeight
         configuration.imageProperties.symbolConfiguration = .font(style).color(color)
@@ -383,22 +383,3 @@ extension NSListContentConfiguration {
         return configuration
     }
 }
-
-
-extension NSFont.Weight {
-    var symbolWeight: NSUIImage.SymbolWeight {
-        switch self {
-        case .ultraLight: return .ultraLight
-        case .thin: return .thin
-        case .light: return .light
-        case .regular: return .regular
-        case .medium: return .medium
-        case .semibold: return .semibold
-        case .bold: return .bold
-        case .heavy: return .heavy
-        case .black: return .black
-        default: return .regular
-        }
-    }
-}
-
