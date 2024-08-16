@@ -242,14 +242,13 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 imageSize = imageSize.scaled(toWidth: width)
             }
             return imageSize
-        case let .maxiumSizeRelative(width: relativeWidth, height: relativeHeight):
-            let width = bounds.width - appliedConfiguration.margins.width
-            if let relativeWidth = relativeWidth, let relativeHeight = relativeHeight {
-                imageSize = imageSize.scaled(toFit: CGSize(width * relativeWidth, bounds.width * relativeHeight))
-            } else if let relativeWidth = relativeWidth {
-                imageSize = imageSize.scaled(toWidth: width * relativeWidth)
-            } else if let relativeHeight = relativeHeight {
-                imageSize = imageSize.scaled(toHeight: width * relativeHeight)
+        case let .relative(relative):
+            if appliedConfiguration.imageProperties.position.orientation == .vertical {
+                let width = bounds.width - appliedConfiguration.margins.width
+                imageSize = imageSize.scaled(toWidth: width * relative)
+            } else {
+                let height = bounds.height - appliedConfiguration.margins.height
+                imageSize = imageSize.scaled(toHeight: height * relative)
             }
             return imageSize
         default:
