@@ -306,19 +306,11 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
 extension NSListContentConfiguration {
     static func automatic() -> NSListContentConfiguration {
-        var configuration = sidebar(.body, color: .monochrome(.controlAccentColor))
-        configuration.type = .automatic
-        configuration.imageProperties.position = .leading(.firstBaseline)
-        configuration.imageProperties.sizing = .firstTextHeight
-        return configuration
+        sidebar(.body, color: .monochrome(.controlAccentColor), type: .automatic)
     }
 
     static func automaticHeader() -> NSListContentConfiguration {
-        var configuration = sidebar(.body, color: .monochrome(.controlAccentColor))
-        configuration.type = .automaticHeader
-        configuration.imageProperties.position = .leading(.firstBaseline)
-        configuration.imageProperties.sizing = .firstTextHeight
-        return configuration
+        sidebar(.body, color: .monochrome(.controlAccentColor), type: .automaticHeader)
     }
     
     mutating func updated(from configuration: NSListContentConfiguration) -> NSListContentConfiguration {
@@ -341,45 +333,32 @@ extension NSListContentConfiguration {
             if type == .automaticHeader {
                 configuration.textProperties.font = .subheadline.weight(.bold)
                 configuration.textProperties.color = .tertiaryLabelColor
-                // configuration.secondaryTextProperties = configuration.textProperties
+                configuration.secondaryTextProperties.font = .subheadline
+                configuration.secondaryTextProperties.color = .tertiaryLabelColor
                 configuration.imageProperties.tintColor = .tertiaryLabelColor
-                configuration.imageProperties.position = .leading(.firstBaseline)
-                configuration.imageProperties.sizing = .firstTextHeight
-                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.subheadline, weight: .bold), color: .monochrome)
+                configuration.imageProperties.symbolConfiguration = .font(.subheadline, weight: .bold).color(.monochrome(.tertiaryLabelColor))
                 configuration.margins = .init(top: 2.0, leading: 2.0, bottom: 2.0, trailing: 2.0)
-            } else {
-                configuration.textProperties.font = .body
-                configuration.secondaryTextProperties.font = .body
-                configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
-                configuration.imageToTextPadding = 3.0
-                configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
             }
         default:
-            configuration.textProperties.font = .body
-            configuration.secondaryTextProperties.font = .body
             configuration.imageToTextPadding = 6.0
-            configuration.textProperties.maximumNumberOfLines = 0
-            configuration.secondaryTextProperties.maximumNumberOfLines = 0
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body))
-            configuration.imageProperties.symbolConfiguration = .init(font: .textStyle(.body), color: .monochrome)
-            configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0  , bottom: 2.0, trailing: 2.0)
+            configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0, bottom: 2.0, trailing: type == .automaticHeader ? 2.0 : 4.0)
         }
         return configuration
     }
 
-    static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration) -> NSListContentConfiguration {
+    static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration, type: ListItemType = .normal) -> NSListContentConfiguration {
         var configuration = NSListContentConfiguration()
         configuration.imageProperties.position = .leading(.firstBaseline)
         configuration.textProperties.font = .systemFont(style).weight(weight)
         configuration.textProperties.maximumNumberOfLines = 1
-        configuration.secondaryTextProperties.maximumNumberOfLines = 0
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
-        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight)
+        configuration.secondaryTextProperties.maximumNumberOfLines = 0
         configuration.imageProperties.tintColor = color.primary
         configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .font(style).color(color)
+        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight).color(color)
         configuration.imageToTextPadding = 3.0
         configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+        configuration.type = type
         return configuration
     }
 }
