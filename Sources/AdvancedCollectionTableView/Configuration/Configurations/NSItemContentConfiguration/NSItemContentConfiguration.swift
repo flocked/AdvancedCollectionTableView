@@ -256,9 +256,10 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     public func updated(for state: NSConfigurationState) -> NSItemContentConfiguration {
         var configuration = self
         if let state = state as? ConfigurationState {
+            let hash = "\(state.isSelected)\(state.isActive)"
             let isSelected = state.isSelected || (state as? NSItemConfigurationState)?.isDropTarget == true
             if isSelected {
-                configuration.contentProperties.borderStateTransformer = .init("StateTransform") { border in
+                configuration.contentProperties.borderStateTransformer = .init(hash) { border in
                     var border = border
                     if isSelected {
                         border.width = border.width > 3.0 ? border.width : 3.0
@@ -269,7 +270,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
                     }
                     return border
                 }
-                configuration.contentProperties.shadowTransformer = .init("StateTransform") { shadow in
+                configuration.contentProperties.shadowTransformer = .init(hash) { shadow in
                     var shadow = shadow
                     if isSelected {
                         if shadow.opacity != 0.0, let color = shadow.color, color.alphaComponent != 0.0 {

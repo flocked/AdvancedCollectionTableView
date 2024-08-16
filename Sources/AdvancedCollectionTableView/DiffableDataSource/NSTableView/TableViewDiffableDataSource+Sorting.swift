@@ -17,7 +17,7 @@ extension TableViewDiffableDataSource {
         - comparator: The item sorting comperator, or `nil` to remove any sorting comperators from the table column.
         - tableColumn: The table column.
      */
-    func setSortComparator(_ comparator: ElementSortComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+    func setSortComparator(_ comparator: SortingComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
         if let comparator = comparator {
             tableColumn.sortDescriptorPrototype = ItemSortDescriptor([comparator])
         } else if tableColumn.sortDescriptorPrototype is ItemSortDescriptor {
@@ -32,7 +32,7 @@ extension TableViewDiffableDataSource {
         - comparators: The item sorting comperators.
         - tableColumn: The table column.
      */
-    func setSortComparators(_ comparators: [ElementSortComparator<Item>], forColumn tableColumn: NSTableColumn) {
+    func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn) {
         if comparators.isEmpty {
             setSortComparator(nil, forColumn: tableColumn)
         } else {
@@ -42,15 +42,15 @@ extension TableViewDiffableDataSource {
     
     class ItemSortDescriptor: NSSortDescriptor {
         
-        var comparators: [ElementSortComparator<Item>] = []
+        var comparators: [SortingComparator<Item>] = []
         
         @discardableResult
-        func comparators(_ comparators: [ElementSortComparator<Item>]) -> Self {
+        func comparators(_ comparators: [SortingComparator<Item>]) -> Self {
             self.comparators = comparators
             return self
         }
         
-        init(_ comparators: [ElementSortComparator<Item>], ascending: Bool = true, key: String? = nil) {
+        init(_ comparators: [SortingComparator<Item>], ascending: Bool = true, key: String? = nil) {
             super.init(key: key ?? UUID().uuidString, ascending: ascending, selector: nil)
             self.comparators = comparators
         }
