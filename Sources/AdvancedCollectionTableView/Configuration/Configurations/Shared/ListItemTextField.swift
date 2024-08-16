@@ -21,13 +21,14 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     var editingString: String = ""
     let noIntrinsicWidth = true
     
-    var editingContentView: EdiitingContentView? {
-        firstSuperview(where: { $0 is EdiitingContentView }) as? EdiitingContentView
+    var editingContentView: EditingContentView? {
+        firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
     }
     
     var tableCollectionView: NSView? {
         guard let editingContentView = editingContentView else { return nil }
-        return editingContentView is NSListContentView ? firstSuperview(for: NSTableView.self) : firstSuperview(for: NSCollectionView.self)
+        let isTable = editingContentView.superview is NSTableCellView
+        return editingContentView.firstSuperview(for: isTable ? NSTableView.self : NSCollectionView.self)
     }
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {

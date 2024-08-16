@@ -25,8 +25,8 @@ extension NSTableView {
             guard newValue != hoveredRow else { return }
             let previousRow = hoveredRowView
             setAssociatedValue(newValue, key: "hoveredRow")
-            previousRow?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
-            hoveredRowView?.setNeedsAutomaticUpdateConfiguration(updateCells: true)
+            previousRow?.setNeedsAutomaticUpdateConfiguration()
+            hoveredRowView?.setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -47,7 +47,6 @@ extension NSTableView {
         lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
         weak var tableView: NSTableView?
         var isEnabledObservation: KeyValueObservation?
-        var styleObservation: KeyValueObservation?
         
         init(for tableView: NSTableView) {
             self.tableView = tableView
@@ -55,15 +54,9 @@ extension NSTableView {
             updateTrackingAreas()
             tableView.addSubview(withConstraint: self)
             self.sendToBack()
-            styleObservation = tableView.observeChanges(for: \.effectiveStyle) { [weak self] old, new in
-                guard let self = self, old != new, let tableView = self.tableView else { return }
-                tableView.visibleRows().flatMap({$0.cellViews}).forEach({
-                    $0.updateContentConfigurationStyle(tableView: tableView)
-                })
-            }
             isEnabledObservation = tableView.observeChanges(for: \.isEnabled) { [weak self] old, new in
                 guard let self = self, old != new else { return }
-                self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
+                self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
             }
         }
         
@@ -107,12 +100,12 @@ extension NSTableView {
             if let newWindow = newWindow {
                 tokens = [NotificationCenter.default.observe(NSWindow.didBecomeKeyNotification, object: newWindow) { [weak self] _ in
                     guard let self = self, let tableView = self.tableView else { return }
-                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
+                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
 
                 }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, object: newWindow) { [weak self] _ in
                     guard let self = self, let tableView = self.tableView else { return }
                     tableView.hoveredRow = -1
-                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration(updateCells: true) }
+                    tableView.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
                 }]
             }
         }

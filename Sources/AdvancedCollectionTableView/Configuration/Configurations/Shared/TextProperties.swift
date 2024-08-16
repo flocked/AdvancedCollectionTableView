@@ -342,9 +342,8 @@ extension Text {
     @ViewBuilder
     func configurate(using properties: TextProperties) -> some View {
         font(Font(properties.font))
-            .foregroundColor(Color(properties.resolvedColor()))
+            .foregroundColor(properties.resolvedColor().swiftUI)
             .lineLimit(properties.maximumNumberOfLines == 0 ? nil : properties.maximumNumberOfLines)
-            .multilineTextAlignment(properties.alignment.swiftUIMultiline)
-            .frame(alignment: properties.alignment.swiftUI)
+            .textAlignment(properties.alignment.swiftUIMultiline)
     }
 }

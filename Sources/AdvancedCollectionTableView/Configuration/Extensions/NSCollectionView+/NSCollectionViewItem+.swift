@@ -308,7 +308,7 @@ extension NSCollectionViewItem {
      The value of this property is `true` when the text of a list or item content configuration is being edited.
      */
     @objc var isEditing: Bool {
-        (view as? EdiitingContentView)?.isEditing ?? false
+        (view as? EditingContentView)?.isEditing ?? false
     }
 
     /// A Boolean value that indicates whether the item is active (it's window is focused).

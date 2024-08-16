@@ -9,8 +9,16 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-/// A content view for displaying list-based content.
-open class NSListContentView: NSView, NSContentView, EdiitingContentView {
+/**
+ A content view for displaying list-based item content.
+ 
+ You use a list content view for displaying list-based content in a custom view hierarchy. You can embed a list content view manually in a custom cell or in a container view, like a `NSStackView`. You can use Auto Layout or manual layout techniques to size and position the view, and its height adjusts dynamically according to its width and the space it needs to display its content.
+ 
+ A list content view relies on its list content configuration to supply its styling and content. You create a list content view by passing in a ``NSListContentConfiguration`` to ``init(configuration:)``. To update the content view, you set a new configuration on it through its ``configuration`` property.
+ 
+ If you’re using a `NSTableView` or `NSCollectionView`, you don’t need to manually create a list content view to take advantage of the list configuration. Instead, you assign a ``NSListContentConfiguration`` to the ``AppKit/NSTableCellView/contentConfiguration`` property of the table view cells or collection view items.
+ */
+open class NSListContentView: NSView, NSContentView, EditingContentView {
     
     /// Creates a list content view with the specified content configuration.
     public init(configuration: NSListContentConfiguration) {
@@ -213,14 +221,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         case let .maxiumSize(width: maxWidth, height: maxHeight):
             let maxWidth = maxWidth ?? imageSize.width
             let maxHeight = maxHeight ?? imageSize.height
-            if imageSize.width > maxWidth, imageSize.height > maxHeight {
-                imageSize = imageSize.scaled(toFit: CGSize(maxWidth, maxHeight))
-            } else if imageSize.width > maxWidth {
-                imageSize = imageSize.scaled(toWidth: maxWidth)
-            } else if imageSize.height > maxHeight {
-                imageSize = imageSize.scaled(toHeight: maxHeight)
-            }
-            return imageSize
+            return imageSize.scaled(toFit: CGSize(maxWidth, maxHeight))
         case let .relative(relative):
             if appliedConfiguration.imageProperties.position.orientation == .vertical || !appliedConfiguration.hasText && !appliedConfiguration.hasSecondaryText {
                 let width = bounds.width - appliedConfiguration.margins.width

@@ -15,18 +15,20 @@ import FZUIKit
  An item content configuration describes the styling and content for an individual element that might appear in a collection view. You fill the configuration with your content, and then assign it directly to collection view item's via ``AppKit/NSCollectionViewItem/contentConfiguration``, or to your own custom content view (``NSItemContentView``).
 
  ```swift
- var content = NSItemContentConfiguration()
+ var configuration = NSItemContentConfiguration()
 
  // Configure content.
- content.image = NSImage(named: "Mozart")
- content.text = "Mozart"
- content.secondaryText = "A genius composer"
+ configuration.text = "Text"
+ configuration.secondaryText = "Secondary Text"
+ configuration.image = NSImage(named: "Sample")
 
  // Customize appearance.
- content.textProperties.font = .body
+ configuration.contentProperties.cornerRadius = 10.0
 
- collectionViewItem.contentConfiguration = content
+ collectionViewItem.contentConfiguration = configuration
  ```
+ 
+ ![Item Content Configuration](NSItemContentConfiguration)
  */
 public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     // MARK: Creating item configurations
@@ -81,7 +83,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The primary text.
 
-     If you configurate the value with a non-`nil` value, ``attributedText`` is set to `nil`.
+     This value supersedes the ``attributedText`` property.
      */
     public var text: String? {
         didSet {
@@ -93,7 +95,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the primary text.
 
-     If you configurate the value with a non-`nil` value, ``text`` is set to `nil`.
+     This value supersedes the ``text`` property.
      */
     public var attributedText: AttributedString? {
         didSet {
@@ -105,7 +107,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` is set to `nil`.
+     This value supersedes the ``attributedPlaceholderText`` property.
      */
     public var placeholderText: String? {
         didSet {
@@ -117,7 +119,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``placeholderText`` is set to `nil`.
+     This value supersedes the ``placeholderText`` property.
      */
     public var attributedPlaceholderText: AttributedString? {
         didSet {
@@ -129,7 +131,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` is set to `nil`.
+     This value supersedes the ``secondaryAttributedText`` property.
      */
     public var secondaryText: String? {
         didSet {
@@ -141,7 +143,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryText`` is set to `nil`.
+     This value supersedes the ``secondaryText`` property.
      */
     public var secondaryAttributedText: AttributedString? {
         didSet {
@@ -153,7 +155,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      The secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` is set to `nil`.
+     This value supersedes the ``secondaryAttributedPlaceholderText`` property.
      */
     public var secondaryPlaceholderText: String? {
         didSet {
@@ -165,7 +167,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     /**
      An attributed variant of the secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` is set to `nil`.
+     This value supersedes the ``secondaryPlaceholderText`` property.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
@@ -185,7 +187,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
     /// The badges displayed either as overlay or attachment next to the image/view.
     public var badges: [Badge] = []
-    
+
     /// The text for the tooltip.
     public var toolTip: String? = nil
 

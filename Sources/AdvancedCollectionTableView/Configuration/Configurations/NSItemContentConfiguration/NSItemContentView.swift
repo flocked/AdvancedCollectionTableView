@@ -8,8 +8,16 @@
 import AppKit
 import FZUIKit
 
-/// A content view for displaying collection-based item content.
-open class NSItemContentView: NSView, NSContentView, EdiitingContentView {
+/**
+ A content view for displaying collection-based item content.
+ 
+ You use a list content view for displaying list-based content in a custom view hierarchy. You can embed a list content view manually in a custom cell or in a container view, like a `NSStackView`. You can use Auto Layout or manual layout techniques to size and position the view, and its height adjusts dynamically according to its width and the space it needs to display its content.
+ 
+ A list content view relies on its list content configuration to supply its styling and content. You create a list content view by passing in a ``NSItemContentConfiguration`` to ``init(configuration:)``. To update the content view, you set a new configuration on it through its ``configuration`` property.
+ 
+ If you’re using a `NSCollectionView` or `NSTableView`, you don’t need to manually create a list content view to take advantage of the list configuration. Instead, you assign a ``NSItemContentConfiguration`` to the ``AppKit/NSCollectionViewItem/contentConfiguration`` property of the collection view items or table view cells.
+ */
+open class NSItemContentView: NSView, NSContentView, EditingContentView {
     /// Creates an item content view with the specified content configuration.
     public init(configuration: NSItemContentConfiguration) {
         appliedConfiguration = configuration

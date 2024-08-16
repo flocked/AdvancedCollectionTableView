@@ -19,14 +19,18 @@ import FZUIKit
  var content = tableCell.defaultContentConfiguration()
 
  // Configure content.
- content.image = NSImage(systemSymbolName: "star")
- content.text = "Favorites"
+ content.text = "Text"
+ content.secondaryText = "Secondary Text"
+ content.image = NSImage(systemSymbolName: "photo")
 
  // Customize appearance.
- content.imageProperties.tintColor = .purple
+ content.imageProperties.tintColor = .controlAccentColor
 
  tableCell.contentConfiguration = content
  ```
+ 
+ ![List Content Configuration](NSListContentConfiguration)
+
  */
 public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     // MARK: Customizing content
@@ -34,7 +38,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The primary text.
 
-     If you configurate the value with a non-`nil` value, ``attributedText`` is set to `nil`.
+     This value supersedes the ``attributedText`` property.
      */
     public var text: String? {
         didSet {
@@ -46,7 +50,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the primary text.
 
-     If you configurate the value with a non-`nil` value, ``text`` is set to `nil`.
+     This value supersedes the ``text`` property.
      */
     public var attributedText: AttributedString? {
         didSet {
@@ -58,7 +62,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``attributedPlaceholderText`` ist set to `nil`.
+     This value supersedes the ``attributedPlaceholderText`` property.
      */
     public var placeholderText: String? {
         didSet {
@@ -70,7 +74,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the primary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``placeholderText`` is set to `nil`.
+     This value supersedes the ``placeholderText`` property.
      */
     public var attributedPlaceholderText: AttributedString? {
         didSet {
@@ -82,7 +86,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedText`` is set to `nil`.
+     This value supersedes the ``secondaryAttributedText`` property.
      */
     public var secondaryText: String? {
         didSet {
@@ -94,7 +98,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the secondary text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryText`` is set to `nil`.
+     This value supersedes the ``secondaryText`` property.
      */
     public var secondaryAttributedText: AttributedString? {
         didSet {
@@ -106,7 +110,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      The secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryAttributedPlaceholderText`` is set to `nil`.
+     This value supersedes the ``secondaryAttributedPlaceholderText`` property.
      */
     public var secondaryPlaceholderText: String? {
         didSet {
@@ -118,7 +122,7 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /**
      An attributed variant of the secondary placeholder text.
 
-     If you configurate the value with a non-`nil` value, ``secondaryPlaceholderText`` is set to `nil`.
+     This value supersedes the ``secondaryPlaceholderText`` property.
      */
     public var secondaryAttributedPlaceholderText: AttributedString? {
         didSet {
@@ -283,10 +287,6 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
         secondaryText != nil || secondaryAttributedText != nil
     }
 
-    var hasContent: Bool {
-        image != nil
-    }
-
     // MARK: Creating a content view
 
     /// Creates a new instance of the content view using the configuration.
@@ -313,10 +313,29 @@ extension NSListContentConfiguration {
         sidebar(.body, color: .monochrome(.controlAccentColor), type: .automaticHeader)
     }
     
-    mutating func updated(from configuration: NSListContentConfiguration) -> NSListContentConfiguration {
-        guard type.isAutomatic, configuration.type.isAutomatic, let tableViewStyle = configuration.tableViewStyle, tableViewStyle != .automatic else { return self }
-        type = configuration.type
-        return updated(for: tableViewStyle)
+    static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration, type: ListItemType = .normal) -> NSListContentConfiguration {
+        var configuration = NSListContentConfiguration()
+        configuration.imageProperties.position = .leading(.firstBaseline)
+        configuration.textProperties.font = .systemFont(style).weight(weight)
+        configuration.textProperties.maximumNumberOfLines = 1
+        configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
+        configuration.secondaryTextProperties.maximumNumberOfLines = 0
+        configuration.imageProperties.tintColor = color.primary
+        configuration.imageProperties.sizing = .firstTextHeight
+        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight).color(color)
+        configuration.imageToTextPadding = 3.0
+        configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
+        configuration.type = type
+        return configuration
+    }
+    
+    func updated(for tableCell: NSTableCellView) -> NSListContentConfiguration? {
+        guard type.isAutomatic, let tableStyle = tableCell.tableView?.effectiveStyle, tableStyle != tableViewStyle else { return nil }
+        var configuration = self
+        if tableCell.isGroupRowCell, type == .automatic {
+            configuration.type = .automaticHeader
+        }
+        return configuration.updated(for: tableStyle)
     }
     
     func updated(for tableView: NSTableView?) -> NSListContentConfiguration? {
@@ -343,22 +362,6 @@ extension NSListContentConfiguration {
             configuration.imageToTextPadding = 6.0
             configuration.margins = .init(top: 2.0, leading: type == .automaticHeader ? 2.0 : 4.0, bottom: 2.0, trailing: type == .automaticHeader ? 2.0 : 4.0)
         }
-        return configuration
-    }
-
-    static func sidebar(_ style: NSFont.TextStyle, weight: NSFont.Weight = .regular, color: ImageSymbolConfiguration.ColorConfiguration, type: ListItemType = .normal) -> NSListContentConfiguration {
-        var configuration = NSListContentConfiguration()
-        configuration.imageProperties.position = .leading(.firstBaseline)
-        configuration.textProperties.font = .systemFont(style).weight(weight)
-        configuration.textProperties.maximumNumberOfLines = 1
-        configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
-        configuration.secondaryTextProperties.maximumNumberOfLines = 0
-        configuration.imageProperties.tintColor = color.primary
-        configuration.imageProperties.sizing = .firstTextHeight
-        configuration.imageProperties.symbolConfiguration = .font(style, weight: weight).color(color)
-        configuration.imageToTextPadding = 3.0
-        configuration.margins = .init(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
-        configuration.type = type
         return configuration
     }
 }

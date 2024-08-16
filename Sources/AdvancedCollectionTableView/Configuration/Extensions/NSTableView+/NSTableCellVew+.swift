@@ -24,6 +24,7 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
+            let newValue = (newValue as? NSListContentConfiguration)?.updated(for: self) ?? newValue
             setAssociatedValue(newValue, key: "contentConfiguration")
             observeTableCellView()
             configurateContentView()
@@ -77,20 +78,15 @@ extension NSTableCellView {
             if automaticallyUpdatesContentConfiguration {
                 contentConfiguration = contentConfiguration.updated(for: configurationState)
             }
-            /*
-            if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: tableView) {
-                contentConfiguration = configuration
-            }
-            */
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
                 contentView = contentConfiguration.makeContentView()
                 translatesAutoresizingMaskIntoConstraints = false
                 addSubview(withConstraint: contentView!)
-                setNeedsDisplay()
-                contentView?.setNeedsDisplay()
             }
+            setNeedsDisplay()
+            contentView?.setNeedsDisplay()
         } else {
             contentView = nil
         }
@@ -118,19 +114,8 @@ extension NSTableCellView {
     @objc open func setNeedsUpdateConfiguration() {
         updateConfiguration(using: configurationState)
     }
-    
-    func updateContentConfigurationStyle(tableView: NSTableView? = nil) {
-        if var configuration = contentConfiguration as? NSListContentConfiguration, configuration.type.isAutomatic, configuration.type == .automatic, isGroupRowCell {
-            configuration.type = .automaticHeader
-            setAssociatedValue(configuration, key: "contentConfiguration")
-        }
-        if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: tableView ?? self.tableView) {
-            self.contentConfiguration = configuration
-        }
-    }
 
     func setNeedsAutomaticUpdateConfiguration() {
-        updateContentConfigurationStyle()
         if automaticallyUpdatesContentConfiguration {
             setNeedsUpdateConfiguration()
         } else {
@@ -187,6 +172,13 @@ extension NSTableCellView {
             setNeedsUpdateConfiguration()
         }
     }
+    
+    func updateContentConfigurationStyle() {
+        if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
+            setAssociatedValue(configuration, key: "contentConfiguration")
+            contentView?.configuration = configuration
+        }
+    }
 
     func observeTableCellView() {
         if contentConfiguration != nil || configurationUpdateHandler != nil {
@@ -197,12 +189,10 @@ extension NSTableCellView {
                 if self.contentConfiguration is AutomaticHeightSizable {
                     tableView.usesAutomaticRowHeights = true
                 }
-                self.updateContentConfigurationStyle(tableView: tableView)
+                self.updateContentConfigurationStyle()
                 self.rowView?.translatesAutoresizingMaskIntoConstraints = false
                 self.rowView?.observeSelection()
-                if self.automaticallyUpdatesContentConfiguration {
-                    self.setNeedsUpdateConfiguration()
-                }
+                self.setNeedsAutomaticUpdateConfiguration()
             }
             insertSubview(tableCellObserverView!, at: 0)
             /*
@@ -240,12 +230,12 @@ extension NSTableCellView {
 
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
     @objc var isEnabled: Bool {
-        rowView?.isEnabled ?? true
+        tableView?.isEnabled ?? true
     }
 
     /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
     @objc var isEditing: Bool {
-        (contentView as? EdiitingContentView)?.isEditing ?? false
+        (contentView as? EditingContentView)?.isEditing ?? false
     }
 
     var isNextRowSelected: Bool {

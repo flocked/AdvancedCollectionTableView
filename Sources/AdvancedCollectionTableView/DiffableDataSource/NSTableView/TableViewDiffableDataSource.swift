@@ -124,12 +124,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
                     guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
-                    let cellView = sectionHeaderCellProvider(tableView, row, section)
-                    if var configuration = cellView.contentConfiguration as? NSListContentConfiguration, configuration.type == .automatic {
-                        configuration.type = .automaticHeader
-                        cellView.contentConfiguration = configuration
-                    }
-                    return cellView
+                    return sectionHeaderCellProvider(tableView, row, section)
                 }
             } else {
                 dataSource.sectionHeaderViewProvider = nil

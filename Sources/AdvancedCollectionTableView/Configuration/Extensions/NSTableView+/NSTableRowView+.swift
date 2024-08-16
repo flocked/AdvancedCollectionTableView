@@ -130,14 +130,12 @@ extension NSTableRowView {
         updateConfiguration(using: configurationState)
     }
 
-    func setNeedsAutomaticUpdateConfiguration(updateCells: Bool = false) {
+    func setNeedsAutomaticUpdateConfiguration() {
         if automaticallyUpdatesContentConfiguration {
             setNeedsUpdateConfiguration()
         } else {
-            configurationUpdateHandler?(self, configurationState)
-        }
-        if updateCells {
             cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+            configurationUpdateHandler?(self, configurationState)
         }
     }
 
@@ -161,10 +159,7 @@ extension NSTableRowView {
      A hovered row view has the mouse pointer on it.
      */
     @objc var isHovered: Bool {
-        if let tableView = tableView, tableView.hoveredRow != -1 {
-            return tableView.row(for: self) == tableView.hoveredRow
-        }
-        return false
+        row == tableView?.hoveredRow ?? -1
     }
 
     /// A Boolean value that specifies whether the row view is enabled (the table view's `isEnabled` is `true`).
@@ -174,7 +169,7 @@ extension NSTableRowView {
 
     /// A Boolean value that indicates whether the row view is in an editable state. (the text of a content configuration is currently edited).
     @objc var isEditing: Bool {
-        (contentView as? EdiitingContentView)?.isEditing ?? false
+        (contentView as? EditingContentView)?.isEditing ?? false
     }
 
     /// A Boolean value that specifies whether the row view is active (it's window is focused).
@@ -188,7 +183,7 @@ extension NSTableRowView {
             guard newValue != isReordering else { return }
             cellViews.forEach({ $0.backgroundStyle = newValue ? .lowered : .emphasized })
             setAssociatedValue(newValue, key: "isReordering")
-            setNeedsAutomaticUpdateConfiguration(updateCells: true)
+            setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -197,7 +192,7 @@ extension NSTableRowView {
         set {
             guard newValue != isDropTarget else { return }
             setAssociatedValue(newValue, key: "isDropTarget")
-            setNeedsAutomaticUpdateConfiguration(updateCells: true)
+            setNeedsAutomaticUpdateConfiguration()
         }
     }
     
@@ -205,7 +200,7 @@ extension NSTableRowView {
         guard isSelectedObservation == nil else { return }
         isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in
             guard let self = self, old != new else { return }
-            self.setNeedsAutomaticUpdateConfiguration(updateCells: true)
+            self.setNeedsAutomaticUpdateConfiguration()
         }
     }
 

@@ -15,6 +15,6 @@ extension NSListContentConfiguration: AutomaticHeightSizable { }
 extension NSHostingConfiguration: AutomaticHeightSizable { }
 
 /// Content configuration views with editable text fields.
-protocol EdiitingContentView: NSView {
+protocol EditingContentView: NSView {
     var isEditing: Bool { get set }
 }
