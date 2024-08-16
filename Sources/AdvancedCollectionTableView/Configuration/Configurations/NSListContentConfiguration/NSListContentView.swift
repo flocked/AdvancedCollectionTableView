@@ -126,7 +126,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             badgeStackView.spacing = 0
         }
         
-        imageView.calculatedSize = calculateImageViewSize()
+        imageView.calculatedSize = calculateImageViewSize(appliedConfiguration.imageProperties.sizing)
         
         switch appliedConfiguration.imageProperties.position {
         case let .leading(value), let .trailing(value):
@@ -189,39 +189,25 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
         }
     }
     
-    func calculateImageViewSize() -> CGSize? {
+    func calculateImageViewSize(_ sizing: NSListContentConfiguration.ImageProperties.Sizing) -> CGSize? {
         guard let image = appliedConfiguration.image, !image.isSymbolImage else { return nil }
         var imageSize = image.size
-        switch appliedConfiguration.imageProperties.sizing {
+        switch sizing {
         case .firstTextHeight:
-            if appliedConfiguration.hasText {
-                return scaleImageSize(imageSize, to: textField.intrinsicContentSize)
-            } else if appliedConfiguration.hasSecondaryText {
-                return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
-            } else {
-                let width = frame.size.width - appliedConfiguration.margins.width
-                if imageSize.width > width {
-                    imageSize = imageSize.scaled(toWidth: width)
+            if appliedConfiguration.imageProperties.position.orientation == .horizontal {
+                if appliedConfiguration.hasText {
+                    return imageSize.scaled(toHeight: textField.intrinsicContentSize.height)
+                } else if appliedConfiguration.hasSecondaryText {
+                    return imageSize.scaled(toHeight: secondaryTextField.intrinsicContentSize.height)
                 }
-                return imageSize
             }
+            return calculateImageViewSize(.relative(1.0))
         case .totalTextHeight:
-            if appliedConfiguration.hasText, appliedConfiguration.hasSecondaryText {
-                var size = textField.intrinsicContentSize
-                size.height += secondaryTextField.intrinsicContentSize.height
-                size.height += appliedConfiguration.textToSecondaryTextPadding
-                return scaleImageSize(imageSize, to: size)
-            } else if appliedConfiguration.hasText {
-                return scaleImageSize(imageSize, to: textField.intrinsicContentSize)
-            } else if appliedConfiguration.hasSecondaryText {
-                return scaleImageSize(imageSize, to: secondaryTextField.intrinsicContentSize)
-            } else {
-                let width = frame.size.width - appliedConfiguration.margins.width
-                if imageSize.width > width {
-                    imageSize = imageSize.scaled(toWidth: width)
-                }
-                return imageSize
+            if appliedConfiguration.imageProperties.position.orientation == .horizontal, appliedConfiguration.hasText, appliedConfiguration.hasSecondaryText {
+                let height = textField.intrinsicContentSize.height + secondaryTextField.intrinsicContentSize.height + appliedConfiguration.textToSecondaryTextPadding
+                return imageSize.scaled(toHeight: height)
             }
+            return calculateImageViewSize(.firstTextHeight)
         case let .size(size):
             var size = size
             let width = frame.size.width - appliedConfiguration.margins.width
@@ -230,11 +216,13 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             return size
         case let .maxiumSize(width: maxWidth, height: maxHeight):
-            if let maxWidth = maxWidth, imageSize.width > maxWidth, let maxHeight = maxHeight, imageSize.height > maxHeight {
+            let maxWidth = maxWidth ?? imageSize.width
+            let maxHeight = maxHeight ?? imageSize.height
+            if imageSize.width > maxWidth, imageSize.height > maxHeight {
                 imageSize = imageSize.scaled(toFit: CGSize(maxWidth, maxHeight))
-            } else if let maxWidth = maxWidth, imageSize.width > maxWidth {
+            } else if imageSize.width > maxWidth {
                 imageSize = imageSize.scaled(toWidth: maxWidth)
-            } else if let maxHeight = maxHeight, imageSize.height > maxHeight {
+            } else if imageSize.height > maxHeight {
                 imageSize = imageSize.scaled(toHeight: maxHeight)
             }
             let width = frame.size.width - appliedConfiguration.margins.width
@@ -243,7 +231,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
             }
             return imageSize
         case let .relative(relative):
-            if appliedConfiguration.imageProperties.position.orientation == .vertical {
+            if appliedConfiguration.imageProperties.position.orientation == .vertical || !appliedConfiguration.hasText && !appliedConfiguration.hasSecondaryText {
                 let width = bounds.width - appliedConfiguration.margins.width
                 imageSize = imageSize.scaled(toWidth: width * relative)
             } else {
@@ -251,11 +239,7 @@ open class NSListContentView: NSView, NSContentView, EdiitingContentView {
                 imageSize = imageSize.scaled(toHeight: height * relative)
             }
             return imageSize
-        default:
-            let width = frame.size.width - appliedConfiguration.margins.width
-            if imageSize.width > width {
-                imageSize = imageSize.scaled(toWidth: width)
-            }
+        case .none:
             return imageSize
         }
     }
