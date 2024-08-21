@@ -6,7 +6,6 @@
 //
 
 import AppKit
-import FZUIKit
 import AdvancedCollectionTableView
 
 class ViewController: NSViewController {
@@ -93,7 +92,7 @@ class ViewController: NSViewController {
 
 private extension NSView {
     /// Creates a colored view.
-    convenience init(color: NSUIColor, opacity: CGFloat) {
+    convenience init(color: NSColor, opacity: CGFloat) {
         self.init(frame: .zero)
         backgroundColor = color
         alphaValue = opacity

@@ -13,13 +13,17 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     var properties: TextProperties! {
         didSet {
             guard oldValue != properties else { return }
-            update()
+            configurate(using: properties)
+            invalidateIntrinsicContentSize()
+            if isFirstResponder, !properties.isEditable || !properties.isSelectable {
+                isEditing = false
+            }
         }
     }
         
     var previousStringValue: String = ""
     var editingString: String = ""
-    let noIntrinsicWidth = true
+    static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     
     var editingContentView: EditingContentView? {
         firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
@@ -51,14 +55,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         invalidateIntrinsicContentSize()
     }
 
-    func update() {
-        configurate(using: properties)
-        invalidateIntrinsicContentSize()
-        if isFirstResponder, !properties.isEditable || !properties.isSelectable {
-            isEditing = false
-        }
-    }
-
     var textBounds: CGRect {
         guard let cell = cell else { return .zero }
         let rect = cell.drawingRect(forBounds: bounds)
@@ -76,9 +72,14 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         delegate = self
     }
     
-    static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     override var intrinsicContentSize: NSSize {
         var intrinsicContentSize = super.intrinsicContentSize
+        if alignment != .left, editingContentView is NSListContentView {
+            intrinsicContentSize.width = NSView.noIntrinsicMetric
+        } else if alignment != .center, editingContentView is NSItemContentView{
+            intrinsicContentSize.width = NSView.noIntrinsicMetric
+        }
+        
         if preferredMaxLayoutWidth != 0 {
             Self.textField.properties = properties
             Self.textField.maximumNumberOfLines = isEditing ? 0 : Self.textField.maximumNumberOfLines
@@ -86,8 +87,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             Self.textField.attributedStringValue = attributedStringValue
             intrinsicContentSize.width = NSView.noIntrinsicMetric
             intrinsicContentSize.height = Self.textField.intrinsicContentSize.height
-        } else if noIntrinsicWidth {
-            intrinsicContentSize.width = NSView.noIntrinsicMetric
         }
         return intrinsicContentSize
     }
@@ -109,6 +108,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             editingContentView?.isEditing = isEditing
         }
     }
+    
     override public func textDidBeginEditing(_ notification: Notification) {
         super.textDidBeginEditing(notification)
         isEditing = true
@@ -129,7 +129,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         invalidateIntrinsicContentSize()
     }
 
-    public func control(_: NSControl, textView _: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+    public func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         if commandSelector == #selector(NSResponder.insertNewline(_:)) {
             if properties.editingActionOnEnterKeyDown == .endEditing {
                 if properties.stringValidation?(stringValue) ?? true {
