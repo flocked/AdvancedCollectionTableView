@@ -292,6 +292,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
         updateSectionRowIndexes()
+        tableView.hoveredRow = -1
         dataSource.apply(internalSnapshot, option, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
