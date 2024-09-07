@@ -242,6 +242,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         let previousIsEmpty = currentSnapshot.isEmpty
         let internalSnapshot = snapshot.toIdentifiableSnapshot()
         currentSnapshot = snapshot
+        collectionView.hoveredIndexPath = nil
         dataSource.apply(internalSnapshot, option, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
