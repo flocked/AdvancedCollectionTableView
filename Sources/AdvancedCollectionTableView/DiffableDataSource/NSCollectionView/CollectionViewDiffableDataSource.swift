@@ -574,13 +574,19 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
      
      When using this property, ``emptyContentConfiguration`` is set to `nil`.
      */
-    open var emptyView: NSView? = nil {
-        didSet {
-            guard oldValue != emptyView else { return }
-            oldValue?.removeFromSuperview()
-            if emptyView != nil {
-                emptyContentConfiguration = nil
+    open var emptyView: NSView? {
+        get { emptyContentView?.view }
+        set {
+            if let newValue = newValue {
+                if let emptyContentView = emptyContentView {
+                    emptyContentView.view = newValue
+                } else {
+                    emptyContentView = EmptyView(view: newValue)
+                }
                 updateEmptyView()
+            } else {
+                emptyContentView?.removeFromSuperview()
+                emptyContentView = nil
             }
         }
     }
@@ -594,13 +600,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         get { emptyContentView?.configuration }
         set {
             if let configuration = newValue {
-                if let emptyContentView = emptyContentView, emptyContentView.supports(configuration) {
+                if let emptyContentView = emptyContentView {
                     emptyContentView.configuration = configuration
                 } else {
-                    emptyContentView?.removeFromSuperview()
-                    emptyContentView = configuration.makeContentView()
+                    emptyContentView = EmptyView(configuration: configuration)
                 }
-                emptyView = nil
                 updateEmptyView()
             } else {
                 emptyContentView?.removeFromSuperview()
@@ -609,7 +613,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    var emptyContentView: (NSView & NSContentView)?
+    var emptyContentView: EmptyView?
     
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
@@ -628,8 +632,8 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         if !currentSnapshot.isEmpty {
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
-        } else if let emptyView = emptyView ?? emptyContentView, emptyView.superview != collectionView?.enclosingScrollView ?? collectionView {
-            (collectionView?.enclosingScrollView ?? collectionView)?.addSubview(withConstraint: emptyView)
+        } else if let emptyContentView = emptyContentView, emptyContentView.superview != collectionView {
+            collectionView.addSubview(withConstraint: emptyContentView)
         }
         if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty, previousIsEmpty != currentSnapshot.isEmpty {
             emptyHandler(currentSnapshot.isEmpty)
