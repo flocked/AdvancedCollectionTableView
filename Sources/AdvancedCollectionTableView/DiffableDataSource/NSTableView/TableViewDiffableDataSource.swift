@@ -831,7 +831,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
         
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-        if !currentSnapshot.isEmpty {
+        if currentSnapshot.numberOfItems != 0 {
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != tableView {

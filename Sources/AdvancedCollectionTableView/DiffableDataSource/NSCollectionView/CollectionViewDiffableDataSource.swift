@@ -629,7 +629,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
         
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
-        if !currentSnapshot.isEmpty {
+        if currentSnapshot.numberOfItems != 0 {
             emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != collectionView {
