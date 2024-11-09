@@ -92,40 +92,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     open var menuProvider: ((_ elements: [Element]) -> NSMenu?)? {
         didSet {
             if menuProvider != nil  {
-                if !collectionView.isMethodReplaced(#selector(NSCollectionView.menu(for:))) {
-                    do {
-                        try collectionView.replaceMethod(
-                            #selector(NSCollectionView.menu(for:)),
-                            methodSignature: (@convention(c)  (AnyObject, Selector, NSEvent) -> (NSMenu?)).self,
-                            hookSignature: (@convention(block)  (AnyObject, NSEvent) -> (NSMenu?)).self) { store in {
-                                object, event in
-                                if event.type == .rightMouseDown, let collectionView = object as? NSCollectionView, let dataSource = collectionView.dataSource as? Self {
-                                    let location = event.location(in: collectionView)
-                                    return dataSource.menuProvider?(dataSource.elements(for: location))
-                                }
-                                return nil
-                            }
-                            }
-                    } catch {
-                        collectionView.menuProvider = { [weak self] location in
-                            guard let self = self else { return nil }
-                            return self.menuProvider?(self.elements(for: location))
-                        }
-                    }
-                }
-            } else {
-                collectionView.resetMethod(#selector(NSCollectionView.menu(for:)))
-                collectionView.menuProvider = nil
-            }
-        }
-    }
-    
-    open var menuProviderAlt: ((_ elements: [Element]) -> NSMenu?)? {
-        didSet {
-            if menuProviderAlt != nil  {
                 collectionView.menuProvider = { [weak self] location in
                     guard let self = self else { return nil }
-                    return self.menuProviderAlt?(self.elements(for: location))
+                    return self.menuProvider?(self.elements(for: location))
                 }
             } else {
                 collectionView.menuProvider = nil
@@ -146,8 +115,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             if rightClickHandler != nil {
                 collectionView.mouseHandlers.rightDown = { [weak self] event in
                     guard let self = self, let handler = self.rightClickHandler else { return }
-                    let location = event.location(in: self.collectionView)
-                    handler(self.elements(for: location))
+                    handler(self.collectionView.rightClickIndexPaths(for: event).compactMap({ self.element(for:$0) }))
                 }
             } else {
                 collectionView.mouseHandlers.rightDown = nil

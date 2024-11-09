@@ -17,7 +17,7 @@ extension TableViewDiffableDataSource {
         - comparator: The item sorting comperator, or `nil` to remove any sorting comperators from the table column.
         - tableColumn: The table column.
      */
-    func setSortComparator(_ comparator: SortingComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+    public func setSortComparator(_ comparator: SortingComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
         if let comparator = comparator {
             tableColumn.sortDescriptorPrototype = ItemSortDescriptor([comparator])
         } else if tableColumn.sortDescriptorPrototype is ItemSortDescriptor {
@@ -32,7 +32,7 @@ extension TableViewDiffableDataSource {
         - comparators: The item sorting comperators.
         - tableColumn: The table column.
      */
-    func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn) {
+    public func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn) {
         if comparators.isEmpty {
             setSortComparator(nil, forColumn: tableColumn)
         } else {

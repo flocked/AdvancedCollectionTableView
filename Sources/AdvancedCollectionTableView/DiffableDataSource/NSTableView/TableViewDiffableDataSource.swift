@@ -190,8 +190,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if rightClickHandler != nil {
                 tableView.mouseHandlers.rightDown = { [weak self] event in
                     guard let self = self, let handler = self.rightClickHandler else { return }
-                    let location = event.location(in: self.tableView)
-                    handler(self.items(for: location))
+                    handler(self.tableView.rightClickRowIndexes(for: event).compactMap({ self.item(forRow: $0) }))
                 }
             } else {
                 tableView.mouseHandlers.rightDown = nil
