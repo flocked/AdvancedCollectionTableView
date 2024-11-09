@@ -99,7 +99,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                             methodSignature: (@convention(c)  (AnyObject, Selector, NSEvent) -> (NSMenu?)).self,
                             hookSignature: (@convention(block)  (AnyObject, NSEvent) -> (NSMenu?)).self) { store in {
                                 object, event in
-                                Swift.print("menu(for:)", event.type.rawValue, event.type == .rightMouseDown, event.type == .rightMouseUp)
                                 if event.type == .rightMouseDown, let collectionView = object as? NSCollectionView, let dataSource = collectionView.dataSource as? Self {
                                     let location = event.location(in: collectionView)
                                     return dataSource.menuProvider?(dataSource.elements(for: location))
@@ -107,7 +106,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                                 return nil
                             }
                             }
-                        Swift.print("MENU Replaced")
                     } catch {
                         collectionView.menuProvider = { [weak self] location in
                             guard let self = self else { return nil }
@@ -117,6 +115,19 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 }
             } else {
                 collectionView.resetMethod(#selector(NSCollectionView.menu(for:)))
+                collectionView.menuProvider = nil
+            }
+        }
+    }
+    
+    open var menuProviderAlt: ((_ elements: [Element]) -> NSMenu?)? {
+        didSet {
+            if menuProviderAlt != nil  {
+                collectionView.menuProvider = { [weak self] location in
+                    guard let self = self else { return nil }
+                    return self.menuProviderAlt?(self.elements(for: location))
+                }
+            } else {
                 collectionView.menuProvider = nil
             }
         }
