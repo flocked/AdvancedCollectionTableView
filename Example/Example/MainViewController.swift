@@ -8,11 +8,11 @@
 import AppKit
 import AdvancedCollectionTableView
 
-class ViewController: NSViewController {
+class MainViewController: NSViewController {
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     
-    @IBOutlet private var collectionView: NSCollectionView!
+    @IBOutlet var collectionView: NSCollectionView!
 
     var galleryItems = GalleryItem.sampleItems
 

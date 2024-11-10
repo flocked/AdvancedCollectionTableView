@@ -737,10 +737,10 @@
             </objects>
             <point key="canvasLocation" x="878" y="325"/>
         </scene>
-        <!--View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="pYo-Km-esr">
             <objects>
-                <viewController id="f1U-rY-vlz" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="f1U-rY-vlz" customClass="MainViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Ls3-7t-jDk">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                         <autoresizingMask key="autoresizingMask"/>
