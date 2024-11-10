@@ -12,7 +12,7 @@ class ViewController: NSViewController {
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
     typealias ItemRegistration = NSCollectionView.ItemRegistration<NSCollectionViewItem, GalleryItem>
     
-    @IBOutlet var collectionView: NSCollectionView!
+    @IBOutlet private var collectionView: NSCollectionView!
 
     var galleryItems = GalleryItem.sampleItems
 
