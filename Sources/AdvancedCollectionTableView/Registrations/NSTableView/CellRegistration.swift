@@ -61,7 +61,7 @@ public extension NSTableView {
      - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
      */
     struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView {
-        let identifier: NSUserInterfaceItemIdentifier
+        let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)
         let nib: NSNib?
         let handler: Handler
 
@@ -87,7 +87,6 @@ public extension NSTableView {
             self.handler = handler
             self.nib = nil
             self.columnIdentifiers = columnIdentifiers
-            identifier = .init(UUID().uuidString)
         }
 
         /**
@@ -102,7 +101,6 @@ public extension NSTableView {
             self.handler = handler
             self.nib = nib
             self.columnIdentifiers = columnIdentifiers
-            identifier = .init(UUID().uuidString)
         }
 
         /// A closure that handles the cell registration and configuration.
@@ -158,7 +156,7 @@ extension NSTableView {
     }
 }
 
-/// A registration for the table view’s cells.
+/// A registration for table view’s cells.
 public protocol NSTableViewCellRegistration {
     /// The identifiers of the table columns.
     var columnIdentifiers: [NSUserInterfaceItemIdentifier] { get }

@@ -39,7 +39,7 @@ public extension NSCollectionView {
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
      */
     struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryRegistration, _NSCollectionViewSupplementaryRegistration where Supplementary: NSView & NSCollectionViewElement {
-        let identifier: NSUserInterfaceItemIdentifier
+        let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)
         let nib: NSNib?
         let handler: Handler
 
@@ -58,8 +58,7 @@ public extension NSCollectionView {
         public init(elementKind: SupplementaryElementKind, handler: @escaping Handler) {
             self.handler = handler
             self.elementKind = elementKind
-            nib = nil
-            identifier = .init(String(describing: Supplementary.self) + elementKind)
+            self.nib = nil
         }
 
         /**
@@ -74,7 +73,6 @@ public extension NSCollectionView {
             self.nib = nib
             self.elementKind = elementKind
             self.handler = handler
-            identifier = .init(String(describing: Supplementary.self) + String(describing: nib.self) + elementKind)
         }
 
         /// A closure that handles the supplementary registration and configuration.

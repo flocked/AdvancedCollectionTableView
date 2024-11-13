@@ -32,7 +32,7 @@ public extension NSTableView {
      ```
      */
     struct RowRegistration<RowView, Item> where RowView: NSTableRowView {
-        let identifier: NSUserInterfaceItemIdentifier
+        let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)
         let nib: NSNib?
         let handler: Handler
 
@@ -42,13 +42,11 @@ public extension NSTableView {
          Creates a row registration with the specified registration handler.
 
          - Parameters:
-            - identifier: The identifier of the row registration.
             - handler: The handler to configurate the row view.
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
-            nib = nil
-            identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
+            self.nib = nil
         }
 
         /**
@@ -56,13 +54,11 @@ public extension NSTableView {
 
          - Parameters:
             - nib: The nib of the row view.
-            - identifier: The identifier of the row registration.
             - handler: The handler to configurate the row view.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nib
-            identifier = NSUserInterfaceItemIdentifier(String(describing: RowView.self))
         }
 
         /// A closure that handles the row registration and configuration.

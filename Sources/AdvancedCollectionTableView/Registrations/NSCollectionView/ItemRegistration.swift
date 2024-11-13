@@ -61,7 +61,7 @@ public extension NSCollectionView {
      - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
      */
     struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem {
-        let identifier: NSUserInterfaceItemIdentifier
+        let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)
         let nib: NSNib?
         let handler: Handler
 
@@ -74,8 +74,7 @@ public extension NSCollectionView {
          */
         public init(handler: @escaping Handler) {
             self.handler = handler
-            nib = nil
-            identifier = .init(UUID().uuidString)
+            self.nib = nil
         }
 
         /**
@@ -86,9 +85,8 @@ public extension NSCollectionView {
             - handler: The handler to configurate the item.
          */
         public init(nib: NSNib, handler: @escaping Handler) {
-            self.nib = nib
-            identifier = .init(UUID().uuidString)
             self.handler = handler
+            self.nib = nib
         }
 
         /// A closure that handles the item registration and configuration.
