@@ -25,7 +25,7 @@ extension NSCollectionView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
-        Swift.print("AddingObserverView",observerView == nil, subviews(type: ObserverView.self).count, subviews.contains(where: {$0 is ObserverView}))
+        Swift.print("AddingObserverView",observerView == nil, subviews(type: ObserverView.self).count, subviews.indexes(where: {$0 is ObserverView}))
         if !shouldObserve {
             observerView?.removeFromSuperview()
             observerView = nil
@@ -95,6 +95,10 @@ extension NSCollectionView {
                     item.isHovered = true
                 }
             }
+        }
+        
+        override func hitTest(_ point: NSPoint) -> NSView? {
+            return nil
         }
         
         override func mouseExited(with event: NSEvent) {
