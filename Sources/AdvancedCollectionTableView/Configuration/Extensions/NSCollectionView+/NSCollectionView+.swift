@@ -98,7 +98,7 @@ extension NSCollectionView {
         }
         
         override func hitTest(_ point: NSPoint) -> NSView? {
-            return nil
+            return collectionView?.hitTest(point)
         }
         
         override func mouseExited(with event: NSEvent) {
