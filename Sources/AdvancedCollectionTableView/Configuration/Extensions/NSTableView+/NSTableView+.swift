@@ -53,7 +53,8 @@ extension NSTableView {
             super.init(frame: .zero)
             updateTrackingAreas()
             tableView.addSubview(withConstraint: self)
-            self.sendToBack()
+            sendToBack()
+            zPosition = -1000
             isEnabledObservation = tableView.observeChanges(for: \.isEnabled) { [weak self] old, new in
                 guard let self = self, old != new else { return }
                 self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }

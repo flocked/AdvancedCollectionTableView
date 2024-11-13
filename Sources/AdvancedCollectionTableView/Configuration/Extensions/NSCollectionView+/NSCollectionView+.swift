@@ -60,6 +60,7 @@ extension NSCollectionView {
             super.init(frame: .zero)
             updateTrackingAreas()
             collectionView.addSubview(withConstraint: self)
+            self.zPosition = -1000
             self.sendToBack()
         }
         
