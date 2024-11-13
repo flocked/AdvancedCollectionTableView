@@ -163,9 +163,11 @@ extension NSCollectionViewItem {
                 contentView.configuration = contentConfiguration
             } else {
                 let previousFrame = view.frame
+                let previousView = view
                 view = contentConfiguration.makeContentView()
                 view.frame = previousFrame
                 view.setNeedsLayout()
+                previousView.removeFromSuperview()
             }
         } else {
             let previousFrame = view.frame
