@@ -25,6 +25,7 @@ extension NSCollectionView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
+        /*
         Swift.print("AddingObserverView",observerView == nil, subviews(type: ObserverView.self).count, subviews.indexes(where: {$0 is ObserverView}))
         if !shouldObserve {
             observerView?.removeFromSuperview()
@@ -32,6 +33,7 @@ extension NSCollectionView {
         } else if observerView == nil {
             observerView = ObserverView(for: self)
         }
+         */
     }
     
     var observerView: ObserverView? {
