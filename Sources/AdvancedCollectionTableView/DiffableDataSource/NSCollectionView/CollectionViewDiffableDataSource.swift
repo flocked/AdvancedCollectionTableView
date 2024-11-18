@@ -434,9 +434,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     }
 
     /// Selects the specified elements.
-    open func selectElements(_ elements: [Element], scrollPosition: NSCollectionView.ScrollPosition) {
+    open func selectElements(_ elements: [Element], byExtendingSelection extend: Bool = false, scrollPosition: NSCollectionView.ScrollPosition) {
         let indexPaths = Set(elements.compactMap { indexPath(for: $0) })
+        let deselectIndexPaths = extend ? Set([]) : collectionView.selectionIndexPaths.filter({ !indexPaths.contains($0) })
         collectionView.selectItems(at: indexPaths, scrollPosition: scrollPosition)
+        collectionView.deselectItems(at: deselectIndexPaths)
     }
 
     /// Deselects the specified elements.
