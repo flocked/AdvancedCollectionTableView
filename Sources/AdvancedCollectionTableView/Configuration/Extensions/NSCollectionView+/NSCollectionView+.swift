@@ -10,6 +10,7 @@ import FZSwiftUtils
 import FZUIKit
 
 extension NSCollectionView {
+    /// The index path of the item that is hovered by the mouse.
     @objc dynamic var hoveredIndexPath: IndexPath? {
         get { getAssociatedValue("hoveredIndexPath") }
         set {
@@ -19,6 +20,7 @@ extension NSCollectionView {
         }
     }
     
+    /// The item that is hovered by the mouse.
     var hoveredItem: NSCollectionViewItem? {
         guard let indexPath = hoveredIndexPath else { return nil }
         return item(at: indexPath)
@@ -81,6 +83,10 @@ extension NSCollectionView {
             updateHoveredItem(for: event)
         }
         
+        override func mouseExited(with event: NSEvent) {
+            collectionView?.hoveredIndexPath = nil
+        }
+        
         func updateHoveredItem(for event: NSEvent) {
             guard let collectionView = collectionView else { return }
             let location = event.location(in: collectionView)
@@ -96,11 +102,6 @@ extension NSCollectionView {
         
         override func hitTest(_ point: NSPoint) -> NSView? {
             return nil
-        }
-        
-        
-        override func mouseExited(with event: NSEvent) {
-            collectionView?.hoveredIndexPath = nil
         }
         
         override func viewWillMove(toWindow newWindow: NSWindow?) {
