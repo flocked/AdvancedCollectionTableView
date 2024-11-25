@@ -25,15 +25,12 @@ extension NSCollectionView {
     }
     
     func setupObservation(shouldObserve: Bool = true) {
-        /*
-        Swift.print("AddingObserverView",observerView == nil, subviews(type: ObserverView.self).count, subviews.indexes(where: {$0 is ObserverView}))
         if !shouldObserve {
             observerView?.removeFromSuperview()
             observerView = nil
         } else if observerView == nil {
             observerView = ObserverView(for: self)
         }
-         */
     }
     
     var observerView: ObserverView? {
@@ -59,12 +56,12 @@ extension NSCollectionView {
         weak var collectionView: NSCollectionView?
         
         init(for collectionView: NSCollectionView) {
-            self.collectionView = collectionView
             super.init(frame: .zero)
-            updateTrackingAreas()
+            self.collectionView = collectionView
             collectionView.addSubview(withConstraint: self)
-            self.zPosition = -1000
-            self.sendToBack()
+            zPosition = -CGFloat.greatestFiniteMagnitude
+            sendToBack()
+            updateTrackingAreas()
         }
         
         required init?(coder: NSCoder) {
@@ -77,12 +74,10 @@ extension NSCollectionView {
         }
         
         override func mouseEntered(with event: NSEvent) {
-            super.mouseEntered(with: event)
             updateHoveredItem(for: event)
         }
         
         override func mouseMoved(with event: NSEvent) {
-            super.mouseMoved(with: event)
             updateHoveredItem(for: event)
         }
         
@@ -100,11 +95,11 @@ extension NSCollectionView {
         }
         
         override func hitTest(_ point: NSPoint) -> NSView? {
-            return collectionView?.hitTest(point)
+            return nil
         }
         
+        
         override func mouseExited(with event: NSEvent) {
-            super.mouseExited(with: event)
             collectionView?.hoveredIndexPath = nil
         }
         
