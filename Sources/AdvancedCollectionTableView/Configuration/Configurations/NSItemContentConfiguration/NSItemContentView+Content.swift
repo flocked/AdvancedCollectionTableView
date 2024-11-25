@@ -268,7 +268,7 @@ extension NSItemContentView {
             overlayView = configuration.overlayView
 
             anchorPoint = CGPoint(0.5, 0.5)
-            scale = contentProperties.scaleTransform.point
+            scale = contentProperties.scaleTransform
             toolTip = contentProperties.toolTip
             isHidden = !configuration.hasContent
             updateBadges()

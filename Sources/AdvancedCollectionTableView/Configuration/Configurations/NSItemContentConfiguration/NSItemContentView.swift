@@ -127,7 +127,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
         secondaryTextField.isEnabled = textField.isEnabled
 
-        scale = appliedConfiguration.scaleTransform.point
+        scale = appliedConfiguration.scaleTransform
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.contentToTextPadding

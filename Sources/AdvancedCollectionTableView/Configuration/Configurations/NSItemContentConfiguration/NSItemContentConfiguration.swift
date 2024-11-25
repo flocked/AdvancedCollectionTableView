@@ -243,7 +243,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
      The default is `1.0`, which displays the item at it's original scale. A larger value will display the item at a larger and a smaller value at a smaller size.
      */
-    public var scaleTransform: ScaleTransform = 1.0
+    public var scaleTransform: Scale = 1.0
 
     // MARK: Creating a content view
 
@@ -338,30 +338,6 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
 
         var orientation: NSUserInterfaceLayoutOrientation {
             (self == .top || self == .bottom) ? .vertical : .horizontal
-        }
-    }
-    
-    /// The scale transformation.
-    public struct ScaleTransform: Hashable, ExpressibleByFloatLiteral {
-        
-        /// The scale transformation on the x-axis.
-        public var x: CGFloat = 1.0
-        
-        /// The scale transformation on the y-axis.
-        public var y: CGFloat = 1.0
-        
-        public init(floatLiteral value: Float) {
-            self.x = CGFloat(value)
-            self.y = CGFloat(value)
-        }
-        
-        public init(x: CGFloat, y: CGFloat) {
-            self.x = x
-            self.y = y
-        }
-        
-        var point: CGPoint {
-            CGPoint(x, y)
         }
     }
 }

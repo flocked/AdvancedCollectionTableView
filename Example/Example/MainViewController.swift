@@ -46,11 +46,24 @@ class MainViewController: NSViewController {
 
             /// Apply the updated configuration
             item.contentConfiguration = configuration
+            
+            item.view.anchorPoint = CGPoint(0.5)
+            item.view.rotation = state.isHovered ? .init(0, 0, 40) : .init(0, 0, 0)
         }
+    }
+    
+    let testView = NSView().backgroundColor(.controlAccentColor).size(CGSize(200, 100))
+
+    override func viewDidLayout() {
+        testView.rotation = Bool.random() ? .init(0, 0, 40) : .init(0, 0, 0)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        testView.center = view.center
+        view.addSubview(testView)
+        testView.anchorPoint = CGPoint(0.5)
 
         collectionView.collectionViewLayout = .grid(columns: 3)
 

@@ -39,7 +39,6 @@
 - ``scaleTransform``
 - ``TextProperties``
 - ``ContentProperties-swift.struct``
-- ``ScaleTransform-swift.struct``
 
 ### Customizing layout
 
