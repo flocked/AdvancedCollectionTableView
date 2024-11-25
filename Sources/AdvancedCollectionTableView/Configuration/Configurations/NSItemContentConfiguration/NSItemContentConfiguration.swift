@@ -244,6 +244,13 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      The default is `1.0`, which displays the item at it's original scale. A larger value will display the item at a larger and a smaller value at a smaller size.
      */
     public var scaleTransform: Scale = 1.0
+    
+    /**
+     The rotation of the item, in degrees.
+
+     The default is `zero`, which displays the item with no rotation.
+     */
+    public var rotation: Rotation = .zero
 
     // MARK: Creating a content view
 

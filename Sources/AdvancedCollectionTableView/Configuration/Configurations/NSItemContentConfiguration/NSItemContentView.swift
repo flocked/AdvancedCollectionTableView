@@ -79,6 +79,8 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         .spacing(appliedConfiguration.contentToTextPadding)
 
     var stackviewConstraints: [NSLayoutConstraint] = []
+    var _scaleTransform: Scale = .none
+    var _rotation: Rotation = .zero
 
     @available(*, unavailable)
     public required init?(coder _: NSCoder) {
@@ -127,7 +129,14 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
         secondaryTextField.isEnabled = textField.isEnabled
 
-        scale = appliedConfiguration.scaleTransform
+        if appliedConfiguration.scaleTransform != _scaleTransform {
+            _scaleTransform = appliedConfiguration.scaleTransform
+            scale = _scaleTransform
+        }
+        if appliedConfiguration.rotation != _rotation {
+            _rotation = appliedConfiguration.rotation
+            rotation = _rotation
+        }
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.contentToTextPadding

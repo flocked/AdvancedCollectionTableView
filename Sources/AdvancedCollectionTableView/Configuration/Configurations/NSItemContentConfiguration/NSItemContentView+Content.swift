@@ -25,6 +25,12 @@ extension NSItemContentView {
         let imageView: ImageView = .init()
         let containerView = NSView(frame: .zero)
         var badgeViews: [BadgeView] = []
+        
+        var previousSize: CGSize = .zero
+        var centerYConstraint: NSLayoutConstraint?
+        var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
+        var _scaleTransform: Scale = .none
+        var _rotation: Rotation = .zero
 
         var view: NSView? {
             didSet {
@@ -88,8 +94,6 @@ extension NSItemContentView {
                 badgeViews.removeAll()
             }
         }
-
-        var previousSize: CGSize = .zero
 
         override func layout() {
             super.layout()
@@ -166,9 +170,6 @@ extension NSItemContentView {
              }
              */
         }
-
-        var centerYConstraint: NSLayoutConstraint?
-        var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
         
         override var intrinsicContentSize: NSSize {
             if frame.size == .zero {
@@ -268,7 +269,16 @@ extension NSItemContentView {
             overlayView = configuration.overlayView
 
             anchorPoint = CGPoint(0.5, 0.5)
-            scale = contentProperties.scaleTransform
+            
+            if contentProperties.scaleTransform != _scaleTransform {
+                _scaleTransform = contentProperties.scaleTransform
+                scale = _scaleTransform
+            }
+            if contentProperties.rotation != _rotation {
+                _rotation = contentProperties.rotation
+                rotation = _rotation
+            }
+            
             toolTip = contentProperties.toolTip
             isHidden = !configuration.hasContent
             updateBadges()

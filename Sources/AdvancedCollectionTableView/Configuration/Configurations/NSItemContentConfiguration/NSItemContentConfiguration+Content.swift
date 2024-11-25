@@ -42,6 +42,13 @@ public extension NSItemContentConfiguration {
          The default is `1.0`, which displays the content view at it's original scale. A larger value will display the content view at a larger, a smaller value at a smaller size.
          */
         public var scaleTransform: Scale = 1.0
+        
+        /**
+         The rotation of the content view, in degrees.
+
+         The default is `zero`, which displays the content view with no rotation.
+         */
+        public var rotation: Rotation = .zero
 
         /// The background color.
         public var backgroundColor: NSColor? = .lightGray
