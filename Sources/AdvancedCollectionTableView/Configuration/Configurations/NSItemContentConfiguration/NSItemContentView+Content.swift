@@ -268,7 +268,7 @@ extension NSItemContentView {
             view = configuration.view
             overlayView = configuration.overlayView
 
-            anchorPoint = CGPoint(0.5, 0.5)
+            anchorPoint = .center
             
             if contentProperties.scaleTransform != _scaleTransform {
                 _scaleTransform = contentProperties.scaleTransform
