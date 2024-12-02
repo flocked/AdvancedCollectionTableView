@@ -9,12 +9,14 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
+/*
 extension NSCollectionViewItem {
     /// Instantiates a view for the item.
     override open func loadView() {
         view = NSView()
     }
 }
+*/
 
 extension NSCollectionViewItem {
     // MARK: Configuring the background
