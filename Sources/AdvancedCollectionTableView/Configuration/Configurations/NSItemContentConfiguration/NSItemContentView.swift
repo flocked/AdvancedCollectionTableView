@@ -148,7 +148,7 @@ extension NSItemContentView {
     func calculateContentViewFrame(remaining: CGRect) -> CGRect {
         var frame = remaining
         if let imageSize = appliedConfiguration.image?.size {
-            switch appliedConfiguration.contentProperties.imageProperties.scaling {
+            switch appliedConfiguration.imageProperties.scaling {
             case .fit:
                 frame.size = imageSize.scaled(toHeight: remaining.height)
             case .fill, .resize:
@@ -187,7 +187,7 @@ extension NSItemContentView {
         let contentRegion = bounds.inset(by: appliedConfiguration.margins)
         var remainingRegion = contentRegion
         if appliedConfiguration.hasContent {
-            if let imageSize = appliedConfiguration.image?.size, appliedConfiguration.contentProperties.imageProperties.scaling == .fit {
+            if let imageSize = appliedConfiguration.image?.size, appliedConfiguration.imageProperties.scaling == .fit {
                 let resized = imageSize.scaled(toHeight: remainingRegion.height)
                 let contentRectArea = remainingRegion.divided(atDistance: resized.width, from: .minXEdge)
                 remainingRegion = contentRectArea.remainder
@@ -220,7 +220,7 @@ extension NSItemContentView {
             }
         }
         if appliedConfiguration.hasContent {
-            if let imageSize = appliedConfiguration.image?.size, appliedConfiguration.contentProperties.imageProperties.scaling == .fit {
+            if let imageSize = appliedConfiguration.image?.size, appliedConfiguration.imageProperties.scaling == .fit {
                 var contentRect: CGRect = .zero
                 contentRect.size = imageSize.scaled(toHeight: remainingRegion.height)
                 contentRect.center = remainingRegion.center

@@ -29,7 +29,7 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         imageTextStackView.translatesAutoresizingMaskIntoConstraints = false
         badgeStackView.translatesAutoresizingMaskIntoConstraints = false
         stackViewConstraints = addSubview(withConstraint: badgeStackView)
-        
+
         updateConfiguration()
     }
     
@@ -85,7 +85,7 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     func updateConfiguration() {
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
-        
+                
         textField.isEnabled = appliedConfiguration.isEnabled
         textField.properties = appliedConfiguration.textProperties
         textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
@@ -107,8 +107,10 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         if let badge = appliedConfiguration.badge, appliedConfiguration.imageProperties.position.orientation == .horizontal {
             badgeStackView.spacing = appliedConfiguration.textToBadgePadding
             badgeStackView.alignment = badge.alignment.alignment
+
             if badgeView == nil {
                 badgeView = BadgeView(properties: badge)
+                badgeStackView.addArrangedSubview(badgeView!)
             }
             guard let badgeView = badgeView else { return }
             badgeView.properties = badge

@@ -26,9 +26,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     
     var editingContentView: EditingContentView? {
-        firstSuperview(for: NSView.self)
-       // firstSuperview(for: EditingContentView.self)
-        return firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
+        firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
     }
     
     var tableCollectionView: NSView? {

@@ -40,6 +40,8 @@ public extension NSListContentConfiguration {
             case roundedRect(radius: CGFloat)
             /// A circular badge.
             case circle
+            /// A capsule badge.
+            case capsule
             
             /// A rounded badge with a corner radius of `6.0`.
             public static let roundedRect = Shape.roundedRect(radius: 6.0)
@@ -93,7 +95,7 @@ public extension NSListContentConfiguration {
         public var shadow: ShadowConfiguration = .none()
 
         /// The margins between the text/image and the edges of the badge.
-        public var margins = NSDirectionalEdgeInsets(width: 4, height: 2)
+        public var margins = NSDirectionalEdgeInsets(top: 1, leading: 3, bottom: 1, trailing: 3)
 
         /// The maximum width of the badge. If the text is larger than the width, it will be truncated.
         public var maxWidth: CGFloat?

@@ -206,6 +206,9 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
         properties.alignment = .center
         return properties
     }()
+    
+    /// Properties for configuring the image.
+    public var imageProperties: ImageProperties = .init()
 
     /**
      Properties for configuring the content view that displays the `view` and `image`.

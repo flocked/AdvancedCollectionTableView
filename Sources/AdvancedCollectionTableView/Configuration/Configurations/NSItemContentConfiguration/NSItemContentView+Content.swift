@@ -181,7 +181,7 @@ extension NSItemContentView {
             if let superviewWidth = superview?.frame.size.width {
                 size.width = superviewWidth - configuration.margins.width
             }
-            if let imageSize = image?.size, contentProperties.imageProperties.scaling.shouldResize {
+            if let imageSize = image?.size, configuration.imageProperties.scaling.shouldResize {
                 switch (contentProperties.maximumSize.width, contentProperties.maximumSize.height) {
                 case let (.some(maxWidth), .some(maxHeight)):
                     let width = min(maxWidth, size.width)
@@ -203,7 +203,7 @@ extension NSItemContentView {
                 }
                 return intrinsicContentSize
             } else {
-                if let imageSize = image?.size, configuration.contentProperties.imageProperties.scaling == .none {
+                if let imageSize = image?.size, configuration.imageProperties.scaling == .none {
                     if imageSize.width < size.width {
                         intrinsicContentSize.width = imageSize.width
                     }
@@ -261,9 +261,9 @@ extension NSItemContentView {
 
             outerShadow = contentProperties._resolvedShadow()
 
-            imageView.tintColor = contentProperties.imageProperties.resolvedTintColor()
-            imageView.imageScaling = contentProperties.imageProperties.scaling.scaling
-            imageView.symbolConfiguration = contentProperties.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
+            imageView.tintColor = configuration.imageProperties.resolvedTintColor()
+            imageView.imageScaling = configuration.imageProperties.scaling.scaling
+            imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration?.nsSymbolConfiguration()
             image = configuration.image
             view = configuration.view
             overlayView = configuration.overlayView

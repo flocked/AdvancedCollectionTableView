@@ -428,7 +428,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
         // let backgroundStyles = dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).flatMap({$0.cellViews}).compactMap({$0.backgroundStyle}).uniqued()
-        // Swift.print("validate", backgroundStyles.count, backgroundStyles.compactMap({$0.rawValue}))
         
         if !dragingRowIndexes.isEmpty {
             if reorderingHandlers.droppable, let canDrop = reorderingHandlers.canDrop, dropOperation == .on {
