@@ -18,8 +18,14 @@ extension TableViewDiffableDataSource {
         - tableColumn: The table column.
      */
     public func setSortComparator(_ comparator: SortingComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+        if activate, comparator != nil, let key = tableColumn.sortDescriptorPrototype?.key {
+            tableView.sortDescriptors.removeAll(where: { $0.key == key })
+        }
         if let comparator = comparator {
             tableColumn.sortDescriptorPrototype = ItemSortDescriptor([comparator])
+            if activate {
+                tableView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + tableView.sortDescriptors
+            }
         } else if tableColumn.sortDescriptorPrototype is ItemSortDescriptor {
             tableColumn.sortDescriptorPrototype = nil
         }
@@ -32,23 +38,23 @@ extension TableViewDiffableDataSource {
         - comparators: The item sorting comperators.
         - tableColumn: The table column.
      */
-    public func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn) {
+    public func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+        if activate, !comparators.isEmpty, let key = tableColumn.sortDescriptorPrototype?.key {
+            tableView.sortDescriptors.removeAll(where: { $0.key == key })
+        }
         if comparators.isEmpty {
             setSortComparator(nil, forColumn: tableColumn)
         } else {
             tableColumn.sortDescriptorPrototype = ItemSortDescriptor(comparators)
+            if activate {
+                tableView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + tableView.sortDescriptors
+            }
         }
     }
     
     class ItemSortDescriptor: NSSortDescriptor {
         
         var comparators: [SortingComparator<Item>] = []
-        
-        @discardableResult
-        func comparators(_ comparators: [SortingComparator<Item>]) -> Self {
-            self.comparators = comparators
-            return self
-        }
         
         init(_ comparators: [SortingComparator<Item>], ascending: Bool = true, key: String? = nil) {
             super.init(key: key ?? UUID().uuidString, ascending: ascending, selector: nil)
@@ -57,8 +63,17 @@ extension TableViewDiffableDataSource {
         
         override var reversedSortDescriptor: Any {
             var comparators = comparators
-            comparators.editEach({$0.order = $0.order == .forward ? .reverse : .forward})
+            comparators.editEach({$0.order.toggle() })
             return ItemSortDescriptor(comparators, ascending: !ascending, key: key)
+        }
+        
+        override func copy() -> Any {
+            ItemSortDescriptor(comparators, ascending: ascending, key: key)
+        }
+        
+        override func isEqual(_ object: Any?) -> Bool {
+            guard let object = object as? ItemSortDescriptor else { return false }
+            return object.key == key && object.ascending == ascending && object.comparators == comparators
         }
         
         required init?(coder: NSCoder) {

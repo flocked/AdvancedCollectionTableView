@@ -227,6 +227,20 @@ extension NSTableCellView {
     @objc var isActive: Bool {
         window?.isKeyWindow ?? false
     }
+    
+    /// A Boolean value that indicates whether the item is focused.
+    @objc var isFocused: Bool {
+        isDescendantFirstResponder
+    }
+    
+    /// A Boolean value that indicates whether the collection view and it's items are focused.
+    @objc var isTableViewFocused: Bool {
+        tableView?.isDescendantFirstResponder == true
+    }
+    
+    var activeState: NSListConfigurationState.ActiveState {
+        isActive ? isTableViewFocused ? .focused : .active : .inactive
+    }
 
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
     @objc var isEnabled: Bool {

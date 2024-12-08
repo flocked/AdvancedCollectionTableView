@@ -47,6 +47,20 @@ extension NSTableView {
         lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
         weak var tableView: NSTableView?
         var isEnabledObservation: KeyValueObservation?
+        var focusObservation: KeyValueObservation?
+        var isFocused: Bool = false {
+            didSet {
+                guard oldValue != isFocused else { return }
+                Swift.print("TableView isFocused", isFocused)
+                // tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+            }
+        }
+        weak var editingView: NSView? {
+            didSet {
+                guard oldValue != editingView else { return }
+                Swift.print("TableView isEditing", editingView ?? "nil")
+            }
+        }
         
         init(for tableView: NSTableView) {
             self.tableView = tableView
@@ -55,9 +69,19 @@ extension NSTableView {
             tableView.addSubview(withConstraint: self)
             sendToBack()
             zPosition = -1000
+            isFocused = tableView.isDescendantFirstResponder
             isEnabledObservation = tableView.observeChanges(for: \.isEnabled) { [weak self] old, new in
                 guard let self = self, old != new else { return }
                 self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+            }
+            focusObservation = observeChanges(for: \.window?.firstResponder) { [weak self] oldValue, newValue in
+                guard let self = self, let tableView = self.tableView else { return }
+                if let view = (newValue as? NSView ?? (newValue as? NSText)?.delegate as? NSView), view.isDescendant(of: tableView) {
+                    self.isFocused = true
+                    self.editingView = (view as? EditiableView)?.isEditable == true ? view : nil
+                } else {
+                    self.isFocused = false
+                }
             }
         }
         

@@ -305,6 +305,13 @@ extension NSCollectionViewItem {
     @objc var isEditing: Bool {
         (view as? EditingContentView)?.isEditing ?? false
     }
+    
+    @objc var _isEditing: Bool {
+        if let editingView = view.window?.firstResponder as? EditiableView, editingView.isEditing, editingView.isDescendant(of: view) {
+            return true
+        }
+        return false
+    }
 
     /// A Boolean value that indicates whether the item is active (it's window is focused).
     @objc var isActive: Bool {
@@ -313,12 +320,16 @@ extension NSCollectionViewItem {
     
     /// A Boolean value that indicates whether the item is focused.
     @objc var isFocused: Bool {
-        (view.window?.firstResponder as? NSView)?.isDescendant(of: view) ?? false
+        view.isDescendantFirstResponder
     }
     
-    /// A Boolean value that indicates whether the collection view and it's items are focused.
+    /// A Boolean value that indicates whether the collection view is focused.
     @objc var isCollectionViewFocused: Bool {
-        _collectionView?.isFirstResponder ?? false
+        _collectionView?.isDescendantFirstResponder == true
+    }
+    
+    var activeState: NSItemConfigurationState.ActiveState {
+        isActive ? isCollectionViewFocused ? .focused : .active : .inactive
     }
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {

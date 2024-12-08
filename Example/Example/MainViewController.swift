@@ -21,8 +21,10 @@ class MainViewController: NSViewController {
     let itemRegistration = ItemRegistration() { collectionViewItem, _, galleryItem in
         /// Configurate the item
         var configuration = NSItemContentConfiguration()
-
+URL(filePath: <#T##String#>)
         configuration.text = galleryItem.title
+        configuration.textProperties.isSelectable = true
+        configuration.textProperties.isEditable = true
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.title)
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)

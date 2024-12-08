@@ -31,11 +31,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
      */
     public var isEnabled: Bool = true
 
-    /**
-     A Boolean value that indicates whether the list item is in a hovered state.
-
-     The value of this property is `true`, if the mouse is hovering the item.
-     */
+    /// A Boolean value that indicates whether the mouse is hovering the item.
     public var isHovered: Bool = false
 
     /**
@@ -51,6 +47,28 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
      The value of this property is `true`, if it's window is focused.
      */
     public var isActive: Bool = false
+    
+    /// The active state of a list item.
+    public enum ActiveState: Int, Hashable {
+        /**
+         Inactive.
+         
+         The window that displays the list item isn't the key window.
+         */
+        case inactive
+        /**
+         Active.
+         
+         The window that displays the list item is the key window.
+         */
+        case active
+        /**
+         Active and focused.
+         
+         The item or table view / collection view that displays the list item is focused (first responder).
+         */
+        case focused
+    }
 
     /// A Boolean value that indicates whether the next list item is in a selected state.
     public var isNextSelected: Bool = false

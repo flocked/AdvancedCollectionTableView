@@ -56,14 +56,38 @@ extension NSCollectionView {
         var tokens: [NotificationToken] = []
         lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
         weak var collectionView: NSCollectionView?
+        var focusObservation: KeyValueObservation?
+        var isFocused = false {
+            didSet {
+                guard oldValue != isFocused else { return }
+                Swift.print("CollectionView isFocused", isFocused)
+                // collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+            }
+        }
+        weak var editingView: NSView? {
+            didSet {
+                guard oldValue != editingView else { return }
+                Swift.print("CollectionView isEditing", editingView != nil)
+            }
+        }
         
         init(for collectionView: NSCollectionView) {
             super.init(frame: .zero)
             self.collectionView = collectionView
             collectionView.addSubview(withConstraint: self)
             zPosition = -CGFloat.greatestFiniteMagnitude
+            isFocused = collectionView.isDescendantFirstResponder
             sendToBack()
             updateTrackingAreas()
+            focusObservation = observeChanges(for: \.window?.firstResponder) { [weak self] oldValue, newValue in
+                guard let self = self, let collectionView = self.collectionView else { return }
+                if let view = (newValue as? NSView ?? (newValue as? NSText)?.delegate as? NSView), view.isDescendant(of: collectionView) {
+                    self.isFocused = true
+                    self.editingView = (view as? EditiableView)?.isEditable == true ? view : nil
+                } else {
+                    self.isFocused = false
+                }
+            }
         }
         
         required init?(coder: NSCoder) {

@@ -48,12 +48,30 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
             self["isActive"] = isActive
         }
     }
+    
+    /// The active state of an item.
+    public enum ActiveState: Int, Hashable {
+        /**
+         Inactive.
+         
+         The window that displays the item isn't the key window.
+         */
+        case inactive
+        /**
+         Active.
+         
+         The window that displays the item is the key window.
+         */
+        case active
+        /**
+         Active and focused.
+         
+         The item or table view / collection view that displays the item is focused (first responder).
+         */
+        case focused
+    }
 
-    /**
-     A Boolean value that indicates whether the item is in a hovered state.
-
-     The value of this property is `true`, if the mouse is hovering the item.
-     */
+    /// A Boolean value that indicates whether the mouse is hovering the item.
     public var isHovered: Bool = false
     
     /// A Boolean value that indicates whether the item is reordering.
