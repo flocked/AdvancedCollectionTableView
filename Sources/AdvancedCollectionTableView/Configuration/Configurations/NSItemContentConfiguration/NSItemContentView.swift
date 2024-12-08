@@ -94,19 +94,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         }
     }
 
-    var isEditing: Bool = false {
-        didSet {
-            guard oldValue != isEditing else { return }
-            if let collectionViewItem = collectionViewItem, collectionViewItem.view == self {
-                collectionViewItem.setNeedsAutomaticUpdateConfiguration()
-            } else if let tableCellView = tableCellView, tableCellView.contentView == self {
-                tableCellView.setNeedsAutomaticUpdateConfiguration()
-            } else if let tableRowView = tableRowView, tableRowView.contentView == self {
-                tableRowView.setNeedsAutomaticUpdateConfiguration()
-            }
-        }
-    }
-
     var tableCellView: NSTableCellView? {
         firstSuperview(for: NSTableCellView.self)
     }

@@ -26,13 +26,16 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     static var textField = WidthTextField.wrapping().truncatesLastVisibleLine(true)
     
     var editingContentView: EditingContentView? {
-        firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
+        firstSuperview(for: NSView.self)
+       // firstSuperview(for: EditingContentView.self)
+        return firstSuperview(where: { $0 is EditingContentView }) as? EditingContentView
     }
     
     var tableCollectionView: NSView? {
-        guard let editingContentView = editingContentView else { return nil }
-        let isTable = editingContentView.superview is NSTableCellView
-        return editingContentView.firstSuperview(for: isTable ? NSTableView.self : NSCollectionView.self)
+        if editingContentView?.superview is NSCollectionView {
+            return editingContentView?.superview
+        }
+        return firstSuperview(for: NSTableView.self)
     }
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {
@@ -105,7 +108,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             previousStringValue = isEditing ? stringValue : ""
             editingString = previousStringValue
             focusRingType = isEditing ? .none : .default
-            editingContentView?.isEditing = isEditing
         }
     }
     

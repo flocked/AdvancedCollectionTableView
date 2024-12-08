@@ -42,6 +42,22 @@ extension NSTableView {
         set { setAssociatedValue(newValue, key: "tableViewObserverView") }
     }
     
+    var editingView: NSView? {
+        observerView?.editingView
+    }
+    
+    var activeState: NSListConfigurationState.ActiveState {
+        isActive ? isFocused ? .focused : .active : .inactive
+    }
+    
+    var isFocused: Bool {
+        observerView?.isFocused == true
+    }
+    
+    var isActive: Bool {
+        window?.isKeyWindow == true
+    }
+    
     class ObserverView: NSView {
         var tokens: [NotificationToken] = []
         lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
@@ -51,14 +67,16 @@ extension NSTableView {
         var isFocused: Bool = false {
             didSet {
                 guard oldValue != isFocused else { return }
-                Swift.print("TableView isFocused", isFocused)
-                // tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+                Swift.print("focus updated", isFocused)
+                tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
             }
         }
         weak var editingView: NSView? {
             didSet {
                 guard oldValue != editingView else { return }
-                Swift.print("TableView isEditing", editingView ?? "nil")
+                Swift.print("editingView updated")
+                oldValue?.firstSuperview(for: NSTableRowView.self)?.setNeedsAutomaticUpdateConfiguration()
+                editingView?.firstSuperview(for: NSTableRowView.self)?.setNeedsAutomaticUpdateConfiguration()
             }
         }
         
@@ -76,6 +94,11 @@ extension NSTableView {
             }
             focusObservation = observeChanges(for: \.window?.firstResponder) { [weak self] oldValue, newValue in
                 guard let self = self, let tableView = self.tableView else { return }
+                if let newValue = newValue {
+                    Swift.print("firstResponder", type(of: newValue))
+                } else {
+                    Swift.print("firstResponder nil")
+                }
                 if let view = (newValue as? NSView ?? (newValue as? NSText)?.delegate as? NSView), view.isDescendant(of: tableView) {
                     self.isFocused = true
                     self.editingView = (view as? EditiableView)?.isEditable == true ? view : nil

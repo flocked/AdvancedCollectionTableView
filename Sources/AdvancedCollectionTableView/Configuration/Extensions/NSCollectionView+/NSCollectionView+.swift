@@ -40,6 +40,22 @@ extension NSCollectionView {
         set { setAssociatedValue(newValue, key: "collectionViewObserverView") }
     }
     
+    var editingView: NSView? {
+        observerView?.editingView
+    }
+    
+    var activeState: NSItemConfigurationState.ActiveState {
+        isActive ? isFocused ? .focused : .active : .inactive
+    }
+    
+    var isFocused: Bool {
+        observerView?.isFocused == true
+    }
+    
+    var isActive: Bool {
+        window?.isKeyWindow == true
+    }
+    
     /*
     /// A Boolean value that indicates whether the collection view reacts to mouse events.
     @objc open var isEnabled: Bool {
@@ -60,14 +76,14 @@ extension NSCollectionView {
         var isFocused = false {
             didSet {
                 guard oldValue != isFocused else { return }
-                Swift.print("CollectionView isFocused", isFocused)
-                // collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+                collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
             }
         }
         weak var editingView: NSView? {
             didSet {
                 guard oldValue != editingView else { return }
-                Swift.print("CollectionView isEditing", editingView != nil)
+                (oldValue?.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)?.setNeedsAutomaticUpdateConfiguration()
+                (editingView?.firstSuperview(where: { $0.parentController is NSCollectionViewItem })?.parentController as? NSCollectionViewItem)?.setNeedsAutomaticUpdateConfiguration()
             }
         }
         

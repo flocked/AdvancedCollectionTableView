@@ -177,7 +177,10 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, isActive: isActive, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
+        let collectionView = _collectionView
+        let activeState = collectionView?.activeState ?? .inactive
+        let isEditing = collectionView?.editingView?.isDescendant(of: view) == true
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, activeState: activeState, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
         return state
     }
 
@@ -296,18 +299,14 @@ extension NSCollectionViewItem {
     var isEnabled: Bool {
         _collectionView?.isEnabled ?? true
     }
-
+    
     /**
      A Boolean value that indicates whether the item is in an editing state.
 
      The value of this property is `true` when the text of a list or item content configuration is being edited.
      */
     @objc var isEditing: Bool {
-        (view as? EditingContentView)?.isEditing ?? false
-    }
-    
-    @objc var _isEditing: Bool {
-        if let editingView = view.window?.firstResponder as? EditiableView, editingView.isEditing, editingView.isDescendant(of: view) {
+        if let editingView = view.window?.firstResponder as? EditiableView ?? (view.window?.firstResponder as? NSText)?.delegate as? EditiableView, editingView.isEditing, editingView.isDescendant(of: view) {
             return true
         }
         return false

@@ -23,9 +23,7 @@ import FZUIKit
 public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the item is selected.
     public var isSelected: Bool = false {
-        didSet {
-            self["isSelected"] = isSelected
-        }
+        didSet { self["isSelected"] = isSelected }
     }
 
     /// A value that indicates the item's highlight state.
@@ -38,19 +36,16 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
      */
     public var isEditing: Bool = false
 
-    /**
-     A Boolean value that indicates whether the item is in an active state.
-
-     The value of this property is `true`, if it's window is focused.
-     */
-    public var isActive: Bool = false {
-        didSet {
-            self["isActive"] = isActive
-        }
+    var isActive: Bool {
+        activeState != .inactive
+    }
+    
+    public var activeState: ActiveState = .inactive {
+        didSet { self["activeState"] = activeState.rawValue }
     }
     
     /// The active state of an item.
-    public enum ActiveState: Int, Hashable {
+    public enum ActiveState: Int, Hashable, CustomStringConvertible {
         /**
          Inactive.
          
@@ -69,6 +64,14 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
          The item or table view / collection view that displays the item is focused (first responder).
          */
         case focused
+        
+        public var description: String {
+            switch self {
+            case .inactive: return "inactive"
+            case .active: return "active"
+            case .focused: return "focused"
+            }
+        }
     }
 
     /// A Boolean value that indicates whether the mouse is hovering the item.
@@ -97,6 +100,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         set { customStates[key] = newValue }
     }
 
+    /*
     public init(
         isSelected: Bool = false,
         highlight: NSCollectionViewItem.HighlightState = .none,
@@ -116,6 +120,28 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self["isSelected"] = isSelected
         self["isActive"] = isActive
     }
+    */
+    
+    public init(
+        isSelected: Bool = false,
+        highlight: NSCollectionViewItem.HighlightState = .none,
+        isEditing: Bool = false,
+        activeState: ActiveState = .inactive,
+        isHovered: Bool = false,
+        isReordering: Bool = false,
+        isDropTarget: Bool = false
+    ) {
+        self.isSelected = isSelected
+        self.highlight = highlight
+        self.isEditing = isEditing
+        self.activeState = activeState
+        self.isHovered = isHovered
+        self.isReordering = isReordering
+        self.isDropTarget = isDropTarget
+        self["isSelected"] = isSelected
+        self["activeState"] = activeState.rawValue
+        self["isItemState"] = true
+    }
 
     init(isSelected: Bool,
          isEnabled: Bool,
@@ -124,7 +150,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
          isEditing: Bool,
          isExpanded: Bool,
          highlight: NSCollectionViewItem.HighlightState,
-         isActive: Bool,
+         activeState: ActiveState,
          isReordering: Bool,
          isDropTarget: Bool,
          customStates _: [NSConfigurationStateCustomKey: AnyHashable] = [:])
@@ -136,11 +162,11 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isEditing = isEditing
         self.isExpanded = isExpanded
         self.highlight = highlight
-        self.isActive = isActive
+        self.activeState = activeState
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
         self["isSelected"] = isSelected
-        self["isActive"] = isActive
+        self["activeState"] = activeState.rawValue
         self["isItemState"] = true
     }
 }
@@ -156,7 +182,7 @@ extension NSItemConfigurationState: ReferenceConvertible {
             isHovered: \(isHovered)
             isEditing: \(isEditing)
             highlight: \(highlight.rawValue)
-            isActive: \(isActive)
+            activeState: \(activeState.rawValue)
             customStates: \(customStates)
         )
         """
@@ -167,11 +193,11 @@ extension NSItemConfigurationState: ReferenceConvertible {
     }
 
     public func _bridgeToObjectiveC() -> __NSItemConfigurationStateObjc {
-        return __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isActive: isActive, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
+        return __NSItemConfigurationStateObjc(state: self)
     }
 
     public static func _forceBridgeFromObjectiveC(_ source: __NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) {
-        result = NSItemConfigurationState(isSelected: source.isSelected, isEnabled: source.isEnabled, isFocused: source.isFocused, isHovered: source.isHovered, isEditing: source.isEditing, isExpanded: source.isExpanded, highlight: source.highlight, isActive: source.isActive, isReordering: source.isReordering, isDropTarget: source.isDropTarget, customStates: source.customStates)
+        result = source.state
     }
 
     public static func _conditionallyBridgeFromObjectiveC(_ source: __NSItemConfigurationStateObjc, result: inout NSItemConfigurationState?) -> Bool {
@@ -191,53 +217,13 @@ extension NSItemConfigurationState: ReferenceConvertible {
 
 /// The `Objective-C` class for ``NSItemConfigurationState``.
 public class __NSItemConfigurationStateObjc: NSObject, NSCopying {
-    let isSelected: Bool
-    let highlight: NSCollectionViewItem.HighlightState
-    let isEditing: Bool
-    let isActive: Bool
-    let isHovered: Bool
-    let isEnabled: Bool
-    let isFocused: Bool
-    let isExpanded: Bool
-    let isReordering: Bool
-    let isDropTarget: Bool
-    let customStates: [NSConfigurationStateCustomKey: AnyHashable]
+    let state: NSItemConfigurationState
 
-    init(isSelected: Bool, isEnabled: Bool, isHovered: Bool, isEditing: Bool, highlight: NSCollectionViewItem.HighlightState, isActive: Bool, isFocused: Bool, isExpanded: Bool, isReordering: Bool, isDropTarget: Bool, customStates: [NSConfigurationStateCustomKey: AnyHashable] = [:]) {
-        self.isSelected = isSelected
-        self.isEnabled = isEnabled
-        self.isHovered = isHovered
-        self.isEditing = isEditing
-        self.highlight = highlight
-        self.isActive = isActive
-        self.isFocused = isFocused
-        self.isExpanded = isExpanded
-        self.isReordering = isReordering
-        self.isDropTarget = isDropTarget
-        self.customStates = customStates
-        super.init()
+    init(state: NSItemConfigurationState) {
+        self.state = state
     }
     
     public func copy(with zone: NSZone? = nil) -> Any {
-        __NSItemConfigurationStateObjc(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, highlight: highlight, isActive: isActive, isFocused: isFocused, isExpanded: isExpanded, isReordering: isReordering, isDropTarget: isDropTarget, customStates: customStates)
+        __NSItemConfigurationStateObjc(state: state)
     }
 }
-
-/*
- /// The emphasized state.
- public struct EmphasizedState: OptionSet, Hashable {
- public let rawValue: UInt
- /// The window of the item is key.
- public static let isKeyWindow = EmphasizedState(rawValue: 1 << 0)
- /// The collection view of the item is first responder.
- public static let isFirstResponder = EmphasizedState(rawValue: 1 << 1)
-
- /// Creates a units structure with the specified raw value.
- public init(rawValue: UInt) {
- self.rawValue = rawValue
- }
- }
-
- /// The emphasized state.
- public var emphasizedState: EmphasizedState = []
- */

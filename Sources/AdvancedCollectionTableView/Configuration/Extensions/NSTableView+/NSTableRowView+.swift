@@ -115,7 +115,10 @@ extension NSTableRowView {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSListConfigurationState {
-        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isActive: isActive, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
+        let tableView = tableView
+        let activeState = tableView?.activeState ?? .inactive
+        let isEditing = tableView?.editingView?.isDescendant(of: self) == true
+        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, activeState: activeState, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
         return state
     }
 
@@ -166,15 +169,27 @@ extension NSTableRowView {
     @objc var isEnabled: Bool {
         tableView?.isEnabled ?? true
     }
-
+    
     /// A Boolean value that indicates whether the row view is in an editable state. (the text of a content configuration is currently edited).
     @objc var isEditing: Bool {
-        (contentView as? EditingContentView)?.isEditing ?? false
+        if let editingView = window?.firstResponder as? EditiableView ?? (window?.firstResponder as? NSText)?.delegate as? EditiableView, editingView.isEditing, editingView.isDescendant(of: self) {
+            return true
+        }
+        return false
     }
 
     /// A Boolean value that specifies whether the row view is active (it's window is focused).
     @objc var isActive: Bool {
         window?.isKeyWindow ?? false
+    }
+    
+    /// A Boolean value that indicates whether the collection view and it's items are focused.
+    @objc var isTableViewFocused: Bool {
+        tableView?.isDescendantFirstResponder == true
+    }
+    
+    var activeState: NSListConfigurationState.ActiveState {
+        isActive ? isTableViewFocused ? .focused : .active : .inactive
     }
     
     @objc var isReordering: Bool {

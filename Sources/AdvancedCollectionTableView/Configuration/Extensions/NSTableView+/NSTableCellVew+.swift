@@ -101,7 +101,10 @@ extension NSTableCellView {
      */
     @objc open var configurationState: NSListConfigurationState {
         let rowView = rowView
-        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isActive: isActive, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
+        let tableView = tableView
+        let activeState = tableView?.activeState ?? .inactive
+        let isEditing = tableView?.editingView?.isDescendant(of: self) == true
+        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, activeState: activeState, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
     }
 
     /**
@@ -249,7 +252,10 @@ extension NSTableCellView {
 
     /// A Boolean value that indicates whether the cell is in an editable state. (the text of a content configuration is currently edited).
     @objc var isEditing: Bool {
-        (contentView as? EditingContentView)?.isEditing ?? false
+        if let editingView = window?.firstResponder as? EditiableView ?? (window?.firstResponder as? NSText)?.delegate as? EditiableView, editingView.isEditing, editingView.isDescendant(of: self) {
+            return true
+        }
+        return false
     }
 
     var isNextRowSelected: Bool {

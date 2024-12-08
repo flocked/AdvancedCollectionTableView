@@ -21,8 +21,6 @@ class SidebarViewController: NSViewController {
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
-        configuration.textProperties.isSelectable = true
-        configuration.textProperties.isEditable = true
         configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
         if sidebarItem.isFavorite {
             configuration.badge = .symbolImage("star.fill", color: .systemYellow, backgroundColor: nil)

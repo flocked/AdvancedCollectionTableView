@@ -14,5 +14,5 @@ protocol ConfigurationState: NSConfigurationState {
     var isHovered: Bool { get }
 }
 
-extension NSItemConfigurationState: ConfigurationState {}
-extension NSListConfigurationState: ConfigurationState {}
+extension NSItemConfigurationState: ConfigurationState { }
+extension NSListConfigurationState: ConfigurationState { }
