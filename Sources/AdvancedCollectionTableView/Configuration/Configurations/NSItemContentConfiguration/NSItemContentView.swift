@@ -70,6 +70,10 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     lazy var contentView = ItemContentView(configuration: appliedConfiguration)
+    var textFieldAlignment: NSTextAlignment?
+    var secondaryTextFieldAlignment: NSTextAlignment?
+    var textFieldConstraint: NSLayoutConstraint?
+    var secondaryTextFieldConstraint: NSLayoutConstraint?
 
     lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading).spacing(appliedConfiguration.textToSecondaryTextPadding)
 
@@ -115,7 +119,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
         secondaryTextField.isEnabled = textField.isEnabled
-
         if appliedConfiguration.scaleTransform != _scaleTransform {
             _scaleTransform = appliedConfiguration.scaleTransform
             scale = _scaleTransform
@@ -124,6 +127,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
             _rotation = appliedConfiguration.rotation
             rotation = _rotation
         }
+        
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.contentToTextPadding
@@ -141,6 +145,33 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         }
         toolTip = appliedConfiguration.toolTip
         contentView.invalidateIntrinsicContentSize()
+        textField.drawsBackground = true
+        
+        if textFieldAlignment != appliedConfiguration.textProperties.alignment {
+            textFieldAlignment = appliedConfiguration.textProperties.alignment
+            textFieldConstraint?.activate(false)
+            switch appliedConfiguration.textProperties.alignment {
+            case .center:
+                textFieldConstraint = textField.centerXAnchor.constraint(equalTo: stackView.centerXAnchor).activate()
+            case .right:
+                textFieldConstraint = textField.rightAnchor.constraint(equalTo: stackView.rightAnchor).activate()
+            default:
+                textFieldConstraint = textField.leftAnchor.constraint(equalTo: stackView.leftAnchor).activate()
+            }
+        }
+        
+        if secondaryTextFieldAlignment != appliedConfiguration.secondaryTextProperties.alignment {
+            secondaryTextFieldAlignment = appliedConfiguration.secondaryTextProperties.alignment
+            secondaryTextFieldConstraint?.activate(false)
+            switch appliedConfiguration.secondaryTextProperties.alignment {
+            case .center:
+                secondaryTextFieldConstraint = secondaryTextField.centerXAnchor.constraint(equalTo: stackView.centerXAnchor).activate()
+            case .right:
+                secondaryTextFieldConstraint = secondaryTextField.rightAnchor.constraint(equalTo: stackView.rightAnchor).activate()
+            default:
+                secondaryTextFieldConstraint = secondaryTextField.leftAnchor.constraint(equalTo: stackView.leftAnchor).activate()
+            }
+        }
     }
 }
 

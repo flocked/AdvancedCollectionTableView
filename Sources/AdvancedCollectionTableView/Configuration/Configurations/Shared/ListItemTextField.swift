@@ -77,8 +77,6 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         var intrinsicContentSize = super.intrinsicContentSize
         if alignment != .left, editingContentView is NSListContentView {
             intrinsicContentSize.width = NSView.noIntrinsicMetric
-        } else if alignment != .center, editingContentView is NSItemContentView{
-            intrinsicContentSize.width = NSView.noIntrinsicMetric
         }
         
         if preferredMaxLayoutWidth != 0 {
