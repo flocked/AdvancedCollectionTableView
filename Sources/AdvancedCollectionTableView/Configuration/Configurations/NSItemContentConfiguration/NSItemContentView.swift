@@ -111,6 +111,8 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     }
 
     func updateConfiguration() {
+        let isAnimating = NSAnimationContext.hasActiveGrouping
+        
         contentView.centerYConstraint?.activate(false)
 
         textField.properties = appliedConfiguration.textProperties
@@ -123,22 +125,21 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         if appliedConfiguration.scaleTransform != _scaleTransform {
             anchorPoint = .center
             _scaleTransform = appliedConfiguration.scaleTransform
-            animator(NSAnimationContext.hasActiveGrouping).scale = _scaleTransform
+            animator(isAnimating).scale = _scaleTransform
         }
         if appliedConfiguration.rotation != _rotation {
             anchorPoint = .center
             _rotation = appliedConfiguration.rotation
-            animator(NSAnimationContext.hasActiveGrouping).rotation = _rotation
+            animator(isAnimating).rotation = _rotation
         }
         
         contentView.configuration = appliedConfiguration
-        textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
-        stackView.spacing = appliedConfiguration.contentToTextPadding
-        stackView.orientation = appliedConfiguration.contentPosition.orientation
-        stackView.alignment = appliedConfiguration.contentAlignment
-        stackView.arrangedViews = appliedConfiguration.contentPosition.contentIsLeading ? [contentView, textStackView] : [textStackView, contentView]
-        stackView.addArrangedSubview(appliedConfiguration.contentPosition.contentIsLeading ? textStackView : contentView)
-        stackviewConstraints.constant(appliedConfiguration.margins)
+        textStackView.animator(isAnimating).spacing = appliedConfiguration.textToSecondaryTextPadding
+        stackView.animator(isAnimating).spacing = appliedConfiguration.contentToTextPadding
+        stackView.animator(isAnimating).orientation = appliedConfiguration.contentPosition.orientation
+        stackView.animator(isAnimating).alignment = appliedConfiguration.contentAlignment
+        stackView.animator(isAnimating).arrangedViews = appliedConfiguration.contentPosition.contentIsLeading ? [contentView, textStackView] : [textStackView, contentView]
+        stackviewConstraints.constant(appliedConfiguration.margins, animated: isAnimating)
         if appliedConfiguration.contentPosition.isFirstBaseline, appliedConfiguration.image?.isSymbolImage == false {
             if appliedConfiguration.hasText {
                 contentView.centerYConstraint = contentView.centerYAnchor.constraint(equalTo: textField.firstBaselineAnchor).activate()
@@ -148,7 +149,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         }
         toolTip = appliedConfiguration.toolTip
         contentView.invalidateIntrinsicContentSize()
-        textField.drawsBackground = true
         
         if textFieldAlignment != appliedConfiguration.textProperties.alignment {
             textFieldAlignment = appliedConfiguration.textProperties.alignment

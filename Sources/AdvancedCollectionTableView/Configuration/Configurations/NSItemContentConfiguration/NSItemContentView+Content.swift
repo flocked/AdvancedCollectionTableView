@@ -252,14 +252,16 @@ extension NSItemContentView {
         }
 
         func updateConfiguration() {
-            backgroundColor = contentProperties.resolvedBackgroundColor()
+            let isAnimating = NSAnimationContext.hasActiveGrouping
+            
+            animator(isAnimating).backgroundColor = contentProperties.resolvedBackgroundColor()
             visualEffect = contentProperties.visualEffect
             
-            containerView.border = contentProperties._resolvedBorder()
-            cornerRadius = contentProperties.cornerRadius
-            containerView.cornerRadius = contentProperties.cornerRadius
+            containerView.animator(isAnimating).border = contentProperties._resolvedBorder()
+            animator(isAnimating).cornerRadius = contentProperties.cornerRadius
+            containerView.animator(isAnimating).cornerRadius = contentProperties.cornerRadius
 
-            outerShadow = contentProperties._resolvedShadow()
+            animator(isAnimating).outerShadow = contentProperties._resolvedShadow()
 
             imageView.tintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = configuration.imageProperties.scaling.scaling
@@ -271,16 +273,16 @@ extension NSItemContentView {
             if contentProperties.scaleTransform != _scaleTransform {
                 anchorPoint = .center
                 _scaleTransform = contentProperties.scaleTransform
-                scale = _scaleTransform
+                animator(isAnimating).scale = _scaleTransform
             }
             if contentProperties.rotation != _rotation {
                 anchorPoint = .center
                 _rotation = contentProperties.rotation
-                rotation = _rotation
+                animator(isAnimating).rotation = _rotation
             }
             
             toolTip = contentProperties.toolTip
-            isHidden = !configuration.hasContent
+            animator(isAnimating).isHidden = !configuration.hasContent
             updateBadges()
             
             invalidateIntrinsicContentSize()

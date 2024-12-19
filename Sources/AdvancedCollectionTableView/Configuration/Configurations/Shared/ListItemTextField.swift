@@ -52,7 +52,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             placeholderString = ""
         }
         toolTip = properties.toolTip == "" ? stringValue != "" ? stringValue : nil : properties.toolTip
-        isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+        animator(NSAnimationContext.hasActiveGrouping).isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         invalidateIntrinsicContentSize()
     }
 

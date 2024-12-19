@@ -83,6 +83,8 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     }
     
     func updateConfiguration() {
+        let isAnimating = NSAnimationContext.hasActiveGrouping
+        
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
                 
@@ -96,13 +98,13 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         imageView.image = appliedConfiguration.image
         imageView.properties = appliedConfiguration.imageProperties
         
-        textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
-        imageTextStackView.spacing = appliedConfiguration.imageToTextPadding
-        imageTextStackView.orientation = appliedConfiguration.imageProperties.position.orientation
-        imageTextStackView.alignment = appliedConfiguration.imageProperties.position.alignment
+        textStackView.animator(isAnimating).spacing = appliedConfiguration.textToSecondaryTextPadding
+        imageTextStackView.animator(isAnimating).spacing = appliedConfiguration.imageToTextPadding
+        imageTextStackView.animator(isAnimating).orientation = appliedConfiguration.imageProperties.position.orientation
+        imageTextStackView.animator(isAnimating).alignment = appliedConfiguration.imageProperties.position.alignment
         imageTextStackView.addArrangedSubview(appliedConfiguration.imageProperties.position.imageIsLeading ? textStackView : imageView)
         
-        stackViewConstraints.constant(appliedConfiguration.margins)
+        stackViewConstraints.constant(appliedConfiguration.margins, animated: isAnimating)
         
         if let badge = appliedConfiguration.badge, appliedConfiguration.imageProperties.position.orientation == .horizontal {
             badgeStackView.spacing = appliedConfiguration.textToBadgePadding
