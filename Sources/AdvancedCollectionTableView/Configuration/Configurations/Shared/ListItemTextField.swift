@@ -38,14 +38,14 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {
         if let attributedString = attributedString {
-            attributedStringValue = NSAttributedString(attributedString)
+            attributedStringValue = attributedString.nsAttributedString
         } else if let text = text {
             stringValue = text
         } else {
             stringValue = ""
         }
         if let attributedPlaceholder = attributedPlaceholder {
-            placeholderAttributedString = NSAttributedString(attributedPlaceholder)
+            placeholderAttributedString = attributedPlaceholder.nsAttributedString
         } else if let placeholder = placeholder {
             placeholderString = placeholder
         } else {

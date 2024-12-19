@@ -25,6 +25,9 @@ class SidebarViewController: NSViewController {
         if sidebarItem.isFavorite {
             configuration.badge = .symbolImage("star.fill", color: .systemYellow, backgroundColor: nil)
         }
+        if Bool.random() {
+            configuration.badge = .text("\(Int.random(max: 20))")
+        }
         tableCell.contentConfiguration = configuration
     }
     
