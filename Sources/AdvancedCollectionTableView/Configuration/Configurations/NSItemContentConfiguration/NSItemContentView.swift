@@ -123,12 +123,12 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         if appliedConfiguration.scaleTransform != _scaleTransform {
             anchorPoint = .center
             _scaleTransform = appliedConfiguration.scaleTransform
-            scale = _scaleTransform
+            animator(NSAnimationContext.hasActiveGrouping).scale = _scaleTransform
         }
         if appliedConfiguration.rotation != _rotation {
             anchorPoint = .center
             _rotation = appliedConfiguration.rotation
-            rotation = _rotation
+            animator(NSAnimationContext.hasActiveGrouping).rotation = _rotation
         }
         
         contentView.configuration = appliedConfiguration
