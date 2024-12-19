@@ -129,9 +129,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
             rotation = _rotation
         }
         
-        Swift.print("check!!", appliedConfiguration.scaleTransform, scale, appliedConfiguration.scaleTransform != _scaleTransform)
-
-        
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.spacing = appliedConfiguration.contentToTextPadding
