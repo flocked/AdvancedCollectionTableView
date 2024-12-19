@@ -119,7 +119,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
         secondaryTextField.isEnabled = textField.isEnabled
-        Swift.print("check!!", appliedConfiguration.scaleTransform, scale)
 
         if appliedConfiguration.scaleTransform != _scaleTransform {
             _scaleTransform = appliedConfiguration.scaleTransform
@@ -129,6 +128,9 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
             _rotation = appliedConfiguration.rotation
             rotation = _rotation
         }
+        
+        Swift.print("check!!", appliedConfiguration.scaleTransform, scale, appliedConfiguration.scaleTransform != _scaleTransform)
+
         
         contentView.configuration = appliedConfiguration
         textStackView.spacing = appliedConfiguration.textToSecondaryTextPadding
