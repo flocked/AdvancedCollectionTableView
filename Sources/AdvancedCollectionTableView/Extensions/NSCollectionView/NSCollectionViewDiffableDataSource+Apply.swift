@@ -15,7 +15,7 @@ extension NSCollectionViewDiffableDataSource {
 
      - Parameters:
         - snapshot: The snapshot reflecting the new state of the data in the collection view.
-        - option: Option how to apply the snapshot to the table view. The default value is `animated`.
+        - option: Option how to apply the snapshot to the collection view. The default value is `animated`.
         - completion: An optional closure to be executed when the animations are complete. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
@@ -29,18 +29,11 @@ extension NSCollectionViewDiffableDataSource {
         }
     }
 
-    private func applySnapshotUsingReloadData(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-                                              completion: (() -> Void)? = nil)
-    {
+    private func applySnapshotUsingReloadData(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, completion: (() -> Void)? = nil) {
         apply(snapshot, animatingDifferences: false, completion: completion)
     }
 
-    private func apply(
-        _ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-        animated: Bool = true,
-        animationDuration: TimeInterval? = nil,
-        completion: (() -> Void)? = nil
-    ) {
+    private func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, animated: Bool = true, animationDuration: TimeInterval? = nil, completion: (() -> Void)? = nil) {
         if animated, animationDuration == nil {
             apply(snapshot, animatingDifferences: true, completion: completion)
         } else {

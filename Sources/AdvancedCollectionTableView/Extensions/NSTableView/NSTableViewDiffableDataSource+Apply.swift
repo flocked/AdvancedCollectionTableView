@@ -29,19 +29,11 @@ extension NSTableViewDiffableDataSource {
         }
     }
 
-    private func applySnapshotUsingReloadData(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-
-                                              completion: (() -> Void)? = nil)
-    {
+    private func applySnapshotUsingReloadData(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, completion: (() -> Void)? = nil) {
         apply(snapshot, animatingDifferences: false, completion: completion)
     }
 
-    private func apply(
-        _ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
-        animated: Bool = true,
-        animationDuration: TimeInterval? = nil,
-        completion: (() -> Void)? = nil
-    ) {
+    private func apply(_ snapshot: NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, animated: Bool = true, animationDuration: TimeInterval? = nil, completion: (() -> Void)? = nil) {
         if animated, animationDuration == nil {
             apply(snapshot, animatingDifferences: true, completion: completion)
         } else {
