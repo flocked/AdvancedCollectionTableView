@@ -93,8 +93,16 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         didSet {
             if menuProvider != nil  {
                 collectionView.menuProvider = { [weak self] location in
-                    guard let self = self else { return nil }
-                    return self.menuProvider?(self.elements(for: location))
+                    guard let self = self, let menuProvider = self.menuProvider else { return nil }
+                    let indexPaths = self.collectionView.rightClickIndexPaths(for: location)
+                    let elements = indexPaths.compactMap({self.element(for: $0)})
+                    guard let menu = self.menuProvider?(indexPaths.compactMap({ self.element(for: $0) })) else { return nil }
+                    let items = indexPaths.compactMap({self.collectionView.item(at:$0)})
+                    items.forEach({ $0.isRightClickSelected = true })
+                    menu.handlers.didClose = {
+                        items.forEach({ $0.isRightClickSelected = false })
+                    }
+                    return menu
                 }
             } else {
                 collectionView.menuProvider = nil
@@ -123,16 +131,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    func elements(for location: CGPoint) -> [Element] {
-        if let item = element(at: location) {
-            var items: [Element] = [item]
-            let selectedItems = selectedElements
-            if selectedItems.contains(item) {
-                items = selectedItems
-            }
-            return items
-        }
-        return []
+    func item(for element: Element) -> NSCollectionViewItem? {
+        guard let indexPath = indexPath(for: element) else { return nil }
+        return collectionView.item(at: indexPath)
     }
 
     func observeHoveredItem() {
@@ -921,12 +922,34 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     /// Handlers for dragging pasteboard items inside the collection view.
     public struct DroppingHandlers {
-        /// The handler that determines whenever pasteboard elements can be dragged inside the collection view.
-        public var canDrop: ((_ contents: [PasteboardContent]) -> ([Element]))?
-        /// The handler that gets called when the handler will drag pasteboard items inside the collection view.
-        public var willDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
-        /// The handler that gets called when the handler did drag pasteboard items inside the collection view.
-        public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        /**
+         The handler that determines the elements to be inserted for the dropping pasteboard content.
+         
+         - Parameters:
+            - contents: The content of the dropping pasteboard.
+            - target: The target element of the drop.
+         */
+        public var canDrop: ((_ contents: [PasteboardContent], _ target: Element?) -> (Bool))?
+        /**
+         The handler that gets called when pasteboard content is about to drop inside the collection view.
+         
+         - Parameters:
+            - contents: The content of the dropping pasteboard.
+            - target: The target element of the drop.
+            - transaction: The transaction for the drop, if new elements are provided via ``elements``.
+         */
+        public var willDrop: ((_ contents: [PasteboardContent], _ target: Element?, _ transaction: DiffableDataSourceTransaction<Section, Element>?) -> ())?
+        /**
+         The handler that gets called when pasteboard content was dropped inside the collection view.
+         
+         - Parameters:
+            - contents: The content of the pasteboard.
+            - target: The target element of the drop.
+            - transaction: The transaction for the drop, if new elements are provided via ``elements``.
+         */
+        public var didDrop: ((_ contents: [PasteboardContent], _ target: Element?, _ transaction: DiffableDataSourceTransaction<Section, Element>?) -> ())?
+        /// The handler that determinates the elements for the dropping pasteboard content.
+        public var elements: ((_ contents: [PasteboardContent]) -> ([Element]))?
         /// A Boolean value that indicates whether dropping elements is animated.
         public var animates: Bool = true
     }

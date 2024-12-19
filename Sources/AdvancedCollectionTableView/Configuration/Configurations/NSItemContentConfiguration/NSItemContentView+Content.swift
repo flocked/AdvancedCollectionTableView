@@ -252,8 +252,8 @@ extension NSItemContentView {
         }
 
         func updateConfiguration() {
-            let isAnimating = NSAnimationContext.hasActiveGrouping
-            
+            let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
+
             animator(isAnimating).backgroundColor = contentProperties.resolvedBackgroundColor()
             visualEffect = contentProperties.visualEffect
             
@@ -263,6 +263,9 @@ extension NSItemContentView {
 
             animator(isAnimating).outerShadow = contentProperties._resolvedShadow()
 
+            if isAnimating, imageView.image != configuration.image || imageView.imageScaling != configuration.imageProperties.scaling.scaling {
+                imageView.transition(.fade(duration: NSAnimationContext.current.duration))
+            }
             imageView.tintColor = configuration.imageProperties.resolvedTintColor()
             imageView.imageScaling = configuration.imageProperties.scaling.scaling
             imageView.symbolConfiguration = configuration.imageProperties.symbolConfiguration?.nsSymbolConfiguration()

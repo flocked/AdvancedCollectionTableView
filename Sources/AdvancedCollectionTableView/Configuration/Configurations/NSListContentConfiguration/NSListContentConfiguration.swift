@@ -165,6 +165,23 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
     /// The margins between the content and the edges of the list view.
     public var margins = NSDirectionalEdgeInsets(top: 6.0, leading: 4.0, bottom: 6.0, trailing: 4.0)
     
+    /**
+     The scaling of the item.
+
+     The default is `1.0`, which displays the item at it's original scale. A larger value will display the item at a larger and a smaller value at a smaller size.
+     */
+    public var scaleTransform: Scale = 1.0
+    
+    /**
+     The rotation of the item, in degrees.
+
+     The default is `zero`, which displays the item with no rotation.
+     */
+    public var rotation: Rotation = .zero
+    
+    /// The alpha value of the item.
+    public var alpha: CGFloat = 1.0
+    
     /// The accesories.
     var accesories: [Accessory] = []
     

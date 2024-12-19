@@ -25,7 +25,6 @@ class MainViewController: NSViewController {
         configuration.secondaryText = galleryItem.detail
         configuration.image = NSImage(named: galleryItem.title)
         configuration.contentProperties.shadow = .black(opacity: 0.5, radius: 5.0)
-
         if let badgeText = galleryItem.badgeText {
             configuration.badges = [.text(badgeText, color: galleryItem.badgeColor, type: .attachment)]
         }
@@ -42,15 +41,15 @@ class MainViewController: NSViewController {
             /// Updates the configuration based on whether the mouse is hovering the item
             configuration.contentProperties.scaleTransform = state.isHovered ? 1.03 : 1.0
             configuration.overlayView = state.isHovered ? NSView(color: .white, opacity: 0.25) : nil
-
-            /// Apply the updated configuration
+            
+            /// Apply the updated configuration animated.
             item.contentConfiguration = configuration
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.collectionViewLayout = .grid(columns: 3)
 
         collectionView.dataSource = dataSource
@@ -66,7 +65,7 @@ class MainViewController: NSViewController {
         dataSource.reorderingHandlers.didReorder = { transaction in
             self.galleryItems = self.galleryItems.applying(transaction.difference)!
         }
-
+        
         dataSource.rightClickHandler = { selectedItems in
             selectedItems.forEach({ item in
                 item.isFavorite = !item.isFavorite

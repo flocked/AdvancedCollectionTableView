@@ -111,8 +111,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     }
 
     func updateConfiguration() {
-        let isAnimating = NSAnimationContext.hasActiveGrouping
-        
+        let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
         contentView.centerYConstraint?.activate(false)
 
         textField.properties = appliedConfiguration.textProperties
@@ -132,6 +131,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
             _rotation = appliedConfiguration.rotation
             animator(isAnimating).rotation = _rotation
         }
+        animator(isAnimating).alphaValue = appliedConfiguration.alpha
         
         contentView.configuration = appliedConfiguration
         textStackView.animator(isAnimating).spacing = appliedConfiguration.textToSecondaryTextPadding
@@ -149,7 +149,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         }
         toolTip = appliedConfiguration.toolTip
         contentView.invalidateIntrinsicContentSize()
-        
+                
         if textFieldAlignment != appliedConfiguration.textProperties.alignment {
             textFieldAlignment = appliedConfiguration.textProperties.alignment
             textFieldConstraint?.activate(false)

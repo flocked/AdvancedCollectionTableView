@@ -282,15 +282,19 @@ extension NSTextField {
      - Parameter properties:The configuration for configurating the text field.
      */
     func configurate(using properties: TextProperties) {
+        let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
         
         maximumNumberOfLines = properties.maximumNumberOfLines
         lineBreakMode = properties.lineBreakMode
-        animator(NSAnimationContext.hasActiveGrouping).textColor = properties.resolvedColor()
-        if NSAnimationContext.hasActiveGrouping, let font = font, properties.font.sizeChanged(to: font) {
-            animator(NSAnimationContext.hasActiveGrouping).fontSize = properties.font.pointSize
+        animator(isAnimating).textColor = properties.resolvedColor()
+        font = properties.font
+        /*
+        if isAnimating, font?.onlySizeChanged(from: properties.font) == true {
+            animator(isAnimating).fontSize = properties.font.pointSize
         } else {
             font = properties.font
         }
+         */
         alignment = properties.alignment
         isEditable = properties.isEditable
         isSelectable = properties.isSelectable
@@ -306,8 +310,8 @@ extension NSTextField {
 }
 
 extension NSFont {
-    func sizeChanged(to font: NSFont) -> Bool {
-        !(fontName == font.fontName && fontDescriptor.symbolicTraits == font.fontDescriptor.symbolicTraits && fontDescriptor.weight == font.fontDescriptor.weight) && pointSize != font.pointSize
+    func onlySizeChanged(from font: NSFont) -> Bool {
+        return (fontName == font.fontName && fontDescriptor.symbolicTraits == font.fontDescriptor.symbolicTraits && fontDescriptor.weight == font.fontDescriptor.weight) && pointSize != font.pointSize
     }
 }
 

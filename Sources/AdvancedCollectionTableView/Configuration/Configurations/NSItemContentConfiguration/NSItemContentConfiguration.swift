@@ -254,6 +254,9 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
      The default is `zero`, which displays the item with no rotation.
      */
     public var rotation: Rotation = .zero
+    
+    /// The alpha value of the item.
+    public var alpha: CGFloat = 1.0
 
     // MARK: Creating a content view
 

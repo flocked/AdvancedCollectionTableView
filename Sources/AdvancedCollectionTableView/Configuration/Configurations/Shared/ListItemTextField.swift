@@ -37,6 +37,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
     }
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {
+        let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
         if let attributedString = attributedString {
             attributedStringValue = attributedString.nsAttributedString
         } else if let text = text {
@@ -52,7 +53,7 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
             placeholderString = ""
         }
         toolTip = properties.toolTip == "" ? stringValue != "" ? stringValue : nil : properties.toolTip
-        animator(NSAnimationContext.hasActiveGrouping).isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
+        animator(isAnimating).isHidden = text == nil && attributedString == nil && placeholder == nil && attributedPlaceholder == nil
         invalidateIntrinsicContentSize()
     }
 

@@ -84,6 +84,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var hoveredRowObserver: KeyValueObservation?
     var keyDownMonitor: NSEvent.Monitor?
     var canDragItems = false
+    var canDrop = false
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider? {
@@ -124,7 +125,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
                     guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
-                    return sectionHeaderCellProvider(tableView, row, section)
+                    var view: NSTableCellView?
+                    NSAnimationContext.runNonAnimated {
+                        view = sectionHeaderCellProvider(tableView, row, section)
+                    }
+                    return view ?? NSTableCellView()
                 }
             } else {
                 dataSource.sectionHeaderViewProvider = nil
@@ -396,8 +401,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource = .init(tableView: tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
-            return cellProvider(tableview, tablecolumn, row, item)
+            var view: NSView?
+            NSAnimationContext.runNonAnimated {
+                view = cellProvider(tableview, tablecolumn, row, item)
+            }
+            return view ?? NSTableCellView()
         })
+        
+        defaultRowAnimation = []
         
         delegate = Delegate(self)
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
@@ -427,8 +438,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dropping
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        // let backgroundStyles = dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).flatMap({$0.cellViews}).compactMap({$0.backgroundStyle}).uniqued()
-        
+        canDrop = false
+        dropTargetRow = nil
         if !dragingRowIndexes.isEmpty {
             if reorderingHandlers.droppable, let canDrop = reorderingHandlers.canDrop, dropOperation == .on {
                 if dragingRowIndexes.count == 1, dragingRowIndexes.first == row {
@@ -447,7 +458,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                     return []
                 }
             }
-            dropTargetRow = nil
             dropValidationRow = dropOperation == .above ? row : nil
         
             if reorderingHandlers.canReorder != nil, dropOperation == .above {
@@ -461,12 +471,15 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         if reorderingSectionRow != nil, dropOperation == .above {
             return moveSectionTransaction(to: row) != nil ? .move : []
         }
-        if draggingInfo.draggingSource as? NSTableView != tableView {
+
+        if draggingInfo.draggingSource as? NSTableView != tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
             let content = draggingInfo.draggingPasteboard.content()
-            if !content.isEmpty, droppingHandlers.canDrop?(content) != nil {
-                return NSDragOperation.copy
+            dropTargetRow = dropOperation == .on ? row : nil
+            let target = dropOperation == .on ? item(forRow: row) : nil
+            if !content.isEmpty, canDrop(content, target) {
+                self.canDrop = true
+                return .copy
             }
-            return []
         }
         return []
     }
@@ -488,16 +501,26 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
             return true
         }
-        if draggingInfo.draggingSource as? NSTableView != tableView {
-            let elements = droppingHandlers.canDrop?(draggingInfo.draggingPasteboard.content()) ?? []
-            if !elements.isEmpty {
-                let transaction = dropItemsTransaction(elements, row: row)
-                droppingHandlers.willDrop?(transaction)
-                apply(transaction.finalSnapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
-                selectItems(elements)
-                droppingHandlers.didDrop?(transaction)
-                return true
+        if draggingInfo.draggingSource as? NSTableView != tableView, canDrop {
+            let content = draggingInfo.draggingPasteboard.content()
+            var items: [Item] = []
+            var target: Item?
+            var transaction: DiffableDataSourceTransaction<Section, Item>? = nil
+            if let dropTargetRow = dropTargetRow {
+                target = item(forRow: dropTargetRow)
+            } else {
+                items = droppingHandlers.items?(content) ?? []
             }
+            if !items.isEmpty {
+                transaction = dropItemsTransaction(items, row: row)
+            }
+            droppingHandlers.willDrop?(content, target, transaction)
+            if let transaction = transaction {
+                apply(transaction.finalSnapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
+                selectItems(items)
+            }
+            droppingHandlers.didDrop?(content, target, transaction)
+            return true
         }
         return false
     }
@@ -522,6 +545,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         reorderingSectionRow = nil
         dropValidationRow = nil
         canDragItems = false
+        canDrop = false
     }
     
     open func tableView(_: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
@@ -1111,12 +1135,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /// Handlers for dragging pasteboard items inside the table view.
     public struct DroppingHandlers {
-        /// The handler that determines the items to insert for the pasteboard content.
-        public var canDrop: ((_ contents: [PasteboardContent]) -> ([Item]))?
-        /// The handler that gets called when the handler will drag pasteboard items inside the table view.
-        public var willDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
-        /// The handler that gets called when the handler did drop items from the pasteboard content.
-        public var didDrop: ((_ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        /// The handler that determines the items to be inserted for the dropping pasteboard content.
+        public var canDrop: ((_ contents: [PasteboardContent], _ target: Item?) -> (Bool))?
+        /// The handler that determinates the items for the dropping pasteboard content.
+        public var items: ((_ contents: [PasteboardContent]) -> ([Item]))?
+        /// The handler that gets called when the pasteboard content is about to drop inside the table view.
+        public var willDrop: ((_ contents: [PasteboardContent], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
+        /// The handler that gets called when the pasteboard content was dropped inside the table view.
+        public var didDrop: ((_ contents: [PasteboardContent], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true
     }

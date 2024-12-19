@@ -179,7 +179,9 @@ extension NSTableCellView {
     func updateContentConfigurationStyle() {
         if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
             setAssociatedValue(configuration, key: "contentConfiguration")
-            contentView?.configuration = configuration
+            NSAnimationContext.runNonAnimated {
+                contentView?.configuration = configuration
+            }
         }
     }
 

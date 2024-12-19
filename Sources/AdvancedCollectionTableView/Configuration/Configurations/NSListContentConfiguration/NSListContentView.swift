@@ -69,7 +69,9 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     lazy var imageTextStackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
     lazy var badgeStackView = NSStackView(views: [imageTextStackView]).orientation(.horizontal).distribution(.fill).alignment(.centerY)
     var stackViewConstraints: [NSLayoutConstraint] = []
-        
+    var _scaleTransform: Scale = .none
+    var _rotation: Rotation = .zero
+    
     var tableCellView: NSTableCellView? {
         superview as? NSTableCellView
     }
@@ -83,8 +85,8 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     }
     
     func updateConfiguration() {
-        let isAnimating = NSAnimationContext.hasActiveGrouping
-        
+        let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
+
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
                 
@@ -95,6 +97,9 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
         
+        if isAnimating, imageView.image != appliedConfiguration.image || imageView.properties != appliedConfiguration.imageProperties {
+            imageView.transition(.fade(duration: NSAnimationContext.current.duration))
+        }
         imageView.image = appliedConfiguration.image
         imageView.properties = appliedConfiguration.imageProperties
         
@@ -157,6 +162,18 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         }
         
         updateAccesoryViews()
+        
+        if appliedConfiguration.scaleTransform != _scaleTransform {
+            anchorPoint = .center
+            _scaleTransform = appliedConfiguration.scaleTransform
+            animator(isAnimating).scale = _scaleTransform
+        }
+        if appliedConfiguration.rotation != _rotation {
+            anchorPoint = .center
+            _rotation = appliedConfiguration.rotation
+            animator(isAnimating).rotation = _rotation
+        }
+        animator(isAnimating).alphaValue = appliedConfiguration.alpha
     }
     
     func updateAccesoryViews() {
