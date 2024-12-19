@@ -121,10 +121,12 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         secondaryTextField.isEnabled = textField.isEnabled
 
         if appliedConfiguration.scaleTransform != _scaleTransform {
+            anchorPoint = .center
             _scaleTransform = appliedConfiguration.scaleTransform
             scale = _scaleTransform
         }
         if appliedConfiguration.rotation != _rotation {
+            anchorPoint = .center
             _rotation = appliedConfiguration.rotation
             rotation = _rotation
         }

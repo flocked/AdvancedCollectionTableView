@@ -267,14 +267,14 @@ extension NSItemContentView {
             image = configuration.image
             view = configuration.view
             overlayView = configuration.overlayView
-
-            anchorPoint = .center
             
             if contentProperties.scaleTransform != _scaleTransform {
+                anchorPoint = .center
                 _scaleTransform = contentProperties.scaleTransform
                 scale = _scaleTransform
             }
             if contentProperties.rotation != _rotation {
+                anchorPoint = .center
                 _rotation = contentProperties.rotation
                 rotation = _rotation
             }
