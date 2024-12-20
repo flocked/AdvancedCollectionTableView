@@ -803,6 +803,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         
         /// A Boolean value that indicates whether deleting elements is animated.
         public var animates: Bool = true
+        
+        /**
+         A Boolean value that indicates whether elements can be deleted by dragging them outside the collection view.
+         
+         - Note: You still need to provide the elements that can be deleted using ``canDelete``.
+         */
+        public var isDeletableByDraggingOutside = false
     }
 
     /**

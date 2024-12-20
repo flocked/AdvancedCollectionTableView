@@ -33,10 +33,10 @@ class SidebarViewController: NSViewController {
         configuration.text = section.title
         sectionHeaderCell.contentConfiguration = configuration
     }
-            
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         tableView.dataSource = dataSource
 
         /// Enables reordering selected rows by dragging them.
@@ -44,7 +44,8 @@ class SidebarViewController: NSViewController {
         
         /// Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems  }
-
+        dataSource.deletingHandlers.isDeletableByDraggingOutside = true 
+        
         /// Swipe row actions for deleting and favoriting an item.
         dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {
@@ -63,7 +64,7 @@ class SidebarViewController: NSViewController {
                 }]
             }
         }
-        
+
         applySnapshot()
     }
         

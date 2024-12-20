@@ -41,17 +41,20 @@ import FZUIKit
  - Note: Don’t change the `dataSource` or `delegate` on the table view after you configure it with a diffable data source. If the table view needs a new data source after you configure it initially, create and configure a new table view and diffable data source.
  */
 open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewDataSource where Section: Hashable & Identifiable, Item: Hashable & Identifiable {
+
     weak var tableView: NSTableView!
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dropValidationRow: Int? = nil
     enum ColumnItemSortingStrategy: Int, Hashable {
-        
         case reset
         /// Updates the item order
         case update
     }
+    var dragDeleteItems: [Item] = []
+    var dragDeleteObservation: KeyValueObservation?
+    var dragDistanceIsMatched = false
     var dragingRowIndexes: [Int] = [] {
         didSet {
             guard oldValue != dragingRowIndexes else { return }
@@ -527,7 +530,28 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     // MARK: Dragging
     
-    open func tableView(_ tableView: NSTableView, draggingSession _: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+    open func tableView(_ tableView: NSTableView, draggingSession: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+        draggingSession.animatesToStartingPositionsOnCancelOrFail = false
+        if deletingHandlers.isDeletableByDraggingOutside, let itemsToDelete = deletingHandlers.canDelete?(rowIndexes.compactMap({item(forRow: $0)})), !itemsToDelete.isEmpty {
+            dragDeleteItems = itemsToDelete
+            let view = tableView.enclosingScrollView ?? tableView
+            let width = view.bounds.width*0.3
+            
+            dragDeleteObservation = NSApplication.shared.observeChanges(for: \.currentEvent) { [weak self] _, event in
+                guard let self = self else { return }
+                if let event = NSEvent.current, event.type == .leftMouseDragged {
+                    let distance = view.bounds.distance(from: event.location(in: view))
+                    self.dragDistanceIsMatched = distance > width
+                    let cursor: NSCursor = self.dragDistanceIsMatched ? .disappearingItem : .arrow
+                    if NSCursor.current != cursor {
+                        cursor.set()
+                    }
+                } else {
+                    self.dragDeleteObservation = nil
+                }
+            }
+        }
+        
         if sectionHeaderCellProvider != nil, let canReorderSection = reorderingHandlers.canReorderSection, rowIndexes.count == 1, let row = rowIndexes.first, let section = section(forRow: row) {
             reorderingSectionRow = canReorderSection(section) ? row : nil
         } else {
@@ -536,10 +560,23 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             items = reorderingHandlers.canReorder?(items) ?? (reorderingHandlers.droppable ? items : [])
             dragingRowIndexes = items.compactMap({row(for: $0)})
         }
+        draggingSession.draggingPasteboard.declareTypes([.string, .fileURL, .itemID, .png, .tiff], owner: nil)
     }
     
-    open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt _: NSPoint, operation _: NSDragOperation) {
-        // dragingRowIndexes.compactMap({ tableView.rowView(atRow: $0, makeIfNecessary: false) }).forEach({ $0.isReordering = false })
+    open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt location: NSPoint, operation _: NSDragOperation) {
+        if !dragDeleteItems.isEmpty, dragDistanceIsMatched {
+            let transaction = currentSnapshot.deleteTransaction(dragDeleteItems)
+            deletingHandlers.willDelete?(dragDeleteItems, transaction)
+            apply(transaction.finalSnapshot, deletingHandlers.animates ? .animated : .withoutAnimation)
+            deletingHandlers.didDelete?(dragDeleteItems, transaction)
+            if NSCursor.current == NSCursor.disappearingItem {
+                NSCursor.arrow.set()
+            }
+        }
+        
+        dragDeleteObservation = nil
+        dragDistanceIsMatched = false
+        dragDeleteItems = []
         dragingRowIndexes = []
         dropTargetRow = nil
         reorderingSectionRow = nil
@@ -552,7 +589,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         if let item = item(forRow: row) {
             let pasteboardItem = IdentifiablePasteboardItem(for: item, content: draggingHandlers.pasteboardContent?(item))
             pasteboardItem.row = row
-            return pasteboardItem
+          //  return pasteboardItem
+            
+            let item = NSPasteboardItem()
+            item.setString("Fun", forType: .string) // Provide string data
+            return item
         } else if reorderingHandlers.canReorderSection != nil, let section = section(forRow: row) {
             let pasteboardItem = IdentifiablePasteboardItem(for: section)
             pasteboardItem.row = row
@@ -562,7 +603,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
-        if let draggingImage = draggingHandlers.draggingImage {
+        if canDrop {
+            let items = droppingHandlers.items?(draggingInfo.draggingPasteboard.content()) ?? []
+        } else if canDragItems, let draggingImage = draggingHandlers.draggingImage {
             draggingInfo.enumerateDraggingItems(for: tableView, classes: [IdentifiablePasteboardItem.self], using: { draggingItem,_,_ in
                 if let row = (draggingItem.item as? IdentifiablePasteboardItem)?.row, let item = self.item(forRow: row) {
                     if let image = draggingImage(item) {
@@ -1076,6 +1119,13 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          */
         public var didDelete: ((_ items: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
         
+        /**
+         A Boolean value that indicates whether items can be deleted by dragging them outside the table view.
+         
+         - Note: You still need to provide the items that can be deleted using ``canDelete``.
+         */
+        public var isDeletableByDraggingOutside = false
+        
         /// A Boolean value that indicates whether deleting items is animated.
         public var animates: Bool = true
     }
@@ -1202,4 +1252,15 @@ extension NSPasteboardItem {
 
 class IdentifiablePasteboardItem: NSPasteboardItem {
     var row: Int = 0
+}
+
+extension CGRect {
+    func distance(from point: CGPoint) -> CGFloat {
+        if contains(point) {
+          return 0
+        }
+        let dx = max(0, max(origin.x - point.x, point.x - maxX))
+        let dy = max(0, max(origin.y - point.y, point.y - maxY))
+        return sqrt(dx * dx + dy * dy)
+    }
 }

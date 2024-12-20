@@ -13,6 +13,9 @@ extension CollectionViewDiffableDataSource {
     class Delegate: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
         weak var dataSource: CollectionViewDiffableDataSource!
         
+        var dragDeleteElements: [Element] = []
+        var dragDeleteObservation: KeyValueObservation?
+        var dragDistanceIsMatched = false
         var canReorderItems = false
         var canDragOutside = false
         var canDropItems = false
@@ -92,17 +95,49 @@ extension CollectionViewDiffableDataSource {
             return collectionView.draggingImageForItems(at: indexPaths, with: event, offset: dragImageOffset)
         }
         
-        func collectionView(_: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
-            // Swift.debugPrint("draggingSession willBeginAt", indexPaths.count)
+        func collectionView(_ collectionView: NSCollectionView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItemsAt indexPaths: Set<IndexPath>) {
+            dragDeleteElements = []
+            dragDistanceIsMatched = false
+            if dataSource.deletingHandlers.isDeletableByDraggingOutside, let elementsToDelete = dataSource.deletingHandlers.canDelete?(indexPaths.compactMap({dataSource.element(for: $0)})), !elementsToDelete.isEmpty {
+                let view = collectionView.enclosingScrollView ?? collectionView
+                let width = view.bounds.width*0.3
+                dragDeleteElements = elementsToDelete
+                dragDeleteObservation = NSApplication.shared.observeChanges(for: \.currentEvent) { [weak self] _, event in
+                    guard let self = self else { return }
+                    if let event = NSEvent.current, event.type == .leftMouseDragged {
+                        let distance = view.bounds.distance(from: event.location(in: view))
+                        self.dragDistanceIsMatched = distance > width
+                        let cursor: NSCursor = self.dragDistanceIsMatched ? .disappearingItem : .arrow
+                        if NSCursor.current != cursor {
+                            cursor.set()
+                        }
+                    } else {
+                        self.dragDeleteObservation = nil
+                    }
+                }
+            }
         }
         
         func collectionView(_: NSCollectionView, draggingSession _: NSDraggingSession, endedAt screenPoint: NSPoint, dragOperation _: NSDragOperation) {
             // Swift.debugPrint("draggingSession endedAt", screenPoint)
+            if !dragDeleteElements.isEmpty, dragDistanceIsMatched {
+                let transaction = dataSource.currentSnapshot.deleteTransaction(dragDeleteElements)
+                dataSource.deletingHandlers.willDelete?(dragDeleteElements, transaction)
+                dataSource.apply(transaction.finalSnapshot, dataSource.deletingHandlers.animates ? .animated : .withoutAnimation)
+                dataSource.deletingHandlers.didDelete?(dragDeleteElements, transaction)
+                if NSCursor.current == NSCursor.disappearingItem {
+                    NSCursor.arrow.set()
+                }
+            }
+            
+            dragDeleteObservation = nil
             draggingIndexPaths = []
             dropTargetIndexPath = nil
             dropValidationIndexPath = nil
             canReorderItems = false
             canDragOutside = false
+            dragDistanceIsMatched = false
+            dragDeleteElements = []
         }
         
         
