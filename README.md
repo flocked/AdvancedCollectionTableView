@@ -166,6 +166,10 @@ An extended `NSCollectionViewDiffableDataSource that provides:
  ## TableViewDiffableDataSource
  
  Simliar to CollectionViewDiffableDataSource.
+ 
+  ## OutlineViewDiffableDataSource
+ 
+ Simliar to CollectionViewDiffableDataSource.
 
 ## Quicklook for NSTableView & NSCollectionView
 

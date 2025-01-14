@@ -71,4 +71,11 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
             return nil
         }
     }
+    
+    var isReloadData: Bool {
+        switch self {
+        case .usingReloadData: return true
+        default: return false
+        }
+    }
 }

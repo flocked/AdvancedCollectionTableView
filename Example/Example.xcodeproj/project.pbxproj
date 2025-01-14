@@ -11,6 +11,7 @@
 		725C32342B6DF69E00997DBC /* Oxi.png in Resources */ = {isa = PBXBuildFile; fileRef = 725C32312B6DF69E00997DBC /* Oxi.png */; };
 		725C32352B6DF69E00997DBC /* Tresor.png in Resources */ = {isa = PBXBuildFile; fileRef = 725C32322B6DF69E00997DBC /* Tresor.png */; };
 		725C32362B6DF69E00997DBC /* Underground.png in Resources */ = {isa = PBXBuildFile; fileRef = 725C32332B6DF69E00997DBC /* Underground.png */; };
+		726452492D287E1600E506C2 /* FZUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 726452482D287E1600E506C2 /* FZUIKit */; };
 		727665F82A55E61700F1FD9F /* Vapor Cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F12A55E61600F1FD9F /* Vapor Cat.png */; };
 		727665FA2A55E61700F1FD9F /* About Blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F32A55E61700F1FD9F /* About Blank.png */; };
 		727665FB2A55E61700F1FD9F /* Plasmawhale.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F42A55E61700F1FD9F /* Plasmawhale.png */; };
@@ -63,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				72A0C7D72B501EE600779BA0 /* AdvancedCollectionTableView in Frameworks */,
+				726452492D287E1600E506C2 /* FZUIKit in Frameworks */,
 				728F108F2B43A32600EE2F2B /* AdvancedCollectionTableView in Frameworks */,
 				728F108B2B43A27300EE2F2B /* AdvancedCollectionTableView in Frameworks */,
 			);
@@ -151,6 +153,7 @@
 				728F108A2B43A27300EE2F2B /* AdvancedCollectionTableView */,
 				728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */,
 				72A0C7D62B501EE600779BA0 /* AdvancedCollectionTableView */,
+				726452482D287E1600E506C2 /* FZUIKit */,
 			);
 			productName = CollectionViewTemplate;
 			productReference = 72DE39852979905C007EACAF /* Example.app */;
@@ -448,6 +451,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		726452482D287E1600E506C2 /* FZUIKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FZUIKit;
+		};
 		728F108A2B43A27300EE2F2B /* AdvancedCollectionTableView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdvancedCollectionTableView;

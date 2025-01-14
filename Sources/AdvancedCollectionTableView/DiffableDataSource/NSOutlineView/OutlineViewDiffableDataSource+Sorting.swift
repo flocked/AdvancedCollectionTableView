@@ -1,6 +1,6 @@
 //
-//  TableViewDiffableDataSource+Sorting.swift
-//
+//  OutlineViewDiffableDataSource+Sorting.swift
+//  
 //
 //  Created by Florian Zand on 03.08.24.
 //
@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension TableViewDiffableDataSource {
+extension OutlineViewDiffableDataSource {
     /**
      Sets the specified item sort comperator to the table column.
      
@@ -17,16 +17,16 @@ extension TableViewDiffableDataSource {
         - comparator: The item sorting comperator, or `nil` to remove any sorting comperators from the table column.
         - tableColumn: The table column.
      */
-    public func setSortComparator(_ comparator: SortingComparator<Item>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+    public func setSortComparator(_ comparator: SortingComparator<ItemIdentifierType>?, forColumn tableColumn: NSTableColumn, activate: Bool = false) {
         if activate, comparator != nil, let key = tableColumn.sortDescriptorPrototype?.key {
-            tableView.sortDescriptors.removeAll(where: { $0.key == key })
+            outlineView.sortDescriptors.removeAll(where: { $0.key == key })
         }
         if let comparator = comparator {
-            tableColumn.sortDescriptorPrototype = ItemSortDescriptor([comparator])
+            tableColumn.sortDescriptorPrototype = ItemIdentifierTypeSortDescriptor([comparator])
             if activate {
-                tableView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + tableView.sortDescriptors
+                outlineView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + outlineView.sortDescriptors
             }
-        } else if tableColumn.sortDescriptorPrototype is ItemSortDescriptor {
+        } else if tableColumn.sortDescriptorPrototype is ItemIdentifierTypeSortDescriptor {
             tableColumn.sortDescriptorPrototype = nil
         }
     }
@@ -38,25 +38,25 @@ extension TableViewDiffableDataSource {
         - comparators: The item sorting comperators.
         - tableColumn: The table column.
      */
-    public func setSortComparators(_ comparators: [SortingComparator<Item>], forColumn tableColumn: NSTableColumn, activate: Bool = false) {
+    public func setSortComparators(_ comparators: [SortingComparator<ItemIdentifierType>], forColumn tableColumn: NSTableColumn, activate: Bool = false) {
         if activate, !comparators.isEmpty, let key = tableColumn.sortDescriptorPrototype?.key {
-            tableView.sortDescriptors.removeAll(where: { $0.key == key })
+            outlineView.sortDescriptors.removeAll(where: { $0.key == key })
         }
         if comparators.isEmpty {
             setSortComparator(nil, forColumn: tableColumn)
         } else {
-            tableColumn.sortDescriptorPrototype = ItemSortDescriptor(comparators)
+            tableColumn.sortDescriptorPrototype = ItemIdentifierTypeSortDescriptor(comparators)
             if activate {
-                tableView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + tableView.sortDescriptors
+                outlineView.sortDescriptors = [tableColumn.sortDescriptorPrototype!] + outlineView.sortDescriptors
             }
         }
     }
     
-    class ItemSortDescriptor: NSSortDescriptor {
+    class ItemIdentifierTypeSortDescriptor: NSSortDescriptor {
         
-        var comparators: [SortingComparator<Item>] = []
+        var comparators: [SortingComparator<ItemIdentifierType>] = []
         
-        init(_ comparators: [SortingComparator<Item>], ascending: Bool = true, key: String? = nil) {
+        init(_ comparators: [SortingComparator<ItemIdentifierType>], ascending: Bool = true, key: String? = nil) {
             super.init(key: key ?? UUID().uuidString, ascending: ascending, selector: nil)
             self.comparators = comparators
         }
@@ -64,15 +64,15 @@ extension TableViewDiffableDataSource {
         override var reversedSortDescriptor: Any {
             var comparators = comparators
             comparators.editEach({$0.order.toggle() })
-            return ItemSortDescriptor(comparators, ascending: !ascending, key: key)
+            return ItemIdentifierTypeSortDescriptor(comparators, ascending: !ascending, key: key)
         }
         
         override func copy() -> Any {
-            ItemSortDescriptor(comparators, ascending: ascending, key: key)
+            ItemIdentifierTypeSortDescriptor(comparators, ascending: ascending, key: key)
         }
         
         override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? ItemSortDescriptor else { return false }
+            guard let object = object as? ItemIdentifierTypeSortDescriptor else { return false }
             return object.key == key && object.ascending == ascending && object.comparators == comparators
         }
         

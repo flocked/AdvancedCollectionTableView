@@ -51,7 +51,6 @@ class MainViewController: NSViewController {
         super.viewDidLoad()
         
         collectionView.collectionViewLayout = .grid(columns: 3)
-
         collectionView.dataSource = dataSource
 
         /// Enables deleting selected items via backspace key.

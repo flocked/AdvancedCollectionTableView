@@ -95,8 +95,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 collectionView.menuProvider = { [weak self] location in
                     guard let self = self, let menuProvider = self.menuProvider else { return nil }
                     let indexPaths = self.collectionView.rightClickIndexPaths(for: location)
-                    let elements = indexPaths.compactMap({self.element(for: $0)})
-                    guard let menu = self.menuProvider?(indexPaths.compactMap({ self.element(for: $0) })) else { return nil }
+                    guard let menu = menuProvider(indexPaths.compactMap({ self.element(for: $0) })) else { return nil }
                     let items = indexPaths.compactMap({self.collectionView.item(at:$0)})
                     items.forEach({ $0.isRightClickSelected = true })
                     menu.handlers.didClose = {
@@ -283,8 +282,69 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         delegate = Delegate(self)
         collectionView.isQuicklookPreviewable = Element.self is QuicklookPreviewable.Type
         collectionView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
+        
         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
+        
+        collectionView.addGestureRecognizer(dragGesture)
+
+        
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
+    }
+    
+    let dragGesture = DragGestureRecognizer()
+    class DragGestureRecognizer: NSGestureRecognizer {
+        var downLocation: CGPoint = .zero
+        var collectionView: NSCollectionView? {
+            view as? NSCollectionView
+        }
+        
+        init() {
+            super.init(target: nil, action: nil)
+            delaysPrimaryMouseButtonEvents = true
+            reattachesAutomatically = true
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func mouseDown(with event: NSEvent) {
+            state = .began
+            if let collectionView = collectionView {
+                downLocation = event.location(in: collectionView)
+            }
+            state = .failed
+        }
+        
+        override func mouseUp(with event: NSEvent) {
+            state = .began
+            var selecting: Set<IndexPath> = []
+            if let collectionView = collectionView {
+                let upLocation = event.location(in: collectionView)
+                let rect = CGRect(point1: downLocation, point2: upLocation)
+                let items = collectionView.displayingItems(in: rect)
+                for item in items {
+                    if let view = item.view as? NSItemContentView {
+                        let rect = collectionView.convert(rect, to: item.view)
+                        if view.check(rect), let indexPath = collectionView.indexPath(for: item) {
+                            selecting.insert(indexPath)
+                        }
+                    } else {
+                        if let indexPath = collectionView.indexPath(for: item) {
+                            selecting.insert(indexPath)
+                        }
+                    }
+                    
+                }
+            }
+            state = .failed
+            collectionView?.selectItems(at: selecting, byExtendingSelection: false)
+        }
+        
+        override func mouseDragged(with event: NSEvent) {
+            state = .began
+            state = .failed
+        }
     }
 
     /**

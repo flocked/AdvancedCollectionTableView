@@ -58,13 +58,16 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
          */
     }
     
-    /// Returns the farthest descendant of the view in the view hierarchy (including itself) that contains a specified point, or `nil if that point lies completely outside the view.
     open override func hitTest(_ point: NSPoint) -> NSView? {
         let view = super.hitTest(point)
-        if ((view == contentView || view?.isDescendant(of: contentView) == true) && contentView.isHidden == false) || (view == textField && textField.isHidden == false) || (view == secondaryTextField && secondaryTextField.isHidden == false) {
+        if let view = view, (view.isDescendant(of: contentView) && !contentView.isHidden) || (view == textField && !textField.isHidden) || (view == secondaryTextField && !secondaryTextField.isHidden) {
             return view
         }
         return nil
+    }
+    
+    public func check(_ rect: CGRect) -> Bool {
+        (rect.intersects(contentView.frame) && !contentView.isHidden) || (rect.intersects(textField.frame) && !textField.isHidden)  || (rect.intersects(secondaryTextField.frame) && !secondaryTextField.isHidden)
     }
 
     let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
@@ -149,7 +152,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         }
         toolTip = appliedConfiguration.toolTip
         contentView.invalidateIntrinsicContentSize()
-                
+                        
         if textFieldAlignment != appliedConfiguration.textProperties.alignment {
             textFieldAlignment = appliedConfiguration.textProperties.alignment
             textFieldConstraint?.activate(false)
@@ -162,7 +165,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
                 textFieldConstraint = textField.leftAnchor.constraint(equalTo: stackView.leftAnchor).activate()
             }
         }
-        
+                
         if secondaryTextFieldAlignment != appliedConfiguration.secondaryTextProperties.alignment {
             secondaryTextFieldAlignment = appliedConfiguration.secondaryTextProperties.alignment
             secondaryTextFieldConstraint?.activate(false)

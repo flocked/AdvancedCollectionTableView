@@ -36,7 +36,7 @@ class SidebarViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.dataSource = dataSource
 
         /// Enables reordering selected rows by dragging them.

@@ -88,6 +88,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     var keyDownMonitor: NSEvent.Monitor?
     var canDragItems = false
     var canDrop = false
+    var immediatelyReorderRowView: NSTableRowView?
+
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider? {
@@ -410,9 +412,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
             return view ?? NSTableCellView()
         })
-        
-        defaultRowAnimation = []
-        
+                
         delegate = Delegate(self)
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
@@ -468,6 +468,26 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 if let last = dragingRowIndexes.last, (dragingRowIndexes + [last+1]).contains(row), dragingRowIndexes.compactMap({ item(forRow: $0) }).compactMap({ section(for: $0) }).uniqued().count == 1 {
                     return []
                 }
+                /*
+                if immediatelyReorderRowView != nil, let fromRow = dragingRowIndexes.first  {
+                    let items = dragingRowIndexes.compactMap { item(forRow: $0) }
+                    let transaction = moveItemsTransaction(items, to: row)
+                    reorderingHandlers.willReorder?(transaction)
+                    /*
+                    NSView.animate {
+                        tableView.beginUpdates()
+                        tableView.moveRow(at: fromRow, to: row)
+                        tableView.endUpdates()
+                    }
+                     */
+                    tableView.sortDescriptors = []
+                    dragingRowIndexes = [row]
+                    apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
+                    selectItems(items)
+                    reorderingHandlers.didReorder?(transaction)
+                    return []
+                }
+                */
                 return .move
             }
         }
@@ -559,11 +579,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             canDragItems = draggingHandlers.canDrag?(items) ?? false
             items = reorderingHandlers.canReorder?(items) ?? (reorderingHandlers.droppable ? items : [])
             dragingRowIndexes = items.compactMap({row(for: $0)})
+            if dragingRowIndexes.count == 1, let row = dragingRowIndexes.first, !tableView.allowsMultipleSelection, reorderingHandlers.reorderImmediately {
+                immediatelyReorderRowView = tableView.rowView(atRow: row, makeIfNecessary: false)
+                immediatelyReorderRowView?.alphaValue = 0.0
+            }
         }
         draggingSession.draggingPasteboard.declareTypes([.string, .fileURL, .itemID, .png, .tiff], owner: nil)
     }
-    
+        
     open func tableView(_: NSTableView, draggingSession _: NSDraggingSession, endedAt location: NSPoint, operation _: NSDragOperation) {
+        immediatelyReorderRowView?.alphaValue = 1.0
+        immediatelyReorderRowView = nil
         if !dragDeleteItems.isEmpty, dragDistanceIsMatched {
             let transaction = currentSnapshot.deleteTransaction(dragDeleteItems)
             deletingHandlers.willDelete?(dragDeleteItems, transaction)

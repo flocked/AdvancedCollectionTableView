@@ -144,19 +144,24 @@ extension CollectionViewDiffableDataSource {
         // MARK: Dropping
                 
         func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-            let proposedIndexPath = proposedIndexPath.pointee as IndexPath
+            
+            let loc = collectionView.convert(draggingInfo.draggingLocation, from: nil)
+            let _proposedIndexPath = proposedIndexPath.pointee as IndexPath
+            Swift.print("validateDrop", _proposedIndexPath.item, proposedDropOperation.pointee == .on, draggingIndexPaths)
+            Swift.print("HEEEEEE", _proposedIndexPath.item,  proposedDropOperation.pointee == .before ? "before": "on")
+
             let previousIndexPath = dropValidationIndexPath
-            dropValidationIndexPath = proposedDropOperation.pointee == .before ? proposedIndexPath : nil
+            dropValidationIndexPath = proposedDropOperation.pointee == .before ? _proposedIndexPath : nil
             dropTargetIndexPath = nil
             canDropItems = false
             
             if draggingInfo.draggingSource as? NSCollectionView == dataSource.collectionView {
                 if dataSource.reorderingHandlers.droppable, let canDrop = dataSource.reorderingHandlers.canDrop, proposedDropOperation.pointee == .on {
-                    if draggingIndexPaths.count == 1, let indexPath = draggingIndexPaths.sorted().first, indexPath == proposedIndexPath {
+                    if draggingIndexPaths.count == 1, let indexPath = draggingIndexPaths.sorted().first, indexPath == _proposedIndexPath {
                         dropTargetIndexPath = nil
                         return []
-                    } else if let target = dataSource.element(for: proposedIndexPath), previousIndexPath != proposedIndexPath {
-                        dropTargetIndexPath = canDrop( draggingIndexPaths.compactMap { dataSource.element(for: $0) }, target) ? proposedIndexPath : nil
+                    } else if let target = dataSource.element(for: _proposedIndexPath), previousIndexPath != _proposedIndexPath {
+                        dropTargetIndexPath = canDrop( draggingIndexPaths.compactMap { dataSource.element(for: $0) }, target) ? _proposedIndexPath : nil
                         return dropTargetIndexPath != nil ? .move : []
                     } else {
                         dropTargetIndexPath = nil
@@ -165,15 +170,40 @@ extension CollectionViewDiffableDataSource {
                 }
                 if dataSource.reorderingHandlers.canReorder != nil {
                     var indexPaths = draggingIndexPaths.sorted()
-                    if let last = indexPaths.last {
-                        indexPaths.append(IndexPath(item: last.item+1, section: last.section))
+                    if indexPaths.count == 1, let last = indexPaths.last, _proposedIndexPath == last {
+                        return []
                     }
-                    if indexPaths.contains(proposedIndexPath) {
+                    if let last = indexPaths.last {
+                      //  indexPaths.append(IndexPath(item: last.item+1, section: last.section))
+                    }
+                    if indexPaths.contains(_proposedIndexPath) {
+                        Swift.print("HHHHHHH 4")
                         if draggingIndexPaths.sections.count == 1 {
-                            return []
+                          //  return []
                         }
                     }
                     if proposedDropOperation.pointee == .on {
+                        if let frame = collectionView.frameForItem(at: _proposedIndexPath) {
+                            if loc.x > frame.minX + (frame.width/2.0), collectionView.numberOfItems(inSection: _proposedIndexPath.section) > _proposedIndexPath.item + 1 {
+                                proposedIndexPath.pointee = IndexPath(item: _proposedIndexPath.item + 1, section: _proposedIndexPath.section) as NSIndexPath
+                                Swift.print("CCCCCCCC", frame.contains(loc))
+                            } else {
+                                if let last = indexPaths.last {
+                                    indexPaths.append(IndexPath(item: last.item+1, section: last.section))
+                                }
+                                if indexPaths.contains(_proposedIndexPath) {
+                                    Swift.print("HHHHHHH 4")
+                                    if draggingIndexPaths.sections.count == 1 {
+                                        return []
+                                    }
+                                }
+                                let indexPath = IndexPath(item: _proposedIndexPath.item+1, section: _proposedIndexPath.section)
+                                if indexPaths.count == 1, let last = indexPaths.last, last == indexPath {
+                                  //  return []
+                                }
+                                Swift.print("DDDDDDD", indexPaths.compactMap({$0.item}), _proposedIndexPath.item)
+                            }
+                        }
                         proposedDropOperation.pointee = .before
                     }
                     return .move
@@ -181,9 +211,8 @@ extension CollectionViewDiffableDataSource {
             }
             if let canDrop = dataSource.droppingHandlers.canDrop {
                 let content = draggingInfo.draggingPasteboard.content()
-                dropTargetIndexPath = proposedDropOperation.pointee == .on ? proposedIndexPath : nil
-                Swift.print("CHECK", proposedDropOperation.pointee == .on)
-                let target = proposedDropOperation.pointee == .on ? dataSource.element(for: proposedIndexPath) : nil
+                dropTargetIndexPath = proposedDropOperation.pointee == .on ? _proposedIndexPath : nil
+                let target = proposedDropOperation.pointee == .on ? dataSource.element(for: _proposedIndexPath) : nil
                 if !content.isEmpty, canDrop(content, target) == true {
                     canDropItems = true
                     return .copy
