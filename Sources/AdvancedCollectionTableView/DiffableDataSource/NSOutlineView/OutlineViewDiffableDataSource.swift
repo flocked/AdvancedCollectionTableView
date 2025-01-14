@@ -45,7 +45,7 @@ import FZSwiftUtils
 public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObject, NSOutlineViewDataSource {
         
     weak var outlineView: NSOutlineView!
-    var currentSnapshot = DiffableDataSourceSectionSnapshot<ItemIdentifierType>()
+    var currentSnapshot = OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>()
     let cellProvider: CellProvider
     var keyDownMonitor: NSEvent.Monitor?
     var hoveredRowObserver: KeyValueObservation?
@@ -361,15 +361,15 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     public typealias CellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
         
-    public func snapshot() -> DiffableDataSourceSectionSnapshot<ItemIdentifierType> {
+    public func snapshot() -> OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType> {
         currentSnapshot
     }
     
-    public func emptySnapshot() -> DiffableDataSourceSectionSnapshot<ItemIdentifierType> {
+    public func emptySnapshot() -> OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType> {
         .init()
     }
     
-    public func apply(_ snapshot: DiffableDataSourceSectionSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+    public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let previousIsEmpty = currentSnapshot.items.isEmpty
         let instructions = currentSnapshot.instructions(forMorphingInto: snapshot)
         let expandCollapse = currentSnapshot.expandCollapse(forMorphingInto: snapshot)
@@ -434,7 +434,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         public var canDelete: ((_ items: [ItemIdentifierType]) -> [ItemIdentifierType])?
 
         /// The handler that that gets called before deleting items.
-        public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: DiffableDataSourceSectionTransaction<ItemIdentifierType>) -> Void)?
+        public var willDelete: ((_ items: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> Void)?
 
         /**
          The handler that that gets called after deleting items.
@@ -462,7 +462,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
          }
          ```
          */
-        public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: DiffableDataSourceSectionTransaction<ItemIdentifierType>) -> Void)?
+        public var didDelete: ((_ items: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> Void)?
         
         /**
          A Boolean value that indicates whether items can be deleted by dragging them outside the outline view.
@@ -526,7 +526,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                 
                 var snapshot = currentSnapshot
                 snapshot.delete(itemsToDelete)
-                let transaction = DiffableDataSourceSectionTransaction(initial: currentSnapshot, final: snapshot)
+                let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
                 self.deletingHandlers.willDelete?(itemsToDelete, transaction)
                 QuicklookPanel.shared.close()
                 self.apply(transaction.finalSnapshot, self.deletingHandlers.animates ? .animated : .withoutAnimation)

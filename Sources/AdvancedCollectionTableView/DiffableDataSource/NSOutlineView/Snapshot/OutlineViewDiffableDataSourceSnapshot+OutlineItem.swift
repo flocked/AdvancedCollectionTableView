@@ -1,5 +1,5 @@
 //
-//  DiffableDataSourceSectionSnapshot+OutlineItem.swift
+//  OutlineViewDiffableDataSourceSnapshot+OutlineItem.swift
 //  
 //
 //  Created by Florian Zand on 09.01.25.
@@ -8,7 +8,7 @@
 import AppKit
 import FZSwiftUtils
 
-extension DiffableDataSourceSectionSnapshot where ItemIdentifierType: ExpandingOutlineItem {
+extension OutlineViewDiffableDataSourceSnapshot where ItemIdentifierType: ExpandingOutlineItem {
     public mutating func append(_ items: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
         validateItems(items + items.flatMap({ $0.descendants() }))
         if let parent = parent {
@@ -36,7 +36,7 @@ extension DiffableDataSourceSectionSnapshot where ItemIdentifierType: ExpandingO
         updateOrderedItems()
     }
     
-    private mutating func insert(_ snapshot: DiffableDataSourceSectionSnapshot, to item: ItemIdentifierType, before: Bool) {
+    private mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, to item: ItemIdentifierType, before: Bool) {
         validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in section snapshot: ")
         validateItems(snapshot.items + snapshot.items.flatMap({ $0.descendants() }))
         if let rootIndex = rootItems.firstIndex(of: item) {
@@ -64,10 +64,10 @@ extension ExpandingOutlineItem {
     }
 
     
-    func nodes() -> [Self: DiffableDataSourceSectionSnapshot<Self>.Node] {
-        var nodes: [Self: DiffableDataSourceSectionSnapshot<Self>.Node] = [:]
+    func nodes() -> [Self: OutlineViewDiffableDataSourceSnapshot<Self>.Node] {
+        var nodes: [Self: OutlineViewDiffableDataSourceSnapshot<Self>.Node] = [:]
         func setup(for child: Self, parent: Self?) {
-            nodes[child] = DiffableDataSourceSectionSnapshot<Self>.Node(parent: parent, children: child.children, isExpanded: child.isExpanded)
+            nodes[child] = OutlineViewDiffableDataSourceSnapshot<Self>.Node(parent: parent, children: child.children, isExpanded: child.isExpanded)
             for _child in child.children {
                 setup(for: _child, parent: child)
             }

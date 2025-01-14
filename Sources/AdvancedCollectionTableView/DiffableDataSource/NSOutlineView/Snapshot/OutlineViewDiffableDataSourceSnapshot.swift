@@ -1,5 +1,5 @@
 //
-//  DiffableDataSourceSectionSnapshot.swift
+//  OutlineViewDiffableDataSourceSnapshot.swift
 //
 //
 //  Created by Florian Zand on 21.12.24.
@@ -19,7 +19,7 @@ import FZSwiftUtils
 
  ```swift
 // Create a section snapshot
-var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<String>()
+var sectionSnapshot = NSOutlineViewDiffableDataSourceSnapshot<String>()
      
 // Populate the section snapshot
 sectionSnapshot.append(["Food", "Drinks"])
@@ -29,7 +29,7 @@ sectionSnapshot.append(["Food", "Drinks"])
 dataSource.apply(sectionSnapshot)
  ```
  */
-public struct DiffableDataSourceSectionSnapshot<ItemIdentifierType: Hashable> {
+public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable> {
     // MARK: - Creating a section snapshot
     
     struct Node {
@@ -106,16 +106,16 @@ public struct DiffableDataSourceSectionSnapshot<ItemIdentifierType: Hashable> {
     }
     
     /// Inserts the provided section snapshot immediately after the item with the specified identifier in the section snapshot.
-    public mutating func insert(_ snapshot: DiffableDataSourceSectionSnapshot, after item: ItemIdentifierType) {
+    public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, after item: ItemIdentifierType) {
        insert(snapshot, to: item, before: false)
     }
     
     /// Inserts the provided section snapshot immediately before the item with the specified identifier in the section snapshot.
-    public mutating func insert(_ snapshot: DiffableDataSourceSectionSnapshot, before item: ItemIdentifierType) {
+    public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, before item: ItemIdentifierType) {
        insert(snapshot, to: item, before: true)
     }
     
-    private mutating func insert(_ snapshot: DiffableDataSourceSectionSnapshot, to item: ItemIdentifierType, before: Bool) {
+    private mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, to item: ItemIdentifierType, before: Bool) {
         validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in section snapshot: ")
         validateItems(snapshot.items)
         if let rootIndex = rootItems.firstIndex(of: item) {
@@ -156,8 +156,8 @@ public struct DiffableDataSourceSectionSnapshot<ItemIdentifierType: Hashable> {
     }
     
     /// Creates a section snapshot that contains the child items of the specified parent item, optionally including the parent item.
-    public func snapshot(of parent: ItemIdentifierType, includingParent: Bool = false) -> DiffableDataSourceSectionSnapshot {
-        var snapshot = DiffableDataSourceSectionSnapshot()
+    public func snapshot(of parent: ItemIdentifierType, includingParent: Bool = false) -> OutlineViewDiffableDataSourceSnapshot {
+        var snapshot = OutlineViewDiffableDataSourceSnapshot()
         snapshot.rootItems = includingParent ? [parent] : children(of: parent)
         for rootItem in snapshot.rootItems {
             snapshot.nodes[rootItem] = nodes[rootItem]
@@ -240,7 +240,7 @@ public struct DiffableDataSourceSectionSnapshot<ItemIdentifierType: Hashable> {
     }
         
     /// Replaces all child items of the specified parent item with the provided section snapshot.
-    public mutating func replace(childrenOf parent: ItemIdentifierType, using snapshot: DiffableDataSourceSectionSnapshot) {
+    public mutating func replace(childrenOf parent: ItemIdentifierType, using snapshot: OutlineViewDiffableDataSourceSnapshot) {
         validateItem(parent, "Parent item does not exist in section snapshot: ")
         validateItems(Array(snapshot.orderedItems), removing: descendants(of: parent))
         guard let previousChildren = nodes[parent]?.children else { return }
@@ -270,7 +270,7 @@ public struct DiffableDataSourceSectionSnapshot<ItemIdentifierType: Hashable> {
     
     /// Returns a string with an ASCII representation of the section snapshot.
     public func visualDescription() -> String {
-        var result = "DiffableDataSourceSectionSnapshot<\(String(describing: ItemIdentifierType.self))>\n"
+        var result = "OutlineViewDiffableDataSourceSnapshot<\(String(describing: ItemIdentifierType.self))>\n"
         
         func buildDescription(for item: ItemIdentifierType, level: Int) {
             let isVisible = isVisible(item) ? "*" : ""

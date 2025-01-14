@@ -81,8 +81,8 @@ extension Array where Element == OutlineChangeInstruction {
     }
 }
 
-extension DiffableDataSourceSectionSnapshot {
-    func instructions(forMorphingInto destination: DiffableDataSourceSectionSnapshot) -> [OutlineChangeInstruction] {
+extension OutlineViewDiffableDataSourceSnapshot {
+    func instructions(forMorphingInto destination: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
         func instructions(forMorphing from: [ItemIdentifierType], to: [ItemIdentifierType], baseIndexPath: IndexPath) -> [OutlineChangeInstruction] {
             let src = from
             let dst = to
@@ -121,7 +121,7 @@ extension DiffableDataSourceSectionSnapshot {
         return result
     }
     
-    func expandCollapse(forMorphingInto destination: DiffableDataSourceSectionSnapshot) -> (expand: [ItemIdentifierType], collapse: [ItemIdentifierType]) {
+    func expandCollapse(forMorphingInto destination: OutlineViewDiffableDataSourceSnapshot) -> (expand: [ItemIdentifierType], collapse: [ItemIdentifierType]) {
         let oldExpanded = nodes.filter({$0.value.isExpanded}).compactMap({$0.key})
         let expanded = destination.nodes.filter({$0.value.isExpanded}).compactMap({$0.key})
         let collapse = oldExpanded.filter({ !expanded.contains($0) })
