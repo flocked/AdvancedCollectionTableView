@@ -1246,7 +1246,7 @@ extension TableViewDiffableDataSource where Item: QuicklookPreviewable {
         - items: The items to preview.
         - current: The item that starts the preview. The default value is `nil`.
      */
-    public func quicklookItems(_ items: [Item], current: Item? = nil) where Item: QuicklookPreviewable {
+    public func quicklookItems(_ items: [Item], current: Item? = nil) {
         let rows = items.compactMap { row(for: $0) }
         if let current = current, let currentRow = row(for: current) {
             tableView.quicklookRows(at: rows, current: currentRow)

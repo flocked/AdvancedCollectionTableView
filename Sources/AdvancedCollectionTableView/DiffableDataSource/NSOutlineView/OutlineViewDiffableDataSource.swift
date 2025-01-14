@@ -565,6 +565,38 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
 }
 
+// MARK: - Quicklook
+
+extension OutlineViewDiffableDataSource where ItemIdentifierType: QuicklookPreviewable {
+    /**
+     A Boolean value that indicates whether the user can open a quicklook preview of selected items by pressing space bar.
+     
+     Any item conforming to `QuicklookPreviewable` can be previewed by providing a preview file url.
+     */
+    public var isQuicklookPreviewable: Bool {
+        get { outlineView.isQuicklookPreviewable }
+        set { outlineView.isQuicklookPreviewable = newValue }
+    }
+
+    /**
+     Opens `QuicklookPanel` that presents quicklook previews of the specified items.
+
+     To quicklook the selected items, use table view's `quicklookSelectedRows()`.
+
+     - Parameters:
+        - items: The items to preview.
+        - current: The item that starts the preview. The default value is `nil`.
+     */
+    public func quicklookItems(_ items: [ItemIdentifierType], current: ItemIdentifierType? = nil) {
+        let rows = items.compactMap { row(for: $0) }
+        if let current = current, let currentRow = row(for: current) {
+            outlineView.quicklookRows(at: rows, current: currentRow)
+        } else {
+            outlineView.quicklookRows(at: rows)
+        }
+    }
+}
+
 fileprivate extension NSTableColumn {
     static let outline = NSTableColumn()
 }
