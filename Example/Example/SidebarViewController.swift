@@ -1,5 +1,5 @@
 //
-//  SidebarViewController.swift
+//  TableSidebarViewController.swift
 //
 //
 //  Created by Florian Zand on 19.01.23.
@@ -8,7 +8,7 @@
 import AppKit
 import AdvancedCollectionTableView
 
-class SidebarViewController: NSViewController {
+class TableSidebarViewController: NSViewController {
     typealias DataSource = TableViewDiffableDataSource<Section, SidebarItem>
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, SidebarItem>
     typealias SectionHeaderRegistration = NSTableView.CellRegistration<NSTableCellView, Section>
@@ -75,5 +75,17 @@ class SidebarViewController: NSViewController {
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)
         snapshot.appendItems(SidebarItem.sampleItems3, toSection: .section3)
         dataSource.apply(snapshot, .usingReloadData)
+    }
+    
+    let outlineSidebarViewController = OutlineSidebarViewController.loadFromStoryboard()!
+        
+    @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {
+        tableView.isHidden = segmentedControl.indexOfSelectedItem == 1
+        if segmentedControl.indexOfSelectedItem == 1 {
+            outlineSidebarViewController.view.frame = view.bounds
+            view.insertSubview(outlineSidebarViewController.view, at: 0)
+        } else {
+            outlineSidebarViewController.view.removeFromSuperview()
+        }
     }
 }

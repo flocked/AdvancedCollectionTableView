@@ -12,6 +12,8 @@
 		725C32352B6DF69E00997DBC /* Tresor.png in Resources */ = {isa = PBXBuildFile; fileRef = 725C32322B6DF69E00997DBC /* Tresor.png */; };
 		725C32362B6DF69E00997DBC /* Underground.png in Resources */ = {isa = PBXBuildFile; fileRef = 725C32332B6DF69E00997DBC /* Underground.png */; };
 		726452492D287E1600E506C2 /* FZUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 726452482D287E1600E506C2 /* FZUIKit */; };
+		726BE26A2D3DB14C00823E9B /* OutlineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726BE2692D3DB14C00823E9B /* OutlineItem.swift */; };
+		726BE26C2D3DB15700823E9B /* OutlineSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726BE26B2D3DB15700823E9B /* OutlineSidebarViewController.swift */; };
 		727665F82A55E61700F1FD9F /* Vapor Cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F12A55E61600F1FD9F /* Vapor Cat.png */; };
 		727665FA2A55E61700F1FD9F /* About Blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F32A55E61700F1FD9F /* About Blank.png */; };
 		727665FB2A55E61700F1FD9F /* Plasmawhale.png in Resources */ = {isa = PBXBuildFile; fileRef = 727665F42A55E61700F1FD9F /* Plasmawhale.png */; };
@@ -38,6 +40,8 @@
 		725C32312B6DF69E00997DBC /* Oxi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Oxi.png; sourceTree = "<group>"; };
 		725C32322B6DF69E00997DBC /* Tresor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tresor.png; sourceTree = "<group>"; };
 		725C32332B6DF69E00997DBC /* Underground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Underground.png; sourceTree = "<group>"; };
+		726BE2692D3DB14C00823E9B /* OutlineItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutlineItem.swift; sourceTree = "<group>"; };
+		726BE26B2D3DB15700823E9B /* OutlineSidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutlineSidebarViewController.swift; sourceTree = "<group>"; };
 		727665F12A55E61600F1FD9F /* Vapor Cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Vapor Cat.png"; path = "Example/Sample Images/Vapor Cat.png"; sourceTree = SOURCE_ROOT; };
 		727665F32A55E61700F1FD9F /* About Blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "About Blank.png"; path = "Example/Sample Images/About Blank.png"; sourceTree = SOURCE_ROOT; };
 		727665F42A55E61700F1FD9F /* Plasmawhale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Plasmawhale.png; path = "Example/Sample Images/Plasmawhale.png"; sourceTree = SOURCE_ROOT; };
@@ -114,6 +118,7 @@
 				72DE39882979905C007EACAF /* AppDelegate.swift */,
 				72DE398A2979905C007EACAF /* MainViewController.swift */,
 				72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */,
+				726BE26B2D3DB15700823E9B /* OutlineSidebarViewController.swift */,
 				72F99B642A44FBC000DDDA1E /* Model */,
 				72D95F492A46ED86008B1FE6 /* Sample Images */,
 				72DE398C2979905D007EACAF /* Assets.xcassets */,
@@ -129,6 +134,7 @@
 				72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */,
 				72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */,
 				72F99B652A44FBCB00DDDA1E /* Section.swift */,
+				726BE2692D3DB14C00823E9B /* OutlineItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -226,10 +232,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				72DE398B2979905C007EACAF /* MainViewController.swift in Sources */,
+				726BE26A2D3DB14C00823E9B /* OutlineItem.swift in Sources */,
 				72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */,
 				72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */,
 				72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */,
 				72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */,
+				726BE26C2D3DB15700823E9B /* OutlineSidebarViewController.swift in Sources */,
 				72DE39892979905C007EACAF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
