@@ -42,7 +42,7 @@ import FZSwiftUtils
  - Note: Don’t change the `dataSource` or `delegate` on the outline view after you configure it with a diffable data source. If the outline view needs a new data source after you configure it initially, create and configure a new outline view and diffable data source.
  */
 public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObject, NSOutlineViewDataSource {
-        
+    
     weak var outlineView: NSOutlineView!
     var currentSnapshot = OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>()
     let cellProvider: CellProvider
@@ -50,6 +50,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var hoveredRowObserver: KeyValueObservation?
     var delegate: Delegate!
     var draggedItems: [ItemIdentifierType] = []
+    var draggedParent: ItemIdentifierType?
+    var draggedIndexes: [Int] = []
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider?
@@ -58,9 +60,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      A closure that configures and returns a row view for a outline view from its diffable data source.
      
      - Parameters
-        - outlineView: The outline view to configure this row view for.
-        - row: The row of the row view.
-        - item: The item of the row.
+     - outlineView: The outline view to configure this row view for.
+     - row: The row of the row view.
+     - item: The item of the row.
      
      - Returns: A configured row view object.
      */
@@ -98,7 +100,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     /**
      The handler that gets called when the user right-clicks the outline view.
-
+     
      `items` provides:
      - if right-click on a **selected item**, all selected items,
      - else if right-click on a **non-selected item**, that item,
@@ -122,7 +124,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     /// The handlers for expanding/collapsing items.
     open var expanionHandlers = ExpanionHandlers()
-
+    
     /**
      The handlers for deleting items.
      
@@ -136,32 +138,72 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      
      // Option 1: Update the backing store from a CollectionDifference
      dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
-         guard let self = self else { return }
-         
-         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
-             self.backingStore = updatedBackingStore
-         }
+     guard let self = self else { return }
+     
+     if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+     self.backingStore = updatedBackingStore
      }
-
+     }
+     
      // Option 2: Update the backing store from the final items
      dataSource.deletingHandlers.didDelete = { [weak self] items, transaction in
-         guard let self = self else { return }
-         
-         self.backingStore = transaction.finalSnapshot.itemIdentifiers
+     guard let self = self else { return }
+     
+     self.backingStore = transaction.finalSnapshot.itemIdentifiers
      }
      ```
      */
     open var deletingHandlers = DeletingHandlers() {
         didSet { setupKeyDownMonitor() }
     }
+    
+    /**
+     The handlers for reordering items.
+     
+     Provide ``ReorderingHandlers-swift.struct/canReorder`` to support the reordering of items in your table view.
+     
+     The system calls the ``ReorderingHandlers-swift.struct/didReorder`` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+     
+     ```swift
+     // Allow every item to be reordered
+     dataSource.reorderingHandlers.canReorder = { items in return true }
 
+     // Option 1: Update the backing store from a CollectionDifference
+     dataSource.reorderingHandlers.didDelete = { [weak self] items, transaction in
+         guard let self = self else { return }
+         
+         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+             self.backingStore = updatedBackingStore
+         }
+     }
+     
+     // Option 1: Update the backing store from a CollectionDifference
+     dataSource.reorderingHandlers.didDelete = { [weak self] items, transaction in
+         guard let self = self else { return }
+         
+         if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+             self.backingStore = updatedBackingStore
+         }
+     }
+     
+     // Option 2: Update the backing store from the final items
+     dataSource.reorderingHandlers.didReorder = { [weak self] items, transaction in
+         guard let self = self else { return }
+         
+         self.backingStore = transaction.finalSnapshot.itemIdentifiers
+     }
+     ```
+     */
+    open var reorderingHandlers = ReorderingHandlers()
+
+        
     /// The handlers for hovering items with the mouse.
     open var hoverHandlers = HoverHandlers() {
-        didSet { 
-          //  setupHoverObserving()
+        didSet {
+            //  setupHoverObserving()
         }
     }
-
+    
     /// The handlers for outline columns.
     open var columnHandlers = ColumnHandlers()
     
@@ -210,10 +252,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     var emptyContentView: EmptyView?
-
+    
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
-          
+     
      You can use this handler e.g. if you want to update your empty content configuration or view.
      
      - Parameter isEmpty: A Boolean value indicating whether the current snapshot is empty.
@@ -223,7 +265,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             emptyHandler?(currentSnapshot.items.isEmpty)
         }
     }
-        
+    
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if !currentSnapshot.items.isEmpty {
             emptyView?.removeFromSuperview()
@@ -236,8 +278,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                 emptyHandler(currentSnapshot.items.isEmpty)
             }
         }
-     }
-
+    }
+    
     
     /**
      The default animation the UI uses to show differences between rows.
@@ -339,7 +381,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     open var visibleItems: [ItemIdentifierType] {
         outlineView.visibleRowIndexes().compactMap { item(forRow: $0) }
     }
-
+    
     func rowView(for item: ItemIdentifierType) -> NSTableRowView? {
         if let row = row(for: item) {
             return outlineView.rowView(atRow: row, makeIfNecessary: false)
@@ -361,8 +403,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      ```
      
      - Parameters:
-        - outlineView: The initialized outline view object to connect to the diffable data source.
-        - cellProvider: A closure that creates and returns each of the cells for the outline view from the data the diffable data source provides.
+     - outlineView: The initialized outline view object to connect to the diffable data source.
+     - cellProvider: A closure that creates and returns each of the cells for the outline view from the data the diffable data source provides.
      */
     public init(outlineView: NSOutlineView, cellProvider: @escaping CellProvider) {
         self.outlineView = outlineView
@@ -373,7 +415,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         outlineView.delegate = delegate
         outlineView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         outlineView.isQuicklookPreviewable = ItemIdentifierType.self is QuicklookPreviewable.Type
-
+        
     }
     
     /**
@@ -386,8 +428,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      ```
      
      - Parameters:
-        - outlineView: The initialized outline view object to connect to the diffable data source.
-        - cellRegistration: A cell registration which returns each of the cells for the outline view from the data the diffable data source provides.
+     - outlineView: The initialized outline view object to connect to the diffable data source.
+     - cellRegistration: A cell registration which returns each of the cells for the outline view from the data the diffable data source provides.
      */
     public convenience init<Cell: NSTableCellView>(outlineView: NSOutlineView, cellRegistration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
         self.init(outlineView: outlineView, cellProvider: {
@@ -400,14 +442,14 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      A closure that configures and returns a cell view for a outline view from its diffable data source.
      
      - Parameters
-        - outlineView: The outline view to configure this cell for.
-        - tableColumn: The table column of the cell.
-        - item: The item for this cell.
+     - outlineView: The outline view to configure this cell for.
+     - tableColumn: The table column of the cell.
+     - item: The item for this cell.
      
      - Returns: A configured cell object.
      */
     public typealias CellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
-     
+    
     /**
      Returns a representation of the current state of the data in the outline view.
      
@@ -428,9 +470,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      The system interrupts any ongoing item animations and immediately reloads the outline view’s content.
      
      - Parameters:
-        - snapshot: The snapshot that reflects the new state of the data in the outline view.
-        - option: Option how to apply the snapshot to the outline view. The default value is `animated`.
-        - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
+     - snapshot: The snapshot that reflects the new state of the data in the outline view.
+     - option: Option how to apply the snapshot to the outline view. The default value is `animated`.
+     - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let previousIsEmpty = currentSnapshot.items.isEmpty
@@ -460,22 +502,45 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     public func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
-        self.draggedItems  = draggedItems.compactMap({$0 as? ItemIdentifierType})
+        self.draggedItems = draggedItems.compactMap({$0 as? ItemIdentifierType})
+        
+        let parents = self.draggedItems.compactMap({ currentSnapshot.parent(of:$0) }).uniqued()
+        var children: [ItemIdentifierType] = []
+        if parents.isEmpty {
+            children = currentSnapshot.rootItems
+        } else if parents.count == 1 {
+            children = currentSnapshot.children(of: parents[0])
+        }
+        let indexes = self.draggedItems.compactMap({ children.firstIndex(of: $0 ) })
+        if (parents.isEmpty || parents.count == 1), indexes.isIncrementing() {
+            self.draggedParent = parents.first
+            self.draggedIndexes = indexes.sorted()
+        }
     }
     
     public func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
         draggedItems = []
+        draggedIndexes = []
+        draggedParent = nil
     }
     
     public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        guard let item = item as? ItemIdentifierType,  draggedItems != [item] else { return [] }
-        return .move
+        if let item = item as? ItemIdentifierType, draggedItems.contains(item) {
+            return []
+        }
+        if draggedParent == item as? ItemIdentifierType, let last = draggedIndexes.last, (draggedIndexes + [last+1]).contains(index) {
+            return []
+        }
+        return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) == true ? .move : []
     }
     
     public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        var snapshot = snapshot()
-        snapshot.move(draggedItems, to: item as? ItemIdentifierType, index: index)
-        apply(snapshot, .withoutAnimation)
+        var snapshot = currentSnapshot
+        snapshot.move(draggedItems, toIndex: index == -1 ? 0 : index, of: item as? ItemIdentifierType)
+        let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+        reorderingHandlers.willReorder?(transaction)
+        apply(snapshot, .usingReloadData)
+        reorderingHandlers.didReorder?(transaction)
         return true
     }
     
@@ -512,6 +577,53 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
 
         /// The handler that gets called whenever items get deselected.
         public var didDeselect: (([ItemIdentifierType]) -> Void)?
+    }
+    
+    /**
+     Handlers for reordering items.
+     
+     Take a look at ``reorderingHandlers-swift.property`` how to support reordering items.
+     */
+    public struct ReorderingHandlers {
+        /// The handler that determines if items can be reordered. The default value is `nil` which indicates that items can't be reordered.
+        public var canReorder: ((_ items: [ItemIdentifierType], _ parent: ItemIdentifierType?) -> Bool)?
+
+        /// The handler that that gets called before reordering items.
+        public var willReorder: ((_ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> Void)?
+
+        /**
+         The handler that that gets called after reordering items.
+
+         The system calls the `didReorder` handler after a reordering transaction (``DiffableDataSourceTransaction``) occurs, so you can update your data backing store with information about the changes.
+         
+         ```swift
+         // Allow every item to be reordered
+         dataSource.reorderingHandlers.canDelete = { items in return true }
+
+         // Option 1: Update the backing store from a CollectionDifference
+         dataSource.reorderingHandlers.didDelete = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+                 self.backingStore = updatedBackingStore
+             }
+         }
+
+         // Option 2: Update the backing store from the final items
+         dataSource.reorderingHandlers.didReorder = { [weak self] items, transaction in
+             guard let self = self else { return }
+             
+             self.backingStore = transaction.finalSnapshot.itemIdentifiers
+         }
+         ```
+         */
+        public var didReorder: ((_ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> Void)?
+        
+        /// A Boolean value that indicates whether reordering items is animated.
+        public var animates: Bool = false
+        
+        /// A Boolean value that indicates whether rows reorder immediately while the user drags them.
+        var reorderImmediately: Bool = true
     }
     
     public struct DeletingHandlers {

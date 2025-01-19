@@ -9,28 +9,25 @@ import AppKit
 import FZSwiftUtils
 
 /**
- A representation of the state of the data in a outlineview at a specific point in time.
+ A representation of the state of the data in a outline view at a specific point in time.
  
- A section snapshot represents the data for a single section in a collection view. Through a section snapshot, you set up the initial state of the data that displays in an individual section of your view, and later update that data.
- 
- You can use section snapshots with or instead of an NSDiffableDataSourceSnapshot, which represents the data in the entire view. Use a section snapshot when you need precise management of the data in a section of your layout, such as when the sections of your layout acquire their data from different sources. You can also use a section snapshot to represent data with a hierarchical structure, such as an outline with expandable items.
- 
- The following example creates a section snapshot with one root item that contains three child items:
+ ``OutlineViewDiffableDataSource`` uses snapshots to provide data for outline views. You use a snapshot to set up the initial state of the data that a view displays, and you use snapshots to reflect changes to the data that the view displays.
+   
+ The following example creates a snapshot with one root item that contains three child items:
 
  ```swift
-// Create a section snapshot
-var sectionSnapshot = NSOutlineViewDiffableDataSourceSnapshot<String>()
+// Create a snapshot
+ var snapshot = OutlineViewDiffableDataSourceSnapshot<String>()
      
-// Populate the section snapshot
-sectionSnapshot.append(["Food", "Drinks"])
- sectionSnapshot.append(["🍏", "🍓", "🥐"], to: "Food")
+// Populate the snapshot
+ snapshot.append(["Food", "Drinks"])
+ snapshot.append(["🍏", "🍓", "🥐"], to: "Food")
      
-// Apply the section snapshot
-dataSource.apply(sectionSnapshot)
+// Apply the snapshot
+dataSource.apply(snapshot)
  ```
  */
 public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable> {
-    // MARK: - Creating a section snapshot
     
     struct Node {
         var parent: ItemIdentifierType?
@@ -38,7 +35,9 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         var isExpanded: Bool = false
     }
     
-    /// Creates an empty section snapshot.
+    // MARK: - Creating a snapshot
+    
+    /// Creates an empty snapshot.
     public init() { }
     
     /// Internal storage for the hierarchy of items.
@@ -47,15 +46,15 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     /// The items ordered.
     private var orderedItems: OrderedSet<ItemIdentifierType> = []
     
-    /// The identifiers of the items at the top level of the section snapshot’s hierarchy.
+    /// The identifiers of the items at the top level of the snapshot’s hierarchy.
     public internal(set) var rootItems: [ItemIdentifierType] = []
     
-    /// The identifiers of all items in the section snapshot.
+    /// The identifiers of all items in the snapshot.
     public var items: [ItemIdentifierType] {
         Array(orderedItems)
     }
         
-    /// The identifiers of the currently visible items in the section snapshot.
+    /// The identifiers of the currently visible items in the snapshot.
     public var visibleItems: [ItemIdentifierType] {
         func visibleChilds(for parent: ItemIdentifierType) -> [ItemIdentifierType] {
             var visibleItems = children(of: parent).filter({ isExpanded($0) })
@@ -67,11 +66,11 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     
     // MARK: - Adding ItemIdentifierTypes
     
-    /// Adds the specified items as child items of the specified parent item in the section snapshot.
+    /// Adds the specified items as child items of the specified parent item in the snapshot.
     public mutating func append(_ items: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
         validateItems(items)
         if let parent = parent {
-            validateItem(parent, "Parent item does not exist in section snapshot: ")
+            validateItem(parent, "Parent item does not exist in snapshot: ")
             nodes[parent]?.children.append(contentsOf: items)
         } else {
             rootItems.append(contentsOf: items)
@@ -82,18 +81,18 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     
     // MARK: - Inserting items
     
-    /// Inserts the provided items immediately after the item with the specified identifier in the section snapshot.
+    /// Inserts the provided items immediately after the item with the specified identifier in the snapshot.
     public mutating func insert(_ items: [ItemIdentifierType], after item: ItemIdentifierType) {
         insert(items, to: item, before: false)
     }
 
-    /// Inserts the provided items immediately before the item with the specified identifier in the section snapshot.
+    /// Inserts the provided items immediately before the item with the specified identifier in the snapshot.
     public mutating func insert(_ items: [ItemIdentifierType], before item: ItemIdentifierType) {
         insert(items, to: item, before: true)
     }
   
     private mutating func insert(_ items: [ItemIdentifierType], to item: ItemIdentifierType, before: Bool) {
-        validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in section snapshot: ")
+        validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in snapshot: ")
         validateItems(items)
         if let rootIndex = rootItems.firstIndex(of: item) {
             rootItems.insert(contentsOf: items, at: before ? rootIndex : rootIndex + 1)
@@ -105,18 +104,18 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         updateOrderedItems()
     }
     
-    /// Inserts the provided section snapshot immediately after the item with the specified identifier in the section snapshot.
+    /// Inserts the provided snapshot immediately after the item with the specified identifier in the snapshot.
     public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, after item: ItemIdentifierType) {
        insert(snapshot, to: item, before: false)
     }
     
-    /// Inserts the provided section snapshot immediately before the item with the specified identifier in the section snapshot.
+    /// Inserts the provided snapshot immediately before the item with the specified identifier in the snapshot.
     public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, before item: ItemIdentifierType) {
        insert(snapshot, to: item, before: true)
     }
     
     private mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, to item: ItemIdentifierType, before: Bool) {
-        validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in section snapshot: ")
+        validateItem(item, "ItemIdentifierType to insert \(before ? "before" : "after") does not exist in snapshot: ")
         validateItems(snapshot.items)
         if let rootIndex = rootItems.firstIndex(of: item) {
             rootItems.insert(contentsOf: snapshot.rootItems, at: before ? rootIndex : rootIndex + 1)
@@ -130,53 +129,59 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         updateOrderedItems()
     }
     
-    /// Moves the item from its current position in the snapshot to the position immediately before the specified item.
-    public mutating func move(_ item: ItemIdentifierType, before: ItemIdentifierType) {
-        move(item, to: before, before: true)
+    /// Moves the items from their current position in the snapshot to the position immediately before the specified item.
+    public mutating func move(_ items: [ItemIdentifierType], before: ItemIdentifierType) {
+        move(items, to: before, before: true)
     }
     
-    public mutating func move(_ item: ItemIdentifierType, after: ItemIdentifierType) {
-        move(item, to: after, before: false)
+    /// Moves the items from their current position in the snapshot to the position immediately after the specified item.
+    public mutating func move(_ items: [ItemIdentifierType], after: ItemIdentifierType) {
+        move(items, to: after, before: false)
     }
     
-    /// Moves the item from its current position in the snapshot to the position immediately after the specified item.
-    private mutating func move(_ item: ItemIdentifierType, to toItem: ItemIdentifierType, before: Bool) {
-        validateItem(item, "ItemIdentifierType to move does not exist in section snapshot: \(String(describing: item))")
-        validateItem(toItem, "ItemIdentifierType to move \(before ? "before" : "after") does not exist in section snapshot: \(String(describing: toItem))")
-        if let index = rootItems.firstIndex(of: toItem) {
-            deleteItemFromParent(item)
-            rootItems.insert(item, at: before ? index : index + 1)
-            nodes[item]?.parent = nil
-        } else if let parent = parent(of: toItem), let index = nodes[parent]?.children.firstIndex(of: item) {
-            deleteItemFromParent(item)
-            nodes[parent]?.children.insert(item, at: before ? index : index + 1)
-            nodes[item]?.parent = parent
+    private mutating func move(_ items: [ItemIdentifierType], to toItem: ItemIdentifierType, before: Bool) {
+        validateMoveItems(items)
+        validateItem(toItem, "ItemIdentifierType to move \(before ? "before" : "after") does not exist in snapshot: \(String(describing: toItem))")
+        
+        let parent = parent(of: toItem)
+        items.forEach({
+            deleteItemFromParent($0)
+            nodes[$0]?.parent = parent
+        })
+        if let parent = parent, let index = nodes[parent]?.children.firstIndex(of: toItem) {
+            nodes[parent]?.children.insert(contentsOf: items, at: before ? index : index + 1)
+        } else if let index = rootItems.firstIndex(of: toItem) {
+            rootItems.insert(contentsOf: items, at: before ? index : index + 1)
         }
         updateOrderedItems()
     }
     
-    mutating func move(_ items: [ItemIdentifierType], to toItem: ItemIdentifierType?, index: Int) {
+    /// Moves the items from their current position in the snapshot to the specified index of the specified parent.
+    public mutating func move(_ items: [ItemIdentifierType], toIndex index: Int, of parent: ItemIdentifierType?) {
         validateMoveItems(items)
-        if let toItem = toItem {
-            validateItem(toItem, "ItemIdentifierType to move does not exist in section snapshot: \(String(describing: toItem))")
-            if nodes[toItem]?.children.count ?? .max >= index {
+        if let parent = parent {
+            validateItem(parent, "Parent item does not exist in snapshot: ")
+            if index > children(of: parent).count {
                 NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
             }
-        } else if rootItems.count >= index {
+        } else if index > rootItems.count {
             NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
         }
         items.forEach({
-            deleteItemFromParent($0)
-            nodes[$0]?.parent = toItem
+            if self.parent(of: $0) != parent {
+                deleteItemFromParent($0)
+                nodes[$0]?.parent = parent
+            }
         })
-        if let toItem = toItem {
-            nodes[toItem]?.children.insert(contentsOf: items, at: index)
+        if let parent = parent {
+            nodes[parent]?.children._insert(items, at: index)
         } else {
-            rootItems.insert(contentsOf: items, at: index)
+            rootItems._insert(items, at: index)
         }
+        updateOrderedItems()
     }
     
-    /// Creates a section snapshot that contains the child items of the specified parent item, optionally including the parent item.
+    /// Creates a snapshot that contains the child items of the specified parent item, optionally including the parent item.
     public func snapshot(of parent: ItemIdentifierType, includingParent: Bool = false) -> OutlineViewDiffableDataSourceSnapshot {
         var snapshot = OutlineViewDiffableDataSourceSnapshot()
         snapshot.rootItems = includingParent ? [parent] : children(of: parent)
@@ -191,12 +196,12 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     
     // MARK: - Getting item metrics
     
-    /// Finds the index of the specified item in the section snapshot.
+    /// Finds the index of the specified item in the snapshot.
     public func index(of item: ItemIdentifierType) -> Int? {
         return orderedItems.firstIndex(of: item)
     }
     
-    /// Finds the hierarchical level of the specified item in the section snapshot.
+    /// Finds the hierarchical level of the specified item in the snapshot.
     public func level(of item: ItemIdentifierType) -> Int? {
         guard contains(item) else { return nil }
         var level = 0
@@ -208,12 +213,12 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         return level
     }
     
-    /// Finds the parent item of the specified item in the section snapshot.
+    /// Finds the parent item of the specified item in the snapshot.
     public func parent(of item: ItemIdentifierType) -> ItemIdentifierType? {
         nodes[item]?.parent
     }
     
-    /// Returns the children items of the specified item in the section snapshot.
+    /// Returns the children items of the specified item in the snapshot.
     public func children(of parent: ItemIdentifierType, recursive: Bool = false) -> [ItemIdentifierType] {
         if !recursive {
             return nodes[parent]?.children ?? []
@@ -221,7 +226,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         return descendants(of: parent)
     }
     
-    /// Indicates whether the section snapshot contains the specified item.
+    /// Indicates whether the snapshot contains the specified item.
     public func contains(_ item: ItemIdentifierType) -> Bool {
         nodes[item] != nil
     }
@@ -240,10 +245,10 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
 
     // MARK: - Removing items
 
-    /// Deletes the items with the specified identifiers, and any of their child items, from the section snapshot.
+    /// Deletes the items with the specified identifiers, and any of their child items, from the snapshot.
     public mutating func delete(_ items: [ItemIdentifierType]) {
         for item in items {
-            validateItem(item, "ItemIdentifierType to delete does not exist in section snapshot: ")
+            validateItem(item, "ItemIdentifierType to delete does not exist in snapshot: ")
             if let index = rootItems.firstIndex(of: item) {
                 rootItems.remove(at: index)
                 deleteItemAndDescendants(item)
@@ -260,9 +265,9 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         rootItems.removeAll()
     }
         
-    /// Replaces all child items of the specified parent item with the provided section snapshot.
+    /// Replaces all child items of the specified parent item with the provided snapshot.
     public mutating func replace(childrenOf parent: ItemIdentifierType, using snapshot: OutlineViewDiffableDataSourceSnapshot) {
-        validateItem(parent, "Parent item does not exist in section snapshot: ")
+        validateItem(parent, "Parent item does not exist in snapshot: ")
         validateItems(Array(snapshot.orderedItems), removing: descendants(of: parent))
         guard let previousChildren = nodes[parent]?.children else { return }
         previousChildren.forEach({ deleteItemAndDescendants($0) })
@@ -279,17 +284,17 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         nodes[item]?.isExpanded == true
     }
     
-    /// Expands the specified items in the section snapshot.
+    /// Expands the specified items in the snapshot.
     public mutating func expand(_ items: [ItemIdentifierType]) {
         items.forEach({ nodes[$0]?.isExpanded = true })
     }
     
-    /// Collapses the specified items in the section snapshot.
+    /// Collapses the specified items in the snapshot.
     public mutating func collapse(_ items: [ItemIdentifierType]) {
         items.forEach({ nodes[$0]?.isExpanded = false })
     }
     
-    /// Returns a string with an ASCII representation of the section snapshot.
+    /// Returns a string with an ASCII representation of the snapshot.
     public func visualDescription() -> String {
         var result = "OutlineViewDiffableDataSourceSnapshot<\(String(describing: ItemIdentifierType.self))>\n"
         
@@ -334,10 +339,17 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     private mutating func deleteItemFromParent(_ item: ItemIdentifierType) {
         if let parent = parent(of: item), let index = nodes[parent]?.children.firstIndex(of: item) {
             nodes[parent]?.children.remove(at: index)
+        } else if let index = rootItems.firstIndex(of: item) {
+            rootItems.remove(at: index)
         }
     }
     
-    func validateItems(_ items: [ItemIdentifierType], removing: [ItemIdentifierType] = [], _ message: String = "ItemIdentifierTypes in a section snapshot must be unique. Duplicate items:\n") {
+    func childIndex(of item: ItemIdentifierType) -> Int? {
+        guard let parent = parent(of: item) else { return nil }
+        return children(of: parent).firstIndex(of: item)
+    }
+    
+    func validateItems(_ items: [ItemIdentifierType], removing: [ItemIdentifierType] = [], _ message: String = "ItemIdentifierTypes in a snapshot must be unique. Duplicate items:\n") {
         var orderedItems = orderedItems
         orderedItems.remove(removing)
         var duplicates: OrderedSet<ItemIdentifierType> = []
@@ -380,5 +392,22 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     
     func isExpandable(_ item: ItemIdentifierType) -> Bool {
         !children(of: item).isEmpty
+    }
+}
+
+fileprivate extension Array where Element: Equatable {
+    mutating func _insert(_ items: [Element], at index: Int) {
+        var adjustedIndex = index
+        let filteredItems = items.filter { item in
+            if let existingIndex = firstIndex(of: item) {
+                if existingIndex < adjustedIndex {
+                    adjustedIndex -= 1
+                }
+                remove(at: existingIndex)
+                return true
+            }
+            return true
+        }
+        insert(contentsOf: filteredItems, at: adjustedIndex)
     }
 }

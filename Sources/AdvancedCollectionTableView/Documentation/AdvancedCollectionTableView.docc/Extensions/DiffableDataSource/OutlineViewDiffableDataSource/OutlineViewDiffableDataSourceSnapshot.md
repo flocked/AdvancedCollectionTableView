@@ -1,0 +1,57 @@
+# ``OutlineViewDiffableDataSourceSnapshot``
+
+## Overview
+
+## Topics
+
+### Creating a snapshot
+
+- ``init()``
+- ``snapshot(of:includingParent:)``
+- ``append(_:to:)``
+
+### Accessing items
+
+- ``items`` 
+- ``rootItems``
+- ``visibleItems``
+
+### Getting item metrics
+
+- ``index(of:)``
+- ``level(of:)``
+- ``parent(of:)``
+- ``contains(_:)``
+- ``isVisible(_:)``
+
+### Inserting items
+
+- ``insert(_:before:)-5psi5``
+- ``insert(_:before:)-3vdz``
+- ``insert(_:after:)-97sm4``
+- ``insert(_:after:)-9at59``
+
+### Moving items
+
+- ``move(_:before:)``
+- ``move(_:after:)``
+- ``move(_:toIndex:of:)``
+
+### Removing items
+
+- ``delete(_:)``
+- ``deleteAll()``
+
+### Replacing items
+
+- ``replace(childrenOf:using:)``
+
+### Expanding and collapsing items
+
+- ``isExpanded(_:)``
+- ``expand(_:)``
+- ``collapse(_:)``
+
+### Debugging snapshots
+
+- ``visualDescription()``

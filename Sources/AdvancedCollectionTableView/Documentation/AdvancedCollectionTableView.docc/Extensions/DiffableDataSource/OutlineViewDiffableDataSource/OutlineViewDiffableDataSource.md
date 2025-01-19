@@ -1,4 +1,4 @@
-# ``TableViewDiffableDataSource``
+# ``OutlineViewDiffableDataSource``
 
 ## Overview
 

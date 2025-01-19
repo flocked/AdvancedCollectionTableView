@@ -163,6 +163,7 @@ extension NSOutlineView {
                 applySnapshot()
                 NSAnimationContext.endGrouping()
             } else {
+                Swift.print("HEEERE", animation.rawValue)
                 applySnapshot()
                 completion?()
             }
