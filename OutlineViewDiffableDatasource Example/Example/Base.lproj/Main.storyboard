@@ -12,11 +12,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Example" id="1Xt-HY-uBw">
+                            <menuItem title="OutlineViewDiffableDatasource Example" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Example" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="OutlineViewDiffableDatasource Example" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Example" id="5kV-Vb-QxS">
+                                        <menuItem title="About OutlineViewDiffableDatasource Example" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -30,7 +30,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide Example" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide OutlineViewDiffableDatasource Example" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -48,7 +48,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Example" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit OutlineViewDiffableDatasource Example" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -661,7 +661,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="Example Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="OutlineViewDiffableDatasource Example Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
@@ -750,7 +750,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="scH-7B-Xch">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <collectionView selectable="YES" allowsMultipleSelection="YES" id="xnc-OY-4Nz">
                                             <rect key="frame" x="0.0" y="0.0" width="480" height="158"/>
@@ -814,16 +814,16 @@ Favorite table cells by swiping left and delete them by swiping right.</string>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="3eT-aC-SQo">
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="498"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="tDC-fv-VVI" id="tgK-DT-BKx">
-                                            <rect key="frame" x="0.0" y="0.0" width="227" height="498"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="220" height="498"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="17" height="0.0"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="AutomaticTableColumnIdentifier.0" width="194.5" minWidth="40" maxWidth="1000" id="tDC-fv-VVI">
+                                                <tableColumn identifier="AutomaticTableColumnIdentifier.0" width="180" minWidth="40" maxWidth="1000" id="tDC-fv-VVI">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -836,11 +836,11 @@ Favorite table cells by swiping left and delete them by swiping right.</string>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="jJk-Qi-l9K">
-                                                            <rect key="frame" x="18" y="0.0" width="189" height="24"/>
+                                                            <rect key="frame" x="18" y="0.0" width="175" height="24"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BT7-nT-zZP">
-                                                                    <rect key="frame" x="0.0" y="4" width="189" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="4" width="175" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="7ay-jJ-V7D">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -860,7 +860,7 @@ Favorite table cells by swiping left and delete them by swiping right.</string>
                                     </subviews>
                                     <nil key="backgroundColor"/>
                                 </clipView>
-                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="IKh-0i-w7Z">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="IKh-0i-w7Z">
                                     <rect key="frame" x="0.0" y="482" width="220" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>

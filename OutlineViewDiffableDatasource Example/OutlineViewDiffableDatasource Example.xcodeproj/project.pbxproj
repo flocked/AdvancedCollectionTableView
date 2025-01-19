@@ -45,7 +45,7 @@
 		727665F62A55E61700F1FD9F /* Berghain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Berghain.png; path = "Example/Sample Images/Berghain.png"; sourceTree = SOURCE_ROOT; };
 		72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
 		72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
-		72DE39852979905C007EACAF /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		72DE39852979905C007EACAF /* OutlineViewDiffableDatasource Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OutlineViewDiffableDatasource Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		72DE39882979905C007EACAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72DE398A2979905C007EACAF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		72DE398C2979905D007EACAF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 		72DE39862979905C007EACAF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				72DE39852979905C007EACAF /* Example.app */,
+				72DE39852979905C007EACAF /* OutlineViewDiffableDatasource Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		72DE39842979905C007EACAF /* Example */ = {
+		72DE39842979905C007EACAF /* OutlineViewDiffableDatasource Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 72DE39942979905D007EACAF /* Build configuration list for PBXNativeTarget "Example" */;
+			buildConfigurationList = 72DE39942979905D007EACAF /* Build configuration list for PBXNativeTarget "OutlineViewDiffableDatasource Example" */;
 			buildPhases = (
 				72DE39812979905C007EACAF /* Sources */,
 				72DE39822979905C007EACAF /* Frameworks */,
@@ -148,7 +148,7 @@
 			);
 			dependencies = (
 			);
-			name = Example;
+			name = "OutlineViewDiffableDatasource Example";
 			packageProductDependencies = (
 				728F108A2B43A27300EE2F2B /* AdvancedCollectionTableView */,
 				728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */,
@@ -156,7 +156,7 @@
 				726452482D287E1600E506C2 /* FZUIKit */,
 			);
 			productName = CollectionViewTemplate;
-			productReference = 72DE39852979905C007EACAF /* Example.app */;
+			productReference = 72DE39852979905C007EACAF /* OutlineViewDiffableDatasource Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -191,7 +191,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				72DE39842979905C007EACAF /* Example */,
+				72DE39842979905C007EACAF /* OutlineViewDiffableDatasource Example */,
 			);
 		};
 /* End PBXProject section */
@@ -432,7 +432,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		72DE39942979905D007EACAF /* Build configuration list for PBXNativeTarget "Example" */ = {
+		72DE39942979905D007EACAF /* Build configuration list for PBXNativeTarget "OutlineViewDiffableDatasource Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				72DE39952979905D007EACAF /* Debug */,
