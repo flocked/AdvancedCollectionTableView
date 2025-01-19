@@ -1274,6 +1274,11 @@ extension NSPasteboardItem {
         self.init(content: content ?? [])
         setString(String(element.id.hashValue), forType: .itemID)
     }
+    
+    convenience init<Item: Hashable>(forItem item: Item, content: [PasteboardContent]? = nil) {
+        self.init(content: content ?? [])
+        setString(String(describing: item), forType: .itemID)
+    }
 }
 
 class IdentifiablePasteboardItem: NSPasteboardItem {

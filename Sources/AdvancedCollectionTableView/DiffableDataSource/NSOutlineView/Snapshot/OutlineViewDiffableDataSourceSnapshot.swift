@@ -155,6 +155,27 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         updateOrderedItems()
     }
     
+    mutating func move(_ items: [ItemIdentifierType], to toItem: ItemIdentifierType?, index: Int) {
+        validateMoveItems(items)
+        if let toItem = toItem {
+            validateItem(toItem, "ItemIdentifierType to move does not exist in section snapshot: \(String(describing: toItem))")
+            if nodes[toItem]?.children.count ?? .max >= index {
+                NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
+            }
+        } else if rootItems.count >= index {
+            NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
+        }
+        items.forEach({
+            deleteItemFromParent($0)
+            nodes[$0]?.parent = toItem
+        })
+        if let toItem = toItem {
+            nodes[toItem]?.children.insert(contentsOf: items, at: index)
+        } else {
+            rootItems.insert(contentsOf: items, at: index)
+        }
+    }
+    
     /// Creates a section snapshot that contains the child items of the specified parent item, optionally including the parent item.
     public func snapshot(of parent: ItemIdentifierType, includingParent: Bool = false) -> OutlineViewDiffableDataSourceSnapshot {
         var snapshot = OutlineViewDiffableDataSourceSnapshot()
@@ -329,6 +350,17 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         if !duplicates.isEmpty {
             let duplicateItemIdentifierTypesString = duplicates.compactMap({String(describing: $0)}).joined(separator: "\n")
             NSException(name: .internalInconsistencyException, reason: "\(message)\(duplicateItemIdentifierTypesString)", userInfo: nil).raise()
+        }
+    }
+    
+    func validateMoveItems(_ items: [ItemIdentifierType]) {
+        let items = items.filter({ nodes[$0] == nil })
+        if !items.isEmpty {
+            if items.count == 1 {
+                NSException(name: .internalInconsistencyException, reason: "ItemIdentifierType to move doesn't exist: \(items[0]) ", userInfo: nil).raise()
+            } else {
+                NSException(name: .internalInconsistencyException, reason: "ItemIdentifierTypes to move don't exists: \(items.compactMap({ "\($0)" }).joined(separator: "\n")) ", userInfo: nil).raise()
+            }
         }
     }
     

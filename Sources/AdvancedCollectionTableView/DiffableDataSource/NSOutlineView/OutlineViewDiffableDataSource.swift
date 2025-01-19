@@ -49,6 +49,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var keyDownMonitor: NSEvent.Monitor?
     var hoveredRowObserver: KeyValueObservation?
     var delegate: Delegate!
+    var draggedItems: [ItemIdentifierType] = []
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowProvider?
@@ -370,6 +371,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         self.delegate = .init(self)
         outlineView.dataSource = self
         outlineView.delegate = delegate
+        outlineView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
         outlineView.isQuicklookPreviewable = ItemIdentifierType.self is QuicklookPreviewable.Type
 
     }
@@ -455,6 +457,31 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     public func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
         currentSnapshot.isExpandable(item as! ItemIdentifierType)
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
+        self.draggedItems  = draggedItems.compactMap({$0 as? ItemIdentifierType})
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {
+        draggedItems = []
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+        guard let item = item as? ItemIdentifierType,  draggedItems != [item] else { return [] }
+        return .move
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
+        var snapshot = snapshot()
+        snapshot.move(draggedItems, to: item as? ItemIdentifierType, index: index)
+        apply(snapshot, .withoutAnimation)
+        return true
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> (any NSPasteboardWriting)? {
+        guard let item = item as? ItemIdentifierType else { return nil }
+        return NSPasteboardItem(forItem: item)
     }
 
     /// Handlers for selecting items.
