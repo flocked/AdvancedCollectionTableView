@@ -82,50 +82,42 @@ extension Array where Element == OutlineChangeInstruction {
 }
 
 extension OutlineViewDiffableDataSourceSnapshot {
-    func instructions(forMorphingInto destination: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
-        func instructions(forMorphing from: [ItemIdentifierType], to: [ItemIdentifierType], baseIndexPath: IndexPath) -> [OutlineChangeInstruction] {
-            let src = from
-            let dst = to
+    func instructions(forMorphingInto newSnapshot: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
+        func calculateInstructions(from source: [ItemIdentifierType], to destination: [ItemIdentifierType], baseIndexPath: IndexPath) -> [OutlineChangeInstruction] {
             var result: [OutlineChangeInstruction] = []
-            var work = src
-            var deletables = [ItemIdentifierType]()
-            for item in work {
-                if !dst.contains(item) {
-                    deletables.append(item)
-                }
-            }
-            for deletable in deletables {
+            var work = source
+     
+            for deletable in work.filter({ !destination.contains($0) }) {
                 if let delIdx = work.firstIndex(of: deletable) {
                     work.remove(at: delIdx)
                     result.append(.remove(deletable, baseIndexPath.appending(delIdx)))
                 }
             }
-            for (dstIdx, item) in dst.enumerated() {
+            for (dstIdx, item) in destination.enumerated() {
                 if work.firstIndex(of: item) == nil {
                     work.insert(item, at: dstIdx)
                     result.append(.insert(item, baseIndexPath.appending(dstIdx)))
                 }
             }
-            for (index, item) in dst.enumerated() {
+            for (index, item) in destination.enumerated() {
                 let indexPath = baseIndexPath.appending(index)
                 if work.contains(item) {
-                    result.append(contentsOf: instructions(forMorphing: children(of: item), to: destination.children(of: item), baseIndexPath: indexPath))
+                    result += calculateInstructions(from: children(of: item), to: newSnapshot.children(of: item), baseIndexPath: indexPath)
                 }
             }
             return result
         }
         
-        var result: [OutlineChangeInstruction] = []
-        result.append(contentsOf: instructions(forMorphing: rootItems, to: destination.rootItems, baseIndexPath: IndexPath()))
+        var result = calculateInstructions(from: rootItems, to: newSnapshot.rootItems, baseIndexPath: IndexPath())
         result.reduce()
         return result
     }
     
     func expandCollapse(forMorphingInto destination: OutlineViewDiffableDataSourceSnapshot) -> (expand: [ItemIdentifierType], collapse: [ItemIdentifierType]) {
-        let oldExpanded = nodes.filter({$0.value.isExpanded}).compactMap({$0.key})
-        let expanded = destination.nodes.filter({$0.value.isExpanded}).compactMap({$0.key})
-        let collapse = oldExpanded.filter({ !expanded.contains($0) })
-        let expand = expanded.filter({ !oldExpanded.contains($0) })
+        let oldExpanded = Set(nodes.filter { $0.value.isExpanded }.map { $0.key })
+        let newExpanded = Set(destination.nodes.filter { $0.value.isExpanded }.map { $0.key })
+        let collapse = Array(oldExpanded.subtracting(newExpanded))
+        let expand = Array(newExpanded.subtracting(oldExpanded))
         return (expand, collapse)
     }
 }

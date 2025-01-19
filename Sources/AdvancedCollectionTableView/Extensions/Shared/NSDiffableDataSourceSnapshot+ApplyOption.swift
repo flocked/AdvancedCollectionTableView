@@ -78,4 +78,11 @@ public enum NSDiffableDataSourceSnapshotApplyOption: Hashable, Sendable {
         default: return false
         }
     }
+    
+    var isWithoutAbinatuib: Bool {
+        switch self {
+        case .withoutAnimation: return true
+        default: return false
+        }
+    }
 }

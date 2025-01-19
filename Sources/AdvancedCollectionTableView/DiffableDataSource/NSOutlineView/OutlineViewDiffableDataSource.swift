@@ -10,7 +10,6 @@ import FZQuicklook
 import FZUIKit
 import FZSwiftUtils
 
-
 /**
  The object you use to manage data and provide items for a outline view.
 
@@ -319,8 +318,14 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     /// Reloads the outline view cells for the specified items.
-    open func reloadItems(_ items: [ItemIdentifierType], animated: Bool = false) {
-
+    open func reloadItems(_ items: [ItemIdentifierType], reloadChildren: Bool = false, animated: Bool = false) {
+        if animated {
+            NSView.animate {
+                items.forEach({ self.outlineView.animator().reloadItem($0, reloadChildren: reloadChildren) })
+            }
+        } else {
+            items.forEach({ outlineView.reloadItem($0, reloadChildren: reloadChildren) })
+        }
     }
     
     /// Updates the data for the specified items, preserving the existing outline view cells for the items.
@@ -341,6 +346,23 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         return nil
     }
     
+    
+    /**
+     Creates a diffable data source with the specified cell provider, and connects it to the specified outline view.
+     
+     To connect a diffable data source to a outline view, you create the diffable data source using this initializer, passing in the outline view you want to associate with that data source. You also pass in a item provider, where you configure each of your cells to determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = OutlineViewDiffableDataSource<Section, Item>(outlineView: outlineView, cellProvider: {
+     (outlineView, tableColumn, item) in
+     // configure and return cell
+     })
+     ```
+     
+     - Parameters:
+        - outlineView: The initialized outline view object to connect to the diffable data source.
+        - cellProvider: A closure that creates and returns each of the cells for the table view from the data the diffable data source provides.
+     */
     public init(outlineView: NSOutlineView, cellProvider: @escaping CellProvider) {
         self.outlineView = outlineView
         self.cellProvider = cellProvider
@@ -352,6 +374,19 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
 
     }
     
+    /**
+     Creates a diffable data source with the specified cell registration, and connects it to the specified outline view.
+     
+     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the outline view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     
+     ```swift
+     dataSource = OutlineViewDiffableDataSource<Section, Item>(outlineView: outlineView, cellRegistration: cellRegistration)
+     ```
+     
+     - Parameters:
+        - outlineView: The initialized outline view object to connect to the diffable data source.
+        - cellRegistration: A cell registration which returns each of the cells for the table view from the data the diffable data source provides.
+     */
     public convenience init<Cell: NSTableCellView>(outlineView: NSOutlineView, cellRegistration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
         self.init(outlineView: outlineView, cellProvider: {
             outlineView, column, item in
@@ -359,29 +394,52 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         })
     }
     
+    /**
+     A closure that configures and returns a cell view for a table view from its diffable data source.
+     
+     - Parameters
+        - outlineView: The outline view to configure this cell for.
+        - tableColumn: The table column of the cell.
+        - item: The item for this cell.
+     
+     - Returns: A configured cell object.
+     */
     public typealias CellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
-        
+     
+    /**
+     Returns a representation of the current state of the data in the table view.
+     
+     A snapshot containing section and item identifiers in the order that they appear in the UI.
+     */
     public func snapshot() -> OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType> {
         currentSnapshot
     }
     
+    /// Returns an empty snapshot.
     public func emptySnapshot() -> OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType> {
         .init()
     }
     
+    /**
+     Updates the UI to reflect the state of the data in the snapshot, optionally animating the UI changes.
+     
+     The system interrupts any ongoing item animations and immediately reloads the table view’s content.
+     
+     - Parameters:
+        - snapshot: The snapshot that reflects the new state of the data in the table view.
+        - option: Option how to apply the snapshot to the table view. The default value is `animated`.
+        - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
+     */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         let previousIsEmpty = currentSnapshot.items.isEmpty
         let instructions = currentSnapshot.instructions(forMorphingInto: snapshot)
         let expandCollapse = currentSnapshot.expandCollapse(forMorphingInto: snapshot)
         currentSnapshot = snapshot
         outlineView.apply(instructions, option, animation: defaultRowAnimation, expand: expandCollapse.expand, collapse: expandCollapse.collapse, completion: completion)
-        // expandCollapse.collapse.forEach({ outlineView.collapseItem($0) })
-        // expandCollapse.expand.forEach({ outlineView.expandItem($0) })
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
     
-    public func outlineView(_ outlineView: NSOutlineView, child index: Int,
-        ofItem item: Any?) -> Any {
+    public func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
         if let item = item as? ItemIdentifierType {
             return currentSnapshot.children(of: item)[index]
         }

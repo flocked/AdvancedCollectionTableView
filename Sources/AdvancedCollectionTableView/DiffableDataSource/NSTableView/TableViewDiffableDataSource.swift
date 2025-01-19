@@ -389,7 +389,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a item provider, where you configure each of your cells to determine how to display your data in the UI.
      
      ```swift
-     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, itemProvider: {
+     dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellProvider: {
      (tableView, tableColumn, row, item) in
      // configure and return cell
      })
