@@ -547,7 +547,15 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         var snapshot = currentSnapshot
-        snapshot.move(draggedItems, toIndex: index == -1 ? 0 : index, of: item as? ItemIdentifierType)
+        var index = index
+        if index == -1 {
+            if let item = item as? ItemIdentifierType {
+                index = snapshot.children(of: item).count
+            } else {
+                index = snapshot.rootItems.count
+            }
+        }
+        snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
         let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
         reorderingHandlers.willReorder?(transaction)
         apply(snapshot, .usingReloadData)
