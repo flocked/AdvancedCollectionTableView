@@ -183,6 +183,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
     rootItems.forEach { rootItem in
         let childItems = (1...5).map { "\(rootItem).\($0)" }
         snapshot.append(childItems, to: rootItem)
+        
         childItems.forEach { childItem in
             let grandchildItems = (1...5).map { "\(childItem).\($0)" }
             snapshot.append(grandchildItems, to: childItem)
