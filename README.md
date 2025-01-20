@@ -213,7 +213,7 @@ collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 
 ## Installation
 
-Add AdvancedCollectionTableView to your app's Package.swift file, or selecting File -> Add Package Dependencies in Xcode:
+Add `AdvancedCollectionTableView` to your app's `Package.swift` file, or selecting `File -> Add Package Dependencies` in Xcode:
 
 ```swift
 .package(url: "https://github.com/flocked/AdvancedCollectionTableView")
