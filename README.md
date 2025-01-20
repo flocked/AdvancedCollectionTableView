@@ -165,11 +165,31 @@ An extended `NSCollectionViewDiffableDataSource that provides:
   
  ## TableViewDiffableDataSource
  
- Simliar to CollectionViewDiffableDataSource.
+ Simliar to `CollectionViewDiffableDataSource`.
  
   ## OutlineViewDiffableDataSource
+  
+  A diffable data source for `NSOutlineView` simliar to `CollectionViewDiffableDataSource`.
  
- Simliar to CollectionViewDiffableDataSource.
+ Example usage:
+ 
+ ```swift
+    let dataSource = OutlineViewDiffableDataSource<String>(outlineView: outlineView, cellRegistration: cellRegistration)
+    
+    var snapshot = OutlineViewDiffableDataSourceSnapshot<String>()
+    let rootItems ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
+    snapshot.append(rootItems)
+    
+    rootItems.forEach { rootItem in
+        let childItems = (1...5).map { "\(rootItem).\($0)" }
+        snapshot.append(childItems, to: rootItem)
+        childItems.forEach { childItem in
+            let grandchildItems = (1...5).map { "\(childItem).\($0)" }
+            snapshot.append(grandchildItems, to: childItem)
+        }
+    }
+    dataSource.apply(snapshot, .withoutAnimation)
+ ```
 
 ## Quicklook for NSTableView & NSCollectionView
 
@@ -213,7 +233,7 @@ collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 
 ## Installation
 
-Add `AdvancedCollectionTableView` to your app's `Package.swift` file, or selecting `File -> Add Package Dependencies` in Xcode:
+Add `AdvancedCollectionTableView` to your app's `Package.swift` file, or selecting `File -> Add Package Dependencies in Xcode:
 
 ```swift
 .package(url: "https://github.com/flocked/AdvancedCollectionTableView")

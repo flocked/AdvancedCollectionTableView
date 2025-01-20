@@ -67,7 +67,7 @@ class OutlineSidebarViewController: NSViewController {
         
         let rootItems: [OutlineItem] = ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
         snapshot.append(rootItems)
-        snapshot.expand(rootItems)
+        
         rootItems.forEach { rootItem in
             let childItems = (1...5).map { OutlineItem("\(rootItem.title).\($0)") }
             snapshot.append(childItems, to: rootItem)
