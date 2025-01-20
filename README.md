@@ -188,7 +188,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
             snapshot.append(grandchildItems, to: childItem)
         }
     }
-    dataSource.apply(snapshot, .withoutAnimation)
+    dataSource.apply(snapshot)
  ```
 
 ## Quicklook for NSTableView & NSCollectionView
