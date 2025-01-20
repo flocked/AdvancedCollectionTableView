@@ -23,7 +23,7 @@
 		728F108F2B43A32600EE2F2B /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 728F108E2B43A32600EE2F2B /* AdvancedCollectionTableView */; };
 		72A0C7D72B501EE600779BA0 /* AdvancedCollectionTableView in Frameworks */ = {isa = PBXBuildFile; productRef = 72A0C7D62B501EE600779BA0 /* AdvancedCollectionTableView */; };
 		72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */; };
-		72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */; };
+		72AFC2B42980ECA600FEA1C8 /* TableSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AFC2B32980ECA600FEA1C8 /* TableSidebarViewController.swift */; };
 		72DE39892979905C007EACAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE39882979905C007EACAF /* AppDelegate.swift */; };
 		72DE398B2979905C007EACAF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DE398A2979905C007EACAF /* MainViewController.swift */; };
 		72DE398D2979905D007EACAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72DE398C2979905D007EACAF /* Assets.xcassets */; };
@@ -31,6 +31,7 @@
 		72F02E0E2AE117BC00D8D3D7 /* Dystopian City.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0C2AE117BC00D8D3D7 /* Dystopian City.png */; };
 		72F02E0F2AE117BC00D8D3D7 /* Fireworker Monkey.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F02E0D2AE117BC00D8D3D7 /* Fireworker Monkey.png */; };
 		72F049452B4325F700A6871E /* Neil Catstrong.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F049442B4325F400A6871E /* Neil Catstrong.png */; };
+		72F4CC442D3DF8FD00F2A734 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F4CC422D3DF8FD00F2A734 /* SplitViewController.swift */; };
 		72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B652A44FBCB00DDDA1E /* Section.swift */; };
 		72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */; };
 /* End PBXBuildFile section */
@@ -48,7 +49,7 @@
 		727665F52A55E61700F1FD9F /* Cosmojelly.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Cosmojelly.png; path = "Example/Sample Images/Cosmojelly.png"; sourceTree = SOURCE_ROOT; };
 		727665F62A55E61700F1FD9F /* Berghain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Berghain.png; path = "Example/Sample Images/Berghain.png"; sourceTree = SOURCE_ROOT; };
 		72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
-		72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
+		72AFC2B32980ECA600FEA1C8 /* TableSidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableSidebarViewController.swift; sourceTree = "<group>"; };
 		72DE39852979905C007EACAF /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72DE39882979905C007EACAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72DE398A2979905C007EACAF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -58,6 +59,7 @@
 		72F02E0C2AE117BC00D8D3D7 /* Dystopian City.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dystopian City.png"; sourceTree = "<group>"; };
 		72F02E0D2AE117BC00D8D3D7 /* Fireworker Monkey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Fireworker Monkey.png"; sourceTree = "<group>"; };
 		72F049442B4325F400A6871E /* Neil Catstrong.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Neil Catstrong.png"; sourceTree = "<group>"; };
+		72F4CC422D3DF8FD00F2A734 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		72F99B652A44FBCB00DDDA1E /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -117,8 +119,9 @@
 			children = (
 				72DE39882979905C007EACAF /* AppDelegate.swift */,
 				72DE398A2979905C007EACAF /* MainViewController.swift */,
-				72AFC2B32980ECA600FEA1C8 /* SidebarViewController.swift */,
+				72AFC2B32980ECA600FEA1C8 /* TableSidebarViewController.swift */,
 				726BE26B2D3DB15700823E9B /* OutlineSidebarViewController.swift */,
+				72F4CC422D3DF8FD00F2A734 /* SplitViewController.swift */,
 				72F99B642A44FBC000DDDA1E /* Model */,
 				72D95F492A46ED86008B1FE6 /* Sample Images */,
 				72DE398C2979905D007EACAF /* Assets.xcassets */,
@@ -236,7 +239,8 @@
 				72AFC23A29804B7D00FEA1C8 /* CollectionItem.swift in Sources */,
 				72F99B662A44FBCB00DDDA1E /* Section.swift in Sources */,
 				72F99B682A44FBDD00DDDA1E /* SidebarItem.swift in Sources */,
-				72AFC2B42980ECA600FEA1C8 /* SidebarViewController.swift in Sources */,
+				72F4CC442D3DF8FD00F2A734 /* SplitViewController.swift in Sources */,
+				72AFC2B42980ECA600FEA1C8 /* TableSidebarViewController.swift in Sources */,
 				726BE26C2D3DB15700823E9B /* OutlineSidebarViewController.swift in Sources */,
 				72DE39892979905C007EACAF /* AppDelegate.swift in Sources */,
 			);

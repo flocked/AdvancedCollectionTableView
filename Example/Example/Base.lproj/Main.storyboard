@@ -731,11 +731,11 @@
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="556"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="dkC-fw-nsz" id="OL6-2g-mY0">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="dkC-fw-nsz" id="OL6-2g-mY0">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="556"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="17" height="0.0"/>
-                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <size key="intercellSpacing" width="3" height="0.0"/>
+                                            <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
                                                 <tableColumn identifier="AutomaticTableColumnIdentifier.0" width="178" minWidth="40" maxWidth="1000" id="dkC-fw-nsz">
@@ -751,11 +751,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="Znc-hb-lwg">
-                                                            <rect key="frame" x="18" y="0.0" width="173" height="24"/>
+                                                            <rect key="frame" x="11" y="0.0" width="187" height="24"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TwF-bG-26t">
-                                                                    <rect key="frame" x="0.0" y="4" width="173" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="4" width="187" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="mg0-B0-XJ4">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -784,6 +784,42 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
+                            <visualEffectView fixedFrame="YES" blendingMode="withinWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="H97-Fn-scY">
+                                <rect key="frame" x="0.0" y="0.0" width="220" height="180"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="69l-J2-Vtw">
+                                        <rect key="frame" x="20" y="177" width="180" height="5"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                    </box>
+                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="s9N-XY-cUg">
+                                        <rect key="frame" x="18" y="53" width="184" height="118"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                        <textFieldCell key="cell" id="2H0-Zm-1Ot">
+                                            <font key="font" textStyle="body" name=".SFNS-Regular"/>
+                                            <string key="title">Reorder items and outline cells by dragging them and delete them via backspace.
+
+Quicklook collection items via spacebar and favorite them by right-clicking them.</string>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Ef-kZ-Evo">
+                                        <rect key="frame" x="17" y="19" width="162" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="ZUF-hD-N4J">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment label="TableView"/>
+                                                <segment label="OutlineView" selected="YES" tag="1"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="segmentedPressed:" target="pHe-8d-Ckn" id="4np-g9-H4g"/>
+                                        </connections>
+                                    </segmentedControl>
+                                </subviews>
+                            </visualEffectView>
                         </subviews>
                     </view>
                     <connections>
@@ -797,11 +833,10 @@
         <!--Split View Controller-->
         <scene sceneID="kZ3-XE-N79">
             <objects>
-                <splitViewController id="DML-nL-2eg" sceneMemberID="viewController">
+                <splitViewController id="DML-nL-2eg" customClass="SplitViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="bFe-Mf-mBl"/>
                         <splitViewItem id="7hD-QQ-ruv"/>
-                        <splitViewItem id="l6a-44-3F1"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Wb5-Zx-fWz">
                         <rect key="frame" x="0.0" y="0.0" width="700" height="500"/>
@@ -810,7 +845,6 @@
                     <connections>
                         <segue destination="IgV-tW-gYz" kind="relationship" relationship="splitItems" id="NB4-kc-ruk"/>
                         <segue destination="f1U-rY-vlz" kind="relationship" relationship="splitItems" id="wfQ-Cb-UbV"/>
-                        <segue destination="pHe-8d-Ckn" kind="relationship" relationship="splitItems" id="I6v-Lg-hol"/>
                     </connections>
                 </splitViewController>
                 <customObject id="yJe-I5-mQc" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -926,7 +960,7 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     </box>
                                     <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="mrG-QP-ihx">
-                                        <rect key="frame" x="18" y="53" width="184" height="176"/>
+                                        <rect key="frame" x="18" y="58" width="184" height="176"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <textFieldCell key="cell" id="pTN-Rj-Fnb">
                                             <font key="font" textStyle="body" name=".SFNS-Regular"/>
@@ -940,7 +974,7 @@ Favorite table cells by swiping left and delete them by swiping right.</string>
                                         </textFieldCell>
                                     </textField>
                                     <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Yv-Ur-r5h">
-                                        <rect key="frame" x="29" y="19" width="162" height="24"/>
+                                        <rect key="frame" x="17" y="19" width="162" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="mug-3m-xIo">
                                             <font key="font" metaFont="system"/>

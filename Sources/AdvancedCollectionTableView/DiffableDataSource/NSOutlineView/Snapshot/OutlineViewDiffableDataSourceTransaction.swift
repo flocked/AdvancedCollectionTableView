@@ -1,5 +1,5 @@
 //
-//  NSOutlineViewDiffableDataSourceTransaction.swift
+//  OutlineViewDiffableDataSourceTransaction.swift
 //  
 //
 //  Created by Florian Zand on 09.01.25.

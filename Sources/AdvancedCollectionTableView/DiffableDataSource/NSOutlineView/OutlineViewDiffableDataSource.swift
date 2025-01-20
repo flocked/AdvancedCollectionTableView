@@ -487,11 +487,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
-        let instructions = currentSnapshot.instructions(forMorphingInto: snapshot)
-        let expandCollapse = currentSnapshot.expandCollapse(forMorphingInto: snapshot)
         currentSnapshot = snapshot
-        outlineView.apply(instructions, option, animation: defaultRowAnimation, expand: expandCollapse.expand, collapse: expandCollapse.collapse, completion: completion)
+        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
     

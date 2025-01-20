@@ -35,7 +35,7 @@ extension OutlineChangeInstruction: Equatable {
 
     var item: AnyHashable? {
         switch self {
-        case .remove(let item, _): return item
+        case .remove(let item, _), .insert(let item, _): return item
         case .insert(let item, _): return item
         default: return nil
         }
@@ -53,31 +53,21 @@ extension OutlineChangeInstruction: Equatable {
 extension Array where Element == OutlineChangeInstruction {
     mutating func reduce() {
         // search for all removed, then try to pair with an inserted
-        let removeds = allRemoved
+        let removeds = filter { if case .remove = $0 { return true } else { return false } }
         for removed in removeds {
-            let inserteds = allInserted
+            let inserteds = filter { if case .insert = $0 { return true } else { return false } }
             if let item = removed.item,
                 let inserted = inserteds.first(where: { $0.item == item }) {
                 let newInstruction = OutlineChangeInstruction.move(removed.targetIndexPath, inserted.targetIndexPath)
-                delete(removed)
+                if let removeIdx = firstIndex(where: { $0 == removed }) {
+                    remove(at: removeIdx)
+                }
                 guard let insertIdx = firstIndex(where: { $0 == inserted }) else {
                     preconditionFailure("how does this happen")
                 }
                 insert(newInstruction, at: insertIdx)
             }
         }
-    }
-
-    mutating func delete(_ item: OutlineChangeInstruction) {
-        if let removeIdx = firstIndex(where: { $0 == item }) {
-            remove(at: removeIdx)
-        }
-    }
-    var allRemoved: [OutlineChangeInstruction] {
-        filter { if case .remove = $0 { return true } else { return false } }
-    }
-    var allInserted: [OutlineChangeInstruction] {
-        filter { if case .insert = $0 { return true } else { return false } }
     }
 }
 
@@ -112,19 +102,17 @@ extension OutlineViewDiffableDataSourceSnapshot {
         result.reduce()
         return result
     }
-    
-    func expandCollapse(forMorphingInto destination: OutlineViewDiffableDataSourceSnapshot) -> (expand: [ItemIdentifierType], collapse: [ItemIdentifierType]) {
-        let oldExpanded = Set(nodes.filter { $0.value.isExpanded }.map { $0.key })
-        let newExpanded = Set(destination.nodes.filter { $0.value.isExpanded }.map { $0.key })
-        let collapse = Array(oldExpanded.subtracting(newExpanded))
-        let expand = Array(newExpanded.subtracting(oldExpanded))
-        return (expand, collapse)
-    }
 }
 
 
 extension NSOutlineView {
-    func apply(_ snapshot: [OutlineChangeInstruction], _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, animation: NSTableView.AnimationOptions = [.effectFade], expand: [Any] = [], collapse: [Any] = [], completion: (() -> Void)? = nil) {
+    func apply<Item: Hashable>(_ snapshot: OutlineViewDiffableDataSourceSnapshot<Item>, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<Item>, option: NSDiffableDataSourceSnapshotApplyOption, animation: NSTableView.AnimationOptions, completion: (() -> Void)?) {
+        let instructions = currentSnapshot.instructions(forMorphingInto: snapshot)
+        
+        let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key })
+        let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key })
+        let collapse = Array(oldExpanded.subtracting(newExpanded))
+        let expand = Array(newExpanded.subtracting(oldExpanded))
         var animation = animation
         if case .withoutAnimation = option {
             animation = []
@@ -132,7 +120,7 @@ extension NSOutlineView {
         if !option.isReloadData {
             func applySnapshot() {
                 beginUpdates()
-                snapshot.forEach { instr in
+                instructions.forEach { instr in
                     switch instr {
                     case .insert(_, let indexPath):
                         let parent = lastParent(for: indexPath)
@@ -163,15 +151,15 @@ extension NSOutlineView {
                 applySnapshot()
                 NSAnimationContext.endGrouping()
             } else {
-                Swift.print("HEEERE", animation.rawValue)
                 applySnapshot()
                 completion?()
             }
         } else {
             reloadData()
         }
+        
     }
-
+    
     func lastParent(for indexPath: IndexPath) -> Any? {
         var indexPath = indexPath
         indexPath.removeLast()

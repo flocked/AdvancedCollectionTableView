@@ -15,7 +15,7 @@ class TableSidebarViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
     
-    lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration, sectionHeaderRegistration: sectionHeaderRegistration)
+    lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
 
     let cellRegistration = CellRegistration { tableCell, _, _, sidebarItem in
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
@@ -77,16 +77,9 @@ class TableSidebarViewController: NSViewController {
         snapshot.appendItems(SidebarItem.sampleItems3, toSection: .section3)
         dataSource.apply(snapshot, .usingReloadData)
     }
-    
-    let outlineSidebarViewController = OutlineSidebarViewController.loadFromStoryboard()!
-        
+                
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {
-        tableView.isHidden = segmentedControl.indexOfSelectedItem == 1
-        if segmentedControl.indexOfSelectedItem == 1 {
-            outlineSidebarViewController.view.frame = view.bounds
-            view.insertSubview(outlineSidebarViewController.view, at: 0)
-        } else {
-            outlineSidebarViewController.view.removeFromSuperview()
-        }
+        (view.window?.contentViewController as? SplitViewController)?.swapSidebar()
+        segmentedControl.selectedSegment = 0
     }
 }

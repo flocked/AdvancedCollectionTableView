@@ -15,11 +15,33 @@ class OutlineSidebarViewController: NSViewController {
     @IBOutlet var outlineView: NSOutlineView!
     
     lazy var dataSource = DataSource(outlineView: outlineView, cellRegistration: cellRegistration)
+    
+    var currentSnapshot: OutlineViewDiffableDataSourceSnapshot<OutlineItem> {
+        dataSource.snapshot()
+    }
 
-    let cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
-        /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
-        var configuration = tableCell.defaultContentConfiguration()
+    lazy var cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
+        var configuration = NSListContentConfiguration.plain()
         configuration.text = outlineItem.title
+        
+        /// Check if the outline item is a root item and change it's font.
+        if self.currentSnapshot.rootItems.contains(outlineItem) {
+            configuration.textProperties.font = .body.bold
+        }
+        tableCell.contentConfiguration = configuration
+    }
+    
+    lazy var headerRegistration = CellRegistration { tableCell, _, _, outlineItem in
+        
+        if let rowView = tableCell.rowView, rowView.isGroupRowStyle {
+            Swift.print("groupRow", rowView.frame, rowView.subviews, rowView.backgroundColor == .controlAccentColor)
+
+            rowView.backgroundColor = .controlAccentColor
+
+        }
+        var configuration = NSListContentConfiguration.plain()
+        configuration.text = outlineItem.title
+        configuration.textProperties.font = .body.bold
         tableCell.contentConfiguration = configuration
     }
     
@@ -27,8 +49,9 @@ class OutlineSidebarViewController: NSViewController {
         super.viewDidLoad()
         
         outlineView.dataSource = dataSource
+        outlineView.floatsGroupRows = false
         
-        dataSource.applyHeaderRegistration(cellRegistration)
+        dataSource.applyHeaderRegistration(headerRegistration)
         
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { _, _ in return true }
@@ -44,16 +67,20 @@ class OutlineSidebarViewController: NSViewController {
         
         let rootItems: [OutlineItem] = ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
         snapshot.append(rootItems)
-        
+        snapshot.expand(rootItems)
         rootItems.forEach { rootItem in
             let childItems = (1...5).map { OutlineItem("\(rootItem.title).\($0)") }
             snapshot.append(childItems, to: rootItem)
-            
             childItems.forEach { childItem in
                 let grandchildItems = (1...5).map { OutlineItem("\(childItem.title).\($0)") }
                 snapshot.append(grandchildItems, to: childItem)
             }
         }
         dataSource.apply(snapshot, .withoutAnimation)
+    }
+    
+    @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {
+        (view.window?.contentViewController as? SplitViewController)?.swapSidebar()
+        segmentedControl.selectedSegment = 1
     }
 }

@@ -7,7 +7,7 @@
 
 import AppKit
 import FZUIKit
-
+import FZSwiftUtils
 
 extension OutlineViewDiffableDataSource {
     class Delegate: NSObject, NSOutlineViewDelegate {
@@ -69,7 +69,12 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-            dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType)
+            /*
+            if self.outlineView(outlineView, isGroupItem: item) {
+                return SectionRowView()
+            }
+             */
+            return dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType)
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldExpandItem item: Any) -> Bool {
@@ -124,19 +129,68 @@ extension OutlineViewDiffableDataSource {
         }
     
         func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
+            /*
             if self.outlineView(outlineView, isGroupItem: item), let headerCellProvider = dataSource.headerCellProvider {
                 return headerCellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
             }
+            */
             return dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
         }
-        
+           
+        /*
         func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
+            guard let item = item as? ItemIdentifierType else { return false }
+            return dataSource.currentSnapshot.rootItems.contains(item)
             guard let item = item as? ItemIdentifierType, dataSource.headerCellProvider != nil else { return false }
             return dataSource.currentSnapshot.groupItems.contains(item)
         }
+        */
         
         init(_ dataSource: OutlineViewDiffableDataSource!) {
             self.dataSource = dataSource
         }
     }
 }
+
+/*
+extension OutlineViewDiffableDataSource {
+    class SectionRowView: NSTableRowView {
+        override var frame: NSRect {
+            didSet {
+                if frame.size.width != 200 {
+                    frame.size.width = 200
+                }
+            }
+        }
+        
+        override var subviews: [NSView] {
+            didSet {
+            }
+        }
+        
+        var _button: NSButton?
+        var buttonSuperviewObservation: KeyValueObservation?
+        
+        override func addSubview(_ view: NSView) {
+            super.addSubview(view)
+            if let button = subviews(type: NSButton.self).first {
+                _button = button
+                buttonSuperviewObservation = button.observeChanges(for: \.superview) { [weak self] old, new in
+                    guard let self = self else { return }
+                    if new == nil {
+                        self.addSubview(button)
+                    }
+                    button.frame.origin.x = frame.width - button.frame.width
+                }
+            }
+        }
+        
+        override func viewDidMoveToSuperview() {
+            super.viewDidMoveToSuperview()
+            if let button = _button, !subviews.contains(button) {
+              //  addSubview(button)
+            }
+        }
+    }
+}
+*/
