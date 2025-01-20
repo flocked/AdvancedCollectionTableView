@@ -171,7 +171,7 @@ An extended `NSCollectionViewDiffableDataSource that provides:
   
   A diffable data source for `NSOutlineView` simliar to `CollectionViewDiffableDataSource`.
  
- Example usage of a data source with a `String` as `ItemIdentifierType`:
+ Example usage of a data source with a String as `ItemIdentifierType`:
  
  ```swift
     let dataSource = OutlineViewDiffableDataSource<String>(outlineView: outlineView, cellRegistration: cellRegistration)
