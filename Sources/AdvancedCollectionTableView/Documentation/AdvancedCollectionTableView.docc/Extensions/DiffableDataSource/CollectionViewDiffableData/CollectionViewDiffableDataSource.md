@@ -12,18 +12,20 @@
 
 - ``supplementaryViewProvider-swift.property``
 - ``SupplementaryViewProvider-swift.typealias``
+- ``useSupplementaryRegistrations(_:)``
 
 ### Identifying elements
 
 - ``elements``
 - ``selectedElements``
+- ``displayingElements``
 - ``element(for:)``
 - ``element(at:)``
 - ``elements(for:)``
 - ``indexPath(for:)``
 - ``reloadElements(_:animated:)``
 - ``reconfigureElements(_:)``
-- ``selectElements(_:scrollPosition:)``
+- ``selectElements(_:byExtendingSelection:scrollPosition:)`` 
 - ``selectElements(in:scrollPosition:)``
 - ``deselectElements(_:)``
 - ``deselectElements(in:)``
@@ -32,7 +34,7 @@
 ### Identifying sections
 
 - ``sections``
-- ``section(for:)``
+- ``section(at:)``
 - ``index(for:)``
 - ``scrollToSection(_:scrollPosition:)``
 
@@ -46,7 +48,6 @@
 
 - ``menuProvider``
 - ``rightClickHandler``
-- ``pinchHandler``
 
 ### Displaying empty view
 
@@ -94,7 +95,16 @@
 - ``highlightHandlers-swift.property``
 - ``HighlightHandlers-swift.struct``
 
+### Managing drag interactions
+
+- ``draggingHandlers-swift.property``
+- ``DraggingHandlers-swift.struct``
+
+### Managing drop interactions
+
+- ``droppingHandlers-swift.property``
+- ``DroppingHandlers-swift.struct``
+
 ### Supporting protocol requirements
 
-- <doc:CollectionViewDiffableDataSource---Protocol-Implementations>
-
+- <doc:CollectionViewDiffableDataSource-Protocol-Implementations>

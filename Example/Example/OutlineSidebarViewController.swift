@@ -25,8 +25,10 @@ class OutlineSidebarViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         outlineView.dataSource = dataSource
+        
+        dataSource.applyHeaderRegistration(cellRegistration)
         
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { _, _ in return true }
@@ -39,9 +41,10 @@ class OutlineSidebarViewController: NSViewController {
         
     func applySnapshot() {
         var snapshot = dataSource.emptySnapshot()
+        
         let rootItems: [OutlineItem] = ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
         snapshot.append(rootItems)
-
+        
         rootItems.forEach { rootItem in
             let childItems = (1...5).map { OutlineItem("\(rootItem.title).\($0)") }
             snapshot.append(childItems, to: rootItem)

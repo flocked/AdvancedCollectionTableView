@@ -5,10 +5,10 @@
 ### Creating a badge
 
 - ``init()``
-- ``text(_:textStyle:textColor:color:type:position:shape:)``
-- ``image(_:text:textStyle:color:type:position:shape:)``
-- ``symbolImage(_:text:textStyle:color:backgroundColor:type:position:shape:)``
-- ``view(_:color:type:position:shape:)``
+- ``text(_:textStyle:textColor:color:shape:type:position:)``
+- ``image(_:text:textStyle:color:shape:type:position:)``
+- ``symbolImage(_:text:size:color:backgroundColor:shape:type:position:)``
+- ``view(_:color:shape:type:position:)``
 
 ### Configurating badge
 
@@ -23,6 +23,7 @@
 - ``attributedText``
 - ``image``
 - ``view``
+- ``toolTip``
 
 ### Customizing content appearance
 
@@ -34,20 +35,18 @@
 ### Customizing background
 
 - ``backgroundColor``
-- ``backgroundColorTransform``
+- ``backgroundColorTransformer``
 - ``resolvedBackgroundColor()``
 - ``visualEffect``
 
 ### Customizing shape
 
 - ``shape``
+- ``Shape``
 
 ### Customizing border
 
-- ``borderWidth``
-- ``borderColor``
-- ``borderColorTransform``
-- ``resolvedBorderColor()``
+- ``border``
 
 ### Customizing shadow
 
@@ -58,4 +57,3 @@
 - ``margins``
 - ``maxWidth``
 - ``imageToTextPadding``
-- ``spacing``

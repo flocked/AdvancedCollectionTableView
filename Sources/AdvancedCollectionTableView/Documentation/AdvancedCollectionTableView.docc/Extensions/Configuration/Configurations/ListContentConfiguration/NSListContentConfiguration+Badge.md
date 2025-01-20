@@ -19,6 +19,7 @@
 - ``text``
 - ``attributedText``
 - ``image``
+- ``toolTip``
 
 ### Customizing content appearance
 
@@ -29,22 +30,23 @@
 ### Customizing color
 
 - ``color``
-- ``colorTransform``
+- ``colorTransformer``
 - ``resolvedColor()``
 
 ### Customizing background color
 
 - ``backgroundColor``
-- ``backgroundColorTransform``
+- ``backgroundColorTransformer``
 - ``resolvedBackgroundColor()``
 
 ### Customizing border
 
-- ``cornerRadius``
-- ``borderWidth``
-- ``borderColor``
-- ``borderColorTransform``
-- ``resolvedBorderColor()``
+- ``border``
+
+### Customizing shape
+
+- ``shape``
+- ``Shape``
 
 ### Customizing shadow
 
@@ -52,6 +54,9 @@
 
 ### Customizing layout
 
+- ``alignment-swift.property``
 - ``margins``
 - ``maxWidth``
 - ``imageToTextPadding``
+- ``margins``
+- ``Alignment-swift.enum``

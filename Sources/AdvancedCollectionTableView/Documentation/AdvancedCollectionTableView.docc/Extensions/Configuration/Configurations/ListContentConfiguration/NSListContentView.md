@@ -13,7 +13,3 @@
 ### Determining configuration support
 
 - ``supports(_:)``
-
-### Managing the layout
-
-- ``layout()``

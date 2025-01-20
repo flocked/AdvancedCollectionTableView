@@ -124,7 +124,15 @@ extension OutlineViewDiffableDataSource {
         }
     
         func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-            dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            if self.outlineView(outlineView, isGroupItem: item), let headerCellProvider = dataSource.headerCellProvider {
+                return headerCellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            }
+            return dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+        }
+        
+        func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
+            guard let item = item as? ItemIdentifierType, dataSource.headerCellProvider != nil else { return false }
+            return dataSource.currentSnapshot.groupItems.contains(item)
         }
         
         init(_ dataSource: OutlineViewDiffableDataSource!) {

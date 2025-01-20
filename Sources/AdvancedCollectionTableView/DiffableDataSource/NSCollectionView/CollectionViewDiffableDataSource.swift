@@ -15,8 +15,8 @@ import QuickLookUI
  A  `NSCollectionViewDiffableDataSource` with additional functionality.
 
  The diffable data source provides:
- - Reordering elements via ``ReorderingHandlers-swift.struct``.
- - Deleting elements via  ``DeletingHandlers-swift.struct``.
+ - Reordering elements via ``reorderingHandlers-swift.property``.
+ - Deleting elements via  ``deletingHandlers-swift.property``.
  - Quicklook previews of elements via spacebar by providing elements conforming to `QuicklookPreviewable`.
  - A right click menu for selected elements via ``menuProvider``.
 
@@ -27,7 +27,6 @@ import QuickLookUI
  - Highlighting elements via ``highlightHandlers-swift.property``.
  - Displaying elements via ``displayHandlers-swift.property``.
  - Hovering elements by mouse via ``hoverHandlers-swift.property``.
- - Pinching of the collection view via ``pinchHandler``.
 
  ### Configurating the data source
 

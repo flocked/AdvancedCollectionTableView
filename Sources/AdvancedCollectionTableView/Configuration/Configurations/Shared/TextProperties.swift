@@ -108,11 +108,11 @@ public struct TextProperties {
     public var color: NSUIColor = .labelColor
 
     /// The color transformer for resolving the text color.
-    public var colorTansform: ColorTransformer?
+    public var colorTransformer: ColorTransformer?
 
     /// Generates the resolved text color, using the text color and color transformer.
     public func resolvedColor() -> NSUIColor {
-        colorTansform?(color) ?? color
+        colorTransformer?(color) ?? color
     }
     
     /// The tooltip of the text. If set to to an empty string, the text of the textfield is used.
@@ -125,7 +125,7 @@ public struct TextProperties {
     var bezel: BezelType = .none
     
     /// The text field bezel.
-    public enum BezelType: Int, Hashable {
+    enum BezelType: Int, Hashable {
         /// Square bezel.
         case square
         /// Rounded bezel.
@@ -263,7 +263,7 @@ extension TextProperties: Hashable {
         hasher.combine(isEditable)
         hasher.combine(isSelectable)
         hasher.combine(color)
-        hasher.combine(colorTansform)
+        hasher.combine(colorTransformer)
         hasher.combine(numberFormatter)
         hasher.combine(adjustsFontSizeToFitWidth)
         hasher.combine(minimumScaleFactor)

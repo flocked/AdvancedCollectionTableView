@@ -32,7 +32,8 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     struct Node {
         var parent: ItemIdentifierType?
         var children: [ItemIdentifierType] = []
-        var isExpanded: Bool = false
+        var isExpanded = false
+        var isGroup = false
     }
     
     // MARK: - Creating a snapshot
@@ -293,6 +294,8 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     public mutating func collapse(_ items: [ItemIdentifierType]) {
         items.forEach({ nodes[$0]?.isExpanded = false })
     }
+    
+    var groupItems: [ItemIdentifierType] = []
     
     /// Returns a string with an ASCII representation of the snapshot.
     public func visualDescription() -> String {

@@ -8,12 +8,18 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 
 ## Topics
 
-### Data Sources
+### Collection- & TableView Data Sources
 
 - ``CollectionViewDiffableDataSource``
 - ``TableViewDiffableDataSource``
 - ``DiffableDataSourceTransaction``
 - ``NSDiffableDataSourceSnapshotApplyOption``
+
+### OutlineView Data Source
+
+- ``OutlineViewDiffableDataSource``
+- ``OutlineViewDiffableDataSourceSnapshot``
+- ``OutlineViewDiffableDataSourceTransaction``
 
 ### CollectionView Registration
 
@@ -24,7 +30,6 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 
 - ``AppKit/NSTableView/CellRegistration``
 - ``AppKit/NSTableView/RowRegistration``
-- ``AppKit/NSTableView/SectionHeaderRegistration``
 
 ### Item Content Configuration
 
@@ -53,5 +58,4 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 - <doc:NSTableCellView+>
 - <doc:NSTableRowView+>
 - <doc:NSTableViewDiffableDataSource+>
-- ``NSTableSectionHeaderView``
 - ``NSTableViewCellRegistration``

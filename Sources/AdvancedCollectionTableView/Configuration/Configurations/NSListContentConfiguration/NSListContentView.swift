@@ -16,7 +16,7 @@ import FZUIKit
  
  A list content view relies on its list content configuration to supply its styling and content. You create a list content view by passing in a ``NSListContentConfiguration`` to ``init(configuration:)``. To update the content view, you set a new configuration on it through its ``configuration`` property.
  
- If you’re using a ``AppKit/NSTableView`` or ``AppKit/NSCollectionView``, you don’t need to manually create a list content view to take advantage of the list configuration. Instead, you assign a ``NSListContentConfiguration`` to the ``AppKit/NSTableCellView/contentConfiguration`` property of the table view cells or collection view items.
+ If you’re using a [NSTableView](https://developer.apple.com/documentation/appkit/nstableview) or [NSCollectionView](https://developer.apple.com/documentation/appkit/nscollectionview), you don’t need to manually create a list content view to take advantage of the list configuration. Instead, you assign a ``NSListContentConfiguration`` to the ``AppKit/NSTableCellView/contentConfiguration`` property of the table view cells or collection view items.
  */
 open class NSListContentView: NSView, NSContentView, EditingContentView {
     

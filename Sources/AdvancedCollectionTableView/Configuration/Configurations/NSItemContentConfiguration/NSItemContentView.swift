@@ -15,7 +15,7 @@ import FZUIKit
  
  A item content view relies on its item content configuration to supply its styling and content. You create a item content view by passing in a ``NSItemContentConfiguration`` to ``init(configuration:)``. To update the content view, you set a new configuration on it through its ``configuration`` property.
  
- If you’re using a ``AppKit/NSCollectionView`` or ``AppKit/NSTableView``, you don’t need to manually create a item content view to take advantage of the item configuration. Instead, you assign a ``NSItemContentConfiguration`` to the ``AppKit/NSCollectionViewItem/contentConfiguration`` property of the collection view items or table view cells.
+ If you’re using a [NSCollectionView](https://developer.apple.com/documentation/appkit/nscollectionview) or [NSTableView](https://developer.apple.com/documentation/appkit/nstableview), you don’t need to manually create a item content view to take advantage of the item configuration. Instead, you assign a ``NSItemContentConfiguration`` to the ``AppKit/NSCollectionViewItem/contentConfiguration`` property of the collection view items or table view cells.
  */
 open class NSItemContentView: NSView, NSContentView, EditingContentView {
     

@@ -14,12 +14,11 @@ import FZSwiftUtils
  The object you use to manage data and provide items for a outline view.
 
  The diffable data source provides:
- - Expanding/collapsing items via ``ExpansionHandlers-swift.struct``.
- - Reordering items via ``ReorderingHandlers-swift.struct``.
- - Deleting items via  ``DeletingHandlers-swift.struct``.
+ - Expanding/collapsing items via ``expanionHandlers-swift.property``.
+ - Reordering items via ``reorderingHandlers-swift.property``.
+ - Deleting items via  ``deletingHandlers-swift.property``.
  - Quicklook previews of items via spacebar by providing items conforming to `QuicklookPreviewable`.
  - Right click menu provider for selected items via ``menuProvider``.
- - Row action provider via ``rowActionProvider``.
 
  __It includes handlers for:__
 
@@ -54,7 +53,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedIndexes: [Int] = []
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
-    open var rowViewProvider: RowProvider?
+    open var rowViewProvider: RowViewProvider?
     
     /**
      A closure that configures and returns a row view for a outline view from its diffable data source.
@@ -66,7 +65,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      
      - Returns: A configured row view object.
      */
-    public typealias RowProvider = (_ outlineView: NSOutlineView, _ row: Int, _ item: ItemIdentifierType) -> NSTableRowView
+    public typealias RowViewProvider = (_ outlineView: NSOutlineView, _ row: Int, _ item: ItemIdentifierType) -> NSTableRowView
     
     /// Applies the row view registration to configure and return outline row views.
     open func applyRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, ItemIdentifierType>) {
@@ -74,6 +73,19 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             registration.makeView(tableView, row, item)
         }
     }
+    
+    open var headerCellProvider: HeaderCellProvider?
+    
+    /// Uses the specified cell registration to configure and return section header cell views.
+    open func applyHeaderRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
+        headerCellProvider = { outlineView, column, item in
+            outlineView.makeCellView(using: registration, forColumn: column ?? .outline, row: 0, item: item)!
+        }
+    }
+    
+    /// ``ExpanionHandlers-swift.struct`` ``expanionHandlers-swift.property``
+    public typealias HeaderCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
+
     
     /**
      The right click menu provider.
@@ -548,7 +560,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         guard let item = item as? ItemIdentifierType else { return nil }
         return NSPasteboardItem(forItem: item)
     }
-
+    
     /// Handlers for selecting items.
     public struct ExpanionHandlers {
         /// The handler that determines if an item should expand. The default value is `nil` which indicates that all items should expand.

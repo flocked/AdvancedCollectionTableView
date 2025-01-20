@@ -13,9 +13,9 @@
 
 ### Creating section header views
 
-- ``sectionHeaderViewProvider-swift.property``
-- ``SectionHeaderViewProvider-swift.typealias``
-- ``applySectionHeaderViewRegistration(_:)``
+- ``sectionHeaderCellProvider-swift.property``
+- ``SectionHeaderCellProvider-swift.typealias``
+- ``applySectionHeaderRegistration(_:)``
 
 ### Creating row views
 
@@ -27,6 +27,7 @@
 
 - ``items``
 - ``selectedItems``
+- ``visibleItems``
 - ``item(forRow:)``
 - ``row(for:)-3ouhk``
 - ``item(at:)``
@@ -41,7 +42,6 @@
 ### Identifying sections
 
 - ``sections``
-- ``section(for:)``
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:)``
 
@@ -63,11 +63,6 @@
 - ``emptyView``
 - ``emptyContentConfiguration``
 - ``emptyHandler``
-
-### Previewing items
-
-- ``isQuicklookPreviewable``
-- ``quicklookItems(_:current:)``
 
 ### Supporting reordering items
 
@@ -94,6 +89,26 @@
 - ``columnHandlers-swift.property``
 - ``ColumnHandlers-swift.struct``
 
+### Sorting items
+
+- ``setSortComparator(_:forColumn:activate:)``
+- ``setSortComparators(_:forColumn:activate:)``
+
+### Previewing items
+
+- ``isQuicklookPreviewable``
+- ``quicklookItems(_:current:)``
+
+### Managing drag interactions
+
+- ``draggingHandlers-swift.property``
+- ``DraggingHandlers-swift.struct``
+
+### Managing drop interactions
+
+- ``droppingHandlers-swift.property``
+- ``DroppingHandlers-swift.struct``
+
 ### Supporting protocol requirements
 
-- <doc:TableViewDiffableDataSource---Protocol-Implementations>
+- <doc:TableViewDiffableDataSource-Protocol-Implementations>

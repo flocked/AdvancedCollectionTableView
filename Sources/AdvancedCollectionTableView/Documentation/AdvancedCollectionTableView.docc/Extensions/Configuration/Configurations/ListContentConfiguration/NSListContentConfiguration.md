@@ -38,6 +38,10 @@
 - ``textProperties``
 - ``secondaryTextProperties``
 - ``imageProperties-swift.property``
+- ``scaleTransform``
+- ``rotation``
+- ``alpha``
+- ``toolTip``
 - ``ImageProperties-swift.struct``
 - ``TextProperties``
 

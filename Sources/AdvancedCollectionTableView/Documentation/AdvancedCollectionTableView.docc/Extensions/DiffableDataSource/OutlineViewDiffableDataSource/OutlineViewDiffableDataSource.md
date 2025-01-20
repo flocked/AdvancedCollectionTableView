@@ -12,9 +12,9 @@
 
 ### Creating section header views
 
-- ``sectionHeaderViewProvider-swift.property``
-- ``SectionHeaderViewProvider-swift.typealias``
-- ``applySectionHeaderViewRegistration(_:)``
+- ``headerCellProvider-swift.property``
+- ``HeaderCellProvider-swift.typealias``
+- ``applyHeaderRegistration(_:)``
 
 ### Creating row views
 
@@ -26,10 +26,11 @@
 
 - ``items``
 - ``selectedItems``
+- ``visibleItems``
 - ``item(forRow:)``
-- ``row(for:)-3ouhk``
+- ``row(for:)``
 - ``item(at:)``
-- ``reloadItems(_:animated:)``
+- ``reloadItems(_:reloadChildren:animated:)``
 - ``reconfigureItems(_:)``
 - ``selectItems(_:byExtendingSelection:)``
 - ``deselectItems(_:)``
@@ -46,7 +47,6 @@
 
 - ``menuProvider``
 - ``rightClickHandler``
-- ``rowActionProvider``
 
 ### Displaying empty view
 
@@ -54,10 +54,10 @@
 - ``emptyContentConfiguration``
 - ``emptyHandler``
 
-### Previewing items
+### Supporting reordering items
 
-- ``isQuicklookPreviewable``
-- ``quicklookItems(_:current:)``
+- ``reorderingHandlers-swift.property``
+- ``ReorderingHandlers-swift.struct``
 
 ### Supporting deleting items
 
@@ -71,8 +71,8 @@
 
 ### Handling expanding/collapsing items
 
-- ``expansionHandlers-swift.property``
-- ``ExpansionHandlers-swift.struct``
+- ``expanionHandlers-swift.property``
+- ``ExpanionHandlers-swift.struct``
 
 ### Handling hovering items
 
@@ -84,6 +84,16 @@
 - ``columnHandlers-swift.property``
 - ``ColumnHandlers-swift.struct``
 
+### Sorting items
+
+- ``setSortComparator(_:forColumn:activate:)``
+- ``setSortComparators(_:forColumn:activate:)``
+
+### Previewing items
+
+- ``isQuicklookPreviewable``
+- ``quicklookItems(_:current:)``
+
 ### Supporting protocol requirements
 
-- <doc:OutlineViewDiffableDataSource---Protocol-Implementations>
+- <doc:OutlineViewDiffableDataSource-Protocol-Implementations>

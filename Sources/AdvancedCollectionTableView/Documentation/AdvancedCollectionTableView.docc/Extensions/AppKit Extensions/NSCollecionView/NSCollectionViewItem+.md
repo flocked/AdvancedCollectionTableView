@@ -22,7 +22,3 @@ Extensions for `NSCollectionViewItem`.
 - ``AppKit/NSCollectionViewItem/updateConfiguration(using:)``
 - ``AppKit/NSCollectionViewItem/configurationUpdateHandler-swift.property``
 - ``AppKit/NSCollectionViewItem/ConfigurationUpdateHandler-swift.typealias``
-
-### Managing the view
-
-- ``AppKit/NSCollectionViewItem/loadView()``

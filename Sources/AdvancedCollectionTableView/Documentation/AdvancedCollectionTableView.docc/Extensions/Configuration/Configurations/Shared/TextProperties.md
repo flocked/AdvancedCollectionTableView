@@ -21,41 +21,34 @@
 - ``title2``
 - ``title3``
 
-### Configurating font
+### Configurating appearance
 
 - ``font``
-
-### Configurating color
-
 - ``color``
-- ``colorTansform``
+- ``colorTransformer``
 - ``resolvedColor()``
-
-### Configurating lines
-
-- ``numberOfLines``
-- ``lineBreakMode``
-
-### Configurating alignment
-
 - ``alignment``
+- ``toolTip``
 
-### Configurating formatting
+### Configurating lines and layout
 
-- ``numberFormatter``
-
-### Configurating scaling
-
+- ``maximumNumberOfLines``
+- ``lineBreakMode``
 - ``adjustsFontSizeToFitWidth``
 - ``minimumScaleFactor``
 - ``allowsDefaultTighteningForTruncation``
 
-### Configurating selecting
+### Configurating interaction
 
 - ``isSelectable``
-
-### Configurating editing
-
 - ``isEditable``
 - ``onEditEnd``
 - ``stringValidation``
+- ``editingActionOnEnterKeyDown``
+- ``editingActionOnEscapeKeyDown``
+- ``EnterKeyAction``
+- ``EscapeKeyAction``
+
+### Configurating formatting
+
+- ``numberFormatter``

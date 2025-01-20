@@ -38,6 +38,7 @@ class TableSidebarViewController: NSViewController {
         super.viewDidLoad()
 
         tableView.dataSource = dataSource
+        dataSource.applySectionHeaderRegistration(sectionHeaderRegistration)
 
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { selectedItems in return selectedItems }

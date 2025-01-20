@@ -5,6 +5,7 @@
 ### Configuring scaling
 
 - ``scaling-swift.property``
+- ``Scaling-swift.enum``
 
 ### Configuring symbol configuration
 
@@ -13,26 +14,31 @@
 ### Configuring tint color
 
 - ``tintColor``
-- ``tintColorTransform``
+- ``tintColorTransformer``
 - ``resolvedTintColor()``
 
 ### Configuring background color
 
 - ``backgroundColor``
-- ``backgroundColorTransform``
+- ``backgroundColorTransformer``
 - ``resolvedBackgroundColor()``
 
 ### Configuring border
 
-- ``borderWidth``
-- ``borderColor``
-- ``borderColorTransform``
-- ``resolvedBorderColor()``
+- ``border``
+- ``borderTransformer``
+- ``resolvedBorder()``
 - ``cornerRadius``
 
 ### Configuring shadow
 
 - ``shadow``
+- ``shadowTransformer``
+- ``resolvedShadow()``
+
+### Configuring tooltip
+
+- ``toolTip``
 
 ### Customizing layout
 

@@ -5,8 +5,10 @@
 //  Created by Florian Zand on 09.01.25.
 //
 
+/*
 import AppKit
 import FZSwiftUtils
+
 
 extension OutlineViewDiffableDataSourceSnapshot where ItemIdentifierType: ExpandingOutlineItem {
     public mutating func append(_ items: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
@@ -76,3 +78,4 @@ extension ExpandingOutlineItem {
         return nodes
     }
 }
+*/

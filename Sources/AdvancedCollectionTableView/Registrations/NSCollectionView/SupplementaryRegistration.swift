@@ -34,9 +34,9 @@ public extension NSCollectionView {
      }
      ```
 
-     You don’t need to item call `register(_:forSupplementaryViewOfKind:withIdentifier)`.  The registration occurs automatically when you pass the supplementary view registration to ``makeSupplementaryView(using:for:)``.
+     You don’t need to item call [register(_:forSupplementaryViewOfKind:withIdentifier:)](https://developer.apple.com/documentation/appkit/nscollectionview/1528233-register) or [register(_:forItemWithIdentifier:)](https://developer.apple.com/documentation/appkit/nscollectionview/1528174-register).  The registration occurs automatically when you pass the supplementary view registration to ``makeSupplementaryView(using:for:)``.
 
-     - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.SupplementaryViewProvider closure; doing so prevents item reuse.
+     - Important: Do not create your item registration inside a [NSCollectionViewDiffableDataSource.SupplementaryViewProvider](https://developer.apple.com/documentation/appkit/nscollectionviewdiffabledatasource/supplementaryviewprovider) closure; doing so prevents item reuse.
      */
     struct SupplementaryRegistration<Supplementary>: NSCollectionViewSupplementaryRegistration, _NSCollectionViewSupplementaryRegistration where Supplementary: NSView & NSCollectionViewElement {
         let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)

@@ -19,3 +19,8 @@ The diffable data source type conforms to `NSTableViewDataSource`.
 - ``TableViewDiffableDataSource/tableView(_:draggingSession:willBeginAt:forRowIndexes:)``
 - ``TableViewDiffableDataSource/tableView(_:acceptDrop:row:dropOperation:)``
 - ``TableViewDiffableDataSource/tableView(_:draggingSession:endedAt:operation:)``
+- ``TableViewDiffableDataSource/tableView(_:updateDraggingItemsForDrag:)``
+
+### Sorting items
+
+- ``TableViewDiffableDataSource/tableView(_:sortDescriptorsDidChange:)``

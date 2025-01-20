@@ -15,7 +15,7 @@ public extension NSCollectionView {
 
      Use a item registration to register items with your collection view and configure each item for display. You create a item registration with your item type and data item type as the registration’s generic parameters, passing in a registration handler to configure the item. In the registration handler, you specify how to configure the content and appearance of that type of item.
 
-     The following example creates a item registration for items of type `NSCollectionViewItem`. It creates a content configuration, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
+     The following example creates a item registration for items of type [NSCollectionViewItem](https://developer.apple.com/documentation/appkit/nscollectionviewitem). It creates a content configuration, customizes the content and appearance of the configuration, and then assigns the configuration to the item.
 
      ```swift
      struct GalleryItem {
@@ -56,9 +56,9 @@ public extension NSCollectionView {
      dataSource = NSCollectionViewDiffableDataSource(collectionView: collectionView, itemRegistration: itemRegistration)
      ```
 
-     You don’t need to call ``register(_:forItemWithIdentifier:)``. The collection view registers your item automatically when you pass the item registration to ``makeItem(using:for:element:)``.
+     You don’t need to call [register(_:forItemWithIdentifier:)](https://developer.apple.com/documentation/appkit/nscollectionview/1528268-register) or [register(_:forItemWithIdentifier:)](https://developer.apple.com/documentation/appkit/nscollectionview/1528174-register). The collection view registers your item automatically when you pass the item registration to ``makeItem(using:for:element:)``.
 
-     - Important: Do not create your item registration inside a `NSCollectionViewDiffableDataSource.ItemProvider` closure; doing so prevents item reuse.
+     - Important: Do not create your item registration inside a [NSCollectionViewDiffableDataSource.ItemProvider](https://developer.apple.com/documentation/appkit/nscollectionviewdiffabledatasource/itemprovider) closure; doing so prevents item reuse.
      */
     struct ItemRegistration<Item, Element> where Item: NSCollectionViewItem {
         let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)
@@ -70,6 +70,7 @@ public extension NSCollectionView {
         /**
          Creates a item registration with the specified registration handler.
 
+         
          - Parameter handler: The handler to configurate the item.
          */
         public init(handler: @escaping Handler) {

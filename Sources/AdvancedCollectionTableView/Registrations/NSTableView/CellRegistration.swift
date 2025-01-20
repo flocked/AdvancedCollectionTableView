@@ -15,10 +15,10 @@ public extension NSTableView {
 
      Use a cell registration to register table cell views with your table view and configure each cell for display. You create a cell registration with your cell type and data cell type as the registration’s generic parameters, passing in a registration handler to configure the cell. In the registration handler, you specify how to configure the content and appearance of that type of cell.
 
-     The following example creates a cell registration for cells of type `NSTableViewCell`. Each cells textfield displays its item.
+     The following example creates a cell registration for cells of type [NSTableCellView](https://developer.apple.com/documentation/appkit/nstablecellview). Each cells textfield displays its item.
 
      ```swift
-     let cellRegistration = NSTableView.CellRegistration<NSTableViewCell, String> { cell, column, row, string in
+     let cellRegistration = NSTableView.CellRegistration<NSTableCellView, String> { cell, column, row, string in
 
         var contentConfiguration = cell.defaultContentConfiguration()
 
@@ -44,7 +44,7 @@ public extension NSTableView {
      dataSource = NSTableViewDiffableDataSource(collectionView: collectionView, cellRegistration: cellRegistration)
      ```
 
-     You don’t need to call table views  `register(_:forIdentifier:)`. The table view registers your cell automatically when you pass the cell registration to ``makeCellView(using:forColumn:row:item:)``.
+     You don’t need to call table views  [register(_:forIdentifier:)](https://developer.apple.com/documentation/appkit/nstableview/1524297-register). The table view registers your cell automatically when you pass the cell registration to ``makeCellView(using:forColumn:row:item:)``.
 
      ## Column Identifiers
 
@@ -58,7 +58,7 @@ public extension NSTableView {
      diffableDataSource.applySectionHeaderRegistration(cellRegistration)
      ```
      
-     - Important: Do not create your cell registration inside a `NSTableViewDiffableDataSource.CellProvider` closure; doing so prevents cell reuse.
+     - Important: Do not create your cell registration inside a [NSTableViewDiffableDataSource.CellProvider](https://developer.apple.com/documentation/appkit/nstableviewdiffabledatasource/cellprovider) closure; doing so prevents cell reuse.
      */
     struct CellRegistration<Cell, Item>: NSTableViewCellRegistration, _NSTableViewCellRegistration where Cell: NSTableCellView {
         let identifier: NSUserInterfaceItemIdentifier = .init(UUID().uuidString)

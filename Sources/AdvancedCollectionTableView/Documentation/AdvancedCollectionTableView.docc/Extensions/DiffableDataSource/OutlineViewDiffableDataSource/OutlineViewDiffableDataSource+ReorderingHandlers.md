@@ -1,4 +1,4 @@
-# ``CollectionViewDiffableDataSource/ReorderingHandlers-swift.struct``
+# ``OutlineViewDiffableDataSource/ReorderingHandlers-swift.struct``
 
 ## Topics
 

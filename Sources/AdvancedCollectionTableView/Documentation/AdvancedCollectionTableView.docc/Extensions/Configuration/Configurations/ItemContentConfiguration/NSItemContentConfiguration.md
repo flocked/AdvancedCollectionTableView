@@ -9,15 +9,12 @@
 - ``imageItem(_:text:secondaryText:cornerRadius:)``
 - ``listItem(_:secondaryText:image:)``
 
-### Customizing content
+### Customizing text
 
 - ``text``
 - ``attributedText``
 - ``secondaryText``
 - ``secondaryAttributedText``
-- ``image``
-- ``view``
-- ``overlayView``
 
 ### Customizing placeholder
 
@@ -25,6 +22,12 @@
 - ``attributedPlaceholderText``
 - ``secondaryPlaceholderText``
 - ``secondaryAttributedPlaceholderText``
+
+### Customizing content
+
+- ``image``
+- ``view``
+- ``overlayView``
 
 ### Configurating badges
 
@@ -35,9 +38,14 @@
 
 - ``textProperties``
 - ``secondaryTextProperties``
+- ``imageProperties-swift.property``
 - ``contentProperties-swift.property``
 - ``scaleTransform``
+- ``rotation``
+- ``alpha``
+- ``toolTip``
 - ``TextProperties``
+- ``ImageProperties-swift.struct``
 - ``ContentProperties-swift.struct``
 
 ### Customizing layout

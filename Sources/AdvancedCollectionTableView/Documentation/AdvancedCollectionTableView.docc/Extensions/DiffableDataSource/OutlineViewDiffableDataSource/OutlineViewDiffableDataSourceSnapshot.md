@@ -15,6 +15,7 @@
 - ``items`` 
 - ``rootItems``
 - ``visibleItems``
+- ``children(of:recursive:)``
 
 ### Getting item metrics
 

@@ -5,27 +5,31 @@
 ### Configuring content properties
 
 - ``cornerRadius``
-- ``maximumSize``
 - ``scaleTransform``
+- ``rotation``
+- ``visualEffect``
+- ``toolTip``
 
 ### Configuring background color
 
 - ``backgroundColor``
-- ``backgroundColorTransform``
+- ``backgroundColorTransformer``
 - ``resolvedBackgroundColor()``
 
 ### Configuring border
 
-- ``borderWidth``
-- ``borderColor``
-- ``borderColorTransform``
-- ``resolvedBorderColor()``
-
-### Configuring image appearance
-
-- ``imageProperties-swift.property``
-- ``ImageProperties-swift.struct``
+- ``border``
+- ``borderTransformer``
+- ``resolvedBorder()``
 
 ### Configuring shadow
 
 - ``shadow``
+- ``shadowTransformer``
+- ``resolvedShadow()``
+
+### Configuring size
+
+- ``maximumSize``
+- ``ProposedSize``
+
