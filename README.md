@@ -165,11 +165,11 @@ An extended `NSCollectionViewDiffableDataSource that provides:
   
  ## TableViewDiffableDataSource
  
- Simliar to `CollectionViewDiffableDataSource.
+ Simliar to CollectionViewDiffableDataSource.
  
   ## OutlineViewDiffableDataSource
   
-  A diffable data source for `NSOutlineView` simliar to `CollectionViewDiffableDataSource`.
+  A diffable data source for NSOutlineView simliar to CollectionViewDiffableDataSource.
  
  Example usage of a data source with a String as `ItemIdentifierType`:
  
