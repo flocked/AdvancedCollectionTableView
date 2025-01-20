@@ -109,10 +109,11 @@ extension NSOutlineView {
     func apply<Item: Hashable>(_ snapshot: OutlineViewDiffableDataSourceSnapshot<Item>, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<Item>, option: NSDiffableDataSourceSnapshotApplyOption, animation: NSTableView.AnimationOptions, completion: (() -> Void)?) {
         let instructions = currentSnapshot.instructions(forMorphingInto: snapshot)
         
-        let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key })
-        let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key })
+        let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot.groupItems)
+        let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot.groupItems)
         let collapse = Array(oldExpanded.subtracting(newExpanded))
-        let expand = Array(newExpanded.subtracting(oldExpanded))
+        var expand = Array(newExpanded.subtracting(oldExpanded))
+                
         var animation = animation
         if case .withoutAnimation = option {
             animation = []
@@ -140,9 +141,16 @@ extension NSOutlineView {
                         }
                     }
                 }
-                collapse.forEach({ animator().collapseItem($0) })
-                expand.forEach({ animator().expandItem($0) })
+                let animates = option.animationDuration ?? 0.0 > 0.0
+                if animates {
+                    collapse.forEach({ animator().collapseItem($0) })
+                    expand.forEach({ animator().expandItem($0) })
+                }
                 endUpdates()
+                if !animates {
+                    collapse.forEach({ collapseItem($0) })
+                    expand.forEach({ expandItem($0) })
+                }
             }
             if let duration = option.animationDuration, duration > 0.0 {
                 NSAnimationContext.beginGrouping()

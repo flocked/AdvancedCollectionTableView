@@ -7,11 +7,15 @@
 
 import Foundation
 
-struct OutlineItem: Hashable, ExpressibleByStringLiteral {
+struct OutlineItem: Hashable, ExpressibleByStringLiteral, CustomStringConvertible {
     let title: String
     
     init(_ title: String) {
         self.title = title
+    }
+    
+    var description: String {
+        title
     }
     
     init(stringLiteral value: String) {

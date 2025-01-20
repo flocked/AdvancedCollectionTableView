@@ -10,11 +10,11 @@
 - ``init(outlineView:cellProvider:)``
 - ``CellProvider``
 
-### Creating section header views
+### Creating group row views.
 
-- ``headerCellProvider-swift.property``
-- ``HeaderCellProvider-swift.typealias``
-- ``applyHeaderRegistration(_:)``
+- ``groupRowCellProvider-swift.property``
+- ``GroupRowCellProvider-swift.typealias``
+- ``applyGroupRowCellRegistration(_:)``
 
 ### Creating row views
 

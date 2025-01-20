@@ -65,7 +65,7 @@ public extension NSTableView {
         public typealias Handler = (_ rowView: RowView, _ row: Int, _ item: Item) -> Void
 
         func makeView(_ tableView: NSTableView, _ row: Int, _ item: Item) -> RowView {
-            let rowView = (tableView.rowView(atRow: row, makeIfNecessary: false) as? RowView) ?? RowView(frame: .zero)
+            let rowView = (tableView.makeView(withIdentifier: identifier, owner: self) as? RowView) ?? RowView(frame: .zero)
             rowView.identifier = identifier
             handler(rowView, row, item)
             return rowView

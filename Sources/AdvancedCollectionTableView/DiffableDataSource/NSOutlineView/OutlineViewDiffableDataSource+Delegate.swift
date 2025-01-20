@@ -15,49 +15,35 @@ extension OutlineViewDiffableDataSource {
         var previousSelectedItems: [ItemIdentifierType] = []
         
         func outlineView(_ outlineView: NSOutlineView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
-            let isEmpty = proposedSelectionIndexes.isEmpty
-            if !isEmpty, proposedSelectionIndexes.isEmpty {
-                return outlineView.selectedRowIndexes
-            }
-            guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil else {
-                return proposedSelectionIndexes
-            }
-            let selectedRows = Array(outlineView.selectedRowIndexes)
-            let proposedRows = Array(proposedSelectionIndexes)
-
-            let diff = selectedRows.difference(to: proposedRows)
-            let selectedItems = diff.added.compactMap { outlineView.item(atRow: $0) } as! [ItemIdentifierType]
-            let deselectedItems = diff.removed.compactMap { outlineView.item(atRow: $0) } as! [ItemIdentifierType]
-
-            var selections: [ItemIdentifierType] = selectedItems
-            if !selectedItems.isEmpty, let shouldSelectRows = dataSource.selectionHandlers.shouldSelect?(selectedItems)  {
-                selections = selectedItems.filter({ shouldSelectRows.contains($0) })
+            previousSelectedItems = outlineView.selectedRowIndexes.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            let diff = outlineView.selectedRowIndexes.difference(to: proposedSelectionIndexes)
+            
+            var selected = diff.added.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            selected = selected.filter({ !self.outlineView(outlineView, isGroupItem: $0) })
+            if !selected.isEmpty {
+                selected = dataSource.selectionHandlers.shouldSelect?(selected) ?? selected
             }
 
-            if !deselectedItems.isEmpty, let shouldDeselectRows = dataSource.selectionHandlers.shouldDeselect?(deselectedItems) {
-                    selections += deselectedItems.filter({ !shouldDeselectRows.contains($0) })
+            var deselected = diff.removed.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            if !deselected.isEmpty {
+                let should = dataSource.selectionHandlers.shouldDeselect?(deselected) ?? deselected
+                selected += deselected.filter({ !should.contains($0) })
+                deselected = deselected.filter({ should.contains($0) })
             }
-
-            return IndexSet(selections.compactMap { outlineView.row(for: $0 as! NSView) })
+            
+            return IndexSet(selected.compactMap({dataSource.row(for:$0)}) + diff.unchanged)
         }
         
-        
         func outlineViewSelectionDidChange(_: Notification) {
-            guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
-                previousSelectedItems = (dataSource.outlineView.selectedItems) as! [ItemIdentifierType]
-                return
+            guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else { return }
+            
+            let diff = previousSelectedItems.difference(to: dataSource.selectedItems)
+            if !diff.added.isEmpty {
+                dataSource.selectionHandlers.didSelect?(diff.added)
             }
-            let selectedItems = (dataSource.outlineView.selectedItems) as! [ItemIdentifierType]
-            let diff = previousSelectedItems.difference(to: selectedItems)
-
-            if !diff.added.isEmpty, let didSelect = dataSource.selectionHandlers.didSelect {
-                didSelect(diff.added)
+            if !diff.removed.isEmpty {
+                dataSource.selectionHandlers.didDeselect?(diff.removed)
             }
-
-            if !diff.removed.isEmpty, let didDeselect = dataSource.selectionHandlers.didDeselect {
-                didDeselect(diff.removed)
-            }
-            previousSelectedItems = selectedItems
         }
         
         func outlineView(_ outlineView: NSOutlineView, userCanChangeVisibilityOf column: NSTableColumn) -> Bool {
@@ -69,30 +55,45 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-            /*
-            if self.outlineView(outlineView, isGroupItem: item) {
-                return SectionRowView()
+            let rowView: NSTableRowView
+            if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType) {
+                rowView = view
+            } else {
+                rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
+                rowView.identifier = "_RowView"
             }
-             */
-            return dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType)
+            if dataSource.currentSnapshot.groupItemsAreExpandable, self.outlineView(dataSource.outlineView, isGroupItem: item) {
+                var isExpanded = false
+                if let item = item as? ItemIdentifierType {
+                    isExpanded = dataSource.currentSnapshot.isExpanded(item)
+                }
+                let button = rowView.viewWithTag(OutlineButton.tag) as? OutlineButton ?? OutlineButton(for: rowView, dataSource.outlineView)
+                button.state = isExpanded ? .on : .off
+            } else {
+                rowView.viewWithTag(OutlineButton.tag)?.removeFromSuperview()
+            }
+            return rowView
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldExpandItem item: Any) -> Bool {
-            dataSource.expanionHandlers.shouldExpand?(item as! ItemIdentifierType) ?? true
+            guard !dataSource.isExpandingItems else { return true }
+            return dataSource.expanionHandlers.shouldExpand?(item as! ItemIdentifierType) ?? true
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldCollapseItem item: Any) -> Bool {
-            dataSource.expanionHandlers.shouldCollapse?(item as! ItemIdentifierType) ?? true
+            guard !dataSource.isExpandingItems else { return true }
+            return dataSource.expanionHandlers.shouldCollapse?(item as! ItemIdentifierType) ?? true
         }
         
         func outlineViewItemDidExpand(_ notification: Notification) {
-            guard let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isExpandingItems, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            Swift.print("outlineViewItemDidExpand")
             dataSource.expanionHandlers.didExpand?(item)
             dataSource.currentSnapshot.expand([item])
         }
         
         func outlineViewItemDidCollapse(_ notification: Notification) {
-            guard let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isExpandingItems, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
             dataSource.expanionHandlers.didCollapse?(item)
             dataSource.currentSnapshot.collapse([item])
         }
@@ -129,28 +130,62 @@ extension OutlineViewDiffableDataSource {
         }
     
         func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-            /*
-            if self.outlineView(outlineView, isGroupItem: item), let headerCellProvider = dataSource.headerCellProvider {
-                return headerCellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            let isGroupItem = self.outlineView(outlineView, isGroupItem: item)
+            let cellView: NSView
+            if isGroupItem, let groupRowCellProvider = dataSource.groupRowCellProvider {
+                cellView = groupRowCellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            } else {
+                cellView = dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
             }
-            */
-            return dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            return cellView
         }
-           
-        /*
+        
+        func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
+            !self.outlineView(outlineView, isGroupItem: item)
+        }
+        
         func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
-            guard let item = item as? ItemIdentifierType else { return false }
+            guard let item = item as? ItemIdentifierType, dataSource.currentSnapshot.usesGroupItems else { return false }
             return dataSource.currentSnapshot.rootItems.contains(item)
-            guard let item = item as? ItemIdentifierType, dataSource.headerCellProvider != nil else { return false }
-            return dataSource.currentSnapshot.groupItems.contains(item)
         }
-        */
+        
+        func outlineView(_ outlineView: NSOutlineView, tintConfigurationForItem item: Any) -> NSTintConfiguration? {
+            guard let item = item as? ItemIdentifierType else { return nil }
+            return dataSource.tintConfigurationProvider?(item)
+        }
         
         init(_ dataSource: OutlineViewDiffableDataSource!) {
             self.dataSource = dataSource
         }
+        
+        class OutlineButton: NSButton {
+            init(for view: NSView, _ outlineView: NSOutlineView) {
+                super.init(frame: .zero)
+                title = ""
+                bezelStyle = .disclosure
+                sizeToFit()
+                frame.origin = .init(x: view.bounds.width - 20, y: (view.bounds.height/2.0)-(bounds.height/2.0))
+                target = outlineView
+                action = NSSelectorFromString("_outlineControlClicked:")
+                tag = Self.tag
+                view.addSubview(self)
+                frameObservation = observeChanges(for: \.superview?.frame) { [weak self] old, new in
+                    guard let self = self, old?.size != new?.size, let new = new?.size else { return }
+                    self.frame.origin = CGPoint(x: new.width - 20, y: (new.height/2.0)-(self.bounds.height/2.0))
+                }
+            }
+            
+            static var tag: Int { 3345665333 }
+            
+            required init?(coder: NSCoder) {
+                fatalError("init(coder:) has not been implemented")
+            }
+            
+            var frameObservation: KeyValueObservation?
+        }
     }
 }
+
 
 /*
 extension OutlineViewDiffableDataSource {

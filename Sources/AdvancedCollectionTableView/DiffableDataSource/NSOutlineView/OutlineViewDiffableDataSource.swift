@@ -51,6 +51,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedItems: [ItemIdentifierType] = []
     var draggedParent: ItemIdentifierType?
     var draggedIndexes: [Int] = []
+    var isExpandingItems = false
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider?
@@ -67,24 +68,34 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      */
     public typealias RowViewProvider = (_ outlineView: NSOutlineView, _ row: Int, _ item: ItemIdentifierType) -> NSTableRowView
     
-    /// Applies the row view registration to configure and return outline row views.
+    /// Applies the specified row view registration to configure and return the outline view’s rows views.
     open func applyRowViewRegistration<Row: NSTableRowView>(_ registration: NSTableView.RowRegistration<Row, ItemIdentifierType>) {
         rowViewProvider = { tableView, row, item in
             registration.makeView(tableView, row, item)
         }
     }
     
-    open var headerCellProvider: HeaderCellProvider?
+    /// The closure that configures and returns cell views for the outline view’s group rows.
+    open var groupRowCellProvider: GroupRowCellProvider?
     
-    /// Uses the specified cell registration to configure and return section header cell views.
-    open func applyHeaderRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
-        headerCellProvider = { outlineView, column, item in
-            outlineView.makeCellView(using: registration, forColumn: column ?? .outline, row: 0, item: item)!
+    /// Applies the specified cell registration to configures and returns cell views for the outline view’s group rows.
+    open func applyGroupRowCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
+        groupRowCellProvider = { outlineView, column, item in
+        outlineView.makeCellView(using: registration, forColumn: column ?? .outline, row: 0, item: item)!
         }
     }
     
-    /// ``ExpanionHandlers-swift.struct`` ``expanionHandlers-swift.property``
-    public typealias HeaderCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
+    /**
+     A closure that configures and returns a cell view for a outline view group row.
+     
+     - Parameters
+     - outlineView: The outline view to configure this cell for.
+     - tableColumn: The table column of the cell.
+     - item: The item for this cell.
+     
+     - Returns: A configured cell object.
+     */
+    public typealias GroupRowCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
 
     
     /**
@@ -107,6 +118,18 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             } else {
                 outlineView.menuProvider = nil
             }
+        }
+    }
+    
+    /**
+     The item tint configuration provider.
+     
+     The provided tint configuration is used to customize an item’s tinting behavior.
+     */
+    open var tintConfigurationProvider: ((_ item: ItemIdentifierType) -> NSTintConfiguration?)? = nil {
+        didSet {
+            guard (oldValue == nil && tintConfigurationProvider != nil) || (oldValue != nil && tintConfigurationProvider == nil) else { return }
+            outlineView.reloadData()
         }
     }
     
@@ -487,11 +510,13 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+        isExpandingItems = true
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
         outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
+        isExpandingItems = false
     }
     
     public func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
@@ -535,6 +560,98 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         draggedParent = nil
     }
     
+    /*
+    public var usesGroupItems = false {
+        didSet {
+            guard oldValue != usesGroupItems else { return }
+            reloadItems(currentSnapshot.rootItems)
+            updateGroupItems(reload: true)
+        }
+    }
+    
+    public var groupItemsAreCollapsable = false {
+        didSet {
+            guard oldValue != groupItemsAreCollapsable, usesGroupItems else { return }
+            updateGroupItems(reload: true)
+        }
+    }
+    
+    public enum GroupItemOption {
+        case none
+        case enabled
+        case enabledExpandable
+    }
+    
+    public var groupItems: GroupItemOption = .none
+    
+    func updateGroupItems(reload: Bool = false) {
+        isExpandingItems = true
+        if reload {
+            reloadItems(currentSnapshot.rootItems)
+        }
+        if !usesGroupItems {
+            let expanded = currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) })
+            expanded.filter({ currentSnapshot.nodes[$0]?.isExpanded == false }).forEach({ outlineView.collapseItem($0) })
+        } else {
+            if groupItemsAreCollapsable {
+              // Swift.print("CHECKALT", currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) }))
+                
+              //  currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) })
+               // currentSnapshot.rootItems.compactMap({ currentSnapshot.isExpanded($0) })
+                Swift.print("-------")
+                Swift.print(currentSnapshot.rootItems.filter({ currentSnapshot.isExpanded($0) }))
+                Swift.print(currentSnapshot.rootItems.filter({ !currentSnapshot.isExpanded($0) }))
+
+                currentSnapshot.rootItems.forEach({
+                    if currentSnapshot.isExpanded($0) {
+                        outlineView.expandItem($0)
+                    } else {
+                        Swift.print("HERE")
+                        outlineView.collapseItem($0)
+                    }
+                })
+                /*
+                var collapsing: [ItemIdentifierType] = []
+                var expanding: [ItemIdentifierType] = []
+                for item in currentSnapshot.rootItems {
+                    let isExpanded = outlineView.isItemExpanded(item)
+                    let isExpanded1 = currentSnapshot.nodes[item]?.isExpanded ?? false
+                    Swift.print("HERE", isExpanded, isExpanded1)
+
+                    if isExpanded != isExpanded1 {
+                        if isExpanded {
+                            collapsing.append(item)
+                        } else {
+                            expanding.append(item)
+                        }
+                    }
+                }
+                collapsing.forEach({outlineView.collapseItem($0)})
+                expanding.forEach({outlineView.expandItem($0)})
+/*
+                
+                var expanded = currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) })
+                expanded = expanded.filter({ !currentSnapshot.isExpanded($0) })
+                    expanded.forEach({ outlineView.collapseItem($0) })
+                var collapsed = currentSnapshot.rootItems.filter({ !outlineView.isItemExpanded($0) })
+              //  collapsed = collapsed.filter({ currentSnapshot.isExpanded($0) })
+                    collapsed.forEach({ outlineView.expandItem($0) })
+                Swift.print(expanded)
+                Swift.print(currentSnapshot.rootItems.filter({ currentSnapshot.isExpanded($0) }))
+                Swift.print("---------")
+                Swift.print(collapsed)
+                Swift.print(currentSnapshot.rootItems.filter({ !currentSnapshot.isExpanded($0) }))
+ */*/
+            } else {
+                let collapsed = currentSnapshot.rootItems.filter({ !outlineView.isItemExpanded($0) })
+                collapsed.forEach({ outlineView.expandItem($0) })
+                Swift.print("CHECK", currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) }))
+            }
+        }
+        isExpandingItems = false
+    }
+    */
+    
     public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         if let item = item as? ItemIdentifierType, draggedItems.contains(item) {
             return []
@@ -542,6 +659,14 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         if draggedParent == item as? ItemIdentifierType, let last = draggedIndexes.last, (draggedIndexes + [last+1]).contains(index) {
             return []
         }
+        if index == -1, delegate.outlineView(outlineView, isGroupItem: item) {
+            return []
+        }
+        /*
+        if index == -1, !draggedIndexes.isEmpty, (draggedParent == item as? ItemIdentifierType) || (draggedParent == nil && item == nil) {
+            return []
+        }
+        */
         return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) == true ? .move : []
     }
     

@@ -21,38 +21,16 @@ class OutlineSidebarViewController: NSViewController {
     }
 
     lazy var cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
-        var configuration = NSListContentConfiguration.plain()
+        var configuration = tableCell.defaultContentConfiguration()
         configuration.text = outlineItem.title
-        
-        /// Check if the outline item is a root item and change it's font.
-        if self.currentSnapshot.rootItems.contains(outlineItem) {
-            configuration.textProperties.font = .body.bold
-        }
         tableCell.contentConfiguration = configuration
     }
-    
-    lazy var headerRegistration = CellRegistration { tableCell, _, _, outlineItem in
-        
-        if let rowView = tableCell.rowView, rowView.isGroupRowStyle {
-            Swift.print("groupRow", rowView.frame, rowView.subviews, rowView.backgroundColor == .controlAccentColor)
 
-            rowView.backgroundColor = .controlAccentColor
-
-        }
-        var configuration = NSListContentConfiguration.plain()
-        configuration.text = outlineItem.title
-        configuration.textProperties.font = .body.bold
-        tableCell.contentConfiguration = configuration
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         outlineView.dataSource = dataSource
-        outlineView.floatsGroupRows = false
-        
-        dataSource.applyHeaderRegistration(headerRegistration)
-        
+                
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { _, _ in return true }
         
@@ -64,10 +42,9 @@ class OutlineSidebarViewController: NSViewController {
         
     func applySnapshot() {
         var snapshot = dataSource.emptySnapshot()
-        
+                
         let rootItems: [OutlineItem] = ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
         snapshot.append(rootItems)
-        
         rootItems.forEach { rootItem in
             let childItems = (1...5).map { OutlineItem("\(rootItem.title).\($0)") }
             snapshot.append(childItems, to: rootItem)
