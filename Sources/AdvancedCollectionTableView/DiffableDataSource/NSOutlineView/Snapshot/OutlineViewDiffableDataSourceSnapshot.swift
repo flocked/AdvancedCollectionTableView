@@ -33,7 +33,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         var parent: ItemIdentifierType?
         var children: [ItemIdentifierType] = []
         var isExpanded = false
-        var index = 0
     }
     
     // MARK: - Creating a snapshot
@@ -65,6 +64,8 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         return rootItems + rootItems.flatMap({ visibleChilds(for: $0) })
     }
     
+    var isCalculatingDiff = false
+    
     // MARK: - Adding ItemIdentifierTypes
     
     /// Adds the specified items as child items of the specified parent item in the snapshot.
@@ -73,17 +74,11 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         if let parent = parent {
             validateItem(parent, "Parent item does not exist in snapshot: ")
             nodes[parent]?.children.append(contentsOf: items)
-            updateIndexes(for: nodes[parent]?.children ?? [])
         } else {
             rootItems.append(contentsOf: items)
-            updateIndexes(for: rootItems)
         }
         items.forEach({ nodes[$0] = Node(parent: parent) })
         updateOrderedItems()
-    }
-    
-    mutating func updateIndexes(for items: [ItemIdentifierType]) {
-        items.enumerated().forEach({ nodes[$0.element]?.index = $0.offset })
     }
     
     // MARK: - Inserting items
@@ -111,14 +106,29 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         updateOrderedItems()
     }
     
-    mutating func insert(_ item: ItemIdentifierType, _ node: Node, at index: Int, of parent: ItemIdentifierType?) {
+    /// Inserts the provided items to the specified parent.
+    public mutating func insert(_ items: [ItemIdentifierType], atIndex index: Int, of parent: ItemIdentifierType? = nil) {
+        validateItems(items)
+        if let parent = parent {
+            validateItem(parent, "Parent item does not exist in snapshot: ")
+            if index > children(of: parent).count {
+                NSException(name: .internalInconsistencyException, reason: "Index is to large", userInfo: nil).raise()
+            }
+            nodes[parent]?.children.insert(contentsOf: items, at: index)
+        } else if index > rootItems.count {
+            NSException(name: .internalInconsistencyException, reason: "Index is to large", userInfo: nil).raise()
+            rootItems.insert(contentsOf: items, at: index)
+        }
+        items.forEach({ nodes[$0] = .init(parent: parent) })
+    }
+    
+    mutating func insert(_ item: ItemIdentifierType, at index: Int, of parent: ItemIdentifierType?) {
         if let parent = parent {
             nodes[parent]?.children.insert(item, at: index)
         } else {
             rootItems.insert(item, at: index)
         }
-        nodes[item] = node
-        nodes[item]?.parent = parent
+        nodes[item] = .init(parent: parent)
         updateOrderedItems()
     }
     
@@ -181,10 +191,10 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         if let parent = parent {
             validateItem(parent, "Parent item does not exist in snapshot: ")
             if index > children(of: parent).count {
-                NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
+                NSException(name: .internalInconsistencyException, reason: "Index is to large", userInfo: nil).raise()
             }
         } else if index > rootItems.count {
-            NSException(name: .internalInconsistencyException, reason: "Index to large", userInfo: nil).raise()
+            NSException(name: .internalInconsistencyException, reason: "Index is to large", userInfo: nil).raise()
         }
         items.forEach({
             if self.parent(of: $0) != parent {
@@ -261,6 +271,12 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         }
         return true
     }
+    
+    /// A Boolean value indicating whether the item is a descendant of the specified parent.
+    public func isDescendant(_ item: ItemIdentifierType, of parent: ItemIdentifierType) -> Bool {
+        let children = children(of: parent)
+        return children.contains(item) || children.contains(where: { isDescendant(item, of: $0) })
+    }
 
     // MARK: - Removing items
 
@@ -287,7 +303,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     /// Replaces all child items of the specified parent item with the provided snapshot.
     public mutating func replace(childrenOf parent: ItemIdentifierType, using snapshot: OutlineViewDiffableDataSourceSnapshot) {
         validateItem(parent, "Parent item does not exist in snapshot: ")
-        validateItems(Array(snapshot.orderedItems), removing: descendants(of: parent))
+        validateItems(Array(snapshot.items), removing: descendants(of: parent))
         guard let previousChildren = nodes[parent]?.children else { return }
         previousChildren.forEach({ deleteItemAndDescendants($0) })
         nodes[parent]?.children = snapshot.rootItems
@@ -338,29 +354,21 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         
         /// A Boolean value indicating whether the group items are floating.
         public var isFloating: Bool = false
+        
+        public var discolure: DisclosureOption = .isDisplayedOnHover
+        
+        public enum DisclosureOption {
+            case isHidden
+            case isDisplayedOnHover
+            case isDisplayed
+        }
+        
+        /**
+         
+         
+         */
+        public var showsDisclosureOnHovering = false
     }
-    
-    /*
-    /**
-     A Boolean value indicating whether the root items are group items.
-     
-     The default value is `false`. The group items are expanded and can't be collapsed.
-     
-     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
-     */
-    public var usesGroupItems: Bool = false
-    */
-    
-    /*
-    /**
-     A Boolean value indicating whether group items can be expanded/collapsed.
-     
-     The default value is `false`. The group row items are expanded and can't be collapsed.
-     
-     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
-     */
-    public var groupItemsAreExpandable = false
-     */
     
     var _groupItems: [ItemIdentifierType] {
         groupItems.isEnabled && groupItems.isAlwaysExpanded ? rootItems : []
@@ -426,6 +434,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     func validateItems(_ items: [ItemIdentifierType], removing: [ItemIdentifierType] = [], _ message: String = "ItemIdentifierTypes in a snapshot must be unique. Duplicate items:\n") {
+        guard !isCalculatingDiff else { return }
         var orderedItems = orderedItems
         orderedItems.remove(removing)
         var duplicates: OrderedSet<ItemIdentifierType> = []
@@ -440,8 +449,9 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
             NSException(name: .internalInconsistencyException, reason: "\(message)\(duplicateItemIdentifierTypesString)", userInfo: nil).raise()
         }
     }
-    
+        
     func validateMoveItems(_ items: [ItemIdentifierType]) {
+        guard !isCalculatingDiff else { return }
         let items = items.filter({ nodes[$0] == nil })
         if !items.isEmpty {
             if items.count == 1 {
@@ -459,24 +469,12 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     mutating func updateOrderedItems() {
+        guard !isCalculatingDiff else { return }
         orderedItems = []
         for root in rootItems {
             orderedItems.append(root)
             orderedItems.append(contentsOf: descendants(of: root))
         }
-        updateIndexes()
-    }
-    
-    mutating func updateIndexes() {
-        func updateIndexes(of items: [ItemIdentifierType]) {
-            items.enumerated().forEach({ nodes[$0.element]?.index = $0.offset })
-            items.forEach({ updateIndexes(of: children(of: $0)) })
-        }
-        updateIndexes(of: rootItems)
-    }
-    
-    func isExpandable(_ item: ItemIdentifierType) -> Bool {
-        !children(of: item).isEmpty
     }
 }
 
@@ -496,3 +494,25 @@ fileprivate extension Array where Element: Equatable {
         insert(contentsOf: filteredItems, at: adjustedIndex)
     }
 }
+
+/*
+/**
+ A Boolean value indicating whether the root items are group items.
+ 
+ The default value is `false`. The group items are expanded and can't be collapsed.
+ 
+ If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
+ */
+public var usesGroupItems: Bool = false
+*/
+
+/*
+/**
+ A Boolean value indicating whether group items can be expanded/collapsed.
+ 
+ The default value is `false`. The group row items are expanded and can't be collapsed.
+ 
+ If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
+ */
+public var groupItemsAreExpandable = false
+ */

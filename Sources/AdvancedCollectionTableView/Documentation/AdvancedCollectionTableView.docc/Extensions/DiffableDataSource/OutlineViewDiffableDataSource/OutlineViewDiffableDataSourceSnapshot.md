@@ -24,6 +24,7 @@
 - ``parent(of:)``
 - ``contains(_:)``
 - ``isVisible(_:)``
+- ``isDescendant(_:of:)``
 
 ### Inserting items
 

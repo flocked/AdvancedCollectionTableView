@@ -33,6 +33,7 @@ extension OutlineViewDiffableDataSourceSnapshot {
     func instructions(forMorphingTo newSnapshot: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
         var movedItems: Set<ItemIdentifierType> = []
         var work = self
+        work.isCalculatingDiff = true
         func calculateSteps(from source: [ItemIdentifierType], to destination: [ItemIdentifierType], parent: ItemIdentifierType? = nil) -> [OutlineChangeInstruction] {
             var instructions: [OutlineChangeInstruction] = []
             for step in destination.difference(from: source).steps {
@@ -45,14 +46,15 @@ extension OutlineViewDiffableDataSourceSnapshot {
                         work.move([item], toIndex: index, of: parent)
                     } else {
                         instructions.append(.insert(item, at: index, parent: parent))
-                        work.insert(item, newSnapshot.nodes[item]!, at: index, of: parent)
+                        work.insert(item, at: index, of: parent)
                     }
                 case .remove(let item, let index):
                     if let toIndex = newSnapshot.childIndex(of: item) {
                         guard !movedItems.contains(item) else { continue }
                         movedItems.insert(item)
-                        instructions.append(.move(item, from: index, work.parent(of: item), to: toIndex, parent))
-                        work.move([item], toIndex: toIndex, of: parent)
+                        let newParent = newSnapshot.parent(of: item)
+                        instructions.append(.move(item, from: index, work.parent(of: item), to: toIndex, newParent))
+                        work.move([item], toIndex: toIndex, of: newParent)
                     } else {
                         instructions.append(.remove(item, at: index, parent: parent))
                         work.delete([item])
@@ -68,6 +70,10 @@ extension OutlineViewDiffableDataSourceSnapshot {
             return instructions
         }
         let instructions = calculateSteps(from: rootItems, to: newSnapshot.rootItems)
+        Swift.print("------")
+        for step in instructions {
+            Swift.print(step)
+        }
         return instructions
     }
 }

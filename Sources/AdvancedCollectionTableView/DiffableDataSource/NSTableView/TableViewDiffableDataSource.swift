@@ -437,9 +437,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         })
                 
         delegate = Delegate(self)
-        tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string])
+        tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string, .URL])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
-        // tableView.setDraggingSourceOperationMask(.move, forLocal: true)
+        tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
     }
     
     /**
@@ -638,11 +638,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         if let item = item(forRow: row) {
             let pasteboardItem = IdentifiablePasteboardItem(for: item, content: draggingHandlers.pasteboardContent?(item))
             pasteboardItem.row = row
-          //  return pasteboardItem
-            
-            let item = NSPasteboardItem()
-            item.setString("Fun", forType: .string) // Provide string data
-            return item
+            return pasteboardItem
         } else if reorderingHandlers.canReorderSection != nil, let section = section(forRow: row) {
             let pasteboardItem = IdentifiablePasteboardItem(for: section)
             pasteboardItem.row = row

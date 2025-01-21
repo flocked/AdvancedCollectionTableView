@@ -55,14 +55,26 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
+            let isGroupItem = self.outlineView(dataSource.outlineView, isGroupItem: item)
             let rowView: NSTableRowView
             if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType) {
                 rowView = view
             } else {
-                rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
-                rowView.identifier = "_RowView"
+                rowView = outlineView.makeView(withIdentifier: isGroupItem ? "_GroupRowView" : "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
+                rowView.identifier = isGroupItem ? "_GroupRowView" : "_RowView"
+                /*
+                if self.outlineView(dataSource.outlineView, isGroupItem: item) {
+                    let groupRowView = outlineView.makeView(withIdentifier: "GroupItemRowView", owner: nil) as? GroupItemRowView ?? GroupItemRowView()
+                    groupRowView.setup()
+                  rowView =  groupRowView
+                    rowView.identifier = "GroupItemRowView"
+                } else {
+                    rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
+                    rowView.identifier = "_RowView"
+                }
+                 */
             }
-            if !dataSource.currentSnapshot.groupItems.isAlwaysExpanded, self.outlineView(dataSource.outlineView, isGroupItem: item) {
+            if !dataSource.currentSnapshot.groupItems.isAlwaysExpanded, isGroupItem {
                 var isExpanded = false
                 if let item = item as? ItemIdentifierType {
                     isExpanded = dataSource.currentSnapshot.isExpanded(item)
@@ -76,23 +88,23 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldExpandItem item: Any) -> Bool {
-            guard !dataSource.isExpandingItems else { return true }
+            guard !dataSource.isApplyingSnapshot else { return true }
             return dataSource.expanionHandlers.shouldExpand?(item as! ItemIdentifierType) ?? true
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldCollapseItem item: Any) -> Bool {
-            guard !dataSource.isExpandingItems else { return true }
+            guard !dataSource.isApplyingSnapshot else { return true }
             return dataSource.expanionHandlers.shouldCollapse?(item as! ItemIdentifierType) ?? true
         }
         
         func outlineViewItemDidExpand(_ notification: Notification) {
-            guard !dataSource.isExpandingItems, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
             dataSource.expanionHandlers.didExpand?(item)
             dataSource.currentSnapshot.expand([item])
         }
         
         func outlineViewItemDidCollapse(_ notification: Notification) {
-            guard !dataSource.isExpandingItems, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
             dataSource.expanionHandlers.didCollapse?(item)
             dataSource.currentSnapshot.collapse([item])
         }
@@ -139,9 +151,11 @@ extension OutlineViewDiffableDataSource {
             return cellView
         }
         
+        /*
         func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
             !self.outlineView(outlineView, isGroupItem: item)
         }
+        */
         
         func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
             guard let item = item as? ItemIdentifierType, dataSource.currentSnapshot.groupItems.isEnabled else { return false }
@@ -228,3 +242,29 @@ extension OutlineViewDiffableDataSource {
     }
 }
 */
+
+/*
+ class GroupItemRowView: NSTableRowView {
+     var frameObservation: KeyValueObservation?
+     func setup() {
+         guard frameObservation == nil else { return }
+         isGroupRowStyle = true
+         frameObservation = observeChanges(for: \.superview?.frame) { [weak self] old, new in
+             guard let self = self, let new = new else { return }
+             Swift.print("heree", new)
+           //  self.frame.size.width = new.width
+         }
+     }
+     
+     override var frame: NSRect {
+         didSet {
+             guard oldValue != frame else { return }
+             Swift.print("row", frame)
+             if let superview = superview {
+              //   frame.size.width = superview.bounds.width
+             }
+
+         }
+     }
+ }
+ */

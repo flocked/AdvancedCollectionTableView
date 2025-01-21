@@ -21,7 +21,7 @@ class OutlineSidebarViewController: NSViewController {
     }
 
     lazy var cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
-        var configuration = tableCell.defaultContentConfiguration()
+        var configuration = NSListContentConfiguration.sidebar()
         configuration.text = outlineItem.title
         tableCell.contentConfiguration = configuration
     }

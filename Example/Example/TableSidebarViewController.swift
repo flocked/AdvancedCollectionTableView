@@ -45,7 +45,9 @@ class TableSidebarViewController: NSViewController {
         
         /// Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems  }
-        dataSource.deletingHandlers.isDeletableByDraggingOutside = true 
+        
+        dataSource.draggingHandlers.canDrag = { items in return true }
+        dataSource.draggingHandlers.pasteboardContent = { item in return ["Fun"] }
         
         /// Swipe row actions for deleting and favoriting an item.
         dataSource.rowActionProvider = { swippedItem, edge in

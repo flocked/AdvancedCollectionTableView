@@ -7,14 +7,32 @@
 
 import Foundation
 
-/// An outline view node.
+/**
+ A outline node that can be used to construct the items of a `OutlineViewDiffableDataSourceSnapshot`.
+ 
+ Example usage:
+ ```swift
+ var snapshot = OutlineViewDiffableDataSourceSnapshot<String> {
+    OutlineNode("Food") {
+        OutlineNode("Root 1 Child 1")
+        OutlineNode("Root 1 Child 2")
+        OutlineNode("Root 1 Child 3")
+    }.isExpanded(true)
+    OutlineNode("Root 2")
+    OutlineNode("Root 3") {
+        OutlineNode("Root 3 Child 1")
+        OutlineNode("Root 3 Child 2")
+    }
+ }
+ ```
+ */
 public struct OutlineNode<ItemIdentifierType: Hashable> {
     /// The item of the node.
     public let item: ItemIdentifierType
     
     /// The children of the node.
     public let children: [OutlineNode]
-    
+        
     /// A Boolean value indicating whether the item of the node is expanded.
     public let isExpanded: Bool
     
@@ -22,6 +40,13 @@ public struct OutlineNode<ItemIdentifierType: Hashable> {
     public func isExpanded(_ isExpanded: Bool) -> Self {
         .init(item, children: children, isExpanded: isExpanded)
     }
+    
+    /*
+    /// A Boolean value indicating whether the node contains the item.
+    public func contains(_ item: ItemIdentifierType) -> Bool {
+        children.contains(where: { $0.item == item || $0.contains(item) })
+    }
+     */
     
     /// Creates a node with the specified item.
     public init(_ item: ItemIdentifierType) {

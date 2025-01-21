@@ -51,7 +51,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedItems: [ItemIdentifierType] = []
     var draggedParent: ItemIdentifierType?
     var draggedIndexes: [Int] = []
-    var isExpandingItems = false
+    var isApplyingSnapshot = false
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider?
@@ -510,14 +510,14 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-        isExpandingItems = true
+        isApplyingSnapshot = true
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
-        
-       outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
+        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
+         updateEmptyView(previousIsEmpty: previousIsEmpty)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
-        isExpandingItems = false
+        isApplyingSnapshot = false
     }
     
     public func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
@@ -535,7 +535,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     public func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        currentSnapshot.isExpandable(item as! ItemIdentifierType)
+        !currentSnapshot.children(of: item as! ItemIdentifierType).isEmpty
     }
     
     public func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
@@ -586,7 +586,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     public var groupItems: GroupItemOption = .none
     
     func updateGroupItems(reload: Bool = false) {
-        isExpandingItems = true
+        isApplyingSnapshot = true
         if reload {
             reloadItems(currentSnapshot.rootItems)
         }
@@ -649,7 +649,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                 Swift.print("CHECK", currentSnapshot.rootItems.filter({ outlineView.isItemExpanded($0) }))
             }
         }
-        isExpandingItems = false
+        isApplyingSnapshot = false
     }
     */
     
@@ -663,12 +663,16 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         if index == -1, delegate.outlineView(outlineView, isGroupItem: item) {
             return []
         }
+        if let item = item as? ItemIdentifierType, draggedItems.contains(where: { currentSnapshot.isDescendant(item, of: $0) }) {
+            return []
+        }
+        
         /*
         if index == -1, !draggedIndexes.isEmpty, (draggedParent == item as? ItemIdentifierType) || (draggedParent == nil && item == nil) {
             return []
         }
         */
-        return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) == true ? .move : []
+        return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) ?? true == true ? .move : []
     }
     
     public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
