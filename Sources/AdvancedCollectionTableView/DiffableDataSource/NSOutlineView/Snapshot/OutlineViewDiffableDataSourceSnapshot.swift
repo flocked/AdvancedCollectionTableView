@@ -33,7 +33,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         var parent: ItemIdentifierType?
         var children: [ItemIdentifierType] = []
         var isExpanded = false
-        var isGroup = false
+        var index = 0
     }
     
     // MARK: - Creating a snapshot
@@ -45,7 +45,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     var nodes: [ItemIdentifierType: Node] = [:]
     
     /// The items ordered.
-    private var orderedItems: OrderedSet<ItemIdentifierType> = []
+    var orderedItems: OrderedSet<ItemIdentifierType> = []
     
     /// The identifiers of the items at the top level of the snapshot’s hierarchy.
     public internal(set) var rootItems: [ItemIdentifierType] = []
@@ -95,11 +95,17 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         if let parent = parent {
             validateItem(parent, "Parent item does not exist in snapshot: ")
             nodes[parent]?.children.append(contentsOf: items)
+            updateIndexes(for: nodes[parent]?.children ?? [])
         } else {
             rootItems.append(contentsOf: items)
+            updateIndexes(for: rootItems)
         }
         items.forEach({ nodes[$0] = Node(parent: parent) })
         updateOrderedItems()
+    }
+    
+    mutating func updateIndexes(for items: [ItemIdentifierType]) {
+        items.enumerated().forEach({ nodes[$0.element]?.index = $0.offset })
     }
     
     // MARK: - Inserting items
@@ -124,6 +130,17 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
             nodes[parent]?.children.insert(contentsOf: items, at: before ? childIndex : childIndex + 1)
             items.forEach { nodes[$0] = .init(parent: parent) }
         }
+        updateOrderedItems()
+    }
+    
+    mutating func insert(_ item: ItemIdentifierType, _ node: Node, at index: Int, of parent: ItemIdentifierType?) {
+        if let parent = parent {
+            nodes[parent]?.children.insert(item, at: index)
+        } else {
+            rootItems.insert(item, at: index)
+        }
+        nodes[item] = node
+        nodes[item]?.parent = parent
         updateOrderedItems()
     }
     
@@ -176,6 +193,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         } else if let index = rootItems.firstIndex(of: toItem) {
             rootItems.insert(contentsOf: items, at: before ? index : index + 1)
         }
+        
         updateOrderedItems()
     }
     
@@ -356,10 +374,10 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         let descendants = descendants(of: item)
         let itemsToDelete = descendants + item
         itemsToDelete.forEach({ nodes[$0] = nil })
-        orderedItems.removeAll { itemsToDelete.contains($0) }
+        orderedItems.remove(itemsToDelete)
     }
     
-    private mutating func deleteItemFromParent(_ item: ItemIdentifierType) {
+    mutating func deleteItemFromParent(_ item: ItemIdentifierType) {
         if let parent = parent(of: item), let index = nodes[parent]?.children.firstIndex(of: item) {
             nodes[parent]?.children.remove(at: index)
         } else if let index = rootItems.firstIndex(of: item) {
@@ -368,8 +386,10 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     func childIndex(of item: ItemIdentifierType) -> Int? {
-        guard let parent = parent(of: item) else { return nil }
-        return children(of: parent).firstIndex(of: item)
+        if let parent = parent(of: item) {
+            return children(of: parent).firstIndex(of: item)
+        }
+        return rootItems.firstIndex(of: item)
     }
     
     func validateItems(_ items: [ItemIdentifierType], removing: [ItemIdentifierType] = [], _ message: String = "ItemIdentifierTypes in a snapshot must be unique. Duplicate items:\n") {
@@ -411,6 +431,15 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
             orderedItems.append(root)
             orderedItems.append(contentsOf: descendants(of: root))
         }
+        updateIndexes()
+    }
+    
+    mutating func updateIndexes() {
+        func updateIndexes(of items: [ItemIdentifierType]) {
+            items.enumerated().forEach({ nodes[$0.element]?.index = $0.offset })
+            items.forEach({ updateIndexes(of: children(of: $0)) })
+        }
+        updateIndexes(of: rootItems)
     }
     
     func isExpandable(_ item: ItemIdentifierType) -> Bool {

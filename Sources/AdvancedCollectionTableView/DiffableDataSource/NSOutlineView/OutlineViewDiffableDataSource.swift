@@ -514,7 +514,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
-        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
+        
+       outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
         isExpandingItems = false
     }
@@ -683,7 +684,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
         let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
         reorderingHandlers.willReorder?(transaction)
-        apply(snapshot, .usingReloadData)
+        apply(snapshot, .withoutAnimation)
         reorderingHandlers.didReorder?(transaction)
         return true
     }

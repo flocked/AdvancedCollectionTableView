@@ -87,7 +87,6 @@ extension OutlineViewDiffableDataSource {
         
         func outlineViewItemDidExpand(_ notification: Notification) {
             guard !dataSource.isExpandingItems, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
-            Swift.print("outlineViewItemDidExpand")
             dataSource.expanionHandlers.didExpand?(item)
             dataSource.currentSnapshot.expand([item])
         }
