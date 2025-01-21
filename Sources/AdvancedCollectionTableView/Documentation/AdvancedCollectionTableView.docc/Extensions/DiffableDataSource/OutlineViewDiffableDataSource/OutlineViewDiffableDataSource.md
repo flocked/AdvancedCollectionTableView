@@ -48,6 +48,10 @@
 - ``menuProvider``
 - ``rightClickHandler``
 
+### Providing tint configurations
+
+``tintConfigurationProvider``
+
 ### Displaying empty view
 
 - ``emptyView``
