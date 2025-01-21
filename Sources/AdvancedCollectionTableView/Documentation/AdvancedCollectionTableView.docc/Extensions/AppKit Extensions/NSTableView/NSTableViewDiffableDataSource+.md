@@ -13,7 +13,7 @@ Extensions for `NSTableViewDiffableDataSource`.
 
 ### Creating Section Views
 
-- ``applySectionHeaderViewRegistration(_:)``
+- ``AppKit/NSTableViewDiffableDataSource/applySectionHeaderViewRegistration(_:)``
 
 ### Updating data
 

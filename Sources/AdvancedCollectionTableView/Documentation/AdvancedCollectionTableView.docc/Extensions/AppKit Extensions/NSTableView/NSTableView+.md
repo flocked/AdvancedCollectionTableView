@@ -19,11 +19,6 @@ Extensions for `NSTableView`.
 - ``AppKit/NSTableView/RowRegistration``
 - ``AppKit/NSTableView/makeRowView(using:forRow:item:)``
 
-### Creating section header views
-
-- ``AppKit/NSTableView/SectionHeaderRegistration``
-- ``AppKit/NSTableView/makeSectionHeaderView(using:row:section:)``
-
 ### Reloading content
 
 - ``AppKit/NSTableView/reconfigureRows(at:)``

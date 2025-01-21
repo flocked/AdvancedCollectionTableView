@@ -67,7 +67,7 @@ extension OutlineViewDiffableDataSourceSnapshot {
             }
             return instructions
         }
-        var instructions = calculateSteps(from: rootItems, to: newSnapshot.rootItems)
+        let instructions = calculateSteps(from: rootItems, to: newSnapshot.rootItems)
         return instructions
     }
 }
@@ -78,11 +78,11 @@ extension NSOutlineView {
             beginUpdates()
             for instruction in currentSnapshot.instructions(forMorphingTo: snapshot) {
                 switch instruction {
-                case .insert(let item, let index, let parent):
+                case .insert(_, let index, let parent):
                     insertItems(at: IndexSet(integer: index), inParent: parent, withAnimation: animation)
-                case .remove(let item, let index, let parent):
+                case .remove(_, let index, let parent):
                     removeItems(at: IndexSet(integer: index), inParent: parent, withAnimation: animation)
-                case .move(let item, let from, let fromParent, let to, let toParent):
+                case .move(_, let from, let fromParent, let to, let toParent):
                     moveItem(at: from, inParent: fromParent, to: to, inParent: toParent)
                 }
             }
@@ -94,7 +94,7 @@ extension NSOutlineView {
             let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot._groupItems)
             let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot._groupItems)
             let collapse = Array(oldExpanded.subtracting(newExpanded))
-            var expand = Array(newExpanded.subtracting(oldExpanded))
+            let expand = Array(newExpanded.subtracting(oldExpanded))
             collapse.forEach({ animator().collapseItem($0) })
             expand.forEach({ animator().expandItem($0) })
         }
