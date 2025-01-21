@@ -31,7 +31,7 @@ enum OutlineChangeInstruction: CustomStringConvertible, Hashable, Equatable {
 
 extension OutlineViewDiffableDataSourceSnapshot {
     func instructions(forMorphingTo newSnapshot: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
-        var allMoved: Set<ItemIdentifierType> = []
+        var movedItems: Set<ItemIdentifierType> = []
         var work = self
         func calculateSteps(from source: [ItemIdentifierType], to destination: [ItemIdentifierType], parent: ItemIdentifierType? = nil) -> [OutlineChangeInstruction] {
             var instructions: [OutlineChangeInstruction] = []
@@ -39,22 +39,20 @@ extension OutlineViewDiffableDataSourceSnapshot {
                 switch step {
                 case .insert(let item, let index):
                     if let fromIndex = work.childIndex(of: item) {
-                        if !allMoved.contains(item) {
-                            instructions.append(.move(item, from: fromIndex, work.parent(of: item), to: index, parent))
-                            work.move([item], toIndex: index, of: parent)
-                            allMoved.insert(item)
-                        }
+                        guard !movedItems.contains(item) else { continue }
+                        movedItems.insert(item)
+                        instructions.append(.move(item, from: fromIndex, work.parent(of: item), to: index, parent))
+                        work.move([item], toIndex: index, of: parent)
                     } else {
                         instructions.append(.insert(item, at: index, parent: parent))
                         work.insert(item, newSnapshot.nodes[item]!, at: index, of: parent)
                     }
                 case .remove(let item, let index):
                     if let toIndex = newSnapshot.childIndex(of: item) {
-                        if !allMoved.contains(item) {
-                            instructions.append(.move(item, from: index, work.parent(of: item), to: toIndex, parent))
-                            work.move([item], toIndex: toIndex, of: parent)
-                            allMoved.insert(item)
-                        }
+                        guard !movedItems.contains(item) else { continue }
+                        movedItems.insert(item)
+                        instructions.append(.move(item, from: index, work.parent(of: item), to: toIndex, parent))
+                        work.move([item], toIndex: toIndex, of: parent)
                     } else {
                         instructions.append(.remove(item, at: index, parent: parent))
                         work.delete([item])
@@ -69,35 +67,16 @@ extension OutlineViewDiffableDataSourceSnapshot {
             }
             return instructions
         }
-
         var instructions = calculateSteps(from: rootItems, to: newSnapshot.rootItems)
-
         return instructions
     }
 }
 
 extension NSOutlineView {
     func apply<Item: Hashable>(_ snapshot: OutlineViewDiffableDataSourceSnapshot<Item>, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<Item>, option: NSDiffableDataSourceSnapshotApplyOption, animation: NSTableView.AnimationOptions, completion: (() -> Void)?) {
-        guard !option.isReloadData else {
-            reloadData()
-            completion?()
-            return
-        }
-        let instructions = currentSnapshot.instructions(forMorphingTo: snapshot)
-        
-        let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot.groupItems)
-        let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot.groupItems)
-        let collapse = Array(oldExpanded.subtracting(newExpanded))
-        var expand = Array(newExpanded.subtracting(oldExpanded))
-                
-        var animation = animation
-        if case .withoutAnimation = option {
-            animation = []
-        }
-        
         func applySnapshot() {
             beginUpdates()
-            for instruction in instructions {
+            for instruction in currentSnapshot.instructions(forMorphingTo: snapshot) {
                 switch instruction {
                 case .insert(let item, let index, let parent):
                     insertItems(at: IndexSet(integer: index), inParent: parent, withAnimation: animation)
@@ -107,27 +86,32 @@ extension NSOutlineView {
                     moveItem(at: from, inParent: fromParent, to: to, inParent: toParent)
                 }
             }
-            let animates = option.animationDuration ?? 0.0 > 0.0
-            if animates {
-                collapse.forEach({ animator().collapseItem($0) })
-                expand.forEach({ animator().expandItem($0) })
-            }
+            expandCollapseItems()
             endUpdates()
-            if !animates {
-                collapse.forEach({ collapseItem($0) })
-                expand.forEach({ expandItem($0) })
-            }
         }
         
-        if let duration = option.animationDuration, duration > 0.0 {
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = duration
-            NSAnimationContext.current.completionHandler = completion
-            applySnapshot()
-            NSAnimationContext.endGrouping()
-        } else {
-            applySnapshot()
+        func expandCollapseItems() {
+            let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot.groupItems)
+            let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot.groupItems)
+            let collapse = Array(oldExpanded.subtracting(newExpanded))
+            var expand = Array(newExpanded.subtracting(oldExpanded))
+            collapse.forEach({ animator().collapseItem($0) })
+            expand.forEach({ animator().expandItem($0) })
+        }
+        
+        if option.isReloadData {
+            reloadData()
+            expandCollapseItems()
             completion?()
+        } else if let duration = option.animationDuration, duration > 0.0 {
+            NSView.animate(withDuration: duration, animations: {
+                applySnapshot()
+            }, completion: completion)
+        } else {
+            NSView.performWithoutAnimation {
+                applySnapshot()
+                completion?()
+            }
         }
     }
 }

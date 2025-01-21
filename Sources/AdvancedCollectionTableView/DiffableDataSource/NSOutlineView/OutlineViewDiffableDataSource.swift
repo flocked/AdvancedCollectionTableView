@@ -684,7 +684,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
         let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
         reorderingHandlers.willReorder?(transaction)
-        apply(snapshot, .withoutAnimation)
+        apply(snapshot, reorderingHandlers.animates ? .animated : .withoutAnimation)
         reorderingHandlers.didReorder?(transaction)
         return true
     }
