@@ -70,10 +70,6 @@ extension OutlineViewDiffableDataSourceSnapshot {
             return instructions
         }
         let instructions = calculateSteps(from: rootItems, to: newSnapshot.rootItems)
-        Swift.print("------")
-        for step in instructions {
-            Swift.print(step)
-        }
         return instructions
     }
 }
