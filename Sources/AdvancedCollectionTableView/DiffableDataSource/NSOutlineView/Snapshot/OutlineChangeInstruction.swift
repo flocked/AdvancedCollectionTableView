@@ -91,13 +91,15 @@ extension NSOutlineView {
         }
         
         func expandCollapseItems() {
-            let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot.groupItems)
-            let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot.groupItems)
+            let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot._groupItems)
+            let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot._groupItems)
             let collapse = Array(oldExpanded.subtracting(newExpanded))
             var expand = Array(newExpanded.subtracting(oldExpanded))
             collapse.forEach({ animator().collapseItem($0) })
             expand.forEach({ animator().expandItem($0) })
         }
+        
+        floatsGroupRows = snapshot.groupItems.isFloating
         
         if option.isReloadData {
             reloadData()

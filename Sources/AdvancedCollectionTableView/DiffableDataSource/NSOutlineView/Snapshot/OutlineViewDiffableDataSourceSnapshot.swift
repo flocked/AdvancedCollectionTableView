@@ -54,28 +54,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     public var items: [ItemIdentifierType] {
         Array(orderedItems)
     }
-    
-    /**
-     A Boolean value indicating whether the root items are group items.
-     
-     The default value is `false`. The group items are expanded and can't be collapsed.
-     
-     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
-     */
-    public var usesGroupItems: Bool = false
-    
-    /**
-     A Boolean value indicating whether group items can be expanded/collapsed.
-     
-     The default value is `false`. The group row items are expanded and can't be collapsed.
-     
-     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
-     */
-    public var groupItemsAreExpandable = false
-    
-    var groupItems: [ItemIdentifierType] {
-        usesGroupItems && !groupItemsAreExpandable ? rootItems : []
-    }
         
     /// The identifiers of the currently visible items in the snapshot.
     public var visibleItems: [ItemIdentifierType] {
@@ -334,6 +312,61 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     public mutating func collapse(_ items: [ItemIdentifierType]) {
         items.forEach({ nodes[$0]?.isExpanded = false })
     }
+    
+    // MARK: - Configurating group items
+    
+    /// Properties for group items.
+    public var groupItems = GroupItemProperties()
+    
+    /// Properties for group items.
+    public struct GroupItemProperties {
+        /**
+         A Boolean value indicating whether the root items are displayed as group items.
+         
+         If set to `true`, you can optionally provide custom group item cell views using `OutlineViewDiffableDataSource's` ``OutlineViewDiffableDataSource/groupItemCellProvider-swift.property`` and ``OutlineViewDiffableDataSource/applyGroupItemCellRegistration(_:)``.
+         */
+        public var isEnabled: Bool = false
+
+        /**
+         A Boolean value indicating whether group items can be expanded/collapsed.
+         
+         The default value is `true` and group items can't be collapsed.
+         
+         If you set the value to `false`, the group item can be expanded and collapsed like regular items.
+         */
+        public var isAlwaysExpanded: Bool = true
+        
+        /// A Boolean value indicating whether the group items are floating.
+        public var isFloating: Bool = false
+    }
+    
+    /*
+    /**
+     A Boolean value indicating whether the root items are group items.
+     
+     The default value is `false`. The group items are expanded and can't be collapsed.
+     
+     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
+     */
+    public var usesGroupItems: Bool = false
+    */
+    
+    /*
+    /**
+     A Boolean value indicating whether group items can be expanded/collapsed.
+     
+     The default value is `false`. The group row items are expanded and can't be collapsed.
+     
+     If you set this value to `true`, the group rows display a disclosure button and you can manage the expansion state of the items via ``expand(_:)`` and ``collapse(_:)``.
+     */
+    public var groupItemsAreExpandable = false
+     */
+    
+    var _groupItems: [ItemIdentifierType] {
+        groupItems.isEnabled && groupItems.isAlwaysExpanded ? rootItems : []
+    }
+    
+    // MARK: - Debugging snapshots
         
     /// Returns a string with an ASCII representation of the snapshot.
     public func visualDescription() -> String {

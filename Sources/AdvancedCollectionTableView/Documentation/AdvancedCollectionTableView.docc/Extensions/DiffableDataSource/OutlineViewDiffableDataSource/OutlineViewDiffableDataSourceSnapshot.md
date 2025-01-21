@@ -55,8 +55,8 @@
 
 ### Configurating group items
 
-- ``usesGroupItems`` 
-- ``groupItemsAreExpandable``
+- ``groupItems`` 
+- ``GroupItemProperties``
 
 ### Debugging snapshots
 

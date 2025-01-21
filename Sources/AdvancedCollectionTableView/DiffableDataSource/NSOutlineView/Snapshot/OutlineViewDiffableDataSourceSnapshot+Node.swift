@@ -42,49 +42,6 @@ public struct OutlineNode<ItemIdentifierType: Hashable> {
         self.children = children
         self.isExpanded = isExpanded
     }
-    
-    /// A function builder type that produces an array of nodes.
-    @resultBuilder
-    public enum Builder {
-        public static func buildBlock(_ block: [OutlineNode]...) -> [OutlineNode] {
-            block.flatMap { $0 }
-        }
-
-        public static func buildOptional(_ item: [OutlineNode]?) -> [OutlineNode] {
-            item ?? []
-        }
-
-        public static func buildEither(first: [OutlineNode]?) -> [OutlineNode] {
-            first ?? []
-        }
-
-        public static func buildEither(second: [OutlineNode]?) -> [OutlineNode] {
-            second ?? []
-        }
-
-        public static func buildArray(_ components: [[OutlineNode]]) -> [OutlineNode] {
-            components.flatMap { $0 }
-        }
-
-        public static func buildExpression(_ expr: [OutlineNode]?) -> [OutlineNode] {
-            expr ?? []
-        }
-
-        public static func buildExpression(_ expr: OutlineNode?) -> [OutlineNode] {
-            expr.map { [$0] } ?? []
-        }
-        
-        public static func buildExpression(_ expr: ItemIdentifierType?) -> [OutlineNode] {
-            if let item = expr {
-                return [.init(item)]
-            }
-            return []
-        }
-        
-        public static func buildExpression(_ expr: [ItemIdentifierType]?) -> [OutlineNode] {
-            expr?.compactMap({.init($0)}) ?? []
-        }
-    }
 }
 
 extension OutlineViewDiffableDataSourceSnapshot {
@@ -134,5 +91,50 @@ extension OutlineViewDiffableDataSourceSnapshot {
         append(nodes.compactMap({$0.item}), to: item)
         nodes.forEach({ self.nodes[$0.item]?.isExpanded = $0.isExpanded })
         nodes.forEach({ apply($0.children, to: $0.item) })
+    }
+}
+
+extension OutlineNode {
+    /// A function builder type that produces an array of nodes.
+    @resultBuilder
+    public enum Builder {
+        public static func buildBlock(_ block: [OutlineNode]...) -> [OutlineNode] {
+            block.flatMap { $0 }
+        }
+
+        public static func buildOptional(_ item: [OutlineNode]?) -> [OutlineNode] {
+            item ?? []
+        }
+
+        public static func buildEither(first: [OutlineNode]?) -> [OutlineNode] {
+            first ?? []
+        }
+
+        public static func buildEither(second: [OutlineNode]?) -> [OutlineNode] {
+            second ?? []
+        }
+
+        public static func buildArray(_ components: [[OutlineNode]]) -> [OutlineNode] {
+            components.flatMap { $0 }
+        }
+
+        public static func buildExpression(_ expr: [OutlineNode]?) -> [OutlineNode] {
+            expr ?? []
+        }
+
+        public static func buildExpression(_ expr: OutlineNode?) -> [OutlineNode] {
+            expr.map { [$0] } ?? []
+        }
+        
+        public static func buildExpression(_ expr: ItemIdentifierType?) -> [OutlineNode] {
+            if let item = expr {
+                return [.init(item)]
+            }
+            return []
+        }
+        
+        public static func buildExpression(_ expr: [ItemIdentifierType]?) -> [OutlineNode] {
+            expr?.compactMap({.init($0)}) ?? []
+        }
     }
 }

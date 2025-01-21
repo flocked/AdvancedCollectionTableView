@@ -75,12 +75,12 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         }
     }
     
-    /// The closure that configures and returns cell views for the outline view’s group rows.
-    open var groupRowCellProvider: GroupRowCellProvider?
+    /// The closure that configures and returns cell views for the outline view’s group items.
+    open var groupItemCellProvider: GroupItemCellProvider?
     
-    /// Applies the specified cell registration to configures and returns cell views for the outline view’s group rows.
-    open func applyGroupRowCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
-        groupRowCellProvider = { outlineView, column, item in
+    /// Applies the specified cell registration to configures and returns cell views for the outline view’s group items.
+    open func applyGroupItemCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
+        groupItemCellProvider = { outlineView, column, item in
         outlineView.makeCellView(using: registration, forColumn: column ?? .outline, row: 0, item: item)!
         }
     }
@@ -95,7 +95,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      
      - Returns: A configured cell object.
      */
-    public typealias GroupRowCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
+    public typealias GroupItemCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
 
     
     /**
