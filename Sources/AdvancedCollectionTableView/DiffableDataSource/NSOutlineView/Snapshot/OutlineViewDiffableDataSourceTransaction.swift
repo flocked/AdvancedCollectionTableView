@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A transaction that describes the changes after reordering the items of a outline view..
 public struct OutlineViewDiffableDataSourceTransaction<ItemIdentifierType: Hashable> {
     /// The section snapshot before the transaction occured.
     public let initialSnapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>

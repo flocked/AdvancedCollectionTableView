@@ -32,7 +32,7 @@ class OutlineSidebarViewController: NSViewController {
         outlineView.dataSource = dataSource
                 
         /// Enables reordering selected rows by dragging them.
-        dataSource.reorderingHandlers.canReorder = { _, _ in return true }
+        dataSource.reorderingHandlers.canReorder = { _,_ in return true }
         
         /// Enables deleting selected items via backspace key.
         dataSource.deletingHandlers.canDelete = { items in return items }

@@ -398,7 +398,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     /// All descendants of a given item in depth-first order.
-    private func descendants(of parent: ItemIdentifierType) -> [ItemIdentifierType] {
+    func descendants(of parent: ItemIdentifierType) -> [ItemIdentifierType] {
         var result: [ItemIdentifierType] = []
         var stack: [ItemIdentifierType] = [parent]
         
