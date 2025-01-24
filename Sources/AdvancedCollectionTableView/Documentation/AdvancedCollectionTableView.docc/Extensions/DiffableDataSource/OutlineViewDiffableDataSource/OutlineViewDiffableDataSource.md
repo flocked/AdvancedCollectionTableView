@@ -39,6 +39,7 @@
 ### Updating data
 
 - ``snapshot()``
+- ``snapshot(for:)``
 - ``emptySnapshot()``
 - ``apply(_:_:completion:)``
 - ``defaultRowAnimation``
