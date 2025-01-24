@@ -1,4 +1,4 @@
-# Advanced NSCollectionView and NSTableView
+# Advance NSCollectionView and NSTableView
 
 A framework for NSCollectionView, NSTableView and NSOutlineView. It provides a collection of classes and extensions, many of them being ports of missing UIKit APIs.
 
