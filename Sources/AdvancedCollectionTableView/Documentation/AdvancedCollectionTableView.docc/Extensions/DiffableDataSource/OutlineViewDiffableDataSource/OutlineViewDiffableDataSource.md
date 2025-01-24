@@ -75,6 +75,10 @@
 
 ### Handling expanding/collapsing items
 
+- ``expand(_:expandChildren:)-770uz``
+- ``expand(_:expandChildren:)-1v68w``
+- ``collapse(_:collapseChildren:)-82w6c``
+- ``collapse(_:collapseChildren:)-5f5fu``
 - ``expanionHandlers-swift.property``
 - ``ExpanionHandlers-swift.struct``
 

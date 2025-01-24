@@ -417,6 +417,50 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         outlineView.visibleRowIndexes().compactMap { item(forRow: $0) }
     }
     
+    /**
+     Expands a specified item and, optionally, its children.
+     
+     - Parameters:
+        - item: The items to expand.
+        - expandChildren: If `true`, recursively expands item and its children. If `false`, expands item only.
+     */
+    open func expand(_ item: ItemIdentifierType,  expandChildren: Bool = false) {
+        expand([item], expandChildren: expandChildren)
+    }
+    
+    /**
+     Expands the specified items and, optionally, their children.
+     
+     - Parameters:
+        - items: The items to expand.
+        - expandChildren: If `true`, recursively expands item and its children. If `false`, expands item only.
+     */
+    open func expand(_ items: [ItemIdentifierType],  expandChildren: Bool = false) {
+        items.forEach({ outlineView.expandItem($0, expandChildren: expandChildren) })
+    }
+    
+    /**
+     Collapses a given item and, optionally, its children.
+     
+     - Parameters:
+        - item: The item to expand.
+        - collapseChildren: If `true`, recursively collapses item and its children. If `false`, collapses item only.
+     */
+    open func collapse(_ item: ItemIdentifierType,  collapseChildren: Bool = false) {
+        collapse([item], collapseChildren: collapseChildren)
+    }
+    
+    /**
+     Collapses the specified items and, optionally, their children.
+     
+     - Parameters:
+        - items: The items to expand.
+        - collapseChildren: If `true`, recursively collapses item and its children. If `false`, collapses item only.
+     */
+    open func collapse(_ items: [ItemIdentifierType],  collapseChildren: Bool = false) {
+        items.forEach({ outlineView.collapseItem($0, collapseChildren: collapseChildren) })
+    }
+    
     func rowView(for item: ItemIdentifierType) -> NSTableRowView? {
         if let row = row(for: item) {
             return outlineView.rowView(atRow: row, makeIfNecessary: false)

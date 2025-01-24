@@ -54,6 +54,7 @@ class OutlineSidebarViewController: NSViewController {
             }
         }
         dataSource.apply(snapshot, .withoutAnimation)
+        dataSource.expand(rootItems[0])
     }
     
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {
