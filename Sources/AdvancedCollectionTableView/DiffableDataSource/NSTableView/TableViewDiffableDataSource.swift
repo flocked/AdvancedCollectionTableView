@@ -108,7 +108,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      A closure that configures and returns a row view for a table view from its diffable data source.
      
-     - Parameters
+     - Parameters:
         - tableView: The table view to configure this row view for.
         - row: The row of the row view.
         - item: The item of the row.
@@ -145,7 +145,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      A closure that configures and returns a section header cell for a table view from its diffable data source.
      
-     - Parameters
+     - Parameters:
         - tableView: The table view to configure this section header cell view for.
         - row: The row of the section.
         - section: The section.
@@ -365,7 +365,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
-     To connect a diffable data source to a table view, you create the diffable data source using this initializer, passing in the table view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
+     Specify column identifiers for each of the cell registrations using: ``AppKit/NSTableView/CellRegistration/init(columnIdentifiers:handler:)``
+     
+     The column identifiers are used to create the cells for each column with the coresponding column identifier.
      
      ```swift
      dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistrations: cellRegistrations)
@@ -445,7 +447,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /**
      A closure that configures and returns a cell view for a table view from its diffable data source.
      
-     - Parameters
+     - Parameters:
         - tableView: The table view to configure this cell for.
         - tableColumn: The table column of the cell.
         - row: The row of the cell in the table view.
@@ -464,6 +466,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dropping
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        if draggingInfo.draggingSource as? NSTableView === tableView {
+            
+        } else {
+            
+        }
+        
         canDrop = false
         dropTargetRow = nil
         if !dragingRowIndexes.isEmpty {
@@ -518,7 +526,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return moveSectionTransaction(to: row) != nil ? .move : []
         }
 
-        if draggingInfo.draggingSource as? NSTableView != tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
+        if draggingInfo.draggingSource as? NSTableView !== tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
             let content = draggingInfo.draggingPasteboard.content()
             dropTargetRow = dropOperation == .on ? row : nil
             let target = dropOperation == .on ? item(forRow: row) : nil
@@ -547,7 +555,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
             return true
         }
-        if draggingInfo.draggingSource as? NSTableView != tableView, canDrop {
+        if draggingInfo.draggingSource as? NSTableView !== tableView, canDrop {
             let content = draggingInfo.draggingPasteboard.content()
             var items: [Item] = []
             var target: Item?
@@ -1039,7 +1047,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /// The handlers for table columns.
     open var columnHandlers = ColumnHandlers()
     
-    /// The handlers for dragging pasteboard items inside the table view.
+    /// The handlers for dropping items inside the table view.
     public var droppingHandlers = DroppingHandlers()
     
     /// The handlers for dragging elements outside the table view.
@@ -1223,21 +1231,21 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         /// The handler that gets called when the handler did drag items outside the table view.
         public var didDrag: ((_ items: [Item]) -> ())?
         /// The handler that provides the pasteboard content for an item that can be dragged outside the table view.
-        public var pasteboardContent: ((_ item: Item)->([PasteboardContent]))?
+        public var pasteboardContent: ((_ item: Item)->([PasteboardWriting]))?
         /// The handler that determines the image when dragging elements outside the table view.
         public var draggingImage: ((_ item: Item) -> (NSImage, CGRect?)?)?
     }
     
-    /// Handlers for dragging pasteboard items inside the table view.
+    /// Handlers for dropping items inside the table view.
     public struct DroppingHandlers {
-        /// The handler that determines the items to be inserted for the dropping pasteboard content.
-        public var canDrop: ((_ contents: [PasteboardContent], _ target: Item?) -> (Bool))?
-        /// The handler that determinates the items for the dropping pasteboard content.
-        public var items: ((_ contents: [PasteboardContent]) -> ([Item]))?
-        /// The handler that gets called when the pasteboard content is about to drop inside the table view.
-        public var willDrop: ((_ contents: [PasteboardContent], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
-        /// The handler that gets called when the pasteboard content was dropped inside the table view.
-        public var didDrop: ((_ contents: [PasteboardContent], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
+        /// The handler that determines whether a drop with the pasteboard content is accepted.
+        public var canDrop: ((_ content: [PasteboardReading], _ target: Item?) -> (Bool))?
+        /// The handler that determinates the items to be inserted for the pasteboard content.
+        public var items: ((_ content: [PasteboardReading]) -> ([Item]))?
+        /// The handler that gets called before new items are dropped.
+        public var willDrop: ((_ content: [PasteboardReading], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
+        /// The handler that gets called after new items are dropped.
+        public var didDrop: ((_ content: [PasteboardReading], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true
     }
@@ -1363,12 +1371,12 @@ extension TableViewDiffableDataSource {
 
 
 extension NSPasteboardItem {
-    convenience init<Element: Identifiable & Hashable>(for element: Element, content: [PasteboardContent]? = nil) {
+    convenience init<Element: Identifiable & Hashable>(for element: Element, content: [PasteboardWriting]? = nil) {
         self.init(content: content ?? [])
         setString(String(element.id.hashValue), forType: .itemID)
     }
     
-    convenience init<Item: Hashable>(forItem item: Item, content: [PasteboardContent]? = nil) {
+    convenience init<Item: Hashable>(forItem item: Item, content: [PasteboardWriting]? = nil) {
         self.init(content: content ?? [])
         setString(String(describing: item), forType: .itemID)
     }

@@ -911,6 +911,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          */
         public var didReorder: ((_ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
         
+        /*
         /**
          The handler that determines if elements can be dropped to another element while reordering. The default value is `nil` which indicates that elements can't be inserted.
          
@@ -920,13 +921,16 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         
         /// The handler that that gets called after dropping elements.
         public var didDrop: ((_ elements: [Element], _ target: Element) -> ())?
+        */
         
         /// A Boolean value that indicates whether reordering elements is animated.
         public var animates: Bool = true
         
+        /*
         var droppable: Bool {
             canDrop != nil && didDrop != nil
         }
+        */
     }
 
     /// Handlers for the highlight state of elements.
@@ -981,41 +985,52 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         /// The handler that gets called when the handler did drag elements outside the collection view.
         public var didDrag: ((_ elements: [Element]) -> ())?
         /// The handler that provides the pasteboard content for an element that can be dragged outside the collection view.
-        public var pasteboardContent: ((_ element: Element)->([PasteboardContent]))?
+        public var pasteboardContent: ((_ element: Element)->([PasteboardWriting]))?
         /// The handler that determines the image when dragging elements outside the collection view.
         public var draggingImage: ((_ elements: [Element], _ event: NSEvent, _ screenLocation: CGPoint) -> NSImage?)?
+        
+        var isDraggable: Bool {
+            canDrag != nil && pasteboardContent != nil
+        }
     }
     
     /// Handlers for dragging pasteboard items inside the collection view.
     public struct DroppingHandlers {
+        public var canDropInto: ((_ content: [PasteboardReading], _ element: Element) -> (Bool))?
+        public var didDropInto: ((_ content: [PasteboardReading], _ element: Element)->())?
+        var isDroppableInto: Bool {
+            canDropInto != nil && didDropInto != nil
+        }
+
+        
         /**
          The handler that determines the elements to be inserted for the dropping pasteboard content.
          
          - Parameters:
-            - contents: The content of the dropping pasteboard.
+            - content: The content of the dropping pasteboard.
             - target: The target element of the drop.
          */
-        public var canDrop: ((_ contents: [PasteboardContent], _ target: Element?) -> (Bool))?
+        public var canDrop: ((_ content: [PasteboardReading]) -> (Bool))?
         /**
          The handler that gets called when pasteboard content is about to drop inside the collection view.
          
          - Parameters:
-            - contents: The content of the dropping pasteboard.
+            - content: The content of the dropping pasteboard.
             - target: The target element of the drop.
             - transaction: The transaction for the drop, if new elements are provided via ``elements``.
          */
-        public var willDrop: ((_ contents: [PasteboardContent], _ target: Element?, _ transaction: DiffableDataSourceTransaction<Section, Element>?) -> ())?
+        public var willDrop: ((_ content: [PasteboardReading], _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
          
          - Parameters:
-            - contents: The content of the pasteboard.
+            - content: The content of the pasteboard.
             - target: The target element of the drop.
             - transaction: The transaction for the drop, if new elements are provided via ``elements``.
          */
-        public var didDrop: ((_ contents: [PasteboardContent], _ target: Element?, _ transaction: DiffableDataSourceTransaction<Section, Element>?) -> ())?
+        public var didDrop: ((_ content: [PasteboardReading], _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         /// The handler that determinates the elements for the dropping pasteboard content.
-        public var elements: ((_ contents: [PasteboardContent]) -> ([Element]))?
+        public var elements: ((_ content: [PasteboardReading]) -> ([Element]))?
         /// A Boolean value that indicates whether dropping elements is animated.
         public var animates: Bool = true
     }

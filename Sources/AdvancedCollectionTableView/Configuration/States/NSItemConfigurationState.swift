@@ -77,6 +77,9 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the mouse is hovering the item.
     public var isHovered: Bool = false
     
+    /// A Boolean value that indicates whether the item is dragging.
+    public var isDragging: Bool = false
+    
     /// A Boolean value that indicates whether the item is reordering.
     public var isReordering: Bool = false
     
@@ -122,20 +125,31 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     }
     */
     
-    public init(
+    /**
+     Creates an item configuration state.
+     
+     Typically, you don’t create a configuration state yourself. To obtain an item configuration state, override the ``AppKit/NSCollectionViewItem/updateConfiguration(using:)`` method in collection view item subclass and use the state parameter. Outside of this method, you can get a collection view item’s configuration state by using its ``AppKit/NSCollectionViewItem/configurationState`` property.
+     */
+    public init() {
+        
+    }
+    
+    init(
         isSelected: Bool = false,
         highlight: NSCollectionViewItem.HighlightState = .none,
         isEditing: Bool = false,
         activeState: ActiveState = .inactive,
         isHovered: Bool = false,
+        isDragging: Bool = false,
         isReordering: Bool = false,
         isDropTarget: Bool = false
     ) {
+        self.isEditing = isEditing
         self.isSelected = isSelected
         self.highlight = highlight
-        self.isEditing = isEditing
         self.activeState = activeState
         self.isHovered = isHovered
+        self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
         self["isSelected"] = isSelected
@@ -178,11 +192,14 @@ extension NSItemConfigurationState: ReferenceConvertible {
     public var description: String {
         """
         NSItemConfigurationState(
-            isEnabled: \(isEnabled)
-            isHovered: \(isHovered)
+            isSelected: \(isSelected)
             isEditing: \(isEditing)
+            activeState: \(activeState)
             highlight: \(highlight.rawValue)
-            activeState: \(activeState.rawValue)
+            isHovered: \(isHovered)
+            isDragging: \(isDragging)
+            isDropTarget: \(isDropTarget)
+            isReordering: \(isReordering)
             customStates: \(customStates)
         )
         """

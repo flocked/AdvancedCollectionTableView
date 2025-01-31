@@ -51,7 +51,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedItems: [ItemIdentifierType] = []
     var draggedParent: ItemIdentifierType?
     var draggedIndexes: [Int] = []
+    var dropItems: [ItemIdentifierType] = []
+    var dropContent: [PasteboardReading] = []
     var isApplyingSnapshot = false
+    lazy var groupRowTableColumn = NSTableColumn()
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider?
@@ -59,10 +62,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     /**
      A closure that configures and returns a row view for a outline view from its diffable data source.
      
-     - Parameters
-     - outlineView: The outline view to configure this row view for.
-     - row: The row of the row view.
-     - item: The item of the row.
+     - Parameters:
+        - outlineView: The outline view to configure this row view for.
+        - row: The row of the row view.
+        - item: The item of the row.
      
      - Returns: A configured row view object.
      */
@@ -80,22 +83,21 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     
     /// Applies the specified cell registration to configures and returns cell views for the outline view’s group items.
     open func applyGroupItemCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
-        groupItemCellProvider = { outlineView, column, item in
-        outlineView.makeCellView(using: registration, forColumn: column ?? .outline, row: 0, item: item)!
+        groupItemCellProvider = { outlineView, item in
+            outlineView.makeCellView(using: registration, forColumn: self.groupRowTableColumn, row: 0, item: item)!
         }
     }
-    
+        
     /**
      A closure that configures and returns a cell view for a outline view group row.
      
-     - Parameters
-     - outlineView: The outline view to configure this cell for.
-     - tableColumn: The table column of the cell.
-     - item: The item for this cell.
+     - Parameters:
+        - outlineView: The outline view to configure this cell for.
+        - item: The item for this cell.
      
      - Returns: A configured cell object.
      */
-    public typealias GroupItemCellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
+    public typealias GroupItemCellProvider = (_ outlineView: NSOutlineView, _ identifier: ItemIdentifierType) -> NSView
 
     
     /**
@@ -191,6 +193,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     open var deletingHandlers = DeletingHandlers() {
         didSet { setupKeyDownMonitor() }
     }
+    
+    /// The handlers for dropping items inside the outline view.
+    open var droppingHandlers = DroppingHandlers()
     
     /**
      The handlers for reordering items.
@@ -482,8 +487,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      ```
      
      - Parameters:
-     - outlineView: The initialized outline view object to connect to the diffable data source.
-     - cellProvider: A closure that creates and returns each of the cells for the outline view from the data the diffable data source provides.
+        - outlineView: The initialized outline view object to connect to the diffable data source.
+        - cellProvider: A closure that creates and returns each of the cells for the outline view from the data the diffable data source provides.
      */
     public init(outlineView: NSOutlineView, cellProvider: @escaping CellProvider) {
         self.outlineView = outlineView
@@ -498,6 +503,18 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     /**
+     A closure that configures and returns a cell view for a outline view from its diffable data source.
+     
+     - Parameters:
+        - outlineView: The outline view to configure this cell for.
+        - tableColumn: The table column of the cell.
+        - item: The item for this cell.
+     
+     - Returns: A configured cell object.
+     */
+    public typealias CellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn, _ identifier: ItemIdentifierType) -> NSView
+    
+    /**
      Creates a diffable data source with the specified cell registration, and connects it to the specified outline view.
      
      To connect a diffable data source to a outline view, you create the diffable data source using this initializer, passing in the outline view you want to associate with that data source. You also pass in a cell registration, where each of your cells gets determine how to display your data in the UI.
@@ -507,27 +524,40 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      ```
      
      - Parameters:
-     - outlineView: The initialized outline view object to connect to the diffable data source.
-     - cellRegistration: A cell registration which returns each of the cells for the outline view from the data the diffable data source provides.
+        - outlineView: The initialized outline view object to connect to the diffable data source.
+        - cellRegistration: A cell registration which returns each of the cells for the outline view from the data the diffable data source provides.
      */
     public convenience init<Cell: NSTableCellView>(outlineView: NSOutlineView, cellRegistration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
         self.init(outlineView: outlineView, cellProvider: {
             outlineView, column, item in
-            outlineView.makeCellView(using: cellRegistration, forColumn: column ?? .outline, row: 0, item: item)!
+            outlineView.makeCellView(using: cellRegistration, forColumn: column, row: 0, item: item)!
         })
     }
     
     /**
-     A closure that configures and returns a cell view for a outline view from its diffable data source.
+     Creates a diffable data source with the specified cell registrations, and connects it to the specified outline view.
+          
+     Specify column identifiers for each of the cell registrations using: ``AppKit/NSTableView/CellRegistration/init(columnIdentifiers:handler:)``
      
-     - Parameters
-     - outlineView: The outline view to configure this cell for.
-     - tableColumn: The table column of the cell.
-     - item: The item for this cell.
+     The column identifiers are used to create the cells for each column with the coresponding column identifier.
      
-     - Returns: A configured cell object.
+     ```swift
+     dataSource = OutlineViewDiffableDataSource<Item>(outlineView: outlineView, cellRegistrations: cellRegistrations)
+     ```
+     
+     - Parameters:
+        - outlineView: The initialized outline view object to connect to the diffable data source.
+        - cellRegistrations: Cell registrations which returns each of the cells for the outline view from the data the diffable data source provides.
      */
-    public typealias CellProvider = (_ outlineView: NSOutlineView, _ tableColumn: NSTableColumn?, _ identifier: ItemIdentifierType) -> NSView
+    public convenience init(outlineView: NSOutlineView, cellRegistrations: [NSTableViewCellRegistration]) {
+        self.init(outlineView: outlineView, cellProvider: {
+            outlineView, column, item in
+            if let cellRegistration = (cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty })) as? _NSTableViewCellRegistration {
+                return cellRegistration.makeView(outlineView, column, 0, item) ?? NSTableCellView()
+            }
+            return NSTableCellView()
+        })
+    }
     
     /// Returns a representation of the current state of the data in the outline view.
     public func snapshot() -> OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType> {
@@ -557,9 +587,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      The system interrupts any ongoing item animations and immediately reloads the outline view’s content.
      
      - Parameters:
-     - snapshot: The snapshot that reflects the new state of the data in the outline view.
-     - option: Option how to apply the snapshot to the outline view. The default value is `animated`.
-     - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
+        - snapshot: The snapshot that reflects the new state of the data in the outline view.
+        - option: Option how to apply the snapshot to the outline view. The default value is `animated`.
+        - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
         isApplyingSnapshot = true
@@ -611,6 +641,8 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         draggedItems = []
         draggedIndexes = []
         draggedParent = nil
+        dropItems = []
+        dropContent = []
     }
     
     /*
@@ -705,44 +737,68 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     */
     
+    var previewIndex: Int? = nil
+    var previewParent: ItemIdentifierType? = nil
+    var previewItems: [ItemIdentifierType] = []
+    
     public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        if let item = item as? ItemIdentifierType, draggedItems.contains(item) {
-            return []
+        if info.draggingSource as? NSOutlineView === outlineView {
+            if let item = item as? ItemIdentifierType, draggedItems.contains(item) {
+                return []
+            }
+            if draggedParent == item as? ItemIdentifierType, let last = draggedIndexes.last, (draggedIndexes + [last+1]).contains(index) {
+                return []
+            }
+            if index == -1, let item = item, delegate.outlineView(outlineView, isGroupItem: item) {
+                return []
+            }
+            if let item = item as? ItemIdentifierType, draggedItems.contains(where: { currentSnapshot.isDescendant(item, of: $0) }) {
+                return []
+            }
+            /*
+            if index == -1, !draggedIndexes.isEmpty, (draggedParent == item as? ItemIdentifierType) || (draggedParent == nil && item == nil) {
+                return []
+            }
+            */
+            return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) ?? true == true ? .move : []
+        } else if let canDrop = droppingHandlers.canDrop {
+            dropItems = []
+            dropContent = info.draggingPasteboard.content()
+            if canDrop(dropContent, item as? ItemIdentifierType), let items = droppingHandlers.items?(dropContent, item as? ItemIdentifierType), !items.isEmpty {
+                dropItems = items
+                return .move
+            }
         }
-        if draggedParent == item as? ItemIdentifierType, let last = draggedIndexes.last, (draggedIndexes + [last+1]).contains(index) {
-            return []
-        }
-        if index == -1, let item = item, delegate.outlineView(outlineView, isGroupItem: item) {
-            return []
-        }
-        if let item = item as? ItemIdentifierType, draggedItems.contains(where: { currentSnapshot.isDescendant(item, of: $0) }) {
-            return []
-        }
-        
-        /*
-        if index == -1, !draggedIndexes.isEmpty, (draggedParent == item as? ItemIdentifierType) || (draggedParent == nil && item == nil) {
-            return []
-        }
-        */
-        return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) ?? true == true ? .move : []
+        return []
     }
     
     public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        var snapshot = currentSnapshot
-        var index = index
-        if index == -1 {
-            if let item = item as? ItemIdentifierType {
-                index = snapshot.children(of: item).count
-            } else {
-                index = snapshot.rootItems.count
+        if let sourceOutlineView = info.draggingSource as? NSOutlineView, sourceOutlineView === outlineView {
+            var snapshot = currentSnapshot
+            var index = index
+            if index == -1 {
+                if let item = item as? ItemIdentifierType {
+                    index = snapshot.children(of: item).count
+                } else {
+                    index = snapshot.rootItems.count
+                }
             }
+            snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
+            let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+            reorderingHandlers.willReorder?(transaction)
+            apply(snapshot, reorderingHandlers.animates ? .animated : .withoutAnimation)
+            reorderingHandlers.didReorder?(transaction)
+            return true
+        } else if !dropItems.isEmpty {
+            var snapshot = snapshot()
+            snapshot.insert(dropItems, atIndex: index, of: item as? ItemIdentifierType)
+            let transaction = OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>.init(initial: currentSnapshot, final: snapshot)
+            droppingHandlers.willDrop?(dropContent, item as? ItemIdentifierType, dropItems, transaction)
+            apply(snapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
+            droppingHandlers.didDrop?(dropContent, item as? ItemIdentifierType, dropItems, transaction)
+            return true
         }
-        snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
-        let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
-        reorderingHandlers.willReorder?(transaction)
-        apply(snapshot, reorderingHandlers.animates ? .animated : .withoutAnimation)
-        reorderingHandlers.didReorder?(transaction)
-        return true
+        return false
     }
     
     public func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> (any NSPasteboardWriting)? {
@@ -911,7 +967,22 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         
         /// The handler that gets called whenever the sort descriptors of the columns changed.
         public var sortDescriptorsChanged: ((_ old: [NSSortDescriptor], _ new: [NSSortDescriptor]) -> Void)?
-
+    }
+    
+    /// Handlers for dropping items inside the outline view.
+    public struct DroppingHandlers {
+        /// The handler that determines whether a drop with the pasteboard content is accepted.
+        public var canDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?) -> (Bool))?
+        /// The handler that determinates the items to be inserted for the pasteboard content.
+        public var items: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?) -> ([ItemIdentifierType]))?
+        /// The handler that gets called before new items are dropped.
+        public var willDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        /// The handler that gets called after new items are dropped.
+        public var didDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        /// A Boolean value that indicates whether dropping items is animated.
+        public var animates: Bool = false
+        /// A Boolean value that indicates whether the dropped items are previewed.
+        public var previewItems = true
     }
     
     func setupKeyDownMonitor() {
@@ -1066,8 +1137,4 @@ extension OutlineViewDiffableDataSource {
             fatalError("init(coder:) has not been implemented")
         }
     }
-}
-
-fileprivate extension NSTableColumn {
-    static let outline = NSTableColumn()
 }

@@ -7,6 +7,7 @@
 
 import AppKit
 import AdvancedCollectionTableView
+import FZUIKit
 
 class OutlineSidebarViewController: NSViewController {
     typealias DataSource = OutlineViewDiffableDataSource<OutlineItem>
@@ -36,6 +37,12 @@ class OutlineSidebarViewController: NSViewController {
         
         /// Enables deleting selected items via backspace key.
         dataSource.deletingHandlers.canDelete = { items in return items }
+        
+        dataSource.droppingHandlers.canDrop = { _,parent in parent == nil }
+        dataSource.droppingHandlers.items = { content,_ in
+            return content.strings.compactMap({ OutlineItem("\($0)")  })
+            
+        }
         
         applySnapshot()
     }

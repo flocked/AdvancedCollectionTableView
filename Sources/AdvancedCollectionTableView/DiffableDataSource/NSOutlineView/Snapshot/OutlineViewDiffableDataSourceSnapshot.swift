@@ -463,6 +463,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     func validateItem(_ item: ItemIdentifierType, _ message: String) {
+        guard !isCalculatingDiff else { return }
         if !contains(item) {
             NSException(name: .internalInconsistencyException, reason: message + String(describing: item), userInfo: nil).raise()
         }
@@ -481,8 +482,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
 fileprivate extension Array where Element: Equatable {
     mutating func _insert(_ items: [Element], at index: Int) {
         var adjustedIndex = index
-        let _index = index
-        let values = self
         let filteredItems = items.filter { item in
             if let existingIndex = firstIndex(of: item) {
                 if existingIndex < adjustedIndex {
@@ -493,7 +492,6 @@ fileprivate extension Array where Element: Equatable {
             }
             return true
         }
-        Swift.print("_insert", _index, adjustedIndex, values, items)
         insert(contentsOf: filteredItems, at: adjustedIndex)
     }
 }

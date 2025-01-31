@@ -21,7 +21,9 @@ class TableSidebarViewController: NSViewController {
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
-        configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
+     //   configuration.secondaryText = "sdsd\n"
+        configuration.secondaryTextProperties.maximumNumberOfLines = 0
+     //   configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
         if sidebarItem.isFavorite {
             configuration.badge = .symbolImage("star.fill", color: .systemYellow, backgroundColor: nil)
         }
@@ -53,14 +55,14 @@ class TableSidebarViewController: NSViewController {
         dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {
                 /// Left swipe
-                return [NSTableViewRowAction.regular(symbolName: swippedItem.isFavorite ? "star" : "star.fill", color: .systemYellow) { _,_ in
+                return [NSTableViewRowAction.regular("SomeTest", color: .systemYellow) { _,_ in
                         swippedItem.isFavorite = !swippedItem.isFavorite
                         self.dataSource.reconfigureItems([swippedItem])
                         self.tableView.rowActionsVisible = false
                     }, ]
             } else {
                 /// Right swipe
-                return [NSTableViewRowAction.destructive(symbolName: "trash.fill") { _,_ in
+                return [NSTableViewRowAction.regular("SomeTest") { _,_ in
                     var snapshot = self.dataSource.snapshot()
                     snapshot.deleteItems([swippedItem])
                     self.dataSource.apply(snapshot)

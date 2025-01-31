@@ -30,7 +30,7 @@ extension NSTableRowView {
         get { getAssociatedValue("contentConfiguration") }
         set {
             setAssociatedValue(newValue, key: "contentConfiguration")
-            observeTableRowView()
+            observeRowView()
             configurateContentView()
         }
     }
@@ -102,7 +102,7 @@ extension NSTableRowView {
         get { getAssociatedValue("configurationUpdateHandler") }
         set {
             setAssociatedValue(newValue, key: "configurationUpdateHandler")
-            observeTableRowView()
+            observeRowView()
             setNeedsUpdateConfiguration()
         }
     }
@@ -202,49 +202,21 @@ extension NSTableRowView {
         }
     }
     
+    @objc var isDragging: Bool {
+        get { getAssociatedValue("isDragging") ?? false }
+        set {
+            guard newValue != isReordering else { return }
+            setAssociatedValue(newValue, key: "isDragging")
+            setNeedsAutomaticUpdateConfiguration()
+        }
+    }
+    
     @objc var isDropTarget: Bool {
         get { getAssociatedValue("isDropTarget") ?? false }
         set {
             guard newValue != isDropTarget else { return }
             setAssociatedValue(newValue, key: "isDropTarget")
             setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-    
-    func observeSelection() {
-        guard isSelectedObservation == nil else { return }
-        isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in
-            guard let self = self, old != new else { return }
-            self.setNeedsAutomaticUpdateConfiguration()
-        }
-    }
-
-    func observeTableRowView() {
-        observeSelection()
-        if contentConfiguration != nil || configurationUpdateHandler != nil {
-            guard tableViewObserverView == nil else { return }
-            tableViewObserverView = TableViewObserverView { [weak self] tableView in
-                guard let self = self else { return }
-                if self.contentConfiguration is AutomaticHeightSizable {
-                    tableView.usesAutomaticRowHeights = true
-                }
-                tableView.setupObservation()
-            }
-            insertSubview(tableViewObserverView!, at: 0)
-            /*
-             rowObserver?.add(\.superview) { [weak self] _, _ in
-             guard let self = self else { return }
-             if self.needsAutomaticRowHeights {
-             self.tableView?.usesAutomaticRowHeights = true
-             }
-             self.tableView?.setupObservation()
-             self.setCellViewsNeedAutomaticUpdateConfiguration()
-             }
-             }
-             */
-        } else {
-            tableViewObserverView?.removeFromSuperview()
-            tableViewObserverView = nil
         }
     }
     
@@ -256,18 +228,37 @@ extension NSTableRowView {
         }
     }
     
-    var rowObserver: KeyValueObserver<NSTableRowView>? {
-        get { getAssociatedValue("rowObserver") }
-        set { setAssociatedValue(newValue, key: "rowObserver") }
-    }
-    
-    var tableViewObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableViewObserverView") }
-        set { setAssociatedValue(newValue, key: "tableViewObserverView") }
+    func observeSelection() {
+        guard isSelectedObservation == nil else { return }
+        isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in
+            guard let self = self, old != new else { return }
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
     }
     
     var isSelectedObservation: KeyValueObservation? {
         get { getAssociatedValue("isSelectedObservation") }
         set { setAssociatedValue(newValue, key: "isSelectedObservation") }
+    }
+
+    func observeRowView() {
+        observeSelection()
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard tableViewObservation == nil else { return }
+            tableViewObservation = observeChanges(for: \.window) { [weak self] _, window in
+                guard window != nil, let self = self, let tableView = self.tableView else { return }
+                if self.contentConfiguration is AutomaticHeightSizable {
+                    tableView.usesAutomaticRowHeights = true
+                }
+                tableView.setupObservation()
+            }
+        } else {
+            tableViewObservation = nil
+        }
+    }
+    
+    var tableViewObservation: KeyValueObservation? {
+        get { getAssociatedValue("tableViewObservation") }
+        set { setAssociatedValue(newValue, key: "tableViewObservation") }
     }
 }

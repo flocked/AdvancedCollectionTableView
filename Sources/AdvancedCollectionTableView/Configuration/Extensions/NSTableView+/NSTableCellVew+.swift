@@ -26,7 +26,7 @@ extension NSTableCellView {
         set {
             let newValue = (newValue as? NSListContentConfiguration)?.updated(for: self) ?? newValue
             setAssociatedValue(newValue, key: "contentConfiguration")
-            observeTableCellView()
+            observeCellView()
             configurateContentView()
         }
     }
@@ -177,51 +177,8 @@ extension NSTableCellView {
         get { getAssociatedValue("configurationUpdateHandler") }
         set {
             setAssociatedValue(newValue, key: "configurationUpdateHandler")
-            observeTableCellView()
+            observeCellView()
             setNeedsUpdateConfiguration()
-        }
-    }
-    
-    func updateContentConfigurationStyle() {
-        if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
-            setAssociatedValue(configuration, key: "contentConfiguration")
-            NSAnimationContext.runNonAnimated {
-                contentView?.configuration = configuration
-            }
-        }
-    }
-
-    func observeTableCellView() {
-        if contentConfiguration != nil || configurationUpdateHandler != nil {
-            guard tableCellObserverView == nil else { return }
-            tableCellObserverView = TableViewObserverView { [weak self] tableView in
-                guard let self = self else { return }
-                tableView.setupObservation()
-                if self.contentConfiguration is AutomaticHeightSizable {
-                    tableView.usesAutomaticRowHeights = true
-                }
-                self.updateContentConfigurationStyle()
-                self.rowView?.translatesAutoresizingMaskIntoConstraints = false
-                self.rowView?.observeSelection()
-                self.setNeedsAutomaticUpdateConfiguration()
-            }
-            insertSubview(tableCellObserverView!, at: 0)
-            /*
-            tableCellObserver = observeChanges(for: \.superview, handler: { [weak self] _, _ in
-                guard let self = self else { return }
-                let rowView = self.rowView
-                if self.contentConfiguration is AutomaticHeightSizable {
-                    self.tableView?.usesAutomaticRowHeights = true
-                    rowView?.needsAutomaticRowHeights = true
-                }
-                self.updateContentConfigurationStyle()
-                rowView?.observeTableRowView()
-                self.setNeedsUpdateConfiguration()
-            })
-             */
-        } else {
-            tableCellObserverView?.removeFromSuperview()
-            tableCellObserverView = nil
         }
     }
     
@@ -293,19 +250,38 @@ extension NSTableCellView {
             setAssociatedValue(newValue, key: "_contentView")
         }
     }
+    
+    func updateContentConfigurationStyle() {
+        if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
+            setAssociatedValue(configuration, key: "contentConfiguration")
+            NSAnimationContext.runNonAnimated {
+                contentView?.configuration = configuration
+            }
+        }
+    }
 
-    var tableCellObserver: KeyValueObservation? {
-        get { getAssociatedValue("tableCellObserver") }
-        set { setAssociatedValue(newValue, key: "tableCellObserver") }
+    func observeCellView() {
+        if contentConfiguration != nil || configurationUpdateHandler != nil {
+            guard tableViewObservation == nil else { return }
+            tableViewObservation = observeChanges(for: \.window) { [weak self] _, window in
+                guard window != nil, let self = self, let tableView = self.tableView else { return }
+                tableView.setupObservation()
+                if self.contentConfiguration is AutomaticHeightSizable {
+                    tableView.usesAutomaticRowHeights = true
+                }
+                self.updateContentConfigurationStyle()
+                self.setNeedsAutomaticUpdateConfiguration()
+                guard let rowView = self.rowView else { return }
+                rowView.translatesAutoresizingMaskIntoConstraints = false
+                rowView.observeSelection()
+            }
+        } else {
+            tableViewObservation = nil
+        }
     }
     
-    var tableCellObserverView: TableViewObserverView? {
-        get { getAssociatedValue("tableCellObserverView") }
-        set { setAssociatedValue(newValue, key: "tableCellObserverView") }
-    }
-    
-    var tableViewStyle: NSTableView.Style? {
-        get { getAssociatedValue("tableViewStyle") }
-        set { setAssociatedValue(newValue, key: "tableViewStyle") }
+    var tableViewObservation: KeyValueObservation? {
+        get { getAssociatedValue("tableViewObservation") }
+        set { setAssociatedValue(newValue, key: "tableViewObservation") }
     }
 }

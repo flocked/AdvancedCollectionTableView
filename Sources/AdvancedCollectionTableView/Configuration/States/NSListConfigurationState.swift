@@ -87,6 +87,9 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
     /// A Boolean value that indicates whether the previous list item is in a selected state.
     public var isPreviousSelected: Bool = false
     
+    /// A Boolean value that indicates whether the list item is dragging.
+    public var isDragging: Bool = false
+    
     /// A Boolean value that indicates whether the list item is reordering.
     public var isReordering: Bool = false
     
@@ -132,11 +135,21 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
     }
     */
     
-    public init(isSelected: Bool = false,
+    /**
+     Creates a list configuration state.
+     
+     Typically, you don’t create a configuration state yourself. To obtain a list configuration state, override the ``AppKit/NSTableCellView/updateConfiguration(using:)`` method in your table cell or row view subclass and use the state parameter. Outside of this method, you can get a table cell or row view’s configuration state by using its ``AppKit/NSTableCellView/configurationState`` property.
+     */
+    public init() {
+        
+    }
+    
+    init(isSelected: Bool = false,
                 isEnabled: Bool = true,
                 isHovered: Bool = false,
                 isEditing: Bool = false,
                 activeState: ActiveState = .inactive,
+                isDragging: Bool = false,
                 isReordering: Bool = false,
                 isDropTarget: Bool = false,
                 isNextSelected: Bool = false,
@@ -147,6 +160,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isHovered = isHovered
         self.isEditing = isEditing
         self.activeState = activeState
+        self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
         self.isNextSelected = isNextSelected
@@ -162,6 +176,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          activeState: ActiveState,
          isNextSelected: Bool,
          isPreviousSelected: Bool,
+         isDragging: Bool,
          isReordering: Bool,
          isDropTarget: Bool,
          customStates: [NSConfigurationStateCustomKey: AnyHashable])
@@ -173,6 +188,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.activeState = activeState
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
+        self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
         self.customStates = customStates
@@ -190,9 +206,12 @@ extension NSListConfigurationState: ReferenceConvertible {
         NSListConfigurationState(
             isSelected: \(isSelected)
             isEnabled: \(isEnabled)
-            isHovered: \(isHovered)
             isEditing: \(isEditing)
-            activeState: \(activeState.rawValue)
+            isHovered: \(isHovered)
+            activeState: \(activeState)
+            isDragging: \(isDragging)
+            isDropTarget: \(isDropTarget)
+            isReordering: \(isReordering)
             isNextSelected: \(isNextSelected)
             isPreviousSelected: \(isPreviousSelected)
             customStates: \(customStates)

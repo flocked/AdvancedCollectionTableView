@@ -141,14 +141,11 @@ extension OutlineViewDiffableDataSource {
         }
     
         func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-            let isGroupItem = self.outlineView(outlineView, isGroupItem: item)
-            let cellView: NSView
-            if isGroupItem, let groupItemCellProvider = dataSource.groupItemCellProvider {
-                cellView = groupItemCellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+            if self.outlineView(outlineView, isGroupItem: item), let groupItemCellProvider = dataSource.groupItemCellProvider {
+                return groupItemCellProvider(outlineView, item as! ItemIdentifierType)
             } else {
-                cellView = dataSource.cellProvider(outlineView, tableColumn, item as! ItemIdentifierType)
+                return dataSource.cellProvider(outlineView, tableColumn!, item as! ItemIdentifierType)
             }
-            return cellView
         }
         
         /*

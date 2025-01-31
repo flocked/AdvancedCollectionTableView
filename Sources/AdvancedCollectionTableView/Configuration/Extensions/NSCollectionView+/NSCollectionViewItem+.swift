@@ -177,11 +177,8 @@ extension NSCollectionViewItem {
      To add your own custom state, see `NSConfigurationStateCustomKey`.
      */
     @objc open var configurationState: NSItemConfigurationState {
-        let collectionView = _collectionView
-        let activeState = collectionView?.activeState ?? .inactive
-        let isEditing = collectionView?.editingView?.isDescendant(of: view) == true
         let isSelected = isRightClickSelected == true ? true : isSelected
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, activeState: activeState, isHovered: isHovered, isReordering: isReordering, isDropTarget: isDropTarget)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, activeState: activeState, isHovered: isHovered, isDragging: isDragging, isReordering: isReordering, isDropTarget: isDropTarget)
         return state
     }
 
@@ -291,10 +288,16 @@ extension NSCollectionViewItem {
         set {
             guard newValue != isReordering else { return }
             setAssociatedValue(newValue, key: "isReordering")
-            setNeedsAutomaticUpdateConfiguration()
         }
     }
     
+    var isDragging: Bool {
+        get { getAssociatedValue("isDragging", initialValue: false) }
+        set {
+            guard newValue != isReordering else { return }
+            setAssociatedValue(newValue, key: "isDragging")
+        }
+    }
     
     /// A Boolean value that indicates whether the item is enabled.
     var isEnabled: Bool {
