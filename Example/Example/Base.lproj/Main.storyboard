@@ -837,6 +837,7 @@ Quicklook collection items via spacebar and favorite them by right-clicking them
                     <splitViewItems>
                         <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="bFe-Mf-mBl"/>
                         <splitViewItem id="7hD-QQ-ruv"/>
+                        <splitViewItem collapsed="YES" id="CKi-lU-ho8"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Wb5-Zx-fWz">
                         <rect key="frame" x="0.0" y="0.0" width="700" height="500"/>
@@ -845,6 +846,7 @@ Quicklook collection items via spacebar and favorite them by right-clicking them
                     <connections>
                         <segue destination="IgV-tW-gYz" kind="relationship" relationship="splitItems" id="NB4-kc-ruk"/>
                         <segue destination="f1U-rY-vlz" kind="relationship" relationship="splitItems" id="wfQ-Cb-UbV"/>
+                        <segue destination="pHe-8d-Ckn" kind="relationship" relationship="splitItems" id="2qV-WD-Wbi"/>
                     </connections>
                 </splitViewController>
                 <customObject id="yJe-I5-mQc" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

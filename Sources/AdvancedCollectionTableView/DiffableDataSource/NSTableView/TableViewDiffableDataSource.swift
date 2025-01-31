@@ -527,7 +527,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
 
         if draggingInfo.draggingSource as? NSTableView !== tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
-            let content = draggingInfo.draggingPasteboard.content()
+            let content = draggingInfo.draggingPasteboard.content
             dropTargetRow = dropOperation == .on ? row : nil
             let target = dropOperation == .on ? item(forRow: row) : nil
             if !content.isEmpty, canDrop(content, target) {
@@ -556,7 +556,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return true
         }
         if draggingInfo.draggingSource as? NSTableView !== tableView, canDrop {
-            let content = draggingInfo.draggingPasteboard.content()
+            let content = draggingInfo.draggingPasteboard.content
             var items: [Item] = []
             var target: Item?
             var transaction: DiffableDataSourceTransaction<Section, Item>? = nil
@@ -657,7 +657,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
         if canDrop {
-            let items = droppingHandlers.items?(draggingInfo.draggingPasteboard.content()) ?? []
+            let items = droppingHandlers.items?(draggingInfo.draggingPasteboard.content) ?? []
         } else if canDragItems, let draggingImage = draggingHandlers.draggingImage {
             draggingInfo.enumerateDraggingItems(for: tableView, classes: [IdentifiablePasteboardItem.self], using: { draggingItem,_,_ in
                 if let row = (draggingItem.item as? IdentifiablePasteboardItem)?.row, let item = self.item(forRow: row) {

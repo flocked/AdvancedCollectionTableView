@@ -87,3 +87,13 @@ class TableSidebarViewController: NSViewController {
         segmentedControl.selectedSegment = 0
     }
 }
+
+struct Handlers {
+    var options: ((_ draggingInfo: any NSDraggingInfo)->(NSSpringLoadingOptions))?
+}
+
+protocol AAAAa {
+    
+    func options(_ draggingInfo: any NSDraggingInfo) -> NSSpringLoadingOptions
+    
+}

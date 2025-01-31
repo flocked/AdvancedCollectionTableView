@@ -164,14 +164,14 @@ extension CollectionViewDiffableDataSource {
         
         func validateDropInto(_ draggingInfo: NSDraggingInfo, _ proposedIndexPath: IndexPath) -> NSDragOperation {
             guard dataSource.droppingHandlers.isDroppableInto, let handler = dataSource.droppingHandlers.canDropInto, let element = dataSource.element(for: proposedIndexPath) else { return [] }
-            let content = draggingInfo.draggingPasteboard.content()
+            let content = draggingInfo.draggingPasteboard.content
             dropIntoElement = !content.isEmpty && handler(content, element) ? element : nil
             return dropIntoElement != nil ? .copy : []
         }
         
         func validateDrop(_ draggingInfo: NSDraggingInfo) -> NSDragOperation {
             guard let canDrop = dataSource.droppingHandlers.canDrop, let elementsHandler = dataSource.droppingHandlers.elements else { return [] }
-            let content = draggingInfo.draggingPasteboard.content()
+            let content = draggingInfo.draggingPasteboard.content
             if !content.isEmpty && canDrop(content) {
                 droppingElements = elementsHandler(content)
             }
@@ -251,11 +251,11 @@ extension CollectionViewDiffableDataSource {
                     return false
                 }
             } else if dropOperation == .on, let element = dropIntoElement {
-                let content = draggingInfo.draggingPasteboard.content()
+                let content = draggingInfo.draggingPasteboard.content
                 dataSource.droppingHandlers.didDropInto?(content, element)
                 return true
             } else if dropOperation == .before, !droppingElements.isEmpty {
-                let content = draggingInfo.draggingPasteboard.content()
+                let content = draggingInfo.draggingPasteboard.content
                 let transaction: DiffableDataSourceTransaction<Section, Element> = dataSource.dropTransaction(droppingElements, indexPath: indexPath)
                 dataSource.droppingHandlers.willDrop?(content, droppingElements, transaction)
                 dataSource.apply(transaction.finalSnapshot, dataSource.droppingHandlers.animates ? .animated : .withoutAnimation)

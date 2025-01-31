@@ -763,7 +763,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) ?? true == true ? .move : []
         } else if let canDrop = droppingHandlers.canDrop {
             dropItems = []
-            dropContent = info.draggingPasteboard.content()
+            dropContent = info.draggingPasteboard.content
             if canDrop(dropContent, item as? ItemIdentifierType), let items = droppingHandlers.items?(dropContent, item as? ItemIdentifierType), !items.isEmpty {
                 dropItems = items
                 return .move
