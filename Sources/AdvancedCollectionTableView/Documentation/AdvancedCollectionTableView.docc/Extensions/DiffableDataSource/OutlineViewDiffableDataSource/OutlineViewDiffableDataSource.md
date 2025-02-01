@@ -7,6 +7,7 @@
 ### Creating a diffable data source
 
 - ``init(outlineView:cellRegistration:)``
+- ``init(outlineView:cellRegistrations:)``
 - ``init(outlineView:cellProvider:)``
 - ``CellProvider``
 
