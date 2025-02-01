@@ -54,11 +54,6 @@
 - ``expand(_:)``
 - ``collapse(_:)``
 
-### Configurating group items
-
-- ``groupItems`` 
-- ``GroupItemProperties``
-
 ### Debugging snapshots
 
 - ``visualDescription()``

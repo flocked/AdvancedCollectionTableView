@@ -10,17 +10,18 @@
 - ``init(outlineView:cellProvider:)``
 - ``CellProvider``
 
-### Creating group row views.
-
-- ``groupItemCellProvider-swift.property``
-- ``GroupItemCellProvider-swift.typealias``
-- ``applyGroupItemCellRegistration(_:)``
-
 ### Creating row views
 
 - ``rowViewProvider-swift.property``
 - ``RowViewProvider-swift.typealias``
 - ``applyRowViewRegistration(_:)``
+
+### Creating group item cell views.
+
+- ``groupItemCellProvider-swift.property``
+- ``GroupItemCellProvider-swift.typealias``
+- ``applyGroupItemCellRegistration(_:)``
+- ``groupItemsAreCollapsable``
 
 ### Identifying items
 
