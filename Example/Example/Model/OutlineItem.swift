@@ -14,11 +14,11 @@ struct OutlineItem: Hashable, ExpressibleByStringLiteral, CustomStringConvertibl
         self.title = title
     }
     
-    var description: String {
-        title
-    }
-    
     init(stringLiteral value: String) {
         self.title = value
+    }
+    
+    var description: String {
+        title
     }
 }

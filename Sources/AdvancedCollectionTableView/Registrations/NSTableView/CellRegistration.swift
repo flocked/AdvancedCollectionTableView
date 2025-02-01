@@ -107,11 +107,8 @@ public extension NSTableView {
         public typealias Handler = (_ cellView: Cell, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Void
 
         func makeCellView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Item) -> Cell? {
-            register(tableView)
-            if !columnIdentifiers.isEmpty, !columnIdentifiers.contains(tableColumn.identifier) {
-                return nil
-            }
-            guard let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell else { return nil }
+            let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? Cell ?? Cell()
+            cell.identifier = identifier
             handler(cell, tableColumn, row, item)
             return cell
         }

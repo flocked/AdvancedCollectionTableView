@@ -241,7 +241,7 @@ extension NSTableRowView {
         set { setAssociatedValue(newValue, key: "isSelectedObservation") }
     }
 
-    func observeRowView() {
+    public func observeRowView() {
         observeSelection()
         if contentConfiguration != nil || configurationUpdateHandler != nil {
             guard tableViewObservation == nil else { return }

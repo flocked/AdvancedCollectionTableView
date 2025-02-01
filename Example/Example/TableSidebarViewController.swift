@@ -21,9 +21,7 @@ class TableSidebarViewController: NSViewController {
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
-     //   configuration.secondaryText = "sdsd\n"
-        configuration.secondaryTextProperties.maximumNumberOfLines = 0
-     //   configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
+        configuration.image = NSImage(systemSymbolName: sidebarItem.symbolName)
         if sidebarItem.isFavorite {
             configuration.badge = .symbolImage("star.fill", color: .systemYellow, backgroundColor: nil)
         }
@@ -86,14 +84,4 @@ class TableSidebarViewController: NSViewController {
         (view.window?.contentViewController as? SplitViewController)?.swapSidebar()
         segmentedControl.selectedSegment = 0
     }
-}
-
-struct Handlers {
-    var options: ((_ draggingInfo: any NSDraggingInfo)->(NSSpringLoadingOptions))?
-}
-
-protocol AAAAa {
-    
-    func options(_ draggingInfo: any NSDraggingInfo) -> NSSpringLoadingOptions
-    
 }

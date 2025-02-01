@@ -331,6 +331,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     
     // MARK: - Configurating group items
     
+    /*
     /// Properties for group items.
     public var groupItems = GroupItemProperties()
     
@@ -344,35 +345,29 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         public var isEnabled: Bool = false
 
         /**
-         A Boolean value indicating whether group items can be expanded/collapsed.
+         A Boolean value indicating whether group items are always expanded and can't be collapsed.
          
-         The default value is `true` and group items can't be collapsed.
+         The default value is `false` and indicates that group items can be expanded and collapsed like regular items.
          
-         If you set the value to `false`, the group item can be expanded and collapsed like regular items.
+         If set to `true`, the items are always expanded and can't be collapsed.
+
          */
-        public var isAlwaysExpanded: Bool = true
-        
-        /// A Boolean value indicating whether the group items are floating.
-        public var isFloating: Bool = false
-        
-        public var discolure: DisclosureOption = .isDisplayedOnHover
-        
-        public enum DisclosureOption {
-            case isHidden
-            case isDisplayedOnHover
-            case isDisplayed
-        }
+        public var isAlwaysExpanded: Bool = false
         
         /**
+         A Boolean value indicating whether the group items are floating.
          
-         
+         The default value is `false`.
          */
-        public var showsDisclosureOnHovering = false
+        public var isFloating: Bool = false
     }
+    */
     
+    /*
     var _groupItems: [ItemIdentifierType] {
         groupItems.isEnabled && groupItems.isAlwaysExpanded ? rootItems : []
     }
+     */
     
     // MARK: - Debugging snapshots
         

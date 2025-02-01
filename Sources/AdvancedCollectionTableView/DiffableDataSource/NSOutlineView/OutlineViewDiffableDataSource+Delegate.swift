@@ -55,36 +55,17 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-            let isGroupItem = self.outlineView(dataSource.outlineView, isGroupItem: item)
-            let rowView: NSTableRowView
-            if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType) {
-                rowView = view
+            if self.outlineView(dataSource.outlineView, isGroupItem: item) {
+                let rowView = outlineView.makeView(withIdentifier: "_GroupRowView", owner: self) as? NSTableRowView ?? NSTableRowView()
+                rowView.identifier = "_GroupRowView"
+                return rowView
+            } else if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType) {
+                return view
             } else {
-                rowView = outlineView.makeView(withIdentifier: isGroupItem ? "_GroupRowView" : "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
-                rowView.identifier = isGroupItem ? "_GroupRowView" : "_RowView"
-                /*
-                if self.outlineView(dataSource.outlineView, isGroupItem: item) {
-                    let groupRowView = outlineView.makeView(withIdentifier: "GroupItemRowView", owner: nil) as? GroupItemRowView ?? GroupItemRowView()
-                    groupRowView.setup()
-                  rowView =  groupRowView
-                    rowView.identifier = "GroupItemRowView"
-                } else {
-                    rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
-                    rowView.identifier = "_RowView"
-                }
-                 */
+                let rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
+                rowView.identifier = "_RowView"
+                return rowView
             }
-            if !dataSource.currentSnapshot.groupItems.isAlwaysExpanded, isGroupItem {
-                var isExpanded = false
-                if let item = item as? ItemIdentifierType {
-                    isExpanded = dataSource.currentSnapshot.isExpanded(item)
-                }
-                let button = rowView.viewWithTag(OutlineButton.tag) as? OutlineButton ?? OutlineButton(for: rowView, dataSource.outlineView)
-                button.state = isExpanded ? .on : .off
-            } else {
-                rowView.viewWithTag(OutlineButton.tag)?.removeFromSuperview()
-            }
-            return rowView
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldExpandItem item: Any) -> Bool {
@@ -142,20 +123,26 @@ extension OutlineViewDiffableDataSource {
     
         func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
             if self.outlineView(outlineView, isGroupItem: item), let groupItemCellProvider = dataSource.groupItemCellProvider {
-                return groupItemCellProvider(outlineView, item as! ItemIdentifierType)
+                let rowView = outlineView.makeView(withIdentifier: "_GroupCellRowView", owner: self) as? GroupItemCellRowView ?? GroupItemCellRowView()
+                rowView.identifier = "_GroupCellRowView"
+                NSAnimationContext.runNonAnimated {
+                    rowView.view = groupItemCellProvider(outlineView, item as! ItemIdentifierType)
+                }
+                return rowView
             } else {
                 return dataSource.cellProvider(outlineView, tableColumn!, item as! ItemIdentifierType)
             }
         }
         
-        /*
         func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
-            !self.outlineView(outlineView, isGroupItem: item)
+            if !dataSource.groupItemsAreCollapsable, self.outlineView(outlineView, isGroupItem: item) {
+                return false
+            }
+            return true
         }
-        */
         
         func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
-            guard let item = item as? ItemIdentifierType, dataSource.currentSnapshot.groupItems.isEnabled else { return false }
+            guard let item = item as? ItemIdentifierType, dataSource.groupItemCellProvider != nil else { return false }
             return dataSource.currentSnapshot.rootItems.contains(item)
         }
         
@@ -167,101 +154,78 @@ extension OutlineViewDiffableDataSource {
         init(_ dataSource: OutlineViewDiffableDataSource!) {
             self.dataSource = dataSource
         }
-        
-        class OutlineButton: NSButton {
-            init(for view: NSView, _ outlineView: NSOutlineView) {
-                super.init(frame: .zero)
-                title = ""
-                bezelStyle = .disclosure
-                sizeToFit()
-                frame.origin = .init(x: view.bounds.width - 20, y: (view.bounds.height/2.0)-(bounds.height/2.0))
-                target = outlineView
-                action = NSSelectorFromString("_outlineControlClicked:")
-                tag = Self.tag
-                view.addSubview(self)
-                frameObservation = observeChanges(for: \.superview?.frame) { [weak self] old, new in
-                    guard let self = self, old?.size != new?.size, let new = new?.size else { return }
-                    self.frame.origin = CGPoint(x: new.width - 20, y: (new.height/2.0)-(self.bounds.height/2.0))
-                }
-            }
-            
-            static var tag: Int { 3345665333 }
-            
-            required init?(coder: NSCoder) {
-                fatalError("init(coder:) has not been implemented")
-            }
-            
-            var frameObservation: KeyValueObservation?
+    }
+}
+
+fileprivate class GroupItemCellRowView: NSTableRowView {
+    var view: NSView? {
+        didSet {
+            guard oldValue !== view else { return }
+            oldValue?.removeFromSuperview()
+            guard let view = view else { return }
+            addSubview(withConstraint: view)
         }
     }
 }
 
-
 /*
-extension OutlineViewDiffableDataSource {
-    class SectionRowView: NSTableRowView {
-        override var frame: NSRect {
-            didSet {
-                if frame.size.width != 200 {
-                    frame.size.width = 200
-                }
-            }
-        }
-        
-        override var subviews: [NSView] {
-            didSet {
-            }
-        }
-        
-        var _button: NSButton?
-        var buttonSuperviewObservation: KeyValueObservation?
-        
-        override func addSubview(_ view: NSView) {
-            super.addSubview(view)
-            if let button = subviews(type: NSButton.self).first {
-                _button = button
-                buttonSuperviewObservation = button.observeChanges(for: \.superview) { [weak self] old, new in
-                    guard let self = self else { return }
-                    if new == nil {
-                        self.addSubview(button)
-                    }
-                    button.frame.origin.x = frame.width - button.frame.width
-                }
-            }
-        }
-        
-        override func viewDidMoveToSuperview() {
-            super.viewDidMoveToSuperview()
-            if let button = _button, !subviews.contains(button) {
-              //  addSubview(button)
-            }
-        }
-    }
-}
-*/
-
-/*
- class GroupItemRowView: NSTableRowView {
-     var frameObservation: KeyValueObservation?
-     func setup() {
-         guard frameObservation == nil else { return }
-         isGroupRowStyle = true
-         frameObservation = observeChanges(for: \.superview?.frame) { [weak self] old, new in
-             guard let self = self, let new = new else { return }
-             Swift.print("heree", new)
-           //  self.frame.size.width = new.width
+ fileprivate class GroupItemRowView: NSTableRowView {
+     
+     var mouseEntered = false
+     var trackingArea: TrackingArea?
+     var disclosureButton: NSButton?
+     
+     override func mouseEntered(with event: NSEvent) {
+         mouseEntered = true
+     }
+     
+     override func mouseExited(with event: NSEvent) {
+         disclosureButton?.isHidden = false
+         mouseEntered = false
+     }
+     
+     override func updateTrackingAreas() {
+         super.updateTrackingAreas()
+         trackingArea?.update()
+     }
+     
+     func setupDisclosureButton(for outlineView: NSOutlineView, displaysAlways: Bool) {
+         guard disclosureButton == nil || disclosureButton?.target !== outlineView else {
+             if displaysAlways {
+                 disclosureButton?.state = .on
+             }
+             return
+         }
+         disclosureButton?.removeFromSuperview()
+         disclosureButton = outlineView.makeView(withIdentifier: NSOutlineView.showHideButtonIdentifier, owner: nil) as? NSButton
+         disclosureButton?.state = displaysAlways ? .on : .off
+         addSubview(disclosureButton!)
+         updateDisclosureButton()
+         trackingArea = TrackingArea(for: self, options: [.activeAlways,.mouseEnteredAndExited])
+         updateTrackingAreas()
+     }
+     
+     override func addSubview(_ view: NSView) {
+         super.addSubview(view)
+         if view != disclosureButton && view.identifier == NSOutlineView.showHideButtonIdentifier, mouseEntered {
+             disclosureButton?.isHidden = true
          }
      }
      
-     override var frame: NSRect {
-         didSet {
-             guard oldValue != frame else { return }
-             Swift.print("row", frame)
-             if let superview = superview {
-              //   frame.size.width = superview.bounds.width
-             }
-
-         }
+     override func layout() {
+         super.layout()
+         updateDisclosureButton()
+     }
+     
+     func updateDisclosureButton() {
+         guard let button = disclosureButton else { return }
+         button.frame.origin = CGPoint(x: bounds.width - 22.5, y: (bounds.height/2.0)-(button.bounds.height/2.0))
+     }
+     
+     func removeDisclosureButton() {
+         disclosureButton?.removeFromSuperview()
+         disclosureButton = nil
+         trackingArea = nil
      }
  }
  */

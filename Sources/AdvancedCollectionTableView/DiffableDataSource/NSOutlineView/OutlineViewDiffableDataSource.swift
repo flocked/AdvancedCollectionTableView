@@ -54,6 +54,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var dropItems: [ItemIdentifierType] = []
     var dropContent: [PasteboardReading] = []
     var isApplyingSnapshot = false
+    var didApplyGroupItems = false
     lazy var groupRowTableColumn = NSTableColumn()
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
@@ -78,24 +79,49 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         }
     }
     
-    /// The closure that configures and returns cell views for the outline view’s group items.
+    /**
+     The closure that configures and returns cell views for the outline view’s group items.
+     
+     To use group items, enable group items in the snapshot you apply, by setting ``OutlineViewDiffableDataSourceSnapshot/groupItems`` `isEnabled` to `true`.
+     */
     open var groupItemCellProvider: GroupItemCellProvider?
     
-    /// Applies the specified cell registration to configures and returns cell views for the outline view’s group items.
+    /**
+     Applies the specified cell registration to configures and returnscellrow views for the outline view’s group items.
+     
+     To use group items, enable group items in the snapshot you apply, by setting ``OutlineViewDiffableDataSourceSnapshot/groupItems`` `isEnabled` to `true`.
+     */
     open func applyGroupItemCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
+        let previousUsesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         groupItemCellProvider = { outlineView, item in
-            outlineView.makeCellView(using: registration, forColumn: self.groupRowTableColumn, row: 0, item: item)!
+            outlineView.makeCellView(using:registration, forColumn: self.groupRowTableColumn, row: 0, item: item)!
+        }
+        
+        reapplySnapshot(previousUsesGroupItems: previousUsesGroupItems)
+    }
+    
+    /**
+     A Boolean value indicating whether group items are collapse can be expanded and collapsed like regular items.
+     
+     The default value is `true`. If set to `false`, the items are always expanded and can't be collapsed.
+     */
+    open var groupItemsAreCollapsable: Bool = true {
+        didSet {
+            guard oldValue != groupItemsAreCollapsable, groupItemCellProvider != nil else { return }
+            reapplySnapshot()
         }
     }
         
     /**
-     A closure that configures and returns a cell view for a outline view group row.
+     A closure that configures and returns a cell view for a group item.
+     
+     To use group items, enable group items in the snapshot you apply, by setting ``OutlineViewDiffableDataSourceSnapshot/groupItems`` `isEnabled` to `true`.
      
      - Parameters:
-        - outlineView: The outline view to configure this cell for.
-        - item: The item for this cell.
+        - outlineView: The outline view to configure this cell view for.
+        - item: The item for this cell view.
      
-     - Returns: A configured cell object.
+     - Returns: A configured cell view object.
      */
     public typealias GroupItemCellProvider = (_ outlineView: NSOutlineView, _ identifier: ItemIdentifierType) -> NSView
 
@@ -117,7 +143,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                     guard let self = self else { return nil }
                     return self.menuProvider?(self.items(for: location))
                 }
-            } else {
+            } else if oldValue != nil {
                 outlineView.menuProvider = nil
             }
         }
@@ -150,7 +176,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                     guard let self = self, let handler = self.rightClickHandler else { return }
                     handler(self.outlineView.rightClickRowIndexes(for: event).compactMap({ self.item(forRow: $0) }))
                 }
-            } else {
+            } else if oldValue != nil {
                 outlineView.mouseHandlers.rightDown = nil
             }
         }
@@ -592,14 +618,27 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
+      apply(snapshot, option, completion: completion, previousUsesGroupItems: nil)
+    }
+    
+    func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil, previousUsesGroupItems: Bool?, isReapplying: Bool = false) {
         isApplyingSnapshot = true
+        let usesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
-        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
-         updateEmptyView(previousIsEmpty: previousIsEmpty)
-        updateEmptyView(previousIsEmpty: previousIsEmpty)
+        outlineView.hoveredRow = !isReapplying ? -1 : outlineView.hoveredRow
+        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion, previousGroupItems: (previousUsesGroupItems ?? usesGroupItems) ? current.rootItems : [], groupItems: usesGroupItems ? snapshot.rootItems : [])
+        if !isReapplying {
+            updateEmptyView(previousIsEmpty: previousIsEmpty)
+        }
         isApplyingSnapshot = false
+    }
+    
+    func reapplySnapshot(previousUsesGroupItems: Bool? = nil) {
+        let currentSnapshot = currentSnapshot
+        apply(emptySnapshot(), .withoutAnimation, previousUsesGroupItems: previousUsesGroupItems, isReapplying: true)
+        apply(currentSnapshot, .withoutAnimation, previousUsesGroupItems: previousUsesGroupItems, isReapplying: true)
     }
     
     public func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
@@ -782,6 +821,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
                 } else {
                     index = snapshot.rootItems.count
                 }
+            }
+            if index == 0, let item = item as? ItemIdentifierType, !snapshot.isExpanded(item) {
+                index = snapshot.children(of: item).count
             }
             snapshot.move(draggedItems, toIndex: index, of: item as? ItemIdentifierType)
             let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)

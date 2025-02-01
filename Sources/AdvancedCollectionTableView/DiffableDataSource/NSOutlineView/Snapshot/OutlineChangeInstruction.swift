@@ -75,7 +75,7 @@ extension OutlineViewDiffableDataSourceSnapshot {
 }
 
 extension NSOutlineView {
-    func apply<Item: Hashable>(_ snapshot: OutlineViewDiffableDataSourceSnapshot<Item>, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<Item>, option: NSDiffableDataSourceSnapshotApplyOption, animation: NSTableView.AnimationOptions, completion: (() -> Void)?) {
+    func apply<Item: Hashable>(_ snapshot: OutlineViewDiffableDataSourceSnapshot<Item>, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<Item>, option: NSDiffableDataSourceSnapshotApplyOption, animation: NSTableView.AnimationOptions, completion: (() -> Void)?, previousGroupItems: [Item], groupItems: [Item]) {
         func applySnapshot() {
             beginUpdates()
             for instruction in currentSnapshot.instructions(forMorphingTo: snapshot) {
@@ -93,16 +93,16 @@ extension NSOutlineView {
         }
         
         func expandCollapseItems() {
-            let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + currentSnapshot._groupItems)
-            let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + snapshot._groupItems)
+            
+          //  groupItems.isEnabled && groupItems.isAlwaysExpanded
+            let oldExpanded = Set(currentSnapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + previousGroupItems)
+            let newExpanded = Set(snapshot.nodes.filter { $0.value.isExpanded }.map { $0.key } + groupItems)
             let collapse = Array(oldExpanded.subtracting(newExpanded))
             let expand = Array(newExpanded.subtracting(oldExpanded))
             collapse.forEach({ animator().collapseItem($0) })
             expand.forEach({ animator().expandItem($0) })
         }
-        
-        floatsGroupRows = snapshot.groupItems.isFloating
-        
+                
         if option.isReloadData {
             reloadData()
             expandCollapseItems()

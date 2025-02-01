@@ -181,7 +181,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                     guard let self = self else { return nil }
                     return self.menuProvider?(self.items(for: location))
                 }
-            } else {
+            } else if oldValue != nil {
                 tableView.menuProvider = nil
             }
         }
@@ -202,7 +202,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                     guard let self = self, let handler = self.rightClickHandler else { return }
                     handler(self.tableView.rightClickRowIndexes(for: event).compactMap({ self.item(forRow: $0) }))
                 }
-            } else {
+            } else if oldValue != nil {
                 tableView.mouseHandlers.rightDown = nil
             }
         }
@@ -1248,6 +1248,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         public var didDrop: ((_ content: [PasteboardReading], _ target: Item?, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true
+        
+        /// The handler that determines whether items can be dropped on another item.
+        var canDropItems: ((_ items: [Item], _ target: Item) -> (Bool))?
+        /// The handler that gets called before items are dropped on another item.
+        var willDropItems: ((_ content: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
+        /// The handler that gets called after items are dropped on another item.
+        var didDropItems: ((_ content: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
+
     }
 }
 

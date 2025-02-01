@@ -17,7 +17,7 @@ class SidebarItem: NSObject, Identifiable {
         self.title = title
         self.symbolName = symbolName
     }
-
+    
     static let sampleItems1 = [SidebarItem("Messages", symbolName: "message.fill"),
                                       SidebarItem("Photos", symbolName: "photo"),
                                       SidebarItem("Videos", symbolName: "film")]

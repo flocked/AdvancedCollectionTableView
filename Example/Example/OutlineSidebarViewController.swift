@@ -7,11 +7,11 @@
 
 import AppKit
 import AdvancedCollectionTableView
-import FZUIKit
 
 class OutlineSidebarViewController: NSViewController {
     typealias DataSource = OutlineViewDiffableDataSource<OutlineItem>
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, OutlineItem>
+
 
     @IBOutlet var outlineView: NSOutlineView!
     
@@ -22,34 +22,28 @@ class OutlineSidebarViewController: NSViewController {
     }
 
     lazy var cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
-        var configuration = NSListContentConfiguration.sidebar()
+        var configuration = tableCell.defaultContentConfiguration()
         configuration.text = outlineItem.title
         tableCell.contentConfiguration = configuration
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         outlineView.dataSource = dataSource
+        dataSource.applyGroupItemCellRegistration(cellRegistration)
                 
         /// Enables reordering selected rows by dragging them.
         dataSource.reorderingHandlers.canReorder = { _,_ in return true }
         
         /// Enables deleting selected items via backspace key.
         dataSource.deletingHandlers.canDelete = { items in return items }
-        
-        dataSource.droppingHandlers.canDrop = { _,parent in parent == nil }
-        dataSource.droppingHandlers.items = { content,_ in
-            return content.strings.compactMap({ OutlineItem("\($0)")  })
-            
-        }
-        
+
         applySnapshot()
     }
         
     func applySnapshot() {
         var snapshot = dataSource.emptySnapshot()
-                
         let rootItems: [OutlineItem] = ["Root 1", "Root 2", "Root 3", "Root 4", "Root 5"]
         snapshot.append(rootItems)
         rootItems.forEach { rootItem in
@@ -61,7 +55,7 @@ class OutlineSidebarViewController: NSViewController {
             }
         }
         dataSource.apply(snapshot, .withoutAnimation)
-        dataSource.expand(rootItems[0])
+        dataSource.expand(rootItems)
     }
     
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {

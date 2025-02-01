@@ -102,7 +102,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                     }
                     return menu
                 }
-            } else {
+            } else if oldValue != nil {
                 collectionView.menuProvider = nil
             }
         }
@@ -123,7 +123,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                     guard let self = self, let handler = self.rightClickHandler else { return }
                     handler(self.collectionView.rightClickIndexPaths(for: event).compactMap({ self.element(for:$0) }))
                 }
-            } else {
+            } else if oldValue != nil {
                 collectionView.mouseHandlers.rightDown = nil
             }
         }
