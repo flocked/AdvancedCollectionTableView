@@ -7,6 +7,7 @@
 
 import AppKit
 import FZUIKit
+import FZSwiftUtils
 
 /**
  A content view for displaying collection-based item content.

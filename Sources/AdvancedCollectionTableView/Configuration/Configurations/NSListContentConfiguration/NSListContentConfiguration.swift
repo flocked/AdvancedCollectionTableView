@@ -7,6 +7,7 @@
 
 import AppKit
 import FZUIKit
+import FZSwiftUtils
 
 /**
  A content configuration for a list-based content view.
