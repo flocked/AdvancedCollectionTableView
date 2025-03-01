@@ -442,6 +442,35 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string, .URL])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
         tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
+        
+        if tableView.responds(to: #selector(NSTableView.draggingSession(_:movedTo:))) {
+            do {
+               try tableView.replaceMethod(
+                #selector(NSTableView.draggingSession(_:movedTo:)),
+               methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, NSPoint) -> ()).self,
+               hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, NSPoint) -> ()).self) { store in {
+                   object, session, point in
+                   Swift.print("draggingSession movedTo", point)
+                   store.original(object, #selector(NSView.mouseDown(with:)), session, point)
+                   }
+               }
+            } catch {
+               debugPrint(error)
+            }
+        } else {
+            do {
+               try tableView.addMethod(
+                #selector(NSTableView.draggingSession(_:movedTo:)),
+               methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, NSPoint) -> ()).self,
+               hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, NSPoint) -> ()).self) { store in {
+                   object, session, point in
+                   Swift.print("draggingSession movedTo", point)
+                   }
+               }
+            } catch {
+               debugPrint(error)
+            }
+        }
     }
     
     /**
