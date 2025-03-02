@@ -285,8 +285,6 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
         
         collectionView.addGestureRecognizer(dragGesture)
-
-        
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
     }
     
