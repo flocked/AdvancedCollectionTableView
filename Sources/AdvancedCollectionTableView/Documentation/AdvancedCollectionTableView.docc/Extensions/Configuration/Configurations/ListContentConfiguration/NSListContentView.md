@@ -10,6 +10,12 @@
 
 - ``configuration``
 
+### Managing the content layout
+
+- ``textLayoutGuide``
+- ``secondaryTextLayoutGuide``
+- ``imageLayoutGuide``
+
 ### Determining configuration support
 
 - ``supports(_:)``
