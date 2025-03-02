@@ -30,11 +30,9 @@ extension NSTableView {
                     } else {
                         try addMethod(
                             selector,
-                            methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
-                            hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in {
+                            methodSignature: (@convention(block)  (AnyObject, NSDraggingSession, CGPoint) -> ()).self)  {
                                 object, session, point in
                                 (object as? NSTableView)?.draggingSessionMoveHandler?(session, point)
-                            }
                             }
                     }
                 } catch {
