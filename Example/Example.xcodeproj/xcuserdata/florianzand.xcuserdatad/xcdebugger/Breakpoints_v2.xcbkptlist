@@ -3,22 +3,4 @@
    uuid = "D2B010BE-3534-4443-8561-CB5D17ED66BC"
    type = "1"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ECF54206-5C3A-488C-B7B6-35FC90C650FE"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../../Library/Developer/Xcode/DerivedData/CollectionViewTemplate-hbzgtugoftebbnctjkkxcohzifsf/SourcePackages/checkouts/AdvancedCollectionTableView/Sources/AdvancedCollectionTableView/Configuration/Configurations/CollectionViewContentConfiguration/NSItemContentConfiguration.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
-            landmarkName = "TextTransform"
-            landmarkType = "13">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

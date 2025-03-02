@@ -442,35 +442,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string, .URL])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
         tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
-        
-        if tableView.responds(to: #selector(NSTableView.draggingSession(_:movedTo:))) {
-            do {
-               try tableView.replaceMethod(
-                #selector(NSTableView.draggingSession(_:movedTo:)),
-               methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, NSPoint) -> ()).self,
-               hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, NSPoint) -> ()).self) { store in {
-                   object, session, point in
-                   Swift.print("draggingSession movedTo", point)
-                   store.original(object, #selector(NSView.mouseDown(with:)), session, point)
-                   }
-               }
-            } catch {
-               debugPrint(error)
-            }
-        } else {
-            do {
-               try tableView.addMethod(
-                #selector(NSTableView.draggingSession(_:movedTo:)),
-               methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, NSPoint) -> ()).self,
-               hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, NSPoint) -> ()).self) { store in {
-                   object, session, point in
-                   Swift.print("draggingSession movedTo", point)
-                   }
-               }
-            } catch {
-               debugPrint(error)
-            }
-        }
+        tableView.setDraggingSourceOperationMask(.copy, forLocal: true)
     }
     
     /**
@@ -495,14 +467,18 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dropping
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        if draggingInfo.draggingSource as? NSTableView === tableView {
-            
-        } else {
-            
-        }
-        
         canDrop = false
         dropTargetRow = nil
+        if draggingInfo.draggingSource as? NSTableView !== tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
+            let content = draggingInfo.draggingPasteboard.content
+            dropTargetRow = dropOperation == .on ? row : nil
+            let target = dropOperation == .on ? item(forRow: row) : nil
+            if !content.isEmpty, canDrop(content, target) {
+                self.canDrop = true
+                return .copy
+            }
+        }
+        
         if !dragingRowIndexes.isEmpty {
             if reorderingHandlers.droppable, let canDrop = reorderingHandlers.canDrop, dropOperation == .on {
                 if dragingRowIndexes.count == 1, dragingRowIndexes.first == row {
@@ -555,15 +531,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return moveSectionTransaction(to: row) != nil ? .move : []
         }
 
-        if draggingInfo.draggingSource as? NSTableView !== tableView, let canDrop = droppingHandlers.canDrop, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
-            let content = draggingInfo.draggingPasteboard.content
-            dropTargetRow = dropOperation == .on ? row : nil
-            let target = dropOperation == .on ? item(forRow: row) : nil
-            if !content.isEmpty, canDrop(content, target) {
-                self.canDrop = true
-                return .copy
-            }
-        }
+      
         return []
     }
     

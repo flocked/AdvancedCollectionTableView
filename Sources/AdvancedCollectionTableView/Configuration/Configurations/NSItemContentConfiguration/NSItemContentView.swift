@@ -49,6 +49,33 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         configuration is NSItemContentConfiguration
     }
     
+    /**
+     A guide for positioning the primary text in the content view.
+     
+     If the configuration doesn’t specify primary text, the value of this property is `nil`.
+     
+     If you apply a new configuration without primary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var textLayoutGuide: NSLayoutGuide?
+    
+    /**
+     A guide for positioning the secondary text in the content view.
+     
+     If the configuration doesn’t specify secondary text, the value of this property is `nil`.
+     
+     If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var secondaryTextLayoutGuide: NSLayoutGuide?
+    
+    /**
+     A guide for positioning the image or view in the content view.
+     
+     If the configuration doesn’t specify an image or view, the value of this property is `nil`.
+     
+     If you apply a new configuration without image or view to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var contentLayoutGuide: NSLayoutGuide?
+    
     func isHovering(at location: CGPoint) -> Bool {
         return (contentView.frame.contains(location) && contentView.isHidden == false) ||
         CGRect(0, 0, max(textField.bounds.width, secondaryTextField.bounds.width), contentView.frame.y).contains(location)
@@ -179,5 +206,33 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
                 secondaryTextFieldConstraint = secondaryTextField.leftAnchor.constraint(equalTo: stackView.leftAnchor).activate()
             }
         }
+        updateLayoutGuides()
+    }
+    
+    func updateLayoutGuides() {
+        if !appliedConfiguration.hasText, let guide = textLayoutGuide {
+            removeLayoutGuide(guide)
+            textLayoutGuide = nil
+        } else if appliedConfiguration.hasText, textLayoutGuide == nil {
+            textLayoutGuide = NSLayoutGuide()
+           addLayoutGuide(textLayoutGuide!)
+            textLayoutGuide?.constraint(to: textField)
+        }
+        if !appliedConfiguration.hasSecondaryText, let guide = secondaryTextLayoutGuide {
+           removeLayoutGuide(guide)
+           secondaryTextLayoutGuide = nil
+        } else if appliedConfiguration.hasSecondaryText, secondaryTextLayoutGuide == nil {
+           secondaryTextLayoutGuide = NSLayoutGuide()
+           addLayoutGuide(secondaryTextLayoutGuide!)
+            secondaryTextLayoutGuide?.constraint(to: secondaryTextField)
+       }
+       if !appliedConfiguration.hasContent, let guide = contentLayoutGuide {
+           removeLayoutGuide(guide)
+           contentLayoutGuide = nil
+       } else if appliedConfiguration.hasContent, contentLayoutGuide == nil {
+           contentLayoutGuide = NSLayoutGuide()
+           addLayoutGuide(contentLayoutGuide!)
+           contentLayoutGuide?.constraint(to: contentView)
+       }
     }
 }

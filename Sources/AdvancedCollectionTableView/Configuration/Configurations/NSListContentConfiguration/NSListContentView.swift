@@ -44,6 +44,32 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     }
     
     /**
+     A guide for positioning the primary text in the content view.
+     
+     If the configuration doesn’t specify primary text, the value of this property is `nil`.
+     
+     If you apply a new configuration without primary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var textLayoutGuide: NSLayoutGuide?
+    
+    /**
+     A guide for positioning the secondary text in the content view.
+     
+     If the configuration doesn’t specify secondary text, the value of this property is `nil`.
+     
+     If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var secondaryTextLayoutGuide: NSLayoutGuide?
+    
+    /**
+     A guide for positioning the image in the content view.
+     
+     If the configuration doesn’t specify an image, the value of this property is `nil`.
+     
+     If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
+     */
+    public internal(set) var imageLayoutGuide: NSLayoutGuide?
+    /**
      Determines whether the view is compatible with the provided configuration.
      
      Returns `true` if the configuration is ``NSListContentConfiguration``, or `false` if not.
@@ -96,10 +122,6 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         secondaryTextField.isEnabled = appliedConfiguration.isEnabled
         secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
         secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        
-        if isAnimating, imageView.image != appliedConfiguration.image || imageView.properties != appliedConfiguration.imageProperties {
-            imageView.transition(.fade(duration: NSAnimationContext.current.duration))
-        }
         imageView.image = appliedConfiguration.image
         imageView.properties = appliedConfiguration.imageProperties
         
@@ -174,6 +196,34 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
             animator(isAnimating).rotation = _rotation
         }
         animator(isAnimating).alphaValue = appliedConfiguration.alpha
+        updateLayoutGuides()
+    }
+    
+    func updateLayoutGuides() {
+         if !appliedConfiguration.hasText, let guide = textLayoutGuide {
+             removeLayoutGuide(guide)
+             textLayoutGuide = nil
+         } else if appliedConfiguration.hasText, textLayoutGuide == nil {
+             textLayoutGuide = NSLayoutGuide()
+            addLayoutGuide(textLayoutGuide!)
+             textLayoutGuide?.constraint(to: textField)
+         }
+        if !appliedConfiguration.hasSecondaryText, let guide = secondaryTextLayoutGuide {
+            removeLayoutGuide(guide)
+            secondaryTextLayoutGuide = nil
+        } else if appliedConfiguration.hasSecondaryText, secondaryTextLayoutGuide == nil {
+            secondaryTextLayoutGuide = NSLayoutGuide()
+            addLayoutGuide(secondaryTextLayoutGuide!)
+            secondaryTextLayoutGuide?.constraint(to: secondaryTextField)
+        }
+        if appliedConfiguration.image == nil, let guide = imageLayoutGuide {
+            removeLayoutGuide(guide)
+            imageLayoutGuide = nil
+        } else if appliedConfiguration.image != nil, imageLayoutGuide == nil {
+            imageLayoutGuide = NSLayoutGuide()
+            addLayoutGuide(imageLayoutGuide!)
+            imageLayoutGuide?.constraint(to: imageView)
+        }
     }
     
     func updateAccesoryViews() {
