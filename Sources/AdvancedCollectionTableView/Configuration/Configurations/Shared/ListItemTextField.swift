@@ -35,6 +35,18 @@ class ListItemTextField: NSTextField, NSTextFieldDelegate {
         }
         return firstSuperview(for: NSTableView.self)
     }
+    
+    var layoutGuide: NSLayoutGuide?
+    func updateLayoutGuide(for view: NSView) {
+        if isHidden, let guide = layoutGuide {
+            view.removeLayoutGuide(guide)
+            layoutGuide = nil
+        } else if isHidden, layoutGuide == nil {
+            layoutGuide = NSLayoutGuide()
+            view.addLayoutGuide(layoutGuide!)
+            layoutGuide?.constraint(to: self)
+        }
+    }
 
     func updateText(_ text: String?, _ attributedString: AttributedString?, _ placeholder: String? = nil, _ attributedPlaceholder: AttributedString? = nil) {
         let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0

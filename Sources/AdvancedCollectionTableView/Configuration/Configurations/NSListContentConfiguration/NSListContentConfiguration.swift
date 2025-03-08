@@ -338,7 +338,7 @@ extension NSListContentConfiguration {
         configuration.textProperties.maximumNumberOfLines = 1
         configuration.secondaryTextProperties.font = .systemFont(style).weight(weight)
         configuration.secondaryTextProperties.maximumNumberOfLines = 0
-        configuration.imageProperties.tintColor = color.primary
+        configuration.imageProperties.tintColor = color.colors.first
         configuration.imageProperties.sizing = .firstTextHeight
         configuration.imageProperties.symbolConfiguration = .font(style, weight: weight).color(color)
         configuration.imageToTextPadding = 3.0

@@ -29,8 +29,6 @@ extension NSItemContentView {
         var previousSize: CGSize = .zero
         var centerYConstraint: NSLayoutConstraint?
         var intrinsicSize = CGSize(NSView.noIntrinsicMetric, NSView.noIntrinsicMetric)
-        var _scaleTransform: Scale = .none
-        var _rotation: Rotation = .zero
 
         var view: NSView? {
             didSet {
@@ -273,16 +271,8 @@ extension NSItemContentView {
             view = configuration.view
             overlayView = configuration.overlayView
             
-            if contentProperties.scaleTransform != _scaleTransform {
-                anchorPoint = .center
-                _scaleTransform = contentProperties.scaleTransform
-                animator(isAnimating).scale = _scaleTransform
-            }
-            if contentProperties.rotation != _rotation {
-                anchorPoint = .center
-                _rotation = contentProperties.rotation
-                animator(isAnimating).rotation = _rotation
-            }
+            _scaleTransform = contentProperties.scaleTransform
+            _rotation = contentProperties.rotation
             
             toolTip = contentProperties.toolTip
             animator(isAnimating).isHidden = !configuration.hasContent

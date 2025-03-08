@@ -14,31 +14,25 @@ extension NSTableView {
         set {
             setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
             let selector = #selector(NSTableView.draggingSession(_:movedTo:))
-            if newValue != nil {
-                guard !isMethodReplaced(selector) else { return }
+            if newValue != nil, !isMethodReplaced(selector) {
                 do {
                     if responds(to: selector) {
-                        try replaceMethod(
-                            selector,
-                            methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
-                            hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in {
-                                object, session, point in
+                        try replaceMethod(selector,
+                            methodSignature: (@convention(c) (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
+                            hookSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in { object, session, point in
                                 (object as? NSTableView)?.draggingSessionMoveHandler?(session, point)
                                 store.original(object, selector, session, point)
-                            }
-                            }
+                            } }
                     } else {
-                        try addMethod(
-                            selector,
-                            methodSignature: (@convention(block)  (AnyObject, NSDraggingSession, CGPoint) -> ()).self)  {
-                                object, session, point in
+                        try addMethod(selector,
+                            methodSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { object, session, point in
                                 (object as? NSTableView)?.draggingSessionMoveHandler?(session, point)
                             }
                     }
                 } catch {
                    debugPrint(error)
                 }
-            } else {
+            } else if newValue == nil {
                 resetMethod(selector)
             }
         }

@@ -50,7 +50,7 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
      
      If you apply a new configuration without primary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
      */
-    public internal(set) var textLayoutGuide: NSLayoutGuide?
+    public var textLayoutGuide: NSLayoutGuide? { textStackView.textField.layoutGuide }
     
     /**
      A guide for positioning the secondary text in the content view.
@@ -59,7 +59,7 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
      
      If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
      */
-    public internal(set) var secondaryTextLayoutGuide: NSLayoutGuide?
+    public var secondaryTextLayoutGuide: NSLayoutGuide? { textStackView.secondaryTextField.layoutGuide }
     
     /**
      A guide for positioning the image in the content view.
@@ -85,18 +85,19 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         }
     }
     
-    let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
-    let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+    //let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+    //let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+    var textField: ListItemTextField { textStackView.textField }
+    var secondaryTextField: ListItemTextField { textStackView.secondaryTextField }
+
     lazy var imageView = ListImageView(properties: appliedConfiguration.imageProperties)
     var badgeView: BadgeView?
     var topAccesoryViews: [AccessoryView] = []
     var bottomAccesoryViews: [AccessoryView] = []
-    lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading)
+    lazy var textStackView = TextStackView()
     lazy var imageTextStackView = NSStackView(views: [imageView, textStackView]).orientation(.horizontal).distribution(.fill)
     lazy var badgeStackView = NSStackView(views: [imageTextStackView]).orientation(.horizontal).distribution(.fill).alignment(.centerY)
     var stackViewConstraints: [NSLayoutConstraint] = []
-    var _scaleTransform: Scale = .none
-    var _rotation: Rotation = .zero
     
     var tableCellView: NSTableCellView? {
         superview as? NSTableCellView
@@ -115,17 +116,12 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
 
         toolTip = appliedConfiguration.toolTip
         imageView.verticalConstraint?.activate(false)
-                
-        textField.isEnabled = appliedConfiguration.isEnabled
-        textField.properties = appliedConfiguration.textProperties
-        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
-        secondaryTextField.isEnabled = appliedConfiguration.isEnabled
-        secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
-        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
+        
+        textStackView.update(with: appliedConfiguration, for: self)
+
         imageView.image = appliedConfiguration.image
         imageView.properties = appliedConfiguration.imageProperties
         
-        textStackView.animator(isAnimating).spacing = appliedConfiguration.textToSecondaryTextPadding
         imageTextStackView.animator(isAnimating).spacing = appliedConfiguration.imageToTextPadding
         imageTextStackView.animator(isAnimating).orientation = appliedConfiguration.imageProperties.position.orientation
         imageTextStackView.animator(isAnimating).alignment = appliedConfiguration.imageProperties.position.alignment
@@ -185,37 +181,14 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         
         updateAccesoryViews()
         
-        if appliedConfiguration.scaleTransform != _scaleTransform {
-            anchorPoint = .center
-            _scaleTransform = appliedConfiguration.scaleTransform
-            animator(isAnimating).scale = _scaleTransform
-        }
-        if appliedConfiguration.rotation != _rotation {
-            anchorPoint = .center
-            _rotation = appliedConfiguration.rotation
-            animator(isAnimating).rotation = _rotation
-        }
+        _scaleTransform = appliedConfiguration.scaleTransform
+        _rotation = appliedConfiguration.rotation
+
         animator(isAnimating).alphaValue = appliedConfiguration.alpha
         updateLayoutGuides()
     }
     
     func updateLayoutGuides() {
-         if !appliedConfiguration.hasText, let guide = textLayoutGuide {
-             removeLayoutGuide(guide)
-             textLayoutGuide = nil
-         } else if appliedConfiguration.hasText, textLayoutGuide == nil {
-             textLayoutGuide = NSLayoutGuide()
-            addLayoutGuide(textLayoutGuide!)
-             textLayoutGuide?.constraint(to: textField)
-         }
-        if !appliedConfiguration.hasSecondaryText, let guide = secondaryTextLayoutGuide {
-            removeLayoutGuide(guide)
-            secondaryTextLayoutGuide = nil
-        } else if appliedConfiguration.hasSecondaryText, secondaryTextLayoutGuide == nil {
-            secondaryTextLayoutGuide = NSLayoutGuide()
-            addLayoutGuide(secondaryTextLayoutGuide!)
-            secondaryTextLayoutGuide?.constraint(to: secondaryTextField)
-        }
         if appliedConfiguration.image == nil, let guide = imageLayoutGuide {
             removeLayoutGuide(guide)
             imageLayoutGuide = nil

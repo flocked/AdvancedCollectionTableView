@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 import FZUIKit
+import UniformTypeIdentifiers
 
 extension CollectionViewDiffableDataSource {
     class Delegate: NSObject, NSCollectionViewDelegate, NSCollectionViewPrefetching {
@@ -147,7 +148,7 @@ extension CollectionViewDiffableDataSource {
         
         
         // MARK: Dropping
-                
+          
         func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
             droppingElements = []
             if draggingInfo.draggingSource as? NSCollectionView === dataSource.collectionView {

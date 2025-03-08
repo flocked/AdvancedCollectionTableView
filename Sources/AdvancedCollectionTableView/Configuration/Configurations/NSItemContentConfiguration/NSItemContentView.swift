@@ -56,7 +56,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
      
      If you apply a new configuration without primary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
      */
-    public internal(set) var textLayoutGuide: NSLayoutGuide?
+    public var textLayoutGuide: NSLayoutGuide? { textStackView.textField.layoutGuide }
     
     /**
      A guide for positioning the secondary text in the content view.
@@ -65,7 +65,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
      
      If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
      */
-    public internal(set) var secondaryTextLayoutGuide: NSLayoutGuide?
+    public var secondaryTextLayoutGuide: NSLayoutGuide? { textStackView.secondaryTextField.layoutGuide }
     
     /**
      A guide for positioning the image or view in the content view.
@@ -98,15 +98,15 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         (rect.intersects(contentView.frame) && !contentView.isHidden) || (rect.intersects(textField.frame) && !textField.isHidden)  || (rect.intersects(secondaryTextField.frame) && !secondaryTextField.isHidden)
     }
 
-    let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
-    let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
+    var textField: ListItemTextField { textStackView.textField }
+    var secondaryTextField: ListItemTextField { textStackView.secondaryTextField }
     lazy var contentView = ItemContentView(configuration: appliedConfiguration)
     var textFieldAlignment: NSTextAlignment?
     var secondaryTextFieldAlignment: NSTextAlignment?
     var textFieldConstraint: NSLayoutConstraint?
     var secondaryTextFieldConstraint: NSLayoutConstraint?
 
-    lazy var textStackView = NSStackView(views: [textField, secondaryTextField]).orientation(.vertical).alignment(.leading).spacing(appliedConfiguration.textToSecondaryTextPadding)
+    lazy var textStackView = TextStackView()
 
     lazy var stackView = NSStackView(views: [contentView, textStackView])
         .orientation(appliedConfiguration.contentPosition.orientation)
@@ -114,8 +114,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
         .spacing(appliedConfiguration.contentToTextPadding)
 
     var stackviewConstraints: [NSLayoutConstraint] = []
-    var _scaleTransform: Scale = .none
-    var _rotation: Rotation = .zero
 
     @available(*, unavailable)
     public required init?(coder _: NSCoder) {
@@ -144,28 +142,15 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     func updateConfiguration() {
         let isAnimating = NSAnimationContext.hasActiveGrouping && NSAnimationContext.current.duration > 0.0
         contentView.centerYConstraint?.activate(false)
+        
+        textStackView.update(with: appliedConfiguration, for: self)
 
-        textField.properties = appliedConfiguration.textProperties
-        textField.updateText(appliedConfiguration.text, appliedConfiguration.attributedText, appliedConfiguration.placeholderText, appliedConfiguration.attributedPlaceholderText)
-        secondaryTextField.properties = appliedConfiguration.secondaryTextProperties
-        secondaryTextField.updateText(appliedConfiguration.secondaryText, appliedConfiguration.secondaryAttributedText, appliedConfiguration.secondaryPlaceholderText, appliedConfiguration.secondaryAttributedPlaceholderText)
-        textField.isEnabled = firstSuperview(for: NSCollectionView.self)?.isEnabled ?? true
-        secondaryTextField.isEnabled = textField.isEnabled
+        _scaleTransform = appliedConfiguration.scaleTransform
+        _rotation = appliedConfiguration.rotation
 
-        if appliedConfiguration.scaleTransform != _scaleTransform {
-            anchorPoint = .center
-            _scaleTransform = appliedConfiguration.scaleTransform
-            animator(isAnimating).scale = _scaleTransform
-        }
-        if appliedConfiguration.rotation != _rotation {
-            anchorPoint = .center
-            _rotation = appliedConfiguration.rotation
-            animator(isAnimating).rotation = _rotation
-        }
         animator(isAnimating).alphaValue = appliedConfiguration.alpha
         
         contentView.configuration = appliedConfiguration
-        textStackView.animator(isAnimating).spacing = appliedConfiguration.textToSecondaryTextPadding
         stackView.animator(isAnimating).spacing = appliedConfiguration.contentToTextPadding
         stackView.animator(isAnimating).orientation = appliedConfiguration.contentPosition.orientation
         stackView.animator(isAnimating).alignment = appliedConfiguration.contentAlignment
@@ -210,22 +195,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     }
     
     func updateLayoutGuides() {
-        if !appliedConfiguration.hasText, let guide = textLayoutGuide {
-            removeLayoutGuide(guide)
-            textLayoutGuide = nil
-        } else if appliedConfiguration.hasText, textLayoutGuide == nil {
-            textLayoutGuide = NSLayoutGuide()
-           addLayoutGuide(textLayoutGuide!)
-            textLayoutGuide?.constraint(to: textField)
-        }
-        if !appliedConfiguration.hasSecondaryText, let guide = secondaryTextLayoutGuide {
-           removeLayoutGuide(guide)
-           secondaryTextLayoutGuide = nil
-        } else if appliedConfiguration.hasSecondaryText, secondaryTextLayoutGuide == nil {
-           secondaryTextLayoutGuide = NSLayoutGuide()
-           addLayoutGuide(secondaryTextLayoutGuide!)
-            secondaryTextLayoutGuide?.constraint(to: secondaryTextField)
-       }
        if !appliedConfiguration.hasContent, let guide = contentLayoutGuide {
            removeLayoutGuide(guide)
            contentLayoutGuide = nil
