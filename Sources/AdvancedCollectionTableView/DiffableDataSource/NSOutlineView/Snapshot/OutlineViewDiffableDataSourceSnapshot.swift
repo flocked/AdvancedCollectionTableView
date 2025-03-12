@@ -147,11 +147,11 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         validateItems(snapshot.items)
         if let rootIndex = rootItems.firstIndex(of: item) {
             rootItems.insert(contentsOf: snapshot.rootItems, at: before ? rootIndex : rootIndex + 1)
-            nodes.merge(snapshot.nodes)
+            nodes.merge(with: snapshot.nodes)
         } else if let parentItem = parent(of: item),
                   let childIndex = nodes[parentItem]?.children.firstIndex(of: item) {
             nodes[parentItem]?.children.insert(contentsOf: snapshot.rootItems, at: before ? childIndex : childIndex + 1)
-            nodes.merge(snapshot.nodes)
+            nodes.merge(with: snapshot.nodes)
             snapshot.rootItems.forEach({ nodes[$0]?.parent = parentItem })
         }
         updateOrderedItems()
@@ -307,7 +307,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
         guard let previousChildren = nodes[parent]?.children else { return }
         previousChildren.forEach({ deleteItemAndDescendants($0) })
         nodes[parent]?.children = snapshot.rootItems
-        nodes.merge(snapshot.nodes)
+        nodes.merge(with: snapshot.nodes)
         snapshot.rootItems.forEach({ nodes[$0]?.parent = parent })
         updateOrderedItems()
     }
