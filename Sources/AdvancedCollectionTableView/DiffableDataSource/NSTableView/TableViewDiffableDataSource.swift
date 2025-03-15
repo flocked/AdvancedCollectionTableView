@@ -535,9 +535,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         if !dragingRowIndexes.isEmpty {
             let items = dragingRowIndexes.compactMap { item(forRow: $0) }
             dragingRowIndexes = []
-            if dropTargetRow != nil, let didDrop = reorderingHandlers.didDrop, let target = item(forRow: row) {
+            if dropTargetRow != nil, let target = item(forRow: row) {
                 dropTargetRow = nil
-                didDrop(items, target)
+                var snapshot = currentSnapshot
+                snapshot.deleteItems(items)
+                let transaction = DiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
+                reorderingHandlers.willDrop?(items, target, transaction)
+                apply(transaction.finalSnapshot, reorderingHandlers.animates ? .animated :  .withoutAnimation)
+                reorderingHandlers.didDrop?(items, target, transaction)
             } else {
                 let transaction = moveItemsTransaction(items, to: row)
                 reorderingHandlers.willReorder?(transaction)
@@ -571,6 +576,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dragging
     
     open func tableView(_ tableView: NSTableView, draggingSession: NSDraggingSession, willBeginAt _: NSPoint, forRowIndexes rowIndexes: IndexSet) {
+        
         draggingSession.animatesToStartingPositionsOnCancelOrFail = false
         if deletingHandlers.isDeletableByDraggingOutside, let itemsToDelete = deletingHandlers.canDelete?(rowIndexes.compactMap({item(forRow: $0)})), !itemsToDelete.isEmpty {
             dragDeleteItems = itemsToDelete
@@ -1107,18 +1113,21 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          */
         public var canDrop: ((_ items: [Item], _ target: Item) -> Bool)?
         
+        /// The handler that that gets called before dropping items to another item.
+        public var willDrop: ((_ items: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> Void)?
+        
         /// The handler that that gets called after dropping items.
-        public var didDrop: ((_ items: [Item], _ target: Item) -> ())?
+        public var didDrop: ((_ items: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         
         /// A Boolean value that indicates whether reordering items is animated.
         public var animates: Bool = false
         
-        /// A Boolean value that indicates whether rows reorder immediately while the user drags them.
-        var reorderImmediately: Bool = true
-        
         var droppable: Bool {
             canDrop != nil && didDrop != nil
         }
+        
+        /// A Boolean value that indicates whether rows reorder immediately while the user drags them.
+        var reorderImmediately: Bool = true
     }
 
     /**
@@ -1227,22 +1236,16 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /// Handlers for dropping items inside the table view.
     public struct DroppingHandlers {
-        /// The handler that determines whether the proposed drop can be dropped to an item.
-        public var canDropInto: ((_ dropInfo: DropInfo, _ item: Item) -> Bool)?
-        /// The handler that gets called when pasteboard content is dropped to an item.
-        public var didDropInto: ((_ dropInfo: DropInfo, _ item: Item)->())?
-        var isDroppableInto: Bool {
-            canDropInto != nil && didDropInto != nil
-        }
-        
         /**
          The handler that determines whether the pasteboard content can be dropped to the collection view.
          
          - Parameter dropInfo: The information about the proposed drop.
          */
         public var canDrop: ((_ dropInfo: DropInfo) -> Bool)?
+        
         /// The handler that determinates the items for the proposed drop.
         public var items: ((_ dropInfo: DropInfo) -> ([Item]))?
+        
         /**
          The handler that gets called when pasteboard content is about to drop inside the collection view.
          
@@ -1252,6 +1255,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             - transaction: The transaction for the drop.
          */
         public var willDrop: ((_ dropInfo: DropInfo, _ newItems: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
          
@@ -1261,16 +1265,19 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             - transaction: The transaction for the drop.
          */
         public var didDrop: ((_ dropInfo: DropInfo, _ newItems: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true
-        
-        /// The handler that determines whether items can be dropped on another item.
-        var canDropItems: ((_ items: [Item], _ target: Item) -> (Bool))?
-        /// The handler that gets called before items are dropped on another item.
-        var willDropItems: ((_ content: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
-        /// The handler that gets called after items are dropped on another item.
-        var didDropItems: ((_ content: [Item], _ target: Item, _ transaction: DiffableDataSourceTransaction<Section, Item>?) -> ())?
 
+        /// The handler that determines whether the proposed drop can be dropped to an item.
+        public var canDropInto: ((_ dropInfo: DropInfo, _ item: Item) -> Bool)?
+        
+        /// The handler that gets called when pasteboard content is dropped to an item.
+        public var didDropInto: ((_ dropInfo: DropInfo, _ item: Item)->())?
+        
+        var isDroppableInto: Bool {
+            canDropInto != nil && didDropInto != nil
+        }
     }
 }
 

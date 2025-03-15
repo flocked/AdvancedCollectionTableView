@@ -924,6 +924,19 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         /// A Boolean value that indicates whether reordering elements is animated.
         public var animates: Bool = true
         
+        /**
+         The handler that determines if elements can be dropped to another element while reordering. The default value is `nil` which indicates that elements can't be inserted.
+         
+         To enable dropping of elements to another item while reordering, you also have  to provide ``didDrop``.
+         */
+        var canDrop: ((_ elements: [Element], _ target: Element) -> Bool)?
+        
+        /// The handler that that gets called before dropping elements to another element.
+        var willDrop: ((_ elements: [Element], _ target: Element, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> Void)?
+        
+        /// The handler that that gets called after dropping elements to another element.
+        var didDrop: ((_ elements: [Element], _ target: Element, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        
         /*
         var droppable: Bool {
             canDrop != nil && didDrop != nil
@@ -994,20 +1007,13 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     
     /// Handlers for dragging pasteboard items inside the collection view.
     public struct DroppingHandlers {
-        /// The handler that determines whether the proposed drop can be dropped to an element.
-        public var canDropInto: ((_ dropInfo: DropInfo, _ element: Element) -> Bool)?
-        /// The handler that gets called when pasteboard content is dropped to an element.
-        public var didDropInto: ((_ dropInfo: DropInfo, _ element: Element)->())?
-        var isDroppableInto: Bool {
-            canDropInto != nil && didDropInto != nil
-        }
-        
         /**
          The handler that determines whether the pasteboard content can be dropped to the collection view.
          
          - Parameter dropInfo: The information about the proposed drop.
          */
         public var canDrop: ((_ dropInfo: DropInfo) -> Bool)?
+        
         /**
          The handler that gets called when pasteboard content is about to drop inside the collection view.
          
@@ -1017,6 +1023,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             - transaction: The transaction for the drop.
          */
         public var willDrop: ((_ dropInfo: DropInfo, _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
          
@@ -1026,10 +1033,22 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             - transaction: The transaction for the drop.
          */
         public var didDrop: ((_ dropInfo: DropInfo, _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        
         /// The handler that determinates the elements for the proposed drop.
         public var elements: ((_ dropInfo: DropInfo) -> ([Element]))?
+        
         /// A Boolean value that indicates whether dropping elements is animated.
         public var animates: Bool = true
+        
+        /// The handler that determines whether the proposed drop can be dropped to an element.
+        public var canDropInto: ((_ dropInfo: DropInfo, _ element: Element) -> Bool)?
+        
+        /// The handler that gets called when pasteboard content is dropped to an element.
+        public var didDropInto: ((_ dropInfo: DropInfo, _ element: Element)->())?
+        
+        var isDroppableInto: Bool {
+            canDropInto != nil && didDropInto != nil
+        }
     }
 }
 
