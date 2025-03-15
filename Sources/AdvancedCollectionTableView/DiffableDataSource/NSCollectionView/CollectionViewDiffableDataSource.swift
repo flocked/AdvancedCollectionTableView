@@ -244,6 +244,44 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         dataSource.apply(internalSnapshot, option, completion: completion)
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
+    
+    public enum PreviewImageSizing {
+        case size(CGSize)
+        case automatic
+        case fitting(width: CGFloat?, height: CGFloat?)
+    }
+    
+    /// Returns a preview image of the collection view item for the specified element.
+    public func previewImage(for element: Element) -> NSImage? {
+        previewImage(for: element, size: nil)
+    }
+    
+    /// Returns a preview image of the collection view item for the specified element and item size.
+    public func previewImage(for element: Element, size: CGSize) -> NSImage? {
+        previewImage(for: element, size: size)
+    }
+    
+    /// Returns a preview image of the collection view item for the specified element and item width.
+    public func previewImage(for element: Element, width: CGFloat) -> NSImage? {
+        previewImage(for: element, width: width)
+    }
+    
+    /// Returns a preview image of the collection view item for the specified element and item height.
+    public func previewImage(for element: Element, height: CGFloat) -> NSImage? {
+        previewImage(for: element, height: height)
+    }
+    
+    private func previewImage(for element: Element, size: CGSize? = nil, width: CGFloat? = nil, height: CGFloat? = nil) -> NSImage? {
+        guard let item = itemProvider(collectionView, IndexPath(item: 0, section: 0), element) else { return nil }
+        if width != nil || height != nil {
+            item.view.frame.size = item.view.systemLayoutSizeFitting(width: width, height: height)
+            item.view.frame.size.width = width ?? item.view.frame.size.width
+            item.view.frame.size.height = height ?? item.view.frame.size.height
+        } else {
+            item.view.frame.size = size ?? collectionView.frameForItem(at: IndexPath(item: 0, section: 0))?.size ?? CGSize(512, 512)
+        }
+        return item.view.renderedImage
+    }
 
     // MARK: - Init
 
@@ -266,7 +304,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     public init(collectionView: NSCollectionView, itemProvider: @escaping ItemProvider) {
         self.collectionView = collectionView
         super.init()
-
+        self.itemProvider = itemProvider
         dataSource = .init(collectionView: collectionView, itemProvider: {
             [weak self] collectionView, indePath, itemID in
             guard let self = self, let item = self.elements[id: itemID] else { return nil }
@@ -287,6 +325,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         collectionView.addGestureRecognizer(dragGesture)
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
     }
+    var itemProvider: ItemProvider!
     
     let dragGesture = DragGestureRecognizer()
     class DragGestureRecognizer: NSGestureRecognizer {

@@ -498,6 +498,26 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         return nil
     }
     
+    /// Returns a preview image of the table row for the specified item.
+    public func previewImage(for item: ItemIdentifierType) -> NSImage? {
+        let columns = outlineView.tableColumns
+        guard !columns.isEmpty else { return nil }
+        return NSImage(combining: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }))
+    }
+    
+    /// Returns a preview image of the table cell for the specified item and table column.
+    public func previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn) -> NSImage? {
+        previewImage(for: item, tableColumn: tableColumn, useColumnWidth: true)
+    }
+    
+    private func previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
+        guard let index = outlineView.tableColumns.firstIndex(of: tableColumn) else { return nil }
+        let view = cellProvider(outlineView, tableColumn, item)
+        view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)
+        view.frame.size.width = useColumnWidth ? tableColumn.width : view.frame.size.width
+        return view.renderedImage
+    }
+    
     
     /**
      Creates a diffable data source with the specified cell provider, and connects it to the specified outline view.
@@ -846,6 +866,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     public func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> (any NSPasteboardWriting)? {
         guard let item = item as? ItemIdentifierType else { return nil }
         return NSPasteboardItem(forItem: item)
+    }
+    
+    public func outlineView(_ outlineView: NSOutlineView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
+        
     }
     
     /// Handlers for selecting items.

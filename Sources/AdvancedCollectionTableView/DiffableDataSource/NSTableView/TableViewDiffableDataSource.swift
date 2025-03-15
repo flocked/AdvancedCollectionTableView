@@ -44,6 +44,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     weak var tableView: NSTableView!
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
+    var cellProvider: CellProvider!
     var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var dropValidationRow: Int? = nil
@@ -315,6 +316,26 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
+    /// Returns a preview image of the table row for the specified item.
+    public func previewImage(for item: Item) -> NSImage? {
+        let columns = tableView.tableColumns
+        guard !columns.isEmpty else { return nil }
+        return NSImage(combining: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }))
+    }
+    
+    /// Returns a preview image of the table cell for the specified item and table column.
+    public func previewImage(for item: Item, tableColumn: NSTableColumn) -> NSImage? {
+        previewImage(for: item, tableColumn: tableColumn, useColumnWidth: true)
+    }
+    
+    private func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
+        guard let index = tableView.tableColumns.firstIndex(of: tableColumn) else { return nil }
+        let view = cellProvider(tableView, tableColumn, 0, item)
+        view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)
+        view.frame.size.width = useColumnWidth ? tableColumn.width : view.frame.size.width
+        return view.renderedImage
+    }
+    
     // MARK: - Init
     
     /**
@@ -426,7 +447,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     public init(tableView: NSTableView, cellProvider: @escaping CellProvider) {
         self.tableView = tableView
         super.init()
-        
+        self.cellProvider = cellProvider
         dataSource = .init(tableView: tableView, cellProvider: {
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
@@ -436,7 +457,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
             return view ?? NSTableCellView()
         })
-                
         delegate = Delegate(self)
         tableView.registerForDraggedTypes([.itemID, .fileURL, .tiff, .png, .string, .URL])
         tableView.isQuicklookPreviewable = Item.self is QuicklookPreviewable.Type
@@ -651,7 +671,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
+        guard !(draggingInfo.draggingSource as? NSTableView === tableView) else { return }
         if canDrop {
+            droppingHandlers.updateDragItems?(draggingInfo.dropInfo(for: tableView))
+           /// if droppingHandlers.
            // let items = droppingHandlers.items?(draggingInfo.draggingPasteboard.content) ?? []
         } else if canDragItems, let draggingImage = draggingHandlers.draggingImage {
             draggingInfo.enumerateDraggingItems(for: tableView, classes: [IdentifiablePasteboardItem.self], using: { draggingItem,_,_ in
@@ -1265,6 +1288,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             - transaction: The transaction for the drop.
          */
         public var didDrop: ((_ dropInfo: DropInfo, _ newItems: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        
+        public var updateDragItems: ((_ dropInfo: DropInfo)->())?
         
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true

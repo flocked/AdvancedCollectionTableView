@@ -67,7 +67,7 @@ class TableSidebarViewController: NSViewController {
                 }]
             }
         }
-
+        
         applySnapshot()
     }
         
@@ -83,5 +83,30 @@ class TableSidebarViewController: NSViewController {
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {
         (view.window?.contentViewController as? SplitViewController)?.swapSidebar()
         segmentedControl.selectedSegment = 0
+    }
+}
+
+extension NSImage {
+    convenience init?(combining images: [NSImage]) {
+        guard !images.isEmpty else { return nil }
+        
+        let totalWidth = images.reduce(0) { $0 + $1.size.width }
+        let maxHeight = images.map { $0.size.height }.max() ?? 0
+        
+        let newSize = NSSize(width: totalWidth, height: maxHeight)
+        let newImage = NSImage(size: newSize)
+        
+        newImage.lockFocus()
+        
+        var xOffset: CGFloat = 0
+        for image in images {
+            let imageRect = NSRect(x: xOffset, y: maxHeight - image.size.height, width: image.size.width, height: image.size.height)
+            image.draw(in: imageRect)
+            xOffset += image.size.width
+        }
+        
+        newImage.unlockFocus()
+        
+        self.init(data: newImage.tiffRepresentation!)
     }
 }

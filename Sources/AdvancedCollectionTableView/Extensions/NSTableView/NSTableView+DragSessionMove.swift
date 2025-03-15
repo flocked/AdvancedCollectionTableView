@@ -9,7 +9,7 @@ import AppKit
 import FZSwiftUtils
 
 extension NSTableView {
-    var draggingSessionMoveHandler: ((NSDraggingSession, CGPoint)->())? {
+    var draggingSessionMovedHandler: ((NSDraggingSession, CGPoint)->())? {
         get { getAssociatedValue("draggingSessionMoveHandler") }
         set {
             setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
@@ -20,13 +20,13 @@ extension NSTableView {
                         try replaceMethod(selector,
                             methodSignature: (@convention(c) (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
                             hookSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in { object, session, point in
-                                (object as? NSTableView)?.draggingSessionMoveHandler?(session, point)
+                                (object as? NSTableView)?.draggingSessionMovedHandler?(session, point)
                                 store.original(object, selector, session, point)
                             } }
                     } else {
                         try addMethod(selector,
                             methodSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { object, session, point in
-                                (object as? NSTableView)?.draggingSessionMoveHandler?(session, point)
+                                (object as? NSTableView)?.draggingSessionMovedHandler?(session, point)
                             }
                     }
                 } catch {
