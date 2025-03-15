@@ -802,8 +802,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             return reorderingHandlers.canReorder?(draggedItems, item as? ItemIdentifierType) ?? true == true ? .move : []
         } else if let canDrop = droppingHandlers.canDrop {
             dropItems = []
-            dropContent = info.draggingPasteboard.content
-            if canDrop(dropContent, item as? ItemIdentifierType), let items = droppingHandlers.items?(dropContent, item as? ItemIdentifierType), !items.isEmpty {
+            if canDrop(info.dropInfo(for: outlineView), item as? ItemIdentifierType), let items = droppingHandlers.items?(info.dropInfo(for: outlineView), item as? ItemIdentifierType), !items.isEmpty {
                 dropItems = items
                 return .move
             }
@@ -835,9 +834,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             var snapshot = snapshot()
             snapshot.insert(dropItems, atIndex: index, of: item as? ItemIdentifierType)
             let transaction = OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>.init(initial: currentSnapshot, final: snapshot)
-            droppingHandlers.willDrop?(dropContent, item as? ItemIdentifierType, dropItems, transaction)
+            droppingHandlers.willDrop?(info.dropInfo(for: outlineView), item as? ItemIdentifierType, dropItems, transaction)
             apply(snapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
-            droppingHandlers.didDrop?(dropContent, item as? ItemIdentifierType, dropItems, transaction)
+            droppingHandlers.didDrop?(info.dropInfo(for: outlineView), item as? ItemIdentifierType, dropItems, transaction)
             return true
         }
         return false
@@ -1014,13 +1013,13 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     /// Handlers for dropping items inside the outline view.
     public struct DroppingHandlers {
         /// The handler that determines whether a drop with the pasteboard content is accepted.
-        public var canDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?) -> (Bool))?
+        public var canDrop: ((_ dropInfo: DropInfo, _ parent: ItemIdentifierType?) -> Bool)?
         /// The handler that determinates the items to be inserted for the pasteboard content.
-        public var items: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?) -> ([ItemIdentifierType]))?
+        public var items: ((_ dropInfo: DropInfo, _ parent: ItemIdentifierType?) -> ([ItemIdentifierType]))?
         /// The handler that gets called before new items are dropped.
-        public var willDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        public var willDrop: ((_ dropInfo: DropInfo, _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
         /// The handler that gets called after new items are dropped.
-        public var didDrop: ((_ content: [PasteboardReading], _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        public var didDrop: ((_ dropInfo: DropInfo, _ parent: ItemIdentifierType?, _ newItems: [ItemIdentifierType], _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = false
         /// A Boolean value that indicates whether the dropped items are previewed.

@@ -165,16 +165,15 @@ extension CollectionViewDiffableDataSource {
         
         func validateDropInto(_ draggingInfo: NSDraggingInfo, _ proposedIndexPath: IndexPath) -> NSDragOperation {
             guard dataSource.droppingHandlers.isDroppableInto, let handler = dataSource.droppingHandlers.canDropInto, let element = dataSource.element(for: proposedIndexPath) else { return [] }
-            let content = draggingInfo.draggingPasteboard.content
-            dropIntoElement = !content.isEmpty && handler(content, element) ? element : nil
+            dropIntoElement = handler(draggingInfo.dropInfo(for: dataSource.collectionView), element) ? element : nil
             return dropIntoElement != nil ? .copy : []
         }
         
         func validateDrop(_ draggingInfo: NSDraggingInfo) -> NSDragOperation {
             guard let canDrop = dataSource.droppingHandlers.canDrop, let elementsHandler = dataSource.droppingHandlers.elements else { return [] }
-            let content = draggingInfo.draggingPasteboard.content
-            if !content.isEmpty && canDrop(content) {
-                droppingElements = elementsHandler(content)
+            let dropInfo = draggingInfo.dropInfo(for: dataSource.collectionView)
+            if canDrop(dropInfo) {
+                droppingElements = elementsHandler(dropInfo)
             }
             return !droppingElements.isEmpty ? .copy : []
         }
@@ -238,6 +237,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
+            let dropInfo = draggingInfo.dropInfo(for: dataSource.collectionView)
             if draggingInfo.draggingSource as? NSCollectionView === collectionView {
                 guard !draggingElements.isEmpty else { return false }
                 if dropOperation == .before {
@@ -252,16 +252,14 @@ extension CollectionViewDiffableDataSource {
                     return false
                 }
             } else if dropOperation == .on, let element = dropIntoElement {
-                let content = draggingInfo.draggingPasteboard.content
-                dataSource.droppingHandlers.didDropInto?(content, element)
+                dataSource.droppingHandlers.didDropInto?(dropInfo, element)
                 return true
             } else if dropOperation == .before, !droppingElements.isEmpty {
-                let content = draggingInfo.draggingPasteboard.content
                 let transaction: DiffableDataSourceTransaction<Section, Element> = dataSource.dropTransaction(droppingElements, indexPath: indexPath)
-                dataSource.droppingHandlers.willDrop?(content, droppingElements, transaction)
+                dataSource.droppingHandlers.willDrop?(dropInfo, droppingElements, transaction)
                 dataSource.apply(transaction.finalSnapshot, dataSource.droppingHandlers.animates ? .animated : .withoutAnimation)
                 dataSource.selectElements(droppingElements, scrollPosition: [])
-                dataSource.droppingHandlers.didDrop?(content, droppingElements, transaction)
+                dataSource.droppingHandlers.didDrop?(dropInfo, droppingElements, transaction)
                 return true
             }
             return false

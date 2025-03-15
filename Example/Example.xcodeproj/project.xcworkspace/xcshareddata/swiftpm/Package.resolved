@@ -1,4 +1,5 @@
 {
+  "originHash" : "9a3fc9d4e8c660ad4f02d3fe7cb14be2d4a8737c02d84fc43a36ece1c84e8b31",
   "pins" : [
     {
       "identity" : "fzquicklook",
@@ -15,7 +16,7 @@
       "location" : "https://github.com/flocked/FZSwiftUtils.git",
       "state" : {
         "branch" : "main",
-        "revision" : "ee687631fef23c035db7abcc6aa85e1840a8a17a"
+        "revision" : "21b4a9aa0cef7bce4b6b1f0a63e8e52511cd1eb7"
       }
     },
     {
@@ -24,9 +25,9 @@
       "location" : "https://github.com/flocked/FZUIKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "31a7f38c18bfc669e8379ec3971c4b6da47b2b54"
+        "revision" : "142acd51d6c38cf0149d304a1a75c010f5b729eb"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
