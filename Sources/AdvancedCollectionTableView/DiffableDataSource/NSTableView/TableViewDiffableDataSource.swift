@@ -320,12 +320,17 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     public func previewImage(for item: Item) -> NSImage? {
         let columns = tableView.tableColumns
         guard !columns.isEmpty else { return nil }
-        return NSImage(combining: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }))
+        return NSImage(combineHorizontal: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }), alignment: .top)
     }
     
     /// Returns a preview image of the table cell for the specified item and table column.
     public func previewImage(for item: Item, tableColumn: NSTableColumn) -> NSImage? {
         previewImage(for: item, tableColumn: tableColumn, useColumnWidth: true)
+    }
+    
+    /// Returns a preview image of the table row for the specified items.
+    public func previewImage(for items: [Item]) -> NSImage? {
+        NSImage(combineVertical: items.compactMap({ previewImage(for: $0)}).reversed(), alignment: .left)
     }
     
     private func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {

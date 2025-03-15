@@ -245,33 +245,27 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
     
-    public enum PreviewImageSizing {
-        case size(CGSize)
-        case automatic
-        case fitting(width: CGFloat?, height: CGFloat?)
-    }
-    
     /// Returns a preview image of the collection view item for the specified element.
     public func previewImage(for element: Element) -> NSImage? {
-        previewImage(for: element, size: nil)
+        _previewImage(for: element, size: nil)
     }
     
     /// Returns a preview image of the collection view item for the specified element and item size.
     public func previewImage(for element: Element, size: CGSize) -> NSImage? {
-        previewImage(for: element, size: size)
+        _previewImage(for: element, size: size)
     }
     
     /// Returns a preview image of the collection view item for the specified element and item width.
     public func previewImage(for element: Element, width: CGFloat) -> NSImage? {
-        previewImage(for: element, width: width)
+        _previewImage(for: element, width: width)
     }
     
     /// Returns a preview image of the collection view item for the specified element and item height.
     public func previewImage(for element: Element, height: CGFloat) -> NSImage? {
-        previewImage(for: element, height: height)
+        _previewImage(for: element, height: height)
     }
     
-    private func previewImage(for element: Element, size: CGSize? = nil, width: CGFloat? = nil, height: CGFloat? = nil) -> NSImage? {
+    private func _previewImage(for element: Element, size: CGSize? = nil, width: CGFloat? = nil, height: CGFloat? = nil) -> NSImage? {
         guard let item = itemProvider(collectionView, IndexPath(item: 0, section: 0), element) else { return nil }
         if width != nil || height != nil {
             item.view.frame.size = item.view.systemLayoutSizeFitting(width: width, height: height)
