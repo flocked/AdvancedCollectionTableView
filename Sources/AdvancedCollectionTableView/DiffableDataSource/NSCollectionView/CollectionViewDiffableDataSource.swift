@@ -1074,7 +1074,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         public var animates: Bool = true
         
         /// A Boolean value that indicates whether the items for the proposed drop elements are previewed.
-        public var previewDroppedElements = true
+        public var previewDroppedElements = false
         
         /// The handler that determines whether the proposed drop can be dropped to an element.
         public var canDropInto: ((_ dropInfo: DropInfo, _ element: Element) -> Bool)?

@@ -1060,7 +1060,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         public var animates: Bool = false
         
         /// A Boolean value that indicates whether the rows for the proposed drop items are previewed.
-        public var previewDroppedItems = true
+        public var previewDroppedItems = false
         
         /// A Boolean value that indicates whether the dropped items are previewed.
         public var previewItems = true

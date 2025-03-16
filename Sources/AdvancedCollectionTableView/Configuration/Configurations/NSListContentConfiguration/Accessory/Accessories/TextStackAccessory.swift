@@ -112,7 +112,5 @@ struct TextStackAccessory {
     public var trailingTextProperties: TextProperties = .primary
     
     /// The spacing between the leading and trailing text.
-    public var leadingToTrailingTextSpacing: CGFloat = 4.0
-    
-    var trailingText: String?
+    public var leadingToTrailingTextSpacing: CGFloat = 4.0    
 }
