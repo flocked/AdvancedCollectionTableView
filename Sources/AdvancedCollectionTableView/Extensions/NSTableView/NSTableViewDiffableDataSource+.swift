@@ -20,7 +20,7 @@ public extension NSTableViewDiffableDataSource {
 
      - Returns: The view to display the specified column and row.
      */
-    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -41,7 +41,7 @@ public extension NSTableViewDiffableDataSource {
 
      - Returns: An instance or subclass of `NSTableRowView`. If `nil` is returned, an `NSTableRowView` instance will be created and used.
      */
-    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+    public func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         let selector = NSSelectorFromString("_tableView:rowViewForRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -62,7 +62,7 @@ public extension NSTableViewDiffableDataSource {
 
      - Returns: `true` if the specified row should have the group row style drawn, `false` otherwise.
      */
-    func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+    public func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
         let selector = NSSelectorFromString("_tableView:isGroupRow:")
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
@@ -105,13 +105,7 @@ public extension NSTableViewDiffableDataSource {
     }
     
     private func _previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, tableView: NSTableView, useColumnWidth: Bool = true) -> NSImage? {
-        guard let index = tableView.tableColumns.firstIndex(of: tableColumn) else { return nil }
-        let view: NSView
-        if let row = row(forItemIdentifier: item), let _view = tableView.view(atColumn: index, row: row, makeIfNecessary: true) {
-            view = _view
-        } else {
-            view = cellProvider(tableView, tableColumn, 0, item) as! NSView
-        }
+        guard tableView.tableColumns.contains(tableColumn), let view = createCellView(for: item, tableColumn: tableColumn, tableView: tableView) else { return nil }
         view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)
         view.frame.size.width = useColumnWidth ? tableColumn.width : view.frame.size.width
         return view.renderedImage
