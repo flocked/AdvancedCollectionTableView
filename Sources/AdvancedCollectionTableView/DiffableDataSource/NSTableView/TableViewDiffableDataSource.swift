@@ -320,7 +320,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     public func previewImage(for item: Item) -> NSImage? {
         let columns = tableView.tableColumns
         guard !columns.isEmpty else { return nil }
-        return NSImage(combineHorizontal: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }), alignment: .top)
+        
+        Swift.print("previewImage", columns.count, columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!)?.size}).alignHorizontal(alignment: .top), NSImage(combineHorizontalAlt: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }), alignment: .top)?.size ?? "nil")
+        return NSImage(combineHorizontalAlt: columns.compactMap({ previewImage(for: item, tableColumn: $0, useColumnWidth: $0 !== columns.last!) }), alignment: .top)
     }
     
     /// Returns a preview image of the table cell for the specified item and table column.
@@ -330,7 +332,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     /// Returns a preview image of the table row for the specified items.
     public func previewImage(for items: [Item]) -> NSImage? {
-        NSImage(combineVertical: items.compactMap({ previewImage(for: $0)}).reversed(), alignment: .left)
+        Swift.print("previewImage", items.count)
+        return NSImage(combineVerticalAlt: items.compactMap({ previewImage(for: $0)}).reversed(), alignment: .left)
     }
     
     private func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
@@ -677,6 +680,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
         if canDrop, droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: tableView)), !items.isEmpty, let image = previewImage(for: items) {
+            Swift.print("DraggingItems", tableView.frame.size, image.size)
             draggingInfo.setDraggedImage(image)
         }
         /*
@@ -1462,5 +1466,49 @@ extension CGRect {
         let dx = max(0, max(origin.x - point.x, point.x - maxX))
         let dy = max(0, max(origin.y - point.y, point.y - maxY))
         return sqrt(dx * dx + dy * dy)
+    }
+}
+
+extension NSUIImage {
+    /**
+     Creates a new image by combining the specified images.
+     
+     - Parameters:
+        - images: The images to combine.
+        - orientation: The orientation of the images when combining them.
+        - alignment: The alignment of the images when combining them.
+     - Returns: The combined images, or `nil` if the images couldn't be combined.
+     */
+    public convenience init?(combineVerticalAlt images: [NSUIImage], alignment: HorizontalAlignment = .center) {
+        guard let image = NSUIImage.combined(images: images, vertical: true, alignment: alignment.rawValue) else { return nil }
+        self.init(size: image.size)
+        lockFocus()
+        defer { unlockFocus() }
+        image.draw(at: .zero, from: CGRect(origin: .zero, size: image.size), operation: .copy, fraction: 1.0)
+    }
+    
+    public convenience init?(combineHorizontalAlt images: [NSUIImage], alignment: VerticalAlignment = .center) {
+        guard let image = NSUIImage.combined(images: images, vertical: false, alignment: alignment.rawValue) else { return nil }
+        self.init(size: image.size)
+        lockFocus()
+        defer { unlockFocus() }
+        image.draw(at: .zero, from: CGRect(origin: .zero, size: image.size), operation: .copy, fraction: 1.0)
+    }
+    
+    private static func combined(images: [NSUIImage], vertical: Bool, alignment: Int) -> NSUIImage? {
+        guard !images.isEmpty else { return nil }
+        let rects = vertical ? images.map({$0.size}).alignVertical(alignment: .init(rawValue: alignment)!) : images.map({$0.size}).alignHorizontal(alignment: .init(rawValue: alignment)!)
+        let finalImage = NSUIImage(size: rects.union().size)
+        finalImage.lockFocus()
+        defer { finalImage.unlockFocus() }
+        var currentPoint: CGPoint = .zero
+        for value in zip(images, rects) {
+            let image = value.0
+            let drawRect = value.1
+            image.draw(in: drawRect)
+            currentPoint = vertical ? CGPoint(x: currentPoint.x, y: currentPoint.y + image.size.height) : CGPoint(x: currentPoint.x + image.size.width, y: currentPoint.y)
+        }
+        Swift.print("combined", finalImage.size, vertical, alignment, images.compactMap({$0.size}), rects, rects.union().size, NSGraphicsContext.current?.imageInterpolation.rawValue)
+        return finalImage
     }
 }
