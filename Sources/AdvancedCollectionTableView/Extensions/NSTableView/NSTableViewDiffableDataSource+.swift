@@ -75,19 +75,33 @@ public extension NSTableViewDiffableDataSource {
     }
     
     /// The cell provider of the datasource.
-    private var cellProvider: ((NSTableView, NSTableColumn, Int, ItemIdentifierType)->(Any)) {
-        guard let cellProvider: ((NSTableView, NSTableColumn, Int, ItemIdentifierType)->(NSView?)) = getIvarValue(for: "cellProvider") else { return { _,_,_,_ in return NSTableCellView() } }
+    public var cellProvider: ((NSTableView, NSTableColumn, Int, ItemIdentifierType)->(NSView)) {
+        typealias CellProviderBlock = @convention(block) (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Any) -> NSView
+        guard let cellProvider: CellProviderBlock = getIvarValue(for: "_cellProvider") else { return { _,_,_,_ in return NSTableCellView() } }
         return cellProvider
     }
     
-    private func previewImage(for item: ItemIdentifierType, tableView: NSTableView) -> NSImage? {
+    /// Creates a new table cell view for the specified item using the cell provider.
+    public func createCellView(for item: ItemIdentifierType, tableColumn: NSTableColumn? = nil, tableView: NSTableView) -> NSView? {
+        guard let tableColumn = tableColumn ?? tableView.tableColumns.first, tableView.tableColumns.contains(tableColumn) else { return nil }
+        return cellProvider(tableView, tableColumn, 0, item)
+    }
+        
+    /// Returns a preview image of the table cell for the specified item and table column.
+    public func previewImage(for item: ItemIdentifierType, tableView: NSTableView) -> NSImage? {
         let columns = tableView.tableColumns
         guard !columns.isEmpty else { return nil }
         return NSImage(combineHorizontal: columns.compactMap({ _previewImage(for: item, tableColumn: $0, tableView: tableView, useColumnWidth: $0 !== columns.last!) }), alignment: .top)
     }
     
-    private func previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, tableView: NSTableView) -> NSImage? {
+    /// Returns a preview image of the table row for the specified item.
+    public func previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, tableView: NSTableView) -> NSImage? {
         _previewImage(for: item, tableColumn: tableColumn, tableView: tableView)
+    }
+    
+    /// Returns a preview image of the table rows for the specified items.
+    public func previewImage(for items: [ItemIdentifierType], tableView: NSTableView) -> NSImage? {
+        return NSImage(combineVertical: items.compactMap({ previewImage(for: $0, tableView: tableView)}).reversed(), alignment: .left)
     }
     
     private func _previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, tableView: NSTableView, useColumnWidth: Bool = true) -> NSImage? {

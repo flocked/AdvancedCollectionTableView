@@ -498,7 +498,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         return nil
     }
     
-    /// Returns a preview image of the table row for the specified item.
+    /// Returns a preview image of the table row for the specified items.
     public func previewImage(for item: ItemIdentifierType) -> NSImage? {
         let columns = outlineView.tableColumns
         guard !columns.isEmpty else { return nil }
