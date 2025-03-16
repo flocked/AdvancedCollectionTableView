@@ -334,7 +334,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     private func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
-        guard let index = tableView.tableColumns.firstIndex(of: tableColumn) else { return nil }
+        guard tableView.tableColumns.contains(tableColumn) else { return nil }
         let view = cellProvider(tableView, tableColumn, 0, item)
         view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)
         view.frame.size.width = useColumnWidth ? tableColumn.width : view.frame.size.width

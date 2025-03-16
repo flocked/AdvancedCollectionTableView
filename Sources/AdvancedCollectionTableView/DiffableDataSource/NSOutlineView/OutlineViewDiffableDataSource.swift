@@ -512,7 +512,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     private func previewImage(for item: ItemIdentifierType, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
-        guard let index = outlineView.tableColumns.firstIndex(of: tableColumn) else { return nil }
+        guard outlineView.tableColumns.contains(tableColumn) else { return nil }
         let view = cellProvider(outlineView, tableColumn, item)
         view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)
         view.frame.size.width = useColumnWidth ? tableColumn.width : view.frame.size.width
@@ -645,7 +645,6 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         var snapshot = snapshot
         snapshot.usesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         isApplyingSnapshot = true
-        let usesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
