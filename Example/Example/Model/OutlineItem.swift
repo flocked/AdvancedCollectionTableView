@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct OutlineItem: Hashable, ExpressibleByStringLiteral, CustomStringConvertible {
+public struct OutlineItem: Hashable, Identifiable, ExpressibleByStringLiteral, CustomStringConvertible {
     
     public let title: String
     
@@ -20,6 +20,10 @@ public struct OutlineItem: Hashable, ExpressibleByStringLiteral, CustomStringCon
     }
     
     public var description: String {
+        title
+    }
+    
+    public var id: String {
         title
     }
 }

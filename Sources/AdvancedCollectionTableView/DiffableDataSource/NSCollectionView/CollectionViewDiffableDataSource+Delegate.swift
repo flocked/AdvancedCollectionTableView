@@ -314,7 +314,7 @@ extension CollectionViewDiffableDataSource {
         }
         
         func collectionView(_ collectionView: NSCollectionView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
-            if !droppingElements.isEmpty, dataSource.droppingHandlers.previewDroppedElements {
+            if !droppingElements.isEmpty, dataSource.droppingHandlers.previewElements {
             }
         }
     }

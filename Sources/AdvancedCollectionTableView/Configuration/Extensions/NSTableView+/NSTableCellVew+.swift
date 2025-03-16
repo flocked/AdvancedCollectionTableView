@@ -238,12 +238,6 @@ extension NSTableCellView {
     var isGroupRowCell: Bool {
         guard let rowView = rowView else { return false }
         let isGroup = rowView.identifier != "_GroupCellRowView" ? rowView.isGroupRowStyle : (rowView.superview as? NSTableRowView)?.isGroupRowStyle == true
-        if isGroup, rowView.superview is NSTableRowView {
-            if let contentView = contentView as? NSListContentView {
-                Swift.print("CHECK",   contentView.textField.stringValue, textField != nil)
-              
-            }
-        }
         return rowView.identifier != "_GroupCellRowView" ? rowView.isGroupRowStyle : (rowView.superview as? NSTableRowView)?.isGroupRowStyle == true
     }
     

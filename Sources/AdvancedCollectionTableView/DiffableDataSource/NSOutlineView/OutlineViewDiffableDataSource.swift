@@ -37,8 +37,6 @@ import FZSwiftUtils
  Then, you generate the current state of the data and display the data in the UI by constructing and applying a snapshot. For more information, see `NSDiffableDataSourceSnapshot`.
  
  - Note: Each of your items must have unique identifiers.
-
- - Note: Don’t change the `dataSource` or `delegate` on the outline view after you configure it with a diffable data source. If the outline view needs a new data source after you configure it initially, create and configure a new outline view and diffable data source.
  */
 public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObject, NSOutlineViewDataSource {
     
@@ -53,7 +51,6 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedIndexes: [Int] = []
     var canDrop = false
     var isApplyingSnapshot = false
-    var didApplyGroupItems = false
     lazy var groupRowTableColumn = NSTableColumn()
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
@@ -915,7 +912,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     public func outlineView(_ outlineView: NSOutlineView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
-        if canDrop, droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
+        if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
             draggingInfo.setDraggedImage(image)
         }
     }
@@ -1101,9 +1098,6 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         public var animates: Bool = false
         
         /// A Boolean value that indicates whether the rows for the proposed drop items are previewed.
-        public var previewDroppedItems = false
-        
-        /// A Boolean value that indicates whether the dropped items are previewed.
         public var previewItems = true
     }
     

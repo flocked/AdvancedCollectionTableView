@@ -51,6 +51,10 @@ class OutlineSidebarViewController: NSViewController {
         }
         dataSource.apply(snapshot, .withoutAnimation)
         dataSource.expand(rootItems)
+        
+        snapshot.nonCollapsableItems = [rootItems[0], rootItems[1]]
+        snapshot.nonCollapsableItems = [rootItems[2]]
+        Swift.print(snapshot.nonCollapsableItems.count, snapshot.nonCollapsableItems)
     }
     
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {

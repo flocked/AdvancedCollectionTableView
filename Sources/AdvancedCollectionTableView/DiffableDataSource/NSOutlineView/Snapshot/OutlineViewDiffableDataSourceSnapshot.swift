@@ -49,8 +49,11 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     /// The identifiers of the items at the top level of the snapshot’s hierarchy.
     public internal(set) var rootItems: [ItemIdentifierType] = []
     
-    var isCalculatingDiff = false
+    /// A Boolean value indicating that the root items are displayed as group items.
     var usesGroupItems: Bool = false
+    
+    /// A Boolean value indicating whether the snapshot is currently used to calculate the diff to another snapshot.
+    var isCalculatingDiff = false
     
     /// The identifiers of all items in the snapshot.
     public var items: [ItemIdentifierType] {
@@ -435,7 +438,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType: Hashable
     }
     
     var expandedItems: Set<ItemIdentifierType> {
-        var items = Set(nodes.filter({ $0.value.isExpanded }).compactMap({ $0.key }))
+        var items = Set(nodes.filter({ $0.value.isExpanded }).keys)
         if usesGroupItems {
             items += rootItems
         }
@@ -459,3 +462,12 @@ fileprivate extension Array where Element: Equatable {
         insert(contentsOf: filteredItems, at: adjustedIndex)
     }
 }
+
+/*
+ /**
+  The items that can't be collapsed.
+  
+  Only items that are inserted to the snapshot can be provided.
+  */
+ public var nonCollapsableItems: Set<ItemIdentifierType> = []
+ */
