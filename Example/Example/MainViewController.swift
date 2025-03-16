@@ -7,6 +7,8 @@
 
 import AppKit
 import AdvancedCollectionTableView
+import FZSwiftUtils
+import FZUIKit
 
 class MainViewController: NSViewController {
     typealias DataSource = CollectionViewDiffableDataSource<Section, GalleryItem>
@@ -47,8 +49,55 @@ class MainViewController: NSViewController {
         }
     }
     
+    let testView = TestView()
+    let view1 = TestView()
+    let view2 = TestView()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+
+        Swift.print("view1", view1.tag)
+        Swift.print("view2", view2.tag)
+
+        Swift.print("-----")
+        testView.addSubview(view1)
+        Swift.print("-----")
+        testView.addSubview(view2)
+        Swift.print("-----")
+        testView.addSubview(view1)
+        Swift.print("-----")
+        testView.subviews = [view1, view2]
+        Swift.print("-----")
+        testView.subviews = [view2, view1]
+        Swift.print("-----")
+        testView.subviews = [view2]
+
+
+        var configuration = NSListContentConfiguration.sidebar()
+        configuration.text = LoremIpsum.words(3)
+        configuration.secondaryText = LoremIpsum.words(6)
+        configuration.secondaryTextProperties.maximumNumberOfLines = 0
+        configuration.image = NSImage(systemSymbolName: "photo")
+        let contentView = configuration.makeContentView()
+        contentView.frame.size = contentView.systemLayoutSizeFitting(width: 400)
+        let containerView = NSTableCellView()
+        containerView.frame.origin = CGPoint(20)
+        containerView.frame.size = contentView.frame.size
+        
+        containerView.addSubview(contentView)
+        containerView.cornerRadius = contentView.frame.size.height / 2.0
+        Swift.print(contentView.frame.size.height / 2.0)
+        contentView.frame.origin.x = contentView.frame.size.height / 2.0
+        containerView.backgroundColor = .controlAccentColor
+        containerView.backgroundStyle = .emphasized
+      //  view.addSubview(containerView)
+        
+        let maskView = MaskView().size(CGSize(120, 60))
+        maskView.backgroundColor = .clear
+        maskView.shadowPath = .init(rect: maskView.bounds)
+        view.addSubview(maskView)
+      //  maskView.configurate(using: ShapeConfiguration.capsule)
+        maskView.outerShadow = .accentColor(opacity: 0.9)
         
         collectionView.collectionViewLayout = .grid(columns: 3)
         collectionView.dataSource = dataSource
@@ -87,6 +136,28 @@ class MainViewController: NSViewController {
     }
 }
 
+class MaskView: NSView {
+    let shapeLayer = CAShapeLayer()
+    
+    override func layout() {
+        super.layout()
+        
+        shapeLayer.frame = bounds
+        shapeLayer.path = NSBezierPath(roundedRect: bounds, cornerRadius: bounds.height/2.0).cgPath
+    }
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+      //  layer?.addSublayer(shapeLayer)
+        shapeLayer.fillColor = NSColor.controlAccentColor.cgColor
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
+
 private extension NSView {
     /// Creates a colored view.
     convenience init(color: NSColor, opacity: CGFloat) {
@@ -95,3 +166,40 @@ private extension NSView {
         alphaValue = opacity
     }
 }
+
+
+
+class TestView: NSView {
+    var _tag: Int = Int.random(max: 30)
+    
+    override var tag: Int {
+        _tag
+    }
+    
+    override func layout() {
+        super.layout()
+        Swift.print("layout")
+    }
+    
+    override func viewDidMoveToSuperview() {
+        Swift.print("superview viewDidMoveToSuperview", superview != nil)
+    }
+    
+    override func viewWillMove(toSuperview newSuperview: NSView?) {
+        Swift.print("superview viewWillMove", newSuperview != nil)
+    }
+    
+    override func layoutSubtreeIfNeeded() {
+        Swift.print("layoutSubtreeIfNeeded")
+    }
+    
+    override func willRemoveSubview(_ subview: NSView) {
+        Swift.print("willRemoveSubview", subview.tag)
+
+    }
+    
+    override func didAddSubview(_ subview: NSView) {
+        Swift.print("didAddSubview", subview.tag)
+    }
+}
+

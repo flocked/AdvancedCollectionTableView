@@ -51,7 +51,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     var draggedItems: [ItemIdentifierType] = []
     var draggedParent: ItemIdentifierType?
     var draggedIndexes: [Int] = []
-    var canDrop: NSDragOperation = []
+    var canDrop = false
     var isApplyingSnapshot = false
     var didApplyGroupItems = false
     lazy var groupRowTableColumn = NSTableColumn()
@@ -843,7 +843,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     */
         
     public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        canDrop = []
+        canDrop = false
         if info.draggingSource as? NSOutlineView === outlineView {
             if let item = item as? ItemIdentifierType, draggedItems.contains(item) {
                 return []
@@ -867,7 +867,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         if info.draggingSource as? NSTableView !== outlineView {
             if let canDrag = droppingHandlers.canDrop {
                 self.canDrop = canDrag(info.dropInfo(for: outlineView), item as? ItemIdentifierType)
-                return self.canDrop
+                return self.canDrop ? .copy : []
             }
         }
         return []
@@ -894,7 +894,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             reorderingHandlers.didReorder?(transaction)
             return true
         }
-        if info.draggingSource as? NSOutlineView !== outlineView, canDrop != [] {
+        if info.draggingSource as? NSOutlineView !== outlineView, canDrop {
             let dropInfo = info.dropInfo(for: outlineView)
             let item = item as? ItemIdentifierType
             let items = droppingHandlers.items?(dropInfo) ?? []
@@ -915,7 +915,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     public func outlineView(_ outlineView: NSOutlineView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
-        if canDrop != [], droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
+        if canDrop, droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
             draggingInfo.setDraggedImage(image)
         }
     }
@@ -1086,7 +1086,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     /// Handlers for dropping items inside the outline view.
     public struct DroppingHandlers {
         /// The handler that determines whether a drop with the pasteboard content is accepted.
-        public var canDrop: ((_ dropInfo: DropInfo, _ target: ItemIdentifierType?) -> NSDragOperation)?
+        public var canDrop: ((_ dropInfo: DropInfo, _ target: ItemIdentifierType?) -> Bool)?
         
         /// The handler that determinates the items to be inserted for the pasteboard content.
         public var items: ((_ dropInfo: DropInfo) -> ([ItemIdentifierType]))?
