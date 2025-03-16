@@ -35,31 +35,27 @@ public extension NSListContentConfiguration {
         }
 
         /// The scaling of the image.
-        public enum Scaling: Hashable {
+        public enum Scaling: Int, Hashable {
             /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
-            case fit
+            case scaleToFit
+            /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect of the image.
+            case scaleToFill
             /// The image is resized to fit the entire bounds rectangle.
             case resize
             /// The image isn't resized.
             case none
-            //   case fill
 
-            var imageScaling: NSImageScaling {
+            var scaling: NSImageScaling {
                 switch self {
-                case .fit: return .scaleProportionallyUpOrDown
-                //   case .fill: return .scaleProportionallyUpOrDown
+                case .scaleToFit: return .scaleProportionallyUpOrDown
+                case .scaleToFill: return .scaleProportionallyUpOrDown
                 case .resize: return .scaleAxesIndependently
                 case .none: return .scaleNone
                 }
             }
-
-            var contentsGravity: CALayerContentsGravity {
-                switch self {
-                case .fit: return .resizeAspect
-                //    case .fill: return .resizeAspectFill
-                case .resize: return .resize
-                case .none: return .center
-                }
+            
+            var imageScaling: ImageView.ImageScaling {
+                ImageView.ImageScaling(rawValue: rawValue)!
             }
         }
 
@@ -142,8 +138,27 @@ public extension NSListContentConfiguration {
             }
         }
 
-        //   var reservedLayoutSize: CGSize = CGSize(0, 0)
-        //    static let standardDimension: CGFloat = -CGFloat.greatestFiniteMagnitude
+        /**
+         The layout size that the system reserves for the image, and then centers the image within.
+         
+         Use this property to ensure:
+         - Consistent horizontal alignment for images across adjacent content views, even when the images vary in width.
+         - Consistent height for content views, even when the images vary in height.
+         
+         The reserved layout size only affects the amount of space for the image, and its positioning within that space. It doesn’t affect the size of the image.
+         
+         The default value is `zero`. A width or height of zero means that the system uses the default behavior for that dimension:
+         - The system centers symbol images inside a predefined reserved layout size that scales with the content size category.
+         - Nonsymbol images use a reserved layout size equal to the actual size of the displayed image.
+         */
+        public var reservedLayoutSize: CGSize = CGSize(0, 0)
+        
+        /**
+         The system standard layout dimension for reserved layout size.
+         
+         Setting the ``reservedLayoutSize`` width or height to this constant results in using the system standard value for a symbol image for that dimension, even when the image is not a symbol image.
+         */
+        public static let standardDimension: CGFloat = -CGFloat.greatestFiniteMagnitude
 
         /// The tint color for an image that is a template or symbol image.
         public var tintColor: NSColor?
@@ -202,7 +217,7 @@ public extension NSListContentConfiguration {
         public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
 
         /// The image scaling.
-        public var scaling: Scaling = .fit
+        public var scaling: Scaling = .scaleToFit
 
         /// The sizing option for the image.
         public var sizing: Sizing = .totalTextHeight
@@ -216,3 +231,98 @@ public extension NSListContentConfiguration {
         init() {}
     }
 }
+
+/*
+ struct Layout: Hashable {
+     enum VerticalSizing: Hashable {
+         /// The image isn't resized.
+         case imageSize
+         /// The image is resized to the list item's height.
+         case totalHeight
+         /// The image is resized to the text height.
+         case textHeight
+         /// The image is resized to the secondary text height.
+         case secondaryTextHeight
+         /// The image is resized to fit the specified width.
+         case width(CGFloat)
+         /// The image is resized to fit the specified height.
+         case height(CGFloat)
+         /// The image is resized to the specified size.
+         case size(CGSize)
+         /// The image is resized to fit the maximum size.
+         case maxSize(CGSize)
+     }
+     
+     enum HorizontalSizing: Hashable {
+         /// The image isn't resized.
+         case imageSize
+         /// The image is resized to the list item's width.
+         case totalWidth
+         /// The image is resized to fit the specified width.
+         case width(CGFloat)
+         /// The image is resized to fit the specified height.
+         case height(CGFloat)
+         /// The image is resized to the specified size.
+         case size(CGSize)
+         /// The image is resized to fit the maximum size.
+         case maxSize(CGSize)
+     }
+     
+     enum VerticalPosition: Hashable {
+         /// The image is positioned at the first baseline.
+         case firstBaseline
+         /// The image is positioned at the center the text.
+         case text
+         /// The image is positioned at the center the secondary text.
+         case secondaryText
+         /// The image is positioned at the top edge.
+         case top
+         /// The image is positioned at the vertical center.
+         case center
+         /// The image is positioned at the bottom edge.
+         case bottom
+     }
+     
+     enum HorizontalPosition: Hashable {
+         /// The image is positioned at the leading edge.
+         case leading
+         /// The image is positioned at the horizontal center.
+         case center
+         /// The image is positioned at the trailing edge.
+         case traiing
+     }
+     
+     enum _Position: Hashable {
+         case leading(VerticalPosition, VerticalSizing)
+         case trailing(VerticalPosition, VerticalSizing)
+         case bottom(HorizontalPosition, HorizontalSizing)
+         case top(HorizontalPosition, HorizontalSizing)
+     }
+     
+     func sdsd() {
+        // Layout.
+     }
+     
+     let positon: _Position
+     
+     init(_ positon: _Position) {
+         self.positon = positon
+     }
+     
+     public static func leading(at positon: VerticalPosition = .firstBaseline, size: VerticalSizing = .imageSize) -> Layout {
+         Layout(.leading(positon, size))
+     }
+     
+     public static func trailing(at positon: VerticalPosition = .firstBaseline, size: VerticalSizing = .imageSize) -> Layout {
+         Layout(.trailing(positon, size))
+     }
+     
+     public static func bottom(at positon: HorizontalPosition = .leading, size: HorizontalSizing = .totalWidth) -> Layout {
+         Layout(.bottom(positon, size))
+     }
+     
+     public static func top(at positon: HorizontalPosition = .leading, size: HorizontalSizing = .totalWidth) -> Layout {
+         Layout(.top(positon, size))
+     }
+ }
+ */

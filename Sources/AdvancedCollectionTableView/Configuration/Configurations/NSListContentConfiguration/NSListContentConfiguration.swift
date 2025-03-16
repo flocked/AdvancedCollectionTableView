@@ -159,6 +159,20 @@ public struct NSListContentConfiguration: NSContentConfiguration, Hashable {
 
     /// The padding between primary and secndary text.
     public var textToSecondaryTextPadding: CGFloat = 2.0
+    
+    /**
+     The minimum horizontal padding between the text and secondary text.
+     
+     This value only applies when there’s both text and secondary text, and they’re in a side-by-side layout that ``prefersSideBySideTextAndSecondaryText`` specifies.
+     */
+    public var textToSecondaryTextHorizontalPadding: CGFloat = 8.0
+    
+    /**
+     A Boolean value that determines whether the configuration positions the text and secondary text side by side.
+     
+     When this value is `true`, the configuration positions the text and secondary text side by side if there’s sufficient space. Otherwise, the configuration stacks the text in a vertical layout.
+     */
+    public var prefersSideBySideTextAndSecondaryText: Bool = false
 
     /// The padding between the text and badge.
     public var textToBadgePadding: CGFloat = 6.0

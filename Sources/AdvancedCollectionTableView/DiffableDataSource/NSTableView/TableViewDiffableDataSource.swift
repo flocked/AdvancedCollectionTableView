@@ -676,6 +676,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
+        if canDrop, droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: tableView)), !items.isEmpty, let image = previewImage(for: items) {
+            draggingInfo.setDraggedImage(image)
+        }
+        /*
         guard !(draggingInfo.draggingSource as? NSTableView === tableView) else { return }
         if canDrop {
             droppingHandlers.updateDragItems?(draggingInfo.dropInfo(for: tableView))
@@ -692,6 +696,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 }
             })
         }
+         */
     }
     
     open func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
@@ -1298,6 +1303,9 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = true
+        
+        /// A Boolean value that indicates whether the rows for the proposed drop items are previewed.
+        public var previewDroppedItems = true
 
         /// The handler that determines whether the proposed drop can be dropped to an item.
         public var canDropInto: ((_ dropInfo: DropInfo, _ item: Item) -> Bool)?

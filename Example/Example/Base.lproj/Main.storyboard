@@ -909,7 +909,7 @@ Quicklook collection items via spacebar and favorite them by right-clicking them
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="5" horizontalPageScroll="10" verticalLineScroll="5" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Imv-nG-c4J">
                                 <rect key="frame" x="0.0" y="253" width="220" height="245"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" id="Bv4-Kx-Cwg">
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="245"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

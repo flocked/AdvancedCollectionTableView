@@ -312,6 +312,11 @@ extension CollectionViewDiffableDataSource {
             let items = indexPaths.compactMap { self.dataSource.element(for: $0) }
             didChange(items, highlightState)
         }
+        
+        func collectionView(_ collectionView: NSCollectionView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
+            if !droppingElements.isEmpty, dataSource.droppingHandlers.previewDroppedElements {
+            }
+        }
     }
     
     /*

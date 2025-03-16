@@ -11,7 +11,7 @@ import FZUIKit
 import SwiftUI
 
 extension NSListContentView {
-    class ListImageView: NSImageView {
+    class ListImageView: ImageView {
         var properties: NSListContentConfiguration.ImageProperties {
             didSet {
                 guard oldValue != properties else { return }
@@ -20,15 +20,15 @@ extension NSListContentView {
         }
 
         override var image: NSImage? {
-            didSet {
-                isHidden = (image == nil)
-            }
+            didSet { isHidden = image == nil }
         }
 
         override var intrinsicContentSize: NSSize {
             var intrinsicContentSize = super.intrinsicContentSize
 
-            if image?.isSymbolImage == true, properties.position.orientation == .horizontal {
+            intrinsicContentSize = intrinsicContentSize.clamped(min: reservedLayoutSize)
+            
+            if reservedLayoutSize.width == 0, image?.isSymbolImage == true, properties.position.orientation == .horizontal {
                 intrinsicContentSize.width = (intrinsicContentSize.height * 2.5).rounded(.towardZero)
                 return intrinsicContentSize
             }
@@ -47,13 +47,14 @@ extension NSListContentView {
         }
 
         var verticalConstraint: NSLayoutConstraint?
+        var reservedLayoutSize: CGSize = .zero
 
         func update() {
-            imageScaling = image?.isSymbolImage == true ? .scaleNone : properties.scaling.imageScaling
+            imageScaling = image?.isSymbolImage == true ? .none : properties.scaling.imageScaling
             symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
             border = properties.resolvedBorder()
             backgroundColor = properties.resolvedBackgroundColor()
-            contentTintColor = properties.resolvedTintColor()
+            tintColor = properties.resolvedTintColor()
             cornerRadius = properties.cornerRadius
             outerShadow = properties.resolvedShadow()
             toolTip = properties.toolTip

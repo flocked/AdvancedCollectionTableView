@@ -874,7 +874,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
     }
     
     public func outlineView(_ outlineView: NSOutlineView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
-        
+        if canDrop != [], droppingHandlers.previewDroppedItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
+            draggingInfo.setDraggedImage(image)
+        }
     }
     
     /// Handlers for selecting items.
@@ -1056,6 +1058,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = false
+        
+        /// A Boolean value that indicates whether the rows for the proposed drop items are previewed.
+        public var previewDroppedItems = true
         
         /// A Boolean value that indicates whether the dropped items are previewed.
         public var previewItems = true
