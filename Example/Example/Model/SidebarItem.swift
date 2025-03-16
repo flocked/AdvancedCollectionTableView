@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SidebarItem: NSObject, Identifiable {
+public class SidebarItem: NSObject, Identifiable {
 
     public let title: String
     public let symbolName: String

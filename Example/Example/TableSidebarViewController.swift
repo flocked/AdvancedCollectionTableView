@@ -46,6 +46,16 @@ class TableSidebarViewController: NSViewController {
         /// Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems  }
         
+        /// Enable dropping strings to the table view by checking if the drop contains strings.
+        dataSource.droppingHandlers.canDrop = { drop in
+            return !drop.content.strings.isEmpty
+        }
+        
+        /// Provides sidebar items for the dropped strings.
+        dataSource.droppingHandlers.items = { drop in
+            return drop.content.strings.compactMap({ SidebarItem($0, symbolName: "photo") })
+        }
+        
         /// Swipe row actions for deleting and favoriting an item.
         dataSource.rowActionProvider = { swippedItem, edge in
             if edge == .leading {

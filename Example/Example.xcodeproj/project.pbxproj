@@ -136,8 +136,8 @@
 			children = (
 				72AFC23929804B7D00FEA1C8 /* CollectionItem.swift */,
 				72F99B672A44FBDD00DDDA1E /* SidebarItem.swift */,
-				72F99B652A44FBCB00DDDA1E /* Section.swift */,
 				726BE2692D3DB14C00823E9B /* OutlineItem.swift */,
+				72F99B652A44FBCB00DDDA1E /* Section.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

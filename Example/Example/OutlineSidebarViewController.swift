@@ -12,16 +12,11 @@ class OutlineSidebarViewController: NSViewController {
     typealias DataSource = OutlineViewDiffableDataSource<OutlineItem>
     typealias CellRegistration = NSTableView.CellRegistration<NSTableCellView, OutlineItem>
 
-
     @IBOutlet var outlineView: NSOutlineView!
     
     lazy var dataSource = DataSource(outlineView: outlineView, cellRegistration: cellRegistration)
     
-    var currentSnapshot: OutlineViewDiffableDataSourceSnapshot<OutlineItem> {
-        dataSource.snapshot()
-    }
-
-    lazy var cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
+    let cellRegistration = CellRegistration { tableCell, _, _, outlineItem in
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = outlineItem.title
         tableCell.contentConfiguration = configuration
