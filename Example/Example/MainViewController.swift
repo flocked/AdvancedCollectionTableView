@@ -77,6 +77,26 @@ class MainViewController: NSViewController {
         
         dataSource.selectElements([galleryItems.first!], scrollPosition: .top)
         collectionView.makeFirstResponder()
+        
+        Swift.print(NSDiffableDataSourceSnapshotReference.classReflection())
+        var object = dataSource.snapshot() as NSDiffableDataSourceSnapshotReference
+        object.perform(NSSelectorFromString("reconfigureItemsWithIdentifiers:"), with: [galleryItems[0], galleryItems[1]])
+        if let impl: NSObject = object.getIvarValue(for: "_impl") {
+            Swift.print(impl.objectIdentifier)
+            if let reconfiguredItemIdentifiers = impl.value(forKey: "reconfiguredItemIdentifiers") as? [GalleryItem] {
+                Swift.print(reconfiguredItemIdentifiers)
+            }
+        }
+        let snapshot = object as NSDiffableDataSourceSnapshot<Section, GalleryItem>
+        object = snapshot as NSDiffableDataSourceSnapshotReference
+        if let impl: NSObject = object.getIvarValue(for: "_impl") {
+            Swift.print(impl.objectIdentifier)
+
+            if let reconfiguredItemIdentifiers = impl.value(forKey: "reconfiguredItemIdentifiers") as? [GalleryItem] {
+                Swift.print(reconfiguredItemIdentifiers)
+            }
+        }
+        
     }
 
     func applySnapshot(using items: [GalleryItem]) {

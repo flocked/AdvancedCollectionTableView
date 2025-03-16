@@ -1052,20 +1052,18 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          
          - Parameters:
             - dropInfo: The information about the drop.
-            - newElements: The new elements to be inserted for the drop.
             - transaction: The transaction for the drop.
          */
-        public var willDrop: ((_ dropInfo: DropInfo, _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        public var willDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
          
          - Parameters:
             - dropInfo: The information about the drop.
-            - newElements: The new elements that have be inserted for the drop.
             - transaction: The transaction for the drop.
          */
-        public var didDrop: ((_ dropInfo: DropInfo, _ newElements: [Element], _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        public var didDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         
         /// The handler that determinates the elements for the proposed drop.
         public var elements: ((_ dropInfo: DropInfo) -> ([Element]))?

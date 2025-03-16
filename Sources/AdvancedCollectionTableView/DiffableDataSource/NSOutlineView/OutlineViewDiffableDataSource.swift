@@ -83,7 +83,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      
      To use group items, enable group items in the snapshot you apply, by setting ``OutlineViewDiffableDataSourceSnapshot/groupItems`` `isEnabled` to `true`.
      */
-    open var groupItemCellProvider: GroupItemCellProvider?
+    open var groupItemCellProvider: GroupItemCellProvider? {
+        didSet { reapplySnapshot() }
+    }
     
     /**
      Applies the specified cell registration to configures and returnscellrow views for the outline view’s group items.
@@ -91,12 +93,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
      To use group items, enable group items in the snapshot you apply, by setting ``OutlineViewDiffableDataSourceSnapshot/groupItems`` `isEnabled` to `true`.
      */
     open func applyGroupItemCellRegistration<Cell: NSTableCellView>(_ registration: NSTableView.CellRegistration<Cell, ItemIdentifierType>) {
-        let previousUsesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         groupItemCellProvider = { outlineView, item in
             outlineView.makeCellView(using:registration, forColumn: self.groupRowTableColumn, row: 0, item: item)!
         }
-        
-        reapplySnapshot(previousUsesGroupItems: previousUsesGroupItems)
     }
     
     /**
@@ -642,27 +641,69 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         - completion: An optional completion handler which gets called after applying the snapshot. The system calls this closure from the main queue.
      */
     public func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil) {
-      apply(snapshot, option, completion: completion, previousUsesGroupItems: nil)
+        _apply(snapshot, option, completion: completion)
     }
     
-    func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil, previousUsesGroupItems: Bool?, isReapplying: Bool = false) {
+    func _apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, _ option: NSDiffableDataSourceSnapshotApplyOption = .animated, completion: (() -> Void)? = nil, isReapplying: Bool = false) {
+        var snapshot = snapshot
+        snapshot.usesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         isApplyingSnapshot = true
         let usesGroupItems = groupItemCellProvider != nil && !groupItemsAreCollapsable
         let current = currentSnapshot
         let previousIsEmpty = currentSnapshot.items.isEmpty
         currentSnapshot = snapshot
         outlineView.hoveredRow = !isReapplying ? -1 : outlineView.hoveredRow
-        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion, previousGroupItems: (previousUsesGroupItems ?? usesGroupItems) ? current.rootItems : [], groupItems: usesGroupItems ? snapshot.rootItems : [])
+        outlineView.apply(snapshot, currentSnapshot: current, option: option, animation: defaultRowAnimation, completion: completion)
         if !isReapplying {
             updateEmptyView(previousIsEmpty: previousIsEmpty)
         }
         isApplyingSnapshot = false
     }
     
-    func reapplySnapshot(previousUsesGroupItems: Bool? = nil) {
+    func apply(_ snapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, option: NSDiffableDataSourceSnapshotApplyOption, currentSnapshot: OutlineViewDiffableDataSourceSnapshot<ItemIdentifierType>, completion: (() -> Void)?) {
+        func applySnapshot() {
+            outlineView.beginUpdates()
+            for instruction in currentSnapshot.instructions(forMorphingTo: snapshot) {
+                switch instruction {
+                case .insert(_, let index, let parent):
+                    outlineView.insertItems(at: IndexSet(integer: index), inParent: parent, withAnimation: defaultRowAnimation)
+                case .remove(_, let index, let parent):
+                    outlineView.removeItems(at: IndexSet(integer: index), inParent: parent, withAnimation: defaultRowAnimation)
+                case .move(_, let from, let fromParent, let to, let toParent):
+                    outlineView.moveItem(at: from, inParent: fromParent, to: to, inParent: toParent)
+                }
+            }
+            expandCollapseItems()
+            outlineView.endUpdates()
+        }
+        
+        func expandCollapseItems() {
+            let oldExpanded = currentSnapshot.expandedItems
+            let newExpanded = snapshot.expandedItems
+            oldExpanded.subtracting(newExpanded).forEach({ outlineView.animator().collapseItem($0) })
+            newExpanded.subtracting(oldExpanded).forEach({ outlineView.animator().expandItem($0) })
+        }
+                
+        if option.isReloadData {
+            outlineView.reloadData()
+            expandCollapseItems()
+            completion?()
+        } else if let duration = option.animationDuration, duration > 0.0 {
+            NSView.animate(withDuration: duration, {
+                applySnapshot()
+            }, completion: completion)
+        } else {
+            NSView.performWithoutAnimation {
+                applySnapshot()
+                completion?()
+            }
+        }
+    }
+    
+    func reapplySnapshot() {
         let currentSnapshot = currentSnapshot
-        apply(emptySnapshot(), .withoutAnimation, previousUsesGroupItems: previousUsesGroupItems, isReapplying: true)
-        apply(currentSnapshot, .withoutAnimation, previousUsesGroupItems: previousUsesGroupItems, isReapplying: true)
+        _apply(emptySnapshot(), .withoutAnimation, isReapplying: true)
+        _apply(currentSnapshot, .withoutAnimation, isReapplying: true)
     }
     
     public func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
@@ -860,9 +901,9 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
             var snapshot = snapshot()
             snapshot.insert(items, atIndex: index, of: item)
             let transaction = OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>.init(initial: currentSnapshot, final: snapshot)
-            droppingHandlers.willDrop?(dropInfo, items, item, transaction)
+            droppingHandlers.willDrop?(dropInfo, item, transaction)
             apply(transaction.finalSnapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
-            droppingHandlers.didDrop?(dropInfo, items, item, transaction)
+            droppingHandlers.didDrop?(dropInfo, item, transaction)
             return true
         }
         return false
@@ -1051,10 +1092,10 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         public var items: ((_ dropInfo: DropInfo) -> ([ItemIdentifierType]))?
         
         /// The handler that gets called before new items are dropped.
-        public var willDrop: ((_ dropInfo: DropInfo, _ newItems: [ItemIdentifierType], _ target: ItemIdentifierType?, _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        public var willDrop: ((_ dropInfo: DropInfo, _ target: ItemIdentifierType?, _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
         
         /// The handler that gets called after new items are dropped.
-        public var didDrop: ((_ dropInfo: DropInfo, _ newItems: [ItemIdentifierType], _ target: ItemIdentifierType?, _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
+        public var didDrop: ((_ dropInfo: DropInfo, _ target: ItemIdentifierType?, _ transaction: OutlineViewDiffableDataSourceTransaction<ItemIdentifierType>) -> ())?
         
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = false

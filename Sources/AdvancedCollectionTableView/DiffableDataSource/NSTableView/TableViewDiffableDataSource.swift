@@ -587,10 +587,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 let items = droppingHandlers.items?(dropInfo) ?? []
                 if !items.isEmpty {
                     let transaction = dropItemsTransaction(items, row: row)
-                    droppingHandlers.willDrop?(dropInfo,items, transaction)
+                    droppingHandlers.willDrop?(dropInfo, transaction)
                     apply(transaction.finalSnapshot, droppingHandlers.animates ? .animated : .withoutAnimation)
                     selectItems(items)
-                    droppingHandlers.didDrop?(dropInfo,items, transaction)
+                    droppingHandlers.didDrop?(dropInfo, transaction)
                     return true
                 }
             }
@@ -1285,20 +1285,18 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          
          - Parameters:
             - dropInfo: The information about the drop.
-            - newItems: The new items to be inserted for the drop.
             - transaction: The transaction for the drop.
          */
-        public var willDrop: ((_ dropInfo: DropInfo, _ newItems: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var willDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
          
          - Parameters:
             - dropInfo: The information about the drop.
-            - newItems: The new items that have be inserted for the drop.
             - transaction: The transaction for the drop.
          */
-        public var didDrop: ((_ dropInfo: DropInfo, _ newItems: [Item], _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var didDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         
         public var updateDragItems: ((_ dropInfo: DropInfo)->())?
         
