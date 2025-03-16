@@ -21,12 +21,12 @@ extension NSCollectionViewDiffableDataSource {
         itemProvider(collectionView, IndexPath(item: 0, section: 0), itemIdentifier)
     }
     
-    /// Returns a preview image of the collection view item for the specified element.
+    /// Returns a preview image of the collection view item for the specified item.
     public func previewImage(for item: ItemIdentifierType) -> NSImage? {
         _previewImage(for: item, size: nil)
     }
     
-    /// Returns a preview image of the collection view item for the specified element and item size.
+    /// Returns a preview image of the collection view item for the specified item and item size.
     public func previewImage(for item: ItemIdentifierType, size: CGSize) -> NSImage? {
         _previewImage(for: item, size: size)
     }
