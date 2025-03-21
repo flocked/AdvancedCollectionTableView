@@ -32,6 +32,10 @@ extension NSListContentView {
                 intrinsicContentSize.width = (intrinsicContentSize.height * 2.5).rounded(.towardZero)
                 return intrinsicContentSize
             }
+            
+            if reservedLayoutSize.width == NSListContentConfiguration.ImageProperties.standardDimension {
+               // intrinsicContentSize.width = intrinsicContentSize.width.c
+            }
 
             if let calculatedSize = calculatedSize {
                 return calculatedSize
@@ -47,7 +51,16 @@ extension NSListContentView {
         }
 
         var verticalConstraint: NSLayoutConstraint?
-        var reservedLayoutSize: CGSize = .zero
+        var reservedLayoutSize: CGSize = .zero {
+            didSet {
+                if reservedLayoutSize.width == NSListContentConfiguration.ImageProperties.standardDimension {
+                    reservedLayoutSize.width = 36.0
+                }
+                if reservedLayoutSize.height == NSListContentConfiguration.ImageProperties.standardDimension {
+                    reservedLayoutSize.height = 9.0
+                }
+            }
+        }
 
         func update() {
             imageScaling = image?.isSymbolImage == true ? .none : properties.scaling.imageScaling
