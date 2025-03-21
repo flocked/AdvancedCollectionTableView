@@ -71,6 +71,7 @@ extension NSListContentView {
             cornerRadius = properties.cornerRadius
             outerShadow = properties.resolvedShadow()
             toolTip = properties.toolTip
+            reservedLayoutSize = properties.reservedLayoutSize
             invalidateIntrinsicContentSize()
         }
 
