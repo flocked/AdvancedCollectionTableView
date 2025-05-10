@@ -8,6 +8,7 @@
 import AppKit
 import FZSwiftUtils
 
+/*
 extension NSTableView {
     var draggingSessionMovedHandler: ((NSDraggingSession, CGPoint)->())? {
         get { getAssociatedValue("draggingSessionMoveHandler") }
@@ -39,3 +40,4 @@ extension NSTableView {
         }
     }
 }
+*/
