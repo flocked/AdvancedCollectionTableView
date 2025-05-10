@@ -15,22 +15,19 @@ extension NSCollectionView {
             setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
             let selector = #selector(NSCollectionView.draggingSession(_:movedTo:))
             if newValue != nil {
-                guard !isMethodReplaced(selector) else { return }
+                guard !isMethodHooked(selector) else { return }
                 do {
-                    try replaceMethod(
-                        selector,
-                        methodSignature: (@convention(c)  (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
-                        hookSignature: (@convention(block)  (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in {
-                            object, session, point in
-                            (object as? NSCollectionView)?.draggingSessionMoveHandler?(session, point)
-                            store.original(object, selector, session, point)
-                        }
-                        }
+                    try hook(selector, closure: { original, object, sel, session, point in
+                        (object as? NSCollectionView)?.draggingSessionMoveHandler?(session, point)
+                        original(object, sel, session, point)
+                    } as @convention(block) (
+                        (AnyObject, Selector, NSDraggingSession, CGPoint) -> Void,
+                        AnyObject, Selector, NSDraggingSession, CGPoint) -> Void)
                 } catch {
                    debugPrint(error)
                 }
             } else {
-                resetMethod(selector)
+                revertHooks(for: selector)
             }
         }
     }

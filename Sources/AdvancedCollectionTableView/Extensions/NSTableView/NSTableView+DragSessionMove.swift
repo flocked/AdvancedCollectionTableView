@@ -14,15 +14,15 @@ extension NSTableView {
         set {
             setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
             let selector = #selector(NSTableView.draggingSession(_:movedTo:))
-            if newValue != nil, !isMethodReplaced(selector) {
+            if newValue != nil, !isMethodReplaced(selector), !isMethodHooked(selector) {
                 do {
                     if responds(to: selector) {
-                        try replaceMethod(selector,
-                            methodSignature: (@convention(c) (AnyObject, Selector, NSDraggingSession, CGPoint) -> ()).self,
-                            hookSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { store in { object, session, point in
-                                (object as? NSTableView)?.draggingSessionMovedHandler?(session, point)
-                                store.original(object, selector, session, point)
-                            } }
+                        try hook(selector, closure: { original, object, sel, session, point in
+                            (object as? NSTableView)?.draggingSessionMovedHandler?(session, point)
+                            original(object, sel, session, point)
+                        } as @convention(block) (
+                            (AnyObject, Selector, NSDraggingSession, CGPoint) -> Void,
+                            AnyObject, Selector, NSDraggingSession, CGPoint) -> Void)
                     } else {
                         try addMethod(selector,
                             methodSignature: (@convention(block) (AnyObject, NSDraggingSession, CGPoint) -> ()).self) { object, session, point in
@@ -34,6 +34,7 @@ extension NSTableView {
                 }
             } else if newValue == nil {
                 resetMethod(selector)
+                revertHooks(for: selector)
             }
         }
     }
