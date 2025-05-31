@@ -177,6 +177,27 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         }
     }
     
+    /// The handler that gets called when the table view gets double clicked.
+    open var doubleClickHandler: ((_ item: ItemIdentifierType?)->())? {
+        didSet {
+            if doubleClickGesture != nil, doubleClickGesture == nil {
+                doubleClickGesture = .init(target: self, action: #selector(didDoubleClick(_:)))
+                doubleClickGesture?.numberOfClicksRequired = 2
+                outlineView?.addGestureRecognizer(doubleClickGesture!)
+            } else if doubleClickGesture == nil, let gesture = doubleClickGesture {
+                outlineView?.removeGestureRecognizer(gesture)
+                doubleClickGesture = nil
+            }
+        }
+    }
+    
+    var doubleClickGesture: NSClickGestureRecognizer?
+    
+    @objc func didDoubleClick(_ gesture: NSClickGestureRecognizer) {
+        guard let outlineView = outlineView else { return }
+        doubleClickHandler?(item(forRow: outlineView.selectedRow))
+    }
+    
     /// The handlers for selecting items.
     open var selectionHandlers = SelectionHandlers()
     

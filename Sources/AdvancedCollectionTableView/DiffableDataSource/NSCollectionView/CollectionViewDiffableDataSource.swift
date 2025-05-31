@@ -129,6 +129,31 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
+    /// The handler that gets called when the collection view gets double clicked.
+    open var doubleClickHandler: ((_ element: Element?)->())? {
+        didSet {
+            if doubleClickGesture != nil, doubleClickGesture == nil {
+                doubleClickGesture = .init(target: self, action: #selector(didDoubleClick(_:)))
+                doubleClickGesture?.numberOfClicksRequired = 2
+                collectionView?.addGestureRecognizer(doubleClickGesture!)
+            } else if doubleClickGesture == nil, let gesture = doubleClickGesture {
+                collectionView?.removeGestureRecognizer(gesture)
+                doubleClickGesture = nil
+            }
+        }
+    }
+    
+    var doubleClickGesture: NSClickGestureRecognizer?
+    
+    @objc func didDoubleClick(_ gesture: NSClickGestureRecognizer) {
+        guard let collectionView = collectionView else { return }
+        if let indexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) {
+            doubleClickHandler?(element(for: indexPath))
+        } else {
+            doubleClickHandler?(nil)
+        }
+    }
+    
     func item(for element: Element) -> NSCollectionViewItem? {
         guard let indexPath = indexPath(for: element) else { return nil }
         return collectionView.item(at: indexPath)

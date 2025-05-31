@@ -211,6 +211,27 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /// Provides an array of row actions to be attached to the specified edge of a table row and displayed when the user swipes horizontally across the row.
     open var rowActionProvider: ((_ item: Item, _ edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction])? = nil
     
+    /// The handler that gets called when the table view gets double clicked.
+    open var doubleClickHandler: ((_ item: Item?)->())? {
+        didSet {
+            if doubleClickGesture != nil, doubleClickGesture == nil {
+                doubleClickGesture = .init(target: self, action: #selector(didDoubleClick(_:)))
+                doubleClickGesture?.numberOfClicksRequired = 2
+                tableView?.addGestureRecognizer(doubleClickGesture!)
+            } else if doubleClickGesture == nil, let gesture = doubleClickGesture {
+                tableView?.removeGestureRecognizer(gesture)
+                doubleClickGesture = nil
+            }
+        }
+    }
+    
+    var doubleClickGesture: NSClickGestureRecognizer?
+    
+    @objc func didDoubleClick(_ gesture: NSClickGestureRecognizer) {
+        guard let tableView = tableView else { return }
+        doubleClickHandler?(item(forRow: tableView.selectedRow))
+    }
+    
     /**
      The default animation the UI uses to show differences between rows.
      
