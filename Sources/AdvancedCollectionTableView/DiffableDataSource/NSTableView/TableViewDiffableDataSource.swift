@@ -217,6 +217,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if doubleClickGesture != nil, doubleClickGesture == nil {
                 doubleClickGesture = .init(target: self, action: #selector(didDoubleClick(_:)))
                 doubleClickGesture?.numberOfClicksRequired = 2
+                doubleClickGesture?.delaysPrimaryMouseButtonEvents = false
+                doubleClickGesture?.delaysSecondaryMouseButtonEvents = false
                 tableView?.addGestureRecognizer(doubleClickGesture!)
             } else if doubleClickGesture == nil, let gesture = doubleClickGesture {
                 tableView?.removeGestureRecognizer(gesture)
