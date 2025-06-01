@@ -11,47 +11,40 @@ import FZUIKit
 /// View that is displayed if a table or collection view is empty.
 class EmptyView: NSView {
         
-    var contentView: (NSView & NSContentView)?
     var view: NSView? {
         didSet {
             guard oldValue != view else { return }
+            oldValue?.removeFromSuperview()
             if let view = view {
-                contentView?.removeFromSuperview()
-                contentView = nil
                 view.frame.size = bounds.size
                 addSubview(view)
             }
         }
     }
     
-    public var configuration: NSContentConfiguration? {
-        get { contentView?.configuration }
+    var configuration: NSContentConfiguration? {
+        get { (view as? NSContentView)?.configuration }
         set {
             if let newValue = newValue {
-                view?.removeFromSuperview()
-                view = nil
-                if contentView?.supports(newValue) == true {
-                    contentView?.configuration = newValue
+                if let view = view as? NSContentView, view.supports(newValue) {
+                    view.configuration = newValue
                 } else {
-                    contentView?.removeFromSuperview()
-                    contentView = newValue.makeContentView()
-                    contentView?.frame.size = bounds.size
-                    addSubview(contentView!)
+                    view = newValue.makeContentView()
                 }
+            } else {
+                view = nil
             }
         }
     }
     
     public init(view: NSView) {
-        self.view = view
         super.init(frame: .zero)
-        addSubview(view)
+        defer { self.view = view }
     }
     
     public init(configuration: NSContentConfiguration) {
-        self.contentView = configuration.makeContentView()
         super.init(frame: .zero)
-        addSubview(contentView!)
+        defer { self.configuration = configuration }
     }
     
     required init?(coder: NSCoder) {
@@ -60,7 +53,6 @@ class EmptyView: NSView {
     
     override func layout() {
         super.layout()
-        contentView?.frame.size = bounds.size
         view?.frame.size = bounds.size
     }
 }
