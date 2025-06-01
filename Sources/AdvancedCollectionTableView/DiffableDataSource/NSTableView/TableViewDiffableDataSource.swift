@@ -214,25 +214,19 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     /// The handler that gets called when the table view gets double clicked.
     open var doubleClickHandler: ((_ item: Item?)->())? {
         didSet {
-            if doubleClickGesture != nil, doubleClickGesture == nil {
-                doubleClickGesture = .init(target: self, action: #selector(didDoubleClick(_:)))
-                doubleClickGesture?.numberOfClicksRequired = 2
-                doubleClickGesture?.delaysPrimaryMouseButtonEvents = false
-                doubleClickGesture?.delaysSecondaryMouseButtonEvents = false
+            doubleClickGesture?.removeFromView()
+            doubleClickGesture = nil
+            if let handler = doubleClickHandler {
+                doubleClickGesture = .init { [weak self] gesture in
+                    guard let self = self, let tableView = self.tableView else { return }
+                    handler(self.item(forRow: tableView.selectedRow))
+                }
                 tableView?.addGestureRecognizer(doubleClickGesture!)
-            } else if doubleClickGesture == nil, let gesture = doubleClickGesture {
-                tableView?.removeGestureRecognizer(gesture)
-                doubleClickGesture = nil
             }
         }
     }
     
-    var doubleClickGesture: NSClickGestureRecognizer?
-    
-    @objc func didDoubleClick(_ gesture: NSClickGestureRecognizer) {
-        guard let tableView = tableView else { return }
-        doubleClickHandler?(item(forRow: tableView.selectedRow))
-    }
+    var doubleClickGesture: DoubleClickGestureRecognizer?
     
     /**
      The default animation the UI uses to show differences between rows.
