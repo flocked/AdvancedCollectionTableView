@@ -12,19 +12,19 @@ import FZSwiftUtils
 extension OutlineViewDiffableDataSource {
     class Delegate: NSObject, NSOutlineViewDelegate {
         weak var dataSource: OutlineViewDiffableDataSource!
-        var previousSelectedItems: [ItemIdentifierType] = []
+        var previousSelectedItems: [Item] = []
         
         func outlineView(_ outlineView: NSOutlineView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
-            previousSelectedItems = outlineView.selectedRowIndexes.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            previousSelectedItems = outlineView.selectedRowIndexes.compactMap({ outlineView.item(atRow: $0) as? Item })
             let diff = outlineView.selectedRowIndexes.difference(to: proposedSelectionIndexes)
             
-            var selected = diff.added.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            var selected = diff.added.compactMap({ outlineView.item(atRow: $0) as? Item })
             selected = selected.filter({ !self.outlineView(outlineView, isGroupItem: $0) })
             if !selected.isEmpty {
                 selected = dataSource.selectionHandlers.shouldSelect?(selected) ?? selected
             }
 
-            var deselected = diff.removed.compactMap({ outlineView.item(atRow: $0) as? ItemIdentifierType })
+            var deselected = diff.removed.compactMap({ outlineView.item(atRow: $0) as? Item })
             if !deselected.isEmpty {
                 let should = dataSource.selectionHandlers.shouldDeselect?(deselected) ?? deselected
                 selected += deselected.filter({ !should.contains($0) })
@@ -59,7 +59,7 @@ extension OutlineViewDiffableDataSource {
                 let rowView = outlineView.makeView(withIdentifier: "_GroupRowView", owner: self) as? NSTableRowView ?? NSTableRowView()
                 rowView.identifier = "_GroupRowView"
                 return rowView
-            } else if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! ItemIdentifierType)!, item as! ItemIdentifierType) {
+            } else if let view = dataSource.rowViewProvider?(outlineView, dataSource.row(for: item as! Item)!, item as! Item) {
                 return view
             } else {
                 let rowView = outlineView.makeView(withIdentifier: "_RowView", owner: self) as? NSTableRowView ?? NSTableRowView()
@@ -70,22 +70,22 @@ extension OutlineViewDiffableDataSource {
         
         func outlineView(_ outlineView: NSOutlineView, shouldExpandItem item: Any) -> Bool {
             guard !dataSource.isApplyingSnapshot else { return true }
-            return dataSource.expanionHandlers.shouldExpand?(item as! ItemIdentifierType) ?? true
+            return dataSource.expanionHandlers.shouldExpand?(item as! Item) ?? true
         }
         
         func outlineView(_ outlineView: NSOutlineView, shouldCollapseItem item: Any) -> Bool {
             guard !dataSource.isApplyingSnapshot else { return true }
-            return dataSource.expanionHandlers.shouldCollapse?(item as! ItemIdentifierType) ?? true
+            return dataSource.expanionHandlers.shouldCollapse?(item as! Item) ?? true
         }
         
         func outlineViewItemDidExpand(_ notification: Notification) {
-            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? Item else { return }
             dataSource.expanionHandlers.didExpand?(item)
             dataSource.currentSnapshot.expand([item])
         }
         
         func outlineViewItemDidCollapse(_ notification: Notification) {
-            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? ItemIdentifierType else { return }
+            guard !dataSource.isApplyingSnapshot, let item = notification.userInfo?["NSObject"] as? Item else { return }
             dataSource.expanionHandlers.didCollapse?(item)
             dataSource.currentSnapshot.collapse([item])
         }
@@ -126,11 +126,11 @@ extension OutlineViewDiffableDataSource {
                 let rowView = outlineView.makeView(withIdentifier: "_GroupCellRowView", owner: self) as? GroupItemCellRowView ?? GroupItemCellRowView()
                 rowView.identifier = "_GroupCellRowView"
                 NSAnimationContext.runNonAnimated {
-                    rowView.view = groupItemCellProvider(outlineView, item as! ItemIdentifierType)
+                    rowView.view = groupItemCellProvider(outlineView, item as! Item)
                 }
                 return rowView
             } else {
-                return dataSource.cellProvider(outlineView, tableColumn!, item as! ItemIdentifierType)
+                return dataSource.cellProvider(outlineView, tableColumn!, item as! Item)
             }
         }
         
@@ -142,12 +142,12 @@ extension OutlineViewDiffableDataSource {
         }
         
         func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
-            guard let item = item as? ItemIdentifierType, dataSource.groupItemCellProvider != nil else { return false }
+            guard let item = item as? Item, dataSource.groupItemCellProvider != nil else { return false }
             return dataSource.currentSnapshot.rootItems.contains(item)
         }
         
         func outlineView(_ outlineView: NSOutlineView, tintConfigurationForItem item: Any) -> NSTintConfiguration? {
-            guard let item = item as? ItemIdentifierType else { return nil }
+            guard let item = item as? Item else { return nil }
             return dataSource.tintConfigurationProvider?(item)
         }
         

@@ -31,10 +31,10 @@ enum OutlineChangeInstruction: CustomStringConvertible, Hashable, Equatable {
 
 extension OutlineViewDiffableDataSourceSnapshot {
     func instructions(forMorphingTo newSnapshot: OutlineViewDiffableDataSourceSnapshot) -> [OutlineChangeInstruction] {
-        var movedItems: Set<ItemIdentifierType> = []
+        var movedItems: Set<Item> = []
         var work = self
         work.isCalculatingDiff = true
-        func calculateSteps(from source: [ItemIdentifierType], to destination: [ItemIdentifierType], parent: ItemIdentifierType? = nil) -> [OutlineChangeInstruction] {
+        func calculateSteps(from source: [Item], to destination: [Item], parent: Item? = nil) -> [OutlineChangeInstruction] {
             var instructions: [OutlineChangeInstruction] = []
             for step in destination.difference(from: source).steps {
                 switch step {

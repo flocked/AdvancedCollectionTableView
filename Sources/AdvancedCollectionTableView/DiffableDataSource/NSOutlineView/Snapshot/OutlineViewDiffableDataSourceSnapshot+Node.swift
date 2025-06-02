@@ -26,9 +26,9 @@ import Foundation
  }
  ```
  */
-public struct OutlineNode<ItemIdentifierType: Hashable> {
+public struct OutlineNode<Item: Hashable> {
     /// The item of the node.
-    public let item: ItemIdentifierType
+    public let item: Item
     
     /// The children of the node.
     public let children: [OutlineNode]
@@ -43,26 +43,26 @@ public struct OutlineNode<ItemIdentifierType: Hashable> {
     
     /*
     /// A Boolean value indicating whether the node contains the item.
-    public func contains(_ item: ItemIdentifierType) -> Bool {
+    public func contains(_ item: Item) -> Bool {
         children.contains(where: { $0.item == item || $0.contains(item) })
     }
      */
     
     /// Creates a node with the specified item.
-    public init(_ item: ItemIdentifierType) {
+    public init(_ item: Item) {
         self.item = item
         self.children = []
         self.isExpanded = false
     }
     
     /// Creates a node with the specified item and children.
-    public init(_ item: ItemIdentifierType, @Builder _ children: () -> [OutlineNode]) {
+    public init(_ item: Item, @Builder _ children: () -> [OutlineNode]) {
         self.item = item
         self.children = children()
         self.isExpanded = false
     }
     
-    init(_ item: ItemIdentifierType, children: [OutlineNode], isExpanded: Bool) {
+    init(_ item: Item, children: [OutlineNode], isExpanded: Bool) {
         self.item = item
         self.children = children
         self.isExpanded = isExpanded
@@ -89,30 +89,30 @@ extension OutlineViewDiffableDataSourceSnapshot {
      }
      ```
      */
-    public init(@OutlineNode<ItemIdentifierType>.Builder nodes: () -> [OutlineNode<ItemIdentifierType>]) {
+    public init(@OutlineNode<Item>.Builder nodes: () -> [OutlineNode<Item>]) {
         apply(nodes())
     }
     
     /// Adds the items of the specified nodes as child items of the specified parent item in the snapshot.
-    public mutating func append(@OutlineNode<ItemIdentifierType>.Builder _ nodes: () -> [OutlineNode<ItemIdentifierType>], to parent: ItemIdentifierType? = nil) {
+    public mutating func append(@OutlineNode<Item>.Builder _ nodes: () -> [OutlineNode<Item>], to parent: Item? = nil) {
         apply(nodes(), to: parent)
     }
     
     /// Inserts the items of the provided nodes immediately after the item with the specified identifier in the snapshot.
-    public mutating func insert(@OutlineNode<ItemIdentifierType>.Builder _ nodes: () -> [OutlineNode<ItemIdentifierType>], after item: ItemIdentifierType) {
+    public mutating func insert(@OutlineNode<Item>.Builder _ nodes: () -> [OutlineNode<Item>], after item: Item) {
         let nodes = nodes()
         insert(nodes.compactMap({$0.item}), after: item)
         nodes.forEach({ apply($0.children, to: $0.item) })
     }
     
     /// Inserts the items of the provided nodes immediately before the item with the specified identifier in the snapshot.
-    public mutating func insert(@OutlineNode<ItemIdentifierType>.Builder _ nodes: () -> [OutlineNode<ItemIdentifierType>], before item: ItemIdentifierType) {
+    public mutating func insert(@OutlineNode<Item>.Builder _ nodes: () -> [OutlineNode<Item>], before item: Item) {
         let nodes = nodes()
         insert(nodes.compactMap({$0.item}), before: item)
         nodes.forEach({ apply($0.children, to: $0.item) })
     }
     
-    mutating func apply(_ nodes: [OutlineNode<ItemIdentifierType>], to item: ItemIdentifierType? = nil) {
+    mutating func apply(_ nodes: [OutlineNode<Item>], to item: Item? = nil) {
         append(nodes.compactMap({$0.item}), to: item)
         nodes.forEach({ self.nodes[$0.item]?.isExpanded = $0.isExpanded })
         nodes.forEach({ apply($0.children, to: $0.item) })
@@ -151,14 +151,14 @@ extension OutlineNode {
             expr.map { [$0] } ?? []
         }
         
-        public static func buildExpression(_ expr: ItemIdentifierType?) -> [OutlineNode] {
+        public static func buildExpression(_ expr: Item?) -> [OutlineNode] {
             if let item = expr {
                 return [.init(item)]
             }
             return []
         }
         
-        public static func buildExpression(_ expr: [ItemIdentifierType]?) -> [OutlineNode] {
+        public static func buildExpression(_ expr: [Item]?) -> [OutlineNode] {
             expr?.compactMap({.init($0)}) ?? []
         }
     }

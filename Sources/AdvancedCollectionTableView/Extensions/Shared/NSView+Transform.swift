@@ -16,7 +16,7 @@ extension NSView {
             guard newValue != _scaleTransform else { return }
             setAssociatedValue(newValue, key: "_scaleTransform")
             anchorPoint = .center
-            scale = newValue
+            animatorIfNeeded().scale = newValue
         }
     }
     
@@ -26,7 +26,7 @@ extension NSView {
             guard newValue != _rotation else { return }
             setAssociatedValue(newValue, key: "_rotation")
             anchorPoint = .center
-            rotation = newValue
+            animatorIfNeeded().rotation = newValue
         }
     }
 }
