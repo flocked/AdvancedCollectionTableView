@@ -29,7 +29,6 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
         imageTextStackView.translatesAutoresizingMaskIntoConstraints = false
         badgeStackView.translatesAutoresizingMaskIntoConstraints = false
         stackViewConstraints = addSubview(withConstraint: badgeStackView)
-
         updateConfiguration()
     }
     
