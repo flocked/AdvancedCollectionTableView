@@ -177,7 +177,7 @@ public class OutlineViewDiffableDataSource<ItemIdentifierType: Hashable>: NSObje
         }
     }
     
-    /// The handler that gets called when the table view gets double clicked.
+    /// The handler that gets called when the outline view gets double clicked.
     open var doubleClickHandler: ((_ item: ItemIdentifierType?)->())? {
         didSet {
             doubleClickGesture?.removeFromView()
