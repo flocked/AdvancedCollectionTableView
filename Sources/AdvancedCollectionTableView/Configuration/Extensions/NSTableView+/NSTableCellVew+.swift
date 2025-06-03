@@ -275,15 +275,11 @@ extension NSTableCellView {
             tableViewObservation = observeChanges(for: \.window) { [weak self] _, window in
                 guard window != nil, let self = self, let tableView = self.tableView else { return }
                 tableView.setupObservation()
-                if self.contentConfiguration is AutomaticHeightSizable, !tableView.usesAutomaticRowHeights {
-                    tableView.enableAutomaticRowHeights()
-                } else {
-                    self.updateContentConfigurationStyle()
-                    self.setNeedsAutomaticUpdateConfiguration()
-                    guard let rowView = self.rowView else { return }
-                    rowView.translatesAutoresizingMaskIntoConstraints = false
-                    rowView.observeSelection()
-                }
+                self.updateContentConfigurationStyle()
+                self.setNeedsAutomaticUpdateConfiguration()
+                guard let rowView = self.rowView else { return }
+                rowView.translatesAutoresizingMaskIntoConstraints = false
+                rowView.observeSelection()
             }
         } else {
             tableViewObservation = nil
@@ -297,7 +293,10 @@ extension NSTableCellView {
     
     var _tableView: NSTableView? {
         get { getAssociatedValue("_tableView") }
-        set { setAssociatedValue(weak: newValue, key: "_tableView") }
+        set {
+            guard newValue != _tableView else { return }
+            setAssociatedValue(weak: newValue, key: "_tableView")
+        }
     }
     
     func observeWillMoveToRowView() {

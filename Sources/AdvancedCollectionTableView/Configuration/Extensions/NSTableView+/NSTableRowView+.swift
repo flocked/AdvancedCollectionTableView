@@ -250,9 +250,6 @@ extension NSTableRowView {
             guard tableViewObservation == nil else { return }
             tableViewObservation = observeChanges(for: \.window) { [weak self] _, window in
                 guard window != nil, let self = self, let tableView = self.tableView else { return }
-                if self.contentConfiguration is AutomaticHeightSizable {
-                    tableView.usesAutomaticRowHeights = true
-                }
                 tableView.setupObservation()
             }
         } else {
