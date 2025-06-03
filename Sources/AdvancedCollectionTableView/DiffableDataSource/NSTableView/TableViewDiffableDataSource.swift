@@ -97,7 +97,8 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let rowViewProvider = rowViewProvider {
                 dataSource.rowViewProvider = { [weak self] tableview, row, identifier in
                     guard let self = self, let item = self.currentSnapshot.itemIdentifiers[id: identifier as! Item.ID] else { return NSTableRowView() }
-                    return rowViewProvider(tableview, row, item)
+                    let rowView = rowViewProvider(tableview, row, item)
+                    return rowView
                 }
             } else {
                 dataSource.rowViewProvider = nil

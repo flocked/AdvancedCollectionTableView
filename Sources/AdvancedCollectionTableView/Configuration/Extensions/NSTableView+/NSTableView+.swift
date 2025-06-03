@@ -57,4 +57,17 @@ extension NSTableView {
     var isActive: Bool {
         window?.isKeyWindow == true
     }
+    
+    func enableAutomaticRowHeights() {
+        guard !usesAutomaticRowHeights else { return }
+        Self.swizzleCellRegistration()
+        isEnablingAutomaticRowHeights = true
+        usesAutomaticRowHeights = true
+        reloadData()
+    }
+    
+    var isEnablingAutomaticRowHeights: Bool {
+        get { getAssociatedValue("isEnablingAutomaticRowHeights") ?? false }
+        set { setAssociatedValue(newValue, key: "isEnablingAutomaticRowHeights") }
+    }
 }

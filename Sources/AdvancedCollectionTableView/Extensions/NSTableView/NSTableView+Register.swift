@@ -64,6 +64,10 @@ extension NSTableView {
     }
 
     @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
+        if isEnablingAutomaticRowHeights {
+            isEnablingAutomaticRowHeights = false
+            return nil
+        }
         if let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
             return cell
         }
