@@ -291,26 +291,18 @@ extension NSTableCellView {
         set { setAssociatedValue(newValue, key: "tableViewObservation") }
     }
     
-    var _tableView: NSTableView? {
-        get { getAssociatedValue("_tableView") }
-        set {
-            guard newValue != _tableView else { return }
-            setAssociatedValue(weak: newValue, key: "_tableView")
-        }
-    }
-    
     func observeWillMoveToRowView() {
-        guard !isMethodHooked(#selector(NSView.viewWillMove(toSuperview:))) else { return }
-        do {
-            try hookBefore(#selector(NSView.viewWillMove(toSuperview:)), closure: {
-               object, selector, superview in
-                guard let rowView = superview as? NSTableRowView else { return }
-                rowView.observeWillMoveToTableView()
-                // rowView.translatesAutoresizingMaskIntoConstraints = false
-                // rowView.observeSelection()
-            } as @convention(block) (AnyObject, Selector, NSView?) -> ())
-        } catch {
-            Swift.print(error)
+        if let tableView = tableView {
+            tableView.enableAutomaticRowHeights()
+        } else if !isMethodHooked(#selector(NSView.viewWillMove(toSuperview:))) {
+            do {
+                try hookBefore(#selector(NSView.viewWillMove(toSuperview:)), closure: {
+                    object, selector, superview in
+                    (superview as? NSTableRowView)?.observeWillMoveToTableView()
+                } as @convention(block) (AnyObject, Selector, NSView?) -> ())
+            } catch {
+                Swift.print(error)
+            }
         }
     }
 }
