@@ -822,6 +822,28 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         tableView.reconfigureRows(at: rows)
     }
     
+    /**
+     Updates the section header data for the specified sections.
+     
+     This method only updates section headers and not items of the section. It only works, if you provided ``sectionHeaderCellProvider-swift.property`` or section header registration using ``applySectionHeaderRegistration(_:)``.
+     */
+    open func reloadSectionHeaders(_ sections: [Section]) {
+        guard sectionHeaderCellProvider != nil else { return }
+        let rows = IndexSet(sections.compactMap { row(for: $0) })
+        // tableView.reloadData(forRowIndexes: <#T##IndexSet#>, columnIndexes: <#T##IndexSet#>)
+    }
+    
+    /**
+     Updates the section header data for the specified sections, preserving existing headers.
+
+     This method only updates section headers and not items of the section. It only works, if you provided ``sectionHeaderCellProvider-swift.property`` or section header registration using ``applySectionHeaderRegistration(_:)``.
+     */
+    open func reconfigureSectionHeaders(_ sections: [Section]) {
+        guard sectionHeaderCellProvider != nil else { return }
+        let rows = IndexSet(sections.compactMap { row(for: $0) })
+        tableView.reconfigureRows(at: rows)
+    }
+    
     /// The items that are visible.
     open var visibleItems: [Item] {
         tableView.visibleRowIndexes().compactMap { item(forRow: $0) }
