@@ -2,6 +2,8 @@
 
 A framework for NSCollectionView, NSTableView and NSOutlineView. It provides a collection of classes and extensions, many of them being ports of missing UIKit APIs.
 
+**Always use the main branch, as else the code might not compile probably.**
+
 **Take a look at the included sample app which demonstrates most features.**
 
 **For a full documentation take a look at the** [Online Documentation](https://swiftpackageindex.com/flocked/AdvancedCollectionTableView/documentation/).
@@ -237,10 +239,13 @@ collectionViewItem.quicklookPreview = URL(fileURLWithPath: "someFile.png")
 Add `AdvancedCollectionTableView` to your app's `Package.swift` file, or selecting `File -> Add Package Dependencies in Xcode:
 
 ```swift
-.package(url: "https://github.com/flocked/AdvancedCollectionTableView")
+.package(url: "https://github.com/flocked/AdvancedCollectionTableView",)
 ```
+
+**Always use the main branch, as else the code might not compile probably.**
 
 If you clone the repo, you can run the sample app, which demonstrates most of the API`s.
 
 ### Known bugs
 - `OutlineViewDiffableDataSource`: Dragging rows isn't working.
+- All diffable datasources: Some inconsistency for dropping content and dragging out rows/items.
