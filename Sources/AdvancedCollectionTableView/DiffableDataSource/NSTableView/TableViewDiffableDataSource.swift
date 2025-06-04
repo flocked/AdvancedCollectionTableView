@@ -830,7 +830,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     open func reloadSectionHeaders(_ sections: [Section]) {
         guard sectionHeaderCellProvider != nil else { return }
         let rows = IndexSet(sections.compactMap { row(for: $0) })
-        // tableView.reloadData(forRowIndexes: <#T##IndexSet#>, columnIndexes: <#T##IndexSet#>)
+        tableView.reloadData(forRowIndexes: rows, columnIndexes: IndexSet([0]))
     }
     
     /**
@@ -842,6 +842,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         guard sectionHeaderCellProvider != nil else { return }
         let rows = IndexSet(sections.compactMap { row(for: $0) })
         tableView.reconfigureRows(at: rows)
+
     }
     
     /// The items that are visible.

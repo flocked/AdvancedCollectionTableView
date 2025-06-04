@@ -28,14 +28,21 @@ extension NSTableView {
         let columns = tableColumns
         
         for row in indexes {
-            for (index, column) in columns.enumerated() {
-                if view(atColumn: index, row: row, makeIfNecessary: false) != nil {
-                    reconfigureIndexPath = IndexPath(item: row, section: index)
-                    _ = delegate.tableView?(self, viewFor: column, row: row)
-                }
+            if delegate.tableView?(self, isGroupRow: row) ?? false {
                 if rowView(atRow: row, makeIfNecessary: false) != nil {
-                    reconfigureIndexPath = IndexPath(item: row, section: -1)
-                    _ = delegate.tableView?(self, rowViewForRow: row)
+                    reconfigureIndexPath = IndexPath(item: row, section: 0)
+                    _ = delegate.tableView?(self, viewFor: nil, row: row)
+                }
+            } else {
+                for (index, column) in columns.enumerated() {
+                    if view(atColumn: index, row: row, makeIfNecessary: false) != nil {
+                        reconfigureIndexPath = IndexPath(item: row, section: index)
+                        _ = delegate.tableView?(self, viewFor: column, row: row)
+                    }
+                    if rowView(atRow: row, makeIfNecessary: false) != nil {
+                        reconfigureIndexPath = IndexPath(item: row, section: -1)
+                        _ = delegate.tableView?(self, rowViewForRow: row)
+                    }
                 }
             }
         }
