@@ -124,7 +124,7 @@ public extension NSTableView {
                     tableView.register(nib, forIdentifier: identifier)
                 }
             } else {
-                if tableView.registeredCellsByIdentifier[identifier] != Cell.self {
+                if tableView.registeredClassesByIdentifier[identifier] != Cell.self {
                     tableView.register(Cell.self, forIdentifier: identifier)
                 }
             }

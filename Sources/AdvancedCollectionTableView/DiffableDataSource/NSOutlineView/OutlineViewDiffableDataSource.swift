@@ -438,7 +438,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    /// Reloads the outline view cells for the specified items.
+    /// Reloads the outline view row view and cells for the specified items.
     open func reloadItems(_ items: [Item], reloadChildren: Bool = false, animated: Bool = false) {
         if animated {
             NSView.animate {
@@ -449,7 +449,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    /// Updates the data for the specified items, preserving the existing outline view cells for the items.
+    /// Updates the data for the specified items, preserving the existing outline view row views and cells for the items.
     open func reconfigureItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         outlineView.reconfigureRows(at: rows)

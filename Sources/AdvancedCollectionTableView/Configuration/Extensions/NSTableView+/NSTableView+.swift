@@ -60,7 +60,7 @@ extension NSTableView {
     
     func enableAutomaticRowHeights() {
         guard !usesAutomaticRowHeights else { return }
-        Self.swizzleCellRegistration()
+        Self.swizzleViewRegistration()
         isEnablingAutomaticRowHeights = true
         usesAutomaticRowHeights = true
         reloadData()

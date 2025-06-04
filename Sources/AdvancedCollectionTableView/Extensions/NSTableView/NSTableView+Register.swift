@@ -11,91 +11,100 @@ import FZUIKit
 
 extension NSTableView {
     /**
-     Registers a class to use when creating new cells in the table view.
+     Registers a view class for the specified identifier, so that view-based table views can use it to instantiate views.
 
-     Use this method to register the classes that represent cells in your table view. When you request an cell using the ``makeView(for:)`` method, the table view recycles an existing cell with the same class or creates a new one by instantiating your class.
-
-     - Parameter cellClass: The table cell view class to register.
+     Use this method to associate the view class with the specified identifier. When you request a view using ``makeView(for:)``, the table view recycles an existing view with the same class or creates a new one by instantiating your class.
+     
+     - Parameter viewClass: The  view class to register.
      */
-    public func register(_ cellClass: NSTableCellView.Type) {
-        register(cellClass, forIdentifier: .init(cellClass))
+    public func register(_ viewClass: NSView.Type) {
+        register(viewClass, forIdentifier: .init(viewClass))
     }
 
-    func register(_ cellClass: NSTableCellView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        Self.swizzleCellRegistration()
-        registeredCellsByIdentifier[identifier] = cellClass
-        registeredCellsByIdentifier = registeredCellsByIdentifier
+    func register(_ viewClass: NSView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+        Self.swizzleViewRegistration()
+        registeredClassesByIdentifier[identifier] = viewClass
+        registeredClassesByIdentifier = registeredClassesByIdentifier
     }
 
     /**
-     Returns a new or existing view with the specified table cell class.
+     Returns a new or existing view with the specified view class.
 
-     The be able to create a table view cell from a cell class, you have to register it first via ``register(_:)``.
+     To be able to create a reusable view using this method, you have to register it first via ``register(_:)``.
 
      When this method is called, the table view automatically instantiates the cell view with the specified owner, which is usually the table view’s delegate. (The owner is useful in setting up outlets and target/actions from the view.).
 
-     This method may also return a reused cell view with the same class that is no longer available on screen. If the cell class isn't registered, the cell can’t be instantiated or can't found in the reuse queue, this method returns nil.
+     This method may return a reused view with the same class that is no longer available on screen.
 
-     This method is usually called by the delegate in `tableView(_:viewFor:row:)`, but it can also be overridden to provide custom views for cell class. Note that `awakeFromNib()` is called each time this method is called, which means that `awakeFromNib` is also called on owner, even though the owner is already awake.
+     Note that `awakeFromNib()` is called each time this method is called.
 
-     - Parameter cellClass: The class of the table cell view.
+     - Parameter viewClass: The class of the view.
 
-     - Returns:The table cell view, or `nil` if the cell class isn't registered or the cell couldn't be created.
+     - Returns:The view, or `nil` if the view class isn't registered or the view couldn't be created.
      */
-    public func makeView<TableCellView: NSTableCellView>(for cellClass: TableCellView.Type) -> TableCellView? {
-        makeView(for: cellClass, withIdentifier: .init(cellClass))
+    public func makeView<View: NSView>(for viewClass: View.Type) -> View? {
+        makeView(for: viewClass, withIdentifier: .init(viewClass))
     }
 
-    func makeView<TableCellView: NSTableCellView>(for _: TableCellView.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> TableCellView? {
-        makeView(withIdentifier: identifier, owner: nil) as? TableCellView
+    func makeView<View: NSView>(for _: View.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> View? {
+        makeView(withIdentifier: identifier, owner: nil) as? View
     }
     
-    /// The dictionary of all registered cells for view-based table view identifiers.
-    var registeredCellsByIdentifier: [NSUserInterfaceItemIdentifier: NSTableCellView.Type] {
-        get { getAssociatedValue("registeredCellsByIdentifier", initialValue: [:]) }
-        set { setAssociatedValue(newValue, key: "registeredCellsByIdentifier") }
+    /**
+     The dictionary of all registered classes for view-based table view identifiers.
+     
+     Each key in the dictionary is the identifier used to register the view class in the ``register(_:)``. The value of each key is the corresponding view class.
+     */
+    public private(set) var registeredClassesByIdentifier: [NSUserInterfaceItemIdentifier: NSView.Type] {
+        get { getAssociatedValue("registeredClassesByIdentifier", initialValue: [:]) }
+        set { setAssociatedValue(newValue, key: "registeredClassesByIdentifier") }
     }
 
-    @objc func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+    @objc private func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
         if nib == nil {
-            registeredCellsByIdentifier[identifier] = nil
+            registeredClassesByIdentifier[identifier] = nil
         }
         swizzled_register(nib, forIdentifier: identifier)
     }
 
-    @objc func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
+    @objc private func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
         if isEnablingAutomaticRowHeights {
             isEnablingAutomaticRowHeights = false
             return nil
         }
-        if let reconfigureIndexPath = reconfigureIndexPath, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
-            return cell
-        }
-        if let registeredCellClass = registeredCellsByIdentifier[identifier] {
-            if let tableCellView = swizzled_makeView(withIdentifier: identifier, owner: owner) {
-                return tableCellView
-            } else {
-                let tableCellView = registeredCellClass.init(frame: .zero)
-                tableCellView.identifier = identifier
-                return tableCellView
+        if let reconfigureIndexPath = reconfigureIndexPath {
+            if reconfigureIndexPath.section != -1, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
+                return cell
+            } else if reconfigureIndexPath.section == -1, let rowView = rowView(atRow: reconfigureIndexPath.item, makeIfNecessary: false) {
+                return rowView
             }
         }
-        return swizzled_makeView(withIdentifier: identifier, owner: owner)
+        if let registeredViewClass = registeredClassesByIdentifier[identifier] {
+            if let view = swizzled_makeView(withIdentifier: identifier, owner: owner) {
+                return view
+            } else {
+                let view = registeredViewClass.init(frame: .zero)
+                view.identifier = identifier
+                return view
+            }
+        }
+        let view = swizzled_makeView(withIdentifier: identifier, owner: owner)
+        return view
     }
     
-    static var didSwizzleCellRegistration: Bool {
-        get { FZSwiftUtils.getAssociatedValue("didSwizzleCellRegistration", object: NSTableView.self, initialValue: false) }
-        set { FZSwiftUtils.setAssociatedValue(newValue, key: "didSwizzleCellRegistration", object: NSTableView.self) }
+    private static var didSwizzleViewRegistration: Bool {
+        get { getAssociatedValue("didSwizzleViewRegistration") ?? false }
+        set { setAssociatedValue(newValue, key: "didSwizzleViewRegistration") }
     }
 
-    @objc static func swizzleCellRegistration() {
-        guard didSwizzleCellRegistration == false else { return }
+    static func swizzleViewRegistration() {
+        guard !didSwizzleViewRegistration else { return }
         do {
             try Swizzle(NSTableView.self) {
                 #selector(makeView(withIdentifier:owner:)) <-> #selector(swizzled_makeView(withIdentifier:owner:))
                 #selector((register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(swizzled_register(_:forIdentifier:))
             }
-            didSwizzleCellRegistration = true
+            didSwizzleViewRegistration = true
         } catch {
             Swift.debugPrint(error)
         }

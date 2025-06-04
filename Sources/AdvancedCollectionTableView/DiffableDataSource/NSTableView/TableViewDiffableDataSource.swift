@@ -809,14 +809,14 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    /// Reloads the table view cells for the specified items.
+    /// Reloads the table row views and cells for the specified items.
     open func reloadItems(_ items: [Item], animated: Bool = false) {
         var snapshot = snapshot()
         snapshot.reloadItems(items)
         apply(snapshot, animated ? .animated : .withoutAnimation)
     }
     
-    /// Updates the data for the specified items, preserving the existing table view cells for the items.
+    /// Updates the data for the specified items, preserving the existing table row views and cells for the items.
     open func reconfigureItems(_ items: [Item]) {
         let rows = IndexSet(items.compactMap { row(for: $0) })
         tableView.reconfigureRows(at: rows)
