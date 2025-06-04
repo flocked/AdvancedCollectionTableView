@@ -2,7 +2,7 @@
 
 A framework for NSCollectionView, NSTableView and NSOutlineView. It provides a collection of classes and extensions, many of them being ports of missing UIKit APIs.
 
-**Always use the main branch, as else the code might not compile probably.**
+**Always use the main branch, as else the package might not compile probably.**
 
 **Take a look at the included sample app which demonstrates most features.**
 
