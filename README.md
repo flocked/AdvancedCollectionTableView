@@ -241,3 +241,6 @@ Add `AdvancedCollectionTableView` to your app's `Package.swift` file, or selecti
 ```
 
 If you clone the repo, you can run the sample app, which demonstrates most of the API`s.
+
+### Known bugs
+- `OutlineViewDiffableDataSource`: Dragging rows isn't working.
