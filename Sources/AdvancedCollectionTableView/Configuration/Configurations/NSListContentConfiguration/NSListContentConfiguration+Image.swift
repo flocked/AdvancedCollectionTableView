@@ -35,7 +35,7 @@ public extension NSListContentConfiguration {
         }
 
         /// The scaling of the image.
-        public enum Scaling: Int, Hashable {
+        public enum ImageScaling: Int, Hashable {
             /// The image is resized to fit the bounds rectangle, preserving the aspect of the image. If the image does not completely fill the bounds rectangle, the image is centered in the partial axis.
             case scaleToFit
             /// The image is resized to completely fill the bounds rectangle, while still preserving the aspect of the image.
@@ -217,7 +217,7 @@ public extension NSListContentConfiguration {
         public var symbolConfiguration: ImageSymbolConfiguration? = .font(.body)
 
         /// The image scaling.
-        public var scaling: Scaling = .scaleToFit
+        public var scaling: ImageScaling = .scaleToFit
 
         /// The sizing option for the image.
         public var sizing: Sizing = .totalTextHeight

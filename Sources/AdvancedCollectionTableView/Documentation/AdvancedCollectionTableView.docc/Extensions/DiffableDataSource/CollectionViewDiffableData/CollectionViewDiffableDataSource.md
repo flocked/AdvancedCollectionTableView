@@ -47,6 +47,7 @@
 ### Configurating user interaction
 
 - ``menuProvider``
+- ``doubleClickHandler``
 - ``rightClickHandler``
 
 ### Displaying empty view
@@ -59,6 +60,10 @@
 
 - ``isQuicklookPreviewable``
 - ``quicklookElements(_:current:)``
+- ``previewImage(for:)``
+- ``previewImage(for:size:)``
+- ``previewImage(for:width:)``
+- ``previewImage(for:height:)``
 
 ### Supporting prefetching elements
 

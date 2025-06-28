@@ -21,3 +21,5 @@ The diffable data source type conforms to `NSOutlineViewDataSource`.
 - ``OutlineViewDiffableDataSource/outlineView(_:validateDrop:proposedItem:proposedChildIndex:)``
 - ``OutlineViewDiffableDataSource/outlineView(_:acceptDrop:item:childIndex:)``
 - ``OutlineViewDiffableDataSource/outlineView(_:pasteboardWriterForItem:)``
+
+- ``OutlineViewDiffableDataSource/outlineView(_:updateDraggingItemsForDrag:)``

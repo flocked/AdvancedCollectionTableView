@@ -2,10 +2,10 @@
 
 ## Topics
 
-### Configuring scaling
+### Configuring image scaling
 
-- ``scaling-swift.property``
-- ``Scaling-swift.enum``
+- ``scaling``
+- ``ImageScaling-swift.enum``
 
 ### Configuring symbol configuration
 
@@ -46,3 +46,5 @@
 - ``Sizing-swift.enum``
 - ``position-swift.property``
 - ``Position-swift.enum``
+- ``reservedLayoutSize``
+- ``standardDimension``

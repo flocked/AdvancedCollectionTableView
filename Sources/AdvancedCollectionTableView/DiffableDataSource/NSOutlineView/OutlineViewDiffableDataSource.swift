@@ -47,6 +47,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     var hoveredRowObserver: KeyValueObservation?
     var delegate: Delegate!
     var draggedItems: [Item] = []
+    var reorderingItems: [Item] = []
     var draggedParent: Item?
     var draggedIndexes: [Int] = []
     var canDrop = false
@@ -859,6 +860,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         
     public func outlineView(_ outlineView: NSOutlineView, validateDrop info: any NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         canDrop = false
+        reorderingItems = []
         if info.draggingSource as? NSOutlineView === outlineView {
             if let item = item as? Item, draggedItems.contains(item) {
                 return []
@@ -877,7 +879,9 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
                 return []
             }
             */
-            return reorderingHandlers.canReorder?(draggedItems, item as? Item) ?? true == true ? .move : []
+            reorderingItems = reorderingHandlers.canReorder?(draggedItems, item as? Item) ?? []
+            Swift.print("validate", draggedItems.count, reorderingItems.count)
+            return !reorderingItems.isEmpty ? .move : []
         }
         if info.draggingSource as? NSTableView !== outlineView {
             if let canDrag = droppingHandlers.canDrop {
@@ -890,6 +894,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     
     public func outlineView(_ outlineView: NSOutlineView, acceptDrop info: any NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         if info.draggingSource as? NSOutlineView === outlineView {
+            guard !reorderingItems.isEmpty else { return false }
             var snapshot = currentSnapshot
             var index = index
             if index == -1 {
@@ -902,7 +907,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
             if index == 0, let item = item as? Item, !snapshot.isExpanded(item) {
                 index = snapshot.children(of: item).count
             }
-            snapshot.move(draggedItems, toIndex: index, of: item as? Item)
+            snapshot.move(reorderingItems, toIndex: index, of: item as? Item)
             let transaction = OutlineViewDiffableDataSourceTransaction(initial: currentSnapshot, final: snapshot)
             reorderingHandlers.willReorder?(transaction)
             apply(snapshot, reorderingHandlers.animates ? .animated : .withoutAnimation)
@@ -925,6 +930,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     }
     
     public func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> (any NSPasteboardWriting)? {
+        Swift.print("pasteboardWriterForItem")
         guard let item = item as? Item else { return nil }
         return NSPasteboardItem(forItem: item)
     }
@@ -972,7 +978,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
      */
     public struct ReorderingHandlers {
         /// The handler that determines if items can be reordered. The default value is `nil` which indicates that items can't be reordered.
-        public var canReorder: ((_ items: [Item], _ parent: Item?) -> Bool)?
+        public var canReorder: ((_ items: [Item], _ parent: Item?) -> [Item])?
 
         /// The handler that that gets called before reordering items.
         public var willReorder: ((_ transaction: OutlineViewDiffableDataSourceTransaction<Item>) -> Void)?

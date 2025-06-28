@@ -44,6 +44,8 @@
 - ``sections``
 - ``row(for:)-3rckc``
 - ``scrollToSection(_:)``
+- ``reloadSectionHeaders(_:)``
+- ``reconfigureSectionHeaders(_:)``
 
 ### Updating data
 
@@ -55,6 +57,7 @@
 ### Configurating user interaction
 
 - ``menuProvider``
+- ``doubleClickHandler``
 - ``rightClickHandler``
 - ``rowActionProvider``
 
@@ -98,6 +101,9 @@
 
 - ``isQuicklookPreviewable``
 - ``quicklookItems(_:current:)``
+- ``previewImage(for:)-3u1yi``
+- ``previewImage(for:tableColumn:)``
+- ``previewImage(for:)-5c512``
 
 ### Managing drag interactions
 

@@ -18,8 +18,6 @@ extension TableViewDiffableDataSource {
             super.init()
             dataSource.tableView.delegate = self
         }
-
-        // MARK: - Selecting
         
         public func tableViewSelectionDidChange(_: Notification) {
             guard dataSource.selectionHandlers.didSelect != nil || dataSource.selectionHandlers.didDeselect != nil else {
@@ -131,5 +129,122 @@ extension TableViewDiffableDataSource {
         func tableView(_ tableView: NSTableView, mouseDownInHeaderOf tableColumn: NSTableColumn) {
             dataSource.columnHandlers.didClickHeader?(tableColumn)
         }
+        
+        /*
+         // MARK: - TypeSelect
+
+         
+        /// Matching type select strings by row.
+        var matchingTypeSelectStrings: [Int: [String: [String]]] = [:]
+        var previousSearchString = ""
+        
+        public func tableView(_ tableView: NSTableView, shouldTypeSelectFor event: NSEvent,
+            withCurrentSearch searchString: String?) -> Bool {
+            if searchString == nil {
+                matchingTypeSelectStrings = [:]
+                previousSearchString = ""
+            }
+            return true
+        }
+        
+        public func tableView(_ tableView: NSTableView, nextTypeSelectMatchFromRow startRow: Int, toRow endRow: Int, for searchString: String) -> Int {
+            let searchString = searchString.lowercased()
+            var rows: [Int] = []
+            if endRow >= startRow {
+                rows = (startRow...endRow).map({$0})
+            } else {
+                rows = (endRow..<tableView.numberOfRows).map({$0}) + (0...startRow).map({$0})
+            }
+            for row in rows {
+                if var rowMatches = matchingTypeSelectStrings[row] {
+                    if let matchedStrings = rowMatches[searchString] {
+                        if !matchedStrings.isEmpty {
+                            return row
+                        }
+                    } else if var matchedStrings = rowMatches[previousSearchString], !matchedStrings.isEmpty {
+                        matchedStrings = matchedStrings.filter({ $0.hasPrefix(searchString) })
+                        rowMatches[searchString] = matchedStrings
+                        matchingTypeSelectStrings[row] = rowMatches
+                        if !matchedStrings.isEmpty {
+                            return row
+                        }
+                    }
+                    
+                    if !rowMatch.strings.isEmpty, rowMatch.searchString != searchString {
+                        rowMatch = (searchString, rowMatch.strings.filter({ $0.hasPrefix(searchString)}))
+                        matchingTypeSelectStrings[row] = rowMatch
+                    }
+                    if !rowMatch.strings.isEmpty {
+                        return row
+                    }
+                } else {
+                    let rowMatch = matchingTypeSelectStrings(for: tableView, row: row, searchString: searchString)
+                    matchingTypeSelectStrings[row] = rowMatch
+                    if !rowMatch.strings.isEmpty {
+                        return row
+                    }
+                }
+            }
+            return tableView.selectedRow
+        }
+        
+        func matchingTypeSelectStrings(for tableView: NSTableView, row: Int, searchString: String) -> [String] {
+            guard !self.tableView(tableView, isGroupRow: row) else { return (searchString, []) }
+            var matchingStrings: [String] = []
+            let columns = tableView.selectedColumnIndexes.isEmpty ? IndexSet(integersIn: 0..<tableView.numberOfColumns) : tableView.selectedColumnIndexes
+            for column in columns {
+                let strings = tableView.view(atColumn: column, row: row, makeIfNecessary: true)?.subviews(depth: .max).compactMap({ ($0 as? TextSearchableView)?.searchableText }) ?? []
+                matchingStrings += strings.filter({ $0.hasPrefix(searchString) })
+            }
+            return matchingStrings
+        }
+        */
+        
+        /*
+        public func tableView(_ tableView: NSTableView, shouldTypeSelectFor event: NSEvent,
+            withCurrentSearch searchString: String?) -> Bool {
+            Swift.print("shouldTypeSelect", event.type.description, event.charactersIgnoringModifiers, searchString ?? "")
+            return true
+        }
+        
+        public func tableView(_ tableView: NSTableView, nextTypeSelectMatchFromRow startRow: Int, toRow endRow: Int, for searchString: String) -> Int {
+            Swift.print("nextTypeSelect", searchString, startRow, endRow)
+            return startRow
+        }
+        
+        public func tableView(_ tableView: NSTableView, typeSelectStringFor tableColumn: NSTableColumn?, row: Int) -> String?
+            
+            
+            if let tableColumn = tableColumn {
+                if let column = tableView.tableColumns.firstIndex(where: { $0 === tableColumn }), let view = tableView.view(atColumn: column, row: row, makeIfNecessary: false) {
+                    return view.subviews(type: NSTextField.self, depth: .max).map({$0.stringValue}).joined(separator: " ")
+                }
+            } else if let view = dataSource.tableView.rowView(atRow: row, makeIfNecessary: false) {
+                return view.subviews(type: NSTextField.self, depth: .max).map({$0.stringValue}).joined(separator: " ")
+            }
+return nil
+            
+        }
+        */
     }
 }
+
+/*
+ protocol TextSearchableView: NSView {
+     var searchableText: String? { get }
+ }
+
+ extension NSTextField: TextSearchableView {
+     var searchableText: String? {
+       guard !isHidden && alphaValue > 0 else { return nil }
+       return stringValue.lowercased()
+     }
+ }
+
+ extension NSTextView: TextSearchableView {
+     var searchableText: String? {
+       guard !isHidden && alphaValue > 0 else { return nil }
+       return string.lowercased()
+     }
+ }
+ */

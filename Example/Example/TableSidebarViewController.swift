@@ -16,8 +16,8 @@ class TableSidebarViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     
     lazy var dataSource = DataSource(tableView: tableView, cellRegistration: cellRegistration)
-    
-    let cellRegistration = CellRegistration { tableCell, _, _, sidebarItem in
+        
+    let cellRegistration = CellRegistration { tableCell, _, row, sidebarItem in
         /// `defaultContentConfiguration` returns a table cell content configuration with default styling based on the table view it's displayed at (in this case a sidebar table).
         var configuration = tableCell.defaultContentConfiguration()
         configuration.text = sidebarItem.title
@@ -36,15 +36,21 @@ class TableSidebarViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        tableView.draggingDestinationFeedbackStyle = .gap
         tableView.dataSource = dataSource
         dataSource.applySectionHeaderRegistration(sectionHeaderRegistration)
 
         /// Enables reordering selected rows by dragging them.
-        dataSource.reorderingHandlers.canReorder = { selectedItems in return selectedItems }
+        dataSource.reorderingHandlers.canReorder = { selectedItems in
+            return selectedItems
+        }
+        
         
         /// Enables deleting selected rows via backspace key.
-        dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems }
+        dataSource.deletingHandlers.canDelete = { selectedItems in
+            return selectedItems
+        }
         
         /// Enable dropping strings to the table view by checking if the drop contains strings.
         dataSource.droppingHandlers.canDrop = { drop in
@@ -74,17 +80,16 @@ class TableSidebarViewController: NSViewController {
                 }]
             }
         }
-        
         applySnapshot()
     }
         
-    func applySnapshot() {
+    func applySnapshot(_ option: NSDiffableDataSourceSnapshotApplyOption = .usingReloadData) {
         var snapshot = dataSource.emptySnapshot()
         snapshot.appendSections([.main, .section2, .section3])
         snapshot.appendItems(SidebarItem.sampleItems1, toSection: .main)
         snapshot.appendItems(SidebarItem.sampleItems2, toSection: .section2)
         snapshot.appendItems(SidebarItem.sampleItems3, toSection: .section3)
-        dataSource.apply(snapshot, .usingReloadData)
+        dataSource.apply(snapshot, option)
     }
                 
     @IBAction func segmentedPressed(_ segmentedControl: NSSegmentedControl) {

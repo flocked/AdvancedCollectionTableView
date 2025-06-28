@@ -49,8 +49,10 @@
 
 - ``imageToTextPadding``
 - ``textToSecondaryTextPadding``
+- ``textToSecondaryTextHorizontalPadding``
 - ``textToBadgePadding``
 - ``margins``
+- ``prefersSideBySideTextAndSecondaryText``
 
 ### Creating a content view
 

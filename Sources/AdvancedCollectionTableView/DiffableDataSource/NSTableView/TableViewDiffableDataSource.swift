@@ -509,6 +509,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dropping
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        Swift.print("validateDrop")
         canDrop = false
         dropTargetRow = nil
         if !dragingRowIndexes.isEmpty {

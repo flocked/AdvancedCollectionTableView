@@ -54,21 +54,23 @@ class MainViewController: NSViewController {
         collectionView.dataSource = dataSource
 
         /// Enables deleting selected items via backspace key.
-        dataSource.deletingHandlers.canDelete = { selectedItems in return selectedItems }
+        dataSource.deletingHandlers.canDelete = { selectedItems in
+            return selectedItems
+        }
         dataSource.deletingHandlers.didDelete = { deletedItems, _ in
             self.galleryItems.remove(deletedItems)
         }
 
         /// Enables reordering selected items by dragging them.
-        dataSource.reorderingHandlers.canReorder = { selectedItems in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedItems in
+            return true
+        }
         dataSource.reorderingHandlers.didReorder = { transaction in
             self.galleryItems = self.galleryItems.applying(transaction.difference)!
         }
         
         dataSource.rightClickHandler = { selectedItems in
-            selectedItems.forEach({ item in
-                item.isFavorite = !item.isFavorite
-            })
+            selectedItems.forEach({ item in item.isFavorite = !item.isFavorite })
             /// Reconfigurates items without reloading them by calling the item registration handler.
             self.dataSource.reconfigureElements(selectedItems)
         }

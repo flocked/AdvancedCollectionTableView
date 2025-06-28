@@ -49,11 +49,12 @@
 ### Configurating user interaction
 
 - ``menuProvider``
+- ``doubleClickHandler``
 - ``rightClickHandler``
 
 ### Providing tint configurations
 
-``tintConfigurationProvider``
+- ``tintConfigurationProvider``
 
 ### Displaying empty view
 
@@ -104,6 +105,19 @@
 
 - ``isQuicklookPreviewable``
 - ``quicklookItems(_:current:)``
+- ``previewImage(for:)-56vem``
+- ``previewImage(for:tableColumn:)``
+- ``previewImage(for:)-6noxj``
+
+Managing drag interaction
+
+- ``draggingHandlers-swift.property``
+- ``DraggingHandlers-swift.struct``
+
+Managing drop interaction
+
+- ``droppingHandlers-swift.property``
+- ``DroppingHandlers-swift.struct``
 
 ### Supporting protocol requirements
 

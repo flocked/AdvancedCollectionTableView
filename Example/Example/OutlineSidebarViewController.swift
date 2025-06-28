@@ -29,10 +29,14 @@ class OutlineSidebarViewController: NSViewController {
         dataSource.applyGroupItemCellRegistration(cellRegistration)
                 
         /// Enables reordering selected rows by dragging them.
-        dataSource.reorderingHandlers.canReorder = { _,_ in return true }
+        dataSource.reorderingHandlers.canReorder = { selectedItems, newParentItem in
+            return selectedItems
+        }
         
         /// Enables deleting selected items via backspace key.
-        dataSource.deletingHandlers.canDelete = { items in return items }
+        dataSource.deletingHandlers.canDelete = { selectedItems in
+            return selectedItems
+        }
 
         applySnapshot()
     }

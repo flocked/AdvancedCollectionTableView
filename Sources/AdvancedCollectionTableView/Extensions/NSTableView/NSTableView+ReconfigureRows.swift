@@ -48,6 +48,38 @@ extension NSTableView {
         }
         reconfigureIndexPath = nil
     }
+    
+    public func reconfigureRows(at indexes: IndexSet, columns: [NSUserInterfaceItemIdentifier]) {
+        reconfigureRows(at: indexes, columns: IndexSet(columns.compactMap({ column(withIdentifier: $0) })))
+    }
+    
+    public func reconfigureRows(at rows: IndexSet, columns: IndexSet) {
+        Self.swizzleViewRegistration()
+        guard let delegate = delegate else { return }
+        let tableColumns = tableColumns
+        let columns = columns.filter({ $0 < tableColumns.count })
+        guard columns.isEmpty else { return }
+        for row in rows.filter({$0 < numberOfRows}) {
+            if delegate.tableView?(self, isGroupRow: row) ?? false {
+                if rowView(atRow: row, makeIfNecessary: false) != nil {
+                    reconfigureIndexPath = IndexPath(item: row, section: 0)
+                    _ = delegate.tableView?(self, viewFor: nil, row: row)
+                }
+            } else {
+                for column in columns {
+                    if view(atColumn: column, row: row, makeIfNecessary: false) != nil {
+                        reconfigureIndexPath = IndexPath(item: row, section: column)
+                        _ = delegate.tableView?(self, viewFor: tableColumns[column], row: row)
+                    }
+                    if rowView(atRow: row, makeIfNecessary: false) != nil {
+                        reconfigureIndexPath = IndexPath(item: row, section: -1)
+                        _ = delegate.tableView?(self, rowViewForRow: row)
+                    }
+                }
+            }
+        }
+        reconfigureIndexPath = nil
+    }
 
     var reconfigureIndexPath: IndexPath? {
         get { getAssociatedValue("reconfigureIndexPath") }
