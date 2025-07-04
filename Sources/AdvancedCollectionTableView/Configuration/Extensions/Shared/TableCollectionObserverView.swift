@@ -61,7 +61,7 @@ class TableCollectionObserverView: NSView {
         sendToBack()
         updateTrackingAreas()
         focusObservation = observeChanges(for: \.window?.firstResponder) { [weak self] oldValue, newValue in
-            guard let self = self, let _view = self.collectionView ?? self.tableView else { return }
+            guard let self = self, let _view = self.collectionView ?? self.tableView else { return }            
             if let view = (newValue as? NSView ?? (newValue as? NSText)?.delegate as? NSView), view.isDescendant(of: _view) {
                 self.isFocused = true
                 self.editingView = (view as? EditiableView)?.isEditable == true ? view : nil

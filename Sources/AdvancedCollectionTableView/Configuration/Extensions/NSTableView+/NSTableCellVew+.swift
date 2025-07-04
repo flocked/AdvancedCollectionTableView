@@ -292,17 +292,15 @@ extension NSTableCellView {
     }
     
     func observeWillMoveToRowView() {
-        if let tableView = tableView {
-            tableView.enableAutomaticRowHeights()
-        } else if !isMethodHooked(#selector(NSView.viewWillMove(toSuperview:))) {
-            do {
-                try hookBefore(#selector(NSView.viewWillMove(toSuperview:)), closure: {
-                    object, selector, superview in
-                    (superview as? NSTableRowView)?.observeWillMoveToTableView()
-                } as @convention(block) (AnyObject, Selector, NSView?) -> ())
-            } catch {
-                Swift.print(error)
-            }
+        guard !isMethodHooked(#selector(NSView.viewWillMove(toSuperview:))) else { return }
+        tableView?.enableAutomaticRowHeights()
+        do {
+            try hookBefore(#selector(NSView.viewWillMove(toSuperview:)), closure: {
+                object, selector, superview in
+                (superview as? NSTableRowView)?.observeWillMoveToTableView()
+            } as @convention(block) (AnyObject, Selector, NSView?) -> ())
+        } catch {
+            Swift.print(error)
         }
     }
 }
