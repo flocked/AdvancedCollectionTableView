@@ -125,7 +125,7 @@ extension OutlineViewDiffableDataSource {
             if self.outlineView(outlineView, isGroupItem: item), let groupItemCellProvider = dataSource.groupItemCellProvider {
                 let rowView = outlineView.makeView(withIdentifier: "_GroupCellRowView", owner: self) as? GroupItemCellRowView ?? GroupItemCellRowView()
                 rowView.identifier = "_GroupCellRowView"
-                NSAnimationContext.runNonAnimated {
+                NSAnimationContext.performWithoutAnimation {
                     rowView.view = groupItemCellProvider(outlineView, item as! Item)
                 }
                 return rowView

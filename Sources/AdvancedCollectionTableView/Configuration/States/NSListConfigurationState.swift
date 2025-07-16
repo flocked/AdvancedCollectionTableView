@@ -95,6 +95,9 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the list item is the target of a drop operation.
     public var isDropTarget: Bool = false
+    
+    /// The appearance of the list item.
+    public var appearance: NSAppearance?
 
     /// A Boolean value that indicates whether the list item is in a focused state.
     var isFocused: Bool = false
@@ -153,7 +156,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
                 isReordering: Bool = false,
                 isDropTarget: Bool = false,
                 isNextSelected: Bool = false,
-                isPreviousSelected: Bool = false)
+                isPreviousSelected: Bool = false,
+                appearance: NSAppearance? = nil)
     {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
@@ -179,6 +183,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          isDragging: Bool,
          isReordering: Bool,
          isDropTarget: Bool,
+         appearance: NSAppearance?,
          customStates: [NSConfigurationStateCustomKey: AnyHashable])
     {
         self.isSelected = isSelected
@@ -191,6 +196,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
+        self.appearance = appearance
         self.customStates = customStates
         self["activeState"] = activeState.rawValue
         self["isSelected"] = isSelected
@@ -214,6 +220,7 @@ extension NSListConfigurationState: ReferenceConvertible {
             isReordering: \(isReordering)
             isNextSelected: \(isNextSelected)
             isPreviousSelected: \(isPreviousSelected)
+            appearance: \(appearance?.name.rawValue ?? "-")
             customStates: \(customStates)
         )
         """

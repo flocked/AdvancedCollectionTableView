@@ -178,7 +178,7 @@ extension NSCollectionViewItem {
      */
     @objc open var configurationState: NSItemConfigurationState {
         let isSelected = isRightClickSelected == true ? true : isSelected
-        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, activeState: activeState, isHovered: isHovered, isDragging: isDragging, isReordering: isReordering, isDropTarget: isDropTarget)
+        let state = NSItemConfigurationState(isSelected: isSelected, highlight: highlightState, isEditing: isEditing, activeState: activeState, isHovered: isHovered, isDragging: isDragging, isReordering: isReordering, isDropTarget: isDropTarget, appearance: view.effectiveAppearance)
         return state
     }
 

@@ -117,7 +117,7 @@ extension NSTableCellView {
         let tableView = tableView
         let activeState = tableView?.activeState ?? .inactive
         let isEditing = tableView?.editingView?.isDescendant(of: self) == true
-        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, activeState: activeState, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false)
+        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, activeState: activeState, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false, appearance: effectiveAppearance)
     }
 
     /**
@@ -263,7 +263,7 @@ extension NSTableCellView {
     func updateContentConfigurationStyle() {
         if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
             setAssociatedValue(configuration, key: "contentConfiguration")
-            NSAnimationContext.runNonAnimated {
+            NSAnimationContext.performWithoutAnimation {
                 contentView?.configuration = configuration
             }
         }

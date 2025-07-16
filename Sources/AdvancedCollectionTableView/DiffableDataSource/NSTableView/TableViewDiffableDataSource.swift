@@ -132,7 +132,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
                     guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
                     var view: NSTableCellView?
-                    NSAnimationContext.runNonAnimated {
+                    NSAnimationContext.performWithoutAnimation {
                         view = sectionHeaderCellProvider(tableView, row, section)
                     }
                     return view ?? NSTableCellView()
@@ -475,7 +475,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             [weak self] tableview, tablecolumn, row, itemID in
             guard let self = self, let item = self.items[id: itemID] else { return NSTableCellView() }
             var view: NSView?
-            NSAnimationContext.runNonAnimated {
+            NSAnimationContext.performWithoutAnimation {
                 view = cellProvider(tableview, tablecolumn, row, item)
             }
             return view ?? NSTableCellView()

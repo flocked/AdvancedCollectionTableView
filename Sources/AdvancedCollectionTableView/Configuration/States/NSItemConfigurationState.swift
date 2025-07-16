@@ -40,6 +40,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         activeState != .inactive
     }
     
+    /// The active state of an item.
     public var activeState: ActiveState = .inactive {
         didSet { self["activeState"] = activeState.rawValue }
     }
@@ -85,6 +86,9 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
     
     /// A Boolean value that indicates whether the item is the target of a drop operation.
     public var isDropTarget: Bool = false
+    
+    /// The appearance of the item.
+    public var appearance: NSAppearance?
 
     /// A Boolean value that indicates whether the item is in a enabled state.
     var isEnabled: Bool = true
@@ -142,7 +146,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         isHovered: Bool = false,
         isDragging: Bool = false,
         isReordering: Bool = false,
-        isDropTarget: Bool = false
+        isDropTarget: Bool = false,
+        appearance: NSAppearance? = nil
     ) {
         self.isEditing = isEditing
         self.isSelected = isSelected
@@ -152,6 +157,7 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
+        self.appearance = appearance
         self["isSelected"] = isSelected
         self["activeState"] = activeState.rawValue
         self["isItemState"] = true
@@ -167,7 +173,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
          activeState: ActiveState,
          isReordering: Bool,
          isDropTarget: Bool,
-         customStates _: [NSConfigurationStateCustomKey: AnyHashable] = [:])
+         appearance: NSAppearance?,
+         customStates: [NSConfigurationStateCustomKey: AnyHashable] = [:])
     {
         self.isSelected = isSelected
         self.isEnabled = isEnabled
@@ -179,6 +186,8 @@ public struct NSItemConfigurationState: NSConfigurationState, Hashable {
         self.activeState = activeState
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
+        self.appearance = appearance
+        self.customStates = customStates
         self["isSelected"] = isSelected
         self["activeState"] = activeState.rawValue
         self["isItemState"] = true
@@ -200,6 +209,7 @@ extension NSItemConfigurationState: ReferenceConvertible {
             isDragging: \(isDragging)
             isDropTarget: \(isDropTarget)
             isReordering: \(isReordering)
+            appearance: \(appearance?.name.rawValue ?? "-")
             customStates: \(customStates)
         )
         """

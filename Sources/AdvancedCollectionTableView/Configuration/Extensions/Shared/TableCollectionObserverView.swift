@@ -16,6 +16,7 @@ class TableCollectionObserverView: NSView {
     weak var tableView: NSTableView?
     var focusObservation: KeyValueObservation?
     var isEnabledObservation: KeyValueObservation?
+    var appearanceObservation: KeyValueObservation?
 
     var isFocused = false {
         didSet {
@@ -60,8 +61,13 @@ class TableCollectionObserverView: NSView {
         isFocused = view.isDescendantFirstResponder
         sendToBack()
         updateTrackingAreas()
+        appearanceObservation = observeChanges(for: \.effectiveAppearance) { [weak self] oldValue, newValue in
+            guard let self = self else { return }
+            self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+            self.collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
+        }
         focusObservation = observeChanges(for: \.window?.firstResponder) { [weak self] oldValue, newValue in
-            guard let self = self, let _view = self.collectionView ?? self.tableView else { return }            
+            guard let self = self, let _view = self.collectionView ?? self.tableView else { return }
             if let view = (newValue as? NSView ?? (newValue as? NSText)?.delegate as? NSView), view.isDescendant(of: _view) {
                 self.isFocused = true
                 self.editingView = (view as? EditiableView)?.isEditable == true ? view : nil
@@ -105,7 +111,6 @@ class TableCollectionObserverView: NSView {
                 }
             }
         } else if let tableView = tableView {
-            let location = event.location(in: tableView)
             tableView.hoveredRow = tableView.row(at: event.location(in: tableView))
         }
     }

@@ -104,7 +104,7 @@ extension NSOutlineView {
             expandCollapseItems()
             completion?()
         } else if let duration = option.animationDuration, duration > 0.0 {
-            NSView.animate(withDuration: duration, {
+            NSView.animate(withDuration: duration, changes: {
                 applySnapshot()
             }, completion: completion)
         } else {

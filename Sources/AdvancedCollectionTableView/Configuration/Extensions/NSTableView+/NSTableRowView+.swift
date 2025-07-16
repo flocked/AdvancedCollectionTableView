@@ -121,7 +121,7 @@ extension NSTableRowView {
         let tableView = tableView
         let activeState = tableView?.activeState ?? .inactive
         let isEditing = tableView?.editingView?.isDescendant(of: self) == true
-        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, activeState: activeState, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected)
+        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, activeState: activeState, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected, appearance: effectiveAppearance)
         return state
     }
 
