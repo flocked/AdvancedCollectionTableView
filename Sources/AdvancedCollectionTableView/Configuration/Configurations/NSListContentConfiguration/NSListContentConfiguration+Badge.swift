@@ -89,10 +89,10 @@ public extension NSListContentConfiguration {
         }
         
         /// The border of the badge.
-        public var border: BorderConfiguration = .none()
+        public var border: BorderConfiguration = .none
 
         /// The shadow of the badge.
-        public var shadow: ShadowConfiguration = .none()
+        public var shadow: ShadowConfiguration = .none
 
         /// The margins between the text/image and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(top: 1, leading: 3, bottom: 1, trailing: 3)

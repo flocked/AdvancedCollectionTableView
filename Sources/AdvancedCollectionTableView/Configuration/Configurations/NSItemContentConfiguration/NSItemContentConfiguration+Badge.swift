@@ -105,10 +105,10 @@ public extension NSItemContentConfiguration {
         public var visualEffect: VisualEffectConfiguration?
         
         /// The border of the badge.
-        public var border: BorderConfiguration = .none()
+        public var border: BorderConfiguration = .none
 
         /// The shadow of the badge.
-        public var shadow: ShadowConfiguration = .none()
+        public var shadow: ShadowConfiguration = .none
 
         /// The margins between the text/image and the edges of the badge.
         public var margins = NSDirectionalEdgeInsets(width: 8, height: 4)

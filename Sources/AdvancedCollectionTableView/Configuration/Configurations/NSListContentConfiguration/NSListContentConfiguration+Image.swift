@@ -192,7 +192,7 @@ public extension NSListContentConfiguration {
         public var cornerRadius: CGFloat = 0.0
 
         /// The border of the image.
-        public var border: BorderConfiguration = .none()
+        public var border: BorderConfiguration = .none
         
         /// The border transformer for resolving the border.
         public var borderTransformer: BorderTransformer? = nil
@@ -203,7 +203,7 @@ public extension NSListContentConfiguration {
         }
 
         /// The shadow of the image.
-        public var shadow: ShadowConfiguration = .none()
+        public var shadow: ShadowConfiguration = .none
         
         /// The shadow transformer for resolving the shadow.
         public var shadowTransformer: ShadowTransformer? = nil

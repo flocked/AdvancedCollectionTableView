@@ -68,7 +68,7 @@ public extension NSItemContentConfiguration {
         public var visualEffect: VisualEffectConfiguration?
         
         /// The border of the content.
-        public var border: BorderConfiguration = .none()
+        public var border: BorderConfiguration = .none
         
         /// The border transformer for resolving the border.
         public var borderTransformer: BorderTransformer? = nil
