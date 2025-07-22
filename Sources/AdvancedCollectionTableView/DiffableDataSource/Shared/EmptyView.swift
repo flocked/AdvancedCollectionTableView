@@ -10,13 +10,13 @@ import FZUIKit
 
 /// View that is displayed if a table or collection view is empty.
 class EmptyView: NSView {
-        
+    fileprivate var boundsSize: CGSize = .zero
+
     var view: NSView? {
         didSet {
             guard oldValue != view else { return }
             oldValue?.removeFromSuperview()
-            if let view = view {
-                view.frame.size = bounds.size
+            if let view = view?.size(bounds.size) {
                 addSubview(view)
             }
         }
@@ -53,6 +53,8 @@ class EmptyView: NSView {
     
     override func layout() {
         super.layout()
+        guard bounds.size != boundsSize else { return }
+        boundsSize = bounds.size
         view?.frame.size = bounds.size
     }
 }
