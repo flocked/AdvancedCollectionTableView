@@ -694,7 +694,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 if let emptyContentView = emptyContentView {
                     emptyContentView.view = newValue
                 } else {
-                    emptyContentView = EmptyView(view: newValue)
+                    emptyContentView = .init(view: newValue)
                 }
                 updateEmptyView()
             } else {
@@ -716,7 +716,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
                 if let emptyContentView = emptyContentView {
                     emptyContentView.configuration = configuration
                 } else {
-                    emptyContentView = EmptyView(configuration: configuration)
+                    emptyContentView = .init(configuration: configuration)
                 }
                 updateEmptyView()
             } else {
@@ -726,7 +726,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    var emptyContentView: EmptyView?
+    var emptyContentView: EmptyCollectionTableView?
     
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.

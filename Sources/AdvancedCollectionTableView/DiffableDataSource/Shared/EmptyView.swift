@@ -9,7 +9,7 @@ import AppKit
 import FZUIKit
 
 /// View that is displayed if a table or collection view is empty.
-class EmptyView: NSView {
+class EmptyCollectionTableView: NSView {
     fileprivate var boundsSize: CGSize = .zero
 
     var view: NSView? {
