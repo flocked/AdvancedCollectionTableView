@@ -1019,15 +1019,12 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if currentSnapshot.numberOfItems != 0 {
-            emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != tableView {
             tableView.addSubview(withConstraint: emptyContentView)
         }
-        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-            if previousIsEmpty != currentSnapshot.isEmpty {
-                emptyHandler(currentSnapshot.isEmpty)
-            }
+        if let emptyHandler = emptyHandler, let previousIsEmpty = previousIsEmpty, previousIsEmpty != currentSnapshot.isEmpty {
+            emptyHandler(currentSnapshot.isEmpty)
         }
      }
 

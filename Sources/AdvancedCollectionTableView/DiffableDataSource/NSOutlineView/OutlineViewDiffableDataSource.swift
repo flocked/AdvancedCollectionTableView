@@ -347,15 +347,12 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     
     func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if !currentSnapshot.items.isEmpty {
-            emptyView?.removeFromSuperview()
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != outlineView {
             outlineView.addSubview(withConstraint: emptyContentView)
         }
-        if let emptyHandler = self.emptyHandler, let previousIsEmpty = previousIsEmpty {
-            if previousIsEmpty != currentSnapshot.items.isEmpty {
-                emptyHandler(currentSnapshot.items.isEmpty)
-            }
+        if let emptyHandler = emptyHandler, let previousIsEmpty = previousIsEmpty, previousIsEmpty != currentSnapshot.items.isEmpty {
+            emptyHandler(currentSnapshot.items.isEmpty)
         }
     }
     
