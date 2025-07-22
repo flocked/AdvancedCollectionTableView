@@ -44,26 +44,21 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
 
     weak var tableView: NSTableView!
     var dataSource: NSTableViewDiffableDataSource<Section.ID, Item.ID>!
-    var cellProvider: CellProvider!
-    var delegate: Delegate!
-    var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-    var dropValidationRow: Int? = nil
-    enum ColumnItemSortingStrategy: Int, Hashable {
-        case reset
-        /// Updates the item order
-        case update
-    }
-    var dragDeleteItems: [Item] = []
-    var dragDeleteObservation: KeyValueObservation?
-    var dragDistanceIsMatched = false
-    var dragingRowIndexes: [Int] = [] {
+    fileprivate var cellProvider: CellProvider!
+    fileprivate var delegate: Delegate!
+    fileprivate var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+    fileprivate var dropValidationRow: Int? = nil
+    fileprivate var dragDeleteItems: [Item] = []
+    fileprivate var dragDeleteObservation: KeyValueObservation?
+    fileprivate var dragDistanceIsMatched = false
+    fileprivate var dragingRowIndexes: [Int] = [] {
         didSet {
             guard oldValue != dragingRowIndexes else { return }
             oldValue.forEach({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = false })
             dragingRowIndexes.forEach({ tableView?.rowView(atRow: $0, makeIfNecessary: false)?.isReordering = true })
         }
     }
-    var dropTargetRow: Int? = nil {
+    fileprivate var dropTargetRow: Int? = nil {
         didSet {
             guard oldValue != dropTargetRow else { return }
             if let row = oldValue {
@@ -74,7 +69,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             }
         }
     }
-    var reorderingSectionRow: Int? {
+    fileprivate var reorderingSectionRow: Int? {
         didSet {
             if let row = oldValue {
                 tableView?.rowView(atRow: row, makeIfNecessary: false)?.isReordering = false
@@ -85,11 +80,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     var sectionRowIndexes: [Int] = []
-    var hoveredRowObserver: KeyValueObservation?
-    var keyDownMonitor: NSEvent.Monitor?
-    var canDragItems = false
-    var canDrop = false
-    var immediatelyReorderRowView: NSTableRowView?
+    fileprivate var hoveredRowObserver: KeyValueObservation?
+    fileprivate var keyDownMonitor: NSEvent.Monitor?
+    fileprivate var canDragItems = false
+    fileprivate var canDrop = false
+    fileprivate var immediatelyReorderRowView: NSTableRowView?
     
     /// The closure that configures and returns the table view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider? {
@@ -227,7 +222,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    var doubleClickGesture: DoubleClickGestureRecognizer?
+    fileprivate var doubleClickGesture: DoubleClickGestureRecognizer?
     
     /**
      The default animation the UI uses to show differences between rows.
@@ -245,7 +240,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         dataSource.defaultRowAnimation.rawValue
     }
     
-    func setupHoverObserving() {
+    fileprivate func setupHoverObserving() {
         if hoverHandlers.shouldSetup {
             guard hoveredRowObserver == nil else { return }
             tableView.setupObservation()
@@ -263,7 +258,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    func setupKeyDownMonitor() {
+    fileprivate func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
             keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.tableView.isFirstResponder else { return event }
@@ -324,7 +319,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         updateEmptyView(previousIsEmpty: previousIsEmpty)
     }
     
-    func updateSectionRowIndexes() {
+    fileprivate func updateSectionRowIndexes() {
         sectionRowIndexes.removeAll()
         guard sectionHeaderCellProvider != nil else { return }
         var row = 0
@@ -351,7 +346,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         return NSImage(combineVertical: items.compactMap({ previewImage(for: $0)}).reversed(), alignment: .left)
     }
     
-    private func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
+    fileprivate func previewImage(for item: Item, tableColumn: NSTableColumn, useColumnWidth: Bool) -> NSImage? {
         guard tableView.tableColumns.contains(tableColumn) else { return nil }
         let view = cellProvider(tableView, tableColumn, 0, item)
         view.frame.size = view.systemLayoutSizeFitting(width: tableColumn.width)

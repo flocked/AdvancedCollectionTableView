@@ -45,12 +45,12 @@ import QuickLookUI
 open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, Element: Identifiable & Hashable>: NSObject, NSCollectionViewDataSource {
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
-    var delegate: Delegate!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
-    var previousDisplayingItems = [Element.ID]()
-    var rightDownMonitor: NSEvent.Monitor?
-    var keyDownMonitor: NSEvent.Monitor?
-    var hoveredItemObserver: KeyValueObservation?
+    fileprivate var delegate: Delegate!
+    fileprivate var previousDisplayingItems = [Element.ID]()
+    fileprivate var rightDownMonitor: NSEvent.Monitor?
+    fileprivate var keyDownMonitor: NSEvent.Monitor?
+    fileprivate var hoveredItemObserver: KeyValueObservation?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
     open var supplementaryViewProvider: SupplementaryViewProvider?
@@ -148,14 +148,14 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    var doubleClickGesture: DoubleClickGestureRecognizer?
+    fileprivate var doubleClickGesture: DoubleClickGestureRecognizer?
     
     func item(for element: Element) -> NSCollectionViewItem? {
         guard let indexPath = indexPath(for: element) else { return nil }
         return collectionView.item(at: indexPath)
     }
 
-    func observeHoveredItem() {
+    fileprivate func observeHoveredItem() {
         if hoverHandlers.shouldObserve {
             collectionView.setupObservation()
             if hoveredItemObserver == nil {
@@ -174,7 +174,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
 
-    func observeDisplayingItems() {
+    fileprivate func observeDisplayingItems() {
         if displayHandlers.shouldObserve {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
@@ -206,7 +206,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         previousDisplayingItems = displayingItems
     }
 
-    func observeKeyDown() {
+    fileprivate func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
             keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.collectionView.isFirstResponder else { return event }
@@ -340,10 +340,10 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         collectionView.addGestureRecognizer(dragGesture)
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
     }
-    var itemProvider: ItemProvider!
+    fileprivate var itemProvider: ItemProvider!
     
-    let dragGesture = DragGestureRecognizer()
-    class DragGestureRecognizer: NSGestureRecognizer {
+    fileprivate let dragGesture = DragGestureRecognizer()
+    fileprivate class DragGestureRecognizer: NSGestureRecognizer {
         var downLocation: CGPoint = .zero
         var collectionView: NSCollectionView? {
             view as? NSCollectionView

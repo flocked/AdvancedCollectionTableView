@@ -43,16 +43,16 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     weak var outlineView: NSOutlineView!
     var currentSnapshot = OutlineViewDiffableDataSourceSnapshot<Item>()
     let cellProvider: CellProvider
-    var keyDownMonitor: NSEvent.Monitor?
-    var hoveredRowObserver: KeyValueObservation?
-    var delegate: Delegate!
-    var draggedItems: [Item] = []
-    var reorderingItems: [Item] = []
-    var draggedParent: Item?
-    var draggedIndexes: [Int] = []
-    var canDrop = false
     var isApplyingSnapshot = false
-    lazy var groupRowTableColumn = NSTableColumn()
+    fileprivate var keyDownMonitor: NSEvent.Monitor?
+    fileprivate var hoveredRowObserver: KeyValueObservation?
+    fileprivate  var delegate: Delegate!
+    fileprivate var draggedItems: [Item] = []
+    fileprivate var reorderingItems: [Item] = []
+    fileprivate var draggedParent: Item?
+    fileprivate var draggedIndexes: [Int] = []
+    fileprivate var canDrop = false
+    fileprivate lazy var groupRowTableColumn = NSTableColumn()
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider?
@@ -193,7 +193,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    var doubleClickGesture: DoubleClickGestureRecognizer?
+    fileprivate var doubleClickGesture: DoubleClickGestureRecognizer?
     
     /// The handlers for selecting items.
     open var selectionHandlers = SelectionHandlers()
