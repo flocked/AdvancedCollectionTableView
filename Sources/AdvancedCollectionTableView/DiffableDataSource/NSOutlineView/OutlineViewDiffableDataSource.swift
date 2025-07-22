@@ -329,9 +329,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
             }
         }
     }
-    
-    var emptyContentView: EmptyCollectionTableView?
-    
+        
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
      
@@ -345,7 +343,9 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    func updateEmptyView(previousIsEmpty: Bool? = nil) {
+    fileprivate var emptyContentView: EmptyCollectionTableView?
+    
+    fileprivate func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if !currentSnapshot.items.isEmpty {
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != outlineView {

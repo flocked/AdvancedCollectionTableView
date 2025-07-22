@@ -1002,8 +1002,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
     }
     
-    var emptyContentView: EmptyCollectionTableView?
-
     /**
      The handler that gets called when the data source switches between an empty and non-empty snapshot or viceversa.
           
@@ -1016,8 +1014,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             emptyHandler?(currentSnapshot.isEmpty)
         }
     }
+    
+    fileprivate var emptyContentView: EmptyCollectionTableView?
         
-    func updateEmptyView(previousIsEmpty: Bool? = nil) {
+    fileprivate func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if currentSnapshot.numberOfItems != 0 {
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != tableView {
