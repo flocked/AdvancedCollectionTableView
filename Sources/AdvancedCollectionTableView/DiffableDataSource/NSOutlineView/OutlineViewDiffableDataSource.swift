@@ -44,15 +44,15 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     var currentSnapshot = OutlineViewDiffableDataSourceSnapshot<Item>()
     let cellProvider: CellProvider
     var isApplyingSnapshot = false
-    fileprivate var keyDownMonitor: NSEvent.Monitor?
-    fileprivate var hoveredRowObserver: KeyValueObservation?
-    fileprivate  var delegate: Delegate!
-    fileprivate var draggedItems: [Item] = []
-    fileprivate var reorderingItems: [Item] = []
-    fileprivate var draggedParent: Item?
-    fileprivate var draggedIndexes: [Int] = []
-    fileprivate var canDrop = false
-    fileprivate lazy var groupRowTableColumn = NSTableColumn()
+    private var keyDownMonitor: NSEvent.Monitor?
+    private var hoveredRowObserver: KeyValueObservation?
+    private  var delegate: Delegate!
+    private var draggedItems: [Item] = []
+    private var reorderingItems: [Item] = []
+    private var draggedParent: Item?
+    private var draggedIndexes: [Int] = []
+    private var canDrop = false
+    private lazy var groupRowTableColumn = NSTableColumn()
     
     /// The closure that configures and returns the outline view’s row views from the diffable data source.
     open var rowViewProvider: RowViewProvider?
@@ -193,7 +193,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    fileprivate var doubleClickGesture: DoubleClickGestureRecognizer?
+    private var doubleClickGesture: DoubleClickGestureRecognizer?
     
     /// The handlers for selecting items.
     open var selectionHandlers = SelectionHandlers()
@@ -343,9 +343,9 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
     }
     
-    fileprivate var emptyContentView: EmptyCollectionTableView?
+    private var emptyContentView: EmptyCollectionTableView?
     
-    fileprivate func updateEmptyView(previousIsEmpty: Bool? = nil) {
+    private func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if !currentSnapshot.items.isEmpty {
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != outlineView {

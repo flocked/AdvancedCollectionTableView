@@ -46,11 +46,11 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
     weak var collectionView: NSCollectionView!
     var dataSource: NSCollectionViewDiffableDataSource<Section.ID, Element.ID>!
     var currentSnapshot = NSDiffableDataSourceSnapshot<Section, Element>()
-    fileprivate var delegate: Delegate!
-    fileprivate var previousDisplayingItems = [Element.ID]()
-    fileprivate var rightDownMonitor: NSEvent.Monitor?
-    fileprivate var keyDownMonitor: NSEvent.Monitor?
-    fileprivate var hoveredItemObserver: KeyValueObservation?
+    private var delegate: Delegate!
+    private var previousDisplayingItems = [Element.ID]()
+    private var rightDownMonitor: NSEvent.Monitor?
+    private var keyDownMonitor: NSEvent.Monitor?
+    private var hoveredItemObserver: KeyValueObservation?
 
     /// The closure that configures and returns the collection view’s supplementary views, such as headers and footers, from the diffable data source.
     open var supplementaryViewProvider: SupplementaryViewProvider?
@@ -148,14 +148,14 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    fileprivate var doubleClickGesture: DoubleClickGestureRecognizer?
+    private var doubleClickGesture: DoubleClickGestureRecognizer?
     
     func item(for element: Element) -> NSCollectionViewItem? {
         guard let indexPath = indexPath(for: element) else { return nil }
         return collectionView.item(at: indexPath)
     }
 
-    fileprivate func observeHoveredItem() {
+    private func observeHoveredItem() {
         if hoverHandlers.shouldObserve {
             collectionView.setupObservation()
             if hoveredItemObserver == nil {
@@ -174,7 +174,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
 
-    fileprivate func observeDisplayingItems() {
+    private func observeDisplayingItems() {
         if displayHandlers.shouldObserve {
             collectionView.enclosingScrollView?.contentView.postsBoundsChangedNotifications = true
             NotificationCenter.default.addObserver(self,
@@ -206,7 +206,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         previousDisplayingItems = displayingItems
     }
 
-    fileprivate func observeKeyDown() {
+    private func observeKeyDown() {
         if let canDelete = deletingHandlers.canDelete {
             keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.collectionView.isFirstResponder else { return event }
@@ -340,10 +340,10 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         collectionView.addGestureRecognizer(dragGesture)
         // collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
     }
-    fileprivate var itemProvider: ItemProvider!
+    private var itemProvider: ItemProvider!
     
-    fileprivate let dragGesture = DragGestureRecognizer()
-    fileprivate class DragGestureRecognizer: NSGestureRecognizer {
+    private let dragGesture = DragGestureRecognizer()
+    private class DragGestureRecognizer: NSGestureRecognizer {
         var downLocation: CGPoint = .zero
         var collectionView: NSCollectionView? {
             view as? NSCollectionView
@@ -739,9 +739,9 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
         }
     }
     
-    fileprivate var emptyContentView: EmptyCollectionTableView?
+    private var emptyContentView: EmptyCollectionTableView?
         
-    fileprivate func updateEmptyView(previousIsEmpty: Bool? = nil) {
+    private func updateEmptyView(previousIsEmpty: Bool? = nil) {
         if currentSnapshot.numberOfItems != 0 {
             emptyContentView?.removeFromSuperview()
         } else if let emptyContentView = emptyContentView, emptyContentView.superview != collectionView {
