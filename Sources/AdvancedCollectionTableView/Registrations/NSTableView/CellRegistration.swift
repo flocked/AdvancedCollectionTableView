@@ -153,6 +153,15 @@ extension NSTableView {
     }
 }
 
+fileprivate extension NSTableView {
+    func register(_ viewClass: NSView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
+        Self.swizzleViewRegistration()
+        var registeredClassesByIdentifier = registeredClassesByIdentifier
+        registeredClassesByIdentifier[identifier] = viewClass
+        setValue(safely: registeredClassesByIdentifier, forKey: "registeredClassesByIdentifier")
+    }
+}
+
 /// A registration for table view’s cells.
 public protocol NSTableViewCellRegistration {
     /// The identifiers of the table columns.

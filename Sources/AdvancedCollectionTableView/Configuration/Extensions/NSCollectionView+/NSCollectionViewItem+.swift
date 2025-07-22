@@ -299,11 +299,6 @@ extension NSCollectionViewItem {
         }
     }
     
-    /// A Boolean value that indicates whether the item is enabled.
-    var isEnabled: Bool {
-        _collectionView?.isEnabled ?? true
-    }
-    
     /**
      A Boolean value that indicates whether the item is in an editing state.
 
@@ -377,40 +372,25 @@ extension NSCollectionViewItem {
 }
 
 /*
-extension NSCollectionViewItem {
+extension NSCollectionViewItem: NSAnimatablePropertyContainer {
     /**
      Returns a proxy object for the collection view item that can be used to initiate implied animations when changing ``contentConfiguration`` and ``backgroundConfiguration``.
      */
     public func animator() -> Self {
-        return unsafeBitCast(AnimatorProxy(target: self), to: Self.self)
+        NSObjectProxy(object: self).asObject()
     }
     
-    class AnimatorProxy: NSObject {
-        private weak var target: NSCollectionViewItem?
-        
-        init(target: NSCollectionViewItem) {
-            self.target = target
-        }
-        
-        override func forwardingTarget(for aSelector: Selector!) -> Any? {
-            target
-        }
-        
-        override func isProxy() -> Bool {
-            return true
-        }
-        
-        override func responds(to aSelector: Selector!) -> Bool {
-            target?.responds(to: aSelector) ?? false
-        }
-        
-        func performAnimated(_ block: () -> Void) {
-            NSAnimationContext.runAnimationGroup { context in
-                context.duration = NSAnimationContext.current.duration
-                context.allowsImplicitAnimation = true
-                block()
-            }
-        }
+    public var animations: [NSAnimatablePropertyKey : Any] {
+        get { [:] }
+        set { }
+    }
+    
+    public func animation(forKey key: NSAnimatablePropertyKey) -> Any? {
+        nil
+    }
+    
+    public static func defaultAnimation(forKey key: NSAnimatablePropertyKey) -> Any? {
+        nil
     }
 }
 */
