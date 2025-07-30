@@ -5,6 +5,7 @@
 //  Created by Florian Zand on 18.05.22.
 //
 
+#if os(macOS)
 import AppKit
 import FZSwiftUtils
 
@@ -31,24 +32,24 @@ extension NSCollectionView {
         isReconfiguratingItems = false
     }
 
-    var isReconfiguratingItems: Bool {
-        get { getAssociatedValue("isReconfiguratingItems", initialValue: false) }
+    fileprivate var isReconfiguratingItems: Bool {
+        get { getAssociatedValue("isReconfiguratingItems") ?? false }
         set { setAssociatedValue(newValue, key: "isReconfiguratingItems")
         }
     }
     
-    static var didSwizzleMakeItem: Bool {
-        get { getAssociatedValue("didSwizzleMakeItem", initialValue: false) }
+    fileprivate static var didSwizzleMakeItem: Bool {
+        get { getAssociatedValue("didSwizzleMakeItem") ?? false }
         set { setAssociatedValue(newValue, key: "didSwizzleMakeItem") }
     }
 
     @objc static func swizzleMakeItem() {
-        guard didSwizzleMakeItem == false else { return }
+        guard !didSwizzleMakeItem else { return }
+        didSwizzleMakeItem = true
         do {
-            try Swizzle(NSCollectionView.self) {
+            _ = try Swizzle(NSCollectionView.self) {
                 #selector(makeItem(withIdentifier:for:)) <-> #selector(swizzled_makeItem(withIdentifier:for:))
             }
-            didSwizzleMakeItem = true
         } catch {
             Swift.debugPrint(error)
         }
@@ -61,3 +62,4 @@ extension NSCollectionView {
         return self.swizzled_makeItem(withIdentifier: identifier, for: indexPath)
     }
 }
+#endif
