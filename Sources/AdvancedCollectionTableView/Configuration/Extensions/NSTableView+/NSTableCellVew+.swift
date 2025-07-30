@@ -264,7 +264,7 @@ extension NSTableCellView {
         if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
             setAssociatedValue(configuration, key: "contentConfiguration")
             NSAnimationContext.performWithoutAnimation {
-                contentView?.configuration = configuration
+                self.contentView?.configuration = configuration
             }
         }
     }
