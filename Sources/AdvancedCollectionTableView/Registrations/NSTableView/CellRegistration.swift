@@ -48,7 +48,11 @@ public extension NSTableView {
 
      ## Column Identifiers
 
-     With `columnIdentifiers` you can restrict the cell to specific table columns when used with ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``. You only have to provide column identifiers when your table view has multiple columns and the columns should use different types of table cells. The data source will use the matching cell registration for each column.
+     With `columnIdentifiers` you can restrict the cell to specific table columns when used with ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+     
+     You only have to provide column identifiers when your table view has multiple columns. The table cell is displayed for the columns with the same identifiers.
+     
+     An empty array indicates that the cell isn't restricted to any specific columns.
      
      ## Section Header View
      
@@ -68,9 +72,11 @@ public extension NSTableView {
         /**
          The identifiers of the table columns,
          
-         An empty array indicates that the cell isn't restricted to any specific columns.
+         The column identifiers are used when the registration is applied to ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+         
+         You only have to provide column identifiers when your table view has multiple columns. The table cell is displayed for the columns with the same identifiers.
 
-         The identifiers are used when the registration is applied to ``TableViewDiffableDataSource``. If the value isn't `nil`, the table cell is displayed for the columns with the same identifiers.
+         An empty array indicates that the cell isn't restricted to any specific columns.
          */
         public let columnIdentifiers: [NSUserInterfaceItemIdentifier]
 
@@ -78,9 +84,15 @@ public extension NSTableView {
 
         /**
          Creates a cell registration with the specified registration handler.
+         
+         The column identifiers are used when the registration is applied to ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+         
+         You only have to provide column identifiers when your table view has multiple columns. The table cell is displayed for the columns with the same identifiers.
 
+         An empty array indicates that the cell isn't restricted to any specific columns.
+         
          - Parameters:
-            - columnIdentifiers: The identifiers of the table columns. The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
+            - columnIdentifiers: The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
         public init(columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
@@ -91,6 +103,12 @@ public extension NSTableView {
 
         /**
          Creates a cell registration with the specified registration handler and nib file.
+         
+         The column identifiers are used when the registration is applied to ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+         
+         You only have to provide column identifiers when your table view has multiple columns. The table cell is displayed for the columns with the same identifiers.
+
+         An empty array indicates that the cell isn't restricted to any specific columns.
 
          - Parameters:
             - nib: The nib of the cell.
@@ -168,6 +186,6 @@ public protocol NSTableViewCellRegistration {
     var columnIdentifiers: [NSUserInterfaceItemIdentifier] { get }
 }
 
-protocol _NSTableViewCellRegistration {
+protocol _NSTableViewCellRegistration: NSTableViewCellRegistration {
     func makeView(_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ item: Any) -> NSTableCellView?
 }

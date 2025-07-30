@@ -404,8 +404,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
      Creates a diffable data source with the specified cell registrations, and connects it to the specified table view.
      
      Specify column identifiers for each of the cell registrations using: ``AppKit/NSTableView/CellRegistration/init(columnIdentifiers:handler:)``
-     
+          
      The column identifiers are used to create the cells for each column with the coresponding column identifier.
+     
+     If you don't specify any column identifiers, the cell registrations are used in the order of the table columns.
      
      ```swift
      dataSource = TableViewDiffableDataSource<Section, Item>(tableView: tableView, cellRegistrations: cellRegistrations)
@@ -416,13 +418,24 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         - cellRegistrations: Cell registrations which returns each of the cells for the table view from the data the diffable data source provides.
      */
     public convenience init(tableView: NSTableView, cellRegistrations: [NSTableViewCellRegistration]) {
-        self.init(tableView: tableView, cellProvider: {
-            _, column, row, item in
-            if let cellRegistration = (cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty })) as? _NSTableViewCellRegistration {
-                return cellRegistration.makeView(tableView, column, row, item) ?? NSTableCellView()
-            }
-            return NSTableCellView()
-        })
+        let cellRegistrations = cellRegistrations.compactMap({$0 as? _NSTableViewCellRegistration})
+        if cellRegistrations.contains(where: {!$0.columnIdentifiers.isEmpty}) {
+            self.init(tableView: tableView, cellProvider: {
+                tableView, column, row, item in
+                if let cellRegistration = cellRegistrations.first(where: { $0.columnIdentifiers.contains(column.identifier) }) ?? cellRegistrations.first(where: { $0.columnIdentifiers.isEmpty }) {
+                    return cellRegistration.makeView(tableView, column, row, item) ?? NSTableCellView()
+                }
+                return NSTableCellView()
+            })
+        } else {
+            self.init(tableView: tableView, cellProvider: {
+                tableView, column, row, item in
+                if let cellRegistration = cellRegistrations[safe: tableView.tableColumns.firstIndex(of: column) ?? 0] ?? cellRegistrations.first {
+                    return cellRegistration.makeView(tableView, column, row, item) ?? NSTableCellView()
+                }
+                return NSTableCellView()
+            })
+        }
     }
     
     /*
