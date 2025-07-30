@@ -58,4 +58,5 @@ A collection of classes and extensions for `NSCollectionView` and `NSTableView`,
 - <doc:NSTableCellView+>
 - <doc:NSTableRowView+>
 - <doc:NSTableViewDiffableDataSource+>
+- <doc:NSOutlineView+>
 - ``NSTableViewCellRegistration``

@@ -11,7 +11,7 @@ import FZUIKit
 extension NSOutlineView {
     /**
      Updates the data for the items you specify, preserving the existing row views and cells for the rows.
-
+     
      To update the contents of existing (including prefetched) cells without replacing them with new row views nad cells, use this method instead of ``AppKit/NSOutlineView/reloadItems(_:)``. For optimal performance, choose to reconfigure rows instead of reloading rows unless you have an explicit need to replace the existing row view or cells with new.
      
      - Parameter items: The items you want to update.
