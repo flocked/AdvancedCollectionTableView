@@ -1124,7 +1124,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
+            keyDownMonitor = .local(for: .keyDown) { [weak self] event in
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.outlineView.isFirstResponder else { return event }
                 let selected = outlineView.selectedItems as! [Item]
                 let itemsToDelete = canDelete(selected)

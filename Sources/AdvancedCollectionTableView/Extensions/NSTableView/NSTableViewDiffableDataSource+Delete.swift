@@ -95,7 +95,7 @@ extension NSTableViewDiffableDataSource {
 
     func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete, let didDelete = deletingHandlers.didDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
+            keyDownMonitor = .local(for: .keyDown) { [weak self] event in
                 guard let self = self else { return event }
                 guard event.keyCode == 51 else { return event }
                 if let tableView = (NSApp.keyWindow?.firstResponder as? NSTableView), tableView.dataSource === self {

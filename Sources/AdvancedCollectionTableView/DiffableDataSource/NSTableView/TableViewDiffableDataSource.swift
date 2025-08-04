@@ -260,7 +260,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     private func setupKeyDownMonitor() {
         if let canDelete = deletingHandlers.canDelete {
-            keyDownMonitor = NSEvent.localMonitor(for: .keyDown) { [weak self] event in
+            keyDownMonitor = .local(for: .keyDown) { [weak self] event in
                 guard let self = self, event.charactersIgnoringModifiers == String(UnicodeScalar(NSDeleteCharacter)!), self.tableView.isFirstResponder else { return event }
                 let itemsToDelete = canDelete(self.selectedItems)
                 guard !itemsToDelete.isEmpty else { return event }

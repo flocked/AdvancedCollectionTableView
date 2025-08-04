@@ -24,7 +24,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     public init(configuration: NSItemContentConfiguration) {
         appliedConfiguration = configuration
         super.init(frame: .zero)
-        isOpaque = false
         wantsLayer = true
         clipsToBounds = false
         stackviewConstraints = addSubview(withConstraint: stackView)
