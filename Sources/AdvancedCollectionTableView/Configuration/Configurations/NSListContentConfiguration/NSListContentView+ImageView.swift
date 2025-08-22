@@ -117,6 +117,7 @@ extension NSListContentView {
             self.properties = properties
             super.init(frame: .zero)
             wantsLayer = true
+            imageView.imageAlignment = .alignCenter
             addSubview(imageView)
             update()
         }
