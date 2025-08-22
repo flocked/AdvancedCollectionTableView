@@ -22,7 +22,6 @@ let package = Package(
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook"], path: "Sources/AdvancedCollectionTableView"
-        ),
+            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook"], path: "Sources/AdvancedCollectionTableView", resources: [.process("Resources")]),
     ]
 )
