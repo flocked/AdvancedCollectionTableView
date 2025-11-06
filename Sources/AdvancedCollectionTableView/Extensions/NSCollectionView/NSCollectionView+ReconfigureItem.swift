@@ -47,7 +47,7 @@ extension NSCollectionView {
         guard !didSwizzleMakeItem else { return }
         didSwizzleMakeItem = true
         do {
-            _ = try Swizzle(NSCollectionView.self) {
+            try NSCollectionView.swizzle {
                 #selector(makeItem(withIdentifier:for:)) <-> #selector(swizzled_makeItem(withIdentifier:for:))
             }
         } catch {

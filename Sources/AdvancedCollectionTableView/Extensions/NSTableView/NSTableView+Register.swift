@@ -96,7 +96,7 @@ extension NSTableView {
     static func swizzleViewRegistration() {
         guard !didSwizzleViewRegistration else { return }
         do {
-            _ = try Swizzle(NSTableView.self) {
+            try NSTableView.swizzle {
                 #selector(makeView(withIdentifier:owner:)) <-> #selector(swizzled_makeView(withIdentifier:owner:))
                 #selector((register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(swizzled_register(_:forIdentifier:))
             }

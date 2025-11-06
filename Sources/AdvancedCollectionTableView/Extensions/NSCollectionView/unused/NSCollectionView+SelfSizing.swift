@@ -47,7 +47,7 @@ extension NSCollectionViewItem {
     static func swizzleCollectionViewItemIfNeeded() {
         if didSwizzleCollectionViewItem == false {
             do {
-                _ = try Swizzle(NSCollectionViewItem.self) {
+                try NSCollectionViewItem.swizzle {
                     #selector(viewDidLayout) <-> #selector(swizzled_viewDidLayout)
                     #selector(apply(_:)) <-> #selector(swizzled_apply(_:))
                     #selector(preferredLayoutAttributesFitting(_:)) <-> #selector(swizzled_preferredLayoutAttributesFitting(_:))
