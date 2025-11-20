@@ -86,16 +86,17 @@ extension NSTableCellView {
             } else {
                 contentView = contentConfiguration.makeContentView()
                 translatesAutoresizingMaskIntoConstraints = false
-                addSubview(withConstraint: contentView!)
+                let constraints = addSubview(withConstraint: contentView!)
+                constraints[1].priority = .init(999)
                 /*
-                if let contentView = contentView as? NSListContentView {
-                    textField = contentView.textField
-                    imageView = contentView.imageView
-                } else {
-                    textField = nil
-                    imageView = nil
-                }
-                 */
+                 if let contentView = contentView as? NSListContentView {
+                     textField = contentView.textField
+                     imageView = contentView.imageView
+                 } else {
+                     textField = nil
+                     imageView = nil
+                 }
+                  */
                  
             }
             setNeedsDisplay()

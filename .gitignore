@@ -1,7 +1,34 @@
+## macOS
+.DS_Store
+.netrc
 
-*.resolved
-**/.DS_Store
-.swiftpm/xcode/xcuserdata/florianzand.xcuserdatad/xcschemes/xcschememanagement.plist
-*.xcuserstate
-*.resolved
-*.resolved
+## Obj-C/Swift specific
+*.hmap
+
+## Xcode
+xcuserdata/
+.build/
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+Packages/
+Package.resolved
+Package.pins
+.swiftpm
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Carthage
+Carthage/Build/
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
