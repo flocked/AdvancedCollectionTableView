@@ -102,6 +102,7 @@ extension NSItemContentView {
             imageView.frame.size = bounds.size
             view?.frame.size = bounds.size
             overlayView?.frame.size = bounds.size
+            badgeViews.forEach({ $0.layoutBadge() })
             /*
              if let imageSize = image?.size, contentProperties.imageScaling.shouldResize {
              var size = frame.size

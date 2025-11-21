@@ -15,13 +15,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/flocked/FZSwiftUtils.git", branch: "main"),
         .package(url: "https://github.com/flocked/FZUIKit.git", branch: "main"),
         .package(url: "https://github.com/flocked/FZQuicklook.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "AdvancedCollectionTableView",
-            dependencies: ["FZSwiftUtils", "FZUIKit", "FZQuicklook"], path: "Sources/AdvancedCollectionTableView", resources: [.process("Resources")]),
+            dependencies: ["FZUIKit", "FZQuicklook"], path: "Sources/AdvancedCollectionTableView", resources: [.process("Resources")]),
     ]
 )
