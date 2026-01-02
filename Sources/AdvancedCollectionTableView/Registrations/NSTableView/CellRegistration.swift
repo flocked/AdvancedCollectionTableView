@@ -95,10 +95,25 @@ public extension NSTableView {
             - columnIdentifiers: The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
             - handler: The handler to configurate the cell.
          */
-        public init(columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
+        public init(for columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
             self.handler = handler
             self.nib = nil
             self.columnIdentifiers = columnIdentifiers
+        }
+        
+        /**
+         Creates a cell registration with the specified registration handler.
+         
+         The column identifier is used when the registration is applied to ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+         
+         You only have to provide a column identifier when your table view has multiple columns. The table cell is displayed for the columns with the same identifier.
+         
+         - Parameters:
+            - columnIdentifier: The identifier of the table column.
+            - handler: The handler to configurate the cell.
+         */
+        public init(for columnIdentifier: NSUserInterfaceItemIdentifier, handler: @escaping Handler) {
+            self.init(for: [columnIdentifier], handler: handler)
         }
 
         /**
@@ -111,14 +126,30 @@ public extension NSTableView {
          An empty array indicates that the cell isn't restricted to any specific columns.
 
          - Parameters:
-            - nib: The nib of the cell.
             - columnIdentifiers: The identifiers of the table columns. The default value is `[]`, which indicates that the cell isn't restricted to specific columns.
+            - nib: The nib of the cell.
             - handler: The handler to configurate the cell.
          */
-        public init(nib: NSNib, columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], handler: @escaping Handler) {
+        public init(for columnIdentifiers: [NSUserInterfaceItemIdentifier] = [], nib: NSNib, handler: @escaping Handler) {
             self.handler = handler
             self.nib = nib
             self.columnIdentifiers = columnIdentifiers
+        }
+        
+        /**
+         Creates a cell registration with the specified registration handler and nib file.
+         
+         The column identifier is used when the registration is applied to ``TableViewDiffableDataSource`` using ``TableViewDiffableDataSource/init(tableView:cellRegistrations:)``.
+         
+         You only have to provide a column identifier when your table view has multiple columns. The table cell is displayed for the columns with the same identifier.
+         
+         - Parameters:
+            - columnIdentifier: The identifier of the table column.
+            - nib: The nib of the cell.
+            - handler: The handler to configurate the cell.
+         */
+        public init(for columnIdentifier: NSUserInterfaceItemIdentifier, nib: NSNib, handler: @escaping Handler) {
+            self.init(for: [columnIdentifier], nib: nib, handler: handler)
         }
 
         /// A closure that handles the cell registration and configuration.

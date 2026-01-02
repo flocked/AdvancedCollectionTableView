@@ -22,9 +22,9 @@ public extension NSTableViewDiffableDataSource {
      */
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let selector = NSSelectorFromString("_tableView:viewForTableColumn:row:")
+        typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, NSTableColumn?, Int) -> NSView?        
         if let meth = class_getInstanceMethod(object_getClass(self), selector) {
             let imp = method_getImplementation(meth)
-            typealias ClosureType = @convention(c) (AnyObject, Selector, NSTableView, NSTableColumn?, Int) -> NSView?
             let method: ClosureType = unsafeBitCast(imp, to: ClosureType.self)
             let view = method(self, selector, tableView, tableColumn, row)
             return view
@@ -77,7 +77,7 @@ public extension NSTableViewDiffableDataSource {
     /// The cell provider of the datasource.
     var cellProvider: ((NSTableView, NSTableColumn, Int, ItemIdentifierType)->(NSView)) {
         typealias CellProviderBlock = @convention(block) (_ tableView: NSTableView, _ tableColumn: NSTableColumn, _ row: Int, _ identifier: Any) -> NSView
-        guard let cellProvider: CellProviderBlock = getIvarValue(for: "_cellProvider") else { return { _,_,_,_ in return NSTableCellView() } }
+        guard let cellProvider: CellProviderBlock = ivarValue(named: "_cellProvider") else { return { _,_,_,_ in return NSTableCellView() } }
         return cellProvider
     }
     

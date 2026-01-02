@@ -33,10 +33,10 @@ class TableSidebarViewController: NSViewController {
         configuration.text = section.title
         sectionHeaderCell.contentConfiguration = configuration
     }
-    
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+ 
         tableView.draggingDestinationFeedbackStyle = .gap
         tableView.dataSource = dataSource
         dataSource.applySectionHeaderRegistration(sectionHeaderRegistration)
@@ -67,10 +67,10 @@ class TableSidebarViewController: NSViewController {
             if edge == .leading {
                 /// Left swipe
                 return [NSTableViewRowAction.regular(symbolName: swippedItem.isFavorite ? "star" : "star.fill", color: .systemYellow) { _,_ in
-                        swippedItem.isFavorite = !swippedItem.isFavorite
-                        self.dataSource.reconfigureItems([swippedItem])
-                        self.tableView.rowActionsVisible = false
-                    }]
+                    swippedItem.isFavorite = !swippedItem.isFavorite
+                    self.dataSource.reconfigureItems([swippedItem])
+                    self.tableView.rowActionsVisible = false
+                }]
             } else {
                 /// Right swipe
                 return [NSTableViewRowAction.destructive(symbolName: "trash.fill") { _,_ in
@@ -80,6 +80,7 @@ class TableSidebarViewController: NSViewController {
                 }]
             }
         }
+        
         applySnapshot()
     }
         

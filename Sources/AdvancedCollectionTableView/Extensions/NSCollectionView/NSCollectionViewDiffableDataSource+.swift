@@ -12,7 +12,7 @@ extension NSCollectionViewDiffableDataSource {
     /// The item provider of the datasource.
     public var itemProvider: ItemProvider {
         typealias itemProviderBlock = @convention(block) (NSCollectionView, IndexPath, Any) -> NSCollectionViewItem?
-        guard let object: NSObject = getIvarValue(for: "_impl"), let cellProvider: itemProviderBlock = object.getIvarValue(for: "_collectionViewItemProvider") else { return { _,_,_ in return nil } }
+        guard let object: NSObject = ivarValue(named: "_impl"), let cellProvider: itemProviderBlock = object.ivarValue(named: "_collectionViewItemProvider") else { return { _,_,_ in return nil } }
         return cellProvider
     }
     
@@ -44,7 +44,7 @@ extension NSCollectionViewDiffableDataSource {
     }
     
     private var collectionView: NSCollectionView {
-        guard let object: NSObject = getIvarValue(for: "_impl"), let collectionView: NSCollectionView =  object.getIvarValue(for: "_nsCollectionView") else { return NSCollectionView() }
+        guard let object: NSObject = ivarValue(named: "_impl"), let collectionView: NSCollectionView =  object.ivarValue(named: "_nsCollectionView") else { return NSCollectionView() }
         return collectionView
     }
 }

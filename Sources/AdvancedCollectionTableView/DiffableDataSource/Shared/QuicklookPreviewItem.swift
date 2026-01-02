@@ -60,5 +60,5 @@ class QuicklookPreviewItem: NSObject, QLPreviewItem, QuicklookPreviewable {
 
 extension NSPasteboard.PasteboardType {
     /// Collection view and table view drag & drop type.
-    static let itemID: NSPasteboard.PasteboardType = .init("DiffableDataSource.ItemID")
+    static let itemID: NSPasteboard.PasteboardType = .init("com.advancedTableCollectionView.item-id")
 }

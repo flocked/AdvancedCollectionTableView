@@ -254,7 +254,7 @@ extension NSListContentView.ListImageView {
 fileprivate extension NSImage.SymbolConfiguration {
     var pointSize: CGFloat {
         get { value(forKey: "pointSize") ?? 0.0 }
-        set { setIvarValue(Double(newValue), of: "_pointSize") }
+        set { setIvarValue(Double(newValue), named: "_pointSize") }
     }
     
     var scale: NSImage.SymbolScale {

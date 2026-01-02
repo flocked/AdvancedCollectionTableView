@@ -51,23 +51,18 @@ extension TableViewDiffableDataSource {
             guard dataSource.selectionHandlers.shouldSelect != nil || dataSource.selectionHandlers.shouldDeselect != nil else {
                 return proposedSelectionIndexes
             }
-            let selectedRows = Array(dataSource.tableView.selectedRowIndexes)
-            let proposedRows = Array(proposedSelectionIndexes)
+            let diff = dataSource.tableView.selectedRowIndexes.difference(to: proposedSelectionIndexes)
 
-            let diff = selectedRows.difference(to: proposedRows)
-            let selectedItems = diff.added.compactMap { dataSource.item(forRow: $0) }
-            let deselectedItems = diff.removed.compactMap { dataSource.item(forRow: $0) }
-
-            var selections: [Item] = selectedItems
-            if !selectedItems.isEmpty, let shouldSelectRows = dataSource.selectionHandlers.shouldSelect?(selectedItems)  {
-                selections = selectedItems.filter({ shouldSelectRows.contains($0) })
+            let selectedItems = diff.added.compactMap({ dataSource.indexedItem(forRow: $0) })
+            let deselectedItems = diff.added.compactMap({ dataSource.indexedItem(forRow: $0) })
+            var selection = selectedItems
+            if !selectedItems.isEmpty, let shouldSelectRows = dataSource.selectionHandlers.shouldSelect?(selectedItems.map(\.item))  {
+                selection = selection.filter({ shouldSelectRows.contains($0.item) })
             }
-
-            if !deselectedItems.isEmpty, let shouldDeselectRows = dataSource.selectionHandlers.shouldDeselect?(deselectedItems) {
-                    selections += deselectedItems.filter({ !shouldDeselectRows.contains($0) })
+            if !deselectedItems.isEmpty, let shouldDeselectRows = dataSource.selectionHandlers.shouldDeselect?(deselectedItems.map(\.item)) {
+                selection += deselectedItems.filter({ !shouldDeselectRows.contains($0.item) })
             }
-
-            return IndexSet(selections.compactMap { dataSource.row(for: $0) })
+            return IndexSet(selection.map(\.row))
         }
         
         // MARK: - View

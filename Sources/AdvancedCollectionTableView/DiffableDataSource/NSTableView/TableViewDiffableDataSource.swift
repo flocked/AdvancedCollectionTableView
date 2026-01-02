@@ -10,6 +10,26 @@ import FZQuicklook
 import FZSwiftUtils
 import FZUIKit
 
+class SectionHeaderRowView: NSTableRowView {
+    init() {
+        super.init(frame: .zero)
+        isGroupRowStyle = true
+    }
+    
+    var headerView: NSView? {
+        didSet {
+            guard oldValue != headerView else { return }
+            oldValue?.removeFromSuperview()
+            guard let headerView = headerView else { return }
+            addSubview(withConstraint: headerView)
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 /**
  A `NSTableViewDiffableDataSource` with additional functionality.
 
@@ -126,10 +146,15 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
                     guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
+                    
+                    let rowView = tableView.makeView(withIdentifier: "SectionHeaderRowView", owner: nil) as? SectionHeaderRowView ?? SectionHeaderRowView()
+                    rowView.identifier = "SectionHeaderRowView"
+                    
                     var view: NSTableCellView?
                     NSAnimationContext.performWithoutAnimation {
                         view = sectionHeaderCellProvider(tableView, row, section)
                     }
+                    rowView.headerView = view ?? NSTableCellView()
                     return view ?? NSTableCellView()
                 }
             } else {
@@ -517,7 +542,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     // MARK: Dropping
             
     open func tableView(_ tableView: NSTableView, validateDrop draggingInfo: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        Swift.print("validateDrop")
+        // Swift.print("validateDrop")
         canDrop = false
         dropTargetRow = nil
         if !dragingRowIndexes.isEmpty {
@@ -649,7 +674,6 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
                 }
             }
         }
-        
         if sectionHeaderCellProvider != nil, let canReorderSection = reorderingHandlers.canReorderSection, rowIndexes.count == 1, let row = rowIndexes.first, let section = section(forRow: row) {
             reorderingSectionRow = canReorderSection(section) ? row : nil
         } else {
@@ -702,7 +726,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
         if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: tableView)), !items.isEmpty, let image = previewImage(for: items) {
-            Swift.print("DraggingItems", tableView.frame.size, image.size)
+            // Swift.print("DraggingItems", tableView.frame.size, image.size)
             draggingInfo.setDraggedImage(image)
         }
         /*
@@ -755,6 +779,11 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return items[id: itemID]
         }
         return nil
+    }
+    
+    func indexedItem(forRow row: Int) -> (row: Int, item: Item)? {
+        guard let item = item(forRow: row) else { return nil }
+        return (row, item)
     }
     
     /// Returns the row for the specified item.
