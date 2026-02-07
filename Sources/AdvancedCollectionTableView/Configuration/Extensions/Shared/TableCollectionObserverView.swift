@@ -128,11 +128,11 @@ class TableCollectionObserverView: NSView {
     override func viewWillMove(toWindow newWindow: NSWindow?) {
         tokens = []
         guard let newWindow = newWindow else { return }
-        tokens = [NotificationCenter.default.observe(NSWindow.didBecomeKeyNotification, object: newWindow) { [weak self] _ in
+        tokens = [NotificationCenter.default.observe(NSWindow.didBecomeKeyNotification, postedBy: newWindow) { [weak self] _ in
             guard let self = self else { return }
             self.collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
             self.tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
-        }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, object: newWindow) { [weak self] _ in
+        }, NotificationCenter.default.observe(NSWindow.didResignKeyNotification, postedBy: newWindow) { [weak self] _ in
             guard let self = self else { return }
             self.collectionView?.hoveredIndexPath = nil
             self.collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
