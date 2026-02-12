@@ -24,13 +24,8 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            let newValue = (newValue as? NSListContentConfiguration)?.updated(for: self) ?? newValue
             setAssociatedValue(newValue, key: "contentConfiguration")
-            observeCellView()
-            configurateContentView()
-            if newValue is AutomaticHeightSizable {
-                observeWillMoveToRowView()
-            }
+            setupContentConfiguration(newValue)
         }
     }
 
@@ -76,8 +71,10 @@ extension NSTableCellView {
         }
     }
 
-    func configurateContentView() {
+    private func setupContentConfiguration(_ contentConfiguration: NSContentConfiguration?) {
+        observeCellView()
         if var contentConfiguration = contentConfiguration {
+            contentConfiguration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) ?? contentConfiguration
             if automaticallyUpdatesContentConfiguration {
                 contentConfiguration = contentConfiguration.updated(for: configurationState)
             }
@@ -101,6 +98,8 @@ extension NSTableCellView {
             }
             setNeedsDisplay()
             contentView?.setNeedsDisplay()
+            guard contentConfiguration is AutomaticHeightSizable else { return }
+            observeWillMoveToRowView()
         } else {
             contentView = nil
         }
@@ -148,8 +147,8 @@ extension NSTableCellView {
      Override this method in a subclass to update the cell’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = contentConfiguration, let contentView = contentView {
-            contentView.configuration = contentConfiguration.updated(for: state)
+        if let contentView = contentView {
+            contentView.configuration = contentView.configuration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
     }

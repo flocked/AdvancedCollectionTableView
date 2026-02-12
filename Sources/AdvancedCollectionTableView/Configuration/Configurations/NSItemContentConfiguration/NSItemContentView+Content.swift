@@ -291,6 +291,12 @@ extension NSItemContentView {
             imageView.clipsToBounds = true
             containerView.addSubview(imageView)
             updateConfiguration()
+            
+            // Bugfix for dissplaying initial badges.
+            guard configuration.hasBadges else { return }
+            DispatchQueue.main.async(after: 0.000001) {
+                self.updateConfiguration()
+            }
         }
 
         @available(*, unavailable)

@@ -34,15 +34,19 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     open var configuration: NSContentConfiguration {
         get { appliedConfiguration }
         set {
-            guard let newValue = newValue as? NSItemContentConfiguration else { return }
+            guard let newValue = newValue as? NSItemContentConfiguration, newValue != appliedConfiguration else { return }
             appliedConfiguration = newValue
+            updateConfiguration()
         }
     }
+    
+    var appliedConfiguration: NSItemContentConfiguration
 
     /**
      Determines whether the view is compatible with the provided configuration.
-
-     Returns `true` if the configuration is ``NSItemContentConfiguration``, or `false` if not.
+     
+     - Parameter configuration: The new configuration to test for compatibility.
+     - Returns: `true` if the configuration is ``NSItemContentConfiguration``;  otherwise, `false`.
      */
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSItemContentConfiguration
@@ -76,6 +80,11 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     public internal(set) var contentLayoutGuide: NSLayoutGuide?
     
     func isHovering(at location: CGPoint) -> Bool {
+        var textFrame = textStackView.frame
+        textFrame.size.width = contentView.frame.width
+        
+       // Swift.print("isHovering", textFrame.contains(convert(location, to: textStackView)), textStackView.frame.origin)
+        return (contentView.frame.contains(location) && contentView.isHidden == false) || textStackView.frame.contains(location)
         return (contentView.frame.contains(location) && contentView.isHidden == false) ||
         CGRect(0, 0, max(textField.bounds.width, secondaryTextField.bounds.width), contentView.frame.y).contains(location)
         /*
@@ -85,13 +94,25 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
          */
     }
     
+
     open override func hitTest(_ point: NSPoint) -> NSView? {
         let view = super.hitTest(point)
-        if let view = view, (view.isDescendant(of: contentView) && !contentView.isHidden) || (view == textField && !textField.isHidden) || (view == secondaryTextField && !secondaryTextField.isHidden) {
+        if view == stackView {
+            return nil
+        }
+        return view
+        if let view = view {
+            Swift.print("hit", type(of: view))
+        } else {
+          //  Swift.print("hit nil", NSEvent.current?.type ?? "nil")
+        }
+        return view
+        if let view = view, (view.isDescendant(of: contentView) && !contentView.isHidden) || view.isDescendant(of: textStackView) {
             return view
         }
         return nil
     }
+     
     
     public func check(_ rect: CGRect) -> Bool {
         (rect.intersects(contentView.frame) && !contentView.isHidden) || (rect.intersects(textField.frame) && !textField.isHidden)  || (rect.intersects(secondaryTextField.frame) && !secondaryTextField.isHidden)
@@ -117,13 +138,6 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     @available(*, unavailable)
     public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    var appliedConfiguration: NSItemContentConfiguration {
-        didSet{
-            guard oldValue != appliedConfiguration else { return }
-            updateConfiguration()
-        }
     }
 
     var tableCellView: NSTableCellView? {

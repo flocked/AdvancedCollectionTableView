@@ -30,11 +30,7 @@ extension NSTableRowView {
         get { getAssociatedValue("contentConfiguration") }
         set {
             setAssociatedValue(newValue, key: "contentConfiguration")
-            observeRowView()
-            configurateContentView()
-            if newValue is AutomaticHeightSizable {
-                observeWillMoveToTableView()
-            }
+            setupContentConfiguration(newValue)
         }
     }
 
@@ -56,7 +52,8 @@ extension NSTableRowView {
         }
     }
 
-    func configurateContentView() {
+    private func setupContentConfiguration(_ contentConfiguration: NSContentConfiguration?) {
+        observeRowView()
         if var contentConfiguration = contentConfiguration {
             translatesAutoresizingMaskIntoConstraints = false
             if automaticallyUpdatesContentConfiguration {
@@ -69,6 +66,8 @@ extension NSTableRowView {
                 contentView = contentConfiguration.makeContentView()
                 addSubview(withConstraint: contentView!)
             }
+            guard contentConfiguration is AutomaticHeightSizable else { return }
+            observeWillMoveToTableView()
         } else {
             contentView = nil
         }
@@ -152,10 +151,10 @@ extension NSTableRowView {
      Override this method in a subclass to update the row’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSListConfigurationState) {
-        if let contentConfiguration = contentConfiguration, let contentView = contentView {
-            contentView.configuration = contentConfiguration.updated(for: state)
+        if let contentView = contentView {
+            contentView.configuration = contentView.configuration.updated(for: state)
         }
-        cellViews.forEach { $0.setNeedsUpdateConfiguration() }
+        cellViews.forEach { $0.setNeedsAutomaticUpdateConfiguration() }
         configurationUpdateHandler?(self, state)
     }
 

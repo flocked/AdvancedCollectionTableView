@@ -30,8 +30,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("backgroundConfiguration") }
         set {
             setAssociatedValue(newValue, key: "backgroundConfiguration")
-            setupObservation()
-            configurateBackgroundView()
+            setupBackgroundConfiguration(newValue)
         }
     }
 
@@ -52,11 +51,7 @@ extension NSCollectionViewItem {
      - Returns:A default background content configuration.
      */
     public func defaultBackgroundConfiguration() -> NSBackgroundConfiguration {
-        var configuration = NSBackgroundConfiguration()
-        configuration.cornerRadius = 16.0
-        configuration.shadow = .black(opacity: 0.4, radius: 3.0)
-        configuration.color = .unemphasizedSelectedContentBackgroundColor
-        return configuration
+        .collectionViewItem
     }
 
     /**
@@ -86,7 +81,8 @@ extension NSCollectionViewItem {
         }
     }
 
-    func configurateBackgroundView() {
+    private func setupBackgroundConfiguration(_ backgroundConfiguration: NSContentConfiguration?) {
+        setupObservation()
         if var backgroundConfiguration = backgroundConfiguration {
             if automaticallyUpdatesBackgroundConfiguration {
                 backgroundConfiguration = backgroundConfiguration.updated(for: configurationState)
@@ -119,8 +115,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("contentConfiguration") }
         set {
             setAssociatedValue(newValue, key: "contentConfiguration")
-            setupObservation()
-            configurateContentView()
+            setupContentConfiguration(newValue)
         }
     }
 
@@ -146,8 +141,9 @@ extension NSCollectionViewItem {
     var contentView: NSContentView? {
         view as? NSContentView
     }
-
-    func configurateContentView() {
+    
+    private func setupContentConfiguration(_ contentConfiguration: NSContentConfiguration?) {
+        setupObservation()
         if var contentConfiguration = contentConfiguration {
             if automaticallyUpdatesContentConfiguration {
                 contentConfiguration = contentConfiguration.updated(for: configurationState)
@@ -155,18 +151,19 @@ extension NSCollectionViewItem {
             if let contentView = contentView, contentView.supports(contentConfiguration) {
                 contentView.configuration = contentConfiguration
             } else {
-                let previousFrame = view.frame
-                let previousView = view
-                view = contentConfiguration.makeContentView()
-                view.frame = previousFrame
-                view.setNeedsLayout()
-                previousView.removeFromSuperview()
+                replaceView(with: contentConfiguration.makeContentView())
             }
         } else {
-            let previousFrame = view.frame
-            view = NSView(frame: previousFrame)
+            replaceView(with: NSView())
         }
-        configurateBackgroundView()
+    }
+    
+    private func replaceView(with newView: NSView) {
+        newView.frame = view.frame
+        view.superview?.replaceSubview(view, with: newView)
+        view = newView
+        setupBackgroundConfiguration(backgroundConfiguration)
+        view.setNeedsLayout()
     }
 
     // MARK: Managing the state
@@ -212,11 +209,11 @@ extension NSCollectionViewItem {
      Override this method in a subclass to update the item’s configuration using the provided state.
      */
     @objc open func updateConfiguration(using state: NSItemConfigurationState) {
-        if let contentConfiguration = contentConfiguration, let contentView = contentView {
-            contentView.configuration = contentConfiguration.updated(for: state)
+        if let contentView = contentView {
+            contentView.configuration = contentView.configuration.updated(for: state)
         }
-        if let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
-            backgroundView.configuration = backgroundConfiguration.updated(for: state)
+        if let backgroundView = backgroundView {
+            backgroundView.configuration = backgroundView.configuration.updated(for: state)
         }
         configurationUpdateHandler?(self, state)
     }
@@ -355,10 +352,14 @@ extension NSCollectionViewItem {
                 guard let self = self, old != new else { return }
                 self.setNeedsAutomaticUpdateConfiguration()
             }
-            itemObserver?.add(\.view.superview) { [weak self] _, _ in
-                guard let self = self, let collectionView = self._collectionView else { return }
-                self.itemObserver?.remove(\.view.superview)
+            if let collectionView = _collectionView {
                 collectionView.setupObservation()
+            } else {
+                itemObserver?.add(\.view.superview) { [weak self] _, _ in
+                    guard let self = self, let collectionView = self._collectionView else { return }
+                    self.itemObserver?.remove(\.view.superview)
+                    collectionView.setupObservation()
+                }
             }
         } else {
             itemObserver = nil
@@ -369,6 +370,16 @@ extension NSCollectionViewItem {
     var _collectionView: NSCollectionView? {
         collectionView ?? view.superview as? NSCollectionView
     }
+}
+
+fileprivate extension NSBackgroundConfiguration {
+    static let collectionViewItem: Self = {
+        var configuration = NSBackgroundConfiguration()
+        configuration.cornerRadius = 16.0
+        configuration.shadow = .black(opacity: 0.4, radius: 3.0)
+        configuration.color = .unemphasizedSelectedContentBackgroundColor
+        return configuration
+    }()
 }
 
 /*

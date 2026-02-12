@@ -35,6 +35,7 @@ extension NSItemContentView {
             fatalError("init(coder:) has not been implemented")
         }
         
+        
         func layoutBadge() {
             horizontalConstraint?.activate(false)
             verticalConstraint?.activate(false)

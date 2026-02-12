@@ -58,10 +58,7 @@ public extension NSItemContentConfiguration {
 
         /// Generates the resolved background color for the specified background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = backgroundColor {
-                return backgroundColorTransformer?(backgroundColor) ?? backgroundColor
-            }
-            return nil
+            backgroundColorTransformer?(backgroundColor) ?? backgroundColor
         }
 
         /// The visual effect background of the content.

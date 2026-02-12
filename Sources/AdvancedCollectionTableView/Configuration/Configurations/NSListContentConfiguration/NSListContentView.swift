@@ -9,6 +9,23 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
+extension NSGraphicsContext {
+    public static func pop() {
+        guard let context = stack.popLast() else { return }
+        current = context
+    }
+    
+    public static func push(_ context: NSGraphicsContext) {
+        stack.append(context)
+        current = context
+    }
+    
+    private static var stack: [NSGraphicsContext] {
+        get { getAssociatedValue("conextStack") ?? [] }
+        set { setAssociatedValue(newValue, key: "conextStack") }
+    }
+}
+
 /**
  A content view for displaying list-based item content.
  
@@ -24,7 +41,6 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     public init(configuration: NSListContentConfiguration) {
         appliedConfiguration = configuration
         super.init(frame: .zero)
-        
         clipsToBounds = false
         imageTextStackView.translatesAutoresizingMaskIntoConstraints = false
         badgeStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -36,11 +52,13 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
     open var configuration: NSContentConfiguration {
         get { appliedConfiguration }
         set {
-            if let newValue = newValue as? NSListContentConfiguration {
-                appliedConfiguration = newValue
-            }
+            guard let newValue = newValue as? NSListContentConfiguration, newValue != appliedConfiguration else { return }
+            appliedConfiguration = newValue
+            updateConfiguration()
         }
     }
+    
+    var appliedConfiguration: NSListContentConfiguration
     
     /**
      A guide for positioning the primary text in the content view.
@@ -68,22 +86,17 @@ open class NSListContentView: NSView, NSContentView, EditingContentView {
      If you apply a new configuration without secondary text to the content view, the system removes this layout guide from the view and deactivates any constraints associated with it.
      */
     public internal(set) var imageLayoutGuide: NSLayoutGuide?
+    
     /**
      Determines whether the view is compatible with the provided configuration.
      
-     Returns `true` if the configuration is ``NSListContentConfiguration``, or `false` if not.
+     - Parameter configuration: The new configuration to test for compatibility.
+     - Returns: `true` if the configuration is ``NSListContentConfiguration``;  otherwise, `false`.
      */
     open func supports(_ configuration: NSContentConfiguration) -> Bool {
         configuration is NSListContentConfiguration
     }
-    
-    var appliedConfiguration: NSListContentConfiguration {
-        didSet {
-            guard oldValue != appliedConfiguration else { return }
-            updateConfiguration()
-        }
-    }
-    
+        
     //let textField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     //let secondaryTextField = ListItemTextField.wrapping().truncatesLastVisibleLine(true)
     var textField: ListItemTextField { textStackView.textField }

@@ -91,10 +91,7 @@ public extension NSItemContentConfiguration {
         
         /// Generates the resolved background color, using the background color and color transformer.
         public func resolvedBackgroundColor() -> NSColor? {
-            if let backgroundColor = backgroundColor {
-                return backgroundColorTransformer?(backgroundColor) ?? backgroundColor
-            }
-            return nil
+            backgroundColorTransformer?(backgroundColor) ?? backgroundColor
         }
                
         /**
@@ -282,10 +279,7 @@ public extension NSItemContentConfiguration.Badge {
 
         /// Generates the resolved tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
-            if let tintColor = tintColor {
-                return tintColorTransformer?(tintColor) ?? tintColor
-            }
-            return nil
+            tintColorTransformer?(tintColor) ?? tintColor
         }
         
         var maxWidth: CGFloat? {

@@ -70,10 +70,7 @@ public extension NSItemContentConfiguration {
         
         /// Generates the resolved image tint color for the specified tint color, using the tint color and tint color transformer.
         public func resolvedTintColor() -> NSColor? {
-            if let tintColor = tintColor {
-                return tintColorTransformer?(tintColor) ?? tintColor
-            }
-            return nil
+            tintColorTransformer?(tintColor) ?? tintColor
         }
     }
 }

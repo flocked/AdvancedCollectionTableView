@@ -323,7 +323,7 @@ public struct NSItemContentConfiguration: Hashable, NSContentConfiguration {
     }
 
     var hasBadges: Bool {
-        badges.isEmpty == false && hasContent
+        !badges.isEmpty && hasContent
     }
 
     /// The position of the content.
