@@ -286,6 +286,7 @@ fileprivate struct SymbolFont: Hashable, Codable {
     static let `default` = Self(13.0, .default, .regular)
 }
 
+/*
 extension NSListContentView {
     class ListImageViewAlt: NSImageView {
         init(properties: NSListContentConfiguration.ImageProperties) {
@@ -489,3 +490,4 @@ extension NSUIImage.SymbolConfiguration {
         let scale: NSImage.SymbolScale
     }
 }
+*/
