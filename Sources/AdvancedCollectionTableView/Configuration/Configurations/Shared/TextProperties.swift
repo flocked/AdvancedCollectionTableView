@@ -63,7 +63,7 @@ public struct TextProperties {
         case endEditing
         
         var action: NSTextField.EnterKeyAction {
-            .init(rawValue: rawValue)!
+            self == .none ? .none : .endEditing
         }
     }
     
@@ -86,7 +86,11 @@ public struct TextProperties {
         case endEditingAndReset
         
         var action: NSTextField.EscapeKeyAction {
-            .init(rawValue: rawValue)!
+            switch self {
+            case .none: .none
+            case .endEditing: .endEditing
+            case .endEditingAndReset: .endEditingAndReset
+            }
         }
     }
     

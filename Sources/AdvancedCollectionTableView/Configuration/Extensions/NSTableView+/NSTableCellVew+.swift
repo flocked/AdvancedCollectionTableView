@@ -85,16 +85,6 @@ extension NSTableCellView {
                 translatesAutoresizingMaskIntoConstraints = false
                 let constraints = addSubview(withConstraint: contentView!)
                 constraints[1].priority = .init(999)
-                /*
-                 if let contentView = contentView as? NSListContentView {
-                     textField = contentView.textField
-                     imageView = contentView.imageView
-                 } else {
-                     textField = nil
-                     imageView = nil
-                 }
-                  */
-                 
             }
             setNeedsDisplay()
             contentView?.setNeedsDisplay()
@@ -115,9 +105,8 @@ extension NSTableCellView {
     @objc open var configurationState: NSListConfigurationState {
         let rowView = rowView
         let tableView = tableView
-        let activeState = tableView?.activeState ?? .inactive
         let isEditing = tableView?.editingView?.isDescendant(of: self) == true
-        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, activeState: activeState, isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false, appearance: effectiveAppearance)
+        return NSListConfigurationState(isSelected: rowView?.isSelected ?? false, isEnabled: rowView?.isEnabled ?? true, isHovered: rowView?.isHovered ?? false, isEditing: isEditing, isEmphasized: rowView?.isEmphasized ?? false,  isReordering: rowView?.isReordering ?? false, isDropTarget: rowView?.isDropTarget ?? false, isNextSelected: rowView?.isNextRowSelected ?? false, isPreviousSelected: rowView?.isPreviousRowSelected ?? false, appearance: effectiveAppearance)
     }
 
     /**
@@ -212,10 +201,6 @@ extension NSTableCellView {
     @objc var isTableViewFocused: Bool {
         tableView?.isDescendantFirstResponder == true
     }
-    
-    var activeState: NSListConfigurationState.ActiveState {
-        isActive ? isTableViewFocused ? .focused : .active : .inactive
-    }
 
     /// A Boolean value that specifies whether the cell view is enabled (the table view's `isEnabled` is `true`).
     @objc var isEnabled: Bool {
@@ -254,7 +239,7 @@ extension NSTableCellView {
     
     var contentView: (NSView & NSContentView)? {
         get { getAssociatedValue("_contentView") }
-        set { 
+        set {
             contentView?.removeFromSuperview()
             setAssociatedValue(newValue, key: "_contentView")
         }
@@ -275,10 +260,13 @@ extension NSTableCellView {
             tableViewObservation = observeChanges(for: \.window) { [weak self] _, window in
                 guard window != nil, let self = self, let tableView = self.tableView else { return }
                 tableView.setupObservation()
+                if self.contentConfiguration is SimpleListContentConfiguration, tableView.rowSizeStyle == .custom {
+                    tableView.rowSizeStyle = .default
+                }
                 self.updateContentConfigurationStyle()
                 self.setNeedsAutomaticUpdateConfiguration()
                 guard let rowView = self.rowView else { return }
-                rowView.translatesAutoresizingMaskIntoConstraints = false
+                rowView.translatesAutoresizingMaskIntoConstraints = self.contentConfiguration is SimpleListContentConfiguration
                 rowView.observeSelection()
             }
         } else {

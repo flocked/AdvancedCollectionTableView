@@ -10,26 +10,6 @@ import FZQuicklook
 import FZSwiftUtils
 import FZUIKit
 
-class SectionHeaderRowView: NSTableRowView {
-    init() {
-        super.init(frame: .zero)
-        isGroupRowStyle = true
-    }
-    
-    var headerView: NSView? {
-        didSet {
-            guard oldValue != headerView else { return }
-            oldValue?.removeFromSuperview()
-            guard let headerView = headerView else { return }
-            addSubview(withConstraint: headerView)
-        }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 /**
  A `NSTableViewDiffableDataSource` with additional functionality.
 
@@ -146,15 +126,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             if let sectionHeaderCellProvider = sectionHeaderCellProvider {
                 dataSource.sectionHeaderViewProvider = { [weak self] tableView, row, sectionID in
                     guard let self = self, let section = self.sections[id: sectionID] else { return NSTableCellView() }
-                    
-                    let rowView = tableView.makeView(withIdentifier: "SectionHeaderRowView", owner: nil) as? SectionHeaderRowView ?? SectionHeaderRowView()
-                    rowView.identifier = "SectionHeaderRowView"
-                    
                     var view: NSTableCellView?
                     NSAnimationContext.performWithoutAnimation {
                         view = sectionHeaderCellProvider(tableView, row, section)
                     }
-                    rowView.headerView = view ?? NSTableCellView()
                     return view ?? NSTableCellView()
                 }
             } else {
@@ -184,7 +159,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             return NSTableCellView()
         }
     }
-        
+            
     /**
      The right click menu provider.
      

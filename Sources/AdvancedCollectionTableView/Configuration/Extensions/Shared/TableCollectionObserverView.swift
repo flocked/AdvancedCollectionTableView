@@ -22,7 +22,6 @@ class TableCollectionObserverView: NSView {
         didSet {
             guard oldValue != isFocused else { return }
             collectionView?.visibleItems().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
-            tableView?.visibleRows().forEach { $0.setNeedsAutomaticUpdateConfiguration() }
         }
     }
     

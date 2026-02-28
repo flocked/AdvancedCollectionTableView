@@ -313,6 +313,10 @@ extension NSCollectionViewItem {
         view.window?.isKeyWindow ?? false
     }
     
+    var isEmphasized: Bool {
+        view.window?.isKeyWindow ?? false && _collectionView?.isDescendantFirstResponder == true
+    }
+    
     var isRightClickSelected: Bool {
         get { getAssociatedValue("isRightClickSelected") ?? false }
         set { 

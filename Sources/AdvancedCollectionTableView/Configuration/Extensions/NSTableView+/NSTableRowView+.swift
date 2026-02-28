@@ -118,9 +118,8 @@ extension NSTableRowView {
      */
     @objc open var configurationState: NSListConfigurationState {
         let tableView = tableView
-        let activeState = tableView?.activeState ?? .inactive
         let isEditing = tableView?.editingView?.isDescendant(of: self) == true
-        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, activeState: activeState, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected, appearance: effectiveAppearance)
+        let state = NSListConfigurationState(isSelected: isSelected, isEnabled: isEnabled, isHovered: isHovered, isEditing: isEditing, isEmphasized: isEmphasized, isNextSelected: isNextRowSelected, isPreviousSelected: isPreviousRowSelected, appearance: effectiveAppearance)
         return state
     }
 
@@ -190,10 +189,6 @@ extension NSTableRowView {
         tableView?.isDescendantFirstResponder == true
     }
     
-    var activeState: NSListConfigurationState.ActiveState {
-        isActive ? isTableViewFocused ? .focused : .active : .inactive
-    }
-    
     @objc var isReordering: Bool {
         get { getAssociatedValue("isReordering") ?? false }
         set { 
@@ -233,7 +228,11 @@ extension NSTableRowView {
     func observeSelection() {
         guard isSelectedObservation == nil else { return }
         isSelectedObservation = observeChanges(for: \.isSelected) { [weak self] old, new in
-            guard let self = self, old != new else { return }
+            guard let self = self  else { return }
+            self.setNeedsAutomaticUpdateConfiguration()
+        }
+        isEmphasizedObservation = observeChanges(for: \.isEmphasized) { [weak self] old, new in
+            guard let self = self else { return }
             self.setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -241,6 +240,11 @@ extension NSTableRowView {
     var isSelectedObservation: KeyValueObservation? {
         get { getAssociatedValue("isSelectedObservation") }
         set { setAssociatedValue(newValue, key: "isSelectedObservation") }
+    }
+    
+    var isEmphasizedObservation: KeyValueObservation? {
+        get { getAssociatedValue("isEmphasizedObservation") }
+        set { setAssociatedValue(newValue, key: "isEmphasizedObservation") }
     }
 
     public func observeRowView() {

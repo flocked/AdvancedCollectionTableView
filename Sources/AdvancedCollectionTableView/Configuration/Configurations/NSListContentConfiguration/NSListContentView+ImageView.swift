@@ -233,14 +233,6 @@ extension NSListContentView.ListImageView {
                 }
             }
             
-            var symbolConfiguration: NSImage.SymbolConfiguration? {
-                if #available(macOS 12.0, *) {
-                    return (controlView as? NSImageView)?.symbolConfiguration ?? image?.symbolConfiguration
-                } else {
-                    return (controlView as? NSImageView)?.symbolConfiguration
-                }
-            }
-            
             var symbolFont: SymbolFont {
                 if let configuration = symbolConfiguration {
                     return SymbolFont(configuration.pointSize, configuration.scale, configuration.weight)
@@ -274,6 +266,17 @@ fileprivate struct SymbolFont: Hashable, Codable {
     let scale: Int
     let weight: CGFloat
     
+    public static let symbolSizes: [SymbolFont: CGSize] = {
+        if let url = Bundle.module.url(forResource: "fontSizes"), let data = try? Data(contentsOf: url), let sizes = try? JSONDecoder().decode([SymbolFont: CGSize].self, from: data) {
+            return sizes
+        }
+        return [.default : CGSize(25.0, 20.0)]
+    }()
+    
+    public static func symbolSize(for configuration: NSImage.SymbolConfiguration) -> CGSize? {
+        symbolSizes[SymbolFont(configuration.pointSize, configuration.scale, configuration.weight)]
+    }
+    
     init(_ size: CGFloat, _ scale: NSImage.SymbolScale, _ weight: NSFont.Weight) {
         self.size = size
         self.scale = scale.rawValue
@@ -281,4 +284,208 @@ fileprivate struct SymbolFont: Hashable, Codable {
     }
     
     static let `default` = Self(13.0, .default, .regular)
+}
+
+extension NSListContentView {
+    class ListImageViewAlt: NSImageView {
+        init(properties: NSListContentConfiguration.ImageProperties) {
+            self.properties = properties
+            super.init(frame: .zero)
+            wantsLayer = true
+            imageCell?.setupObservations(for: self)
+            update()
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        var properties: NSListContentConfiguration.ImageProperties {
+            didSet {
+                guard oldValue != properties else { return }
+                update()
+            }
+        }
+        
+        
+        var _imageScaling: NSListContentConfiguration.ImageProperties.ImageScaling = .scaleToFit {
+            didSet {
+                guard oldValue != _imageScaling else { return }
+                imageScaling = _imageScaling.scaling
+                setNeedsLayout()
+            }
+        }
+        
+        func update() {
+            _imageScaling = properties.scaling
+            symbolConfiguration = properties.symbolConfiguration?.nsSymbolConfiguration()
+            border = properties.resolvedBorder()
+            backgroundColor = properties.resolvedBackgroundColor()
+            contentTintColor = properties.resolvedTintColor()
+            cornerRadius = properties.cornerRadius
+            outerShadow = properties.resolvedShadow()
+            toolTip = properties.toolTip
+            reservedLayoutSizeAlt = properties.reservedLayoutSize
+            invalidateIntrinsicContentSize()
+            backgroundColor = .systemRed.withAlphaComponent(0.2)
+        }
+        
+        override var intrinsicContentSize: NSSize {
+            var size = super.intrinsicContentSize
+            size.width = imageCell?.cellSize.width ?? size.width
+            size.height = 40
+          //  size.height = imageCell?.cellSize.height ?? size.height
+
+            return size
+        }
+        
+        var verticalConstraint: NSLayoutConstraint?
+        
+        var calculatedSize: CGSize? {
+            didSet { invalidateIntrinsicContentSize() }
+        }
+        
+        var reservedLayoutSizeAlt: CGSize? {
+            get { imageCell?.reservedLayoutSize }
+            set { imageCell?.reservedLayoutSize = newValue }
+        }
+        
+        private var imageCell: ReservedLayoutImageCell? {
+            cell as? ReservedLayoutImageCell
+        }
+        
+        /*
+        override class var cellClass: AnyClass? {
+            get { ReservedLayoutImageCell.self }
+            set { }
+        }
+         */
+    }
+    
+    @objc(ReservedLayoutImageCell)
+    private class ReservedLayoutImageCell: NSImageCell {
+        static let reservedLayoutStandardSize = CGSize(33.0, 22.0)
+        var reservedLayoutSize: CGSize? = .zero
+        var symbolSize = ReservedLayoutImageCell.reservedLayoutStandardSize
+        var observations: [KeyValueObservation] = []
+        var needsSymbolSizeUpdate = true
+        var previousSymbolConfiguration: NSImage.SymbolConfiguration?
+
+        override var cellSize: NSSize {
+            guard let reservedLayoutSize = reservedLayoutSize, let image = image else { return super.cellSize }
+            var cellSize = reservedLayoutSize
+            if cellSize.width == 0 || cellSize.width == NSImageView.standardDimension {
+                if cellSize.width == NSImageView.standardDimension ||  image.isSymbolImage {
+                    updateSymbolSize()
+                    cellSize.width = symbolSize.width
+                } else {
+                    cellSize.width = image.size.width
+                }
+            }
+            if cellSize.height == 0 || cellSize.height == NSImageView.standardDimension {
+                if cellSize.height == NSImageView.standardDimension || image.isSymbolImage {
+                    updateSymbolSize()
+                    cellSize.height = symbolSize.height
+                } else {
+                    cellSize.height = image.size.height
+                }
+            }
+            return cellSize
+        }
+        
+        override func draw(withFrame cellFrame: NSRect, in controlView: NSView) {
+            guard reservedLayoutSize != nil, let image = image else {
+                super.draw(withFrame: cellFrame, in: controlView)
+                return
+            }
+            var reservedSize = cellSize
+            var imageRect: CGRect = CGRect(.zero, image.size)
+            
+            var testRect = reservedSize.rect
+            var newCellFrame = cellFrame
+            newCellFrame.center = testRect.center
+            
+            
+            switch imageAlignment {
+            case .alignLeft, .alignTopLeft, .alignBottomLeft:
+                imageRect.origin.x = cellFrame.origin.x
+            case .alignRight, .alignTopRight, .alignBottomRight:
+                imageRect.origin.x = cellFrame.maxX - reservedSize.width
+            case .alignCenter, .alignTop, .alignBottom:
+                imageRect.origin.x = cellFrame.midX - (reservedSize.width / 2.0)
+            default:
+                imageRect.origin.x = cellFrame.origin.x
+            }
+            switch imageAlignment {
+            case .alignBottom, .alignBottomLeft, .alignBottomRight:
+                imageRect.origin.y = cellFrame.origin.y
+            case .alignTop, .alignTopLeft, .alignTopRight:
+                imageRect.origin.y = cellFrame.maxY - reservedSize.height
+            case .alignCenter, .alignLeft, .alignRight:
+                imageRect.origin.y = cellFrame.midY - (reservedSize.height / 2.0)
+            default:
+                imageRect.origin.y = cellFrame.origin.y
+            }
+         //   imageRect.origin.x += (reservedSize.width - image.size.width) / 2
+          //  imageRect.origin.y += (reservedSize.height - image.size.height) / 2
+           // image.draw(in: imageRect)
+            Swift.print(reservedSize, cellFrame, imageRect, image.symbolName ?? "nil", newCellFrame.origin)
+            imageRect = cellFrame
+            imageRect.origin.x = cellFrame.midX - (reservedSize.width / 2.0)
+         //   imageRect.origin.y = cellFrame.midY - (reservedSize.height / 2.0)
+
+          //  imageRect.origin.x = newCellFrame.x / 2.0
+          //  imageRect.origin.y = newCellFrame.y / 2.0
+
+           // imageRect.origin = newCellFrame.origin
+            Swift.print(cellSize.width, cellFrame.size.width*1.5)
+            super.draw(withFrame: imageRect, in: controlView)
+        }
+                
+        func updateSymbolSize() {
+            guard needsSymbolSizeUpdate else { return }
+            needsSymbolSizeUpdate = false
+            let resolvedSymbolConfiguration = symbolConfiguration ?? image?.symbolConfiguration
+            guard resolvedSymbolConfiguration != previousSymbolConfiguration else { return }
+            previousSymbolConfiguration = resolvedSymbolConfiguration
+            symbolSize =  resolvedSymbolConfiguration?.reservedLayoutSize() ?? Self.reservedLayoutStandardSize
+            symbolSize.width
+            
+        }
+        
+        func setupObservations(for imageView: NSImageView) {
+            observations += imageView.observeChanges(for: \.image) { [weak self] old, new in
+                guard let self = self, old?.symbolConfiguration != new?.symbolConfiguration else { return }
+                self.needsSymbolSizeUpdate = true
+            }
+            observations += imageView.observeChanges(for: \.symbolConfiguration) { [weak self] old, new in
+                guard let self = self else { return }
+                self.needsSymbolSizeUpdate = true
+            }
+        }
+    }
+}
+
+extension NSUIImage.SymbolConfiguration {
+    /// The layout size that the system reserves for symbol images witth this configuration, and then centers the image within.
+    func reservedLayoutSize() -> CGSize {
+        Self.reservedLayoutSizes[reservedLayoutSizeKey] {
+            NSUIImage.symbol("theatermasks")?.applyingSymbolConfiguration(self)?.size ?? CGSize(33.0, 22.0)
+        }
+    }
+        
+    private static var reservedLayoutSizes: [ReservedLayoutSizeKey: CGSize] {
+        get { getAssociatedValue("reservedLayoutSizes") ?? [:] }
+        set { setAssociatedValue(newValue, key: "reservedLayoutSizes") }
+    }
+    
+    private var reservedLayoutSizeKey: ReservedLayoutSizeKey {
+        .init(pointSize: pointSize, weight: weight, scale: scale)
+    }
+    
+    private struct ReservedLayoutSizeKey: Hashable {
+        let pointSize: CGFloat
+        let weight: NSFont.Weight
+        let scale: NSImage.SymbolScale
+    }
 }

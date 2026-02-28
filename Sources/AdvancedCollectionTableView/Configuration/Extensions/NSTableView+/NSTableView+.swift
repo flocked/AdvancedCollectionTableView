@@ -46,10 +46,6 @@ extension NSTableView {
         observerView?.editingView
     }
     
-    var activeState: NSListConfigurationState.ActiveState {
-        isActive ? isFocused ? .focused : .active : .inactive
-    }
-    
     var isFocused: Bool {
         observerView?.isFocused == true
     }

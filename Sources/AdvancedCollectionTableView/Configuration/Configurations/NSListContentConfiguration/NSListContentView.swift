@@ -9,23 +9,6 @@ import AppKit
 import FZSwiftUtils
 import FZUIKit
 
-extension NSGraphicsContext {
-    public static func pop() {
-        guard let context = stack.popLast() else { return }
-        current = context
-    }
-    
-    public static func push(_ context: NSGraphicsContext) {
-        stack.append(context)
-        current = context
-    }
-    
-    private static var stack: [NSGraphicsContext] {
-        get { getAssociatedValue("conextStack") ?? [] }
-        set { setAssociatedValue(newValue, key: "conextStack") }
-    }
-}
-
 /**
  A content view for displaying list-based item content.
  

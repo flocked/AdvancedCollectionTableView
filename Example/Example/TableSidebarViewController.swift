@@ -36,7 +36,7 @@ class TableSidebarViewController: NSViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
- 
+        
         tableView.draggingDestinationFeedbackStyle = .gap
         tableView.dataSource = dataSource
         dataSource.applySectionHeaderRegistration(sectionHeaderRegistration)
@@ -45,7 +45,6 @@ class TableSidebarViewController: NSViewController {
         dataSource.reorderingHandlers.canReorder = { selectedItems in
             return selectedItems
         }
-        
         
         /// Enables deleting selected rows via backspace key.
         dataSource.deletingHandlers.canDelete = { selectedItems in

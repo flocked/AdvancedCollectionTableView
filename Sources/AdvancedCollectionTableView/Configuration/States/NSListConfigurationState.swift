@@ -42,44 +42,13 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
      The value of this property is `true`, if the text of a list or item content configuration is being edited.
      */
     public var isEditing: Bool = false
-
-    var isActive: Bool {
-        activeState != .inactive
-    }
     
-    public var activeState: ActiveState = .inactive {
-        didSet { self["activeState"] = activeState.rawValue }
-    }
-    
-    /// The active state of a list item.
-    public enum ActiveState: Int, Hashable, CustomStringConvertible {
-        /**
-         Inactive.
-         
-         The window that displays the list item isn't the key window.
-         */
-        case inactive
-        /**
-         Active.
-         
-         The window that displays the list item is the key window.
-         */
-        case active
-        /**
-         Active and focused.
-         
-         The item or table view / collection view that displays the list item is focused (first responder).
-         */
-        case focused
-        
-        public var description: String {
-            switch self {
-            case .inactive: return "inactive"
-            case .active: return "active"
-            case .focused: return "focused"
-            }
-        }
-    }
+    /**
+     A Boolean value that indicates whether the list item is currently in an emphasized state.
+     
+     The value of this property is `true`, if the list item is active in the current environment, such as when it's window is key and  it's table view is focused.
+     */
+    public var isEmphasized: Bool = false
 
     /// A Boolean value that indicates whether the next list item is in a selected state.
     public var isNextSelected: Bool = false
@@ -104,6 +73,8 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
 
     /// A Boolean value that indicates whether the list item is in an expanded state.
     var isExpanded: Bool = false
+    
+    var isActive: Bool { isEmphasized }
 
     var customStates = [NSConfigurationStateCustomKey: AnyHashable]()
 
@@ -151,7 +122,7 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
                 isEnabled: Bool = true,
                 isHovered: Bool = false,
                 isEditing: Bool = false,
-                activeState: ActiveState = .inactive,
+                isEmphasized: Bool = false,
                 isDragging: Bool = false,
                 isReordering: Bool = false,
                 isDropTarget: Bool = false,
@@ -163,13 +134,11 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isEnabled = isEnabled
         self.isHovered = isHovered
         self.isEditing = isEditing
-        self.activeState = activeState
         self.isDragging = isDragging
         self.isReordering = isReordering
         self.isDropTarget = isDropTarget
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
-        self["activeState"] = activeState.rawValue
         self["isSelected"] = isSelected
     }
 
@@ -177,7 +146,6 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
          isEnabled: Bool,
          isHovered: Bool,
          isEditing: Bool,
-         activeState: ActiveState,
          isNextSelected: Bool,
          isPreviousSelected: Bool,
          isDragging: Bool,
@@ -190,7 +158,6 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isEnabled = isEnabled
         self.isHovered = isHovered
         self.isEditing = isEditing
-        self.activeState = activeState
         self.isNextSelected = isNextSelected
         self.isPreviousSelected = isPreviousSelected
         self.isDragging = isDragging
@@ -198,7 +165,6 @@ public struct NSListConfigurationState: NSConfigurationState, Hashable {
         self.isDropTarget = isDropTarget
         self.appearance = appearance
         self.customStates = customStates
-        self["activeState"] = activeState.rawValue
         self["isSelected"] = isSelected
     }
 }
@@ -214,7 +180,7 @@ extension NSListConfigurationState: ReferenceConvertible {
             isEnabled: \(isEnabled)
             isEditing: \(isEditing)
             isHovered: \(isHovered)
-            activeState: \(activeState)
+            isEmphasized: \(isEmphasized)
             isDragging: \(isDragging)
             isDropTarget: \(isDropTarget)
             isReordering: \(isReordering)

@@ -80,6 +80,7 @@ open class NSItemContentView: NSView, NSContentView, EditingContentView {
     public internal(set) var contentLayoutGuide: NSLayoutGuide?
     
     func isHovering(at location: CGPoint) -> Bool {
+        return hitTest(convert(location, to: superview)) != nil
         var textFrame = textStackView.frame
         textFrame.size.width = contentView.frame.width
         

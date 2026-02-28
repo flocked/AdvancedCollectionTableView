@@ -22,5 +22,5 @@ public class SidebarItem: NSObject, Identifiable {
                                       SidebarItem("Photos", symbolName: "photo"),
                                       SidebarItem("Videos", symbolName: "film")]
     static let sampleItems2 = [SidebarItem("Archive", symbolName: "tray.full")]
-    static let sampleItems3 = [SidebarItem("News", symbolName: "newspaper")]
+    static let sampleItems3 = [SidebarItem("News", symbolName: "theatermasks")]
 }
