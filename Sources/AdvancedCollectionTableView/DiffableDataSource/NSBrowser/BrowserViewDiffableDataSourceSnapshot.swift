@@ -1,5 +1,5 @@
 //
-//  OutlineViewDiffableDataSourceSnapshot.swift
+//  BrowserViewDiffableDataSourceSnapshot.swift
 //
 //
 //  Created by Florian Zand on 21.12.24.
@@ -8,31 +8,11 @@
 import AppKit
 import FZSwiftUtils
 
-/**
- A representation of the state of the data in a outline view at a specific point in time.
- 
- ``OutlineViewDiffableDataSource`` uses snapshots to provide data for outline views. You use a snapshot to set up the initial state of the data that a view displays, and you use snapshots to reflect changes to the data that the view displays.
-   
- The following example creates a snapshot with one root item that contains three child items:
-
- ```swift
-// Create a snapshot
- var snapshot = OutlineViewDiffableDataSourceSnapshot<String>()
-     
-// Populate the snapshot
- snapshot.append(["Food", "Drinks"])
- snapshot.append(["🍏", "🍓", "🥐"], to: "Food")
-     
-// Apply the snapshot
-dataSource.apply(snapshot)
- ```
- */
-public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
+public struct BrowserViewDiffableDataSourceSnapshot<Item: Hashable> {
     
     struct Node {
         var parent: Item?
         var children: [Item] = []
-        var isExpanded = false
     }
     
     // MARK: - Creating a snapshot
@@ -58,16 +38,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
     /// The identifiers of all items in the snapshot.
     public var items: [Item] {
         Array(orderedItems)
-    }
-        
-    /// The identifiers of the currently visible items in the snapshot.
-    public var visibleItems: [Item] {
-        func visibleChilds(for parent: Item) -> [Item] {
-            var visibleItems = children(of: parent).filter({ isExpanded($0) })
-            visibleItems += visibleItems.flatMap({ visibleChilds(for: $0) })
-            return visibleItems
-        }
-        return rootItems + rootItems.flatMap({ visibleChilds(for: $0) })
     }
     
     // MARK: - Adding Items
@@ -137,16 +107,16 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
     }
     
     /// Inserts the provided snapshot immediately after the item with the specified identifier in the snapshot.
-    public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, after item: Item) {
+    public mutating func insert(_ snapshot: BrowserViewDiffableDataSourceSnapshot, after item: Item) {
        insert(snapshot, to: item, before: false)
     }
     
     /// Inserts the provided snapshot immediately before the item with the specified identifier in the snapshot.
-    public mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, before item: Item) {
+    public mutating func insert(_ snapshot: BrowserViewDiffableDataSourceSnapshot, before item: Item) {
        insert(snapshot, to: item, before: true)
     }
     
-    private mutating func insert(_ snapshot: OutlineViewDiffableDataSourceSnapshot, to item: Item, before: Bool) {
+    private mutating func insert(_ snapshot: BrowserViewDiffableDataSourceSnapshot, to item: Item, before: Bool) {
         validateItem(item, "Item to insert \(before ? "before" : "after") does not exist in snapshot: ")
         validateItems(snapshot.items)
         if let rootIndex = rootItems.firstIndex(of: item) {
@@ -215,8 +185,8 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
     }
     
     /// Creates a snapshot that contains the child items of the specified parent item, optionally including the parent item.
-    public func snapshot(of parent: Item, includingParent: Bool = false) -> OutlineViewDiffableDataSourceSnapshot {
-        var snapshot = OutlineViewDiffableDataSourceSnapshot()
+    public func snapshot(of parent: Item, includingParent: Bool = false) -> BrowserViewDiffableDataSourceSnapshot {
+        var snapshot = BrowserViewDiffableDataSourceSnapshot()
         snapshot.rootItems = includingParent ? [parent] : children(of: parent)
         for rootItem in snapshot.rootItems {
             snapshot.nodes[rootItem] = nodes[rootItem]
@@ -264,18 +234,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
         nodes[item] != nil
     }
     
-    /// Indicates whether the specified item is currently visible onscreen.
-    public func isVisible(_ item: Item) -> Bool {
-        var item = item
-        while let parent = parent(of: item) {
-            if nodes[parent]?.isExpanded == false {
-                return false
-            }
-            item = parent
-        }
-        return true
-    }
-    
     /// A Boolean value indicating whether the item is a descendant of the specified parent.
     public func isDescendant(_ item: Item, of parent: Item) -> Bool {
         let children = children(of: parent)
@@ -305,7 +263,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
     }
         
     /// Replaces all child items of the specified parent item with the provided snapshot.
-    public mutating func replace(childrenOf parent: Item, using snapshot: OutlineViewDiffableDataSourceSnapshot) {
+    public mutating func replace(childrenOf parent: Item, using snapshot: BrowserViewDiffableDataSourceSnapshot) {
         validateItem(parent, "Parent item does not exist in snapshot: ")
         validateItems(Array(snapshot.items), removing: descendants(of: parent))
         guard let previousChildren = nodes[parent]?.children else { return }
@@ -315,36 +273,16 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
         snapshot.rootItems.forEach({ nodes[$0]?.parent = parent })
         updateOrderedItems()
     }
-    
-    // MARK: - Expanding and collapsing items
-    
-    /// Indicates whether the item with the specified identifier is in an expanded state.
-    public func isExpanded(_ item: Item) -> Bool {
-        nodes[item]?.isExpanded == true
-    }
-    
-    /// Expands the specified items in the snapshot.
-    public mutating func expand(_ items: [Item]) {
-        items.forEach({ nodes[$0]?.isExpanded = true })
-    }
-    
-    /// Collapses the specified items in the snapshot.
-    public mutating func collapse(_ items: [Item]) {
-        items.forEach({ nodes[$0]?.isExpanded = false })
-    }
-    
+        
     // MARK: - Debugging snapshots
         
     /// Returns a string with an ASCII representation of the snapshot.
     public func visualDescription() -> String {
-        var result = "OutlineViewDiffableDataSourceSnapshot<\(String(describing: Item.self))>\n"
+        var result = "BrowserViewDiffableDataSourceSnapshot<\(String(describing: Item.self))>\n"
         
         func buildDescription(for item: Item, level: Int) {
-            let isVisible = isVisible(item) ? "*" : ""
-            let isExpanded = isExpanded(item) ? "+" : "-"
-            let annotation = "\(isVisible)\(isExpanded)"
             let itemDescription = String(describing: item)
-            result += String(repeating: "  ", count: level) + annotation + " \(itemDescription)\n"
+            result += String(repeating: "  ", count: level) + " \(itemDescription)\n"
             
             for child in children(of: item) {
                 buildDescription(for: child, level: level + 1)
@@ -372,7 +310,7 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
     
     private mutating func deleteItemAndDescendants(_ item: Item) {
         let descendants = descendants(of: item)
-        let itemsToDelete = descendants + item
+        let itemsToDelete = descendants + [item]
         itemsToDelete.forEach({ nodes[$0] = nil })
         orderedItems.remove(itemsToDelete)
     }
@@ -435,14 +373,6 @@ public struct OutlineViewDiffableDataSourceSnapshot<Item: Hashable> {
             orderedItems.append(root)
             orderedItems.append(contentsOf: descendants(of: root))
         }
-    }
-    
-    var expandedItems: Set<Item> {
-        var items = Set(nodes.filter({ $0.value.isExpanded }).keys)
-        if usesGroupItems {
-            items += rootItems
-        }
-        return items
     }
 }
 
