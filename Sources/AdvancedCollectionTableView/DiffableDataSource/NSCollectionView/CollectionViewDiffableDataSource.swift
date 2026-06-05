@@ -1065,7 +1065,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
          
          - Parameter dropInfo: The information about the proposed drop.
          */
-        public var canDrop: ((_ dropInfo: DropInfo) -> Bool)?
+        public var canDrop: ((_ dropInfo: NSDraggingInfo) -> Bool)?
         
         /**
          The handler that gets called when pasteboard content is about to drop inside the collection view.
@@ -1074,7 +1074,7 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             - dropInfo: The information about the drop.
             - transaction: The transaction for the drop.
          */
-        public var willDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        public var willDrop: ((_ dropInfo: NSDraggingInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
@@ -1083,16 +1083,16 @@ open class CollectionViewDiffableDataSource<Section: Identifiable & Hashable, El
             - dropInfo: The information about the drop.
             - transaction: The transaction for the drop.
          */
-        public var didDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
+        public var didDrop: ((_ dropInfo: NSDraggingInfo, _ transaction: DiffableDataSourceTransaction<Section, Element>) -> ())?
         
         /// The handler that determinates the elements for the proposed drop.
-        public var elements: ((_ dropInfo: DropInfo) -> ([Element]))?
+        public var elements: ((_ dropInfo: NSDraggingInfo) -> ([Element]))?
         
         /// The handler that determines whether the proposed drop can be dropped to an element.
-        public var canDropInto: ((_ dropInfo: DropInfo, _ element: Element) -> Bool)?
+        public var canDropInto: ((_ dropInfo: NSDraggingInfo, _ element: Element) -> Bool)?
         
         /// The handler that gets called when pasteboard content is dropped to an element.
-        public var didDropInto: ((_ dropInfo: DropInfo, _ element: Element)->())?
+        public var didDropInto: ((_ dropInfo: NSDraggingInfo, _ element: Element)->())?
         
         /// A Boolean value that indicates whether dropping elements is animated.
         public var animates: Bool = true

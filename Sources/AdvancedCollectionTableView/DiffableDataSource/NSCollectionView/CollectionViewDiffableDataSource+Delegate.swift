@@ -165,13 +165,13 @@ extension CollectionViewDiffableDataSource {
         
         func validateDropInto(_ draggingInfo: NSDraggingInfo, _ proposedIndexPath: IndexPath) -> NSDragOperation {
             guard dataSource.droppingHandlers.isDroppableInto, let handler = dataSource.droppingHandlers.canDropInto, let element = dataSource.element(for: proposedIndexPath) else { return [] }
-            dropIntoElement = handler(draggingInfo.dropInfo(for: dataSource.collectionView), element) ? element : nil
+            dropIntoElement = handler(draggingInfo, element) ? element : nil
             return dropIntoElement != nil ? .copy : []
         }
         
         func validateDrop(_ draggingInfo: NSDraggingInfo) -> NSDragOperation {
             guard let canDrop = dataSource.droppingHandlers.canDrop, let elementsHandler = dataSource.droppingHandlers.elements else { return [] }
-            let dropInfo = draggingInfo.dropInfo(for: dataSource.collectionView)
+            let dropInfo = draggingInfo
             if canDrop(dropInfo) {
                 droppingElements = elementsHandler(dropInfo)
             }
@@ -237,7 +237,7 @@ extension CollectionViewDiffableDataSource {
         }
 
         func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
-            let dropInfo = draggingInfo.dropInfo(for: dataSource.collectionView)
+            let dropInfo = draggingInfo
             if draggingInfo.draggingSource as? NSCollectionView === collectionView {
                 guard !draggingElements.isEmpty else { return false }
                 if dropOperation == .before {

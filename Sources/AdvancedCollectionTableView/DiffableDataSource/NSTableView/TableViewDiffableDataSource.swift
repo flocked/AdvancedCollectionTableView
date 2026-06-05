@@ -573,10 +573,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         if draggingInfo.draggingSource as? NSTableView !== tableView, !(row == 0 && sectionRowIndexes.contains(row) && dropOperation == .above), (!sectionRowIndexes.contains(row) || (!sectionRowIndexes.contains(row+1) && dropOperation == .above) ) {
             if dropOperation == .on, droppingHandlers.isDroppableInto, let canDropInto = droppingHandlers.canDropInto, let item = item(forRow: row) {
-                canDrop = canDropInto(draggingInfo.dropInfo(for: tableView), item)
+                canDrop = canDropInto(draggingInfo, item)
                 return canDrop ? .copy : []
             } else if dropOperation == .above, let canDrop = droppingHandlers.canDrop {
-                self.canDrop = canDrop(draggingInfo.dropInfo(for: tableView))
+                self.canDrop = canDrop(draggingInfo)
                 return self.canDrop ? .copy : []
             }
         }
@@ -607,10 +607,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
         }
         if draggingInfo.draggingSource as? NSTableView !== tableView, canDrop {
             if dropOperation == .on, let didDropInto = droppingHandlers.didDropInto, let item = item(forRow: row) {
-                didDropInto(draggingInfo.dropInfo(for: tableView), item)
+                didDropInto(draggingInfo, item)
                 return true
             } else if dropOperation == .above {
-                let dropInfo = draggingInfo.dropInfo(for: tableView)
+                let dropInfo = draggingInfo
                 let items = droppingHandlers.items?(dropInfo) ?? []
                 if !items.isEmpty {
                     let transaction = dropItemsTransaction(items, row: row)
@@ -700,7 +700,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
     }
     
     public func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
-        if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: tableView)), !items.isEmpty, let image = previewImage(for: items) {
+        if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo), !items.isEmpty, let image = previewImage(for: items) {
             // Swift.print("DraggingItems", tableView.frame.size, image.size)
             draggingInfo.setDraggedImage(image)
         }
@@ -1324,10 +1324,10 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
          
          - Parameter dropInfo: The information about the proposed drop.
          */
-        public var canDrop: ((_ dropInfo: DropInfo) -> Bool)?
+        public var canDrop: ((_ dropInfo: NSDraggingInfo) -> Bool)?
         
         /// The handler that determinates the items for the proposed drop.
-        public var items: ((_ dropInfo: DropInfo) -> ([Item]))?
+        public var items: ((_ dropInfo: NSDraggingInfo) -> ([Item]))?
         
         /**
          The handler that gets called when pasteboard content is about to drop inside the collection view.
@@ -1336,7 +1336,7 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             - dropInfo: The information about the drop.
             - transaction: The transaction for the drop.
          */
-        public var willDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var willDrop: ((_ dropInfo: NSDraggingInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         
         /**
          The handler that gets called when pasteboard content was dropped inside the collection view.
@@ -1345,15 +1345,15 @@ open class TableViewDiffableDataSource<Section, Item>: NSObject, NSTableViewData
             - dropInfo: The information about the drop.
             - transaction: The transaction for the drop.
          */
-        public var didDrop: ((_ dropInfo: DropInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
+        public var didDrop: ((_ dropInfo: NSDraggingInfo, _ transaction: DiffableDataSourceTransaction<Section, Item>) -> ())?
         
-        public var updateDragItems: ((_ dropInfo: DropInfo)->())?
+        public var updateDragItems: ((_ dropInfo: NSDraggingInfo)->())?
 
         /// The handler that determines whether the proposed drop can be dropped to an item.
-        public var canDropInto: ((_ dropInfo: DropInfo, _ item: Item) -> Bool)?
+        public var canDropInto: ((_ dropInfo: NSDraggingInfo, _ item: Item) -> Bool)?
         
         /// The handler that gets called when pasteboard content is dropped to an item.
-        public var didDropInto: ((_ dropInfo: DropInfo, _ item: Item)->())?
+        public var didDropInto: ((_ dropInfo: NSDraggingInfo, _ item: Item)->())?
         
         /// A Boolean value that indicates whether new items are inserted animated.
         public var animates: Bool = true

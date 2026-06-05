@@ -882,7 +882,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
         }
         if info.draggingSource as? NSTableView !== outlineView {
             if let canDrag = droppingHandlers.canDrop {
-                self.canDrop = canDrag(info.dropInfo(for: outlineView), item as? Item)
+                self.canDrop = canDrag(info, item as? Item)
                 return self.canDrop ? .copy : []
             }
         }
@@ -912,7 +912,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
             return true
         }
         if info.draggingSource as? NSOutlineView !== outlineView, canDrop {
-            let dropInfo = info.dropInfo(for: outlineView)
+            let dropInfo = info
             let item = item as? Item
             let items = droppingHandlers.items?(dropInfo) ?? []
             var snapshot = snapshot()
@@ -933,7 +933,7 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     }
     
     public func outlineView(_ outlineView: NSOutlineView, updateDraggingItemsForDrag draggingInfo: any NSDraggingInfo) {
-        if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo.dropInfo(for: outlineView)), !items.isEmpty, let image = previewImage(for: items) {
+        if canDrop, droppingHandlers.previewItems, let items = droppingHandlers.items?(draggingInfo), !items.isEmpty, let image = previewImage(for: items) {
             draggingInfo.setDraggedImage(image)
         }
     }
@@ -1104,16 +1104,16 @@ public class OutlineViewDiffableDataSource<Item: Hashable>: NSObject, NSOutlineV
     /// Handlers for dropping items inside the outline view.
     public struct DroppingHandlers {
         /// The handler that determines whether a drop with the pasteboard content is accepted.
-        public var canDrop: ((_ dropInfo: DropInfo, _ target: Item?) -> Bool)?
+        public var canDrop: ((_ dropInfo: NSDraggingInfo, _ target: Item?) -> Bool)?
         
         /// The handler that determinates the items to be inserted for the pasteboard content.
-        public var items: ((_ dropInfo: DropInfo) -> ([Item]))?
+        public var items: ((_ dropInfo: NSDraggingInfo) -> ([Item]))?
         
         /// The handler that gets called before new items are dropped.
-        public var willDrop: ((_ dropInfo: DropInfo, _ target: Item?, _ transaction: OutlineViewDiffableDataSourceTransaction<Item>) -> ())?
+        public var willDrop: ((_ dropInfo: NSDraggingInfo, _ target: Item?, _ transaction: OutlineViewDiffableDataSourceTransaction<Item>) -> ())?
         
         /// The handler that gets called after new items are dropped.
-        public var didDrop: ((_ dropInfo: DropInfo, _ target: Item?, _ transaction: OutlineViewDiffableDataSourceTransaction<Item>) -> ())?
+        public var didDrop: ((_ dropInfo: NSDraggingInfo, _ target: Item?, _ transaction: OutlineViewDiffableDataSourceTransaction<Item>) -> ())?
         
         /// A Boolean value that indicates whether dropping items is animated.
         public var animates: Bool = false
