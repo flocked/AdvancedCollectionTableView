@@ -55,7 +55,7 @@ extension NSTableView {
     }
     
     fileprivate func reconfigureRows(at rows: IndexSet, columns: IndexSet) {
-        Self.swizzleViewRegistration()
+        swizzleViewRegistration()
         guard let delegate = delegate else { return }
         let tableColumns = tableColumns
         let columns = columns.filter({ $0 >= 0 && $0 < tableColumns.count })
