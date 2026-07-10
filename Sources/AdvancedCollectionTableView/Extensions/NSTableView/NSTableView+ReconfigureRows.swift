@@ -59,7 +59,7 @@ extension NSTableView {
         guard let delegate = delegate else { return }
         let tableColumns = tableColumns
         let columns = columns.filter({ $0 >= 0 && $0 < tableColumns.count })
-        guard columns.isEmpty else { return }
+        guard !columns.isEmpty else { return }
         for row in rows.filter({ $0 >= 0 && $0 < numberOfRows}) {
             if delegate.tableView?(self, isGroupRow: row) ?? false {
                 if rowView(atRow: row, makeIfNecessary: false) != nil {
