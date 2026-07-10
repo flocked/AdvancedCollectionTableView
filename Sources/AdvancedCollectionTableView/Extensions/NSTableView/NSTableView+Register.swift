@@ -12,113 +12,104 @@ import FZSwiftUtils
 
 extension NSTableView {
     /**
-     Registers a view class for the specified identifier, so that view-based table views can use it to instantiate views.
+     Registers a view class for use in creating reusable table views.
 
-     Use this method to associate the view class with the specified identifier. When you request a view using ``AppKit/NSTableView/makeView(for:)``, the table view recycles an existing view with the same class or creates a new one by instantiating your class.
-     
-     - Parameter viewClass: The  view class to register.
+     After registering a class, call ``AppKit/NSTableView/makeView(for:)`` to dequeue an existing view of that class or create a new instance if no reusable view is available.
+
+     - Parameter viewClass: The view class to register.
      */
     public func register(_ viewClass: NSView.Type) {
         register(viewClass, forIdentifier: .init(viewClass))
     }
 
     func register(_ viewClass: NSView.Type, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        Self.swizzleViewRegistration()
+        swizzleViewRegistration()
         registeredClassesByIdentifier[identifier] = viewClass
         registeredClassesByIdentifier = registeredClassesByIdentifier
     }
 
     /**
-     Returns a new or existing view with the specified view class.
+     Returns a new or existing view of the specified class.
 
-     To be able to create a reusable view using this method, you have to register it first via ``AppKit/NSTableView/register(_:)``.
+     If a reusable view of the requested class is available, the table view returns it. Otherwise, it creates a new instance of the registered class.
 
-     When this method is called, the table view automatically instantiates the cell view with the specified owner, which is usually the table view’s delegate. (The owner is useful in setting up outlets and target/actions from the view.).
+     Register the view class beforehand using ``AppKit/NSTableView/register(_:)``.
 
-     This method may return a reused view with the same class that is no longer available on screen.
+     When a new view is created, the table view uses its delegate as the owner, allowing outlets and actions to be connected when loading from a nib. Note that [awakeFromNib()](https://developer.apple.com/documentation/objectivec/nsobject-swift.class/awakefromnib()) is called each time this method is called.
 
-     Note that `awakeFromNib()` is called each time this method is called.
-
-     - Parameter viewClass: The class of the view.
-
-     - Returns:The view, or `nil` if the view class isn't registered or the view couldn't be created.
+     - Parameter viewClass: The class of the view to return.
+     - Returns: A reusable view of the specified class, or `nil` if the class hasn't been registered or the view couldn't be created.
      */
     public func makeView<View: NSView>(for viewClass: View.Type) -> View? {
         makeView(for: viewClass, withIdentifier: .init(viewClass))
     }
 
-    func makeView<View: NSView>(for _: View.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> View? {
+    private func makeView<View: NSView>(for _: View.Type, withIdentifier identifier: NSUserInterfaceItemIdentifier) -> View? {
         makeView(withIdentifier: identifier, owner: nil) as? View
     }
-    
-    /**
-     The dictionary of all registered classes for view-based table view identifiers.
-     
-     Each key in the dictionary is the identifier used to register the view class in the ``AppKit/NSTableView/register(_:)``. The value of each key is the corresponding view class.
-     */
-    @objc public private(set) var registeredClassesByIdentifier: [NSUserInterfaceItemIdentifier: NSView.Type] {
-        get { getAssociatedValue("registeredClassesByIdentifier", initialValue: [:]) }
+
+    var registeredClassesByIdentifier: [NSUserInterfaceItemIdentifier: NSView.Type] {
+        get { getAssociatedValue("registeredClassesByIdentifier") ?? [:] }
         set { setAssociatedValue(newValue, key: "registeredClassesByIdentifier") }
     }
 
-    @objc fileprivate func swizzled_register(_ nib: NSNib?, forIdentifier identifier: NSUserInterfaceItemIdentifier) {
-        if nib == nil {
-            registeredClassesByIdentifier[identifier] = nil
-        }
-        swizzled_register(nib, forIdentifier: identifier)
+    /**
+     The view classes currently registered with the table view.
+
+     Register a class using ``AppKit/NSTableView/register(_:)``. When you later request a view using ``AppKit/NSTableView/makeView(for:)``, the table view reuses an existing view of the requested class or creates a new instance if necessary.
+     */
+    public var registeredClasses: [NSView.Type] {
+        registeredClassesByIdentifier.values.map { ($0, ObjectIdentifier($0)) }.uniqued(by: \.1).map(\.0)
     }
 
-    @objc fileprivate func swizzled_makeView(withIdentifier identifier: NSUserInterfaceItemIdentifier, owner: Any?) -> NSView? {
-        if isEnablingAutomaticRowHeights {
-            isEnablingAutomaticRowHeights = false
-            return nil
-        }
-        if let reconfigureIndexPath = reconfigureIndexPath {
-            if reconfigureIndexPath.section != -1, let cell = view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
-                return cell
-            } else if reconfigureIndexPath.section == -1, let rowView = rowView(atRow: reconfigureIndexPath.item, makeIfNecessary: false) {
-                return rowView
-            }
-        }
-        if let registeredViewClass = registeredClassesByIdentifier[identifier] {
-            if let view = swizzled_makeView(withIdentifier: identifier, owner: owner) {
-                return view
-            } else {
-                let view = registeredViewClass.init(frame: .zero)
-                view.identifier = identifier
-                return view
-            }
-        }
-        let view = swizzled_makeView(withIdentifier: identifier, owner: owner)
-        return view
-    }
-
-    static func swizzleViewRegistration() {
-        guard !didSwizzleViewRegistration else { return }
+    func swizzleViewRegistration() {
+        guard viewRegistrationHooks.isEmpty else { return }
         do {
-            try NSTableView.swizzle {
-                #selector(makeView(withIdentifier:owner:)) <-> #selector(swizzled_makeView(withIdentifier:owner:))
-                #selector((register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> Void) <-> #selector(swizzled_register(_:forIdentifier:))
-            }
-            didSwizzleViewRegistration = true
+            viewRegistrationHooks += try hook(#selector(NSTableView.makeView(withIdentifier:owner:)), closure: {
+                original, tableView, selector, identifier, owner in
+                if tableView.isEnablingAutomaticRowHeights {
+                    tableView.isEnablingAutomaticRowHeights = false
+                    return nil
+                }
+                if let reconfigureIndexPath = tableView.reconfigureIndexPath {
+                    if reconfigureIndexPath.section != -1, let cell = tableView.view(atColumn: reconfigureIndexPath.section, row: reconfigureIndexPath.item, makeIfNecessary: false) {
+                        return cell
+                    } else if reconfigureIndexPath.section == -1, let rowView = tableView.rowView(atRow: reconfigureIndexPath.item, makeIfNecessary: false) {
+                        return rowView
+                    }
+                }
+                if let registeredViewClass = tableView.registeredClassesByIdentifier[identifier] {
+                    if let view = original(tableView, selector, identifier, owner) {
+                        return view
+                    } else {
+                        let view = registeredViewClass.init(frame: .zero)
+                        view.identifier = identifier
+                        return view
+                    }
+                }
+                return original(tableView, selector, identifier, owner)
+            } as @convention(block) ((NSTableView, Selector, NSUserInterfaceItemIdentifier, Any?) -> NSView?, NSTableView, Selector, NSUserInterfaceItemIdentifier, Any?) -> NSView?)
+
+            viewRegistrationHooks += try hook(#selector((NSTableView.register(_:forIdentifier:)) as (NSTableView) -> (NSNib?, NSUserInterfaceItemIdentifier) -> ()), closure: {
+                original, tableView, selector, nib, identifier in
+                if nib == nil {
+                    tableView.registeredClassesByIdentifier[identifier] = nil
+                }
+                original(tableView, selector, nib, identifier)
+            } as @convention(block) ((NSTableView, Selector, NSNib?, NSUserInterfaceItemIdentifier) -> (), NSTableView, Selector, NSNib?, NSUserInterfaceItemIdentifier) -> ())
         } catch {
-            Swift.debugPrint(error)
+            Swift.print(error)
         }
     }
-    
-    fileprivate static var didSwizzleViewRegistration: Bool {
-        get { getAssociatedValue("didSwizzleViewRegistration") ?? false }
-        set { setAssociatedValue(newValue, key: "didSwizzleViewRegistration") }
+
+    fileprivate var viewRegistrationHooks: [Hook] {
+        get { getAssociatedValue("viewRegistrationHooks") ?? [] }
+        set { setAssociatedValue(newValue, key: "viewRegistrationHooks") }
     }
-    
+
     @objc var isEnablingAutomaticRowHeights: Bool {
         get { getAssociatedValue("isEnablingAutomaticRowHeights") ?? false }
         set { setAssociatedValue(newValue, key: "isEnablingAutomaticRowHeights") }
-    }
-    
-    @objc fileprivate static var shouldSwizzleViewRegistration: Bool {
-        get { didSwizzleViewRegistration }
-        set { swizzleViewRegistration() }
     }
 }
 #endif
