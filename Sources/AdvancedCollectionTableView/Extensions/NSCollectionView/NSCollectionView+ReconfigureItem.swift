@@ -34,13 +34,13 @@ extension NSCollectionView {
 
     fileprivate var isReconfiguratingItems: Bool {
         get { getAssociatedValue("isReconfiguratingItems") ?? false }
-        set { setAssociatedValue(newValue, key: "isReconfiguratingItems")
+        set { setAssociatedValue(newValue, for: "isReconfiguratingItems")
         }
     }
     
     fileprivate static var didSwizzleMakeItem: Bool {
         get { getAssociatedValue("didSwizzleMakeItem") ?? false }
-        set { setAssociatedValue(newValue, key: "didSwizzleMakeItem") }
+        set { setAssociatedValue(newValue, for: "didSwizzleMakeItem") }
     }
 
     @objc static func swizzleMakeItem() {

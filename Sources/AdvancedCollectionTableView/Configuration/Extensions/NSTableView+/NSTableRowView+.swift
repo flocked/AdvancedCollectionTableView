@@ -29,7 +29,7 @@ extension NSTableRowView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            setAssociatedValue(newValue, key: "contentConfiguration")
+            setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
         }
     }
@@ -42,10 +42,10 @@ extension NSTableRowView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
+        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initial: true) }
         set { 
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
-            setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
+            setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
             if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
                 contentView.configuration = contentConfiguration.updated(for: configurationState)
             }
@@ -103,7 +103,7 @@ extension NSTableRowView {
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
         get { getAssociatedValue("configurationUpdateHandler") }
         set {
-            setAssociatedValue(newValue, key: "configurationUpdateHandler")
+            setAssociatedValue(newValue, for: "configurationUpdateHandler")
             observeRowView()
             setNeedsUpdateConfiguration()
         }
@@ -194,7 +194,7 @@ extension NSTableRowView {
         set { 
             guard newValue != isReordering else { return }
             cellViews.forEach({ $0.backgroundStyle = newValue ? .lowered : .emphasized })
-            setAssociatedValue(newValue, key: "isReordering")
+            setAssociatedValue(newValue, for: "isReordering")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -203,7 +203,7 @@ extension NSTableRowView {
         get { getAssociatedValue("isDragging") ?? false }
         set {
             guard newValue != isReordering else { return }
-            setAssociatedValue(newValue, key: "isDragging")
+            setAssociatedValue(newValue, for: "isDragging")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -212,7 +212,7 @@ extension NSTableRowView {
         get { getAssociatedValue("isDropTarget") ?? false }
         set {
             guard newValue != isDropTarget else { return }
-            setAssociatedValue(newValue, key: "isDropTarget")
+            setAssociatedValue(newValue, for: "isDropTarget")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -221,7 +221,7 @@ extension NSTableRowView {
         get { getAssociatedValue("contentView") }
         set {
             contentView?.removeFromSuperview()
-            setAssociatedValue(newValue, key: "contentView")
+            setAssociatedValue(newValue, for: "contentView")
         }
     }
     
@@ -239,12 +239,12 @@ extension NSTableRowView {
     
     var isSelectedObservation: KeyValueObservation? {
         get { getAssociatedValue("isSelectedObservation") }
-        set { setAssociatedValue(newValue, key: "isSelectedObservation") }
+        set { setAssociatedValue(newValue, for: "isSelectedObservation") }
     }
     
     var isEmphasizedObservation: KeyValueObservation? {
         get { getAssociatedValue("isEmphasizedObservation") }
-        set { setAssociatedValue(newValue, key: "isEmphasizedObservation") }
+        set { setAssociatedValue(newValue, for: "isEmphasizedObservation") }
     }
 
     public func observeRowView() {
@@ -262,7 +262,7 @@ extension NSTableRowView {
     
     var tableViewObservation: KeyValueObservation? {
         get { getAssociatedValue("tableViewObservation") }
-        set { setAssociatedValue(newValue, key: "tableViewObservation") }
+        set { setAssociatedValue(newValue, for: "tableViewObservation") }
     }
     
     func observeWillMoveToTableView() {

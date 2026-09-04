@@ -16,7 +16,7 @@ extension NSCollectionView {
         set {
             guard newValue != hoveredIndexPath else { return }
             hoveredItem?.isHovered = false
-            setAssociatedValue(newValue, key: "hoveredIndexPath")
+            setAssociatedValue(newValue, for: "hoveredIndexPath")
         }
     }
     
@@ -37,7 +37,7 @@ extension NSCollectionView {
     
     var observerView: TableCollectionObserverView? {
         get { getAssociatedValue("collectionViewObserverView") }
-        set { setAssociatedValue(newValue, key: "collectionViewObserverView") }
+        set { setAssociatedValue(newValue, for: "collectionViewObserverView") }
     }
     
     var editingView: NSView? {

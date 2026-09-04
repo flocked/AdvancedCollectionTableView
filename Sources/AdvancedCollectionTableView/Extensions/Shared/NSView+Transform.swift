@@ -14,7 +14,7 @@ extension NSView {
         get { getAssociatedValue("_scaleTransform") ?? .none }
         set {
             guard newValue != _scaleTransform else { return }
-            setAssociatedValue(newValue, key: "_scaleTransform")
+            setAssociatedValue(newValue, for: "_scaleTransform")
             anchorPoint = .center
             animatorIfNeeded().scale = newValue
         }
@@ -24,7 +24,7 @@ extension NSView {
         get { getAssociatedValue("_rotation") ?? .zero }
         set {
             guard newValue != _rotation else { return }
-            setAssociatedValue(newValue, key: "_rotation")
+            setAssociatedValue(newValue, for: "_rotation")
             anchorPoint = .center
             animatorIfNeeded().rotation = newValue
         }

@@ -29,7 +29,7 @@ extension NSCollectionViewItem {
     public var backgroundConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("backgroundConfiguration") }
         set {
-            setAssociatedValue(newValue, key: "backgroundConfiguration")
+            setAssociatedValue(newValue, for: "backgroundConfiguration")
             setupBackgroundConfiguration(newValue)
         }
     }
@@ -65,7 +65,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("automaticallyUpdatesBackgroundConfiguration") ?? true }
         set {
             guard newValue != automaticallyUpdatesBackgroundConfiguration else { return }
-            setAssociatedValue(newValue, key: "automaticallyUpdatesBackgroundConfiguration")
+            setAssociatedValue(newValue, for: "automaticallyUpdatesBackgroundConfiguration")
             setupObservation()
             if newValue, let backgroundConfiguration = backgroundConfiguration, let backgroundView = backgroundView {
                 backgroundView.configuration = backgroundConfiguration.updated(for: configurationState)
@@ -77,7 +77,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("backgroundView") }
         set {
             backgroundView?.removeFromSuperview()
-            setAssociatedValue(newValue, key: "backgroundView")
+            setAssociatedValue(newValue, for: "backgroundView")
         }
     }
 
@@ -114,7 +114,7 @@ extension NSCollectionViewItem {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            setAssociatedValue(newValue, key: "contentConfiguration")
+            setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
         }
     }
@@ -130,7 +130,7 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("automaticallyUpdatesContentConfiguration") ?? true }
         set {
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
-            setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
+            setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
             setupObservation()
             if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
                 contentView.configuration = contentConfiguration.updated(for: configurationState)
@@ -254,45 +254,45 @@ extension NSCollectionViewItem {
         get { getAssociatedValue("configurationUpdateHandler") }
         set {
             setupObservation()
-            setAssociatedValue(newValue, key: "configurationUpdateHandler")
+            setAssociatedValue(newValue, for: "configurationUpdateHandler")
             setNeedsUpdateConfiguration()
         }
     }
     
     /// A Boolean value that indicates whether the item is hovered by the mouse pointer.
     @objc var isHovered: Bool {
-        get { getAssociatedValue("isHovered", initialValue: false) }
+        get { getAssociatedValue("isHovered", initial: false) }
         set {
             guard newValue != isHovered else { return }
-            setAssociatedValue(newValue, key: "isHovered")
+            setAssociatedValue(newValue, for: "isHovered")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     /// A Boolean value that indicates whether the item is the target of a drop operation.
     @objc var isDropTarget: Bool {
-        get { getAssociatedValue("isDropTarget", initialValue: false) }
+        get { getAssociatedValue("isDropTarget", initial: false) }
         set {
             guard newValue != isDropTarget else { return }
-            setAssociatedValue(newValue, key: "isDropTarget")
+            setAssociatedValue(newValue, for: "isDropTarget")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
     
     /// A Boolean value that indicates whether the item is reordering.
     @objc var isReordering: Bool {
-        get { getAssociatedValue("isReordering", initialValue: false) }
+        get { getAssociatedValue("isReordering", initial: false) }
         set {
             guard newValue != isReordering else { return }
-            setAssociatedValue(newValue, key: "isReordering")
+            setAssociatedValue(newValue, for: "isReordering")
         }
     }
     
     var isDragging: Bool {
-        get { getAssociatedValue("isDragging", initialValue: false) }
+        get { getAssociatedValue("isDragging", initial: false) }
         set {
             guard newValue != isReordering else { return }
-            setAssociatedValue(newValue, key: "isDragging")
+            setAssociatedValue(newValue, for: "isDragging")
         }
     }
     
@@ -320,7 +320,7 @@ extension NSCollectionViewItem {
     var isRightClickSelected: Bool {
         get { getAssociatedValue("isRightClickSelected") ?? false }
         set { 
-            setAssociatedValue(newValue, key: "isRightClickSelected")
+            setAssociatedValue(newValue, for: "isRightClickSelected")
             setNeedsAutomaticUpdateConfiguration()
         }
     }
@@ -341,7 +341,7 @@ extension NSCollectionViewItem {
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
         get { getAssociatedValue("itemObserver") }
-        set { setAssociatedValue(newValue, key: "itemObserver") }
+        set { setAssociatedValue(newValue, for: "itemObserver") }
     }
 
     func setupObservation() {

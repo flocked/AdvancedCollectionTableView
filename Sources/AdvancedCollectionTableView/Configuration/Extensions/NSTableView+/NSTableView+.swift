@@ -20,11 +20,11 @@ extension NSTableView {
     }
 
     @objc dynamic var hoveredRow: Int {
-        get { getAssociatedValue("hoveredRow", initialValue: -1) }
+        get { getAssociatedValue("hoveredRow", initial: -1) }
         set {
             guard newValue != hoveredRow else { return }
             let previousRow = hoveredRowView
-            setAssociatedValue(newValue, key: "hoveredRow")
+            setAssociatedValue(newValue, for: "hoveredRow")
             previousRow?.setNeedsAutomaticUpdateConfiguration()
             hoveredRowView?.setNeedsAutomaticUpdateConfiguration()
         }
@@ -39,7 +39,7 @@ extension NSTableView {
     
     var observerView: TableCollectionObserverView? {
         get { getAssociatedValue("tableViewObserverView") }
-        set { setAssociatedValue(newValue, key: "tableViewObserverView") }
+        set { setAssociatedValue(newValue, for: "tableViewObserverView") }
     }
     
     var editingView: NSView? {

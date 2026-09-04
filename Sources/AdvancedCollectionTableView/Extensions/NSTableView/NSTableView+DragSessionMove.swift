@@ -13,7 +13,7 @@ extension NSTableView {
     var draggingSessionMovedHandler: ((NSDraggingSession, CGPoint)->())? {
         get { getAssociatedValue("draggingSessionMoveHandler") }
         set {
-            setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
+            setAssociatedValue(newValue, for: "draggingSessionMoveHandler")
             let selector = #selector(NSTableView.draggingSession(_:movedTo:))
             if newValue != nil, !isMethodReplaced(selector), !isMethodHooked(selector) {
                 do {

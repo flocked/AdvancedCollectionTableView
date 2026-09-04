@@ -11,7 +11,7 @@ import FZUIKit
 
 class TableCollectionObserverView: NSView {
     var tokens: [NotificationToken] = []
-    lazy var trackingArea = TrackingArea(for: self, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow])
+    lazy var trackingArea = TrackingArea(view: self, events: [.mouseMoved, .mouseEnteredAndExited], activation: .inKeyWindow)
     weak var collectionView: NSCollectionView?
     weak var tableView: NSTableView?
     var focusObservation: KeyValueObservation?

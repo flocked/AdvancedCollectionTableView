@@ -24,7 +24,7 @@ extension NSTableCellView {
     public var contentConfiguration: NSContentConfiguration? {
         get { getAssociatedValue("contentConfiguration") }
         set {
-            setAssociatedValue(newValue, key: "contentConfiguration")
+            setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
         }
     }
@@ -61,10 +61,10 @@ extension NSTableCellView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initialValue: true) }
+        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initial: true) }
         set {
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
-            setAssociatedValue(newValue, key: "automaticallyUpdatesContentConfiguration")
+            setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
             if newValue, let contentConfiguration = contentConfiguration, let contentView = contentView {
                 contentView.configuration = contentConfiguration.updated(for: configurationState)
             }
@@ -172,7 +172,7 @@ extension NSTableCellView {
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
         get { getAssociatedValue("configurationUpdateHandler") }
         set {
-            setAssociatedValue(newValue, key: "configurationUpdateHandler")
+            setAssociatedValue(newValue, for: "configurationUpdateHandler")
             observeCellView()
             setNeedsUpdateConfiguration()
         }
@@ -241,13 +241,13 @@ extension NSTableCellView {
         get { getAssociatedValue("_contentView") }
         set {
             contentView?.removeFromSuperview()
-            setAssociatedValue(newValue, key: "_contentView")
+            setAssociatedValue(newValue, for: "_contentView")
         }
     }
     
     func updateContentConfigurationStyle() {
         if let configuration = (contentConfiguration as? NSListContentConfiguration)?.updated(for: self) {
-            setAssociatedValue(configuration, key: "contentConfiguration")
+            setAssociatedValue(configuration, for: "contentConfiguration")
             NSAnimationContext.performWithoutAnimation {
                 self.contentView?.configuration = configuration
             }
@@ -276,7 +276,7 @@ extension NSTableCellView {
     
     var tableViewObservation: KeyValueObservation? {
         get { getAssociatedValue("tableViewObservation") }
-        set { setAssociatedValue(newValue, key: "tableViewObservation") }
+        set { setAssociatedValue(newValue, for: "tableViewObservation") }
     }
     
     func observeWillMoveToRowView() {

@@ -50,7 +50,7 @@ extension NSTableView {
 
     var registeredClassesByIdentifier: [NSUserInterfaceItemIdentifier: NSView.Type] {
         get { getAssociatedValue("registeredClassesByIdentifier") ?? [:] }
-        set { setAssociatedValue(newValue, key: "registeredClassesByIdentifier") }
+        set { setAssociatedValue(newValue, for: "registeredClassesByIdentifier") }
     }
 
     /**
@@ -104,12 +104,12 @@ extension NSTableView {
 
     fileprivate var viewRegistrationHooks: [Hook] {
         get { getAssociatedValue("viewRegistrationHooks") ?? [] }
-        set { setAssociatedValue(newValue, key: "viewRegistrationHooks") }
+        set { setAssociatedValue(newValue, for: "viewRegistrationHooks") }
     }
 
     @objc var isEnablingAutomaticRowHeights: Bool {
         get { getAssociatedValue("isEnablingAutomaticRowHeights") ?? false }
-        set { setAssociatedValue(newValue, key: "isEnablingAutomaticRowHeights") }
+        set { setAssociatedValue(newValue, for: "isEnablingAutomaticRowHeights") }
     }
 }
 #endif

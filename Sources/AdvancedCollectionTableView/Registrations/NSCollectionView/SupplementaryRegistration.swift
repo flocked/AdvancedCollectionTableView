@@ -123,8 +123,8 @@ extension NSCollectionView {
 
 private extension NSCollectionView {
     var registeredSupplementaryRegistrations: [NSUserInterfaceItemIdentifier] {
-        get { getAssociatedValue("registeredSupplementaryRegistrations", initialValue: []) }
-        set { setAssociatedValue(newValue, key: "registeredSupplementaryRegistrations")
+        get { getAssociatedValue("registeredSupplementaryRegistrations", initial: []) }
+        set { setAssociatedValue(newValue, for: "registeredSupplementaryRegistrations")
         }
     }
 }

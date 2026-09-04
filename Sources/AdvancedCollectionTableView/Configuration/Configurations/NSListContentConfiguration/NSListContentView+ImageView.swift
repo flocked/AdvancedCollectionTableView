@@ -477,7 +477,7 @@ extension NSUIImage.SymbolConfiguration {
         
     private static var reservedLayoutSizes: [ReservedLayoutSizeKey: CGSize] {
         get { getAssociatedValue("reservedLayoutSizes") ?? [:] }
-        set { setAssociatedValue(newValue, key: "reservedLayoutSizes") }
+        set { setAssociatedValue(newValue, for: "reservedLayoutSizes") }
     }
     
     private var reservedLayoutSizeKey: ReservedLayoutSizeKey {

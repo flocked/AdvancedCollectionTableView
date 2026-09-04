@@ -12,7 +12,7 @@ extension NSCollectionView {
     var draggingSessionMoveHandler: ((NSDraggingSession, CGPoint)->())? {
         get { getAssociatedValue("draggingSessionMoveHandler") }
         set {
-            setAssociatedValue(newValue, key: "draggingSessionMoveHandler")
+            setAssociatedValue(newValue, for: "draggingSessionMoveHandler")
             let selector = #selector(NSCollectionView.draggingSession(_:movedTo:))
             if newValue != nil {
                 guard !isMethodHooked(selector) else { return }
