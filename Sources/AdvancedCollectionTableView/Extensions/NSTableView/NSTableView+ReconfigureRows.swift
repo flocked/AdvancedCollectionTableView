@@ -83,7 +83,7 @@ extension NSTableView {
     }
 
     var reconfigureIndexPath: IndexPath? {
-        get { getAssociatedValue("reconfigureIndexPath") }
+        get { associatedValue(for: "reconfigureIndexPath") }
         set { setAssociatedValue(newValue, for: "reconfigureIndexPath")
         }
     }

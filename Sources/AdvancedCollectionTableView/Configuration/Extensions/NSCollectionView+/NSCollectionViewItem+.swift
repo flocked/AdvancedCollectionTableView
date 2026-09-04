@@ -27,7 +27,7 @@ extension NSCollectionViewItem {
      ```
      */
     public var backgroundConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue("backgroundConfiguration") }
+        get { associatedValue(for: "backgroundConfiguration") }
         set {
             setAssociatedValue(newValue, for: "backgroundConfiguration")
             setupBackgroundConfiguration(newValue)
@@ -62,7 +62,7 @@ extension NSCollectionViewItem {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesBackgroundConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesBackgroundConfiguration") ?? true }
+        get { associatedValue(for: "automaticallyUpdatesBackgroundConfiguration") ?? true }
         set {
             guard newValue != automaticallyUpdatesBackgroundConfiguration else { return }
             setAssociatedValue(newValue, for: "automaticallyUpdatesBackgroundConfiguration")
@@ -74,7 +74,7 @@ extension NSCollectionViewItem {
     }
 
     var backgroundView: (NSView & NSContentView)? {
-        get { getAssociatedValue("backgroundView") }
+        get { associatedValue(for: "backgroundView") }
         set {
             backgroundView?.removeFromSuperview()
             setAssociatedValue(newValue, for: "backgroundView")
@@ -112,7 +112,7 @@ extension NSCollectionViewItem {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue("contentConfiguration") }
+        get { associatedValue(for: "contentConfiguration") }
         set {
             setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
@@ -127,7 +127,7 @@ extension NSCollectionViewItem {
      If you provide ``configurationUpdateHandler-swift.property`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesContentConfiguration") ?? true }
+        get { associatedValue(for: "automaticallyUpdatesContentConfiguration") ?? true }
         set {
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
             setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
@@ -251,7 +251,7 @@ extension NSCollectionViewItem {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``. The system calls this handler after calling `updateConfiguration(using:)`.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue("configurationUpdateHandler") }
+        get { associatedValue(for: "configurationUpdateHandler") }
         set {
             setupObservation()
             setAssociatedValue(newValue, for: "configurationUpdateHandler")
@@ -261,7 +261,7 @@ extension NSCollectionViewItem {
     
     /// A Boolean value that indicates whether the item is hovered by the mouse pointer.
     @objc var isHovered: Bool {
-        get { getAssociatedValue("isHovered", initial: false) }
+        get { associatedValue(for: "isHovered", initial: false) }
         set {
             guard newValue != isHovered else { return }
             setAssociatedValue(newValue, for: "isHovered")
@@ -271,7 +271,7 @@ extension NSCollectionViewItem {
     
     /// A Boolean value that indicates whether the item is the target of a drop operation.
     @objc var isDropTarget: Bool {
-        get { getAssociatedValue("isDropTarget", initial: false) }
+        get { associatedValue(for: "isDropTarget", initial: false) }
         set {
             guard newValue != isDropTarget else { return }
             setAssociatedValue(newValue, for: "isDropTarget")
@@ -281,7 +281,7 @@ extension NSCollectionViewItem {
     
     /// A Boolean value that indicates whether the item is reordering.
     @objc var isReordering: Bool {
-        get { getAssociatedValue("isReordering", initial: false) }
+        get { associatedValue(for: "isReordering", initial: false) }
         set {
             guard newValue != isReordering else { return }
             setAssociatedValue(newValue, for: "isReordering")
@@ -289,7 +289,7 @@ extension NSCollectionViewItem {
     }
     
     var isDragging: Bool {
-        get { getAssociatedValue("isDragging", initial: false) }
+        get { associatedValue(for: "isDragging", initial: false) }
         set {
             guard newValue != isReordering else { return }
             setAssociatedValue(newValue, for: "isDragging")
@@ -318,7 +318,7 @@ extension NSCollectionViewItem {
     }
     
     var isRightClickSelected: Bool {
-        get { getAssociatedValue("isRightClickSelected") ?? false }
+        get { associatedValue(for: "isRightClickSelected") ?? false }
         set { 
             setAssociatedValue(newValue, for: "isRightClickSelected")
             setNeedsAutomaticUpdateConfiguration()
@@ -340,7 +340,7 @@ extension NSCollectionViewItem {
     }
     
     var itemObserver: KeyValueObserver<NSCollectionViewItem>? {
-        get { getAssociatedValue("itemObserver") }
+        get { associatedValue(for: "itemObserver") }
         set { setAssociatedValue(newValue, for: "itemObserver") }
     }
 

@@ -22,7 +22,7 @@ extension NSTableCellView {
      The default value is `nil`. After you set a content configuration to this property, setting this property back to `nil` replaces the current view with a new, empty view.
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue("contentConfiguration") }
+        get { associatedValue(for: "contentConfiguration") }
         set {
             setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
@@ -61,7 +61,7 @@ extension NSTableCellView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initial: true) }
+        get { associatedValue(for: "automaticallyUpdatesContentConfiguration", initial: true) }
         set {
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
             setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
@@ -170,7 +170,7 @@ extension NSTableCellView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue("configurationUpdateHandler") }
+        get { associatedValue(for: "configurationUpdateHandler") }
         set {
             setAssociatedValue(newValue, for: "configurationUpdateHandler")
             observeCellView()
@@ -238,7 +238,7 @@ extension NSTableCellView {
     }
     
     var contentView: (NSView & NSContentView)? {
-        get { getAssociatedValue("_contentView") }
+        get { associatedValue(for: "_contentView") }
         set {
             contentView?.removeFromSuperview()
             setAssociatedValue(newValue, for: "_contentView")
@@ -275,7 +275,7 @@ extension NSTableCellView {
     }
     
     var tableViewObservation: KeyValueObservation? {
-        get { getAssociatedValue("tableViewObservation") }
+        get { associatedValue(for: "tableViewObservation") }
         set { setAssociatedValue(newValue, for: "tableViewObservation") }
     }
     

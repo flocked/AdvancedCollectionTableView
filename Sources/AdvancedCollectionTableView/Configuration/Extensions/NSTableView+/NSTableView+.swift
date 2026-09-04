@@ -20,7 +20,7 @@ extension NSTableView {
     }
 
     @objc dynamic var hoveredRow: Int {
-        get { getAssociatedValue("hoveredRow", initial: -1) }
+        get { associatedValue(for: "hoveredRow", initial: -1) }
         set {
             guard newValue != hoveredRow else { return }
             let previousRow = hoveredRowView
@@ -38,7 +38,7 @@ extension NSTableView {
     }
     
     var observerView: TableCollectionObserverView? {
-        get { getAssociatedValue("tableViewObserverView") }
+        get { associatedValue(for: "tableViewObserverView") }
         set { setAssociatedValue(newValue, for: "tableViewObserverView") }
     }
     

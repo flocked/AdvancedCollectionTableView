@@ -11,7 +11,7 @@ import FZUIKit
 
 extension NSView {
     var _scaleTransform: Scale {
-        get { getAssociatedValue("_scaleTransform") ?? .none }
+        get { associatedValue(for: "_scaleTransform") ?? .none }
         set {
             guard newValue != _scaleTransform else { return }
             setAssociatedValue(newValue, for: "_scaleTransform")
@@ -21,7 +21,7 @@ extension NSView {
     }
     
     var _rotation: Rotation {
-        get { getAssociatedValue("_rotation") ?? .zero }
+        get { associatedValue(for: "_rotation") ?? .zero }
         set {
             guard newValue != _rotation else { return }
             setAssociatedValue(newValue, for: "_rotation")

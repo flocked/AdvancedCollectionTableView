@@ -12,7 +12,7 @@ import FZUIKit
 extension NSCollectionView {
     /// The index path of the item that is hovered by the mouse.
     @objc dynamic var hoveredIndexPath: IndexPath? {
-        get { getAssociatedValue("hoveredIndexPath") }
+        get { associatedValue(for: "hoveredIndexPath") }
         set {
             guard newValue != hoveredIndexPath else { return }
             hoveredItem?.isHovered = false
@@ -36,7 +36,7 @@ extension NSCollectionView {
     }
     
     var observerView: TableCollectionObserverView? {
-        get { getAssociatedValue("collectionViewObserverView") }
+        get { associatedValue(for: "collectionViewObserverView") }
         set { setAssociatedValue(newValue, for: "collectionViewObserverView") }
     }
     

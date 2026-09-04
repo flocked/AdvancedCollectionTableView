@@ -10,7 +10,7 @@ import FZSwiftUtils
 
 extension NSCollectionView {
     var draggingSessionMoveHandler: ((NSDraggingSession, CGPoint)->())? {
-        get { getAssociatedValue("draggingSessionMoveHandler") }
+        get { associatedValue(for: "draggingSessionMoveHandler") }
         set {
             setAssociatedValue(newValue, for: "draggingSessionMoveHandler")
             let selector = #selector(NSCollectionView.draggingSession(_:movedTo:))

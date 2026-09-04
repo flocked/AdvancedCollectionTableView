@@ -28,7 +28,7 @@ extension NSCollectionView {
 
     /// The mode that the collection view uses for invalidating the size of self-sizing items.
     var selfSizingInvalidation: SelfSizingInvalidation {
-        get { getAssociatedValue("selfSizingInvalidation", initial: SelfSizingInvalidation.disabled) }
+        get { associatedValue(for: "selfSizingInvalidation", initial: SelfSizingInvalidation.disabled) }
         set {
             setAssociatedValue(newValue, for: "selfSizingInvalidation")
             if newValue != .disabled {
@@ -40,7 +40,7 @@ extension NSCollectionView {
 
 extension NSCollectionViewItem {
     static var didSwizzleCollectionViewItem: Bool {
-        get { getAssociatedValue("didSwizzleCollectionViewItemLayoutAttributes", initial: false) }
+        get { associatedValue(for: "didSwizzleCollectionViewItemLayoutAttributes", initial: false) }
         set { setAssociatedValue(newValue, for: "didSwizzleCollectionViewItemLayoutAttributes") }
     }
 
@@ -91,7 +91,7 @@ extension NSCollectionViewItem {
     }
 
     var cachedLayoutAttributes: NSCollectionViewLayoutAttributes? {
-        get { getAssociatedValue("cachedLayoutAttributes") }
+        get { associatedValue(for: "cachedLayoutAttributes") }
         set { setAssociatedValue(newValue, for: "cachedLayoutAttributes") }
     }
 

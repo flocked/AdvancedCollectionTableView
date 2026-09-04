@@ -27,7 +27,7 @@ extension NSTableRowView {
      ```
      */
     public var contentConfiguration: NSContentConfiguration? {
-        get { getAssociatedValue("contentConfiguration") }
+        get { associatedValue(for: "contentConfiguration") }
         set {
             setAssociatedValue(newValue, for: "contentConfiguration")
             setupContentConfiguration(newValue)
@@ -42,7 +42,7 @@ extension NSTableRowView {
      If you override ``updateConfiguration(using:)`` to manually update and customize the content configuration, disable automatic updates by setting this property to `false`.
      */
     @objc open var automaticallyUpdatesContentConfiguration: Bool {
-        get { getAssociatedValue("automaticallyUpdatesContentConfiguration", initial: true) }
+        get { associatedValue(for: "automaticallyUpdatesContentConfiguration", initial: true) }
         set { 
             guard newValue != automaticallyUpdatesContentConfiguration else { return }
             setAssociatedValue(newValue, for: "automaticallyUpdatesContentConfiguration")
@@ -101,7 +101,7 @@ extension NSTableRowView {
      Setting the value of this property calls ``setNeedsUpdateConfiguration()``.
      */
     @objc open var configurationUpdateHandler: ConfigurationUpdateHandler? {
-        get { getAssociatedValue("configurationUpdateHandler") }
+        get { associatedValue(for: "configurationUpdateHandler") }
         set {
             setAssociatedValue(newValue, for: "configurationUpdateHandler")
             observeRowView()
@@ -190,7 +190,7 @@ extension NSTableRowView {
     }
     
     @objc var isReordering: Bool {
-        get { getAssociatedValue("isReordering") ?? false }
+        get { associatedValue(for: "isReordering") ?? false }
         set { 
             guard newValue != isReordering else { return }
             cellViews.forEach({ $0.backgroundStyle = newValue ? .lowered : .emphasized })
@@ -200,7 +200,7 @@ extension NSTableRowView {
     }
     
     @objc var isDragging: Bool {
-        get { getAssociatedValue("isDragging") ?? false }
+        get { associatedValue(for: "isDragging") ?? false }
         set {
             guard newValue != isReordering else { return }
             setAssociatedValue(newValue, for: "isDragging")
@@ -209,7 +209,7 @@ extension NSTableRowView {
     }
     
     @objc var isDropTarget: Bool {
-        get { getAssociatedValue("isDropTarget") ?? false }
+        get { associatedValue(for: "isDropTarget") ?? false }
         set {
             guard newValue != isDropTarget else { return }
             setAssociatedValue(newValue, for: "isDropTarget")
@@ -218,7 +218,7 @@ extension NSTableRowView {
     }
     
     var contentView: (NSView & NSContentView)? {
-        get { getAssociatedValue("contentView") }
+        get { associatedValue(for: "contentView") }
         set {
             contentView?.removeFromSuperview()
             setAssociatedValue(newValue, for: "contentView")
@@ -238,12 +238,12 @@ extension NSTableRowView {
     }
     
     var isSelectedObservation: KeyValueObservation? {
-        get { getAssociatedValue("isSelectedObservation") }
+        get { associatedValue(for: "isSelectedObservation") }
         set { setAssociatedValue(newValue, for: "isSelectedObservation") }
     }
     
     var isEmphasizedObservation: KeyValueObservation? {
-        get { getAssociatedValue("isEmphasizedObservation") }
+        get { associatedValue(for: "isEmphasizedObservation") }
         set { setAssociatedValue(newValue, for: "isEmphasizedObservation") }
     }
 
@@ -261,7 +261,7 @@ extension NSTableRowView {
     }
     
     var tableViewObservation: KeyValueObservation? {
-        get { getAssociatedValue("tableViewObservation") }
+        get { associatedValue(for: "tableViewObservation") }
         set { setAssociatedValue(newValue, for: "tableViewObservation") }
     }
     

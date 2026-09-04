@@ -11,7 +11,7 @@ import FZSwiftUtils
 /*
 extension NSTableView {
     var draggingSessionMovedHandler: ((NSDraggingSession, CGPoint)->())? {
-        get { getAssociatedValue("draggingSessionMoveHandler") }
+        get { associatedValue(for: "draggingSessionMoveHandler") }
         set {
             setAssociatedValue(newValue, for: "draggingSessionMoveHandler")
             let selector = #selector(NSTableView.draggingSession(_:movedTo:))
